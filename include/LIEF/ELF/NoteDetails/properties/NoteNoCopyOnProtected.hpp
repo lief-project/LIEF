@@ -38,8 +38,9 @@ class NoteNoCopyOnProtected : public NoteGnuProperty::Property {
 
   protected:
   NoteNoCopyOnProtected() :
-    NoteGnuProperty::Property(NoteGnuProperty::Property::TYPE::NO_COPY_ON_PROTECTED)
-  {}
+    NoteGnuProperty::Property(
+        NoteGnuProperty::Property::TYPE::NO_COPY_ON_PROTECTED
+    ) {}
 };
 }
 }

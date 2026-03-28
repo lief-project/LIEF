@@ -70,7 +70,8 @@ class LIEF_API DexFile : public Object {
 
   ~DexFile() override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DexFile& dex_file);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DexFile& dex_file);
 
   private:
   std::string location_;

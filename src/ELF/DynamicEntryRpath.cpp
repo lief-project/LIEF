@@ -38,10 +38,13 @@ std::vector<std::string> DynamicEntryRpath::paths() const {
 }
 
 void DynamicEntryRpath::paths(const std::vector<std::string>& paths) {
-  rpath_ = std::accumulate(paths.begin(), paths.end(), std::string(),
-      [] (const std::string& path, const std::string& new_entry) {
-        return path.empty() ? new_entry :  path + DynamicEntryRpath::delimiter + new_entry;
-      });
+  rpath_ =
+      std::accumulate(paths.begin(), paths.end(), std::string(),
+                      [](const std::string& path, const std::string& new_entry) {
+                        return path.empty() ?
+                                   new_entry :
+                                   path + DynamicEntryRpath::delimiter + new_entry;
+                      });
 }
 
 DynamicEntryRpath& DynamicEntryRpath::append(std::string path) {
@@ -54,9 +57,7 @@ DynamicEntryRpath& DynamicEntryRpath::append(std::string path) {
 DynamicEntryRpath& DynamicEntryRpath::remove(const std::string& path) {
   std::vector<std::string> paths = this->paths();
   paths.erase(std::remove_if(paths.begin(), paths.end(),
-                             [&path] (const std::string& p) {
-                               return p == path;
-                             }),
+                             [&path](const std::string& p) { return p == path; }),
               paths.end());
   this->paths(paths);
   return *this;
@@ -91,7 +92,3 @@ std::ostream& DynamicEntryRpath::print(std::ostream& os) const {
 }
 
 }
-
-
-
-

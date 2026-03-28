@@ -24,84 +24,90 @@
 
 namespace LIEF::MachO {
 
-ThreadCommand::ThreadCommand(const details::thread_command& cmd, Header::CPU_TYPE arch) :
+ThreadCommand::ThreadCommand(const details::thread_command& cmd,
+                             Header::CPU_TYPE arch) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   flavor_{cmd.flavor},
   count_{cmd.count},
-  architecture_{arch}
-{}
+  architecture_{arch} {}
 
-ThreadCommand::ThreadCommand(uint32_t flavor, uint32_t count, Header::CPU_TYPE arch) :
+ThreadCommand::ThreadCommand(uint32_t flavor, uint32_t count,
+                             Header::CPU_TYPE arch) :
   LoadCommand::LoadCommand{LoadCommand::TYPE::UNIXTHREAD,
-                           static_cast<uint32_t>(sizeof(details::thread_command) + count * sizeof(uint32_t))},
+                           static_cast<uint32_t>(sizeof(details::thread_command) +
+                                                 count * sizeof(uint32_t))},
   flavor_{flavor},
   count_{count},
   architecture_{arch},
-  state_(size() - sizeof(details::thread_command), 0)
-{
-}
+  state_(size() - sizeof(details::thread_command), 0) {}
 
 uint64_t ThreadCommand::pc() const {
   uint64_t entry = 0;
-  switch(architecture_) {
+  switch (architecture_) {
     case Header::CPU_TYPE::X86:
-      {
-        if (state_.size() < sizeof(details::x86_thread_state_t)) {
-          return entry;
-        }
-        entry = reinterpret_cast<const details::x86_thread_state_t*>(state_.data())->eip;
-        break;
+    {
+      if (state_.size() < sizeof(details::x86_thread_state_t)) {
+        return entry;
       }
+      entry =
+          reinterpret_cast<const details::x86_thread_state_t*>(state_.data())->eip;
+      break;
+    }
 
     case Header::CPU_TYPE::X86_64:
-      {
-        if (state_.size() < sizeof(details::x86_thread_state64_t)) {
-          return entry;
-        }
-        entry = reinterpret_cast<const details::x86_thread_state64_t*>(state_.data())->rip;
-        break;
+    {
+      if (state_.size() < sizeof(details::x86_thread_state64_t)) {
+        return entry;
       }
+      entry = reinterpret_cast<const details::x86_thread_state64_t*>(state_.data())
+                  ->rip;
+      break;
+    }
 
     case Header::CPU_TYPE::ARM:
-      {
-        if (state_.size() < sizeof(details::arm_thread_state_t)) {
-          return entry;
-        }
-        entry = reinterpret_cast<const details::arm_thread_state_t*>(state_.data())->r15;
-        break;
+    {
+      if (state_.size() < sizeof(details::arm_thread_state_t)) {
+        return entry;
       }
+      entry =
+          reinterpret_cast<const details::arm_thread_state_t*>(state_.data())->r15;
+      break;
+    }
 
     case Header::CPU_TYPE::ARM64:
-      {
-        if (state_.size() < sizeof(details::arm_thread_state64_t)) {
-          return entry;
-        }
-        entry = reinterpret_cast<const details::arm_thread_state64_t*>(state_.data())->pc;
-        break;
+    {
+      if (state_.size() < sizeof(details::arm_thread_state64_t)) {
+        return entry;
       }
+      entry = reinterpret_cast<const details::arm_thread_state64_t*>(state_.data())
+                  ->pc;
+      break;
+    }
 
     case Header::CPU_TYPE::POWERPC:
-      {
-        if (state_.size() < sizeof(details::ppc_thread_state_t)) {
-          return entry;
-        }
-        entry = reinterpret_cast<const details::ppc_thread_state_t*>(state_.data())->srr0;
-        break;
+    {
+      if (state_.size() < sizeof(details::ppc_thread_state_t)) {
+        return entry;
       }
+      entry = reinterpret_cast<const details::ppc_thread_state_t*>(state_.data())
+                  ->srr0;
+      break;
+    }
 
     case Header::CPU_TYPE::POWERPC64:
-      {
-        if (state_.size() < sizeof(details::ppc_thread_state64_t)) {
-          return entry;
-        }
-        entry = reinterpret_cast<const details::ppc_thread_state64_t*>(state_.data())->srr0;
-        break;
+    {
+      if (state_.size() < sizeof(details::ppc_thread_state64_t)) {
+        return entry;
       }
+      entry = reinterpret_cast<const details::ppc_thread_state64_t*>(state_.data())
+                  ->srr0;
+      break;
+    }
 
     default:
-      {
-        LIEF_ERR("Unknown architecture");
-      }
+    {
+      LIEF_ERR("Unknown architecture");
+    }
   }
   return entry;
 }
@@ -112,11 +118,10 @@ void ThreadCommand::accept(Visitor& visitor) const {
 
 std::ostream& ThreadCommand::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("flavor={:#x}, count={:#x}, pc={:#08x}",
-                    flavor(), count(), pc());
+  os << fmt::format("flavor={:#x}, count={:#x}, pc={:#08x}", flavor(), count(),
+                    pc());
   return os;
 }
 
 
 }
-

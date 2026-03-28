@@ -22,8 +22,16 @@ class ELF_SysvHash : private Mirror<LIEF::ELF::SysvHash> {
   using lief_t = LIEF::ELF::SysvHash;
   using Mirror::Mirror;
 
-  uint32_t nbucket() const { return get().nbucket(); }
-  uint32_t nchain() const { return get().nchain(); }
-  std::vector<uint32_t> buckets() const { return get().buckets(); }
-  std::vector<uint32_t> chains() const { return get().chains(); }
+  uint32_t nbucket() const {
+    return get().nbucket();
+  }
+  uint32_t nchain() const {
+    return get().nchain();
+  }
+  std::vector<uint32_t> buckets() const {
+    return get().buckets();
+  }
+  std::vector<uint32_t> chains() const {
+    return get().chains();
+  }
 };

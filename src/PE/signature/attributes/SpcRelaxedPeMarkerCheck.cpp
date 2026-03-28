@@ -23,5 +23,3 @@ void SpcRelaxedPeMarkerCheck::accept(Visitor& visitor) const {
 }
 
 }
-
-

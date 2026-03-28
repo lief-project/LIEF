@@ -40,8 +40,7 @@ class LIEF_API FilesetCommand : public LoadCommand {
   FilesetCommand() = default;
   FilesetCommand(const details::fileset_entry_command& command);
   FilesetCommand(std::string name) :
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
 
   FilesetCommand& operator=(FilesetCommand copy);
   FilesetCommand(const FilesetCommand& copy);

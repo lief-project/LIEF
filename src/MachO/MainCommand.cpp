@@ -25,14 +25,13 @@ namespace LIEF::MachO {
 MainCommand::MainCommand(const details::entry_point_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   entrypoint_{cmd.entryoff},
-  stack_size_{cmd.stacksize}
-{}
+  stack_size_{cmd.stacksize} {}
 
 MainCommand::MainCommand(uint64_t entrypoint, uint64_t stacksize) :
-  LoadCommand::LoadCommand{LoadCommand::TYPE::MAIN, sizeof(details::entry_point_command)},
+  LoadCommand::LoadCommand{LoadCommand::TYPE::MAIN,
+                           sizeof(details::entry_point_command)},
   entrypoint_{entrypoint},
-  stack_size_{stacksize}
-{
+  stack_size_{stacksize} {
   this->data(LoadCommand::raw_t(size(), 0));
 }
 
@@ -42,10 +41,9 @@ void MainCommand::accept(Visitor& visitor) const {
 
 std::ostream& MainCommand::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("entrypoint={:#x}, stack size={:#x}",
-                    entrypoint(), stack_size());
+  os << fmt::format("entrypoint={:#x}, stack size={:#x}", entrypoint(),
+                    stack_size());
   return os;
 }
 
 }
-

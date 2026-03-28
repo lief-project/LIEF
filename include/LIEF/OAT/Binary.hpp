@@ -42,28 +42,30 @@ class LIEF_API Binary : public ELF::Binary {
   friend class Parser;
 
   public:
-  using dex_files_t        = std::vector<std::unique_ptr<DEX::File>>;
-  using it_dex_files       = ref_iterator<dex_files_t&, DEX::File*>;
-  using it_const_dex_files = const_ref_iterator<const dex_files_t&, const DEX::File*>;
+  using dex_files_t = std::vector<std::unique_ptr<DEX::File>>;
+  using it_dex_files = ref_iterator<dex_files_t&, DEX::File*>;
+  using it_const_dex_files =
+      const_ref_iterator<const dex_files_t&, const DEX::File*>;
 
-  using classes_t         = std::unordered_map<std::string, Class*>;
-  using classes_list_t    = std::vector<std::unique_ptr<Class>>;
-  using it_classes        = ref_iterator<classes_list_t&, Class*>;
-  using it_const_classes  = const_ref_iterator<const classes_list_t&, const Class*>;
+  using classes_t = std::unordered_map<std::string, Class*>;
+  using classes_list_t = std::vector<std::unique_ptr<Class>>;
+  using it_classes = ref_iterator<classes_list_t&, Class*>;
+  using it_const_classes = const_ref_iterator<const classes_list_t&, const Class*>;
 
-  using oat_dex_files_t        = std::vector<std::unique_ptr<DexFile>>;
-  using it_oat_dex_files       = ref_iterator<oat_dex_files_t&, DexFile*>;
-  using it_const_oat_dex_files = const_ref_iterator<const oat_dex_files_t&, const DexFile*>;
+  using oat_dex_files_t = std::vector<std::unique_ptr<DexFile>>;
+  using it_oat_dex_files = ref_iterator<oat_dex_files_t&, DexFile*>;
+  using it_const_oat_dex_files =
+      const_ref_iterator<const oat_dex_files_t&, const DexFile*>;
 
-  using methods_t         = std::vector<std::unique_ptr<Method>>;
-  using it_methods        = ref_iterator<methods_t&, Method*>;
-  using it_const_methods  = const_ref_iterator<const methods_t&, const Method*>;
+  using methods_t = std::vector<std::unique_ptr<Method>>;
+  using it_methods = ref_iterator<methods_t&, Method*>;
+  using it_const_methods = const_ref_iterator<const methods_t&, const Method*>;
 
   using dex2dex_info_t = std::unordered_map<const DEX::File*, DEX::dex2dex_info_t>;
 
   public:
   Binary& operator=(const Binary& copy) = delete;
-  Binary(const Binary& copy)            = delete;
+  Binary(const Binary& copy) = delete;
 
   /// OAT Header
   const Header& header() const;
@@ -74,7 +76,7 @@ class LIEF_API Binary : public ELF::Binary {
   it_const_dex_files dex_files() const;
 
   /// Iterator over LIEF::OAT::DexFile
-  it_oat_dex_files       oat_dex_files();
+  it_oat_dex_files oat_dex_files();
   it_const_oat_dex_files oat_dex_files() const;
 
   /// Iterator over LIEF::OAT::Class

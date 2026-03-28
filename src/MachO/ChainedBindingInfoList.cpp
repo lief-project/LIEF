@@ -21,19 +21,19 @@
 namespace LIEF::MachO {
 
 std::unique_ptr<ChainedBindingInfoList>
-  ChainedBindingInfoList::create(const ChainedBindingInfo& other)
-{
-  auto result = std::make_unique<ChainedBindingInfoList>(other.format(), other.is_weak_import());
-  result->segment_         = const_cast<SegmentCommand*>(other.segment());
-  result->symbol_          = const_cast<Symbol*>(other.symbol());
+    ChainedBindingInfoList::create(const ChainedBindingInfo& other) {
+  auto result = std::make_unique<ChainedBindingInfoList>(other.format(),
+                                                         other.is_weak_import());
+  result->segment_ = const_cast<SegmentCommand*>(other.segment());
+  result->symbol_ = const_cast<Symbol*>(other.symbol());
   result->library_ordinal_ = other.library_ordinal();
-  result->addend_          = other.addend();
-  result->library_         = const_cast<DylibCommand*>(other.library());
-  result->address_         = other.address();
-  result->ptr_format_      = other.ptr_format();
-  result->offset_          = other.offset();
-  result->btypes_          = other.btypes_;
-  result->arm64_bind_      = other.arm64_bind_;
+  result->addend_ = other.addend();
+  result->library_ = const_cast<DylibCommand*>(other.library());
+  result->address_ = other.address();
+  result->ptr_format_ = other.ptr_format();
+  result->offset_ = other.offset();
+  result->btypes_ = other.btypes_;
+  result->arm64_bind_ = other.arm64_bind_;
   return result;
 }
 
@@ -43,4 +43,3 @@ void ChainedBindingInfoList::swap(ChainedBindingInfoList& other) noexcept {
 }
 
 }
-

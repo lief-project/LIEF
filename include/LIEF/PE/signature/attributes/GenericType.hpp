@@ -27,20 +27,19 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-/// Interface over an attribute for which the internal structure is not supported by LIEF
+/// Interface over an attribute for which the internal structure is not supported
+/// by LIEF
 class LIEF_API GenericType : public Attribute {
   friend class Parser;
   friend class SignatureParser;
 
   public:
   GenericType() :
-    Attribute(Attribute::TYPE::GENERIC_TYPE)
-  {}
+    Attribute(Attribute::TYPE::GENERIC_TYPE) {}
   GenericType(oid_t oid, std::vector<uint8_t> raw) :
     Attribute(Attribute::TYPE::GENERIC_TYPE),
     oid_{std::move(oid)},
-    raw_{std::move(raw)}
-  {}
+    raw_{std::move(raw)} {}
   GenericType(const GenericType&) = default;
   GenericType& operator=(const GenericType&) = default;
 

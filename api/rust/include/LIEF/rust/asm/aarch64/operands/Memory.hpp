@@ -34,21 +34,23 @@ class asm_aarch64_operands_Memory : public asm_aarch64_Operand {
   public:
   using lief_t = LIEF::assembly::aarch64::operands::Memory;
 
-  uint64_t base() const { return to_int(impl().base()); }
+  uint64_t base() const {
+    return to_int(impl().base());
+  }
 
   asm_aarch64_operands_Memory_offset_t offset() const {
     const lief_t::offset_t off = impl().offset();
     return {
-      /*.value = */(uint64_t)off.reg,
-      /*.type = */(uint32_t)to_int(off.type),
+        /*.value = */ (uint64_t)off.reg,
+        /*.type = */ (uint32_t)to_int(off.type),
     };
   }
 
   asm_aarch64_operands_Memory_shift_info_t shift() const {
     const lief_t::shift_info_t info = impl().shift();
     return {
-      /*.type = */(int32_t)info.type,
-      /*.value = */info.value,
+        /*.type = */ (int32_t)info.type,
+        /*.value = */ info.value,
     };
   }
 
@@ -57,5 +59,7 @@ class asm_aarch64_operands_Memory : public asm_aarch64_Operand {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

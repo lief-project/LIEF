@@ -43,14 +43,14 @@ class LIEF_API Import : public Object {
   friend class Builder;
 
   public:
-  using entries_t        = std::vector<std::unique_ptr<ImportEntry>>;
-  using it_entries       = ref_iterator<entries_t&, ImportEntry*>;
-  using it_const_entries = const_ref_iterator<const entries_t&, const ImportEntry*>;
+  using entries_t = std::vector<std::unique_ptr<ImportEntry>>;
+  using it_entries = ref_iterator<entries_t&, ImportEntry*>;
+  using it_const_entries =
+      const_ref_iterator<const entries_t&, const ImportEntry*>;
 
   Import(const details::pe_import& import);
   Import(std::string name) :
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
   Import() = default;
   ~Import() override = default;
 
@@ -103,7 +103,9 @@ class LIEF_API Import : public Object {
 
   /// Return the imported function with the given name
   ImportEntry* get_entry(const std::string& name) {
-    return const_cast<ImportEntry*>(static_cast<const Import*>(this)->get_entry(name));
+    return const_cast<ImportEntry*>(
+        static_cast<const Import*>(this)->get_entry(name)
+    );
   }
   const ImportEntry* get_entry(const std::string& name) const;
 
@@ -155,7 +157,7 @@ class LIEF_API Import : public Object {
   /// Add a new import entry with the given name (i.e. an imported function)
   ImportEntry& add_entry(const std::string& name) {
     entries_.emplace_back(new ImportEntry(name));
-  return *entries_.back();
+    return *entries_.back();
   }
 
   /// Remove the import entry with the given name.

@@ -61,21 +61,24 @@ namespace LIEF::ELF {
 
 template<class ELF_T>
 ok_error_t Builder::build() {
-  const char* type = ((binary_->type_ == Header::CLASS::ELF32) ? "ELF32" : "ELF64");
+  const char* type =
+      ((binary_->type_ == Header::CLASS::ELF32) ? "ELF32" : "ELF64");
   LIEF_DEBUG("== Re-building {} ==", type);
 
   if (!config_.keep_empty_version_requirement) {
     binary_->symbol_version_requirements_.erase(
-      std::remove_if(binary_->symbol_version_requirements_.begin(), binary_->symbol_version_requirements_.end(),
-        [] (const std::unique_ptr<SymbolVersionRequirement>& req) {
-          if constexpr (lief_logging_debug) {
-            if (req->auxiliary_symbols().empty()) {
-              LIEF_DEBUG("Removing: {}", req->name());
-            }
-          }
-          return req->auxiliary_symbols().empty();
-        }
-      ), binary_->symbol_version_requirements_.end());
+        std::remove_if(binary_->symbol_version_requirements_.begin(),
+                       binary_->symbol_version_requirements_.end(),
+                       [](const std::unique_ptr<SymbolVersionRequirement>& req) {
+                         if constexpr (lief_logging_debug) {
+                           if (req->auxiliary_symbols().empty()) {
+                             LIEF_DEBUG("Removing: {}", req->name());
+                           }
+                         }
+                         return req->auxiliary_symbols().empty();
+                       }),
+        binary_->symbol_version_requirements_.end()
+    );
     if (DynamicEntry* dt = binary_->get(DynamicEntry::TAG::VERNEEDNUM)) {
       dt->value(binary_->symbol_version_requirements_.size());
     }
@@ -101,32 +104,32 @@ ok_error_t Builder::build() {
     case Header::FILE_TYPE::DYN:
     case Header::FILE_TYPE::EXEC:
     case Header::FILE_TYPE::CORE:
-      {
-        auto res = build_exe_lib<ELF_T>();
-        if (!res) {
-          LIEF_ERR("The builder failed for the given executable/library. "
-                   "Check the error output");
-          return make_error_code(lief_errors::build_error);
-        }
-        return ok();
+    {
+      auto res = build_exe_lib<ELF_T>();
+      if (!res) {
+        LIEF_ERR("The builder failed for the given executable/library. "
+                 "Check the error output");
+        return make_error_code(lief_errors::build_error);
       }
+      return ok();
+    }
 
     case Header::FILE_TYPE::REL:
-      {
-        auto res = build_relocatable<ELF_T>();
-        if (!res) {
-          LIEF_ERR("The builder failed for the given object file. "
-                   "Check the error output");
-          return make_error_code(lief_errors::build_error);
-        }
-        return ok();
+    {
+      auto res = build_relocatable<ELF_T>();
+      if (!res) {
+        LIEF_ERR("The builder failed for the given object file. "
+                 "Check the error output");
+        return make_error_code(lief_errors::build_error);
       }
+      return ok();
+    }
 
     default:
-      {
-        LIEF_ERR("ELF file '{}' are not supported by LIEF", to_string(file_type));
-        return make_error_code(lief_errors::not_supported);
-      }
+    {
+      LIEF_ERR("ELF file '{}' are not supported by LIEF", to_string(file_type));
+      return make_error_code(lief_errors::not_supported);
+    }
   }
 }
 
@@ -145,11 +148,15 @@ ok_error_t Builder::build_exe_lib() {
       const uint64_t osize = binary_->sizing_info_->interpreter;
       const bool should_relocate = interpt_size > osize || config_.force_relocate;
       if (should_relocate) {
-        LIEF_DEBUG("[-] Need to relocate .interp section ({:#x} new bytes)", interpt_size - osize);
+        LIEF_DEBUG("[-] Need to relocate .interp section ({:#x} new bytes)",
+                   interpt_size - osize);
         layout->relocate_interpreter(interpt_size);
-      } else { LIEF_DEBUG(".interp: -{:#x} bytes", osize - interpt_size); }
-    } else if (!binary_->interpreter_.empty()) { // Directly access private field as we want to avoid
-                                                 // has_interpreter() check
+      } else {
+        LIEF_DEBUG(".interp: -{:#x} bytes", osize - interpt_size);
+      }
+    } else if (!binary_->interpreter_
+                    .empty()) { // Directly access private field as we want to
+                                // avoid has_interpreter() check
 
       // In this case, the original ELF file didn't have an interpreter
       // and the user added one.
@@ -178,16 +185,16 @@ ok_error_t Builder::build_exe_lib() {
 
     Segment& note_segment = *note_segments.back();
 
-    const bool should_relocate =
-      notes_size > note_segment.physical_size() ||
-      nb_segment_notes > 1 ||
-      config_.force_relocate;
+    const bool should_relocate = notes_size > note_segment.physical_size() ||
+                                 nb_segment_notes > 1 || config_.force_relocate;
 
     if (should_relocate) {
       LIEF_DEBUG("[-] Need to relocate .note.* segments ({:#x} new bytes)",
-          notes_size - note_segment.physical_size());
+                 notes_size - note_segment.physical_size());
       layout->relocate_notes(true);
-    } else { /*LIEF_DEBUG(".notes: -{:#x} bytes", note_segment.physical_size() - notes_size);*/ }
+    } else { /*LIEF_DEBUG(".notes: -{:#x} bytes", note_segment.physical_size() -
+                notes_size);*/
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::GNU_HASH) && config_.gnu_hash) {
@@ -195,9 +202,12 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->gnu_hash;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_GNU_HASH ({:#x} new bytes)", needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_GNU_HASH ({:#x} new bytes)",
+                 needed_size - osize);
       layout->relocate_gnu_hash(true);
-    } else { LIEF_DEBUG("DT_GNU_HASH: -{:#x} bytes", osize - needed_size); }
+    } else {
+      LIEF_DEBUG("DT_GNU_HASH: -{:#x} bytes", osize - needed_size);
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::HASH) && config_.dt_hash) {
@@ -205,9 +215,12 @@ ok_error_t Builder::build_exe_lib() {
     const uint64_t osize = binary_->sizing_info_->hash;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_HASH ({:#x} new bytes)", needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_HASH ({:#x} new bytes)",
+                 needed_size - osize);
       layout->relocate_sysv_hash(needed_size);
-    } else { LIEF_DEBUG("DT_HASH: -{:#x} bytes", osize - needed_size); }
+    } else {
+      LIEF_DEBUG("DT_HASH: -{:#x} bytes", osize - needed_size);
+    }
   }
 
   if (binary_->has(Segment::TYPE::DYNAMIC) && config_.dynamic_section) {
@@ -216,9 +229,12 @@ ok_error_t Builder::build_exe_lib() {
     const bool should_relocate = dynamic_needed_size > osize ||
                                  (config_.force_relocate && !config_.skip_dynamic);
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate .dynamic section ({:#x} new bytes)", dynamic_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate .dynamic section ({:#x} new bytes)",
+                 dynamic_needed_size - osize);
       layout->relocate_dynamic(dynamic_needed_size);
-    } else { LIEF_DEBUG("PT_DYNAMIC: -{:#x} bytes", osize - dynamic_needed_size); }
+    } else {
+      LIEF_DEBUG("PT_DYNAMIC: -{:#x} bytes", osize - dynamic_needed_size);
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::RELA) ||
@@ -227,28 +243,37 @@ ok_error_t Builder::build_exe_lib() {
     const size_t dyn_reloc_needed_size = layout->dynamic_relocations_size<ELF_T>();
     if (config_.rela) {
       const uint64_t osize = binary_->sizing_info_->rela;
-      const bool should_relocate = dyn_reloc_needed_size > osize || config_.force_relocate;
+      const bool should_relocate =
+          dyn_reloc_needed_size > osize || config_.force_relocate;
       if (should_relocate) {
-        LIEF_DEBUG("[-] Need to relocate DT_REL(A) ({:#x} new bytes)", dyn_reloc_needed_size - osize);
+        LIEF_DEBUG("[-] Need to relocate DT_REL(A) ({:#x} new bytes)",
+                   dyn_reloc_needed_size - osize);
         layout->relocate_dyn_reloc(dyn_reloc_needed_size);
-      } else { LIEF_DEBUG("DT_REL(A): -{:#x} bytes", osize - dyn_reloc_needed_size); }
+      } else {
+        LIEF_DEBUG("DT_REL(A): -{:#x} bytes", osize - dyn_reloc_needed_size);
+      }
     }
   }
 
   if ((binary_->has(DynamicEntry::TAG::RELR) ||
-      binary_->has(DynamicEntry::TAG::ANDROID_RELR)) && config_.relr)
+       binary_->has(DynamicEntry::TAG::ANDROID_RELR)) &&
+      config_.relr)
   {
     const size_t relr_reloc_size = layout->relative_relocations_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->relr;
     const bool should_relocate = relr_reloc_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_RELR ({:#x} new bytes)", relr_reloc_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_RELR ({:#x} new bytes)",
+                 relr_reloc_size - osize);
       layout->relocate_relr(true);
-    } else { LIEF_DEBUG("DT_RELR: -{:#x} bytes", osize - relr_reloc_size); }
+    } else {
+      LIEF_DEBUG("DT_RELR: -{:#x} bytes", osize - relr_reloc_size);
+    }
   }
 
   if ((binary_->has(DynamicEntry::TAG::ANDROID_RELA) ||
-      binary_->has(DynamicEntry::TAG::ANDROID_REL)) && config_.android_rela)
+       binary_->has(DynamicEntry::TAG::ANDROID_REL)) &&
+      config_.android_rela)
   {
     const size_t android_rela_sz = layout->android_relocations_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->android_rela;
@@ -257,125 +282,164 @@ ok_error_t Builder::build_exe_lib() {
       LIEF_DEBUG("[-] Need to relocate DT_ANDROID_REL[A] ({:#x} new bytes)",
                  android_rela_sz - osize);
       layout->relocate_android_rela(true);
-    } else { LIEF_DEBUG("DT_ANDROID_REL[A]: -{:#x} bytes", osize - android_rela_sz); }
+    } else {
+      LIEF_DEBUG("DT_ANDROID_REL[A]: -{:#x} bytes", osize - android_rela_sz);
+    }
   }
 
   if (config_.jmprel && binary_->has(DynamicEntry::TAG::JMPREL)) {
     const size_t plt_reloc_needed_size = layout->pltgot_relocations_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->jmprel;
-    const bool should_relocate = plt_reloc_needed_size > osize || config_.force_relocate;
+    const bool should_relocate =
+        plt_reloc_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_JMPREL section ({:#x} new bytes)", plt_reloc_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_JMPREL section ({:#x} new bytes)",
+                 plt_reloc_needed_size - osize);
       layout->relocate_plt_reloc(plt_reloc_needed_size);
-    } else { LIEF_DEBUG("DT_JMPREL: -{:#x} bytes", osize - plt_reloc_needed_size); }
+    } else {
+      LIEF_DEBUG("DT_JMPREL: -{:#x} bytes", osize - plt_reloc_needed_size);
+    }
   }
 
   if (config_.dyn_str && binary_->has(DynamicEntry::TAG::STRTAB)) {
     const size_t needed_size = layout->dynstr_size<ELF_T>();
-    const uint64_t osize  = binary_->sizing_info_->dynstr;
+    const uint64_t osize = binary_->sizing_info_->dynstr;
     const bool should_relocate = needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_STRTAB ({:#x} new bytes)", needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_STRTAB ({:#x} new bytes)",
+                 needed_size - osize);
       layout->relocate_dynstr(true);
-    } else { LIEF_DEBUG("DT_STRTAB: -{:#x} bytes", osize - needed_size); }
+    } else {
+      LIEF_DEBUG("DT_STRTAB: -{:#x} bytes", osize - needed_size);
+    }
   }
 
   if (config_.symtab && binary_->has(DynamicEntry::TAG::SYMTAB)) {
     const size_t dynsym_needed_size = layout->dynsym_size<ELF_T>();
     const uint64_t osize = binary_->sizing_info_->dynsym;
-    const bool should_relocate = dynsym_needed_size > osize || config_.force_relocate;
+    const bool should_relocate =
+        dynsym_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_SYMTAB ({:#x} new bytes)", dynsym_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_SYMTAB ({:#x} new bytes)",
+                 dynsym_needed_size - osize);
       layout->relocate_dynsym(dynsym_needed_size);
-    } else { LIEF_DEBUG("DT_SYMTAB: -{:#x} bytes", osize - dynsym_needed_size); }
+    } else {
+      LIEF_DEBUG("DT_SYMTAB: -{:#x} bytes", osize - dynsym_needed_size);
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::INIT_ARRAY) &&
-      binary_->has(DynamicEntry::TAG::INIT_ARRAYSZ) &&
-      config_.init_array)
+      binary_->has(DynamicEntry::TAG::INIT_ARRAYSZ) && config_.init_array)
   {
-    const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::INIT_ARRAY);
+    const size_t needed_size =
+        layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::INIT_ARRAY);
     const uint64_t osize = binary_->sizing_info_->init_array;
     const bool should_relocate = needed_size > osize;
     if (should_relocate) {
       if (binary_->has_symbol("__libc_start_main")) {
-        LIEF_WARN("Relocating DT_INIT_ARRAY on Linux may corrupt the final binary");
+        LIEF_WARN(
+            "Relocating DT_INIT_ARRAY on Linux may corrupt the final binary"
+        );
       }
-      LIEF_DEBUG("[-] Need to relocate DT_INIT_ARRAY ({:#x} new bytes)", osize - needed_size);
+      LIEF_DEBUG("[-] Need to relocate DT_INIT_ARRAY ({:#x} new bytes)",
+                 osize - needed_size);
       layout->relocate_init_array(needed_size);
-    } else { LIEF_DEBUG("DT_INIT_ARRAY: -{:#x} bytes", osize - needed_size); }
+    } else {
+      LIEF_DEBUG("DT_INIT_ARRAY: -{:#x} bytes", osize - needed_size);
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::PREINIT_ARRAY) &&
-      binary_->has(DynamicEntry::TAG::PREINIT_ARRAYSZ) &&
-      config_.preinit_array)
+      binary_->has(DynamicEntry::TAG::PREINIT_ARRAYSZ) && config_.preinit_array)
   {
-    const size_t needed_size = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::PREINIT_ARRAY);
+    const size_t needed_size =
+        layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::PREINIT_ARRAY);
     const uint64_t osize = binary_->sizing_info_->preinit_array;
     const bool should_relocate = needed_size > osize;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_PREINIT_ARRAY ({:#x} new bytes)", osize - needed_size);
+      LIEF_DEBUG("[-] Need to relocate DT_PREINIT_ARRAY ({:#x} new bytes)",
+                 osize - needed_size);
       layout->relocate_preinit_array(needed_size);
-    } else { LIEF_DEBUG("DT_PREINIT_ARRAY: -{:#x} bytes", osize - needed_size); }
+    } else {
+      LIEF_DEBUG("DT_PREINIT_ARRAY: -{:#x} bytes", osize - needed_size);
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::FINI_ARRAY) &&
-      binary_->has(DynamicEntry::TAG::FINI_ARRAYSZ) &&
-      config_.fini_array)
+      binary_->has(DynamicEntry::TAG::FINI_ARRAYSZ) && config_.fini_array)
   {
-    const size_t needed_size   = layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::FINI_ARRAY);
-    const uint64_t osize       = binary_->sizing_info_->fini_array;
+    const size_t needed_size =
+        layout->dynamic_arraysize<ELF_T>(DynamicEntry::TAG::FINI_ARRAY);
+    const uint64_t osize = binary_->sizing_info_->fini_array;
     const bool should_relocate = needed_size > osize;
     if (should_relocate) {
       if (binary_->has_symbol("__libc_start_main")) {
         LIEF_WARN("Relocating .fini_array on Linux may corrupt the final binary");
       }
-      LIEF_DEBUG("[-] Need to relocate DT_FINI_ARRAY ({:#x} new bytes)", osize - needed_size);
+      LIEF_DEBUG("[-] Need to relocate DT_FINI_ARRAY ({:#x} new bytes)",
+                 osize - needed_size);
       layout->relocate_fini_array(needed_size);
-    } else { LIEF_DEBUG("DT_FINI_ARRAY: -{:#x} bytes", osize - needed_size); }
+    } else {
+      LIEF_DEBUG("DT_FINI_ARRAY: -{:#x} bytes", osize - needed_size);
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::VERSYM) && config_.sym_versym) {
     const size_t symver_needed_size = layout->symbol_version<ELF_T>();
-    const uint64_t osize       = binary_->sizing_info_->versym;
-    const bool should_relocate = symver_needed_size > osize || config_.force_relocate;
+    const uint64_t osize = binary_->sizing_info_->versym;
+    const bool should_relocate =
+        symver_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_VERSYM ({:#x} new bytes)", symver_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_VERSYM ({:#x} new bytes)",
+                 symver_needed_size - osize);
       layout->relocate_symver(symver_needed_size);
-    } else { LIEF_DEBUG("DT_VERSYM: -{:#x} bytes", osize - symver_needed_size); }
+    } else {
+      LIEF_DEBUG("DT_VERSYM: -{:#x} bytes", osize - symver_needed_size);
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::VERDEF) && config_.sym_verdef) {
     const size_t symvdef_needed_size = layout->symbol_vdef_size<ELF_T>();
-    const uint64_t osize       = binary_->sizing_info_->verdef;
-    const bool should_relocate = symvdef_needed_size > osize || config_.force_relocate;
+    const uint64_t osize = binary_->sizing_info_->verdef;
+    const bool should_relocate =
+        symvdef_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_VERDEF ({:#x} new bytes)", symvdef_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_VERDEF ({:#x} new bytes)",
+                 symvdef_needed_size - osize);
       layout->relocate_symverd(symvdef_needed_size);
-    } else { LIEF_DEBUG("DT_VERDEF: -{:#x} bytes", osize - symvdef_needed_size); }
+    } else {
+      LIEF_DEBUG("DT_VERDEF: -{:#x} bytes", osize - symvdef_needed_size);
+    }
   }
 
   if (binary_->has(DynamicEntry::TAG::VERNEED) && config_.sym_verneed) {
     const size_t symvreq_needed_size = layout->symbol_vreq_size<ELF_T>();
-    const uint64_t osize       = binary_->sizing_info_->verneed;
-    const bool should_relocate = symvreq_needed_size > osize || config_.force_relocate;
+    const uint64_t osize = binary_->sizing_info_->verneed;
+    const bool should_relocate =
+        symvreq_needed_size > osize || config_.force_relocate;
     if (should_relocate) {
-      LIEF_DEBUG("[-] Need to relocate DT_VERNEED ({:#x} new bytes)", symvreq_needed_size - osize);
+      LIEF_DEBUG("[-] Need to relocate DT_VERNEED ({:#x} new bytes)",
+                 symvreq_needed_size - osize);
       layout->relocate_symverr(symvreq_needed_size);
-    } else { LIEF_DEBUG("DT_VERNEED: -{:#x} bytes", osize - symvreq_needed_size); }
+    } else {
+      LIEF_DEBUG("DT_VERNEED: -{:#x} bytes", osize - symvreq_needed_size);
+    }
   }
 
   const Header& header = binary_->header();
-  if (header.section_name_table_idx() > 0 && !binary_->sections_.empty() ) {
+  if (header.section_name_table_idx() > 0 && !binary_->sections_.empty()) {
     if (header.section_name_table_idx() >= binary_->sections_.size()) {
       LIEF_ERR("Section string table out of bounds");
     } else {
-      std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
+      std::unique_ptr<Section>& string_names_section =
+          binary_->sections_[header.section_name_table_idx()];
       const size_t shstr_size = layout->section_shstr_size();
-      const bool should_relocate = shstr_size > string_names_section->size() || config_.force_relocate;
+      const bool should_relocate =
+          shstr_size > string_names_section->size() || config_.force_relocate;
       if (should_relocate) {
         LIEF_DEBUG("[-] Need to relocate '{}' section ({:#x} new bytes)",
-                   string_names_section->name(), shstr_size - string_names_section->size());
+                   string_names_section->name(),
+                   shstr_size - string_names_section->size());
         layout->relocate_shstr(true);
       }
     }
@@ -399,7 +463,8 @@ ok_error_t Builder::build_exe_lib() {
       } else {
         Section& strtab = sections[strtab_idx];
         const size_t strtab_needed_size = layout->section_strtab_size();
-        const bool should_relocate = strtab_needed_size > strtab.size() || config_.force_relocate;
+        const bool should_relocate =
+            strtab_needed_size > strtab.size() || config_.force_relocate;
         if (should_relocate) {
           LIEF_DEBUG("[-] Need to relocate .strtab section ({:#x} new bytes)",
                      strtab_needed_size - strtab.size());
@@ -413,14 +478,14 @@ ok_error_t Builder::build_exe_lib() {
 
   if (sec_symtab != nullptr) {
     const size_t needed_size = layout->static_sym_size<ELF_T>();
-    const bool should_relocate = needed_size > sec_symtab->size() || config_.force_relocate;
+    const bool should_relocate =
+        needed_size > sec_symtab->size() || config_.force_relocate;
     if (should_relocate) {
       LIEF_DEBUG("[-] Need to relocate '{}' section ({:#x} new bytes)",
                  sec_symtab->name(), needed_size - sec_symtab->size());
       layout->relocate_symtab(needed_size);
     }
-  }
-  else if (!binary_->symtab_symbols_.empty()) {
+  } else if (!binary_->symtab_symbols_.empty()) {
     // In this case the binary was stripped but the user
     // added symbols => We have to craft a new section that will contain the symtab
     LIEF_DEBUG("Need to create a new .symtab section");
@@ -532,15 +597,17 @@ ok_error_t Builder::process_object_relocations() {
   }
 
   using Elf_Rela = typename ELF_T::Elf_Rela;
-  using Elf_Rel  = typename ELF_T::Elf_Rel;
+  using Elf_Rel = typename ELF_T::Elf_Rel;
 
   bool is_rela = it_relocations[0].is_rela();
   const size_t sizeof_rel = is_rela ? sizeof(Elf_Rela) : sizeof(Elf_Rel);
 
   const auto sections = binary_->sections();
-  ObjectFileLayout::sections_reloc_map_t& sections_reloc_map = layout->sections_reloc_map();
+  ObjectFileLayout::sections_reloc_map_t& sections_reloc_map =
+      layout->sections_reloc_map();
   ObjectFileLayout::relocations_map_t& relocations_map = layout->relocation_map();
-  ObjectFileLayout::rel_sections_size_t& rel_sections_size = layout->rel_sections_size();
+  ObjectFileLayout::rel_sections_size_t& rel_sections_size =
+      layout->rel_sections_size();
 
   for (Section& sec : sections) {
     const Section::TYPE type = sec.type();
@@ -566,7 +633,8 @@ ok_error_t Builder::process_object_relocations() {
     relocations_map[sec].push_back(&reloc);
     auto it_reloc_sec = sections_reloc_map.find(sec);
     if (it_reloc_sec == sections_reloc_map.end()) {
-      LIEF_WARN("Can find the relocation section associated with '{}'", sec->name());
+      LIEF_WARN("Can find the relocation section associated with '{}'",
+                sec->name());
       continue;
     }
     Section* reloc_section = it_reloc_sec->second;
@@ -596,11 +664,13 @@ ok_error_t Builder::build_relocatable() {
       LIEF_ERR("Section string table out of bounds");
       return make_error_code(lief_errors::file_format_error);
     }
-    std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
+    std::unique_ptr<Section>& string_names_section =
+        binary_->sections_[header.section_name_table_idx()];
     const size_t shstr_size = layout->section_shstr_size();
     if (shstr_size > string_names_section->size() || config_.force_relocate) {
       LIEF_DEBUG("[-] Need to relocate '{}' section ({:#x} new bytes)",
-                 string_names_section->name(), shstr_size - string_names_section->size());
+                 string_names_section->name(),
+                 shstr_size - string_names_section->size());
       layout->relocate_section(*string_names_section, shstr_size);
     }
   }
@@ -621,7 +691,8 @@ ok_error_t Builder::build_relocatable() {
   if (!layout->is_strtab_shared_shstrtab() && !binary_->symtab_symbols_.empty()) {
     Section* sec_symtab = binary_->get(Section::TYPE::SYMTAB);
     if (sec_symtab == nullptr) {
-      LIEF_ERR("Object file without a symtab section is not supported. Please consider submitting an issue.");
+      LIEF_ERR("Object file without a symtab section is not supported. Please "
+               "consider submitting an issue.");
       return make_error_code(lief_errors::not_supported);
     }
     // The .symtab exists
@@ -632,7 +703,8 @@ ok_error_t Builder::build_relocatable() {
     } else {
       Section& strtab = sections[strtab_idx];
       const size_t strtab_needed_size = layout->section_strtab_size();
-      const bool should_relocate = strtab_needed_size > strtab.size() || config_.force_relocate;
+      const bool should_relocate =
+          strtab_needed_size > strtab.size() || config_.force_relocate;
       if (should_relocate) {
         LIEF_DEBUG("[-] Need to relocate .strtab section ({:#x} new bytes)",
                    strtab_needed_size - strtab.size());
@@ -671,25 +743,25 @@ ok_error_t Builder::build(const Header& header) {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Off  = typename ELF_T::Elf_Off;
+  using Elf_Off = typename ELF_T::Elf_Off;
 
   using Elf_Ehdr = typename ELF_T::Elf_Ehdr;
 
   Elf_Ehdr ehdr;
 
-  ehdr.e_type      = static_cast<Elf_Half>(header.file_type());
-  ehdr.e_machine   = static_cast<Elf_Half>(header.machine_type());
-  ehdr.e_version   = static_cast<Elf_Word>(header.object_file_version());
-  ehdr.e_entry     = static_cast<Elf_Addr>(header.entrypoint());
-  ehdr.e_phoff     = static_cast<Elf_Off>(header.program_headers_offset());
-  ehdr.e_shoff     = static_cast<Elf_Off>(header.section_headers_offset());
-  ehdr.e_flags     = static_cast<Elf_Word>(header.processor_flag());
-  ehdr.e_ehsize    = static_cast<Elf_Half>(header.header_size());
+  ehdr.e_type = static_cast<Elf_Half>(header.file_type());
+  ehdr.e_machine = static_cast<Elf_Half>(header.machine_type());
+  ehdr.e_version = static_cast<Elf_Word>(header.object_file_version());
+  ehdr.e_entry = static_cast<Elf_Addr>(header.entrypoint());
+  ehdr.e_phoff = static_cast<Elf_Off>(header.program_headers_offset());
+  ehdr.e_shoff = static_cast<Elf_Off>(header.section_headers_offset());
+  ehdr.e_flags = static_cast<Elf_Word>(header.processor_flag());
+  ehdr.e_ehsize = static_cast<Elf_Half>(header.header_size());
   ehdr.e_phentsize = static_cast<Elf_Half>(header.program_header_size());
-  ehdr.e_phnum     = static_cast<Elf_Half>(header.numberof_segments());
+  ehdr.e_phnum = static_cast<Elf_Half>(header.numberof_segments());
   ehdr.e_shentsize = static_cast<Elf_Half>(header.section_header_size());
-  ehdr.e_shnum     = static_cast<Elf_Half>(header.numberof_sections());
-  ehdr.e_shstrndx  = static_cast<Elf_Half>(header.section_name_table_idx());
+  ehdr.e_shnum = static_cast<Elf_Half>(header.numberof_sections());
+  ehdr.e_shstrndx = static_cast<Elf_Half>(header.section_name_table_idx());
 
   std::copy(header.identity().begin(), header.identity().end(),
             std::begin(ehdr.e_ident));
@@ -704,7 +776,7 @@ template<typename ELF_T>
 ok_error_t Builder::build_sections() {
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Off  = typename ELF_T::Elf_Off;
+  using Elf_Off = typename ELF_T::Elf_Off;
 
   using Elf_Shdr = typename ELF_T::Elf_Shdr;
 
@@ -724,7 +796,8 @@ ok_error_t Builder::build_sections() {
   LIEF_DEBUG("section headers table at offset: {:#06x}", section_headers_offset);
 
   if (header.section_name_table_idx() < binary_->sections_.size()) {
-    std::unique_ptr<Section>& string_names_section = binary_->sections_[header.section_name_table_idx()];
+    std::unique_ptr<Section>& string_names_section =
+        binary_->sections_[header.section_name_table_idx()];
     string_names_section->content(layout_->raw_shstr());
   }
 
@@ -738,8 +811,7 @@ ok_error_t Builder::build_sections() {
     const std::unique_ptr<Section>& section = binary_->sections_[i];
     LIEF_DEBUG("[FRAME  ] {}", section->is_frame());
     const bool should_commit_data =
-       !section->is_frame()       &&
-        section->size()        > 0 &&
+        !section->is_frame() && section->size() > 0 &&
         section->file_offset() > 0 &&
         // SHT_NOTBITS sections should not be considered.
         // Nevertheless, some (malformed or tricky) ELF binaries
@@ -747,9 +819,9 @@ ok_error_t Builder::build_sections() {
         section->type() != Section::TYPE::NOBITS;
     if (should_commit_data) {
       span<const uint8_t> content = section->content();
-      LIEF_DEBUG("[Content] {:20}: {:#012x} - {:#012x} ({:#x})",
-                 section->name(), section->file_offset(),
-                 section->file_offset() + content.size(), content.size());
+      LIEF_DEBUG("[Content] {:20}: {:#012x} - {:#012x} ({:#x})", section->name(),
+                 section->file_offset(), section->file_offset() + content.size(),
+                 content.size());
       ios_.seekp(section->file_offset());
       ios_.write(content);
     }
@@ -762,23 +834,22 @@ ok_error_t Builder::build_sections() {
     }
 
     Elf_Shdr shdr;
-    shdr.sh_name      = static_cast<Elf_Word>(offset_name);
-    shdr.sh_type      = static_cast<Elf_Word>(section->type());
-    shdr.sh_flags     = static_cast<Elf_Word>(section->flags());
-    shdr.sh_addr      = static_cast<Elf_Addr>(section->virtual_address());
-    shdr.sh_offset    = static_cast<Elf_Off>(section->file_offset());
-    shdr.sh_size      = static_cast<Elf_Word>(section->size());
-    shdr.sh_link      = static_cast<Elf_Word>(section->link());
-    shdr.sh_info      = static_cast<Elf_Word>(section->information());
+    shdr.sh_name = static_cast<Elf_Word>(offset_name);
+    shdr.sh_type = static_cast<Elf_Word>(section->type());
+    shdr.sh_flags = static_cast<Elf_Word>(section->flags());
+    shdr.sh_addr = static_cast<Elf_Addr>(section->virtual_address());
+    shdr.sh_offset = static_cast<Elf_Off>(section->file_offset());
+    shdr.sh_size = static_cast<Elf_Word>(section->size());
+    shdr.sh_link = static_cast<Elf_Word>(section->link());
+    shdr.sh_info = static_cast<Elf_Word>(section->information());
     shdr.sh_addralign = static_cast<Elf_Word>(section->alignment());
-    shdr.sh_entsize   = static_cast<Elf_Word>(section->entry_size());
+    shdr.sh_entsize = static_cast<Elf_Word>(section->entry_size());
 
     // Write Section'header
     if (section_headers_offset > 0) {
       const uint64_t offset = section_headers_offset + i * sizeof(Elf_Shdr);
-      LIEF_DEBUG("[Header ] {:20}: {:#012x} - {:#012x}",
-                 section->name(),
-                 offset, offset + sizeof(Elf_Shdr));
+      LIEF_DEBUG("[Header ] {:20}: {:#012x} - {:#012x}", section->name(), offset,
+                 offset + sizeof(Elf_Shdr));
       section_headers.write<Elf_Shdr>(shdr);
     }
   }
@@ -788,18 +859,18 @@ ok_error_t Builder::build_sections() {
     ios_.write(section_headers);
 
     // Some binaries (e.g., 'ELF/test.go.pie.bin') might have their section
-    // header table at the **beginning** of the binary AND associated with a PT_LOAD
-    // segment. To ensure that build_segments() does not overwrite the table,
-    // we need to commit the content of `section_headers` to the associated
+    // header table at the **beginning** of the binary AND associated with a
+    // PT_LOAD segment. To ensure that build_segments() does not overwrite the
+    // table, we need to commit the content of `section_headers` to the associated
     // PT_LOAD.
     for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
       if (!segment->is_load()) {
         continue;
       }
 
-      bool in_segment =
-        segment->file_offset() <= section_headers_offset &&
-        section_headers_offset < (segment->file_offset() + segment->physical_size());
+      bool in_segment = segment->file_offset() <= section_headers_offset &&
+                        section_headers_offset <
+                            (segment->file_offset() + segment->physical_size());
 
       if (!in_segment) {
         continue;
@@ -821,7 +892,7 @@ template<typename ELF_T>
 ok_error_t Builder::build_segments() {
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Off  = typename ELF_T::Elf_Off;
+  using Elf_Off = typename ELF_T::Elf_Off;
 
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
   LIEF_DEBUG("== Build segments ==");
@@ -832,14 +903,14 @@ ok_error_t Builder::build_segments() {
 
   for (const std::unique_ptr<Segment>& segment : binary_->segments_) {
     Elf_Phdr phdr;
-    phdr.p_type   = static_cast<Elf_Word>(segment->type());
-    phdr.p_flags  = static_cast<Elf_Word>(segment->flags());
+    phdr.p_type = static_cast<Elf_Word>(segment->type());
+    phdr.p_flags = static_cast<Elf_Word>(segment->flags());
     phdr.p_offset = static_cast<Elf_Off>(segment->file_offset());
-    phdr.p_vaddr  = static_cast<Elf_Addr>(segment->virtual_address());
-    phdr.p_paddr  = static_cast<Elf_Addr>(segment->physical_address());
+    phdr.p_vaddr = static_cast<Elf_Addr>(segment->virtual_address());
+    phdr.p_paddr = static_cast<Elf_Addr>(segment->physical_address());
     phdr.p_filesz = static_cast<Elf_Word>(segment->physical_size());
-    phdr.p_memsz  = static_cast<Elf_Word>(segment->virtual_size());
-    phdr.p_align  = static_cast<Elf_Word>(segment->alignment());
+    phdr.p_memsz = static_cast<Elf_Word>(segment->virtual_size());
+    phdr.p_align = static_cast<Elf_Word>(segment->alignment());
 
     pheaders.write<Elf_Phdr>(phdr);
   }
@@ -864,8 +935,8 @@ ok_error_t Builder::build_segments() {
 
   const Elf_Off segment_header_offset = binary_->header().program_headers_offset();
 
-  LIEF_DEBUG("Write segments header {:#012x} -> {:#012x}",
-             segment_header_offset, segment_header_offset + pheaders.size());
+  LIEF_DEBUG("Write segments header {:#012x} -> {:#012x}", segment_header_offset,
+             segment_header_offset + pheaders.size());
   ios_.seekp(segment_header_offset);
   ios_.write(std::move(pheaders.raw()));
   return ok();
@@ -876,9 +947,9 @@ ok_error_t Builder::build_symtab_symbols() {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Off  = typename ELF_T::Elf_Off;
+  using Elf_Off = typename ELF_T::Elf_Off;
 
-  using Elf_Sym  = typename ELF_T::Elf_Sym;
+  using Elf_Sym = typename ELF_T::Elf_Sym;
 
   auto* layout = static_cast<ExeLayout*>(layout_.get());
 
@@ -890,38 +961,44 @@ ok_error_t Builder::build_symtab_symbols() {
   }
   LIEF_DEBUG(".symtab section: '{}'", symbol_section->name());
 
-  std::stable_sort(binary_->symtab_symbols_.begin(), binary_->symtab_symbols_.end(),
+  std::stable_sort(
+      binary_->symtab_symbols_.begin(), binary_->symtab_symbols_.end(),
       [](const std::unique_ptr<Symbol>& lhs, const std::unique_ptr<Symbol>& rhs) {
         return lhs->is_local() && (rhs->is_global() || rhs->is_weak());
-  });
+      }
+  );
 
-  const auto it_first_exported_symbol =
-      std::find_if(binary_->symtab_symbols_.begin(), binary_->symtab_symbols_.end(),
-                   [](const std::unique_ptr<Symbol>& sym) {
-                    return sym->is_exported();
-                   });
+  const auto it_first_exported_symbol = std::find_if(
+      binary_->symtab_symbols_.begin(), binary_->symtab_symbols_.end(),
+      [](const std::unique_ptr<Symbol>& sym) { return sym->is_exported(); }
+  );
 
   const auto first_exported_symbol_index =
-      static_cast<uint32_t>(std::distance(binary_->symtab_symbols_.begin(), it_first_exported_symbol));
+      static_cast<uint32_t>(std::distance(binary_->symtab_symbols_.begin(),
+                                          it_first_exported_symbol));
 
   if (first_exported_symbol_index != symbol_section->information()) {
     LIEF_INFO("information of .symtab section changes from {:d} to {:d}",
-              symbol_section->information(),
-              first_exported_symbol_index);
+              symbol_section->information(), first_exported_symbol_index);
     symbol_section->information(first_exported_symbol_index);
   }
 
-  if (symbol_section->link() == 0 || symbol_section->link() >= binary_->sections_.size()) {
-    LIEF_ERR("Unable to find a string section associated with the symbol section (sh_link)");
+  if (symbol_section->link() == 0 ||
+      symbol_section->link() >= binary_->sections_.size())
+  {
+    LIEF_ERR("Unable to find a string section associated with the symbol section "
+             "(sh_link)");
     return make_error_code(lief_errors::file_format_error);
   }
 
   vector_iostream content(should_swap());
   content.reserve(layout->static_sym_size<ELF_T>());
 
-  // On recent compilers, the symtab string table is merged with the section name table
+  // On recent compilers, the symtab string table is merged with the section name
+  // table
   const std::unordered_map<std::string, size_t>* str_map =
-    layout->is_strtab_shared_shstrtab() ? &layout->shstr_map() : &layout->strtab_map();
+      layout->is_strtab_shared_shstrtab() ? &layout->shstr_map() :
+                                            &layout->strtab_map();
 
   for (const std::unique_ptr<Symbol>& symbol : binary_->symtab_symbols_) {
     const std::string& name = symbol->name();
@@ -934,12 +1011,12 @@ ok_error_t Builder::build_symtab_symbols() {
     }
 
     Elf_Sym sym_hdr{};
-    sym_hdr.st_name  = static_cast<Elf_Word>(offset_name);
-    sym_hdr.st_info  = static_cast<unsigned char>(symbol->information());
+    sym_hdr.st_name = static_cast<Elf_Word>(offset_name);
+    sym_hdr.st_info = static_cast<unsigned char>(symbol->information());
     sym_hdr.st_other = static_cast<unsigned char>(symbol->other());
     sym_hdr.st_shndx = static_cast<Elf_Half>(symbol->shndx());
     sym_hdr.st_value = static_cast<Elf_Addr>(symbol->value());
-    sym_hdr.st_size  = static_cast<Elf_Word>(symbol->size());
+    sym_hdr.st_size = static_cast<Elf_Word>(symbol->size());
 
     content.write<Elf_Sym>(sym_hdr);
   }
@@ -949,10 +1026,10 @@ ok_error_t Builder::build_symtab_symbols() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_dynamic_section() {
-  using Elf_Addr   = typename ELF_T::Elf_Addr;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
-  using Elf_Xword  = typename ELF_T::Elf_Xword;
-  using Elf_Dyn    = typename ELF_T::Elf_Dyn;
+  using Elf_Xword = typename ELF_T::Elf_Xword;
+  using Elf_Dyn = typename ELF_T::Elf_Dyn;
 
   LIEF_DEBUG("[+] Building .dynamic");
 
@@ -962,154 +1039,160 @@ ok_error_t Builder::build_dynamic_section() {
 
     switch (entry->tag()) {
       case DynamicEntry::TAG::NEEDED:
-        {
-          const std::string& name = entry->as<DynamicEntryLibrary>()->name();
-          auto it = dynstr_map.find(name);
-          if (it == dynstr_map.end()) {
-            LIEF_ERR("Can't find string offset in .dynstr for {}", name);
-            break;
-          }
-          entry->value(it->second);
+      {
+        const std::string& name = entry->as<DynamicEntryLibrary>()->name();
+        auto it = dynstr_map.find(name);
+        if (it == dynstr_map.end()) {
+          LIEF_ERR("Can't find string offset in .dynstr for {}", name);
           break;
         }
+        entry->value(it->second);
+        break;
+      }
 
       case DynamicEntry::TAG::SONAME:
-        {
-          const std::string& name = entry->as<DynamicSharedObject>()->name();
-          auto it = dynstr_map.find(name);
-          if (it == dynstr_map.end()) {
-            LIEF_ERR("Can't find string offset in .dynstr for {}", name);
-            break;
-          }
-          entry->value(it->second);
+      {
+        const std::string& name = entry->as<DynamicSharedObject>()->name();
+        auto it = dynstr_map.find(name);
+        if (it == dynstr_map.end()) {
+          LIEF_ERR("Can't find string offset in .dynstr for {}", name);
           break;
         }
+        entry->value(it->second);
+        break;
+      }
 
       case DynamicEntry::TAG::AUXILIARY:
-        {
-          const std::string& name = entry->as<DynamicEntryAuxiliary>()->name();
-          auto it = dynstr_map.find(name);
-          if (it == dynstr_map.end()) {
-            LIEF_ERR("Can't find string offset in .dynstr for {}", name);
-            break;
-          }
-          entry->value(it->second);
+      {
+        const std::string& name = entry->as<DynamicEntryAuxiliary>()->name();
+        auto it = dynstr_map.find(name);
+        if (it == dynstr_map.end()) {
+          LIEF_ERR("Can't find string offset in .dynstr for {}", name);
           break;
         }
+        entry->value(it->second);
+        break;
+      }
 
       case DynamicEntry::TAG::FILTER:
-        {
-          const std::string& name = entry->as<DynamicEntryFilter>()->name();
-          auto it = dynstr_map.find(name);
-          if (it == dynstr_map.end()) {
-            LIEF_ERR("Can't find string offset in .dynstr for {}", name);
-            break;
-          }
-          entry->value(it->second);
+      {
+        const std::string& name = entry->as<DynamicEntryFilter>()->name();
+        auto it = dynstr_map.find(name);
+        if (it == dynstr_map.end()) {
+          LIEF_ERR("Can't find string offset in .dynstr for {}", name);
           break;
         }
+        entry->value(it->second);
+        break;
+      }
 
       case DynamicEntry::TAG::RPATH:
-        {
-          const std::string& name = entry->as<DynamicEntryRpath>()->rpath();
-          auto it = dynstr_map.find(name);
-          if (it == dynstr_map.end()) {
-            LIEF_ERR("Can't find string offset in .dynstr for {}", name);
-            break;
-          }
-          entry->value(it->second);
+      {
+        const std::string& name = entry->as<DynamicEntryRpath>()->rpath();
+        auto it = dynstr_map.find(name);
+        if (it == dynstr_map.end()) {
+          LIEF_ERR("Can't find string offset in .dynstr for {}", name);
           break;
         }
+        entry->value(it->second);
+        break;
+      }
 
       case DynamicEntry::TAG::RUNPATH:
-        {
-          const std::string& name = entry->as<DynamicEntryRunPath>()->runpath();
-          auto it = dynstr_map.find(name);
-          if (it == dynstr_map.end()) {
-            LIEF_ERR("Can't find string offset in .dynstr for {}", name);
-            break;
-          }
-          entry->value(it->second);
+      {
+        const std::string& name = entry->as<DynamicEntryRunPath>()->runpath();
+        auto it = dynstr_map.find(name);
+        if (it == dynstr_map.end()) {
+          LIEF_ERR("Can't find string offset in .dynstr for {}", name);
           break;
         }
+        entry->value(it->second);
+        break;
+      }
 
       case DynamicEntry::TAG::INIT_ARRAY:
-        {
-          if (config_.init_array) {
-            DynamicEntry* dt_array_size = binary_->get(DynamicEntry::TAG::INIT_ARRAYSZ);
-            if (dt_array_size == nullptr) {
-              LIEF_ERR("Can't find the DT_INIT_ARRAYSZ / .init_array");
-              break;
-            }
-            const std::vector<uint64_t>& array = entry->as<DynamicEntryArray>()->array();
-            std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
-
-            auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
-            for (size_t i = 0; i < array.size(); ++i) {
-              raw_array[i] = static_cast<Elf_Addr>(array[i]);
-            }
-
-            dt_array_size->value(array_content.size());
-            binary_->patch_address(entry->value(), array_content);
+      {
+        if (config_.init_array) {
+          DynamicEntry* dt_array_size =
+              binary_->get(DynamicEntry::TAG::INIT_ARRAYSZ);
+          if (dt_array_size == nullptr) {
+            LIEF_ERR("Can't find the DT_INIT_ARRAYSZ / .init_array");
+            break;
           }
-          break;
+          const std::vector<uint64_t>& array =
+              entry->as<DynamicEntryArray>()->array();
+          std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
+
+          auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
+          for (size_t i = 0; i < array.size(); ++i) {
+            raw_array[i] = static_cast<Elf_Addr>(array[i]);
+          }
+
+          dt_array_size->value(array_content.size());
+          binary_->patch_address(entry->value(), array_content);
         }
+        break;
+      }
 
       case DynamicEntry::TAG::FINI_ARRAY:
-        {
-          if (config_.fini_array) {
-            DynamicEntry* dt_array_size = binary_->get(DynamicEntry::TAG::FINI_ARRAYSZ);
-            if (dt_array_size == nullptr) {
-              LIEF_ERR("Can't find the DT_FINI_ARRAYSZ / .fini_array");
-              break;
-            }
-
-            const std::vector<uint64_t>& array = entry->as<DynamicEntryArray>()->array();
-            std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
-
-            auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
-            for (size_t i = 0; i < array.size(); ++i) {
-              raw_array[i] = static_cast<Elf_Addr>(array[i]);
-            }
-
-            dt_array_size->value(array_content.size());
-            binary_->patch_address(entry->value(), array_content);
+      {
+        if (config_.fini_array) {
+          DynamicEntry* dt_array_size =
+              binary_->get(DynamicEntry::TAG::FINI_ARRAYSZ);
+          if (dt_array_size == nullptr) {
+            LIEF_ERR("Can't find the DT_FINI_ARRAYSZ / .fini_array");
+            break;
           }
-          break;
+
+          const std::vector<uint64_t>& array =
+              entry->as<DynamicEntryArray>()->array();
+          std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
+
+          auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
+          for (size_t i = 0; i < array.size(); ++i) {
+            raw_array[i] = static_cast<Elf_Addr>(array[i]);
+          }
+
+          dt_array_size->value(array_content.size());
+          binary_->patch_address(entry->value(), array_content);
         }
+        break;
+      }
 
       case DynamicEntry::TAG::PREINIT_ARRAY:
-        {
-          if (config_.fini_array) {
-            DynamicEntry* dt_array_size = binary_->get(DynamicEntry::TAG::PREINIT_ARRAYSZ);
-            if (dt_array_size == nullptr) {
-              LIEF_ERR("Can't find the DT_PREINIT_ARRAYSZ / .preinit_array");
-              break;
-            }
-
-
-            const std::vector<uint64_t>& array = entry->as<DynamicEntryArray>()->array();
-            std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
-
-            auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
-            for (size_t i = 0; i < array.size(); ++i) {
-              raw_array[i] = static_cast<Elf_Addr>(array[i]);
-            }
-
-            dt_array_size->value(array_content.size());
-            binary_->patch_address(entry->value(), array_content);
+      {
+        if (config_.fini_array) {
+          DynamicEntry* dt_array_size =
+              binary_->get(DynamicEntry::TAG::PREINIT_ARRAYSZ);
+          if (dt_array_size == nullptr) {
+            LIEF_ERR("Can't find the DT_PREINIT_ARRAYSZ / .preinit_array");
+            break;
           }
-          break;
+
+
+          const std::vector<uint64_t>& array =
+              entry->as<DynamicEntryArray>()->array();
+          std::vector<uint8_t> array_content(array.size() * sizeof(Elf_Addr), 0);
+
+          auto* raw_array = reinterpret_cast<Elf_Addr*>(array_content.data());
+          for (size_t i = 0; i < array.size(); ++i) {
+            raw_array[i] = static_cast<Elf_Addr>(array[i]);
+          }
+
+          dt_array_size->value(array_content.size());
+          binary_->patch_address(entry->value(), array_content);
         }
+        break;
+      }
 
       default:
-        {
-          // TODO(romain): Support DT_AUXILIARY
-        }
+      {
+        // TODO(romain): Support DT_AUXILIARY
+      }
     }
 
     Elf_Dyn dynhdr;
-    dynhdr.d_tag      = static_cast<Elf_Sxword>(DynamicEntry::to_value(entry->tag()));
+    dynhdr.d_tag = static_cast<Elf_Sxword>(DynamicEntry::to_value(entry->tag()));
     dynhdr.d_un.d_val = static_cast<Elf_Xword>(entry->value());
 
     dynamic_table_raw.write<Elf_Dyn>(dynhdr);
@@ -1121,7 +1204,9 @@ ok_error_t Builder::build_dynamic_section() {
   if (Section* dynamic_section = binary_->get_section(".dynamic")) {
     dynamic_section->content(raw);
   } else {
-    LIEF_INFO("Can't find the .dynamic section; will still try to update PT_DYNAMIC.");
+    LIEF_INFO(
+        "Can't find the .dynamic section; will still try to update PT_DYNAMIC."
+    );
   }
 
   // Update the PT_DYNAMIC segment
@@ -1155,7 +1240,7 @@ ok_error_t Builder::build_symbol_hash() {
 
 
   uint32_t nbucket = sysv->nbucket();
-  uint32_t nchain  = static_cast<ExeLayout*>(layout_.get())->sysv_nchain();
+  uint32_t nchain = static_cast<ExeLayout*>(layout_.get())->sysv_nchain();
 
   if (nbucket == 0) {
     LIEF_ERR("sysv.nbucket is 0");
@@ -1170,12 +1255,12 @@ ok_error_t Builder::build_symbol_hash() {
   new_hash_table_ptr[1] = nchain;
 
   uint32_t* bucket = &new_hash_table_ptr[2];
-  uint32_t* chain  = &new_hash_table_ptr[2 + nbucket];
+  uint32_t* chain = &new_hash_table_ptr[2 + nbucket];
   uint32_t idx = 0;
   for (const std::unique_ptr<Symbol>& symbol : binary_->dynamic_symbols_) {
     uint32_t hash = binary_->type_ == Header::CLASS::ELF32 ?
-                    hash32(symbol->name().c_str()) :
-                    hash64(symbol->name().c_str());
+                        hash32(symbol->name().c_str()) :
+                        hash64(symbol->name().c_str());
 
     const size_t bucket_idx = hash % nbucket;
     if (bucket_idx >= buckets_limits) {
@@ -1223,7 +1308,9 @@ ok_error_t Builder::build_hash_table() {
 
   if (config_.gnu_hash) {
     if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::GNU_HASH)) {
-      binary_->patch_address(entry->value(), static_cast<ExeLayout*>(layout_.get())->raw_gnuhash());
+      binary_->patch_address(
+          entry->value(), static_cast<ExeLayout*>(layout_.get())->raw_gnuhash()
+      );
     }
   }
   if (has_error) {
@@ -1238,9 +1325,9 @@ ok_error_t Builder::build_obj_symbols() {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Off  = typename ELF_T::Elf_Off;
+  using Elf_Off = typename ELF_T::Elf_Off;
 
-  using Elf_Sym  = typename ELF_T::Elf_Sym;
+  using Elf_Sym = typename ELF_T::Elf_Sym;
   const auto* layout = static_cast<const ObjectFileLayout*>(layout_.get());
   const std::unordered_map<std::string, size_t>* str_map = nullptr;
 
@@ -1263,19 +1350,20 @@ ok_error_t Builder::build_obj_symbols() {
     const std::string& name = symbol->name();
     const auto offset_it = str_map->find(name);
     if (offset_it == str_map->end()) {
-      LIEF_ERR("Unable to find the symbol offset for '{}' in the string table", name);
+      LIEF_ERR("Unable to find the symbol offset for '{}' in the string table",
+               name);
       continue;
     }
 
     const auto name_offset = static_cast<Elf_Off>(offset_it->second);
 
     Elf_Sym sym_header{};
-    sym_header.st_name  = static_cast<Elf_Word>(name_offset);
-    sym_header.st_info  = static_cast<unsigned char>(symbol->information());
+    sym_header.st_name = static_cast<Elf_Word>(name_offset);
+    sym_header.st_info = static_cast<unsigned char>(symbol->information());
     sym_header.st_other = static_cast<unsigned char>(symbol->other());
     sym_header.st_shndx = static_cast<Elf_Half>(symbol->shndx());
     sym_header.st_value = static_cast<Elf_Addr>(symbol->value());
-    sym_header.st_size  = static_cast<Elf_Addr>(symbol->size());
+    sym_header.st_size = static_cast<Elf_Addr>(symbol->size());
 
     symbol_table_raw.write(sym_header);
   }
@@ -1288,9 +1376,9 @@ ok_error_t Builder::build_dynamic_symbols() {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
-  using Elf_Off  = typename ELF_T::Elf_Off;
+  using Elf_Off = typename ELF_T::Elf_Off;
 
-  using Elf_Sym  = typename ELF_T::Elf_Sym;
+  using Elf_Sym = typename ELF_T::Elf_Sym;
   LIEF_DEBUG("[+] Build .dynsym symbols");
 
   const auto& dynstr_map = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
@@ -1305,7 +1393,6 @@ ok_error_t Builder::build_dynamic_symbols() {
   Elf_Addr symbol_table_va = dt_symtab->value();
 
 
-
   // Build symbols
   vector_iostream symbol_table_raw(should_swap());
   symbol_table_raw.reserve(binary_->dynamic_symbols_.size() * sizeof(Elf_Sym));
@@ -1313,7 +1400,8 @@ ok_error_t Builder::build_dynamic_symbols() {
     const std::string& name = symbol->name();
     auto offset_it = dynstr_map.find(name);
     if (offset_it == dynstr_map.end()) {
-      LIEF_ERR("Unable to find the symbol offset for '{}' in the string table", name);
+      LIEF_ERR("Unable to find the symbol offset for '{}' in the string table",
+               name);
       continue;
     }
 
@@ -1321,12 +1409,12 @@ ok_error_t Builder::build_dynamic_symbols() {
 
     Elf_Sym sym_header{};
 
-    sym_header.st_name  = static_cast<Elf_Word>(name_offset);
-    sym_header.st_info  = static_cast<unsigned char>(symbol->information());
+    sym_header.st_name = static_cast<Elf_Word>(name_offset);
+    sym_header.st_info = static_cast<unsigned char>(symbol->information());
     sym_header.st_other = static_cast<unsigned char>(symbol->other());
     sym_header.st_shndx = static_cast<Elf_Half>(symbol->shndx());
     sym_header.st_value = static_cast<Elf_Addr>(symbol->value());
-    sym_header.st_size  = static_cast<Elf_Addr>(symbol->size());
+    sym_header.st_size = static_cast<Elf_Addr>(symbol->size());
 
     symbol_table_raw.write(sym_header);
   }
@@ -1336,12 +1424,12 @@ ok_error_t Builder::build_dynamic_symbols() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_section_relocations() {
-  using Elf_Addr   = typename ELF_T::Elf_Addr;
-  using Elf_Xword  = typename ELF_T::Elf_Xword;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Xword = typename ELF_T::Elf_Xword;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
 
-  using Elf_Rela   = typename ELF_T::Elf_Rela;
-  using Elf_Rel    = typename ELF_T::Elf_Rel;
+  using Elf_Rela = typename ELF_T::Elf_Rela;
+  using Elf_Rel = typename ELF_T::Elf_Rel;
   LIEF_DEBUG("[+] Building relocations");
 
   auto* layout = static_cast<ObjectFileLayout*>(layout_.get());
@@ -1355,14 +1443,15 @@ ok_error_t Builder::build_section_relocations() {
   const bool is_rela = object_relocations[0].is_rela();
   std::unordered_map<Section*, vector_iostream> section_content;
 
-  const ObjectFileLayout::sections_reloc_map_t& sec_relo_map = layout->sections_reloc_map();
+  const ObjectFileLayout::sections_reloc_map_t& sec_relo_map =
+      layout->sections_reloc_map();
   for (const auto& p : layout->relocation_map()) {
     Section* section = p.first;
     std::vector<Relocation*> relocs = p.second;
-    // sort relocations by offset. It is not required by the ELF standard but some linkers (like ld)
-    // rely on this kind of sort for sections such as .eh_frame;
+    // sort relocations by offset. It is not required by the ELF standard but some
+    // linkers (like ld) rely on this kind of sort for sections such as .eh_frame;
     std::sort(relocs.begin(), relocs.end(),
-              [] (const Relocation* lhs, const Relocation* rhs) {
+              [](const Relocation* lhs, const Relocation* rhs) {
                 return lhs->address() < rhs->address();
               });
     for (Relocation* reloc : relocs) {
@@ -1388,19 +1477,19 @@ ok_error_t Builder::build_section_relocations() {
       }
 
       uint64_t r_info = reloc->r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                      Header::CLASS::ELF32 :
-                                      Header::CLASS::ELF64);
+                                          Header::CLASS::ELF32 :
+                                          Header::CLASS::ELF64);
 
       if (is_rela) {
         Elf_Rela relahdr;
         relahdr.r_offset = static_cast<Elf_Addr>(reloc->address());
-        relahdr.r_info   = static_cast<Elf_Xword>(r_info);
+        relahdr.r_info = static_cast<Elf_Xword>(r_info);
         relahdr.r_addend = static_cast<Elf_Sxword>(reloc->addend());
         section_content[reloc_section].write<Elf_Rela>(relahdr);
       } else {
         Elf_Rel relhdr;
         relhdr.r_offset = static_cast<Elf_Addr>(reloc->address());
-        relhdr.r_info   = static_cast<Elf_Xword>(r_info);
+        relhdr.r_info = static_cast<Elf_Xword>(r_info);
         section_content[reloc_section].write<Elf_Rel>(relhdr);
       }
     }
@@ -1431,7 +1520,8 @@ ok_error_t Builder::build_android_relocations() {
       LIEF_ERR("New ANDROID_REL[A] is larger than the in-cache size");
       return make_error_code(lief_errors::build_error);
     }
-    LIEF_WARN("New ANDROID_REL[A] is smaller than the in-cache size. It might require padding");
+    LIEF_WARN("New ANDROID_REL[A] is smaller than the in-cache size. It might "
+              "require padding");
   }
 
   if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::ANDROID_RELA)) {
@@ -1439,8 +1529,9 @@ ok_error_t Builder::build_android_relocations() {
     if (DynamicEntry* dt_size = binary_->get(DynamicEntry::TAG::ANDROID_RELASZ)) {
       dt_size->value(layout.raw_android_rela().size());
     }
-  }
-  else if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::ANDROID_REL)) {
+  } else if (const DynamicEntry* entry =
+                 binary_->get(DynamicEntry::TAG::ANDROID_REL))
+  {
     binary_->patch_address(entry->value(), layout.raw_android_rela());
     if (DynamicEntry* dt_size = binary_->get(DynamicEntry::TAG::ANDROID_RELSZ)) {
       dt_size->value(layout.raw_android_rela().size());
@@ -1468,7 +1559,9 @@ ok_error_t Builder::build_relative_relocations() {
       LIEF_ERR("New RELR is larger than the in-cache size");
       return make_error_code(lief_errors::build_error);
     }
-    LIEF_WARN("New RELR is smaller than the in-cache size. It might require padding");
+    LIEF_WARN(
+        "New RELR is smaller than the in-cache size. It might require padding"
+    );
   }
   if (const DynamicEntry* entry = binary_->get(DynamicEntry::TAG::RELR)) {
     binary_->patch_address(entry->value(), layout.raw_relr());
@@ -1489,14 +1582,15 @@ ok_error_t Builder::build_relative_relocations() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_dynamic_relocations() {
-  using Elf_Addr   = typename ELF_T::Elf_Addr;
-  using Elf_Xword  = typename ELF_T::Elf_Xword;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Xword = typename ELF_T::Elf_Xword;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
 
-  using Elf_Rela   = typename ELF_T::Elf_Rela;
-  using Elf_Rel    = typename ELF_T::Elf_Rel;
+  using Elf_Rela = typename ELF_T::Elf_Rela;
+  using Elf_Rel = typename ELF_T::Elf_Rel;
 
-  Binary::it_dynamic_relocations dynamic_relocations = binary_->dynamic_relocations();
+  Binary::it_dynamic_relocations dynamic_relocations =
+      binary_->dynamic_relocations();
   if (dynamic_relocations.empty()) {
     if (auto* DT = binary_->get(DynamicEntry::TAG::REL)) {
       if (auto* sec = binary_->section_from_virtual_address(DT->value())) {
@@ -1518,17 +1612,17 @@ ok_error_t Builder::build_dynamic_relocations() {
   }
   LIEF_DEBUG("Building DT_REL/DT_RELA");
 
-  DynamicEntry* dt_reloc   = nullptr;
+  DynamicEntry* dt_reloc = nullptr;
   DynamicEntry* dt_relocsz = nullptr;
 
 
   const bool is_rela = dt_rela != nullptr;
   if (dt_rela != nullptr) {
-    dt_reloc   = dt_rela;
+    dt_reloc = dt_rela;
     dt_relocsz = binary_->get(DynamicEntry::TAG::RELASZ);
   } else {
     // Fallback on relation type REL
-    dt_reloc   = dt_rel;
+    dt_reloc = dt_rel;
     dt_relocsz = binary_->get(DynamicEntry::TAG::RELSZ);
   }
 
@@ -1570,19 +1664,19 @@ ok_error_t Builder::build_dynamic_relocations() {
     }
 
     uint64_t r_info = relocation.r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                        Header::CLASS::ELF32 :
-                                        Header::CLASS::ELF64);
+                                            Header::CLASS::ELF32 :
+                                            Header::CLASS::ELF64);
     if (is_rela) {
       Elf_Rela relahdr;
       relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relahdr.r_info   = static_cast<Elf_Xword>(r_info);
+      relahdr.r_info = static_cast<Elf_Xword>(r_info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
       content.write<Elf_Rela>(relahdr);
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relhdr.r_info   = static_cast<Elf_Xword>(r_info);
+      relhdr.r_info = static_cast<Elf_Xword>(r_info);
 
       content.write<Elf_Rel>(relhdr);
     }
@@ -1593,12 +1687,12 @@ ok_error_t Builder::build_dynamic_relocations() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_pltgot_relocations() {
-  using Elf_Addr   = typename ELF_T::Elf_Addr;
-  using Elf_Xword  = typename ELF_T::Elf_Xword;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
+  using Elf_Xword = typename ELF_T::Elf_Xword;
   using Elf_Sxword = typename ELF_T::Elf_Sxword;
 
-  using Elf_Rela   = typename ELF_T::Elf_Rela;
-  using Elf_Rel    = typename ELF_T::Elf_Rel;
+  using Elf_Rela = typename ELF_T::Elf_Rela;
+  using Elf_Rel = typename ELF_T::Elf_Rel;
 
   Binary::it_pltgot_relocations pltgot_relocations = binary_->pltgot_relocations();
   if (pltgot_relocations.empty()) {
@@ -1617,7 +1711,7 @@ ok_error_t Builder::build_pltgot_relocations() {
   if (dt_pltrel != nullptr) {
     is_rela = DynamicEntry::TAG(dt_pltrel->value()) == DynamicEntry::TAG::RELA;
   }
-  DynamicEntry* dt_jmprel   = binary_->get(DynamicEntry::TAG::JMPREL);
+  DynamicEntry* dt_jmprel = binary_->get(DynamicEntry::TAG::JMPREL);
   DynamicEntry* dt_pltrelsz = binary_->get(DynamicEntry::TAG::PLTRELSZ);
   if (dt_jmprel == nullptr) {
     LIEF_ERR("Unable to find the DT_JMPREL entry");
@@ -1651,20 +1745,20 @@ ok_error_t Builder::build_pltgot_relocations() {
     }
 
     uint64_t r_info = relocation.r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                        Header::CLASS::ELF32 :
-                                        Header::CLASS::ELF64);
+                                            Header::CLASS::ELF32 :
+                                            Header::CLASS::ELF64);
 
     if (is_rela) {
       Elf_Rela relahdr;
       relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relahdr.r_info   = static_cast<Elf_Xword>(r_info);
+      relahdr.r_info = static_cast<Elf_Xword>(r_info);
       relahdr.r_addend = static_cast<Elf_Sxword>(relocation.addend());
 
       content.write<Elf_Rela>(relahdr);
     } else {
       Elf_Rel relhdr;
       relhdr.r_offset = static_cast<Elf_Addr>(relocation.address());
-      relhdr.r_info   = static_cast<Elf_Xword>(r_info);
+      relhdr.r_info = static_cast<Elf_Xword>(r_info);
 
       content.write<Elf_Rel>(relhdr);
     }
@@ -1676,10 +1770,10 @@ ok_error_t Builder::build_pltgot_relocations() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_symbol_requirement() {
-  using Elf_Half    = typename ELF_T::Elf_Half;
-  using Elf_Word    = typename ELF_T::Elf_Word;
-  using Elf_Off     = typename ELF_T::Elf_Off;
-  using Elf_Addr    = typename ELF_T::Elf_Addr;
+  using Elf_Half = typename ELF_T::Elf_Half;
+  using Elf_Word = typename ELF_T::Elf_Word;
+  using Elf_Off = typename ELF_T::Elf_Off;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
 
   using Elf_Verneed = typename ELF_T::Elf_Verneed;
   using Elf_Vernaux = typename ELF_T::Elf_Vernaux;
@@ -1707,8 +1801,9 @@ ok_error_t Builder::build_symbol_requirement() {
   vector_iostream svr_raw(should_swap());
 
   uint32_t svr_idx = 0;
-  const auto& sym_name_offset = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
-  for (SymbolVersionRequirement& svr: binary_->symbols_version_requirement()) {
+  const auto& sym_name_offset =
+      static_cast<ExeLayout*>(layout_.get())->dynstr_map();
+  for (SymbolVersionRequirement& svr : binary_->symbols_version_requirement()) {
     const std::string& name = svr.name();
 
     Elf_Off name_offset = 0;
@@ -1724,15 +1819,17 @@ ok_error_t Builder::build_symbol_requirement() {
 
     Elf_Off next_symbol_offset = 0;
     if (svr_idx < (binary_->symbol_version_requirements_.size() - 1)) {
-      next_symbol_offset = sizeof(Elf_Verneed) + svars.size() * sizeof(Elf_Vernaux);
+      next_symbol_offset =
+          sizeof(Elf_Verneed) + svars.size() * sizeof(Elf_Vernaux);
     }
 
     Elf_Verneed header;
     header.vn_version = static_cast<Elf_Half>(svr.version());
-    header.vn_cnt     = static_cast<Elf_Half>(svars.size());
-    header.vn_file    = static_cast<Elf_Word>(name_offset);
-    header.vn_aux     = static_cast<Elf_Word>(!svars.empty() ? sizeof(Elf_Verneed) : 0);
-    header.vn_next    = static_cast<Elf_Word>(next_symbol_offset);
+    header.vn_cnt = static_cast<Elf_Half>(svars.size());
+    header.vn_file = static_cast<Elf_Word>(name_offset);
+    header.vn_aux =
+        static_cast<Elf_Word>(!svars.empty() ? sizeof(Elf_Verneed) : 0);
+    header.vn_next = static_cast<Elf_Word>(next_symbol_offset);
 
     svr_raw.write<Elf_Verneed>(header);
 
@@ -1762,11 +1859,13 @@ ok_error_t Builder::build_symbol_requirement() {
       }
 
       Elf_Vernaux aux_header;
-      aux_header.vna_hash  = static_cast<Elf_Word>(svar.hash());
+      aux_header.vna_hash = static_cast<Elf_Word>(svar.hash());
       aux_header.vna_flags = static_cast<Elf_Half>(svar.flags());
       aux_header.vna_other = static_cast<Elf_Half>(svar.other());
-      aux_header.vna_name  = static_cast<Elf_Word>(svar_name_offset);
-      aux_header.vna_next  = static_cast<Elf_Word>(svar_idx < (svars.size() - 1) ? sizeof(Elf_Vernaux) : 0);
+      aux_header.vna_name = static_cast<Elf_Word>(svar_name_offset);
+      aux_header.vna_next = static_cast<Elf_Word>(svar_idx < (svars.size() - 1) ?
+                                                      sizeof(Elf_Vernaux) :
+                                                      0);
 
       svr_raw.write<Elf_Vernaux>(aux_header);
 
@@ -1788,11 +1887,11 @@ ok_error_t Builder::build_symbol_requirement() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_symbol_definition() {
-  using Elf_Half    = typename ELF_T::Elf_Half;
-  using Elf_Word    = typename ELF_T::Elf_Word;
-  using Elf_Addr    = typename ELF_T::Elf_Addr;
+  using Elf_Half = typename ELF_T::Elf_Half;
+  using Elf_Word = typename ELF_T::Elf_Word;
+  using Elf_Addr = typename ELF_T::Elf_Addr;
 
-  using Elf_Verdef  = typename ELF_T::Elf_Verdef;
+  using Elf_Verdef = typename ELF_T::Elf_Verdef;
   using Elf_Verdaux = typename ELF_T::Elf_Verdaux;
 
   LIEF_DEBUG("[+] Building symbol definition");
@@ -1818,7 +1917,8 @@ ok_error_t Builder::build_symbol_definition() {
 
   auto sym_verdef = binary_->symbols_version_definition();
 
-  const auto& sym_name_offset = static_cast<ExeLayout*>(layout_.get())->dynstr_map();
+  const auto& sym_name_offset =
+      static_cast<ExeLayout*>(layout_.get())->dynstr_map();
   auto& verdef_info = static_cast<ExeLayout*>(layout_.get())->verdef_info();
 
   vector_iostream svd_aux_raw(should_swap());
@@ -1841,8 +1941,8 @@ ok_error_t Builder::build_symbol_definition() {
         const uint64_t next_offset = !is_last ? sizeof(Elf_Verdaux) : 0;
 
         Elf_Verdaux aux_header;
-        aux_header.vda_name  = static_cast<Elf_Word>(dynstr_offset);
-        aux_header.vda_next  = static_cast<Elf_Word>(next_offset);
+        aux_header.vda_name = static_cast<Elf_Word>(dynstr_offset);
+        aux_header.vda_next = static_cast<Elf_Word>(next_offset);
 
         svd_aux_raw.write<Elf_Verdaux>(aux_header);
       }
@@ -1872,21 +1972,21 @@ ok_error_t Builder::build_symbol_definition() {
 
       uint64_t aux_offset = svd_aux_offset + it_offset->second;
       // This is a **relative** offset
-      aux_offset -=  svd_raw.tellp();
+      aux_offset -= svd_raw.tellp();
 
       Elf_Verdef header;
       header.vd_version = static_cast<Elf_Half>(svd.version());
-      header.vd_flags   = static_cast<Elf_Half>(svd.flags());
-      header.vd_ndx     = static_cast<Elf_Half>(svd.ndx());
-      header.vd_cnt     = static_cast<Elf_Half>(svd.symbols_aux().size());
-      header.vd_hash    = static_cast<Elf_Word>(svd.hash());
-      header.vd_aux     = static_cast<Elf_Word>(aux_offset);
-      header.vd_next    = static_cast<Elf_Word>(next_offset);
+      header.vd_flags = static_cast<Elf_Half>(svd.flags());
+      header.vd_ndx = static_cast<Elf_Half>(svd.ndx());
+      header.vd_cnt = static_cast<Elf_Half>(svd.symbols_aux().size());
+      header.vd_hash = static_cast<Elf_Word>(svd.hash());
+      header.vd_aux = static_cast<Elf_Word>(aux_offset);
+      header.vd_next = static_cast<Elf_Word>(next_offset);
       svd_raw.write<Elf_Verdef>(header);
     }
   }
 
-  binary_->patch_address(svd_va,                  svd_raw.raw());
+  binary_->patch_address(svd_va, svd_raw.raw());
   binary_->patch_address(svd_va + svd_aux_offset, svd_aux_raw.raw());
   return ok();
 }
@@ -1930,7 +2030,7 @@ ok_error_t Builder::build_notes() {
   }
 
   std::set<const Note*> notes;
-  for (const Note& note: binary_->notes()) {
+  for (const Note& note : binary_->notes()) {
     update_note_section(note, notes);
   }
   return ok();
@@ -1942,8 +2042,10 @@ ok_error_t Builder::build_symbol_version() {
   LIEF_DEBUG("[+] Building symbol version");
 
   if (binary_->symbol_version_table_.size() != binary_->dynamic_symbols_.size()) {
-    LIEF_WARN("The number of symbol version is different from the number of dynamic symbols {} != {}",
-              binary_->symbol_version_table_.size(), binary_->dynamic_symbols_.size());
+    LIEF_WARN("The number of symbol version is different from the number of "
+              "dynamic symbols {} != {}",
+              binary_->symbol_version_table_.size(),
+              binary_->dynamic_symbols_.size());
   }
 
   DynamicEntry* dt_versym = binary_->get(DynamicEntry::TAG::VERSYM);
@@ -1956,7 +2058,7 @@ ok_error_t Builder::build_symbol_version() {
   vector_iostream sv_raw(should_swap());
   sv_raw.reserve(binary_->symbol_version_table_.size() * sizeof(uint16_t));
 
-  //for (const SymbolVersion* sv : binary_->symbol_version_table_) {
+  // for (const SymbolVersion* sv : binary_->symbol_version_table_) {
   for (const std::unique_ptr<Symbol>& symbol : binary_->dynamic_symbols_) {
     const SymbolVersion* sv = symbol->symbol_version();
     if (sv == nullptr) {
@@ -1995,4 +2097,3 @@ bool Builder::should_build_notes() const {
 }
 
 } // namespace LIEF::ELF
-

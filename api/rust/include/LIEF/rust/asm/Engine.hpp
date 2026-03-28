@@ -22,5 +22,4 @@ class asm_Engine : private Mirror<LIEF::assembly::Engine> {
   public:
   using lief_t = LIEF::assembly::Engine;
   using Mirror::Mirror;
-
 };

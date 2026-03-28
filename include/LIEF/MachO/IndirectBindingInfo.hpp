@@ -28,11 +28,10 @@ namespace MachO {
 /// table.
 class LIEF_API IndirectBindingInfo : public BindingInfo {
   friend class BinaryParser;
-  public:
 
+  public:
   IndirectBindingInfo(SegmentCommand& segment, Symbol& symbol, int32_t ordinal,
-                      DylibCommand* dylib, uint64_t address)
-  {
+                      DylibCommand* dylib, uint64_t address) {
     segment_ = &segment;
     symbol_ = &symbol;
     library_ordinal_ = ordinal;
@@ -56,8 +55,8 @@ class LIEF_API IndirectBindingInfo : public BindingInfo {
 
   ~IndirectBindingInfo() override = default;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const IndirectBindingInfo& info) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const IndirectBindingInfo& info) {
     os << static_cast<const BindingInfo&>(info);
     return os;
   }

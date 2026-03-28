@@ -28,30 +28,30 @@ namespace MachO {
 /// the LC_DYLD_INFO bytecode.
 ///
 /// It does not represent a structure that exists in the Mach-O format
-/// specifications but it provides a *view* on an entry of the Dyld binding opcodes.
+/// specifications but it provides a *view* on an entry of the Dyld binding
+/// opcodes.
 ///
 /// @see: BindingInfo
 class LIEF_API DyldBindingInfo : public BindingInfo {
   friend class BinaryParser;
 
   public:
-  enum class CLASS: uint64_t  {
-    WEAK     = 1u,
-    LAZY     = 2u,
+  enum class CLASS : uint64_t {
+    WEAK = 1u,
+    LAZY = 2u,
     STANDARD = 3u,
-    THREADED = 100u
+    THREADED = 100u,
   };
 
-  enum class TYPE: uint64_t  {
-    POINTER         = 1u,
+  enum class TYPE : uint64_t {
+    POINTER = 1u,
     TEXT_ABSOLUTE32 = 2u,
-    TEXT_PCREL32    = 3u
+    TEXT_PCREL32 = 3u,
   };
 
   public:
   DyldBindingInfo() = default;
-  DyldBindingInfo(CLASS cls, TYPE type,
-                  uint64_t address, int64_t addend = 0,
+  DyldBindingInfo(CLASS cls, TYPE type, uint64_t address, int64_t addend = 0,
                   int32_t oridnal = 0, bool is_weak = false,
                   bool is_non_weak_definition = false, uint64_t offset = 0);
 
@@ -105,8 +105,8 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const DyldBindingInfo& info) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DyldBindingInfo& info) {
     os << static_cast<const BindingInfo&>(info);
     return os;
   }

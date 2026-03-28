@@ -35,7 +35,7 @@ std::string hex_dump_impl(T data, const std::string& sep) {
   std::vector<std::string> hexdigits;
   hexdigits.reserve(data.size());
   std::transform(data.begin(), data.end(), std::back_inserter(hexdigits),
-                 [] (uint8_t x) { return fmt::format("{:02x}", x); });
+                 [](uint8_t x) { return fmt::format("{:02x}", x); });
   return fmt::to_string(fmt::join(hexdigits, sep));
 }
 
@@ -89,7 +89,8 @@ std::string indent(const std::string& input, size_t level) {
 std::string ts_to_str(uint64_t timestamp) {
   using namespace fmt;
   using namespace std::chrono;
-  system_clock::time_point tp = system_clock::time_point(std::chrono::seconds(timestamp));
+  system_clock::time_point tp =
+      system_clock::time_point(std::chrono::seconds(timestamp));
   std::time_t t = std::chrono::system_clock::to_time_t(tp);
   std::string ts = std::ctime(&t);
   ts.resize(ts.size() - 1);

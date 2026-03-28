@@ -41,7 +41,8 @@ result<VectorStream> VectorStream::from_file(const std::string& file) {
   return VectorStream{std::move(data)};
 }
 
-std::unique_ptr<SpanStream> VectorStream::slice(uint32_t offset, size_t size) const {
+std::unique_ptr<SpanStream> VectorStream::slice(uint32_t offset,
+                                                size_t size) const {
   if (offset > binary_.size() || (offset + size) > binary_.size()) {
     return nullptr;
   }
@@ -55,4 +56,3 @@ std::unique_ptr<SpanStream> VectorStream::slice(uint32_t offset) const {
 }
 
 }
-

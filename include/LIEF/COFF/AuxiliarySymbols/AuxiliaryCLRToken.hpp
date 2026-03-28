@@ -32,11 +32,10 @@ class LIEF_API AuxiliaryCLRToken : public AuxiliarySymbol {
   friend class Parser;
 
   LIEF_LOCAL static std::unique_ptr<AuxiliaryCLRToken>
-    parse(const std::vector<uint8_t>& payload);
+      parse(const std::vector<uint8_t>& payload);
 
   AuxiliaryCLRToken() :
-    AuxiliarySymbol(AuxiliarySymbol::TYPE::CLR_TOKEN)
-  {}
+    AuxiliarySymbol(AuxiliarySymbol::TYPE::CLR_TOKEN) {}
 
   AuxiliaryCLRToken(uint8_t aux_type, uint8_t reserved, uint32_t symbol_idx,
                     std::vector<uint8_t> rgb_reserved) :
@@ -44,8 +43,7 @@ class LIEF_API AuxiliaryCLRToken : public AuxiliarySymbol {
     aux_type_(aux_type),
     reserved_(reserved),
     symbol_idx_(symbol_idx),
-    rgb_reserved_(std::move(rgb_reserved))
-  {}
+    rgb_reserved_(std::move(rgb_reserved)) {}
 
   AuxiliaryCLRToken(const AuxiliaryCLRToken&) = default;
   AuxiliaryCLRToken& operator=(const AuxiliaryCLRToken&) = default;
@@ -93,6 +91,7 @@ class LIEF_API AuxiliaryCLRToken : public AuxiliarySymbol {
   }
 
   ~AuxiliaryCLRToken() override = default;
+
   private:
   uint8_t aux_type_ = 0;
   uint8_t reserved_ = 0;

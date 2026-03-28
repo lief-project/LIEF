@@ -114,13 +114,13 @@ std::string Section::to_string() const {
   std::vector<std::string> list_str;
   list_str.reserve(list.size());
   std::transform(list.begin(), list.end(), std::back_inserter(list_str),
-                 [] (const auto c) { return COFF::to_string(c); });
+                 [](const auto c) { return COFF::to_string(c); });
 
   std::vector<std::string> fullname_hex;
   fullname_hex.reserve(name().size());
   std::transform(fullname().begin(), fullname().end(),
                  std::back_inserter(fullname_hex),
-                 [] (const char c) { return format("{:02x}", c); });
+                 [](const char c) { return format("{:02x}", c); });
 
   if (const String* coff_str = coff_string()) {
     os << format("{:{}} {} ({}, {})\n", "Name:", WIDTH, name(),
@@ -136,14 +136,16 @@ std::string Section::to_string() const {
      << format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH, pointerto_raw_data())
      << format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
                pointerto_raw_data(), pointerto_raw_data() + sizeof_raw_data())
-     << format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH, pointerto_relocation())
-     << format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH, pointerto_line_numbers())
-     << format("{:{}} {:#x}\n", "Number of relocations", WIDTH, numberof_relocations())
+     << format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH,
+               pointerto_relocation())
+     << format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH,
+               pointerto_line_numbers())
+     << format("{:{}} {:#x}\n", "Number of relocations", WIDTH,
+               numberof_relocations())
      << format("{:{}} {:#x}\n", "Number of lines", WIDTH, numberof_line_numbers())
      << format("{:{}} {}", "Characteristics", WIDTH, join(list_str, ", "));
 
   return os.str();
-
 }
 
 }

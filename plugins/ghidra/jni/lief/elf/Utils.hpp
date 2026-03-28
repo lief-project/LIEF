@@ -20,13 +20,11 @@
 namespace lief_jni::elf {
 class Utils {
   public:
-  static constexpr jni::Class kClass {
-    "lief/elf/Utils",
+  static constexpr jni::Class kClass{
+      "lief/elf/Utils",
   };
 
-  static jboolean jni_is_elf(JNIEnv* /*env*/, jclass /*clazz*/,
-                             jstring path)
-  {
+  static jboolean jni_is_elf(JNIEnv* /*env*/, jclass /*clazz*/, jstring path) {
     jni::ThreadGuard TG;
     jni::LocalString jpath(path);
     return LIEF::ELF::is_elf(std::string(jpath.Pin().ToString()));

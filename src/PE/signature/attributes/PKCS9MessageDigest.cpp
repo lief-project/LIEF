@@ -28,4 +28,3 @@ std::string PKCS9MessageDigest::print() const {
   return hex_dump(digest());
 }
 }
-

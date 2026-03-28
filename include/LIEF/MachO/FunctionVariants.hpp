@@ -69,8 +69,8 @@ class LIEF_API FunctionVariants : public LoadCommand {
 
     static constexpr uint32_t F_PER_PROCESS = uint32_t(1) << F_BIT;
     static constexpr uint32_t F_SYSTEM_WIDE = uint32_t(2) << F_BIT;
-    static constexpr uint32_t F_ARM64       = uint32_t(3) << F_BIT;
-    static constexpr uint32_t F_X86_64      = uint32_t(4) << F_BIT;
+    static constexpr uint32_t F_ARM64 = uint32_t(3) << F_BIT;
+    static constexpr uint32_t F_X86_64 = uint32_t(4) << F_BIT;
 
     /// Flags describing the target platform, environment, or architecture
     /// for a given function implementation.
@@ -80,21 +80,21 @@ class LIEF_API FunctionVariants : public LoadCommand {
     enum class FLAGS : uint32_t {
       UNKNOWN = 0,
 
-      #define FUNCTION_VARIANT_FLAG(name, value, _) name = (value | F_ARM64),
-        #include "LIEF/MachO/FunctionVariants/Arm64.def"
-      #undef FUNCTION_VARIANT_FLAG
+#define FUNCTION_VARIANT_FLAG(name, value, _) name = (value | F_ARM64),
+#include "LIEF/MachO/FunctionVariants/Arm64.def"
+#undef FUNCTION_VARIANT_FLAG
 
-      #define FUNCTION_VARIANT_FLAG(name, value, _) name = (value | F_X86_64),
-        #include "LIEF/MachO/FunctionVariants/X86_64.def"
-      #undef FUNCTION_VARIANT_FLAG
+#define FUNCTION_VARIANT_FLAG(name, value, _) name = (value | F_X86_64),
+#include "LIEF/MachO/FunctionVariants/X86_64.def"
+#undef FUNCTION_VARIANT_FLAG
 
-      #define FUNCTION_VARIANT_FLAG(name, value, _) name = (value | F_SYSTEM_WIDE),
-        #include "LIEF/MachO/FunctionVariants/SystemWide.def"
-      #undef FUNCTION_VARIANT_FLAG
+#define FUNCTION_VARIANT_FLAG(name, value, _) name = (value | F_SYSTEM_WIDE),
+#include "LIEF/MachO/FunctionVariants/SystemWide.def"
+#undef FUNCTION_VARIANT_FLAG
 
-      #define FUNCTION_VARIANT_FLAG(name, value, _) name = (value | F_PER_PROCESS),
-        #include "LIEF/MachO/FunctionVariants/PerProcess.def"
-      #undef FUNCTION_VARIANT_FLAG
+#define FUNCTION_VARIANT_FLAG(name, value, _) name = (value | F_PER_PROCESS),
+#include "LIEF/MachO/FunctionVariants/PerProcess.def"
+#undef FUNCTION_VARIANT_FLAG
     };
 
     static uint8_t get_raw(FLAGS f) {
@@ -136,9 +136,8 @@ class LIEF_API FunctionVariants : public LoadCommand {
 
     std::string to_string() const;
 
-    LIEF_API friend
-      std::ostream& operator<<(std::ostream& os, const RuntimeTableEntry& entry)
-    {
+    LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                             const RuntimeTableEntry& entry) {
       os << entry.to_string();
       return os;
     }
@@ -147,6 +146,7 @@ class LIEF_API FunctionVariants : public LoadCommand {
     LIEF_LOCAL void set_flags(std::vector<FLAGS> flags) {
       flags_ = std::move(flags);
     }
+
     private:
     bool another_table_;
     uint32_t impl_ = 0;
@@ -184,20 +184,21 @@ class LIEF_API FunctionVariants : public LoadCommand {
       /// Variants that apply on a per-process basis
       PER_PROCESS = 1,
 
-      /// Variants that are selected based on system-wide capabilities or configurations.
+      /// Variants that are selected based on system-wide capabilities or
+      /// configurations.
       SYSTEM_WIDE = 2,
 
       /// Variants optimized for the ARM64 architecture.
       ARM64 = 3,
 
       /// Variants optimized for the x86-64 architecture.
-      X86_64 = 4
+      X86_64 = 4,
     };
 
     RuntimeTable() = default;
     RuntimeTable(KIND kind, uint32_t offset) :
-      kind_(kind), offset_(offset)
-    {}
+      kind_(kind),
+      offset_(offset) {}
     RuntimeTable(const RuntimeTable&) = default;
     RuntimeTable& operator=(const RuntimeTable&) = default;
 
@@ -231,9 +232,8 @@ class LIEF_API FunctionVariants : public LoadCommand {
 
     std::string to_string() const;
 
-    LIEF_API friend
-      std::ostream& operator<<(std::ostream& os, const RuntimeTable& table)
-    {
+    LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                             const RuntimeTable& table) {
       os << table.to_string();
       return os;
     }

@@ -21,16 +21,15 @@
 
 namespace lief_jni::dwarf::editor {
 
-class Type : public JNI<
-  Type, std::unique_ptr<LIEF::dwarf::editor::Type>>
-{
+class Type : public JNI<Type, std::unique_ptr<LIEF::dwarf::editor::Type>> {
   public:
   using JNI::JNI;
-  static constexpr jni::Class kClass {
-    "lief/dwarf/editor/Type",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/dwarf/editor/Type",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static int register_natives(JNIEnv* env);
 

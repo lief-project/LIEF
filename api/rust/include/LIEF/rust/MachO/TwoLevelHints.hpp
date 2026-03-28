@@ -20,16 +20,26 @@
 class MachO_TwoLevelHints : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::TwoLevelHints;
-  MachO_TwoLevelHints(const lief_t& base) : MachO_Command(base) {}
+  MachO_TwoLevelHints(const lief_t& base) :
+    MachO_Command(base) {}
 
-  uint32_t offset() const { return impl().offset(); };
-  uint32_t original_nb_hints() const { return impl().original_nb_hints(); };
+  uint32_t offset() const {
+    return impl().offset();
+  };
+  uint32_t original_nb_hints() const {
+    return impl().original_nb_hints();
+  };
 
-  auto content() const { return make_span(impl().content()); }
+  auto content() const {
+    return make_span(impl().content());
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
+
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

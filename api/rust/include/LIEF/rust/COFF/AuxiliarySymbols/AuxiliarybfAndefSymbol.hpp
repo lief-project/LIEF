@@ -20,12 +20,15 @@
 class COFF_AuxiliarybfAndefSymbol : public COFF_AuxiliarySymbol {
   public:
   using lief_t = LIEF::COFF::AuxiliarybfAndefSymbol;
-  COFF_AuxiliarybfAndefSymbol(const lief_t& obj) : COFF_AuxiliarySymbol(obj) {}
+  COFF_AuxiliarybfAndefSymbol(const lief_t& obj) :
+    COFF_AuxiliarySymbol(obj) {}
 
   static bool classof(const COFF_AuxiliarySymbol& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

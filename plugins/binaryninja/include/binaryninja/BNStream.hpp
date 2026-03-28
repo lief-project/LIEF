@@ -33,8 +33,7 @@ class BNStream : public LIEF::BinaryStream {
 
   BNStream(BinaryNinja::BinaryView& bv) :
     LIEF::BinaryStream((LIEF::BinaryStream::STREAM_TYPE)STREAM_TYPE),
-    bv_(&bv)
-  {
+    bv_(&bv) {
     setpos(bv.GetStart());
   }
 
@@ -51,8 +50,7 @@ class BNStream : public LIEF::BinaryStream {
   }
 
   LIEF::ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size,
-                           uint64_t virtual_address = 0) const override
-  {
+                           uint64_t virtual_address = 0) const override {
     if (bv_->IsValidOffset(virtual_address) &&
         bv_->IsValidOffset(virtual_address + size - 1))
     {
@@ -60,9 +58,7 @@ class BNStream : public LIEF::BinaryStream {
       return LIEF::ok();
     }
 
-    if (bv_->IsValidOffset(offset) &&
-        bv_->IsValidOffset(offset + size - 1))
-    {
+    if (bv_->IsValidOffset(offset) && bv_->IsValidOffset(offset + size - 1)) {
       bv_->Read(dst, offset, size);
       return LIEF::ok();
     }
@@ -79,6 +75,7 @@ class BNStream : public LIEF::BinaryStream {
   }
 
   ~BNStream() override = default;
+
   protected:
   BinaryNinja::BinaryView* bv_ = nullptr;
 };

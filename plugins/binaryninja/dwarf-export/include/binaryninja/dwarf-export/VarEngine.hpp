@@ -26,18 +26,19 @@ class VarEngine {
   VarEngine() = delete;
   VarEngine(TypeEngine& types, LIEF::dwarf::editor::CompilationUnit& CU,
             BinaryNinja::BinaryView& bv) :
-    types_(types), unit_(CU), bv_(bv)
-  {}
+    types_(types),
+    unit_(CU),
+    bv_(bv) {}
 
-  static std::unique_ptr<VarEngine> create(
-      TypeEngine& types, LIEF::dwarf::editor::CompilationUnit& CU,
-      BinaryNinja::BinaryView& bv)
-  {
+  static std::unique_ptr<VarEngine>
+      create(TypeEngine& types, LIEF::dwarf::editor::CompilationUnit& CU,
+             BinaryNinja::BinaryView& bv) {
     auto engine = std::make_unique<VarEngine>(types, CU, bv);
     return engine;
   }
 
-  LIEF::dwarf::editor::Variable* add_variable(const BinaryNinja::DataVariable& var);
+  LIEF::dwarf::editor::Variable*
+      add_variable(const BinaryNinja::DataVariable& var);
 
   ~VarEngine() = default;
 
@@ -49,4 +50,3 @@ class VarEngine {
   std::map<uint64_t, std::unique_ptr<LIEF::dwarf::editor::Variable>> vars_;
 };
 }
-

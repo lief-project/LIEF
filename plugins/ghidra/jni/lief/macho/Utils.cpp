@@ -21,23 +21,13 @@
 namespace lief_jni::macho {
 
 int Utils::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "isMachO",
-      "(Ljava/lang/String;)Z",
-      jni_is_macho
-    ),
-    make(
-      "isFat",
-      "(Ljava/lang/String;)Z",
-      jni_is_fat
-    )
+  static const std::array NATIVE_METHODS{
+      make("isMachO", "(Ljava/lang/String;)Z", jni_is_macho),
+      make("isFat", "(Ljava/lang/String;)Z", jni_is_fat)
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

@@ -48,7 +48,7 @@ class LIEF_API DataDirectory : public Object {
   public:
   static constexpr size_t DEFAULT_NB = 16;
 
-  enum class TYPES: uint32_t  {
+  enum class TYPES : uint32_t {
     EXPORT_TABLE = 0,
     IMPORT_TABLE,
     RESOURCE_TABLE,
@@ -70,8 +70,7 @@ class LIEF_API DataDirectory : public Object {
   };
   DataDirectory() = default;
   DataDirectory(TYPES type) :
-    type_{type}
-  {}
+    type_{type} {}
 
   DataDirectory(const details::pe_data_directory& header, TYPES type);
 
@@ -131,12 +130,12 @@ class LIEF_API DataDirectory : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const DataDirectory& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DataDirectory& entry);
 
   /// \private
   LIEF_LOCAL
-    std::unique_ptr<SpanStream> stream(bool sized = true) const;
+  std::unique_ptr<SpanStream> stream(bool sized = true) const;
 
   private:
   uint32_t rva_ = 0;

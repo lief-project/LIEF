@@ -25,5 +25,7 @@ class PDB_types_Union : public PDB_types_ClassLike {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

@@ -33,11 +33,7 @@ inline std::vector<Range> make_range(const std::vector<LIEF::range_t>& ranges) {
   std::vector<Range> results;
   results.reserve(ranges.size());
   std::transform(ranges.begin(), ranges.end(), std::back_inserter(results),
-    [] (const LIEF::range_t& R) {
-      return make_range(R);
-    }
-  );
+                 [](const LIEF::range_t& R) { return make_range(R); });
   return results;
 }
 }
-

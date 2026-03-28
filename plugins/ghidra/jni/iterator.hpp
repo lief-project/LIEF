@@ -18,7 +18,7 @@
 
 namespace lief_jni {
 template<class T, class V, class J,
-  jni::metaprogramming::StringLiteral holder = "impl">
+         jni::metaprogramming::StringLiteral holder = "impl">
 class Iterator {
   public:
   Iterator() = delete;
@@ -43,7 +43,7 @@ class Iterator {
 
   static T* from_jni(jobject thiz) {
     return reinterpret_cast<T*>(
-      jni::LocalObject<T::kClass>{thiz}.template Access<holder>().Get()
+        jni::LocalObject<T::kClass>{thiz}.template Access<holder>().Get()
     );
   }
 
@@ -56,13 +56,12 @@ class Iterator {
   }
 
   static jobject create(V it) {
-    return jni::LocalObject<T::kClass>{
-      (jlong)new T(std::move(it))
-    }.Release();
+    return jni::LocalObject<T::kClass>{(jlong) new T(std::move(it))}.Release();
   }
 
   protected:
-  Iterator(V it) : it_(std::move(it)) {}
+  Iterator(V it) :
+    it_(std::move(it)) {}
   V it_;
 };
 }

@@ -24,11 +24,9 @@ namespace LIEF {
 JsonVisitor::JsonVisitor() = default;
 
 JsonVisitor::JsonVisitor(json node) :
-  node_{std::move(node)}
-{}
+  node_{std::move(node)} {}
 
-JsonVisitor::JsonVisitor(const JsonVisitor&)            = default;
+JsonVisitor::JsonVisitor(const JsonVisitor&) = default;
 JsonVisitor& JsonVisitor::operator=(const JsonVisitor&) = default;
 
 }
-

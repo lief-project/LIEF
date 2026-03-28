@@ -18,7 +18,7 @@
 
 #include <LIEF/LIEF.hpp>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "Abstract Reader" << '\n';
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <binary>" << '\n';
@@ -36,8 +36,7 @@ int main(int argc, char **argv) {
 
   // Log a formatted message with LIEF's logger
   LIEF::logging::log(LIEF::logging::LEVEL::DEBUG, "Hi: {} here is your number: {}",
-    argv[0], std::to_string(argc)
-  );
+                     argv[0], std::to_string(argc));
 
   // Disable logger
   LIEF::logging::disable();

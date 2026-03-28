@@ -26,37 +26,58 @@ class PE_Section : public AbstractSection {
   friend class PE_Factory;
 
   using lief_t = LIEF::PE::Section;
-  PE_Section(const lief_t& sec) : AbstractSection(sec) {}
-  PE_Section(std::unique_ptr<lief_t> impl) : AbstractSection(std::move(impl)) {}
+  PE_Section(const lief_t& sec) :
+    AbstractSection(sec) {}
+  PE_Section(std::unique_ptr<lief_t> impl) :
+    AbstractSection(std::move(impl)) {}
 
   static auto create() {
     return std::make_unique<PE_Section>(std::make_unique<lief_t>());
   }
 
   static auto create_with_name(std::string name) {
-    return std::make_unique<PE_Section>(
-      std::make_unique<lief_t>(std::move(name))
-    );
+    return std::make_unique<PE_Section>(std::make_unique<lief_t>(std::move(name)));
   }
 
-  static auto create_with_content(std::string name, const uint8_t* buffer, size_t size) {
-    return std::make_unique<PE_Section>(
-      std::make_unique<lief_t>(std::move(name), std::vector<uint8_t>{buffer, buffer + size})
-    );
+  static auto create_with_content(std::string name, const uint8_t* buffer,
+                                  size_t size) {
+    return std::make_unique<PE_Section>(std::make_unique<lief_t>(
+        std::move(name), std::vector<uint8_t>{buffer, buffer + size}
+    ));
   }
 
-  auto sizeof_raw_data() const { return impl().sizeof_raw_data(); }
-  auto virtual_size() const { return impl().virtual_size(); }
-  auto pointerto_raw_data() const { return impl().pointerto_raw_data(); }
-  auto pointerto_relocation() const { return impl().pointerto_relocation(); }
-  auto pointerto_line_numbers() const { return impl().pointerto_line_numbers(); }
-  auto numberof_relocations() const { return impl().numberof_relocations(); }
-  auto numberof_line_numbers() const { return impl().numberof_line_numbers(); }
-  auto characteristics() const { return impl().characteristics(); }
+  auto sizeof_raw_data() const {
+    return impl().sizeof_raw_data();
+  }
+  auto virtual_size() const {
+    return impl().virtual_size();
+  }
+  auto pointerto_raw_data() const {
+    return impl().pointerto_raw_data();
+  }
+  auto pointerto_relocation() const {
+    return impl().pointerto_relocation();
+  }
+  auto pointerto_line_numbers() const {
+    return impl().pointerto_line_numbers();
+  }
+  auto numberof_relocations() const {
+    return impl().numberof_relocations();
+  }
+  auto numberof_line_numbers() const {
+    return impl().numberof_line_numbers();
+  }
+  auto characteristics() const {
+    return impl().characteristics();
+  }
 
-  auto is_discardable() const { return impl().is_discardable(); }
+  auto is_discardable() const {
+    return impl().is_discardable();
+  }
 
-  Span padding() const { return make_span(impl().padding()); }
+  Span padding() const {
+    return make_span(impl().padding());
+  }
 
   auto coff_string() const {
     return details::try_unique<COFF_String>(impl().coff_string());
@@ -67,6 +88,10 @@ class PE_Section : public AbstractSection {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

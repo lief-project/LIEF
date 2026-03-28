@@ -38,71 +38,72 @@ class LIEF_API LoadCommand : public Object {
   friend class Builder;
   friend class BinaryParser;
   friend class Binary;
+
   public:
   using raw_t = std::vector<uint8_t>;
 
-  enum class TYPE: uint64_t {
-    UNKNOWN                  = 0,
-    SEGMENT                  = 0x00000001u,
-    SYMTAB                   = 0x00000002u,
-    SYMSEG                   = 0x00000003u,
-    THREAD                   = 0x00000004u,
-    UNIXTHREAD               = 0x00000005u,
-    LOADFVMLIB               = 0x00000006u,
-    IDFVMLIB                 = 0x00000007u,
-    IDENT                    = 0x00000008u,
-    FVMFILE                  = 0x00000009u,
-    PREPAGE                  = 0x0000000Au,
-    DYSYMTAB                 = 0x0000000Bu,
-    LOAD_DYLIB               = 0x0000000Cu,
-    ID_DYLIB                 = 0x0000000Du,
-    LOAD_DYLINKER            = 0x0000000Eu,
-    ID_DYLINKER              = 0x0000000Fu,
-    PREBOUND_DYLIB           = 0x00000010u,
-    ROUTINES                 = 0x00000011u,
-    SUB_FRAMEWORK            = 0x00000012u,
-    SUB_UMBRELLA             = 0x00000013u,
-    SUB_CLIENT               = 0x00000014u,
-    SUB_LIBRARY              = 0x00000015u,
-    TWOLEVEL_HINTS           = 0x00000016u,
-    PREBIND_CKSUM            = 0x00000017u,
-    LOAD_WEAK_DYLIB          = 0x80000018u,
-    SEGMENT_64               = 0x00000019u,
-    ROUTINES_64              = 0x0000001Au,
-    UUID                     = 0x0000001Bu,
-    RPATH                    = 0x8000001Cu,
-    CODE_SIGNATURE           = 0x0000001Du,
-    SEGMENT_SPLIT_INFO       = 0x0000001Eu,
-    REEXPORT_DYLIB           = 0x8000001Fu,
-    LAZY_LOAD_DYLIB          = 0x00000020u,
-    ENCRYPTION_INFO          = 0x00000021u,
-    DYLD_INFO                = 0x00000022u,
-    DYLD_INFO_ONLY           = 0x80000022u,
-    LOAD_UPWARD_DYLIB        = 0x80000023u,
-    VERSION_MIN_MACOSX       = 0x00000024u,
-    VERSION_MIN_IPHONEOS     = 0x00000025u,
-    FUNCTION_STARTS          = 0x00000026u,
-    DYLD_ENVIRONMENT         = 0x00000027u,
-    MAIN                     = 0x80000028u,
-    DATA_IN_CODE             = 0x00000029u,
-    SOURCE_VERSION           = 0x0000002Au,
-    DYLIB_CODE_SIGN_DRS      = 0x0000002Bu,
-    ENCRYPTION_INFO_64       = 0x0000002Cu,
-    LINKER_OPTION            = 0x0000002Du,
+  enum class TYPE : uint64_t {
+    UNKNOWN = 0,
+    SEGMENT = 0x00000001u,
+    SYMTAB = 0x00000002u,
+    SYMSEG = 0x00000003u,
+    THREAD = 0x00000004u,
+    UNIXTHREAD = 0x00000005u,
+    LOADFVMLIB = 0x00000006u,
+    IDFVMLIB = 0x00000007u,
+    IDENT = 0x00000008u,
+    FVMFILE = 0x00000009u,
+    PREPAGE = 0x0000000Au,
+    DYSYMTAB = 0x0000000Bu,
+    LOAD_DYLIB = 0x0000000Cu,
+    ID_DYLIB = 0x0000000Du,
+    LOAD_DYLINKER = 0x0000000Eu,
+    ID_DYLINKER = 0x0000000Fu,
+    PREBOUND_DYLIB = 0x00000010u,
+    ROUTINES = 0x00000011u,
+    SUB_FRAMEWORK = 0x00000012u,
+    SUB_UMBRELLA = 0x00000013u,
+    SUB_CLIENT = 0x00000014u,
+    SUB_LIBRARY = 0x00000015u,
+    TWOLEVEL_HINTS = 0x00000016u,
+    PREBIND_CKSUM = 0x00000017u,
+    LOAD_WEAK_DYLIB = 0x80000018u,
+    SEGMENT_64 = 0x00000019u,
+    ROUTINES_64 = 0x0000001Au,
+    UUID = 0x0000001Bu,
+    RPATH = 0x8000001Cu,
+    CODE_SIGNATURE = 0x0000001Du,
+    SEGMENT_SPLIT_INFO = 0x0000001Eu,
+    REEXPORT_DYLIB = 0x8000001Fu,
+    LAZY_LOAD_DYLIB = 0x00000020u,
+    ENCRYPTION_INFO = 0x00000021u,
+    DYLD_INFO = 0x00000022u,
+    DYLD_INFO_ONLY = 0x80000022u,
+    LOAD_UPWARD_DYLIB = 0x80000023u,
+    VERSION_MIN_MACOSX = 0x00000024u,
+    VERSION_MIN_IPHONEOS = 0x00000025u,
+    FUNCTION_STARTS = 0x00000026u,
+    DYLD_ENVIRONMENT = 0x00000027u,
+    MAIN = 0x80000028u,
+    DATA_IN_CODE = 0x00000029u,
+    SOURCE_VERSION = 0x0000002Au,
+    DYLIB_CODE_SIGN_DRS = 0x0000002Bu,
+    ENCRYPTION_INFO_64 = 0x0000002Cu,
+    LINKER_OPTION = 0x0000002Du,
     LINKER_OPTIMIZATION_HINT = 0x0000002Eu,
-    VERSION_MIN_TVOS         = 0x0000002Fu,
-    VERSION_MIN_WATCHOS      = 0x00000030u,
-    NOTE                     = 0x00000031u,
-    BUILD_VERSION            = 0x00000032u,
-    DYLD_EXPORTS_TRIE        = 0x80000033u,
-    DYLD_CHAINED_FIXUPS      = 0x80000034u,
-    FILESET_ENTRY            = 0x80000035u,
-    ATOM_INFO                = 0x00000036u,
-    FUNCTION_VARIANTS        = 0x00000037u,
-    FUNCTION_VARIANT_FIXUPS  = 0x00000038u,
-    TARGET_TRIPLE            = 0x00000039u,
+    VERSION_MIN_TVOS = 0x0000002Fu,
+    VERSION_MIN_WATCHOS = 0x00000030u,
+    NOTE = 0x00000031u,
+    BUILD_VERSION = 0x00000032u,
+    DYLD_EXPORTS_TRIE = 0x80000033u,
+    DYLD_CHAINED_FIXUPS = 0x80000034u,
+    FILESET_ENTRY = 0x80000035u,
+    ATOM_INFO = 0x00000036u,
+    FUNCTION_VARIANTS = 0x00000037u,
+    FUNCTION_VARIANT_FIXUPS = 0x00000038u,
+    TARGET_TRIPLE = 0x00000039u,
 
-    LIEF_UNKNOWN             = 0xffee0001u
+    LIEF_UNKNOWN = 0xffee0001u,
   };
 
   public:
@@ -110,8 +111,7 @@ class LIEF_API LoadCommand : public Object {
   LoadCommand(const details::load_command& command);
   LoadCommand(LoadCommand::TYPE type, uint32_t size) :
     command_(type),
-    size_(size)
-  {}
+    size_(size) {}
 
   LoadCommand& operator=(const LoadCommand& copy) = default;
   LoadCommand(const LoadCommand& copy) = default;
@@ -182,8 +182,8 @@ class LIEF_API LoadCommand : public Object {
   }
 
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const LoadCommand& cmd) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const LoadCommand& cmd) {
     return cmd.print(os);
   }
 

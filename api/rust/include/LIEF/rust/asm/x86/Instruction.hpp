@@ -24,18 +24,24 @@ class asm_x86_Instruction : public asm_Instruction {
   public:
   using lief_t = LIEF::assembly::x86::Instruction;
 
-  class it_operands :
-      public ForwardIterator<asm_x86_Operand, LIEF::assembly::x86::Operand::Iterator>
-  {
+  class it_operands
+    : public ForwardIterator<asm_x86_Operand,
+                             LIEF::assembly::x86::Operand::Iterator> {
     public:
-    it_operands(const asm_x86_Instruction::lief_t& src)
-      : ForwardIterator(src.operands()) { }
+    it_operands(const asm_x86_Instruction::lief_t& src) :
+      ForwardIterator(src.operands()) {}
 
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  uint64_t opcode() const { return to_int(impl().opcode()); }
+  uint64_t opcode() const {
+    return to_int(impl().opcode());
+  }
 
   auto operands() const {
     return std::make_unique<it_operands>(impl());
@@ -46,5 +52,7 @@ class asm_x86_Instruction : public asm_Instruction {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

@@ -28,5 +28,3 @@ std::string SigningCertificateV2::print() const {
 }
 
 }
-
-

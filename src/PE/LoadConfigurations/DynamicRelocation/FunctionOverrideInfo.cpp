@@ -23,32 +23,30 @@
 
 namespace LIEF::PE {
 
-FunctionOverrideInfo::FunctionOverrideInfo(
-  uint32_t original_rva, uint32_t bdd_offset, uint32_t base_reloc_size
-) :
+FunctionOverrideInfo::FunctionOverrideInfo(uint32_t original_rva,
+                                           uint32_t bdd_offset,
+                                           uint32_t base_reloc_size) :
   original_rva_(original_rva),
   bdd_offset_(bdd_offset),
-  base_relocsz_(base_reloc_size)
-{}
+  base_relocsz_(base_reloc_size) {}
 
 FunctionOverrideInfo::FunctionOverrideInfo(const FunctionOverrideInfo& other) :
   original_rva_(other.original_rva_),
   bdd_offset_(other.bdd_offset_),
   base_relocsz_(other.base_relocsz_),
-  rvas_(other.rvas_)
-{
+  rvas_(other.rvas_) {
   if (!other.relocations_.empty()) {
     relocations_.reserve(other.relocations_.size());
     std::transform(other.relocations_.begin(), other.relocations_.end(),
                    std::back_inserter(relocations_),
-      [] (const std::unique_ptr<Relocation>& R) {
-        return std::make_unique<Relocation>(*R);
-      }
-    );
+                   [](const std::unique_ptr<Relocation>& R) {
+                     return std::make_unique<Relocation>(*R);
+                   });
   }
 }
 
-FunctionOverrideInfo& FunctionOverrideInfo::operator=(const FunctionOverrideInfo& other) {
+FunctionOverrideInfo&
+    FunctionOverrideInfo::operator=(const FunctionOverrideInfo& other) {
   if (&other == this) {
     return *this;
   }
@@ -62,17 +60,17 @@ FunctionOverrideInfo& FunctionOverrideInfo::operator=(const FunctionOverrideInfo
     relocations_.reserve(other.relocations_.size());
     std::transform(other.relocations_.begin(), other.relocations_.end(),
                    std::back_inserter(relocations_),
-      [] (const std::unique_ptr<Relocation>& R) {
-        return std::make_unique<Relocation>(*R);
-      }
-    );
+                   [](const std::unique_ptr<Relocation>& R) {
+                     return std::make_unique<Relocation>(*R);
+                   });
   }
 
   return *this;
 }
 
 FunctionOverrideInfo::FunctionOverrideInfo(FunctionOverrideInfo&&) = default;
-FunctionOverrideInfo& FunctionOverrideInfo::operator=(FunctionOverrideInfo&&) = default;
+FunctionOverrideInfo&
+    FunctionOverrideInfo::operator=(FunctionOverrideInfo&&) = default;
 
 FunctionOverrideInfo::~FunctionOverrideInfo() = default;
 
@@ -103,41 +101,51 @@ std::string FunctionOverrideInfo::to_string() const {
 }
 
 std::unique_ptr<FunctionOverrideInfo>
-  FunctionOverrideInfo::parse(Parser& ctx, SpanStream& strm)
-{
+    FunctionOverrideInfo::parse(Parser& ctx, SpanStream& strm) {
   auto OriginalRva = strm.read<uint32_t>();
   if (!OriginalRva) {
-    LIEF_DEBUG("Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.OriginalRva");
+    LIEF_DEBUG(
+        "Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.OriginalRva"
+    );
     return nullptr;
   }
 
   auto BDDOffset = strm.read<uint32_t>();
   if (!BDDOffset) {
-    LIEF_DEBUG("Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.BDDOffset");
+    LIEF_DEBUG(
+        "Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.BDDOffset"
+    );
     return nullptr;
   }
 
   auto RvaSize = strm.read<uint32_t>();
   if (!RvaSize) {
-    LIEF_DEBUG("Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.RvaSize");
+    LIEF_DEBUG(
+        "Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.RvaSize"
+    );
     return nullptr;
   }
 
   auto BaseRelocSize = strm.read<uint32_t>();
   if (!BaseRelocSize) {
-    LIEF_DEBUG("Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.BaseRelocSize");
+    LIEF_DEBUG(
+        "Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.BaseRelocSize"
+    );
     return nullptr;
   }
 
-  auto func_override_info = std::make_unique<FunctionOverrideInfo>(
-    *OriginalRva, *BDDOffset, *BaseRelocSize
-  );
+  auto func_override_info =
+      std::make_unique<FunctionOverrideInfo>(*OriginalRva, *BDDOffset,
+                                             *BaseRelocSize);
 
 
   LIEF_DEBUG("OriginalRva: {:#010x}", *OriginalRva);
 
   if (*RvaSize % sizeof(uint32_t) != 0) {
-    LIEF_WARN("IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.RvaSize misaligned: {:#010x}", *RvaSize);
+    LIEF_WARN(
+        "IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.RvaSize misaligned: {:#010x}",
+        *RvaSize
+    );
   }
 
   const size_t count = *RvaSize / sizeof(uint32_t);
@@ -147,16 +155,21 @@ std::unique_ptr<FunctionOverrideInfo>
   for (size_t i = 0; i < count; ++i) {
     auto RVA = strm.read<uint32_t>();
     if (!RVA) {
-      LIEF_WARN("Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.RVAs[{}]", i);
+      LIEF_WARN(
+          "Failed to read IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.RVAs[{}]", i
+      );
       return func_override_info;
     }
-    LIEF_DEBUG("IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.RVA[{}]: {:#010x}", i, *RVA);
+    LIEF_DEBUG("IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.RVA[{}]: {:#010x}", i,
+               *RVA);
     func_override_info->rvas_.push_back(*RVA);
   }
 
   auto BaseRelocs = strm.slice(strm.pos(), *BaseRelocSize);
   if (!BaseRelocs) {
-    LIEF_WARN("Failed to slice IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.BaseRelocs");
+    LIEF_WARN(
+        "Failed to slice IMAGE_FUNCTION_OVERRIDE_DYNAMIC_RELOCATION.BaseRelocs"
+    );
     return func_override_info;
   }
 

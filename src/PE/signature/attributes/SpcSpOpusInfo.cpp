@@ -38,4 +38,3 @@ std::string SpcSpOpusInfo::print() const {
 
 
 }
-

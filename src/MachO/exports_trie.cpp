@@ -25,7 +25,8 @@
 
 namespace LIEF::MachO {
 void show_trie(std::ostream& output, std::string output_prefix,
-               BinaryStream& stream, uint64_t start, uint64_t end, const std::string& prefix) {
+               BinaryStream& stream, uint64_t start, uint64_t end,
+               const std::string& prefix) {
 
 
   if (stream.pos() >= end) {
@@ -85,7 +86,6 @@ void show_trie(std::ostream& output, std::string output_prefix,
     }
 
 
-
     // STUB_AND_RESOLVER
     // =================
     if (is_true(flags & ExportInfo::FLAGS::STUB_AND_RESOLVER)) {
@@ -100,10 +100,12 @@ void show_trie(std::ostream& output, std::string output_prefix,
     output << symbol_name;
     output << "{";
     output << "addr: " << std::showbase << std::hex << address << ", ";
-    output << "flags: " << std::showbase << std::hex << static_cast<uint64_t>(flags);
+    output << "flags: " << std::showbase << std::hex
+           << static_cast<uint64_t>(flags);
     if (is_true(flags & ExportInfo::FLAGS::REEXPORT)) {
       output << ", ";
-      output << "re-exported from #" << std::dec << ordinal << " - " << imported_name;
+      output << "re-exported from #" << std::dec << ordinal << " - "
+             << imported_name;
     }
 
     if (is_true(flags & ExportInfo::FLAGS::STUB_AND_RESOLVER) && other > 0) {
@@ -111,13 +113,12 @@ void show_trie(std::ostream& output, std::string output_prefix,
       output << "other:" << std::showbase << std::hex << other;
     }
 
-    //if (!binary_->has_symbol(symbol_name)) {
-    //  output << " [NOT REGISTRED]";
-    //}
+    // if (!binary_->has_symbol(symbol_name)) {
+    //   output << " [NOT REGISTRED]";
+    // }
 
     output << "}";
     output << '\n';
-
   }
   stream.setpos(children_offset);
   uint32_t nb_children = 0;
@@ -149,17 +150,18 @@ void show_trie(std::ostream& output, std::string output_prefix,
       break;
     }
 
-    output << output_prefix << name << "@off." << std::hex << std::showbase << stream.pos() << '\n';
+    output << output_prefix << name << "@off." << std::hex << std::showbase
+           << stream.pos() << '\n';
 
     size_t current_pos = stream.pos();
     stream.setpos(start + child_node_offet);
     show_trie(output, output_prefix, stream, start, end, name);
     stream.setpos(current_pos);
   }
-
 }
 
-std::vector<uint8_t> create_trie(const exports_list_t& exports, size_t pointer_size) {
+std::vector<uint8_t> create_trie(const exports_list_t& exports,
+                                 size_t pointer_size) {
 
   std::unique_ptr<TrieNode> start = TrieNode::create("");
   std::vector<std::unique_ptr<TrieNode>> nodes;
@@ -200,4 +202,3 @@ std::vector<uint8_t> create_trie(const exports_list_t& exports, size_t pointer_s
   return raw_output.raw();
 }
 }
-

@@ -27,13 +27,11 @@ namespace PE {
 /// Class which represents an entry associated to the RichHeader
 class LIEF_API RichEntry : public Object {
   public:
-
   RichEntry() = default;
   RichEntry(uint16_t id, uint16_t build_id, uint32_t count) :
     id_(id),
     build_id_(build_id),
-    count_(count)
-  {}
+    count_(count) {}
 
   RichEntry(const RichEntry&) = default;
   RichEntry& operator=(const RichEntry&) = default;
@@ -66,17 +64,15 @@ class LIEF_API RichEntry : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const RichEntry& rich_entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const RichEntry& rich_entry);
 
   private:
   uint16_t id_ = 0;
   uint16_t build_id_ = 0;
   uint32_t count_ = 0;
-
 };
 }
 }
 
 #endif
-

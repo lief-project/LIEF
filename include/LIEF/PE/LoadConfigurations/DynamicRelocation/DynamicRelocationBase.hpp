@@ -117,9 +117,8 @@ class LIEF_API DynamicRelocation {
     return const_cast<DynamicRelocation*>(this)->as<T>();
   }
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const DynamicRelocation& reloc)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DynamicRelocation& reloc) {
     os << reloc.to_string();
     return os;
   }

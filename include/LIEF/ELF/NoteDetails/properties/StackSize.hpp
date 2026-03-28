@@ -39,15 +39,14 @@ class LIEF_API StackSize : public NoteGnuProperty::Property {
     return stack_size_;
   }
 
-  void dump(std::ostream &os) const override;
+  void dump(std::ostream& os) const override;
 
   ~StackSize() override = default;
 
   protected:
   StackSize(uint64_t stack_size) :
     NoteGnuProperty::Property(NoteGnuProperty::Property::TYPE::STACK_SIZE),
-    stack_size_(stack_size)
-  {}
+    stack_size_(stack_size) {}
   uint64_t stack_size_ = 0;
 };
 }

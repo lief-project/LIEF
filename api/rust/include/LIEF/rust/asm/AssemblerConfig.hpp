@@ -6,4 +6,4 @@
 struct AssemblerConfig_r;
 
 LIEF_API std::unique_ptr<LIEF::assembly::AssemblerConfig>
-  from_rust(const AssemblerConfig_r& config);
+    from_rust(const AssemblerConfig_r& config);

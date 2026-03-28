@@ -39,17 +39,17 @@ class LIEF_API BuildToolVersion : public Object {
   public:
   enum class TOOLS {
     UNKNOWN = 0,
-    CLANG   = 1,
-    SWIFT   = 2,
-    LD      = 3,
-    LLD     = 4,
+    CLANG = 1,
+    SWIFT = 2,
+    LD = 3,
+    LLD = 4,
 
-    METAL           = 1024,
-    AIRLLD          = 1025,
-    AIRNT           = 1026,
-    AIRNT_PLUGIN    = 1027,
-    AIRPACK         = 1028,
-    GPUARCHIVER     = 1031,
+    METAL = 1024,
+    AIRLLD = 1025,
+    AIRNT = 1026,
+    AIRNT_PLUGIN = 1027,
+    AIRPACK = 1028,
+    GPUARCHIVER = 1031,
     METAL_FRAMEWORK = 1032,
   };
 
@@ -71,8 +71,8 @@ class LIEF_API BuildToolVersion : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const BuildToolVersion& tool);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const BuildToolVersion& tool);
 
   private:
   TOOLS tool_ = TOOLS::UNKNOWN;

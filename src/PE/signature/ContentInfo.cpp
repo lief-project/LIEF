@@ -29,13 +29,11 @@ namespace LIEF::PE {
 
 
 ContentInfo::ContentInfo() :
-  value_(std::make_unique<GenericContent>())
-{}
+  value_(std::make_unique<GenericContent>()) {}
 
 ContentInfo::ContentInfo(const ContentInfo& other) :
   Object::Object(other),
-  value_{other.value_->clone()}
-{}
+  value_{other.value_->clone()} {}
 
 ContentInfo& ContentInfo::operator=(ContentInfo other) {
   swap(other);
@@ -70,4 +68,3 @@ std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info) {
 }
 
 }
-

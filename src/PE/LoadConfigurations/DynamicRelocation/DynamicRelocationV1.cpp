@@ -29,8 +29,7 @@ namespace LIEF::PE {
 
 template<class PE_T>
 std::unique_ptr<DynamicRelocationV1>
-  DynamicRelocationV1::parse(Parser& ctx, BinaryStream& strm)
-{
+    DynamicRelocationV1::parse(Parser& ctx, BinaryStream& strm) {
   using ptr_t = typename PE_T::uint;
   // typedef struct _IMAGE_DYNAMIC_RELOCATION32 {
   //     DWORD      Symbol;
@@ -90,11 +89,9 @@ std::string DynamicRelocationV1::to_string() const {
   return oss.str();
 }
 
-template
-std::unique_ptr<DynamicRelocationV1>
-  DynamicRelocationV1::parse<details::PE32>(Parser& ctx, BinaryStream&);
+template std::unique_ptr<DynamicRelocationV1>
+    DynamicRelocationV1::parse<details::PE32>(Parser& ctx, BinaryStream&);
 
-template
-std::unique_ptr<DynamicRelocationV1>
-  DynamicRelocationV1::parse<details::PE64>(Parser& ctx, BinaryStream&);
+template std::unique_ptr<DynamicRelocationV1>
+    DynamicRelocationV1::parse<details::PE64>(Parser& ctx, BinaryStream&);
 }

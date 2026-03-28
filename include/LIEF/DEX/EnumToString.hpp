@@ -32,4 +32,3 @@ LIEF_API const char* to_string(Type::PRIMITIVES e);
 } // namespace LIEF
 
 #endif
-

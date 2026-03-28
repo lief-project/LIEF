@@ -42,13 +42,12 @@ void init_c_binary(Pe_Binary_t* c_binary, Binary* binary) {
   init_c_sections(c_binary, binary);
   init_c_data_directories(c_binary, binary);
   init_c_imports(c_binary, binary);
-
 }
 
 }
 }
 
-Pe_Binary_t* pe_parse(const char *file) {
+Pe_Binary_t* pe_parse(const char* file) {
   Binary* binary = Parser::parse(file).release();
 
   if (binary == nullptr) {

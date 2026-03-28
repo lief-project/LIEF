@@ -21,20 +21,43 @@
 class ELF_Section : public AbstractSection {
   public:
   using lief_t = LIEF::ELF::Section;
-  ELF_Section(const lief_t& section) : AbstractSection(section) {}
+  ELF_Section(const lief_t& section) :
+    AbstractSection(section) {}
 
-  uint64_t get_type() const { return to_int(impl().type()); }
-  uint64_t flags() const { return impl().flags(); }
-  uint64_t alignment() const { return impl().alignment(); }
-  uint64_t information() const { return impl().information(); }
-  uint64_t entry_size() const { return impl().entry_size(); }
-  uint64_t link() const { return impl().link(); }
-  uint64_t file_offset() const { return impl().file_offset(); }
-  uint64_t original_size() const { return impl().original_size(); }
-  Span content() const { return make_span(impl().content()); }
+  uint64_t get_type() const {
+    return to_int(impl().type());
+  }
+  uint64_t flags() const {
+    return impl().flags();
+  }
+  uint64_t alignment() const {
+    return impl().alignment();
+  }
+  uint64_t information() const {
+    return impl().information();
+  }
+  uint64_t entry_size() const {
+    return impl().entry_size();
+  }
+  uint64_t link() const {
+    return impl().link();
+  }
+  uint64_t file_offset() const {
+    return impl().file_offset();
+  }
+  uint64_t original_size() const {
+    return impl().original_size();
+  }
+  Span content() const {
+    return make_span(impl().content());
+  }
 
-  std::string to_string() const { return details::to_string(impl()); }
+  std::string to_string() const {
+    return details::to_string(impl());
+  }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

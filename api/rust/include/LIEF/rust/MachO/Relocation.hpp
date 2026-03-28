@@ -25,11 +25,18 @@
 class MachO_Relocation : public AbstractRelocation {
   public:
   using lief_t = LIEF::MachO::Relocation;
-  MachO_Relocation(const lief_t& reloc) : AbstractRelocation(reloc) {}
+  MachO_Relocation(const lief_t& reloc) :
+    AbstractRelocation(reloc) {}
 
-  bool is_pc_relative() const { return impl().is_pc_relative(); };
-  auto architecture() const { return to_int(impl().architecture()); };
-  auto origin() const { return to_int(impl().origin()); };
+  bool is_pc_relative() const {
+    return impl().is_pc_relative();
+  };
+  auto architecture() const {
+    return to_int(impl().architecture());
+  };
+  auto origin() const {
+    return to_int(impl().origin());
+  };
 
   auto symbol() const {
     return details::try_unique<MachO_Symbol>(impl().symbol());
@@ -44,5 +51,7 @@ class MachO_Relocation : public AbstractRelocation {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

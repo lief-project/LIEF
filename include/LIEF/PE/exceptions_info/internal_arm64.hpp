@@ -78,8 +78,7 @@ struct arm64_unpacked_t {
   }
 
   uint16_t epilog_count() const {
-    return is_extended() ? (data[1] & 0x0000ffff) :
-                           (data[0] & 0x07C00000) >> 22;
+    return is_extended() ? (data[1] & 0x0000ffff) : (data[0] & 0x07C00000) >> 22;
   }
 
   uint8_t code_words() const {

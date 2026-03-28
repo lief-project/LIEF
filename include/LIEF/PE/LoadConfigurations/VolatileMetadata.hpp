@@ -89,7 +89,8 @@ class LIEF_API VolatileMetadata {
   }
 
   uint32_t info_ranges_size() const {
-    static_assert(sizeof(range_t) == 8, "Can't be used for computing the raw size");
+    static_assert(sizeof(range_t) == 8,
+                  "Can't be used for computing the raw size");
     return info_ranges_.size() * sizeof(range_t);
   }
 
@@ -128,16 +129,15 @@ class LIEF_API VolatileMetadata {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const VolatileMetadata& meta)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const VolatileMetadata& meta) {
     os << meta.to_string();
     return os;
   }
 
   /// \private
-  LIEF_LOCAL static std::unique_ptr<VolatileMetadata>
-    parse(Parser& ctx, BinaryStream& stream);
+  LIEF_LOCAL static std::unique_ptr<VolatileMetadata> parse(Parser& ctx,
+                                                            BinaryStream& stream);
 
   private:
   uint32_t size_ = 0;
@@ -149,7 +149,6 @@ class LIEF_API VolatileMetadata {
 
   access_table_t access_table_;
   info_ranges_t info_ranges_;
-
 };
 }
 }

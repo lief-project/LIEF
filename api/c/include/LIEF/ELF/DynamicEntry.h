@@ -28,38 +28,38 @@ struct Elf_DynamicEntry_t {
 };
 
 struct Elf_DynamicEntry_Library_t {
-  uint64_t    tag;
-  uint64_t    value;
+  uint64_t tag;
+  uint64_t value;
   const char* name;
 };
 
 struct Elf_DynamicEntry_SharedObject_t {
-  uint64_t    tag;
-  uint64_t    value;
+  uint64_t tag;
+  uint64_t value;
   const char* name;
 };
 
 struct Elf_DynamicEntry_Auxiliary_t {
-  uint64_t    tag;
-  uint64_t    value;
+  uint64_t tag;
+  uint64_t value;
   const char* name;
 };
 
 struct Elf_DynamicEntry_Filter_t {
-  uint64_t    tag;
-  uint64_t    value;
+  uint64_t tag;
+  uint64_t value;
   const char* name;
 };
 
 struct Elf_DynamicEntry_Array_t {
-  uint64_t  tag;
-  uint64_t  value;
+  uint64_t tag;
+  uint64_t value;
   uint64_t* array;
 };
 
 struct Elf_DynamicEntry_Rpath_t {
-  uint64_t    tag;
-  uint64_t    value;
+  uint64_t tag;
+  uint64_t value;
   const char* rpath;
 };
 
@@ -74,15 +74,15 @@ struct Elf_DynamicEntry_Flags_t {
   uint64_t value;
 };
 
-typedef struct Elf_DynamicEntry_t              Elf_DynamicEntry_t;
-typedef struct Elf_DynamicEntry_Library_t      Elf_DynamicEntry_Library_t;
+typedef struct Elf_DynamicEntry_t Elf_DynamicEntry_t;
+typedef struct Elf_DynamicEntry_Library_t Elf_DynamicEntry_Library_t;
 typedef struct Elf_DynamicEntry_SharedObject_t Elf_DynamicEntry_SharedObject_t;
-typedef struct Elf_DynamicEntry_Auxiliary_t    Elf_DynamicEntry_Auxiliary_t;
-typedef struct Elf_DynamicEntry_Filter_t       Elf_DynamicEntry_Filter_t;
-typedef struct Elf_DynamicEntry_Array_t        Elf_DynamicEntry_Array_t;
-typedef struct Elf_DynamicEntry_Rpath_t        Elf_DynamicEntry_Rpath_t;
-typedef struct Elf_DynamicEntry_RunPath_t      Elf_DynamicEntry_RunPath_t;
-typedef struct Elf_DynamicEntry_Flags_t        Elf_DynamicEntry_Flags_t;
+typedef struct Elf_DynamicEntry_Auxiliary_t Elf_DynamicEntry_Auxiliary_t;
+typedef struct Elf_DynamicEntry_Filter_t Elf_DynamicEntry_Filter_t;
+typedef struct Elf_DynamicEntry_Array_t Elf_DynamicEntry_Array_t;
+typedef struct Elf_DynamicEntry_Rpath_t Elf_DynamicEntry_Rpath_t;
+typedef struct Elf_DynamicEntry_RunPath_t Elf_DynamicEntry_RunPath_t;
+typedef struct Elf_DynamicEntry_Flags_t Elf_DynamicEntry_Flags_t;
 
 #ifdef __cplusplus
 }

@@ -17,11 +17,16 @@
 
 #define BN_PLUGIN_LOG_NAME "lief-binaryninja"
 
-#define BN_TRACE(...) binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).trace(__VA_ARGS__)
-#define BN_DEBUG(...) binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).debug(__VA_ARGS__)
-#define BN_INFO(...)  binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).info(__VA_ARGS__)
-#define BN_WARN(...)  binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).warn(__VA_ARGS__)
-#define BN_ERR(...)   binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).err(__VA_ARGS__)
+#define BN_TRACE(...)                                                             \
+  binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).trace(__VA_ARGS__)
+#define BN_DEBUG(...)                                                             \
+  binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).debug(__VA_ARGS__)
+#define BN_INFO(...)                                                              \
+  binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).info(__VA_ARGS__)
+#define BN_WARN(...)                                                              \
+  binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).warn(__VA_ARGS__)
+#define BN_ERR(...)                                                               \
+  binaryninja::core::Logger::instance(BN_PLUGIN_LOG_NAME).err(__VA_ARGS__)
 
 namespace binaryninja::core {
 inline void enable_debug_log() {

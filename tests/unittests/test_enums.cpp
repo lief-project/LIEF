@@ -17,12 +17,12 @@
 #include <catch2/catch_test_macros.hpp>
 #include <LIEF/enums.hpp>
 
-enum class TEST_ENUM: uint32_t  {
+enum class TEST_ENUM : uint32_t {
   None = 0,
   A = 1 << 2,
   B = 1 << 5,
 
-  A_or_B  = A | B,
+  A_or_B = A | B,
   A_and_B = A & B,
   not_A = ~A,
 };

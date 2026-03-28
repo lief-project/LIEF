@@ -68,7 +68,8 @@ std::unique_ptr<LIEF::Binary> get_bin(BinaryNinja::BinaryView& bv) {
   std::string original_file = bv.GetFile()->GetOriginalFilename();
   if (LIEF::MachO::is_macho(original_file)) {
     bn::Ref<bn::Architecture> arch = bv.GetDefaultArchitecture();
-    std::unique_ptr<LIEF::MachO::FatBinary> fat = LIEF::MachO::Parser::parse(original_file);
+    std::unique_ptr<LIEF::MachO::FatBinary> fat =
+        LIEF::MachO::Parser::parse(original_file);
     if (fat == nullptr) {
       return nullptr;
     }
@@ -102,8 +103,8 @@ std::unique_ptr<LIEF::Binary> get_bin(BinaryNinja::BinaryView& bv) {
       return fat->take(LIEF::MachO::Header::CPU_TYPE::POWERPC64);
     }
 
-    BN_ERR("Unsupported architecture: {} ({})",
-           arch_name, bv.GetDefaultPlatform()->GetName());
+    BN_ERR("Unsupported architecture: {} ({})", arch_name,
+           bv.GetDefaultPlatform()->GetName());
     return nullptr;
   }
 

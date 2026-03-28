@@ -24,8 +24,7 @@ namespace LIEF::MachO {
 
 DynamicSymbolCommand::DynamicSymbolCommand() :
   LoadCommand::LoadCommand{LoadCommand::TYPE::DYSYMTAB,
-                           sizeof(details::dysymtab_command)}
-{}
+                           sizeof(details::dysymtab_command)} {}
 
 DynamicSymbolCommand::DynamicSymbolCommand(const details::dysymtab_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -55,8 +54,7 @@ DynamicSymbolCommand::DynamicSymbolCommand(const details::dysymtab_command& cmd)
   nb_external_relocations_{cmd.nextrel},
 
   local_relocation_offset_{cmd.locreloff},
-  nb_local_relocations_{cmd.nlocrel}
-{}
+  nb_local_relocations_{cmd.nlocrel} {}
 
 
 void DynamicSymbolCommand::accept(Visitor& visitor) const {
@@ -68,25 +66,36 @@ std::ostream& DynamicSymbolCommand::print(std::ostream& os) const {
   static constexpr auto DEFAULT_FMT = "{:36}: {:#x}\n";
   os << fmt::format(DEFAULT_FMT, "First local symbol index", idx_local_symbol());
   os << fmt::format(DEFAULT_FMT, "Number of local symbols", nb_local_symbols());
-  os << fmt::format(DEFAULT_FMT, "External symbol index", idx_external_define_symbol());
-  os << fmt::format(DEFAULT_FMT, "Number of external symbols", nb_external_define_symbols());
+  os << fmt::format(DEFAULT_FMT, "External symbol index",
+                    idx_external_define_symbol());
+  os << fmt::format(DEFAULT_FMT, "Number of external symbols",
+                    nb_external_define_symbols());
   os << fmt::format(DEFAULT_FMT, "Undefined symbol index", idx_undefined_symbol());
-  os << fmt::format(DEFAULT_FMT, "Number of undefined symbols", nb_undefined_symbols());
+  os << fmt::format(DEFAULT_FMT, "Number of undefined symbols",
+                    nb_undefined_symbols());
   os << fmt::format(DEFAULT_FMT, "Table of content offset", toc_offset());
   os << fmt::format(DEFAULT_FMT, "Number of entries in TOC", nb_toc());
   os << fmt::format(DEFAULT_FMT, "Module table offset", module_table_offset());
-  os << fmt::format(DEFAULT_FMT, "Number of entries in module table", nb_module_table());
-  os << fmt::format(DEFAULT_FMT, "External reference table offset", external_reference_symbol_offset());
-  os << fmt::format(DEFAULT_FMT, "Number of external reference", nb_external_reference_symbols());
-  os << fmt::format(DEFAULT_FMT, "Indirect symbols offset", indirect_symbol_offset());
-  os << fmt::format(DEFAULT_FMT, "Number of indirect symbols", nb_indirect_symbols());
-  os << fmt::format(DEFAULT_FMT, "External relocation offset", external_relocation_offset());
-  os << fmt::format(DEFAULT_FMT, "Number of external relocations", nb_external_relocations());
-  os << fmt::format(DEFAULT_FMT, "Local relocation offset", local_relocation_offset());
-  os << fmt::format(DEFAULT_FMT, "Number of local relocations", nb_local_relocations());
+  os << fmt::format(DEFAULT_FMT, "Number of entries in module table",
+                    nb_module_table());
+  os << fmt::format(DEFAULT_FMT, "External reference table offset",
+                    external_reference_symbol_offset());
+  os << fmt::format(DEFAULT_FMT, "Number of external reference",
+                    nb_external_reference_symbols());
+  os << fmt::format(DEFAULT_FMT, "Indirect symbols offset",
+                    indirect_symbol_offset());
+  os << fmt::format(DEFAULT_FMT, "Number of indirect symbols",
+                    nb_indirect_symbols());
+  os << fmt::format(DEFAULT_FMT, "External relocation offset",
+                    external_relocation_offset());
+  os << fmt::format(DEFAULT_FMT, "Number of external relocations",
+                    nb_external_relocations());
+  os << fmt::format(DEFAULT_FMT, "Local relocation offset",
+                    local_relocation_offset());
+  os << fmt::format(DEFAULT_FMT, "Number of local relocations",
+                    nb_local_relocations());
 
   return os;
 }
 
 }
-

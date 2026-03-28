@@ -22,16 +22,15 @@
 
 namespace lief_jni::generic {
 
-class Relocation : public JNI<
-  Relocation, canbe_unique<LIEF::Relocation>>
-{
+class Relocation : public JNI<Relocation, canbe_unique<LIEF::Relocation>> {
   public:
   using JNI::JNI;
-  static constexpr jni::Class kClass {
-    "lief/generic/Relocation",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/generic/Relocation",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static int register_natives(JNIEnv* env);
 

@@ -34,8 +34,7 @@ class ASN1Reader {
   ASN1Reader() = delete;
 
   ASN1Reader(BinaryStream& stream) :
-    stream_(stream)
-  {}
+    stream_(stream) {}
 
   ASN1Reader(const ASN1Reader&) = delete;
   ASN1Reader& operator=(const ASN1Reader&) = delete;

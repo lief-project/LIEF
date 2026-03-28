@@ -32,10 +32,11 @@ class File;
 class LIEF_API Parser {
   public:
   static std::unique_ptr<File> parse(const std::string& file);
-  static std::unique_ptr<File> parse(std::vector<uint8_t> data, const std::string& name = "");
+  static std::unique_ptr<File> parse(std::vector<uint8_t> data,
+                                     const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
   private:
   Parser();
@@ -95,8 +96,8 @@ class LIEF_API Parser {
 
 
   //// Parse a **Single** java.lang.DexCache object
-  //template<typename ART_T, typename PTR_T>
-  //void parse_class_roots(size_t object_offset);
+  // template<typename ART_T, typename PTR_T>
+  // void parse_class_roots(size_t object_offset);
 
   std::unique_ptr<File> file_;
   std::unique_ptr<BinaryStream> stream_;

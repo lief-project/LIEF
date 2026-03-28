@@ -28,17 +28,17 @@
 
 #include "jni/lief/Utils.hpp"
 
-jint JNI_OnLoad(JavaVM *vm, void *reserved) {
+jint JNI_OnLoad(JavaVM* vm, void* reserved) {
   static auto jvm = std::make_unique<jni::JvmRef<jni::kDefaultJvm>>(vm);
-  LIEF::logging::named::set_logger(GHIDRA_LIEF_LOGGER_NAME,
-    spdlog::ghidra_logger_mt(GHIDRA_LIEF_LOGGER_NAME, GHIDRA_LIEF_LOGGER_NAME)
+  LIEF::logging::named::set_logger(
+      GHIDRA_LIEF_LOGGER_NAME,
+      spdlog::ghidra_logger_mt(GHIDRA_LIEF_LOGGER_NAME, GHIDRA_LIEF_LOGGER_NAME)
   );
 
-  LIEF::logging::named::set_level(
-    GHIDRA_LIEF_LOGGER_NAME,
-    getenv("LIEF_JNI_DEBUG") != nullptr ? LIEF::logging::LEVEL::DEBUG :
-                                          LIEF::logging::LEVEL::INFO
-  );
+  LIEF::logging::named::set_level(GHIDRA_LIEF_LOGGER_NAME,
+                                  getenv("LIEF_JNI_DEBUG") != nullptr ?
+                                      LIEF::logging::LEVEL::DEBUG :
+                                      LIEF::logging::LEVEL::INFO);
 
   JNIEnv* env = nullptr;
   if (int ret = vm->GetEnv((void**)&env, JNI_VERSION_1_6); ret == JNI_EDETACHED) {

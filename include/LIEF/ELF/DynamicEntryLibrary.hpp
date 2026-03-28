@@ -32,13 +32,11 @@ class LIEF_API DynamicEntryLibrary : public DynamicEntry {
   using DynamicEntry::DynamicEntry;
 
   DynamicEntryLibrary() :
-    DynamicEntry::DynamicEntry{DynamicEntry::TAG::NEEDED, 0}
-  {}
+    DynamicEntry::DynamicEntry{DynamicEntry::TAG::NEEDED, 0} {}
 
   DynamicEntryLibrary(std::string name) :
     DynamicEntry::DynamicEntry{DynamicEntry::TAG::NEEDED, 0},
-    libname_(std::move(name))
-  {}
+    libname_(std::move(name)) {}
 
   DynamicEntryLibrary& operator=(const DynamicEntryLibrary&) = default;
   DynamicEntryLibrary(const DynamicEntryLibrary&) = default;

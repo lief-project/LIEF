@@ -43,7 +43,8 @@ std::unique_ptr<MachO::Binary> reload(MachO::Binary& bin) {
   bin.write(oss);
   std::string buffer = oss.str();
 
-  auto stream = std::make_unique<SpanStream>((const uint8_t*)buffer.data(), buffer.size());
+  auto stream =
+      std::make_unique<SpanStream>((const uint8_t*)buffer.data(), buffer.size());
   return MachO::Parser::parse(std::move(stream))->take(0);
 }
 
@@ -65,9 +66,9 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
 
         uint64_t __auth_got = bin->get_section("__auth_got")->virtual_address();
         MachO::DyldChainedFixupsCreator()
-          .add_binding(__auth_got + 0 * sizeof(uint64_t), "_calloc")
-          .add_binding(__auth_got + 4 * sizeof(uint64_t), "_dlopen")
-          .create(*bin);
+            .add_binding(__auth_got + 0 * sizeof(uint64_t), "_calloc")
+            .add_binding(__auth_got + 4 * sizeof(uint64_t), "_dlopen")
+            .create(*bin);
         std::unique_ptr<MachO::Binary> new_bin = reload(*bin);
         const MachO::DyldChainedFixups* fixups = new_bin->dyld_chained_fixups();
         REQUIRE(fixups != nullptr);
@@ -91,10 +92,11 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
         {
           logging::Scoped Scope(logging::LEVEL::WARN);
           MachO::DyldChainedFixupsCreator()
-            .add_binding   (__auth_got + 0 * sizeof(uint64_t), "_calloc")
-            .add_relocation(__auth_got + 2 * sizeof(uint64_t), bin->imagebase() + 0xdeadc0de)
-            .add_binding   (__auth_got + 4 * sizeof(uint64_t), "_dlopen")
-            .create(*bin);
+              .add_binding(__auth_got + 0 * sizeof(uint64_t), "_calloc")
+              .add_relocation(__auth_got + 2 * sizeof(uint64_t),
+                              bin->imagebase() + 0xdeadc0de)
+              .add_binding(__auth_got + 4 * sizeof(uint64_t), "_dlopen")
+              .create(*bin);
         }
         std::unique_ptr<MachO::Binary> new_bin = reload(*bin);
         const MachO::DyldChainedFixups* fixups = new_bin->dyld_chained_fixups();
@@ -118,5 +120,3 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
     }
   }
 }
-
-

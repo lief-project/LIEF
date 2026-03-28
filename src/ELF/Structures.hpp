@@ -21,45 +21,41 @@
 #include "LIEF/ELF/enums.hpp"
 
 
-
-
 namespace LIEF::ELF::details {
 
 #include "structures.inc"
 
-struct Elf64_Prpsinfo
-{
-  char     pr_state;
-  char     pr_sname;
-  char     pr_zomb;
-  char     pr_nice;
+struct Elf64_Prpsinfo {
+  char pr_state;
+  char pr_sname;
+  char pr_zomb;
+  char pr_nice;
   uint32_t pr_pad;
   uint64_t pr_flag;
   uint32_t pr_uid;
   uint32_t pr_gid;
-  int32_t  pr_pid;
-  int32_t  pr_ppid;
-  int32_t  pr_pgrp;
-  int32_t  pr_sid;
-  char     pr_fname[16];
-  char     pr_psargs[80];
+  int32_t pr_pid;
+  int32_t pr_ppid;
+  int32_t pr_pgrp;
+  int32_t pr_sid;
+  char pr_fname[16];
+  char pr_psargs[80];
 };
 
-struct Elf32_Prpsinfo
-{
-  char     pr_state;
-  char     pr_sname;
-  char     pr_zomb;
-  char     pr_nice;
+struct Elf32_Prpsinfo {
+  char pr_state;
+  char pr_sname;
+  char pr_zomb;
+  char pr_nice;
   uint32_t pr_flag;
   uint16_t pr_uid;
   uint16_t pr_gid;
-  int32_t  pr_pid;
-  int32_t  pr_ppid;
-  int32_t  pr_pgrp;
-  int32_t  pr_sid;
-  char     pr_fname[16];
-  char     pr_psargs[80];
+  int32_t pr_pid;
+  int32_t pr_ppid;
+  int32_t pr_pgrp;
+  int32_t pr_sid;
+  char pr_fname[16];
+  char pr_psargs[80];
 };
 
 class ELF32 {
@@ -131,11 +127,9 @@ class ELF64 {
   using Elf_timeval = Elf64_timeval;
 };
 
-class ELF32_x32 : public ELF32 {
-};
+class ELF32_x32 : public ELF32 {};
 
-class ELF32_arm64 : public ELF32 {
-};
+class ELF32_arm64 : public ELF32 {};
 
 
 } // namespace LIEF::ELF::details

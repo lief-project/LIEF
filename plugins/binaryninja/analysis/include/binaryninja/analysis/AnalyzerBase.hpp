@@ -26,42 +26,41 @@ class AnalyzerBase {
   using force_callback_t = std::function<bool(BinaryNinja::DataVariable&)>;
   AnalyzerBase() = delete;
   AnalyzerBase(BinaryNinja::BinaryView& bv) :
-    bv_(bv)
-  {}
+    bv_(bv) {}
 
   virtual void run() = 0;
 
   virtual ~AnalyzerBase() = default;
 
-  void define_type_at(
-      uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
-      std::optional<std::string> name = std::nullopt,
-      bool force = false);
+  void define_type_at(uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
+                      std::optional<std::string> name = std::nullopt,
+                      bool force = false);
 
-  void define_type_at(
-      uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
-      force_callback_t force,
-      std::optional<std::string> name = std::nullopt);
+  void define_type_at(uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
+                      force_callback_t force,
+                      std::optional<std::string> name = std::nullopt);
 
-  void define_struct_at(
-      uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
-      std::optional<std::string> name = std::nullopt,
-      bool force = false);
+  void define_struct_at(uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
+                        std::optional<std::string> name = std::nullopt,
+                        bool force = false);
 
   void define_struct_at(uint64_t address, const std::string& type,
                         std::optional<std::string> name = std::nullopt,
                         bool force = false);
 
   void define_array_at(uint64_t addr, BinaryNinja::Ref<BinaryNinja::Type> type,
-                       size_t count, std::optional<std::string> name = std::nullopt,
+                       size_t count,
+                       std::optional<std::string> name = std::nullopt,
                        bool force = false);
 
   void define_blob(uint64_t addr, size_t size,
-      std::optional<std::string> name = std::nullopt, bool force = false);
+                   std::optional<std::string> name = std::nullopt,
+                   bool force = false);
 
   std::optional<BinaryNinja::DataVariable> get_defined_var(uint64_t addr);
 
-  BinaryNinja::Ref<BinaryNinja::TagType> get_or_create_tag(const std::string& name) {
+  BinaryNinja::Ref<BinaryNinja::TagType>
+      get_or_create_tag(const std::string& name) {
     using namespace BinaryNinja;
     if (Ref<TagType> T = bv_.GetTagTypeByName(name)) {
       return T;
@@ -75,8 +74,7 @@ class AnalyzerBase {
   }
 
   void tag_once(BinaryNinja::Function& F,
-                BinaryNinja::Ref<BinaryNinja::TagType> type)
-  {
+                BinaryNinja::Ref<BinaryNinja::TagType> type) {
     if (!F.GetTagReferencesOfType(type).empty()) {
       return;
     }

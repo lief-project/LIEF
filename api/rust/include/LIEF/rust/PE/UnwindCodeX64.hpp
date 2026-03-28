@@ -34,128 +34,171 @@ class PE_unwind_x64_Code : public Mirror<LIEF::PE::unwind_x64::Code> {
   std::string to_string() const {
     return get().to_string();
   }
-
 };
 
 class PE_unwind_x64_Alloc : public PE_unwind_x64_Code {
   public:
   using lief_t = LIEF::PE::unwind_x64::Alloc;
-  PE_unwind_x64_Alloc(const lief_t& obj) : PE_unwind_x64_Code(obj) {}
+  PE_unwind_x64_Alloc(const lief_t& obj) :
+    PE_unwind_x64_Code(obj) {}
 
-  auto size() const { return impl().size(); }
+  auto size() const {
+    return impl().size();
+  }
 
   static bool classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_unwind_x64_PushNonVol : public PE_unwind_x64_Code {
   public:
   using lief_t = LIEF::PE::unwind_x64::PushNonVol;
-  PE_unwind_x64_PushNonVol(const lief_t& obj) : PE_unwind_x64_Code(obj) {}
+  PE_unwind_x64_PushNonVol(const lief_t& obj) :
+    PE_unwind_x64_Code(obj) {}
 
-  auto reg() const { return to_int(impl().reg()); }
+  auto reg() const {
+    return to_int(impl().reg());
+  }
 
   static bool classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_unwind_x64_PushMachFrame : public PE_unwind_x64_Code {
   public:
   using lief_t = LIEF::PE::unwind_x64::PushMachFrame;
-  PE_unwind_x64_PushMachFrame(const lief_t& obj) : PE_unwind_x64_Code(obj) {}
+  PE_unwind_x64_PushMachFrame(const lief_t& obj) :
+    PE_unwind_x64_Code(obj) {}
 
-  auto value() const { return impl().value(); }
+  auto value() const {
+    return impl().value();
+  }
 
   static bool classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_unwind_x64_SetFPReg : public PE_unwind_x64_Code {
   public:
   using lief_t = LIEF::PE::unwind_x64::SetFPReg;
-  PE_unwind_x64_SetFPReg(const lief_t& obj) : PE_unwind_x64_Code(obj) {}
+  PE_unwind_x64_SetFPReg(const lief_t& obj) :
+    PE_unwind_x64_Code(obj) {}
 
-  auto reg() const { return to_int(impl().reg()); }
+  auto reg() const {
+    return to_int(impl().reg());
+  }
 
   static bool classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_unwind_x64_SaveNonVolatile : public PE_unwind_x64_Code {
   public:
   using lief_t = LIEF::PE::unwind_x64::SaveNonVolatile;
-  PE_unwind_x64_SaveNonVolatile(const lief_t& obj) : PE_unwind_x64_Code(obj) {}
+  PE_unwind_x64_SaveNonVolatile(const lief_t& obj) :
+    PE_unwind_x64_Code(obj) {}
 
-  auto reg() const { return to_int(impl().reg()); }
-  auto offset() const { return impl().offset(); }
+  auto reg() const {
+    return to_int(impl().reg());
+  }
+  auto offset() const {
+    return impl().offset();
+  }
 
   static bool classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_unwind_x64_SaveXMM128 : public PE_unwind_x64_Code {
   public:
   using lief_t = LIEF::PE::unwind_x64::SaveXMM128;
-  PE_unwind_x64_SaveXMM128(const lief_t& obj) : PE_unwind_x64_Code(obj) {}
+  PE_unwind_x64_SaveXMM128(const lief_t& obj) :
+    PE_unwind_x64_Code(obj) {}
 
-  auto num() const { return impl().num(); }
+  auto num() const {
+    return impl().num();
+  }
 
-  auto offset() const { return impl().offset(); }
+  auto offset() const {
+    return impl().offset();
+  }
 
   static bool classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_unwind_x64_Epilog : public PE_unwind_x64_Code {
   public:
   using lief_t = LIEF::PE::unwind_x64::Epilog;
-  PE_unwind_x64_Epilog(const lief_t& obj) : PE_unwind_x64_Code(obj) {}
+  PE_unwind_x64_Epilog(const lief_t& obj) :
+    PE_unwind_x64_Code(obj) {}
 
-  auto flags() const { return impl().flags(); }
+  auto flags() const {
+    return impl().flags();
+  }
 
-  auto size() const { return impl().size(); }
+  auto size() const {
+    return impl().size();
+  }
 
   static bool classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_unwind_x64_Spare : public PE_unwind_x64_Code {
   public:
   using lief_t = LIEF::PE::unwind_x64::Spare;
-  PE_unwind_x64_Spare(const lief_t& obj) : PE_unwind_x64_Code(obj) {}
+  PE_unwind_x64_Spare(const lief_t& obj) :
+    PE_unwind_x64_Code(obj) {}
 
   static bool classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

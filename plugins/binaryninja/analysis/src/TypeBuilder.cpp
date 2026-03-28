@@ -32,10 +32,10 @@ Ref<Type> TypeBuilder::get(const std::string& name) {
     return it->second;
   }
 
-  //if (Ref<Type> type = bv_.GetTypeByName(QualifiedName(name))) {
-  //  BN_ERR("Found non-formatted name: {}", name);
-  //  return type;
-  //}
+  // if (Ref<Type> type = bv_.GetTypeByName(QualifiedName(name))) {
+  //   BN_ERR("Found non-formatted name: {}", name);
+  //   return type;
+  // }
 
   if (auto it = cache_.find(name); it != cache_.end()) {
     return it->second;
@@ -44,10 +44,9 @@ Ref<Type> TypeBuilder::get(const std::string& name) {
   return nullptr;
 }
 
-Ref<Type> TypeBuilder::create_struct(
-    BinaryNinja::Structure& S, const std::string& name,
-    std::optional<std::string> typedef_)
-{
+Ref<Type> TypeBuilder::create_struct(BinaryNinja::Structure& S,
+                                     const std::string& name,
+                                     std::optional<std::string> typedef_) {
   Ref<Type> type = Type::StructureType(&S);
   QualifiedName type_qn(name);
   const std::string ty_src = default_type_src();
@@ -63,8 +62,8 @@ Ref<Type> TypeBuilder::create_struct(
     ref_builder.SetName(type_qn);
 
     Ref<Type> typedef_ty = Type::NamedType(ref_builder.Finalize());
-    QualifiedName type_name_alt = bv_.DefineType(
-        typedef_tyid, typedef_qn, typedef_ty);
+    QualifiedName type_name_alt =
+        bv_.DefineType(typedef_tyid, typedef_qn, typedef_ty);
 
     return typedef_ty;
   }
@@ -73,7 +72,8 @@ Ref<Type> TypeBuilder::create_struct(
 }
 
 
-Ref<Type> TypeBuilder::create_typedef(const std::string& name, const std::string& target) {
+Ref<Type> TypeBuilder::create_typedef(const std::string& name,
+                                      const std::string& target) {
   Ref<Type> target_ty = bv_.GetTypeByName(target);
   if (target_ty == nullptr) {
     BN_ERR("Can't find type named {}", target);
@@ -89,9 +89,8 @@ Ref<Type> TypeBuilder::create_typedef(const std::string& name, const std::string
 
   QualifiedName alias = bv_.DefineType(
       type_id, type_qn,
-      BinaryNinja::TypeBuilder::NamedType(
-        target, target_ty
-      ).Finalize());
+      BinaryNinja::TypeBuilder::NamedType(target, target_ty).Finalize()
+  );
 
   assert(bv_.GetTypeByName(type_qn) != nullptr);
   return bv_.GetTypeByName(type_qn);

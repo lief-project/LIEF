@@ -78,7 +78,6 @@ void Hash::visit(const Binary& binary) {
   if (binary.has_interpreter()) {
     process(binary.interpreter());
   }
-
 }
 
 
@@ -197,7 +196,6 @@ void Hash::visit(const Relocation& relocation) {
   if (sym != nullptr) {
     process(*sym);
   }
-
 }
 
 void Hash::visit(const SymbolVersion& sv) {
@@ -292,7 +290,4 @@ void Hash::visit(const SysvHash& sysvhash) {
 }
 
 
-
 } // namespace LIEF::ELF
-
-

@@ -24,72 +24,79 @@
 namespace LIEF::COFF {
 
 std::unique_ptr<AuxiliarySectionDefinition>
-  AuxiliarySectionDefinition::parse(const std::vector<uint8_t>& payload)
-{
+    AuxiliarySectionDefinition::parse(const std::vector<uint8_t>& payload) {
   const bool isbigobj = payload.size() == sizeof(details::symbol32);
 
   SpanStream stream(payload);
   auto Length = stream.read<uint32_t>();
   if (!Length) {
-    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto NumberOfRelocations = stream.read<uint16_t>();
   if (!NumberOfRelocations) {
-    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto NumberOfLinenumbers = stream.read<uint16_t>();
   if (!NumberOfLinenumbers) {
-    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto CheckSum = stream.read<uint32_t>();
   if (!CheckSum) {
-    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto Number = stream.read<uint16_t>();
   if (!Number) {
-    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto Selection = stream.read<uint8_t>();
   if (!Selection) {
-    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   if (!isbigobj) {
     return std::make_unique<AuxiliarySectionDefinition>(
-      *Length, *NumberOfRelocations, *NumberOfLinenumbers, *CheckSum, *Number,
-      *Selection, /*reserved=*/0
+        *Length, *NumberOfRelocations, *NumberOfLinenumbers, *CheckSum, *Number,
+        *Selection, /*reserved=*/0
     );
   }
 
 
   auto bReserved = stream.read<uint8_t>();
   if (!bReserved) {
-    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   auto HighNumber = stream.read<uint16_t>();
   if (!HighNumber) {
-    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliarySectionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliarySectionDefinition>();
   }
 
   const uint32_t nb_sections = *HighNumber << 16 | *Number;
 
   return std::make_unique<AuxiliarySectionDefinition>(
-    *Length, *NumberOfRelocations, *NumberOfLinenumbers, *CheckSum, nb_sections,
-    *Selection, *bReserved
+      *Length, *NumberOfRelocations, *NumberOfLinenumbers, *CheckSum, nb_sections,
+      *Selection, *bReserved
   );
 }
 

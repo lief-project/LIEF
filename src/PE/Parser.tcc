@@ -102,8 +102,7 @@ ok_error_t Parser::parse_nested_relocated() {
   class RelocatedStream : public BinaryStream {
     public:
     RelocatedStream(Parser& parent) :
-      parent_(&parent)
-    {}
+      parent_(&parent) {}
 
     ~RelocatedStream() override = default;
 
@@ -130,8 +129,7 @@ ok_error_t Parser::parse_nested_relocated() {
       }
 
       // Exact match
-      if (it_value->first == offset && (offset + it_value->second.size) <= size)
-      {
+      if (it_value->first == offset && (offset + it_value->second.size) <= size) {
         const relocation_t& R = it_value->second;
 
         std::memcpy(dst, &R.value, R.size);
@@ -156,8 +154,7 @@ ok_error_t Parser::parse_nested_relocated() {
     }
 
     result<const void*> read_at(uint64_t /*offset*/, uint64_t /*size*/,
-                                uint64_t /*va*/) const override
-    {
+                                uint64_t /*va*/) const override {
       return make_error_code(lief_errors::not_supported);
     }
 
@@ -222,8 +219,9 @@ ok_error_t Parser::parse_headers() {
 template<typename PE_T>
 ok_error_t Parser::parse_data_directories() {
   using pe_optional_header = typename PE_T::pe_optional_header;
-  const uint32_t directories_offset = binary_->dos_header().addressof_new_exeheader() +
-                                      sizeof(details::pe_header) + sizeof(pe_optional_header);
+  const uint32_t directories_offset =
+      binary_->dos_header().addressof_new_exeheader() +
+      sizeof(details::pe_header) + sizeof(pe_optional_header);
   static constexpr auto DEFAULT_NB = DataDirectory::DEFAULT_NB;
   binary_->data_directories_.reserve(DEFAULT_NB);
 
@@ -232,8 +230,8 @@ ok_error_t Parser::parse_data_directories() {
   // with a null entry (RVA / Size, set to 0).
   //
   // Nevertheless it seems that this requirement is not enforced by the PE loader.
-  // The binary bc203f2b6a928f1457e9ca99456747bcb7adbbfff789d1c47e9479aac11598af contains a non-null final
-  // data directory (watermarking?)
+  // The binary bc203f2b6a928f1457e9ca99456747bcb7adbbfff789d1c47e9479aac11598af
+  // contains a non-null final data directory (watermarking?)
   const uint32_t nb_dir = binary_->optional_header().numberof_rva_and_size();
   for (size_t i = 0; i < nb_dir; ++i) {
     auto raw_dir = stream_->read<details::pe_data_directory>();
@@ -246,10 +244,9 @@ ok_error_t Parser::parse_data_directories() {
 
     if (directory->RVA() > 0) {
       const uint64_t offset = binary_->rva_to_offset(directory->RVA());
-      directory->section_   = binary_->section_from_offset(offset);
+      directory->section_ = binary_->section_from_offset(offset);
       if (directory->section_ == nullptr && warn_missing_section(*directory)) {
-        LIEF_WARN("Section not found for {}",
-                  to_string(dir_type));
+        LIEF_WARN("Section not found for {}", to_string(dir_type));
       }
     }
     binary_->data_directories_.push_back(std::move(directory));
@@ -315,32 +312,34 @@ template<typename PE_T>
 ok_error_t Parser::parse_import_table() {
   using uint = typename PE_T::uint;
   DataDirectory* import_dir = binary_->import_dir();
-  DataDirectory* iat_dir    = binary_->iat_dir();
+  DataDirectory* iat_dir = binary_->iat_dir();
 
   if (import_dir == nullptr || iat_dir == nullptr) {
     return make_error_code(lief_errors::not_found);
   }
 
 
-  const uint32_t import_rva    = import_dir->RVA();
+  const uint32_t import_rva = import_dir->RVA();
   const uint64_t import_offset = binary_->rva_to_offset(import_rva);
-  const size_t   import_end    = import_offset + import_dir->size();
+  const size_t import_end = import_offset + import_dir->size();
 
   uint64_t last_imp_offset = 0;
 
   stream_->setpos(import_offset);
   result<details::pe_import> imp_res;
 
-  while (stream_->pos() < import_end && (imp_res = stream_->read<details::pe_import>())) {
+  while (stream_->pos() < import_end &&
+         (imp_res = stream_->read<details::pe_import>()))
+  {
     const auto raw_imp = *imp_res;
     if (BinaryStream::is_all_zero(raw_imp)) {
       break;
     }
 
     auto import = std::make_unique<Import>(raw_imp);
-    import->directory_       = import_dir;
-    import->iat_directory_   = iat_dir;
-    import->type_            = type_;
+    import->directory_ = import_dir;
+    import->iat_directory_ = iat_dir;
+    import->type_ = type_;
 
     if (import->name_rva_ == 0) {
       LIEF_DEBUG("Name RVA is null");
@@ -350,7 +349,7 @@ ok_error_t Parser::parse_import_table() {
     // Offset to the Import (Library) name
     const uint64_t offset_name = binary_->rva_to_offset(import->name_rva_);
 
-    if (auto res_name = stream_->peek_string_at(offset_name))  {
+    if (auto res_name = stream_->peek_string_at(offset_name)) {
       import->name_ = std::move(*res_name);
     } else {
       LIEF_ERR("Failed to read import name (offset: {:#x})", offset_name);
@@ -368,18 +367,21 @@ ok_error_t Parser::parse_import_table() {
       continue; // skip
     }
 
-    last_imp_offset = std::max<uint64_t>(last_imp_offset, offset_name + imp_name.size() + 1);
+    last_imp_offset =
+        std::max<uint64_t>(last_imp_offset, offset_name + imp_name.size() + 1);
 
     // Offset to import lookup table
-    uint64_t LT_offset = import->import_lookup_table_rva() > 0 ?
-                         binary_->rva_to_offset(import->import_lookup_table_rva()) :
-                         0;
+    uint64_t LT_offset =
+        import->import_lookup_table_rva() > 0 ?
+            binary_->rva_to_offset(import->import_lookup_table_rva()) :
+            0;
 
 
     // Offset to the import address table
-    uint64_t IAT_offset = import->import_address_table_rva() > 0 ?
-                          binary_->rva_to_offset(import->import_address_table_rva()) :
-                          0;
+    uint64_t IAT_offset =
+        import->import_address_table_rva() > 0 ?
+            binary_->rva_to_offset(import->import_address_table_rva()) :
+            0;
     LIEF_DEBUG("IAT Offset: {:#010x}", IAT_offset);
     LIEF_DEBUG("IAT RVA:    {:#010x}", import->import_address_table_rva());
     LIEF_DEBUG("ILT Offset: {:#010x}", LT_offset);
@@ -390,7 +392,7 @@ ok_error_t Parser::parse_import_table() {
 
     if (IAT_offset > 0) {
       if (auto res_iat = stream_->peek<uint>(IAT_offset)) {
-        IAT   = *res_iat;
+        IAT = *res_iat;
         table = IAT;
         IAT_offset += sizeof(uint);
       }
@@ -398,7 +400,7 @@ ok_error_t Parser::parse_import_table() {
 
     if (LT_offset > 0) {
       if (auto res_lt = stream_->peek<uint>(LT_offset)) {
-        table      = *res_lt;
+        table = *res_lt;
         LT_offset += sizeof(uint);
       }
     }
@@ -409,16 +411,19 @@ ok_error_t Parser::parse_import_table() {
       auto entry = std::make_unique<ImportEntry>();
       entry->iat_value_ = IAT;
       entry->ilt_value_ = table;
-      entry->data_      = table > 0 ? table : IAT; // In some cases, ILT can be corrupted
-      entry->type_      = type_;
-      entry->rva_       = import->iat_rva_ + sizeof(uint) * (idx++);
+      entry->data_ =
+          table > 0 ? table : IAT; // In some cases, ILT can be corrupted
+      entry->type_ = type_;
+      entry->rva_ = import->iat_rva_ + sizeof(uint) * (idx++);
 
       LIEF_DEBUG("IAT: {:#010x} | ILT: {:#010x}", IAT, table);
 
       if (!entry->is_ordinal()) {
         const size_t hint_off = binary_->rva_to_offset(entry->hint_name_rva());
         const size_t name_off = hint_off + sizeof(uint16_t);
-        if (auto entry_name = stream_->peek_string_at(name_off, MAX_IMPORT_NAME_SIZE)) {
+        if (auto entry_name =
+                stream_->peek_string_at(name_off, MAX_IMPORT_NAME_SIZE))
+        {
           entry->name_ = std::move(*entry_name);
         } else {
           LIEF_ERR("Failed to read import entry name");
@@ -429,12 +434,13 @@ ok_error_t Parser::parse_import_table() {
           LIEF_INFO("Failed to read hint value @{:#x}", hint_off);
         }
 
-        last_imp_offset = std::max<uint64_t>(last_imp_offset, name_off + entry->name().size() + 1);
+        last_imp_offset = std::max<uint64_t>(last_imp_offset,
+                                             name_off + entry->name().size() + 1);
 
         // Check that the import name is valid
         if (is_valid_import_name(entry->name())) {
           import->entries_.push_back(std::move(entry));
-        } else if (!entry->name().empty()){
+        } else if (!entry->name().empty()) {
           LIEF_INFO("Invalid import name '{}', discarding", entry->name());
         }
       } else {
@@ -468,8 +474,10 @@ ok_error_t Parser::parse_import_table() {
     }
 
     if (idx >= MAX_IMPORT_ENTRIES) {
-      LIEF_WARN("Import '{}' exceeded max entries ({}), IAT may lack null terminator",
-                import->name(), MAX_IMPORT_ENTRIES);
+      LIEF_WARN(
+          "Import '{}' exceeded max entries ({}), IAT may lack null terminator",
+          import->name(), MAX_IMPORT_ENTRIES
+      );
     }
 
     import->nb_original_func_ = import->entries_.size();
@@ -483,8 +491,7 @@ ok_error_t Parser::parse_import_table() {
 template<class PE_T>
 ok_error_t Parser::parse_delay_names_table(DelayImport& import,
                                            uint32_t names_offset,
-                                           uint32_t iat_offset)
-{
+                                           uint32_t iat_offset) {
   using ptr_t = typename PE_T::uint;
   ScopedStream nstream(*stream_, names_offset);
 
@@ -501,7 +508,7 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import,
     const uint32_t iat_pos = index * sizeof(ptr_t);
 
     if (auto iat_value = stream_->peek<ptr_t>(iat_offset + iat_pos)) {
-      entry->value_ =import.iat() + iat_pos; // Symbol's value for the base class
+      entry->value_ = import.iat() + iat_pos; // Symbol's value for the base class
       entry->iat_value_ = *iat_value;
       LIEF_DEBUG("  [{}].iat : {:#012x}", index, entry->iat_value_);
     }
@@ -521,8 +528,7 @@ ok_error_t Parser::parse_delay_names_table(DelayImport& import,
       if (Parser::is_valid_import_name(entry->name())) {
         import.entries_.push_back(std::move(entry));
       }
-    }
-    else /* is ordinal */ {
+    } else /* is ordinal */ {
       import.entries_.push_back(std::move(entry));
     }
     entry_val = nstream->read<ptr_t>();
@@ -571,8 +577,8 @@ ok_error_t Parser::parse_delay_imports() {
       imp->name_ = std::move(*dll_name);
     }
 
-    LIEF_DEBUG("  delay_imports.name:       {}",       imp->name_);
-    LIEF_DEBUG("  delay_imports.attribute:  {}",       import->attribute);
+    LIEF_DEBUG("  delay_imports.name:       {}", imp->name_);
+    LIEF_DEBUG("  delay_imports.attribute:  {}", import->attribute);
     LIEF_DEBUG("  delay_imports.handle:     {:#06x}", import->handle);
     LIEF_DEBUG("  delay_imports.iat:        {:#06x}", import->iat);
     LIEF_DEBUG("  delay_imports.name_table: {:#06x}", import->name_table);
@@ -582,18 +588,17 @@ ok_error_t Parser::parse_delay_imports() {
 
     // Offset to Delay Import Name Table
     uint64_t names_offset =
-      import->name_table > 0 ? binary_->rva_to_offset(import->name_table) : 0;
+        import->name_table > 0 ? binary_->rva_to_offset(import->name_table) : 0;
 
     // Offset to the import address table
     uint64_t IAT_offset =
-      import->iat > 0 ? binary_->rva_to_offset(import->iat) : 0;
+        import->iat > 0 ? binary_->rva_to_offset(import->iat) : 0;
 
     LIEF_DEBUG("  [IAT  ]: {:#06x}", IAT_offset);
     LIEF_DEBUG("  [Names]: {:#06x}", names_offset);
 
     if (names_offset > 0) {
-      auto is_ok = parse_delay_names_table<PE_T>(*imp, names_offset,
-                                                 IAT_offset);
+      auto is_ok = parse_delay_names_table<PE_T>(*imp, names_offset, IAT_offset);
       if (!is_ok) {
         LIEF_WARN("Delay imports names table parsed with errors ('{}')",
                   to_string(get_error(is_ok)));
@@ -619,7 +624,7 @@ ok_error_t Parser::parse_tls() {
     return make_error_code(lief_errors::not_found);
   }
   const uint32_t tls_rva = tls_dir->RVA();
-  const uint64_t offset  = binary_->rva_to_offset(tls_rva);
+  const uint64_t offset = binary_->rva_to_offset(tls_rva);
 
   stream_->setpos(offset);
 
@@ -633,26 +638,31 @@ ok_error_t Parser::parse_tls() {
 
   const uint64_t imagebase = binary_->optional_header().imagebase();
 
-  if (tls_header->RawDataStartVA >= imagebase && tls_header->RawDataEndVA > tls_header->RawDataStartVA) {
+  if (tls_header->RawDataStartVA >= imagebase &&
+      tls_header->RawDataEndVA > tls_header->RawDataStartVA)
+  {
     const uint64_t start_data_rva = tls_header->RawDataStartVA - imagebase;
-    const uint64_t stop_data_rva  = tls_header->RawDataEndVA - imagebase;
+    const uint64_t stop_data_rva = tls_header->RawDataEndVA - imagebase;
 
     const uint start_template_offset = binary_->rva_to_offset(start_data_rva);
-    const uint end_template_offset   = binary_->rva_to_offset(stop_data_rva);
+    const uint end_template_offset = binary_->rva_to_offset(stop_data_rva);
 
     const size_t size_to_read = end_template_offset - start_template_offset;
 
     if (size_to_read > Parser::MAX_DATA_SIZE) {
       LIEF_DEBUG("TLS template is too large");
     } else {
-      if (!stream_->peek_data(tls->data_template_, start_template_offset, size_to_read)) {
+      if (!stream_->peek_data(tls->data_template_, start_template_offset,
+                              size_to_read))
+      {
         LIEF_WARN("TLS template corrupted");
       }
     }
   }
 
   if (tls->addressof_callbacks() > imagebase) {
-    uint64_t callbacks_offset = binary_->rva_to_offset(tls->addressof_callbacks() - imagebase);
+    uint64_t callbacks_offset =
+        binary_->rva_to_offset(tls->addressof_callbacks() - imagebase);
     stream_->setpos(callbacks_offset);
     size_t count = 0;
     while (count++ < Parser::MAX_TLS_CALLBACKS) {
@@ -725,52 +735,53 @@ ok_error_t Parser::process_load_config(LoadConfiguration& lconf) {
     auto dst = &LoadConfiguration::guard_cf_functions_;
     const size_t count = lconf.guard_cf_function_count().value_or(0);
 
-    auto is_ok = LoadConfiguration::parse_guard_functions(
-      *this, *stream, lconf, count, dst);
+    auto is_ok = LoadConfiguration::parse_guard_functions(*this, *stream, lconf,
+                                                          count, dst);
     if (!is_ok) {
       LIEF_WARN("Guard CF table processing finished with errors");
     }
   }
 
   if (uint64_t addr = lconf.guard_address_taken_iat_entry_table().value_or((0));
-      addr > 0) {
+      addr > 0)
+  {
     uint64_t offset = bin().va_to_offset(addr);
     ScopedStream stream(*stream_, offset);
     auto dst = &LoadConfiguration::guard_address_taken_iat_entries_;
     const size_t count = lconf.guard_address_taken_iat_entry_count().value_or(0);
 
-    auto is_ok = LoadConfiguration::parse_guard_functions(
-      *this, *stream, lconf, count, dst);
+    auto is_ok = LoadConfiguration::parse_guard_functions(*this, *stream, lconf,
+                                                          count, dst);
     if (!is_ok) {
       LIEF_WARN("Guard CF Address Taken IAT Entry Table processing finished "
                 "with errors");
     }
   }
 
-  if (uint64_t addr = lconf.guard_long_jump_target_table().value_or((0));
-      addr > 0) {
+  if (uint64_t addr = lconf.guard_long_jump_target_table().value_or((0)); addr > 0)
+  {
     uint64_t offset = bin().va_to_offset(addr);
     ScopedStream stream(*stream_, offset);
     auto dst = &LoadConfiguration::guard_long_jump_targets_;
     const size_t count = lconf.guard_long_jump_target_count().value_or(0);
 
-    auto is_ok = LoadConfiguration::parse_guard_functions(
-      *this, *stream, lconf, count, dst);
+    auto is_ok = LoadConfiguration::parse_guard_functions(*this, *stream, lconf,
+                                                          count, dst);
 
     if (!is_ok) {
       LIEF_WARN("Guard CF long jump target processing finished with errors");
     }
   }
 
-  if (uint64_t addr = lconf.guard_eh_continuation_table().value_or((0));
-      addr > 0) {
+  if (uint64_t addr = lconf.guard_eh_continuation_table().value_or((0)); addr > 0)
+  {
     uint64_t offset = bin().va_to_offset(addr);
     ScopedStream stream(*stream_, offset);
     auto dst = &LoadConfiguration::guard_eh_continuation_functions_;
     const size_t count = lconf.guard_eh_continuation_count().value_or(0);
 
-    auto is_ok = LoadConfiguration::parse_guard_functions(
-      *this, *stream, lconf, count, dst);
+    auto is_ok = LoadConfiguration::parse_guard_functions(*this, *stream, lconf,
+                                                          count, dst);
 
     if (!is_ok) {
       LIEF_WARN("Guard EH continuation function processing finished with errors");
@@ -802,4 +813,3 @@ ok_error_t Parser::process_load_config(LoadConfiguration& lconf) {
 }
 
 }
-

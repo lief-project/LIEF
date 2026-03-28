@@ -29,9 +29,9 @@ class RuntimeFunctionAArch64 : public ExceptionInfo {
 
   using ExceptionInfo::ExceptionInfo;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/RuntimeFunctionAArch64",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/pe/RuntimeFunctionAArch64",
+      jni::Constructor{jlong{}},
   };
 
   static int register_natives(JNIEnv* env);

@@ -25,20 +25,20 @@ class EnumType : public Type {
   public:
   using Type::Type;
   using lief_t = LIEF::dwarf::editor::EnumType;
-  static constexpr jni::Class kClass {
-    "lief/dwarf/editor/EnumType",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/dwarf/editor/EnumType",
+      jni::Constructor{jlong{}},
   };
 
-  class Value : public JNI<
-    Value, std::unique_ptr<LIEF::dwarf::editor::EnumType::Value>>
-  {
+  class Value
+    : public JNI<Value, std::unique_ptr<LIEF::dwarf::editor::EnumType::Value>> {
     public:
-    static constexpr jni::Class kClass {
-      "lief/dwarf/editor/EnumType$Value",
-      jni::Constructor{ jlong{} },
-      jni::Field { "impl", jlong{}, }
-    };
+    static constexpr jni::Class kClass{"lief/dwarf/editor/EnumType$Value",
+                                       jni::Constructor{jlong{}},
+                                       jni::Field{
+                                           "impl",
+                                           jlong{},
+                                       }};
 
     static void jni_destroy(JNIEnv* env, jobject thiz) {
       destroy(thiz);
@@ -52,16 +52,12 @@ class EnumType : public Type {
     return thiz;
   }
 
-  static jobject jni_add_value(JNIEnv* env, jobject thiz,
-                               jstring name, jlong value)
-  {
+  static jobject jni_add_value(JNIEnv* env, jobject thiz, jstring name,
+                               jlong value) {
     jni::LocalString jname = name;
-    return Value::create(
-      from_jni(thiz)->cast<lief_t>().add_value(
-        std::string(jname.Pin().ToString()),
-        (int64_t)value
-      )
-    );
+    return Value::create(from_jni(thiz)->cast<lief_t>().add_value(
+        std::string(jname.Pin().ToString()), (int64_t)value
+    ));
   }
 
   static int register_natives(JNIEnv* env);

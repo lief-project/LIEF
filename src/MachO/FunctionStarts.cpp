@@ -25,8 +25,7 @@ namespace LIEF::MachO {
 FunctionStarts::FunctionStarts(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   data_offset_{cmd.dataoff},
-  data_size_{cmd.datasize}
-{}
+  data_size_{cmd.datasize} {}
 
 void FunctionStarts::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -35,8 +34,9 @@ void FunctionStarts::accept(Visitor& visitor) const {
 std::ostream& FunctionStarts::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
   const std::vector<uint64_t> funcs = functions();
-  os << fmt::format("offset={:#08x}, size={:#08x}, #functions={}",
-                     data_offset(), data_size(), funcs.size()) << '\n';
+  os << fmt::format("offset={:#08x}, size={:#08x}, #functions={}", data_offset(),
+                    data_size(), funcs.size())
+     << '\n';
   for (size_t i = 0; i < funcs.size(); ++i) {
     os << fmt::format("  [{}] __TEXT + {:#08x}\n", i, funcs[i]);
   }
@@ -45,4 +45,3 @@ std::ostream& FunctionStarts::print(std::ostream& os) const {
 
 
 }
-

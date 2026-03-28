@@ -21,8 +21,7 @@
 namespace LIEF::MachO {
 
 DyldEnvironment::DyldEnvironment(const details::dylinker_command& cmd) :
-  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize}
-{}
+  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize} {}
 
 void DyldEnvironment::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -35,4 +34,3 @@ std::ostream& DyldEnvironment::print(std::ostream& os) const {
 }
 
 }
-

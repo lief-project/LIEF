@@ -20,7 +20,7 @@
 #include "LIEF/PE/json.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
-#include "PE/json_internal.hpp"
+  #include "PE/json_internal.hpp"
 #endif
 
 
@@ -39,5 +39,3 @@ std::string to_json([[maybe_unused]] const Object& v) {
 
 
 } // namespace LIEF::PE
-
-

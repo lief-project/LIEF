@@ -27,37 +27,48 @@ class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
   using lief_t = LIEF::objc::Protocol;
   using Mirror::Mirror;
 
-  class it_opt_methods :
-      public ForwardIterator<ObjC_Method, LIEF::objc::Method::Iterator>
-  {
+  class it_opt_methods
+    : public ForwardIterator<ObjC_Method, LIEF::objc::Method::Iterator> {
     public:
-    it_opt_methods(const ObjC_Protocol::lief_t& src)
-      : ForwardIterator(src.optional_methods()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_opt_methods(const ObjC_Protocol::lief_t& src) :
+      ForwardIterator(src.optional_methods()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_req_methods :
-      public ForwardIterator<ObjC_Method, LIEF::objc::Method::Iterator>
-  {
+  class it_req_methods
+    : public ForwardIterator<ObjC_Method, LIEF::objc::Method::Iterator> {
     public:
-    it_req_methods(const ObjC_Protocol::lief_t& src)
-      : ForwardIterator(src.required_methods()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_req_methods(const ObjC_Protocol::lief_t& src) :
+      ForwardIterator(src.required_methods()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_properties :
-      public ForwardIterator<ObjC_Property, LIEF::objc::Property::Iterator>
-  {
+  class it_properties
+    : public ForwardIterator<ObjC_Property, LIEF::objc::Property::Iterator> {
     public:
-    it_properties(const ObjC_Protocol::lief_t& src)
-      : ForwardIterator(src.properties()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_properties(const ObjC_Protocol::lief_t& src) :
+      ForwardIterator(src.properties()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  auto mangled_name() const { return get().mangled_name(); }
+  auto mangled_name() const {
+    return get().mangled_name();
+  }
 
   auto optional_methods() const {
     return std::make_unique<it_opt_methods>(get());

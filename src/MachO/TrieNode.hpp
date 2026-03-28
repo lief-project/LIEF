@@ -37,8 +37,7 @@ class LIEF_LOCAL TrieEdge {
   TrieEdge() = delete;
   TrieEdge(std::string str, TrieNode& node) :
     substr(std::move(str)),
-    child(&node)
-  {}
+    child(&node) {}
 
   ~TrieEdge() = default;
 
@@ -60,13 +59,13 @@ class LIEF_LOCAL TrieNode {
   TrieNode() = delete;
 
   TrieNode(std::string str) :
-    cummulative_string_(std::move(str))
-  {}
+    cummulative_string_(std::move(str)) {}
 
   ~TrieNode() = default;
 
   TrieNode& add_symbol(const ExportInfo& info, node_list_t& nodes);
-  TrieNode& add_ordered_nodes(const ExportInfo& info, std::vector<TrieNode*>& nodes);
+  TrieNode& add_ordered_nodes(const ExportInfo& info,
+                              std::vector<TrieNode*>& nodes);
   bool update_offset(uint32_t& offset);
 
   TrieNode& write(vector_iostream& buffer);

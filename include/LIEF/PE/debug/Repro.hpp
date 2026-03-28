@@ -40,22 +40,18 @@ class LIEF_API Repro : public Debug {
 
   public:
   Repro() :
-    Debug{Debug::TYPES::REPRO}
-  {}
+    Debug{Debug::TYPES::REPRO} {}
 
   Repro(std::vector<uint8_t> hash) :
     Debug{Debug::TYPES::REPRO},
-    hash_{std::move(hash)}
-  {}
+    hash_{std::move(hash)} {}
 
   Repro(const details::pe_debug& dbg, std::vector<uint8_t> hash, Section* sec) :
     Debug{dbg, sec},
-    hash_{std::move(hash)}
-  {}
+    hash_{std::move(hash)} {}
 
   Repro(const details::pe_debug& dbg, Section* sec) :
-    Debug{dbg, sec}
-  {}
+    Debug{dbg, sec} {}
 
   Repro(const Repro& other) = default;
   Repro& operator=(const Repro& other) = default;

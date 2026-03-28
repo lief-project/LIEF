@@ -48,7 +48,7 @@ class LIEF_API EnclaveImport {
     /// of all zeros, the imported image must be part of the Windows installation.
     AUTHOR_ID = 0x00000002,
 
- 	  /// The value of the enclave family identifier of the image must match the
+    /// The value of the enclave family identifier of the image must match the
     /// value in the import record. Otherwise, loading of the image fails.
     FAMILY_ID = 0x00000003,
 
@@ -154,16 +154,14 @@ class LIEF_API EnclaveImport {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const EnclaveImport& meta)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const EnclaveImport& meta) {
     os << meta.to_string();
     return os;
   }
 
   /// \private
-  LIEF_LOCAL static result<EnclaveImport>
-    parse(Parser& ctx, BinaryStream& stream);
+  LIEF_LOCAL static result<EnclaveImport> parse(Parser& ctx, BinaryStream& stream);
 
   private:
   TYPE type_ = TYPE::NONE;

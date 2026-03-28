@@ -29,8 +29,7 @@ class LIEF_API DynamicFixupUnknown : public DynamicFixup {
   public:
   DynamicFixupUnknown(std::vector<uint8_t> payload) :
     DynamicFixup(KIND::UNKNOWN),
-    payload_(std::move(payload))
-  {}
+    payload_(std::move(payload)) {}
 
   DynamicFixupUnknown(const DynamicFixupUnknown&) = default;
   DynamicFixupUnknown& operator=(const DynamicFixupUnknown&) = default;

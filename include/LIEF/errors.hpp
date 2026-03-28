@@ -38,7 +38,7 @@ enum class lief_errors : uint32_t {
   build_error,
 
   data_too_large,
-  require_extended_version
+  require_extended_version,
   /*
    * When adding a new error, do not forget
    * to update the Python bindings as well (pyErr.cpp) and Rust bindings:
@@ -57,7 +57,8 @@ inline tl::unexpected<lief_errors> make_error_code(lief_errors e) {
 namespace LIEF {
 /// Wrapper that contains an Object (``T``) or an error
 ///
-/// The tl/expected implementation exposes the method ``value()`` to access the underlying object (if no error)
+/// The tl/expected implementation exposes the method ``value()`` to access the
+/// underlying object (if no error)
 ///
 /// Typical usage is:
 ///
@@ -72,7 +73,7 @@ namespace LIEF {
 ///
 /// See https://tl.tartanllama.xyz/en/latest/api/expected.html for more details
 template<typename T>
- class [[maybe_unused]]result : public tl::expected<T, lief_errors> {
+class [[maybe_unused]] result : public tl::expected<T, lief_errors> {
   public:
   using tl::expected<T, lief_errors>::expected;
 };
@@ -123,9 +124,6 @@ inline bool is_err(const ok_error_t& val) {
 }
 
 }
-
-
-
 
 
 #endif

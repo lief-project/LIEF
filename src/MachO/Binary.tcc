@@ -31,42 +31,44 @@ bool Binary::has_command() const {
 
 template<class T>
 T* Binary::command() {
-  static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
+  static_assert(std::is_base_of<LoadCommand, T>::value,
+                "Require inheritance of 'LoadCommand'");
   return const_cast<T*>(static_cast<const Binary*>(this)->command<T>());
 }
 
 template<class T>
 const T* Binary::command() const {
-  static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
-  const auto it_cmd = std::find_if(
-      commands_.begin(), commands_.end(),
-      [] (const std::unique_ptr<LoadCommand>& command) {
-        return T::classof(command.get());
-      });
+  static_assert(std::is_base_of<LoadCommand, T>::value,
+                "Require inheritance of 'LoadCommand'");
+  const auto it_cmd =
+      std::find_if(commands_.begin(), commands_.end(),
+                   [](const std::unique_ptr<LoadCommand>& command) {
+                     return T::classof(command.get());
+                   });
 
   if (it_cmd == commands_.end()) {
     return nullptr;
   }
 
   return reinterpret_cast<const T*>(it_cmd->get());
-
 }
 
 template<class T>
 size_t Binary::count_commands() const {
-  static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
+  static_assert(std::is_base_of<LoadCommand, T>::value,
+                "Require inheritance of 'LoadCommand'");
 
-  size_t nb_cmd = std::count_if(
-      commands_.begin(), commands_.end(),
-      [] (const std::unique_ptr<LoadCommand>& command) {
-        return T::classof(command.get());
-      });
+  size_t nb_cmd = std::count_if(commands_.begin(), commands_.end(),
+                                [](const std::unique_ptr<LoadCommand>& command) {
+                                  return T::classof(command.get());
+                                });
   return nb_cmd;
 }
 
 template<class CMD, class Func>
 Binary& Binary::for_commands(Func f) {
-  static_assert(std::is_base_of<LoadCommand, CMD>::value, "Require inheritance of 'LoadCommand'");
+  static_assert(std::is_base_of<LoadCommand, CMD>::value,
+                "Require inheritance of 'LoadCommand'");
   for (const std::unique_ptr<LoadCommand>& cmd : commands_) {
     if (!CMD::classof(cmd.get())) {
       continue;
@@ -77,7 +79,8 @@ Binary& Binary::for_commands(Func f) {
 }
 
 template<class T>
-ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint64_t shift) {
+ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from,
+                                    uint64_t shift) {
 
   SegmentCommand* segment = segment_from_virtual_address(relocation.address());
   if (segment == nullptr) {
@@ -98,7 +101,9 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
     return ok();
   }
 
-  if (relative_offset >= segment_size || (relative_offset + sizeof(T)) >= segment_size) {
+  if (relative_offset >= segment_size ||
+      (relative_offset + sizeof(T)) >= segment_size)
+  {
     LIEF_DEBUG("Offset out of bound for relocation: {}", to_string(relocation));
     return make_error_code(lief_errors::read_out_of_bound);
   }
@@ -112,4 +117,3 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
 
 
 }
-

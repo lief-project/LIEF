@@ -26,16 +26,13 @@
 #include "ELF/DataHandler/Handler.hpp"
 
 
-
 namespace LIEF::ELF::DataHandler {
 
 class DataHandlerStream : public BinaryStream {
   public:
   DataHandlerStream(std::vector<uint8_t>& ref) :
     BinaryStream(STREAM_TYPE::ELF_DATA_HANDLER),
-    data_{ref}
-  {
-  }
+    data_{ref} {}
 
   ~DataHandlerStream() override = default;
 
@@ -43,7 +40,8 @@ class DataHandlerStream : public BinaryStream {
     return data_.size();
   }
 
-  result<const void*> read_at(uint64_t offset, uint64_t size, uint64_t /*va*/) const override {
+  result<const void*> read_at(uint64_t offset, uint64_t size,
+                              uint64_t /*va*/) const override {
     if (offset > data_.size() || (offset + size) > data_.size()) {
       return make_error_code(lief_errors::read_error);
     }
@@ -54,7 +52,8 @@ class DataHandlerStream : public BinaryStream {
   std::vector<uint8_t>& data_;
 };
 
-result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStream>& stream) {
+result<std::unique_ptr<Handler>>
+    Handler::from_stream(std::unique_ptr<BinaryStream>& stream) {
   auto hdl = std::unique_ptr<Handler>(new Handler{});
   if (VectorStream::classof(*stream)) {
     auto& vs = static_cast<VectorStream&>(*stream);
@@ -92,17 +91,18 @@ result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStre
 bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
   const auto it_node = std::find_if(nodes_.begin(), nodes_.end(),
-                                    [&tmp] (const std::unique_ptr<Node>& node) {
+                                    [&tmp](const std::unique_ptr<Node>& node) {
                                       return tmp == *node;
                                     });
   return it_node != nodes_.end();
 }
 
-result<Handler::ref_t<Node>> Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
+result<Handler::ref_t<Node>> Handler::get(uint64_t offset, uint64_t size,
+                                          Node::Type type) {
   Node tmp{offset, size, type};
 
   const auto it_node = std::find_if(nodes_.begin(), nodes_.end(),
-                                    [&tmp] (const std::unique_ptr<Node>& node) {
+                                    [&tmp](const std::unique_ptr<Node>& node) {
                                       return tmp == *node;
                                     });
 
@@ -118,7 +118,7 @@ void Handler::remove(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
 
   const auto it_node = std::find_if(nodes_.begin(), nodes_.end(),
-                                    [&tmp] (const std::unique_ptr<Node>& node) {
+                                    [&tmp](const std::unique_ptr<Node>& node) {
                                       return tmp == *node;
                                     });
 
@@ -126,7 +126,7 @@ void Handler::remove(uint64_t offset, uint64_t size, Node::Type type) {
     LIEF_ERR("Node not found");
   }
 
-   nodes_.erase(it_node);
+  nodes_.erase(it_node);
 }
 
 
@@ -153,8 +153,7 @@ ok_error_t Handler::make_hole(uint64_t offset, uint64_t size) {
 
 ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
   static constexpr auto MAX_MEMORY_SIZE = 6_GB;
-  const auto full_size = static_cast<int64_t>(offset) +
-                         static_cast<int64_t>(size);
+  const auto full_size = static_cast<int64_t>(offset) + static_cast<int64_t>(size);
   if (full_size < 0) {
     return make_error_code(lief_errors::corrupted);
   }
@@ -178,5 +177,3 @@ ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
 
 
 } // namespace LIEF::ELF::DataHandler
-
-

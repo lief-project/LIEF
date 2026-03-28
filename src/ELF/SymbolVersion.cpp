@@ -24,7 +24,7 @@ namespace LIEF::ELF {
 
 void SymbolVersion::symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr) {
   symbol_aux_ = &svauxr;
-  value_      = svauxr.other();
+  value_ = svauxr.other();
 }
 
 void SymbolVersion::accept(Visitor& visitor) const {
@@ -38,7 +38,7 @@ std::ostream& operator<<(std::ostream& os, const ELF::SymbolVersion& symv) {
     std::string type;
     if (symv.value() == 0) {
       type = "* Local *";
-    } else if (symv.value() == 1){
+    } else if (symv.value() == 1) {
       type = "* Global *";
     } else {
       type = "* ERROR (" + std::to_string(symv.value()) + ") *";
@@ -49,4 +49,3 @@ std::ostream& operator<<(std::ostream& os, const ELF::SymbolVersion& symv) {
   return os;
 }
 }
-

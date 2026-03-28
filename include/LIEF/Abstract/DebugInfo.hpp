@@ -40,7 +40,8 @@ class LIEF_API DebugInfo {
   friend class Binary;
   enum class FORMAT {
     UNKNOWN = 0,
-    DWARF, PDB,
+    DWARF,
+    PDB,
   };
   DebugInfo(std::unique_ptr<details::DebugInfo> impl);
 
@@ -69,7 +70,8 @@ class LIEF_API DebugInfo {
   }
 
   /// Attempt to resolve the address of the function specified by `name`.
-  virtual optional<uint64_t> find_function_address(const std::string& name) const = 0;
+  virtual optional<uint64_t>
+      find_function_address(const std::string& name) const = 0;
 
   protected:
   std::unique_ptr<details::DebugInfo> impl_;

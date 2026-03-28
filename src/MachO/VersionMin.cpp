@@ -24,19 +24,14 @@
 namespace LIEF::MachO {
 
 VersionMin::VersionMin(const details::version_min_command& version_cmd) :
-  LoadCommand::LoadCommand{LoadCommand::TYPE(version_cmd.cmd), version_cmd.cmdsize},
-  version_{{
-    static_cast<uint32_t>((version_cmd.version >> 16) & 0xFFFF),
-    static_cast<uint32_t>((version_cmd.version >>  8) & 0xFF),
-    static_cast<uint32_t>((version_cmd.version >>  0) & 0xFF)
-  }},
-  sdk_{{
-    static_cast<uint32_t>((version_cmd.sdk >> 16) & 0xFFFF),
-    static_cast<uint32_t>((version_cmd.sdk >>  8) & 0xFF),
-    static_cast<uint32_t>((version_cmd.sdk >>  0) & 0xFF)
-  }}
-{
-}
+  LoadCommand::LoadCommand{LoadCommand::TYPE(version_cmd.cmd),
+                           version_cmd.cmdsize},
+  version_{{static_cast<uint32_t>((version_cmd.version >> 16) & 0xFFFF),
+            static_cast<uint32_t>((version_cmd.version >> 8) & 0xFF),
+            static_cast<uint32_t>((version_cmd.version >> 0) & 0xFF)}},
+  sdk_{{static_cast<uint32_t>((version_cmd.sdk >> 16) & 0xFFFF),
+        static_cast<uint32_t>((version_cmd.sdk >> 8) & 0xFF),
+        static_cast<uint32_t>((version_cmd.sdk >> 0) & 0xFF)}} {}
 
 void VersionMin::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -51,4 +46,3 @@ std::ostream& VersionMin::print(std::ostream& os) const {
 
 
 }
-

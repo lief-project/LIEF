@@ -33,8 +33,7 @@ DyldExportsTrie::~DyldExportsTrie() = default;
 DyldExportsTrie::DyldExportsTrie(const DyldExportsTrie& other) :
   LoadCommand::LoadCommand(other),
   data_offset_{other.data_offset_},
-  data_size_{other.data_size_}
-{
+  data_size_{other.data_size_} {
   /* Do not copy export info */
 }
 
@@ -46,15 +45,14 @@ DyldExportsTrie& DyldExportsTrie::operator=(DyldExportsTrie other) {
 DyldExportsTrie::DyldExportsTrie(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   data_offset_{cmd.dataoff},
-  data_size_{cmd.datasize}
-{}
+  data_size_{cmd.datasize} {}
 
 
 void DyldExportsTrie::swap(DyldExportsTrie& other) noexcept {
   LoadCommand::swap(other);
   std::swap(data_offset_, other.data_offset_);
-  std::swap(data_size_,   other.data_size_);
-  std::swap(content_,     other.content_);
+  std::swap(data_size_, other.data_size_);
+  std::swap(content_, other.content_);
   std::swap(export_info_, other.export_info_);
 }
 
@@ -77,10 +75,8 @@ std::string DyldExportsTrie::show_export_trie() const {
 
 std::ostream& DyldExportsTrie::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("offset={:#08x}, size={:#08x}",
-                     data_offset(), data_size());
+  os << fmt::format("offset={:#08x}, size={:#08x}", data_offset(), data_size());
   return os;
 }
 
 }
-

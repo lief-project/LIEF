@@ -22,7 +22,13 @@ class PDB_types_Attribute : private Mirror<LIEF::pdb::types::Attribute> {
   using Mirror::Mirror;
   using lief_t = LIEF::pdb::types::Attribute;
 
-  auto name() const { return get().name(); }
-  auto field_offset() const { return get().field_offset(); }
-  auto get_type() const { return details::try_unique<PDB_Type>(get().type()); } // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto name() const {
+    return get().name();
+  }
+  auto field_offset() const {
+    return get().field_offset();
+  }
+  auto get_type() const {
+    return details::try_unique<PDB_Type>(get().type());
+  } // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
 };

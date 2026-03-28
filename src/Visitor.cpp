@@ -21,13 +21,11 @@ Visitor::Visitor() = default;
 Visitor::~Visitor() = default;
 
 
-void Visitor::operator()() {
-}
+void Visitor::operator()() {}
 
 void Visitor::visit(const Object& v) {
   v.accept(*this);
 }
-
 
 
 }

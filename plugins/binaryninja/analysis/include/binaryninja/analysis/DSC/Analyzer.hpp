@@ -23,10 +23,10 @@ namespace analysis_plugin::dsc {
 class Analyzer : public analysis_plugin::Analyzer {
   public:
   Analyzer() = delete;
-  Analyzer(std::unique_ptr<LIEF::dsc::DyldSharedCache> impl, BinaryNinja::BinaryView& bv) :
+  Analyzer(std::unique_ptr<LIEF::dsc::DyldSharedCache> impl,
+           BinaryNinja::BinaryView& bv) :
     analysis_plugin::Analyzer(bv, std::make_unique<TypeBuilder>(bv)),
-    dsc_(std::move(impl))
-  {}
+    dsc_(std::move(impl)) {}
 
   void run() override;
 

@@ -35,17 +35,18 @@ using namespace LIEF::ELF;
 namespace LIEF {
 namespace ELF {
 void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
-  c_binary->handler     = reinterpret_cast<void*>(binary);
-  c_binary->type        = static_cast<uint32_t>(binary->type());
+  c_binary->handler = reinterpret_cast<void*>(binary);
+  c_binary->type = static_cast<uint32_t>(binary->type());
   c_binary->interpreter = nullptr;
   if (binary->has_interpreter()) {
     const std::string& interp = binary->interpreter();
-    c_binary->interpreter = static_cast<char*>(malloc((interp.size() + 1) * sizeof(char)));
-    std::memcpy(
-        reinterpret_cast<void*>(const_cast<char*>(c_binary->interpreter)),
-        reinterpret_cast<const void*>(interp.data()),
-        interp.size());
-    reinterpret_cast<char*>(const_cast<char*>(c_binary->interpreter))[interp.size()] = '\0';
+    c_binary->interpreter =
+        static_cast<char*>(malloc((interp.size() + 1) * sizeof(char)));
+    std::memcpy(reinterpret_cast<void*>(const_cast<char*>(c_binary->interpreter)),
+                reinterpret_cast<const void*>(interp.data()), interp.size());
+    reinterpret_cast<char*>(
+        const_cast<char*>(c_binary->interpreter)
+    )[interp.size()] = '\0';
   }
 
   init_c_header(c_binary, binary);
@@ -59,7 +60,7 @@ void init_c_binary(Elf_Binary_t* c_binary, Binary* binary) {
 }
 }
 
-Elf_Binary_t* elf_parse(const char *file) {
+Elf_Binary_t* elf_parse(const char* file) {
   Binary* binary = Parser::parse(file).release();
 
   if (binary == nullptr) {
@@ -80,7 +81,9 @@ int elf_binary_save_header(Elf_Binary_t* binary) {
 
   hdr.file_type(LIEF::ELF::Header::FILE_TYPE(binary->header.file_type));
   hdr.machine_type(LIEF::ELF::ARCH(binary->header.machine_type));
-  hdr.object_file_version(LIEF::ELF::Header::VERSION(binary->header.object_file_version));
+  hdr.object_file_version(
+      LIEF::ELF::Header::VERSION(binary->header.object_file_version)
+  );
   hdr.program_headers_offset(binary->header.program_headers_offset);
   hdr.section_headers_offset(binary->header.section_headers_offset);
   hdr.processor_flag(binary->header.processor_flags);
@@ -92,7 +95,7 @@ int elf_binary_save_header(Elf_Binary_t* binary) {
   hdr.section_name_table_idx(binary->header.name_string_table_idx);
   hdr.entrypoint(binary->header.entrypoint);
 
-  //TODO: identity
+  // TODO: identity
   return 1;
 }
 
@@ -110,6 +113,5 @@ void elf_binary_destroy(Elf_Binary_t* binary) {
 
   delete reinterpret_cast<Binary*>(binary->handler);
   free(binary);
-
 }
 //}

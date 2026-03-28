@@ -21,28 +21,16 @@
 namespace lief_jni::pe {
 
 int DataDirectory::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "getRVA",
-      "()I",
-      jni_get_rva
-    ),
+  static const std::array NATIVE_METHODS{
+      make("getRVA", "()I", jni_get_rva),
 
-    make(
-      "getSize",
-      "()I",
-      jni_get_size
-    ),
+      make("getSize", "()I", jni_get_size),
 
-    make_destroy(
-      &jni_destroy
-    ),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

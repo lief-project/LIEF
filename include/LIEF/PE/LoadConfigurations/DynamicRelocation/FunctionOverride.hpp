@@ -34,7 +34,6 @@ class FunctionOverrideInfo;
 /// This class represents `IMAGE_DYNAMIC_RELOCATION_FUNCTION_OVERRIDE`
 class LIEF_API FunctionOverride : public DynamicFixup {
   public:
-
   /// Mirror `IMAGE_BDD_DYNAMIC_RELOCATION`
   struct image_bdd_dynamic_relocation_t {
     uint16_t left = 0;
@@ -55,9 +54,13 @@ class LIEF_API FunctionOverride : public DynamicFixup {
     std::vector<uint8_t> payload;
   };
 
-  using func_overriding_info_t = std::vector<std::unique_ptr<FunctionOverrideInfo>>;
-  using it_func_overriding_info = ref_iterator<func_overriding_info_t&, FunctionOverrideInfo*>;
-  using it_const_func_overriding_info = const_ref_iterator<const func_overriding_info_t&, const FunctionOverrideInfo*>;
+  using func_overriding_info_t =
+      std::vector<std::unique_ptr<FunctionOverrideInfo>>;
+  using it_func_overriding_info =
+      ref_iterator<func_overriding_info_t&, FunctionOverrideInfo*>;
+  using it_const_func_overriding_info =
+      const_ref_iterator<const func_overriding_info_t&,
+                         const FunctionOverrideInfo*>;
 
   using bdd_info_list_t = std::vector<image_bdd_info_t>;
   using it_bdd_info = ref_iterator<bdd_info_list_t&>;
@@ -116,16 +119,16 @@ class LIEF_API FunctionOverride : public DynamicFixup {
   ~FunctionOverride() override;
 
   /// \private
-  LIEF_LOCAL static
-    std::unique_ptr<FunctionOverride> parse(Parser& ctx, SpanStream& strm);
+  LIEF_LOCAL static std::unique_ptr<FunctionOverride> parse(Parser& ctx,
+                                                            SpanStream& strm);
 
   /// \private
-  LIEF_LOCAL static ok_error_t
-    parse_override_info(Parser& ctx, SpanStream& strm, FunctionOverride& func);
+  LIEF_LOCAL static ok_error_t parse_override_info(Parser& ctx, SpanStream& strm,
+                                                   FunctionOverride& func);
 
   /// \private
-  LIEF_LOCAL static ok_error_t
-    parse_bdd_info(Parser& ctx, SpanStream& strm, FunctionOverride& func);
+  LIEF_LOCAL static ok_error_t parse_bdd_info(Parser& ctx, SpanStream& strm,
+                                              FunctionOverride& func);
 
   private:
   func_overriding_info_t overriding_info_;

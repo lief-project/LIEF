@@ -26,8 +26,7 @@ namespace COFF {
 class LIEF_API RegularHeader : public Header {
   public:
   RegularHeader() :
-    Header(KIND::REGULAR)
-  {}
+    Header(KIND::REGULAR) {}
 
   /// Create a RegularHeader from the given stream
   static std::unique_ptr<RegularHeader> create(BinaryStream& stream);

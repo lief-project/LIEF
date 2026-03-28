@@ -58,11 +58,8 @@ void CoreSigInfo::accept(Visitor& visitor) const {
 void CoreSigInfo::dump(std::ostream& os) const {
   Note::dump(os);
   os << '\n'
-     << fmt::format("  signo: {} code: {} errno: {}\n",
-                    signo().value_or(-1),
-                    sigcode().value_or(-1),
-                    sigerrno().value_or(-1));
+     << fmt::format("  signo: {} code: {} errno: {}\n", signo().value_or(-1),
+                    sigcode().value_or(-1), sigerrno().value_or(-1));
 }
 
 } // namespace LIEF::ELF
-

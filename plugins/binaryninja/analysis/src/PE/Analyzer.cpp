@@ -30,13 +30,12 @@ namespace analysis_plugin::pe {
 Analyzer::Analyzer(std::unique_ptr<LIEF::PE::Binary> impl,
                    BinaryNinja::BinaryView& bv) :
   analysis_plugin::Analyzer(bv, std::make_unique<TypeBuilder>(bv)),
-  pe_(std::move(impl))
-{
+  pe_(std::move(impl)) {
   using namespace analyzers;
 
   if (RuntimeFunctions::can_run(*bv_, *pe_)) {
     analyzers_.push_back(std::make_unique<RuntimeFunctions>(
-      *bv_, *pe_, static_cast<pe::TypeBuilder&>(*type_builder_)
+        *bv_, *pe_, static_cast<pe::TypeBuilder&>(*type_builder_)
     ));
   }
 

@@ -19,9 +19,9 @@
 #include "LIEF/config.h"
 #include "LIEF/visibility.h"
 
-#define LIEF_ENDIAN_SUPPORT(X) \
-  template<> \
-  LIEF_API void swap_endian<X>(X* hdr)
+#define LIEF_ENDIAN_SUPPORT(X)                                                    \
+  template<>                                                                      \
+  LIEF_API void swap_endian<X>(X * hdr)
 
 namespace LIEF {
 
@@ -114,8 +114,7 @@ struct ppc_thread_state64_t;
 }
 
 template<typename T>
-void swap_endian(T*) {
-}
+void swap_endian(T*) {}
 
 template<typename T>
 T get_swapped_endian(const T& other) {
@@ -137,7 +136,7 @@ LIEF_ENDIAN_SUPPORT(int16_t);
 LIEF_ENDIAN_SUPPORT(int32_t);
 LIEF_ENDIAN_SUPPORT(int64_t);
 
-#if defined (LIEF_ELF_SUPPORT)
+#if defined(LIEF_ELF_SUPPORT)
 LIEF_ENDIAN_SUPPORT(ELF::details::Elf32_Auxv);
 LIEF_ENDIAN_SUPPORT(ELF::details::Elf32_Dyn);
 LIEF_ENDIAN_SUPPORT(ELF::details::Elf32_Ehdr);
@@ -166,7 +165,7 @@ LIEF_ENDIAN_SUPPORT(ELF::details::Elf64_Vernaux);
 LIEF_ENDIAN_SUPPORT(ELF::details::Elf64_Verneed);
 #endif
 
-#if defined (LIEF_MACHO_SUPPORT)
+#if defined(LIEF_MACHO_SUPPORT)
 LIEF_ENDIAN_SUPPORT(MachO::details::arm_thread_state64_t);
 LIEF_ENDIAN_SUPPORT(MachO::details::arm_thread_state_t);
 LIEF_ENDIAN_SUPPORT(MachO::details::build_tool_version);

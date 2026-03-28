@@ -157,120 +157,153 @@ class PE_Binary : public AbstractBinary {
   public:
   using lief_t = LIEF::PE::Binary;
 
-  class it_debug :
-      public Iterator<PE_Debug, LIEF::PE::Binary::it_const_debug_entries>
-  {
+  class it_debug
+    : public Iterator<PE_Debug, LIEF::PE::Binary::it_const_debug_entries> {
     public:
-    it_debug(const PE_Binary::lief_t& src)
-      : Iterator(src.debug()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_debug(const PE_Binary::lief_t& src) :
+      Iterator(src.debug()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_signatures :
-      public Iterator<PE_Signature, LIEF::PE::Binary::it_const_signatures>
-  {
+  class it_signatures
+    : public Iterator<PE_Signature, LIEF::PE::Binary::it_const_signatures> {
     public:
-    it_signatures(const PE_Binary::lief_t& src)
-      : Iterator(src.signatures()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_signatures(const PE_Binary::lief_t& src) :
+      Iterator(src.signatures()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_sections :
-      public Iterator<PE_Section, LIEF::PE::Binary::it_const_sections>
-  {
+  class it_sections
+    : public Iterator<PE_Section, LIEF::PE::Binary::it_const_sections> {
     public:
-    it_sections(const PE_Binary::lief_t& src)
-      : Iterator(src.sections()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_sections(const PE_Binary::lief_t& src) :
+      Iterator(src.sections()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_relocations :
-      public Iterator<PE_Relocation, LIEF::PE::Binary::it_const_relocations>
-  {
+  class it_relocations
+    : public Iterator<PE_Relocation, LIEF::PE::Binary::it_const_relocations> {
     public:
-    it_relocations(const PE_Binary::lief_t& src)
-      : Iterator(src.relocations()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_relocations(const PE_Binary::lief_t& src) :
+      Iterator(src.relocations()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_imports :
-      public Iterator<PE_Import, LIEF::PE::Binary::it_const_imports>
-  {
+  class it_imports
+    : public Iterator<PE_Import, LIEF::PE::Binary::it_const_imports> {
     public:
-    it_imports(const PE_Binary::lief_t& src)
-      : Iterator(src.imports()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_imports(const PE_Binary::lief_t& src) :
+      Iterator(src.imports()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_delay_imports :
-      public Iterator<PE_DelayImport, LIEF::PE::Binary::it_const_delay_imports>
-  {
+  class it_delay_imports
+    : public Iterator<PE_DelayImport, LIEF::PE::Binary::it_const_delay_imports> {
     public:
-    it_delay_imports(const PE_Binary::lief_t& src)
-      : Iterator(src.delay_imports()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_delay_imports(const PE_Binary::lief_t& src) :
+      Iterator(src.delay_imports()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_data_directories :
-      public Iterator<PE_DataDirectory, LIEF::PE::Binary::it_const_data_directories>
-  {
+  class it_data_directories
+    : public Iterator<PE_DataDirectory,
+                      LIEF::PE::Binary::it_const_data_directories> {
     public:
-    it_data_directories(const PE_Binary::lief_t& src)
-      : Iterator(src.data_directories()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_data_directories(const PE_Binary::lief_t& src) :
+      Iterator(src.data_directories()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_strings_table :
-      public Iterator<COFF_String, LIEF::PE::Binary::it_const_strings_table>
-  {
+  class it_strings_table
+    : public Iterator<COFF_String, LIEF::PE::Binary::it_const_strings_table> {
     public:
-    it_strings_table(const PE_Binary::lief_t& src)
-      : Iterator(src.coff_string_table()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_strings_table(const PE_Binary::lief_t& src) :
+      Iterator(src.coff_string_table()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_symbols :
-      public Iterator<COFF_Symbol, LIEF::PE::Binary::it_const_symbols>
-  {
+  class it_symbols
+    : public Iterator<COFF_Symbol, LIEF::PE::Binary::it_const_symbols> {
     public:
-    it_symbols(const PE_Binary::lief_t& src)
-      : Iterator(src.symbols()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_symbols(const PE_Binary::lief_t& src) :
+      Iterator(src.symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_exceptions :
-      public Iterator<PE_ExceptionInfo, LIEF::PE::Binary::it_const_exceptions>
-  {
+  class it_exceptions
+    : public Iterator<PE_ExceptionInfo, LIEF::PE::Binary::it_const_exceptions> {
     public:
-    it_exceptions(const PE_Binary::lief_t& src)
-      : Iterator(src.exceptions()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_exceptions(const PE_Binary::lief_t& src) :
+      Iterator(src.exceptions()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
   PE_Binary(std::unique_ptr<LIEF::PE::Binary> bin) :
-    AbstractBinary(std::move(bin))
-  {}
+    AbstractBinary(std::move(bin)) {}
 
   PE_Binary(std::unique_ptr<LIEF::Binary> bin) :
-    AbstractBinary(std::move(bin))
-  {}
+    AbstractBinary(std::move(bin)) {}
 
-  static auto parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
+  static auto
+      parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(path));
   }
 
-  static auto parse_with_config(std::string path, const PE_ParserConfig& config) { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(path, config.conf()));
+  static auto parse_with_config(
+      std::string path, const PE_ParserConfig& config
+  ) { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(path,
+                                                                  config.conf()));
   }
 
   auto debug() const {
@@ -302,23 +335,33 @@ class PE_Binary : public AbstractBinary {
   }
 
   auto tls() const {
-    return details::try_unique<PE_TLS>(impl().tls()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_TLS>(
+        impl().tls()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto rich_header() const {
-    return details::try_unique<PE_RichHeader>(impl().rich_header()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_RichHeader>(
+        impl().rich_header()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto get_export() const {
-    return details::try_unique<PE_Export>(impl().get_export()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_Export>(
+        impl().get_export()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto resources() const {
-    return details::try_unique<PE_ResourceNode>(impl().resources()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_ResourceNode>(
+        impl().resources()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto load_configuration() const {
-    return details::try_unique<PE_LoadConfiguration>(impl().load_configuration()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_LoadConfiguration>(
+        impl().load_configuration()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto dos_header() const {
@@ -333,10 +376,14 @@ class PE_Binary : public AbstractBinary {
     return std::make_unique<PE_OptionalHeader>(impl().optional_header());
   }
 
-  uint32_t compute_checksum() const { return impl().compute_checksum(); }
+  uint32_t compute_checksum() const {
+    return impl().compute_checksum();
+  }
 
   auto resources_manager() const {
-    return details::from_result<PE_ResourcesManager>(impl().resources_manager()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::from_result<PE_ResourcesManager>(
+        impl().resources_manager()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto verify_signature(uint32_t flags) const {
@@ -386,15 +433,23 @@ class PE_Binary : public AbstractBinary {
   }
 
   auto section_from_offset(uint64_t offset) const {
-    return details::try_unique<PE_Section>(impl().section_from_offset(offset)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_Section>(
+        impl().section_from_offset(offset)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto section_from_rva(uint64_t address) const {
-    return details::try_unique<PE_Section>(impl().section_from_offset(address)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_Section>(
+        impl().section_from_offset(address)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto section_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PE_Section>(impl().get_section(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto section_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_Section>(
+        impl().get_section(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto add_section(const PE_Section& section) {
@@ -402,15 +457,25 @@ class PE_Binary : public AbstractBinary {
   }
 
   auto data_directory_by_type(uint32_t type) const {
-    return details::try_unique<PE_DataDirectory>(impl().data_directory(LIEF::PE::DataDirectory::TYPES(type))); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_DataDirectory>(
+        impl().data_directory(LIEF::PE::DataDirectory::TYPES(type))
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto import_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PE_Import>(impl().get_import(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto import_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_Import>(
+        impl().get_import(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto delay_import_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PE_DelayImport>(impl().get_delay_import(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto delay_import_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_DelayImport>(
+        impl().get_delay_import(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto export_dir() const {
@@ -457,8 +522,10 @@ class PE_Binary : public AbstractBinary {
     return details::try_unique<PE_DataDirectory>(impl().delay_dir());
   }
 
-  Span get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const {
-    return make_span(impl().get_content_from_virtual_address(virtual_address, size));
+  Span get_content_from_virtual_address(uint64_t virtual_address,
+                                        uint64_t size) const {
+    return make_span(impl().get_content_from_virtual_address(virtual_address,
+                                                             size));
   }
 
   auto functions() const {
@@ -529,17 +596,26 @@ class PE_Binary : public AbstractBinary {
     return details::try_unique<PE_ExceptionInfo>(impl().find_exception_at(rva));
   }
 
-  auto is_arm64x() const { return impl().is_arm64x(); }
-
-  auto is_arm64ec() const { return impl().is_arm64ec(); }
-
-  auto nested_pe_binary() const {
-    return details::try_unique<PE_Binary>(const_cast<lief_t&>(impl()).move_nested_pe_binary());
+  auto is_arm64x() const {
+    return impl().is_arm64x();
   }
 
-  void write(std::string output) { impl().write(output); }
+  auto is_arm64ec() const {
+    return impl().is_arm64ec();
+  }
 
-  void write_with_config(std::string output, const PE_Binary_write_config_t& config) {
+  auto nested_pe_binary() const {
+    return details::try_unique<PE_Binary>(
+        const_cast<lief_t&>(impl()).move_nested_pe_binary()
+    );
+  }
+
+  void write(std::string output) {
+    impl().write(output);
+  }
+
+  void write_with_config(std::string output,
+                         const PE_Binary_write_config_t& config) {
     impl().write(output, config.conf());
   }
 
@@ -569,6 +645,10 @@ class PE_Binary : public AbstractBinary {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

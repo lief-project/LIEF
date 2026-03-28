@@ -25,7 +25,7 @@ namespace LIEF::ELF {
 
 DynamicEntryArray& DynamicEntryArray::remove(uint64_t function) {
   array_.erase(std::remove_if(array_.begin(), array_.end(),
-                              [function] (uint64_t v) { return v == function; }),
+                              [function](uint64_t v) { return v == function; }),
                array_.end());
   return *this;
 }
@@ -54,7 +54,9 @@ const uint64_t& DynamicEntryArray::operator[](size_t idx) const {
 }
 
 uint64_t& DynamicEntryArray::operator[](size_t idx) {
-  return const_cast<uint64_t&>(static_cast<const DynamicEntryArray*>(this)->operator[](idx));
+  return const_cast<uint64_t&>(
+      static_cast<const DynamicEntryArray*>(this)->operator[](idx)
+  );
 }
 
 void DynamicEntryArray::accept(Visitor& visitor) const {
@@ -69,7 +71,3 @@ std::ostream& DynamicEntryArray::print(std::ostream& os) const {
 }
 
 }
-
-
-
-

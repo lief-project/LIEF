@@ -36,8 +36,7 @@ inline bool should_have_handler(const RuntimeFunctionX64::unwind_info_t& info) {
 }
 
 std::unique_ptr<RuntimeFunctionX64>
-  RuntimeFunctionX64::parse(Parser& ctx, BinaryStream& strm, bool skip_unwind)
-{
+    RuntimeFunctionX64::parse(Parser& ctx, BinaryStream& strm, bool skip_unwind) {
   // From the documentation:
   // > The RUNTIME_FUNCTION structure must be DWORD aligned in memory.
   strm.align(sizeof(uint32_t));
@@ -61,7 +60,7 @@ std::unique_ptr<RuntimeFunctionX64>
   }
 
   auto rfunc =
-    std::make_unique<RuntimeFunctionX64>(*rva_start, *rva_end, *unwind_rva);
+      std::make_unique<RuntimeFunctionX64>(*rva_start, *rva_end, *unwind_rva);
 
   if (!skip_unwind) {
     ctx.memoize(*rfunc);
@@ -85,8 +84,7 @@ std::unique_ptr<RuntimeFunctionX64>
 }
 
 ok_error_t RuntimeFunctionX64::parse_unwind(Parser& ctx, BinaryStream& strm,
-                                            RuntimeFunctionX64& func)
-{
+                                            RuntimeFunctionX64& func) {
   auto VersionFlags = strm.read<uint8_t>();
   if (!VersionFlags) {
     return make_error_code(VersionFlags.error());
@@ -149,10 +147,11 @@ ok_error_t RuntimeFunctionX64::parse_unwind(Parser& ctx, BinaryStream& strm,
 
   if (info.has(UNWIND_FLAGS::CHAIN_INFO)) {
     LIEF_DEBUG("  Chained");
-    std::unique_ptr<RuntimeFunctionX64> chained = parse(ctx, strm, /*skip_unwind=*/true);
+    std::unique_ptr<RuntimeFunctionX64> chained =
+        parse(ctx, strm, /*skip_unwind=*/true);
     if (chained != nullptr) {
-      LIEF_DEBUG("    chain: {:#010x} - {:#010x} - {:#010x}",
-                 chained->rva_start(), chained->rva_end(), chained->unwind_rva());
+      LIEF_DEBUG("    chain: {:#010x} - {:#010x} - {:#010x}", chained->rva_start(),
+                 chained->rva_end(), chained->unwind_rva());
       ExceptionInfo* link = ctx.find_exception_info(chained->rva_start());
       if (link != nullptr) {
         LIEF_DEBUG("    chain (found): {:#010x} - {:#010x} - {:#010x}",
@@ -161,8 +160,10 @@ ok_error_t RuntimeFunctionX64::parse_unwind(Parser& ctx, BinaryStream& strm,
         assert(link->arch() == ExceptionInfo::ARCH::X86_64);
         info.chained = link->as<RuntimeFunctionX64>();
       } else {
-        LIEF_DEBUG("RuntimeFunctionX64 {:#08x}: Failed to find linked chained info",
-                   func.rva_start());
+        LIEF_DEBUG(
+            "RuntimeFunctionX64 {:#08x}: Failed to find linked chained info",
+            func.rva_start()
+        );
         ctx.add_non_resolved(func, chained->rva_start());
       }
     } else {
@@ -176,8 +177,7 @@ ok_error_t RuntimeFunctionX64::parse_unwind(Parser& ctx, BinaryStream& strm,
 }
 
 RuntimeFunctionX64::unwind_info_t::opcodes_t
-  RuntimeFunctionX64::unwind_info_t::opcodes() const
-{
+    RuntimeFunctionX64::unwind_info_t::opcodes() const {
   using namespace unwind_x64;
   opcodes_t out;
 
@@ -210,9 +210,9 @@ std::string RuntimeFunctionX64::unwind_info_t::to_string() const {
       << "  Flags: " << (int)flags << '\n'
       << "  Size of prologue: " << (int)sizeof_prologue << '\n';
 
-  opcodes_t opcodes =  this->opcodes();
-  oss
-    << fmt::format("  Nb opcodes: {} ({})\n", (int)count_opcodes, opcodes.size());
+  opcodes_t opcodes = this->opcodes();
+  oss << fmt::format("  Nb opcodes: {} ({})\n", (int)count_opcodes,
+                     opcodes.size());
 
   if (!opcodes.empty()) {
     oss << "  Opcodes: [\n";
@@ -240,8 +240,8 @@ std::string RuntimeFunctionX64::unwind_info_t::to_string() const {
 std::string RuntimeFunctionX64::to_string() const {
   std::ostringstream oss;
   oss << "RuntimeFunctionX64 {\n";
-  oss << fmt::format("  RVA: [{:#08x}, {:#08x}] ({} bytes)\n",
-                     rva_start(), rva_end(), rva_end() - rva_start())
+  oss << fmt::format("  RVA: [{:#08x}, {:#08x}] ({} bytes)\n", rva_start(),
+                     rva_end(), rva_end() - rva_start())
       << fmt::format("  Unwind info RVA: {:#08x}\n", unwind_rva());
   if (const unwind_info_t* info = unwind_info()) {
     oss << indent(info->to_string(), 2);
@@ -251,21 +251,14 @@ std::string RuntimeFunctionX64::to_string() const {
 }
 
 const char* to_string(RuntimeFunctionX64::UNWIND_OPCODES e) {
-  #define ENTRY(X) std::pair(RuntimeFunctionX64::UNWIND_OPCODES::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(ALLOC_LARGE),
-    ENTRY(ALLOC_SMALL),
-    ENTRY(EPILOG),
-    ENTRY(PUSH_MACHFRAME),
-    ENTRY(PUSH_NONVOL),
-    ENTRY(SAVE_NONVOL),
-    ENTRY(SAVE_NONVOL_FAR),
-    ENTRY(SAVE_XMM128),
-    ENTRY(SAVE_XMM128_FAR),
-    ENTRY(SET_FPREG),
-    ENTRY(SPARE),
+#define ENTRY(X) std::pair(RuntimeFunctionX64::UNWIND_OPCODES::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(ALLOC_LARGE),     ENTRY(ALLOC_SMALL), ENTRY(EPILOG),
+      ENTRY(PUSH_MACHFRAME),  ENTRY(PUSH_NONVOL), ENTRY(SAVE_NONVOL),
+      ENTRY(SAVE_NONVOL_FAR), ENTRY(SAVE_XMM128), ENTRY(SAVE_XMM128_FAR),
+      ENTRY(SET_FPREG),       ENTRY(SPARE),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -274,26 +267,13 @@ const char* to_string(RuntimeFunctionX64::UNWIND_OPCODES e) {
 }
 
 const char* to_string(RuntimeFunctionX64::UNWIND_REG e) {
-  #define ENTRY(X) std::pair(RuntimeFunctionX64::UNWIND_REG::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(R10),
-    ENTRY(R11),
-    ENTRY(R12),
-    ENTRY(R13),
-    ENTRY(R14),
-    ENTRY(R15),
-    ENTRY(R8),
-    ENTRY(R9),
-    ENTRY(RAX),
-    ENTRY(RBP),
-    ENTRY(RBX),
-    ENTRY(RCX),
-    ENTRY(RDI),
-    ENTRY(RDX),
-    ENTRY(RSI),
-    ENTRY(RSP),
+#define ENTRY(X) std::pair(RuntimeFunctionX64::UNWIND_REG::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(R10), ENTRY(R11), ENTRY(R12), ENTRY(R13), ENTRY(R14), ENTRY(R15),
+      ENTRY(R8),  ENTRY(R9),  ENTRY(RAX), ENTRY(RBP), ENTRY(RBX), ENTRY(RCX),
+      ENTRY(RDI), ENTRY(RDX), ENTRY(RSI), ENTRY(RSP),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -303,11 +283,9 @@ const char* to_string(RuntimeFunctionX64::UNWIND_REG e) {
 
 
 const char* to_string(RuntimeFunctionX64::UNWIND_FLAGS op) {
-  switch(op) {
-    default:
-      return "UNKNOWN";
-    case RuntimeFunctionX64::UNWIND_FLAGS::CHAIN_INFO:
-      return "CHAIN_INFO";
+  switch (op) {
+    default: return "UNKNOWN";
+    case RuntimeFunctionX64::UNWIND_FLAGS::CHAIN_INFO: return "CHAIN_INFO";
     case RuntimeFunctionX64::UNWIND_FLAGS::EXCEPTION_HANDLER:
       return "EXCEPTION_HANDLER";
     case RuntimeFunctionX64::UNWIND_FLAGS::TERMINATE_HANDLER:

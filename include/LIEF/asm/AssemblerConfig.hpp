@@ -30,11 +30,11 @@ class LIEF_API AssemblerConfig {
   public:
   AssemblerConfig() = default;
 
-  AssemblerConfig(const AssemblerConfig &) = default;
-  AssemblerConfig &operator=(const AssemblerConfig &) = default;
+  AssemblerConfig(const AssemblerConfig&) = default;
+  AssemblerConfig& operator=(const AssemblerConfig&) = default;
 
-  AssemblerConfig(AssemblerConfig &&) = default;
-  AssemblerConfig &operator=(AssemblerConfig &&) = default;
+  AssemblerConfig(AssemblerConfig&&) = default;
+  AssemblerConfig& operator=(AssemblerConfig&&) = default;
 
   /// The different supported dialects
   enum class DIALECT {
@@ -65,8 +65,8 @@ class LIEF_API AssemblerConfig {
   /// 0x1003: call _my_function
   /// ```
   ///
-  /// The function `_my_function` will remain undefined unless we return its address
-  /// in `resolve_symbol()`:
+  /// The function `_my_function` will remain undefined unless we return its
+  /// address in `resolve_symbol()`:
   ///
   /// ```cpp
   /// class MyConfig : public AssemblerConfig {

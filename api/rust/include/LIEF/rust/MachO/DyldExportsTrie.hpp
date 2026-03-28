@@ -24,28 +24,43 @@
 class MachO_DyldExportsTrie : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::DyldExportsTrie;
-  class it_exports :
-      public Iterator<MachO_ExportInfo, LIEF::MachO::DyldExportsTrie::it_const_export_info>
-  {
+  class it_exports
+    : public Iterator<MachO_ExportInfo,
+                      LIEF::MachO::DyldExportsTrie::it_const_export_info> {
     public:
-    it_exports(const MachO_DyldExportsTrie::lief_t& src)
-      : Iterator(src.exports()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_exports(const MachO_DyldExportsTrie::lief_t& src) :
+      Iterator(src.exports()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  MachO_DyldExportsTrie(const lief_t& base) : MachO_Command(base) {}
+  MachO_DyldExportsTrie(const lief_t& base) :
+    MachO_Command(base) {}
 
-  uint32_t data_offset() const { return impl().data_offset(); }
-  uint32_t data_size() const { return impl().data_size(); }
-  auto content() const { return make_span(impl().content()); }
+  uint32_t data_offset() const {
+    return impl().data_offset();
+  }
+  uint32_t data_size() const {
+    return impl().data_size();
+  }
+  auto content() const {
+    return make_span(impl().content());
+  }
 
-  auto exports() const { return std::make_unique<it_exports>(impl()); }
+  auto exports() const {
+    return std::make_unique<it_exports>(impl());
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

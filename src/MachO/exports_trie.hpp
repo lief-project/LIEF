@@ -26,9 +26,11 @@ namespace MachO {
 class ExportInfo;
 using exports_list_t = std::vector<std::unique_ptr<ExportInfo>>;
 void show_trie(std::ostream& output, std::string output_prefix,
-               BinaryStream& stream, uint64_t start, uint64_t end, const std::string& prefix);
+               BinaryStream& stream, uint64_t start, uint64_t end,
+               const std::string& prefix);
 
-std::vector<uint8_t> create_trie(const exports_list_t& exports, size_t pointer_size);
+std::vector<uint8_t> create_trie(const exports_list_t& exports,
+                                 size_t pointer_size);
 }
 }
 #endif

@@ -42,6 +42,7 @@ struct sub_client_command;
 /// > where the bundle is built with "-client_name client_name".
 class LIEF_API SubClient : public LoadCommand {
   friend class BinaryParser;
+
   public:
   SubClient() = default;
   SubClient(const details::sub_client_command& cmd);

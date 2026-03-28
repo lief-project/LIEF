@@ -46,17 +46,18 @@ class LIEF_API File : public Object {
   public:
   using dex_files_t = std::vector<std::unique_ptr<DEX::File>>;
   using it_dex_files = ref_iterator<dex_files_t&, DEX::File*>;
-  using it_const_dex_files = const_ref_iterator<const dex_files_t&, const DEX::File*>;
+  using it_const_dex_files =
+      const_ref_iterator<const dex_files_t&, const DEX::File*>;
 
   File& operator=(const File& copy) = delete;
-  File(const File& copy)            = delete;
+  File(const File& copy) = delete;
 
   /// VDEX Header
   const Header& header() const;
   Header& header();
 
   /// Iterator over LIEF::DEX::Files registered
-  it_dex_files       dex_files();
+  it_dex_files dex_files();
   it_const_dex_files dex_files() const;
 
   dex2dex_info_t dex2dex_info() const;
@@ -68,7 +69,8 @@ class LIEF_API File : public Object {
 
   ~File() override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const File& vdex_file);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const File& vdex_file);
 
   private:
   File();

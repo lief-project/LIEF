@@ -30,17 +30,17 @@
 
 namespace lief_jni::pe {
 
-class LoadConfiguration : public JNI<
-  LoadConfiguration, canbe_unique<LIEF::PE::LoadConfiguration>>
-{
+class LoadConfiguration
+  : public JNI<LoadConfiguration, canbe_unique<LIEF::PE::LoadConfiguration>> {
   public:
   using lief_t = LIEF::PE::LoadConfiguration;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/LoadConfiguration",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/pe/LoadConfiguration",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static int register_natives(JNIEnv* env);
 
@@ -118,44 +118,44 @@ class LoadConfiguration : public JNI<
 
   static jobject jni_get_seh_table(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().se_handler_table()
+        from_jni(thiz)->cast<lief_t>().se_handler_table()
     );
   }
 
   static jobject jni_get_seh_count(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().se_handler_count()
+        from_jni(thiz)->cast<lief_t>().se_handler_count()
     );
   }
 
-  static jobject jni_get_guard_cf_check_function_pointer(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_guard_cf_check_function_pointer(JNIEnv* env,
+                                                         jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_cf_check_function_pointer()
+        from_jni(thiz)->cast<lief_t>().guard_cf_check_function_pointer()
     );
   }
 
-  static jobject jni_get_guard_cf_dispatch_function_pointer(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_guard_cf_dispatch_function_pointer(JNIEnv* env,
+                                                            jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_cf_dispatch_function_pointer()
+        from_jni(thiz)->cast<lief_t>().guard_cf_dispatch_function_pointer()
     );
   }
 
   static jobject jni_get_guard_cf_function_table(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_cf_function_table()
+        from_jni(thiz)->cast<lief_t>().guard_cf_function_table()
     );
   }
 
   static jobject jni_get_guard_cf_function_count(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_cf_function_count()
+        from_jni(thiz)->cast<lief_t>().guard_cf_function_count()
     );
   }
 
   static jobject jni_get_guard_flags(JNIEnv* env, jobject thiz) {
-    return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_flags()
-    );
+    return java::util::make_optional(from_jni(thiz)->cast<lief_t>().guard_flags());
   }
 
   static jobject jni_get_code_integrity(JNIEnv* env, jobject thiz) {
@@ -164,155 +164,167 @@ class LoadConfiguration : public JNI<
     );
   }
 
-  static jobject jni_get_guard_address_taken_iat_entry_table(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_guard_address_taken_iat_entry_table(JNIEnv* env,
+                                                             jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_address_taken_iat_entry_table()
+        from_jni(thiz)->cast<lief_t>().guard_address_taken_iat_entry_table()
     );
   }
 
-  static jobject jni_get_guard_address_taken_iat_entry_count(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_guard_address_taken_iat_entry_count(JNIEnv* env,
+                                                             jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_address_taken_iat_entry_count()
+        from_jni(thiz)->cast<lief_t>().guard_address_taken_iat_entry_count()
     );
   }
 
   static jobject jni_get_guard_long_jump_target_table(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_long_jump_target_table()
+        from_jni(thiz)->cast<lief_t>().guard_long_jump_target_table()
     );
   }
 
 
   static jobject jni_get_guard_long_jump_target_count(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_long_jump_target_count()
+        from_jni(thiz)->cast<lief_t>().guard_long_jump_target_count()
     );
   }
 
   static jobject jni_get_dynamic_value_reloc_table(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().dynamic_value_reloc_table()
+        from_jni(thiz)->cast<lief_t>().dynamic_value_reloc_table()
     );
   }
 
 
   static jobject jni_get_chpe_metadata_pointer(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().chpe_metadata_pointer()
+        from_jni(thiz)->cast<lief_t>().chpe_metadata_pointer()
     );
   }
 
 
   static jobject jni_get_chpe_metadata(JNIEnv* env, jobject thiz) {
     return java::util::make_optional<CHPEMetadata>(
-        from_jni(thiz)->cast<lief_t>().chpe_metadata());
+        from_jni(thiz)->cast<lief_t>().chpe_metadata()
+    );
   }
 
   static jobject jni_get_guard_rf_failure_routine(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_rf_failure_routine()
+        from_jni(thiz)->cast<lief_t>().guard_rf_failure_routine()
     );
   }
 
-  static jobject jni_get_guard_rf_failure_routine_function_pointer(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_guard_rf_failure_routine_function_pointer(JNIEnv* env,
+                                                                   jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_rf_failure_routine_function_pointer()
+        from_jni(thiz)->cast<lief_t>().guard_rf_failure_routine_function_pointer()
     );
   }
 
-  static jobject jni_get_dynamic_value_reloctable_offset(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_dynamic_value_reloctable_offset(JNIEnv* env,
+                                                         jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().dynamic_value_reloctable_offset()
+        from_jni(thiz)->cast<lief_t>().dynamic_value_reloctable_offset()
     );
   }
 
-  static jobject jni_get_dynamic_value_reloctable_section(JNIEnv* env, jobject thiz) {
-    return java::util::make_optional(
-      (LIEF::optional<uint32_t>)from_jni(thiz)->cast<lief_t>().dynamic_value_reloctable_section()
-    );
+  static jobject jni_get_dynamic_value_reloctable_section(JNIEnv* env,
+                                                          jobject thiz) {
+    return java::util::make_optional((LIEF::optional<uint32_t>)from_jni(thiz)
+                                         ->cast<lief_t>()
+                                         .dynamic_value_reloctable_section());
   }
 
   static jobject jni_get_reserved2(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      (LIEF::optional<uint32_t>)from_jni(thiz)->cast<lief_t>().reserved2()
+        (LIEF::optional<uint32_t>)from_jni(thiz)->cast<lief_t>().reserved2()
     );
   }
 
-  static jobject jni_get_guard_rf_verify_stack_pointer_function_pointer(JNIEnv* env, jobject thiz) {
+  static jobject
+      jni_get_guard_rf_verify_stack_pointer_function_pointer(JNIEnv* env,
+                                                             jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_rf_verify_stackpointer_function_pointer()
+        from_jni(thiz)
+            ->cast<lief_t>()
+            .guard_rf_verify_stackpointer_function_pointer()
     );
   }
 
   static jobject jni_get_hot_patch_table_offset(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().hotpatch_table_offset()
+        from_jni(thiz)->cast<lief_t>().hotpatch_table_offset()
     );
   }
 
   static jobject jni_get_reserved3(JNIEnv* env, jobject thiz) {
-    return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().reserved3()
-    );
+    return java::util::make_optional(from_jni(thiz)->cast<lief_t>().reserved3());
   }
 
   static jobject jni_get_enclave_configuration_pointer(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().enclave_configuration_ptr()
+        from_jni(thiz)->cast<lief_t>().enclave_configuration_ptr()
     );
   }
 
   static jobject jni_get_volatile_metadata_pointer(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().volatile_metadata_pointer()
+        from_jni(thiz)->cast<lief_t>().volatile_metadata_pointer()
     );
   }
 
   static jobject jni_get_guard_eh_continuation_table(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_eh_continuation_table()
+        from_jni(thiz)->cast<lief_t>().guard_eh_continuation_table()
     );
   }
 
   static jobject jni_get_guard_eh_continuation_count(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_eh_continuation_count()
+        from_jni(thiz)->cast<lief_t>().guard_eh_continuation_count()
     );
   }
 
-  static jobject jni_get_guard_xfg_check_function_pointer(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_guard_xfg_check_function_pointer(JNIEnv* env,
+                                                          jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_xfg_check_function_pointer()
+        from_jni(thiz)->cast<lief_t>().guard_xfg_check_function_pointer()
     );
   }
 
-  static jobject jni_get_guard_xfg_dispatch_function_pointer(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_guard_xfg_dispatch_function_pointer(JNIEnv* env,
+                                                             jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_xfg_dispatch_function_pointer()
+        from_jni(thiz)->cast<lief_t>().guard_xfg_dispatch_function_pointer()
     );
   }
 
-  static jobject jni_get_guard_xfg_table_dispatch_function_pointer(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_guard_xfg_table_dispatch_function_pointer(JNIEnv* env,
+                                                                   jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_xfg_table_dispatch_function_pointer()
+        from_jni(thiz)->cast<lief_t>().guard_xfg_table_dispatch_function_pointer()
     );
   }
 
-  static jobject jni_get_cast_guard_os_determined_failure_mode(JNIEnv* env, jobject thiz) {
+  static jobject jni_get_cast_guard_os_determined_failure_mode(JNIEnv* env,
+                                                               jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().cast_guard_os_determined_failure_mode()
+        from_jni(thiz)->cast<lief_t>().cast_guard_os_determined_failure_mode()
     );
   }
 
   static jobject jni_get_guard_memcpy_function_pointer(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().guard_memcpy_function_pointer()
+        from_jni(thiz)->cast<lief_t>().guard_memcpy_function_pointer()
     );
   }
 
   static jobject jni_get_uma_function_pointers(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-      from_jni(thiz)->cast<lief_t>().uma_function_pointers()
+        from_jni(thiz)->cast<lief_t>().uma_function_pointers()
     );
   }
 

@@ -53,27 +53,31 @@ class LIEF_API Builder {
   public:
   /// Configuration options to tweak the building process
   struct config_t {
-    bool dt_hash         = true;  /// Rebuild DT_HASH
-    bool dyn_str         = true;  /// Rebuild DT_STRTAB
-    bool dynamic_section = true;  /// Rebuild PT_DYNAMIC segment
-    bool fini_array      = true;  /// Rebuild DT_FINI_ARRAY
-    bool gnu_hash        = true;  /// Rebuild DT_GNU_HASH
-    bool init_array      = true;  /// Rebuild DT_INIT_ARRAY
-    bool interpreter     = true;  /// Rebuild PT_INTERPRETER
-    bool jmprel          = true;  /// Rebuild DT_JMPREL
-    bool notes           = false; /// Disable note building since it can break the default layout
-    bool preinit_array   = true;  /// Rebuild DT_PREINIT_ARRAY
-    bool relr            = true;  /// Rebuild DT_RELR
-    bool android_rela    = true;  /// Rebuild DT_ANDROID_REL[A]
-    bool rela            = true;  /// Rebuild DT_REL[A]
-    bool static_symtab   = true;  /// Rebuild `.symtab`
-    bool sym_verdef      = true;  /// Rebuild DT_VERDEF
-    bool sym_verneed     = true;  /// Rebuild DT_VERNEED
-    bool sym_versym      = true;  /// Rebuild DT_VERSYM
-    bool symtab          = true;  /// Rebuild DT_SYMTAB
-    bool coredump_notes  = true;  /// Rebuild the Coredump notes
-    bool force_relocate  = false; /// Force to relocating all the ELF structures that are supported by LIEF (mostly for testing)
-    bool skip_dynamic    = false; /// Skip relocating the PT_DYNAMIC segment (only relevant if force_relocate is set)
+    bool dt_hash = true;         /// Rebuild DT_HASH
+    bool dyn_str = true;         /// Rebuild DT_STRTAB
+    bool dynamic_section = true; /// Rebuild PT_DYNAMIC segment
+    bool fini_array = true;      /// Rebuild DT_FINI_ARRAY
+    bool gnu_hash = true;        /// Rebuild DT_GNU_HASH
+    bool init_array = true;      /// Rebuild DT_INIT_ARRAY
+    bool interpreter = true;     /// Rebuild PT_INTERPRETER
+    bool jmprel = true;          /// Rebuild DT_JMPREL
+    bool notes =
+        false; /// Disable note building since it can break the default layout
+    bool preinit_array = true;  /// Rebuild DT_PREINIT_ARRAY
+    bool relr = true;           /// Rebuild DT_RELR
+    bool android_rela = true;   /// Rebuild DT_ANDROID_REL[A]
+    bool rela = true;           /// Rebuild DT_REL[A]
+    bool static_symtab = true;  /// Rebuild `.symtab`
+    bool sym_verdef = true;     /// Rebuild DT_VERDEF
+    bool sym_verneed = true;    /// Rebuild DT_VERNEED
+    bool sym_versym = true;     /// Rebuild DT_VERSYM
+    bool symtab = true;         /// Rebuild DT_SYMTAB
+    bool coredump_notes = true; /// Rebuild the Coredump notes
+    bool force_relocate =
+        false; /// Force to relocating all the ELF structures that are supported by
+               /// LIEF (mostly for testing)
+    bool skip_dynamic = false; /// Skip relocating the PT_DYNAMIC segment (only
+                               /// relevant if force_relocate is set)
 
     /// Remove entries in `.gnu.version_r` if they are not associated with at
     /// least one version
@@ -82,8 +86,7 @@ class LIEF_API Builder {
 
   Builder(Binary& binary, const config_t& config);
   Builder(Binary& binary) :
-    Builder(binary, config_t())
-  {}
+    Builder(binary, config_t()) {}
 
   Builder() = delete;
   ~Builder();
@@ -178,7 +181,8 @@ class LIEF_API Builder {
   template<typename ELF_T>
   LIEF_LOCAL ok_error_t build_notes();
 
-  LIEF_LOCAL ok_error_t update_note_section(const Note& note, std::set<const Note*>& notes);
+  LIEF_LOCAL ok_error_t update_note_section(const Note& note,
+                                            std::set<const Note*>& notes);
 
   template<typename ELF_T>
   LIEF_LOCAL ok_error_t build_overlay();
@@ -198,8 +202,6 @@ class LIEF_API Builder {
 
 } // namespace ELF
 } // namespace LIEF
-
-
 
 
 #endif

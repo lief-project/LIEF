@@ -27,9 +27,8 @@
 
 
 #if defined(LIEF_JSON_SUPPORT)
-#include "visitors/json.hpp"
+  #include "visitors/json.hpp"
 #endif
-
 
 
 namespace LIEF::OAT {
@@ -80,7 +79,8 @@ Binary::it_classes Binary::classes() {
 }
 
 bool Binary::has_class(const std::string& class_name) const {
-  return classes_.find(DEX::Class::fullname_normalized(class_name)) != classes_.end();
+  return classes_.find(DEX::Class::fullname_normalized(class_name)) !=
+         classes_.end();
 }
 
 const Class* Binary::get_class(const std::string& class_name) const {
@@ -92,7 +92,9 @@ const Class* Binary::get_class(const std::string& class_name) const {
 }
 
 Class* Binary::get_class(const std::string& class_name) {
-  return const_cast<Class*>(static_cast<const Binary*>(this)->get_class(class_name));
+  return const_cast<Class*>(
+      static_cast<const Binary*>(this)->get_class(class_name)
+  );
 }
 
 
@@ -102,9 +104,9 @@ const Class* Binary::get_class(size_t index) const {
   }
 
   const auto it = std::find_if(classes_.begin(), classes_.end(),
-      [index] (const std::pair<std::string, Class*>& p) {
-        return p.second->index() == index;
-      });
+                               [index](const std::pair<std::string, Class*>& p) {
+                                 return p.second->index() == index;
+                               });
 
   if (it == classes_.end()) {
     return nullptr;
@@ -147,7 +149,6 @@ std::string Binary::dex2dex_json_info() {
 #else
   return "";
 #endif
-
 }
 
 void Binary::add_class(std::unique_ptr<Class> cls) {
@@ -158,7 +159,6 @@ void Binary::add_class(std::unique_ptr<Class> cls) {
 void Binary::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
 
 
 std::ostream& operator<<(std::ostream& os, const Binary& binary) {
@@ -185,4 +185,3 @@ std::ostream& operator<<(std::ostream& os, const Binary& binary) {
 
 
 }
-

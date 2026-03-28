@@ -23,14 +23,13 @@
 namespace LIEF::MachO {
 
 AtomInfo::AtomInfo() :
-  LoadCommand(LoadCommand::TYPE::ATOM_INFO, sizeof(details::linkedit_data_command))
-{}
+  LoadCommand(LoadCommand::TYPE::ATOM_INFO,
+              sizeof(details::linkedit_data_command)) {}
 
 AtomInfo::AtomInfo(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   data_offset_{cmd.dataoff},
-  data_size_{cmd.datasize}
-{}
+  data_size_{cmd.datasize} {}
 
 void AtomInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -38,11 +37,10 @@ void AtomInfo::accept(Visitor& visitor) const {
 
 std::ostream& AtomInfo::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("offset={:#08x}, size={:#08x}",
-                     data_offset(), data_size()) << '\n';
+  os << fmt::format("offset={:#08x}, size={:#08x}", data_offset(), data_size())
+     << '\n';
   return os;
 }
 
 
 }
-

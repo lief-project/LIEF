@@ -39,18 +39,19 @@ class LIEF_API Header : public Object {
   public:
   struct element_t {
     element_t(HEADER_KEYS key, const std::string& value) :
-      key(key), value(const_cast<std::string*>(&value)) {}
+      key(key),
+      value(const_cast<std::string*>(&value)) {}
 
     HEADER_KEYS key;
     std::string* value = nullptr;
   };
-  using magic_t               = std::array<uint8_t, 4>; // oat\n
-  using key_values_t          = std::map<HEADER_KEYS, std::string>;
-  using it_key_values_t       = ref_iterator<std::vector<element_t>>;
+  using magic_t = std::array<uint8_t, 4>; // oat\n
+  using key_values_t = std::map<HEADER_KEYS, std::string>;
+  using it_key_values_t = ref_iterator<std::vector<element_t>>;
   using it_const_key_values_t = const_ref_iterator<std::vector<element_t>>;
 
   /// Iterator type over
-  using keys_t   = std::vector<HEADER_KEYS>;
+  using keys_t = std::vector<HEADER_KEYS>;
   using values_t = std::vector<std::string>;
 
   public:
@@ -99,7 +100,7 @@ class LIEF_API Header : public Object {
 
   uint32_t key_value_size() const;
 
-  it_key_values_t       key_values();
+  it_key_values_t key_values();
   it_const_key_values_t key_values() const;
 
   keys_t keys() const;
@@ -146,8 +147,6 @@ class LIEF_API Header : public Object {
   uint32_t key_value_store_size_ = 0;
 
   key_values_t dex2oat_context_;
-
-
 };
 
 }

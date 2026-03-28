@@ -32,19 +32,19 @@ class LIEF_API DynamicEntryAuxiliary : public DynamicEntry {
   public:
   using DynamicEntry::DynamicEntry;
   DynamicEntryAuxiliary() :
-    DynamicEntry(DynamicEntry::TAG::AUXILIARY, 0)
-  {}
+    DynamicEntry(DynamicEntry::TAG::AUXILIARY, 0) {}
 
   DynamicEntryAuxiliary(std::string name) :
     DynamicEntry(DynamicEntry::TAG::AUXILIARY, 0),
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
 
   DynamicEntryAuxiliary& operator=(const DynamicEntryAuxiliary&) = default;
   DynamicEntryAuxiliary(const DynamicEntryAuxiliary&) = default;
 
   std::unique_ptr<DynamicEntry> clone() const override {
-    return std::unique_ptr<DynamicEntryAuxiliary>(new DynamicEntryAuxiliary(*this));
+    return std::unique_ptr<DynamicEntryAuxiliary>(
+        new DynamicEntryAuxiliary(*this)
+    );
   }
 
   /// The actual name (e.g. `libaux.so`)

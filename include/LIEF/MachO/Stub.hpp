@@ -53,14 +53,13 @@ class LIEF_API Stub {
     Header::CPU_TYPE arch;
     uint32_t subtype = 0;
     friend bool operator==(const Stub::target_info_t& lhs,
-                           const Stub::target_info_t& rhs)
-    {
+                           const Stub::target_info_t& rhs) {
       return lhs.arch == rhs.arch && lhs.subtype == rhs.subtype;
     }
   };
-  class LIEF_API Iterator :
-    public iterator_facade_base<Iterator, std::random_access_iterator_tag, const Stub>
-  {
+  class LIEF_API Iterator
+    : public iterator_facade_base<Iterator, std::random_access_iterator_tag,
+                                  const Stub> {
     public:
     Iterator() = default;
 
@@ -68,9 +67,7 @@ class LIEF_API Stub {
              size_t pos) :
       target_info_(target_info),
       stubs_(std::move(sections)),
-      pos_(pos)
-    {
-    }
+      pos_(pos) {}
 
     Iterator(const Iterator&) = default;
     Iterator& operator=(const Iterator&) = default;
@@ -114,6 +111,7 @@ class LIEF_API Stub {
     std::vector<const Section*> stubs_;
     size_t pos_ = 0;
   };
+
   public:
   Stub() = delete;
   Stub(const Stub&) = default;
@@ -126,8 +124,7 @@ class LIEF_API Stub {
   Stub(target_info_t target_info, uint64_t addr, std::vector<uint8_t> raw) :
     target_info_(target_info),
     address_(addr),
-    raw_(std::move(raw))
-  {}
+    raw_(std::move(raw)) {}
 
   /// The (raw) instructions of this entry as a slice of bytes
   span<const uint8_t> raw() const {

@@ -20,7 +20,8 @@
 class COFF_AuxiliaryFile : public COFF_AuxiliarySymbol {
   public:
   using lief_t = LIEF::COFF::AuxiliaryFile;
-  COFF_AuxiliaryFile(const lief_t& obj) : COFF_AuxiliarySymbol(obj) {}
+  COFF_AuxiliaryFile(const lief_t& obj) :
+    COFF_AuxiliarySymbol(obj) {}
 
   std::string filename() const {
     return impl().filename();
@@ -31,5 +32,7 @@ class COFF_AuxiliaryFile : public COFF_AuxiliarySymbol {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

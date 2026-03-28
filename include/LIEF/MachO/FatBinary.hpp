@@ -39,7 +39,6 @@ class LIEF_API FatBinary {
   friend class Builder;
 
   public:
-
   /// Internal container used to store Binary objects within a Fat Mach-O
   using binaries_t = std::vector<std::unique_ptr<Binary>>;
 
@@ -163,7 +162,8 @@ class LIEF_API FatBinary {
     return get(cpu);
   }
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const FatBinary& fatbinary);
 
   private:
   LIEF_LOCAL FatBinary();

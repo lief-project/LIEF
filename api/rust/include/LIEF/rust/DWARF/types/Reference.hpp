@@ -25,9 +25,13 @@ class DWARF_types_Reference : public DWARF_Type {
   }
 
   auto underlying_type() const {
-    return details::try_unique<DWARF_Type>(impl().underlying_type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Type>(
+        impl().underlying_type()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

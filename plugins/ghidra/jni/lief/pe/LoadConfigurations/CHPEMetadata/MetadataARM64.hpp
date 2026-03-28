@@ -26,9 +26,9 @@ class CHPEMetadataARM64 : public CHPEMetadata {
 
   using CHPEMetadata::CHPEMetadata;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/CHPEMetadataARM64",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/pe/CHPEMetadataARM64",
+      jni::Constructor{jlong{}},
   };
 
   static jint jni_get_code_map(JNIEnv* env, jobject thiz) {
@@ -47,8 +47,11 @@ class CHPEMetadataARM64 : public CHPEMetadata {
     return (jint)from_jni(thiz)->cast<lief_t>().redirection_metadata();
   }
 
-  static jint jni_get_os_arm64x_dispatch_call_no_redirect(JNIEnv* env, jobject thiz) {
-    return (jint)from_jni(thiz)->cast<lief_t>().os_arm64x_dispatch_call_no_redirect();
+  static jint jni_get_os_arm64x_dispatch_call_no_redirect(JNIEnv* env,
+                                                          jobject thiz) {
+    return (jint)from_jni(thiz)
+        ->cast<lief_t>()
+        .os_arm64x_dispatch_call_no_redirect();
   }
 
   static jint jni_get_os_arm64x_dispatch_ret(JNIEnv* env, jobject thiz) {
@@ -75,8 +78,11 @@ class CHPEMetadataARM64 : public CHPEMetadata {
     return (jint)from_jni(thiz)->cast<lief_t>().auxiliary_iat();
   }
 
-  static jint jni_get_code_ranges_to_entry_points_count(JNIEnv* env, jobject thiz) {
-    return (jint)from_jni(thiz)->cast<lief_t>().code_ranges_to_entry_points_count();
+  static jint jni_get_code_ranges_to_entry_points_count(JNIEnv* env,
+                                                        jobject thiz) {
+    return (jint)from_jni(thiz)
+        ->cast<lief_t>()
+        .code_ranges_to_entry_points_count();
   }
 
   static jint jni_get_redirection_metadata_count(JNIEnv* env, jobject thiz) {
@@ -84,11 +90,15 @@ class CHPEMetadataARM64 : public CHPEMetadata {
   }
 
   static jint jni_get_x64_information_function_pointer(JNIEnv* env, jobject thiz) {
-    return (jint)from_jni(thiz)->cast<lief_t>().get_x64_information_function_pointer();
+    return (jint)from_jni(thiz)
+        ->cast<lief_t>()
+        .get_x64_information_function_pointer();
   }
 
   static jint jni_set_x64_information_function_pointer(JNIEnv* env, jobject thiz) {
-    return (jint)from_jni(thiz)->cast<lief_t>().set_x64_information_function_pointer();
+    return (jint)from_jni(thiz)
+        ->cast<lief_t>()
+        .set_x64_information_function_pointer();
   }
 
   static jint jni_get_extra_rfe_table(JNIEnv* env, jobject thiz) {

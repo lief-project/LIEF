@@ -142,8 +142,8 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 
   /// Byte offset from the start of the file to the indirect symbol table data.
   ///
-  /// Indirect symbol table is used by the loader to speed-up symbol resolution during
-  /// the *lazy binding* process
+  /// Indirect symbol table is used by the loader to speed-up symbol resolution
+  /// during the *lazy binding* process
   ///
   /// References:
   ///   * dyld-519.2.1/src/ImageLoaderMachOCompressed.cpp

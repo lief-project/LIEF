@@ -29,8 +29,7 @@ CodeInfo& CodeInfo::operator=(const CodeInfo&) = default;
 CodeInfo::CodeInfo(const details::code_item& codeitem) :
   nb_registers_{codeitem.registers_size},
   args_input_sizes_{codeitem.ins_size},
-  output_sizes_{codeitem.outs_size}
-{}
+  output_sizes_{codeitem.outs_size} {}
 
 
 void CodeInfo::accept(Visitor& visitor) const {
@@ -50,4 +49,3 @@ std::ostream& operator<<(std::ostream& os, const CodeInfo& /*cinfo*/) {
 CodeInfo::~CodeInfo() = default;
 
 }
-

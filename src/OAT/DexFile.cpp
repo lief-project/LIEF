@@ -83,15 +83,13 @@ void DexFile::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const DexFile& dex_file) {
-  os << dex_file.location() << " - " << std::hex << std::showbase << "(Checksum: " << dex_file.checksum() << ")";
+  os << dex_file.location() << " - " << std::hex << std::showbase
+     << "(Checksum: " << dex_file.checksum() << ")";
   return os;
 }
 
 DexFile::~DexFile() = default;
 
 
-
 }
-

@@ -37,36 +37,36 @@ class ResourceNode;
 /// The Resource Manager provides an enhanced API to manipulate the resource tree.
 class LIEF_API ResourcesManager : public Object {
   public:
-
   /// The different types of resources
   /// From https://learn.microsoft.com/en-us/windows/win32/menurc/resource-types
   enum class TYPE {
-    CURSOR       = 1,
-    BITMAP       = 2,
-    ICON         = 3,
-    MENU         = 4,
-    DIALOG       = 5,
-    STRING       = 6,
-    FONTDIR      = 7,
-    FONT         = 8,
-    ACCELERATOR  = 9,
-    RCDATA       = 10,
+    CURSOR = 1,
+    BITMAP = 2,
+    ICON = 3,
+    MENU = 4,
+    DIALOG = 5,
+    STRING = 6,
+    FONTDIR = 7,
+    FONT = 8,
+    ACCELERATOR = 9,
+    RCDATA = 10,
     MESSAGETABLE = 11,
     GROUP_CURSOR = 12,
-    GROUP_ICON   = 14,
-    VERSION      = 16,
-    DLGINCLUDE   = 17,
-    PLUGPLAY     = 19,
-    VXD          = 20,
-    ANICURSOR    = 21,
-    ANIICON      = 22,
-    HTML         = 23,
-    MANIFEST     = 24
+    GROUP_ICON = 14,
+    VERSION = 16,
+    DLGINCLUDE = 17,
+    PLUGPLAY = 19,
+    VXD = 20,
+    ANICURSOR = 21,
+    ANIICON = 22,
+    HTML = 23,
+    MANIFEST = 24,
   };
 
   public:
   using dialogs_t = ResourceDialog::dialogs_t;
-  using it_const_dialogs = const_ref_iterator<const dialogs_t&, const ResourceDialog*>;
+  using it_const_dialogs =
+      const_ref_iterator<const dialogs_t&, const ResourceDialog*>;
 
   using icons_t = std::vector<ResourceIcon>;
   using it_const_icons = const_ref_iterator<icons_t>;
@@ -89,9 +89,8 @@ class LIEF_API ResourcesManager : public Object {
       return is_defined();
     }
 
-    friend LIEF_API
-      std::ostream& operator<<(std::ostream& os, const string_entry_t& str)
-    {
+    friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                             const string_entry_t& str) {
       os << std::to_string(str.id) << ", " << str.string_u8();
       return os;
     }
@@ -101,13 +100,12 @@ class LIEF_API ResourcesManager : public Object {
 
   ResourcesManager() = delete;
   ResourcesManager(ResourceNode& rsrc) :
-    resources_{&rsrc}
-  {}
+    resources_{&rsrc} {}
 
   ResourcesManager(const ResourcesManager& other) :
     Object(other),
     resources_(other.resources_)
-    // Skip (on purpose) the `dialogs_` cache
+  // Skip (on purpose) the `dialogs_` cache
   {}
 
   ResourcesManager& operator=(const ResourcesManager& other) {
@@ -128,7 +126,8 @@ class LIEF_API ResourcesManager : public Object {
   /// or a nullptr if not found;
   ResourceNode* get_node_type(TYPE type) {
     return const_cast<ResourceNode*>(
-      static_cast<const ResourcesManager*>(this)->get_node_type(type));
+        static_cast<const ResourcesManager*>(this)->get_node_type(type)
+    );
   }
   const ResourceNode* get_node_type(TYPE type) const;
 
@@ -163,7 +162,7 @@ class LIEF_API ResourcesManager : public Object {
 
   /// `true` if resources contain a LIEF::PE::ResourceIcon
   bool has_icons() const {
-    return get_node_type(TYPE::ICON)       != nullptr &&
+    return get_node_type(TYPE::ICON) != nullptr &&
            get_node_type(TYPE::GROUP_ICON) != nullptr;
   }
 
@@ -212,13 +211,14 @@ class LIEF_API ResourcesManager : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourcesManager& m);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourcesManager& m);
 
   private:
   void print_tree(const ResourceNode& node, std::ostringstream& stream,
                   uint32_t current_depth, uint32_t max_depth,
-                  const ResourceNode* parent = nullptr,
-                  std::string header = "", bool is_last = false) const;
+                  const ResourceNode* parent = nullptr, std::string header = "",
+                  bool is_last = false) const;
   ResourceNode* resources_ = nullptr;
   mutable dialogs_t dialogs_;
 };

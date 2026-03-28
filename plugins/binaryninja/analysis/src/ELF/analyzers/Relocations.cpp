@@ -34,7 +34,7 @@ bool Relocations::can_run(BinaryNinja::BinaryView& bv, Binary& elf) {
 void Relocations::run() {
   for (const LIEF::ELF::Relocation& R : elf_.relocations()) {
     std::vector<Ref<BinaryNinja::Relocation>> relocations =
-      bv_.GetRelocationsAt(translate_addr(R.address()));
+        bv_.GetRelocationsAt(translate_addr(R.address()));
 
     if (!relocations.empty()) {
       continue;
@@ -52,7 +52,7 @@ void Relocations::run() {
 
     if (!apply_relocation(R)) {
       BN_WARN("LIEF couldn't apply relocation: 0x{:010x} - {}", R.address(),
-               to_string(R.type()));
+              to_string(R.type()));
     }
   }
 }

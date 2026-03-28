@@ -17,7 +17,7 @@
 #include "LIEF/PE/signature/RsaInfo.hpp"
 
 #ifndef MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
-#define MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+  #define MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
 #endif
 
 #include <mbedtls/private/bignum.h>
@@ -41,8 +41,7 @@ RsaInfo::RsaInfo(const RsaInfo::rsa_ctx_handle ctx) {
   ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
 }
 
-RsaInfo::RsaInfo(const RsaInfo& other)
-{
+RsaInfo::RsaInfo(const RsaInfo& other) {
   if (other.ctx_ != nullptr) {
     const auto* octx = reinterpret_cast<const mbedtls_rsa_context*>(other.ctx_);
     auto* local_ctx = new mbedtls_rsa_context{};
@@ -57,8 +56,7 @@ RsaInfo::RsaInfo(const RsaInfo& other)
 
 
 RsaInfo::RsaInfo(RsaInfo&& other) :
-  ctx_{other.ctx_}
-{}
+  ctx_{other.ctx_} {}
 
 RsaInfo& RsaInfo::operator=(RsaInfo other) {
   swap(other);
@@ -145,4 +143,3 @@ std::ostream& operator<<(std::ostream& os, const RsaInfo& info) {
 }
 
 }
-

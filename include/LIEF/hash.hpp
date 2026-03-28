@@ -56,7 +56,8 @@ class LIEF_API Hash : public Visitor {
   virtual Hash& process(const std::vector<uint8_t>& raw);
   virtual Hash& process(span<const uint8_t> raw);
 
-  template<class T, typename = typename std::enable_if<std::is_enum<T>::value>::type>
+  template<class T,
+           typename = typename std::enable_if<std::is_enum<T>::value>::type>
   Hash& process(T v) {
     return process(static_cast<value_type>(v));
   }
@@ -116,7 +117,6 @@ class LIEF_API Hash : public Visitor {
 
   protected:
   value_type value_ = 0;
-
 };
 
 LIEF_API Hash::value_type hash(const Object& v);

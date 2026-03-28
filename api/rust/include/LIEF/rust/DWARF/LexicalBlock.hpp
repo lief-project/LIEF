@@ -26,19 +26,27 @@ class DWARF_LexicalBlock : private Mirror<LIEF::dwarf::LexicalBlock> {
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::LexicalBlock;
 
-  class it_sub_blocks :
-      public ForwardIterator<DWARF_LexicalBlock, LIEF::dwarf::LexicalBlock::Iterator>
-  {
+  class it_sub_blocks
+    : public ForwardIterator<DWARF_LexicalBlock,
+                             LIEF::dwarf::LexicalBlock::Iterator> {
     public:
-    it_sub_blocks(const DWARF_LexicalBlock::lief_t& src)
-      : ForwardIterator(src.sub_blocks()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_sub_blocks(const DWARF_LexicalBlock::lief_t& src) :
+      ForwardIterator(src.sub_blocks()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  auto name() const { return get().name(); }
+  auto name() const {
+    return get().name();
+  }
 
-  auto description() const { return get().description(); }
+  auto description() const {
+    return get().description();
+  }
 
   uint64_t addr(uint32_t& is_set) const {
     return details::make_optional(get().addr(), is_set);
@@ -56,10 +64,11 @@ class DWARF_LexicalBlock : private Mirror<LIEF::dwarf::LexicalBlock> {
     return get().size();
   }
 
-  auto ranges() const { return details::make_range(get().ranges()); }
+  auto ranges() const {
+    return details::make_range(get().ranges());
+  }
 
   auto sub_blocks() const {
     return std::make_unique<it_sub_blocks>(get());
   }
-
 };

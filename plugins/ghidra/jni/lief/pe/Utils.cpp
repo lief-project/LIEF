@@ -21,18 +21,11 @@
 namespace lief_jni::pe {
 
 int Utils::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "isPE",
-      "(Ljava/lang/String;)Z",
-      jni_is_pe
-    )
-  };
+  static const std::array NATIVE_METHODS{make("isPE", "(Ljava/lang/String;)Z",
+                                              jni_is_pe)};
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

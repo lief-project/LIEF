@@ -35,12 +35,11 @@ class OperandIt;
 /// This class represents an operand for an AArch64 instruction
 class LIEF_API Operand {
   public:
-
   /// **Forward** iterator that outputs aarch64 Operand as `std::unique_ptr`
-  class Iterator final :
-    public iterator_facade_base<Iterator, std::forward_iterator_tag, std::unique_ptr<Operand>,
-                                std::ptrdiff_t, Operand*, std::unique_ptr<Operand>>
-  {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::forward_iterator_tag,
+                                  std::unique_ptr<Operand>, std::ptrdiff_t,
+                                  Operand*, std::unique_ptr<Operand>> {
     public:
     using implementation = details::OperandIt;
 
@@ -94,7 +93,7 @@ class LIEF_API Operand {
 
   /// \private
   static LIEF_LOCAL std::unique_ptr<Operand>
-    create(std::unique_ptr<details::Operand> impl);
+      create(std::unique_ptr<details::Operand> impl);
 
   /// \private
   LIEF_LOCAL const details::Operand& impl() const {

@@ -20,13 +20,11 @@
 namespace lief_jni::pe {
 class Utils {
   public:
-  static constexpr jni::Class kClass {
-    "lief/pe/Utils",
+  static constexpr jni::Class kClass{
+      "lief/pe/Utils",
   };
 
-  static jboolean jni_is_pe(JNIEnv* /*env*/, jclass /*clazz*/,
-                            jstring path)
-  {
+  static jboolean jni_is_pe(JNIEnv* /*env*/, jclass /*clazz*/, jstring path) {
     jni::ThreadGuard TG;
     jni::LocalString jpath(path);
     return LIEF::PE::is_pe(std::string(jpath.Pin().ToString()));

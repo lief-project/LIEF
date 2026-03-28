@@ -48,7 +48,8 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
       return library + '.' + function;
     }
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const forward_information_t& info) {
+    LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                             const forward_information_t& info) {
       os << info.key();
       return os;
     }
@@ -56,18 +57,16 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
 
   public:
   ExportEntry() = default;
-  ExportEntry(uint32_t address, bool is_extern,
-              uint16_t ordinal, uint32_t function_rva) :
+  ExportEntry(uint32_t address, bool is_extern, uint16_t ordinal,
+              uint32_t function_rva) :
     function_rva_{function_rva},
     ordinal_{ordinal},
     address_{address},
-    is_extern_{is_extern}
-  {}
+    is_extern_{is_extern} {}
 
   ExportEntry(std::string name, uint32_t rva) :
     LIEF::Symbol(std::move(name)),
-    address_(rva)
-  {}
+    address_(rva) {}
 
   ExportEntry(const ExportEntry&) = default;
   ExportEntry& operator=(const ExportEntry&) = default;
@@ -133,15 +132,16 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
     address(static_cast<uint32_t>(value));
   }
 
-  void set_forward_info(std::string lib, std::string function)  {
-    forward_info_.library =  std::move(lib);
+  void set_forward_info(std::string lib, std::string function) {
+    forward_info_.library = std::move(lib);
     forward_info_.function = std::move(function);
   }
 
   void accept(Visitor& visitor) const override;
 
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportEntry& exportEntry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ExportEntry& exportEntry);
 
   private:
   uint32_t function_rva_ = 0;
@@ -150,7 +150,6 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
   bool is_extern_ = false;
 
   forward_information_t forward_info_;
-
 };
 
 }

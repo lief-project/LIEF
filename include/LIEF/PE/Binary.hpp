@@ -76,7 +76,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_data_directories = ref_iterator<data_directories_t&, DataDirectory*>;
 
   /// Iterator that outputs const DataDirectory&
-  using it_const_data_directories = const_ref_iterator<const data_directories_t&, const DataDirectory*>;
+  using it_const_data_directories =
+      const_ref_iterator<const data_directories_t&, const DataDirectory*>;
 
   /// Internal container for storing PE's Relocation
   using relocations_t = std::vector<std::unique_ptr<Relocation>>;
@@ -85,7 +86,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   /// Iterator that outputs const Relocation&
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
   /// Internal container for storing PE's Import
   using imports_t = std::vector<std::unique_ptr<Import>>;
@@ -103,7 +105,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_delay_imports = ref_iterator<delay_imports_t&, DelayImport*>;
 
   /// Iterator that outputs const DelayImport&
-  using it_const_delay_imports = const_ref_iterator<const delay_imports_t&, const DelayImport*>;
+  using it_const_delay_imports =
+      const_ref_iterator<const delay_imports_t&, const DelayImport*>;
 
   /// Internal container for storing Debug information
   using debug_entries_t = std::vector<std::unique_ptr<Debug>>;
@@ -112,7 +115,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_debug_entries = ref_iterator<debug_entries_t&, Debug*>;
 
   /// Iterator that outputs const Debug&
-  using it_const_debug_entries = const_ref_iterator<const debug_entries_t&, const Debug*>;
+  using it_const_debug_entries =
+      const_ref_iterator<const debug_entries_t&, const Debug*>;
 
   /// Internal container for storing COFF Symbols
   using symbols_t = std::vector<std::unique_ptr<COFF::Symbol>>;
@@ -121,7 +125,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_symbols = ref_iterator<symbols_t&, COFF::Symbol*>;
 
   /// Iterator that outputs const Symbol&
-  using it_const_symbols = const_ref_iterator<const symbols_t&, const COFF::Symbol*>;
+  using it_const_symbols =
+      const_ref_iterator<const symbols_t&, const COFF::Symbol*>;
 
   /// Internal container for storing strings
   using strings_table_t = std::vector<COFF::String>;
@@ -148,7 +153,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_exceptions = ref_iterator<exceptions_t&, ExceptionInfo*>;
 
   /// Iterator that outputs const ExceptionInfo&
-  using it_const_exceptions = const_ref_iterator<const exceptions_t&, const ExceptionInfo*>;
+  using it_const_exceptions =
+      const_ref_iterator<const exceptions_t&, const ExceptionInfo*>;
 
   Binary();
   ~Binary() override;
@@ -175,7 +181,8 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// @param[in] offset The offset to convert.
   /// @param[in] slide  If not 0, it will replace the default base address (if any)
-  result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+  result<uint64_t> offset_to_virtual_address(uint64_t offset,
+                                             uint64_t slide = 0) const override;
 
   /// Convert the given offset into a relative virtual address (RVA).
   uint64_t offset_to_rva(uint64_t offset) const;
@@ -191,7 +198,9 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// If no section can be found, return a nullptr
   Section* section_from_offset(uint64_t offset) {
-    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset));
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->section_from_offset(offset)
+    );
   }
   const Section* section_from_offset(uint64_t offset) const;
 
@@ -199,7 +208,9 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// If no section can be found, return a nullptr
   Section* section_from_rva(uint64_t virtual_address) {
-    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_rva(virtual_address));
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->section_from_rva(virtual_address)
+    );
   }
   const Section* section_from_rva(uint64_t virtual_address) const;
 
@@ -341,14 +352,17 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Verify the binary against the embedded signature(s) (if any)
-  /// First, it checks that the embedded signatures are correct (c.f. Signature::check)
-  /// and then, it checks that the authentihash matches ContentInfo::digest
+  /// First, it checks that the embedded signatures are correct (c.f.
+  /// Signature::check) and then, it checks that the authentihash matches
+  /// ContentInfo::digest
   ///
-  /// One can tweak the verification process with the Signature::VERIFICATION_CHECKS flags
+  /// One can tweak the verification process with the
+  /// Signature::VERIFICATION_CHECKS flags
   ///
   /// @see LIEF::PE::Signature::check
-  Signature::VERIFICATION_FLAGS verify_signature(
-      Signature::VERIFICATION_CHECKS checks = Signature::VERIFICATION_CHECKS::DEFAULT) const;
+  Signature::VERIFICATION_FLAGS
+      verify_signature(Signature::VERIFICATION_CHECKS checks =
+                           Signature::VERIFICATION_CHECKS::DEFAULT) const;
 
   /// Verify the binary with the Signature object provided in the first parameter.
   /// It can be used to verify a detached signature:
@@ -359,8 +373,10 @@ class LIEF_API Binary : public LIEF::Binary {
   ///   binary->verify_signature(detached.value());
   /// }
   /// \endcode
-  Signature::VERIFICATION_FLAGS verify_signature(const Signature& sig,
-      Signature::VERIFICATION_CHECKS checks = Signature::VERIFICATION_CHECKS::DEFAULT) const;
+  Signature::VERIFICATION_FLAGS
+      verify_signature(const Signature& sig,
+                       Signature::VERIFICATION_CHECKS checks =
+                           Signature::VERIFICATION_CHECKS::DEFAULT) const;
 
   /// Compute the authentihash according to the algorithm provided in the first
   /// parameter
@@ -401,10 +417,9 @@ class LIEF_API Binary : public LIEF::Binary {
   ///          the table. Hence, the first string starts a the offset 4.
   COFF::String* find_coff_string(uint32_t offset) {
     auto it = std::find_if(strings_table_.begin(), strings_table_.end(),
-      [offset] (const COFF::String& item) {
-        return offset == item.offset();
-      }
-    );
+                           [offset](const COFF::String& item) {
+                             return offset == item.offset();
+                           });
     return it == strings_table_.end() ? nullptr : &*it;
   }
 
@@ -427,7 +442,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   ResourceNode* set_resources(std::unique_ptr<ResourceNode> root);
 
-  /// Return the ResourcesManager (class to manage resources more easily than the tree one)
+  /// Return the ResourcesManager (class to manage resources more easily than the
+  /// tree one)
   result<ResourcesManager> resources_manager() const;
 
   /// Return binary's section from its name.
@@ -435,7 +451,9 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// @param[in] name Name of the Section
   Section* get_section(const std::string& name) {
-    return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(name));
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->get_section(name)
+    );
   }
   const Section* get_section(const std::string& name) const;
 
@@ -443,7 +461,9 @@ class LIEF_API Binary : public LIEF::Binary {
   /// nullptr if the binary does not have an import table
   const Section* import_section() const;
   Section* import_section() {
-    return const_cast<Section*>(static_cast<const Binary*>(this)->import_section());
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->import_section()
+    );
   }
 
   /// Delete the section with the given name
@@ -487,7 +507,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the DataDirectory with the given type (or index)
   DataDirectory* data_directory(DataDirectory::TYPES type) {
-    return const_cast<DataDirectory*>(static_cast<const Binary*>(this)->data_directory(type));
+    return const_cast<DataDirectory*>(
+        static_cast<const Binary*>(this)->data_directory(type)
+    );
   }
   const DataDirectory* data_directory(DataDirectory::TYPES type) const;
 
@@ -585,7 +607,9 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// If the import can't be found, it returns a nullptr
   Import* get_import(const std::string& import_name) {
-    return const_cast<Import*>(static_cast<const Binary*>(this)->get_import(import_name));
+    return const_cast<Import*>(
+        static_cast<const Binary*>(this)->get_import(import_name)
+    );
   }
 
   const Import* get_import(const std::string& import_name) const;
@@ -612,7 +636,9 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Returns the DelayImport matching the given name. If it can't be
   /// found, it returns a nullptr
   DelayImport* get_delay_import(const std::string& import_name) {
-    return const_cast<DelayImport*>(static_cast<const Binary*>(this)->get_delay_import(import_name));
+    return const_cast<DelayImport*>(
+        static_cast<const Binary*>(this)->get_delay_import(import_name)
+    );
   }
   const DelayImport* get_delay_import(const std::string& import_name) const;
 
@@ -683,8 +709,10 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @param[in] address        Address to patch
   /// @param[in] patch_value    Patch to apply
   /// @param[in] size           Size of the value in **bytes** (1, 2, ... 8)
-  /// @param[in] addr_type      Type of the Virtual address: VA or RVA. Default: Auto
-  void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t),
+  /// @param[in] addr_type      Type of the Virtual address: VA or RVA. Default:
+  /// Auto
+  void patch_address(uint64_t address, uint64_t patch_value,
+                     size_t size = sizeof(uint64_t),
                      VA_TYPES addr_type = VA_TYPES::AUTO) override;
 
 
@@ -696,12 +724,15 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// @param[in] virtual_address    Virtual address of the data to retrieve
   /// @param[in] size               Size in bytes of the data to retrieve
-  /// @param[in] addr_type          Type of the Virtual address: VA or RVA. Default: Auto
+  /// @param[in] addr_type          Type of the Virtual address: VA or RVA.
+  /// Default: Auto
   span<const uint8_t> get_content_from_virtual_address(
       uint64_t virtual_address, uint64_t size,
-      Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO) const override;
+      Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO
+  ) const override;
 
-  /// Return the binary's entrypoint (It is the same value as OptionalHeader::addressof_entrypoint
+  /// Return the binary's entrypoint (It is the same value as
+  /// OptionalHeader::addressof_entrypoint
   uint64_t entrypoint() const override {
     return optional_header_.imagebase() + optional_header_.addressof_entrypoint();
   }

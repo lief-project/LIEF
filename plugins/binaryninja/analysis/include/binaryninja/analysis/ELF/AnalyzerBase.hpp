@@ -39,7 +39,8 @@ class AnalyzerBase : public analysis_plugin::AnalyzerBase {
 
   uint64_t translate_addr(uint64_t addr, bool revert = false) const;
   bool apply_relocation(const LIEF::ELF::Relocation& R);
-  virtual void define_relocated_type(const LIEF::ELF::Relocation& R, uint64_t target);
+  virtual void define_relocated_type(const LIEF::ELF::Relocation& R,
+                                     uint64_t target);
 
   protected:
   LIEF::ELF::Binary& elf_;

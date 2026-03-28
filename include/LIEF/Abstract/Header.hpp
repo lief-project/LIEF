@@ -67,9 +67,9 @@ class LIEF_API Header : public Object {
     BITS_16 = 1LLU << 0, /// 16-bits architecture
     BITS_32 = 1LLU << 1, /// 32-bits architecture
     BITS_64 = 1LLU << 2, /// 64-bits architecture
-    THUMB   = 1LLU << 3, /// Support ARM Thumb mode
+    THUMB = 1LLU << 3,   /// Support ARM Thumb mode
 
-    ARM64E  = 1LLU << 4, /// ARM64 with extended (security) features
+    ARM64E = 1LLU << 4, /// ARM64 with extended (security) features
   };
 
   enum class OBJECT_TYPES {
@@ -130,7 +130,7 @@ class LIEF_API Header : public Object {
 
   protected:
   ARCHITECTURES architecture_ = ARCHITECTURES::UNKNOWN;
-  OBJECT_TYPES  object_type_ = OBJECT_TYPES::UNKNOWN;
+  OBJECT_TYPES object_type_ = OBJECT_TYPES::UNKNOWN;
   uint64_t entrypoint_ = 0;
   ENDIANNESS endianness_ = ENDIANNESS::UNKNOWN;
   MODES modes_ = MODES::NONE;

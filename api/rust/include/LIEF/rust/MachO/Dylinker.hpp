@@ -20,13 +20,19 @@
 class MachO_Dylinker : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::DylinkerCommand;
-  MachO_Dylinker(const lief_t& base) : MachO_Command(base) {}
+  MachO_Dylinker(const lief_t& base) :
+    MachO_Command(base) {}
 
-  std::string name() const { return impl().name(); };
+  std::string name() const {
+    return impl().name();
+  };
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
+
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

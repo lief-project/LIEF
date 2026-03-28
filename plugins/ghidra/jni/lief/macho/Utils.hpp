@@ -20,22 +20,18 @@
 namespace lief_jni::macho {
 class Utils {
   public:
-  static constexpr jni::Class kClass {
-    "lief/macho/Utils",
+  static constexpr jni::Class kClass{
+      "lief/macho/Utils",
   };
 
-  static jboolean jni_is_macho(JNIEnv* /*env*/, jclass /*clazz*/,
-                               jstring path)
-  {
+  static jboolean jni_is_macho(JNIEnv* /*env*/, jclass /*clazz*/, jstring path) {
     jni::ThreadGuard TG;
     jni::LocalString jpath(path);
     return LIEF::MachO::is_macho(std::string(jpath.Pin().ToString()));
   }
 
 
-  static jboolean jni_is_fat(JNIEnv* /*env*/, jclass /*clazz*/,
-                             jstring path)
-  {
+  static jboolean jni_is_fat(JNIEnv* /*env*/, jclass /*clazz*/, jstring path) {
     jni::ThreadGuard TG;
     jni::LocalString jpath(path);
     return LIEF::MachO::is_fat(std::string(jpath.Pin().ToString()));

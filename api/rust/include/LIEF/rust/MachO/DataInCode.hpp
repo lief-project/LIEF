@@ -24,19 +24,29 @@
 class MachO_DataInCode : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::DataInCode;
-  class it_entries :
-      public Iterator<MachO_DataCodeEntry, LIEF::MachO::DataInCode::it_const_entries>
-  {
+  class it_entries : public Iterator<MachO_DataCodeEntry,
+                                     LIEF::MachO::DataInCode::it_const_entries> {
     public:
-    it_entries(const MachO_DataInCode::lief_t& src)
-      : Iterator(src.entries()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_entries(const MachO_DataInCode::lief_t& src) :
+      Iterator(src.entries()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
-  MachO_DataInCode(const lief_t& base) : MachO_Command(base) {}
-  uint32_t data_offset() const { return impl().data_offset(); };
-  uint32_t data_size() const { return impl().data_size(); };
-  auto content() const { return make_span(impl().content()); }
+  MachO_DataInCode(const lief_t& base) :
+    MachO_Command(base) {}
+  uint32_t data_offset() const {
+    return impl().data_offset();
+  };
+  uint32_t data_size() const {
+    return impl().data_size();
+  };
+  auto content() const {
+    return make_span(impl().content());
+  }
 
   auto entries() const {
     return std::make_unique<it_entries>(impl());
@@ -47,5 +57,7 @@ class MachO_DataInCode : public MachO_Command {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

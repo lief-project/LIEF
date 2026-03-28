@@ -19,14 +19,25 @@
 class ELF_SymbolVersionAuxRequirement : public ELF_SymbolVersionAux {
   public:
   using lief_t = LIEF::ELF::SymbolVersionAuxRequirement;
-  ELF_SymbolVersionAuxRequirement(const lief_t& sym) : ELF_SymbolVersionAux(sym) {}
+  ELF_SymbolVersionAuxRequirement(const lief_t& sym) :
+    ELF_SymbolVersionAux(sym) {}
 
-  uint32_t hash() const { return impl().hash(); }
-  uint16_t flags() const { return impl().flags(); }
-  uint16_t other() const { return impl().other(); }
+  uint32_t hash() const {
+    return impl().hash();
+  }
+  uint16_t flags() const {
+    return impl().flags();
+  }
+  uint16_t other() const {
+    return impl().other();
+  }
 
-  auto name() const { return ELF_SymbolVersionAux::name(); }
+  auto name() const {
+    return ELF_SymbolVersionAux::name();
+  }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

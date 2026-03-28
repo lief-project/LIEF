@@ -9,8 +9,7 @@ void process_dir(const std::filesystem::path& target) {
   for (const auto& e : std::filesystem::directory_iterator(target)) {
     if (e.is_directory()) {
       process_dir(e.path());
-    }
-    else if (e.is_regular_file() && LIEF::ELF::is_elf(e.path())) {
+    } else if (e.is_regular_file() && LIEF::ELF::is_elf(e.path())) {
       process_file(e.path());
     }
   }

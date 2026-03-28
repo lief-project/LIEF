@@ -19,14 +19,19 @@
 class PE_MsManifestBinaryID : public PE_Attribute {
   public:
   using lief_t = LIEF::PE::MsManifestBinaryID;
-  PE_MsManifestBinaryID(const lief_t& base) : PE_Attribute(base) {}
+  PE_MsManifestBinaryID(const lief_t& base) :
+    PE_Attribute(base) {}
 
   static bool classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 
-  auto manifest_id() const { return impl().manifest_id(); }
+  auto manifest_id() const {
+    return impl().manifest_id();
+  }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

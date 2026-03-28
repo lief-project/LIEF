@@ -28,4 +28,3 @@ std::string GenericType::print() const {
 }
 
 }
-

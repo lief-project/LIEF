@@ -32,193 +32,137 @@
 
 namespace lief_jni::dwarf::editor {
 
-void CompilationUnit::jni_set_producer(JNIEnv* env, jobject thiz, jstring producer) {
+void CompilationUnit::jni_set_producer(JNIEnv* env, jobject thiz,
+                                       jstring producer) {
   jni::LocalString jproducer = producer;
   from_jni(thiz)->impl().set_producer(std::string(jproducer.Pin().ToString()));
 }
 
-jobject CompilationUnit::jni_create_function(JNIEnv* env, jobject thiz, jstring name) {
+jobject CompilationUnit::jni_create_function(JNIEnv* env, jobject thiz,
+                                             jstring name) {
   jni::LocalString func_name = name;
-  return Function::create(
-    from_jni(thiz)->impl().create_function(
-      std::string(func_name.Pin().ToString()))
-  );
+  return Function::create(from_jni(thiz)->impl().create_function(
+      std::string(func_name.Pin().ToString())
+  ));
 }
 
 jobject CompilationUnit::jni_create_variable(JNIEnv* env, jobject thiz,
-                                             jstring name)
-{
+                                             jstring name) {
   jni::LocalString jname = name;
   return Variable::create(
-    from_jni(thiz)->impl().create_variable(
-      std::string(jname.Pin().ToString()))
+      from_jni(thiz)->impl().create_variable(std::string(jname.Pin().ToString()))
   );
 }
 
 jobject CompilationUnit::jni_create_generic_type(JNIEnv* env, jobject thiz,
-                                                 jstring name)
-{
+                                                 jstring name) {
   jni::LocalString jname = name;
-  return Type::create(
-    from_jni(thiz)->impl().create_generic_type(
-      std::string(jname.Pin().ToString()))
-  );
+  return Type::create(from_jni(thiz)->impl().create_generic_type(
+      std::string(jname.Pin().ToString())
+  ));
 }
 
-jobject CompilationUnit::jni_create_enum(JNIEnv* env, jobject thiz, jstring name)
-{
+jobject CompilationUnit::jni_create_enum(JNIEnv* env, jobject thiz, jstring name) {
   jni::LocalString jname = name;
   return EnumType::create<EnumType>(
-    from_jni(thiz)->impl().create_enum(
-      std::string(jname.Pin().ToString()))
+      from_jni(thiz)->impl().create_enum(std::string(jname.Pin().ToString()))
   );
 }
 
-jobject CompilationUnit::jni_create_typedef(
-  JNIEnv* env, jobject thiz, jstring name, jobject type)
-{
+jobject CompilationUnit::jni_create_typedef(JNIEnv* env, jobject thiz,
+                                            jstring name, jobject type) {
   jni::LocalString jname = name;
-  return TypeDef::create<TypeDef>(
-    from_jni(thiz)->impl().create_typedef(
-      std::string(jname.Pin().ToString()),
-      Type::from_jni(type)->impl()
-    )
-  );
+  return TypeDef::create<TypeDef>(from_jni(thiz)->impl().create_typedef(
+      std::string(jname.Pin().ToString()), Type::from_jni(type)->impl()
+  ));
 }
 
-jobject CompilationUnit::jni_create_structure(
-  JNIEnv* env, jobject thiz, jstring name, jobject kind)
-{
+jobject CompilationUnit::jni_create_structure(JNIEnv* env, jobject thiz,
+                                              jstring name, jobject kind) {
   java::lang::Enum<StructType::Type> jkind = kind;
   jni::LocalString jname = name;
-  return StructType::create<StructType>(
-    from_jni(thiz)->impl().create_structure(
+  return StructType::create<StructType>(from_jni(thiz)->impl().create_structure(
       std::string(jname.Pin().ToString()),
       jkind.as<LIEF::dwarf::editor::StructType::TYPE>()
-    )
-  );
+  ));
 }
 
-jobject CompilationUnit::jni_create_base_type(
-  JNIEnv* env, jobject thiz, jstring name, jint size, jobject encoding)
-{
+jobject CompilationUnit::jni_create_base_type(JNIEnv* env, jobject thiz,
+                                              jstring name, jint size,
+                                              jobject encoding) {
   java::lang::Enum<BaseType::Encoding> jenconding = encoding;
   jni::LocalString jname = name;
-  return BaseType::create<BaseType>(
-    from_jni(thiz)->impl().create_base_type(
-      std::string(jname.Pin().ToString()),
-      size,
+  return BaseType::create<BaseType>(from_jni(thiz)->impl().create_base_type(
+      std::string(jname.Pin().ToString()), size,
       jenconding.as<LIEF::dwarf::editor::BaseType::ENCODING>()
-    )
-  );
+  ));
 }
 
-jobject CompilationUnit::jni_create_function_type(
-  JNIEnv* env, jobject thiz, jstring name)
-{
+jobject CompilationUnit::jni_create_function_type(JNIEnv* env, jobject thiz,
+                                                  jstring name) {
   jni::LocalString jname = name;
   return FunctionType::create<FunctionType>(
-    from_jni(thiz)->impl().create_function_type(
-      std::string(jname.Pin().ToString())
-    )
+      from_jni(thiz)->impl().create_function_type(
+          std::string(jname.Pin().ToString())
+      )
   );
 }
 
 jobject CompilationUnit::jni_create_pointer_type(JNIEnv* env, jobject thiz,
-                                                 jobject type)
-{
+                                                 jobject type) {
   return PointerType::create<PointerType>(
-    from_jni(thiz)->impl().create_pointer_type(
-      Type::from_jni(type)->impl()
-    )
+      from_jni(thiz)->impl().create_pointer_type(Type::from_jni(type)->impl())
   );
 }
 
 jobject CompilationUnit::jni_create_void_type(JNIEnv* env, jobject thiz) {
-  return Type::create(
-    from_jni(thiz)->impl().create_void_type()
-  );
+  return Type::create(from_jni(thiz)->impl().create_void_type());
 }
 
-jobject CompilationUnit::jni_create_array(
-  JNIEnv* env, jobject thiz, jstring name, jobject type, jint size)
-{
+jobject CompilationUnit::jni_create_array(JNIEnv* env, jobject thiz, jstring name,
+                                          jobject type, jint size) {
   jni::LocalString jname = name;
-  return ArrayType::create<ArrayType>(
-    from_jni(thiz)->impl().create_array(
-      std::string(jname.Pin().ToString()),
-      Type::from_jni(type)->impl(),
-      size
-    )
-  );
+  return ArrayType::create<ArrayType>(from_jni(thiz)->impl().create_array(
+      std::string(jname.Pin().ToString()), Type::from_jni(type)->impl(), size
+  ));
 }
 
 int CompilationUnit::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "setProducer",
-      "(Ljava/lang/String;)V",
-      &jni_set_producer
-    ),
-    make(
-      "createFunction",
-      "(Ljava/lang/String;)Llief/dwarf/editor/Function;",
-      &jni_create_function
-    ),
-    make(
-      "createVariable",
-      "(Ljava/lang/String;)Llief/dwarf/editor/Variable;",
-      &jni_create_variable
-    ),
-    make(
-      "createGenericType",
-      "(Ljava/lang/String;)Llief/dwarf/editor/Type;",
-      &jni_create_generic_type
-    ),
-    make(
-      "createEnum",
-      "(Ljava/lang/String;)Llief/dwarf/editor/EnumType;",
-      &jni_create_enum
-    ),
-    make(
-      "createTypedef",
-      "(Ljava/lang/String;Llief/dwarf/editor/Type;)Llief/dwarf/editor/TypeDef;",
-      &jni_create_typedef
-    ),
-    make(
-      "createStructure",
-      "(Ljava/lang/String;Llief/dwarf/editor/StructType$Type;)Llief/dwarf/editor/StructType;",
-      &jni_create_structure
-    ),
-    make(
-      "createBaseType",
-      "(Ljava/lang/String;ILlief/dwarf/editor/BaseType$Encoding;)Llief/dwarf/editor/BaseType;",
-      &jni_create_base_type
-    ),
-    make(
-      "createFunctionType",
-      "(Ljava/lang/String;)Llief/dwarf/editor/FunctionType;",
-      &jni_create_function_type
-    ),
-    make(
-      "createVoidType",
-      "()Llief/dwarf/editor/Type;",
-      &jni_create_void_type
-    ),
-    make(
-      "createArray",
-      "(Ljava/lang/String;Llief/dwarf/editor/Type;I)Llief/dwarf/editor/ArrayType;",
-      &jni_create_array
-    ),
-    make_destroy(
-      (void*)&jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("setProducer", "(Ljava/lang/String;)V", &jni_set_producer),
+      make("createFunction", "(Ljava/lang/String;)Llief/dwarf/editor/Function;",
+           &jni_create_function),
+      make("createVariable", "(Ljava/lang/String;)Llief/dwarf/editor/Variable;",
+           &jni_create_variable),
+      make("createGenericType", "(Ljava/lang/String;)Llief/dwarf/editor/Type;",
+           &jni_create_generic_type),
+      make("createEnum", "(Ljava/lang/String;)Llief/dwarf/editor/EnumType;",
+           &jni_create_enum),
+      make("createTypedef",
+           "(Ljava/lang/String;Llief/dwarf/editor/Type;)Llief/dwarf/editor/"
+           "TypeDef;",
+           &jni_create_typedef),
+      make("createStructure",
+           "(Ljava/lang/String;Llief/dwarf/editor/StructType$Type;)Llief/dwarf/"
+           "editor/StructType;",
+           &jni_create_structure),
+      make("createBaseType",
+           "(Ljava/lang/String;ILlief/dwarf/editor/BaseType$Encoding;)Llief/dwarf/"
+           "editor/BaseType;",
+           &jni_create_base_type),
+      make("createFunctionType",
+           "(Ljava/lang/String;)Llief/dwarf/editor/FunctionType;",
+           &jni_create_function_type),
+      make("createVoidType", "()Llief/dwarf/editor/Type;", &jni_create_void_type),
+      make("createArray",
+           "(Ljava/lang/String;Llief/dwarf/editor/Type;I)Llief/dwarf/editor/"
+           "ArrayType;",
+           &jni_create_array),
+      make_destroy((void*)&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

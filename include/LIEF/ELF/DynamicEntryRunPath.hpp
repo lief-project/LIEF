@@ -34,19 +34,16 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   using DynamicEntry::DynamicEntry;
 
   DynamicEntryRunPath() :
-    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RUNPATH, 0)
-  {}
+    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RUNPATH, 0) {}
 
   /// Constructor from (run)path
   DynamicEntryRunPath(std::string runpath) :
     DynamicEntry::DynamicEntry(DynamicEntry::TAG::RUNPATH, 0),
-    runpath_(std::move(runpath))
-  {}
+    runpath_(std::move(runpath)) {}
 
   /// Constructor from a list of paths
   DynamicEntryRunPath(const std::vector<std::string>& paths) :
-    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RUNPATH, 0)
-  {
+    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RUNPATH, 0) {
     this->paths(paths);
   }
 
@@ -79,7 +76,7 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   /// Remove the given ``path``
   DynamicEntryRunPath& remove(const std::string& path);
 
-  DynamicEntryRunPath& operator+=(const std::string &path) {
+  DynamicEntryRunPath& operator+=(const std::string& path) {
     return append(path);
   }
 

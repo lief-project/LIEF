@@ -36,8 +36,8 @@ class LayoutChecker {
 
   LayoutChecker() = delete;
   LayoutChecker(const Binary& bin) :
-    elf(bin), filesz(elf.original_size())
-  {}
+    elf(bin),
+    filesz(elf.original_size()) {}
 
   bool check_header();
   bool check_segments();
@@ -47,12 +47,24 @@ class LayoutChecker {
   bool check_tls();
 
   bool check() {
-    if (!check_header()) return false;
-    if (!check_segments()) return false;
-    if (!check_sections()) return false;
-    if (!check_dynamic()) return false;
-    if (!check_notes()) return false;
-    if (!check_tls()) return false;
+    if (!check_header()) {
+      return false;
+    }
+    if (!check_segments()) {
+      return false;
+    }
+    if (!check_sections()) {
+      return false;
+    }
+    if (!check_dynamic()) {
+      return false;
+    }
+    if (!check_notes()) {
+      return false;
+    }
+    if (!check_tls()) {
+      return false;
+    }
     return true;
   }
 
@@ -61,8 +73,8 @@ class LayoutChecker {
     return false;
   }
 
-  template <typename... Args>
-  bool error(const char *fmt, const Args &... args) {
+  template<typename... Args>
+  bool error(const char* fmt, const Args&... args) {
     error_msg = fmt::format(fmt, args...);
     return false;
   }
@@ -85,10 +97,10 @@ bool LayoutChecker::check_header() {
   const Header& hdr = elf.header();
 
   const uint32_t ehdr_size =
-    is64() ? sizeof(details::Elf64_Ehdr) : sizeof(details::Elf32_Ehdr);
+      is64() ? sizeof(details::Elf64_Ehdr) : sizeof(details::Elf32_Ehdr);
   if (filesz < ehdr_size) {
-    return error("File size ({:#x}) is too small for ELF header ({:#x})",
-                 filesz, ehdr_size);
+    return error("File size ({:#x}) is too small for ELF header ({:#x})", filesz,
+                 ehdr_size);
   }
 
   if (hdr.identity_version() != Header::VERSION::CURRENT) {
@@ -104,15 +116,17 @@ bool LayoutChecker::check_header() {
   }
 
   const uint32_t phdr_size =
-    is64() ? sizeof(details::Elf64_Phdr) : sizeof(details::Elf32_Phdr);
+      is64() ? sizeof(details::Elf64_Phdr) : sizeof(details::Elf32_Phdr);
   const uint32_t phnum = hdr.numberof_segments();
   if (phnum > 0) {
     const uint64_t phoff = hdr.program_headers_offset();
     const uint64_t pht_size = (uint64_t)phnum * phdr_size;
 
     if (phoff + pht_size > filesz) {
-      return error("Program header table (offset: {:#x}, size: {:#x}) is beyond file size",
-          phoff, pht_size);
+      return error(
+          "Program header table (offset: {:#x}, size: {:#x}) is beyond file size",
+          phoff, pht_size
+      );
     }
 
     // Required by Android
@@ -121,19 +135,21 @@ bool LayoutChecker::check_header() {
     }
 
     if (phnum > (std::numeric_limits<uint16_t>::max() / phdr_size)) {
-        return error("Too many program headers: {}", phnum);
+      return error("Too many program headers: {}", phnum);
     }
   }
 
   const uint32_t shdr_size =
-    is64() ? sizeof(details::Elf64_Shdr) : sizeof(details::Elf32_Shdr);
+      is64() ? sizeof(details::Elf64_Shdr) : sizeof(details::Elf32_Shdr);
   const uint32_t shnum = hdr.numberof_sections();
   if (shnum > 0) {
     const uint64_t shoff = hdr.section_headers_offset();
     const uint64_t sht_size = (uint64_t)shnum * shdr_size;
     if (shoff + sht_size > filesz) {
-      return error("Section header table (offset: {:#x}, size: {:#x}) is beyond file size",
-                   shoff, sht_size);
+      return error(
+          "Section header table (offset: {:#x}, size: {:#x}) is beyond file size",
+          shoff, sht_size
+      );
     }
 
     // Required by Android
@@ -142,8 +158,8 @@ bool LayoutChecker::check_header() {
     }
 
     if (hdr.section_name_table_idx() >= shnum) {
-       return error("Invalid section name table index: {}",
-                    hdr.section_name_table_idx());
+      return error("Invalid section name table index: {}",
+                   hdr.section_name_table_idx());
     }
   }
 
@@ -170,19 +186,20 @@ bool LayoutChecker::check_segments() {
     const Segment& seg = segments[i];
 
     if (seg.file_offset() + seg.physical_size() > filesz) {
-      return error("Segment[{}] offset ({:#x}) + filesz ({:#x}) is beyond file size ({:#x})",
+      return error("Segment[{}] offset ({:#x}) + filesz ({:#x}) is beyond file "
+                   "size ({:#x})",
                    i, seg.file_offset(), seg.physical_size(), filesz);
     }
 
     if (seg.virtual_size() < seg.physical_size()) {
-      return error("Segment[{}] memsz ({:#x}) is smaller than filesz ({:#x})",
-                   i, seg.virtual_size(), seg.physical_size());
+      return error("Segment[{}] memsz ({:#x}) is smaller than filesz ({:#x})", i,
+                   seg.virtual_size(), seg.physical_size());
     }
 
     const uint64_t alignment = seg.alignment();
     if (alignment > 1 && (alignment & (alignment - 1)) != 0) {
-      return error("Segment[{}] alignment ({:#x}) is not a power of 2",
-                   i, alignment);
+      return error("Segment[{}] alignment ({:#x}) is not a power of 2", i,
+                   alignment);
     }
 
     if (seg.type() == Segment::TYPE::PHDR) {
@@ -192,10 +209,13 @@ bool LayoutChecker::check_segments() {
     if (seg.type() == Segment::TYPE::LOAD) {
       has_pt_load = true;
       if (alignment > 1) {
-        if ((seg.virtual_address() % alignment) != (seg.file_offset() % alignment)) {
-          return error("Segment[{}] (PT_LOAD) p_vaddr ({:#x}) and p_offset ({:#x}) "
-                       "are not congruent modulo p_align ({:#x})",
-                       i, seg.virtual_address(), seg.file_offset(), alignment);
+        if ((seg.virtual_address() % alignment) != (seg.file_offset() % alignment))
+        {
+          return error(
+              "Segment[{}] (PT_LOAD) p_vaddr ({:#x}) and p_offset ({:#x}) "
+              "are not congruent modulo p_align ({:#x})",
+              i, seg.virtual_address(), seg.file_offset(), alignment
+          );
         }
       }
 
@@ -219,7 +239,8 @@ bool LayoutChecker::check_segments() {
         const uint64_t end2 = other.virtual_address() + other.virtual_size();
 
         if (std::max(start1, start2) < std::min(end1, end2)) {
-          return error("Segment[{}] and Segment[{}] (PT_LOAD) overlap in memory", i, j);
+          return error("Segment[{}] and Segment[{}] (PT_LOAD) overlap in memory",
+                       i, j);
         }
       }
     }
@@ -233,10 +254,13 @@ bool LayoutChecker::check_segments() {
   if (pt_phdr != nullptr) {
     bool wrapped = false;
     for (const Segment& seg : segments) {
-      if (seg.type() != Segment::TYPE::LOAD) continue;
+      if (seg.type() != Segment::TYPE::LOAD) {
+        continue;
+      }
       if (seg.virtual_address() <= pt_phdr->virtual_address() &&
-          (pt_phdr->virtual_address() + pt_phdr->virtual_size())
-          <= (seg.virtual_address() + seg.physical_size())) {
+          (pt_phdr->virtual_address() + pt_phdr->virtual_size()) <=
+              (seg.virtual_address() + seg.physical_size()))
+      {
         wrapped = true;
         break;
       }
@@ -245,15 +269,19 @@ bool LayoutChecker::check_segments() {
       return error("PT_PHDR segment is not wrapped by a PT_LOAD segment");
     }
   } else {
-    // If no PT_PHDR, program headers are usually at the beginning of the first PT_LOAD (offset 0)
-    // Linker checks this in FindPhdr()
+    // If no PT_PHDR, program headers are usually at the beginning of the first
+    // PT_LOAD (offset 0) Linker checks this in FindPhdr()
     bool found_pht_in_load = false;
     const uint64_t pht_offset = elf.header().program_headers_offset();
-    const uint32_t phdr_size = is64() ? sizeof(details::Elf64_Phdr) : sizeof(details::Elf32_Phdr);
-    const uint64_t pht_size = (uint64_t)elf.header().numberof_segments() * phdr_size;
+    const uint32_t phdr_size =
+        is64() ? sizeof(details::Elf64_Phdr) : sizeof(details::Elf32_Phdr);
+    const uint64_t pht_size =
+        (uint64_t)elf.header().numberof_segments() * phdr_size;
 
     for (const Segment& seg : segments) {
-      if (seg.type() != Segment::TYPE::LOAD) continue;
+      if (seg.type() != Segment::TYPE::LOAD) {
+        continue;
+      }
       if (seg.file_offset() <= pht_offset &&
           (pht_offset + pht_size) <= (seg.file_offset() + seg.physical_size()))
       {
@@ -262,7 +290,7 @@ bool LayoutChecker::check_segments() {
       }
     }
     if (!found_pht_in_load) {
-       return error("Program header table is not wrapped by a PT_LOAD segment");
+      return error("Program header table is not wrapped by a PT_LOAD segment");
     }
   }
 
@@ -293,7 +321,8 @@ bool LayoutChecker::check_sections() {
     }
 
     if (sec.offset() + sec.size() > filesz) {
-      return error("Section[{}] ('{}') offset ({:#x}) + size ({:#x}) is beyond file size ({:#x})",
+      return error("Section[{}] ('{}') offset ({:#x}) + size ({:#x}) is beyond "
+                   "file size ({:#x})",
                    i, sec.name(), sec.offset(), sec.size(), filesz);
     }
 
@@ -303,35 +332,35 @@ bool LayoutChecker::check_sections() {
       case Section::TYPE::SYMTAB:
       case Section::TYPE::DYNSYM:
         expected_entsize =
-          is64() ? sizeof(details::Elf64_Sym) : sizeof(details::Elf32_Sym);
+            is64() ? sizeof(details::Elf64_Sym) : sizeof(details::Elf32_Sym);
         break;
       case Section::TYPE::DYNAMIC:
         expected_entsize =
-          is64() ? sizeof(details::Elf64_Dyn) : sizeof(details::Elf32_Dyn);
+            is64() ? sizeof(details::Elf64_Dyn) : sizeof(details::Elf32_Dyn);
         break;
       case Section::TYPE::REL:
         expected_entsize =
-          is64() ? sizeof(details::Elf64_Rel) : sizeof(details::Elf32_Rel);
+            is64() ? sizeof(details::Elf64_Rel) : sizeof(details::Elf32_Rel);
         break;
       case Section::TYPE::RELA:
         expected_entsize =
-          is64() ? sizeof(details::Elf64_Rela) : sizeof(details::Elf32_Rela);
+            is64() ? sizeof(details::Elf64_Rela) : sizeof(details::Elf32_Rela);
         break;
       case Section::TYPE::GROUP:
-      case Section::TYPE::SYMTAB_SHNDX:
-        expected_entsize = sizeof(uint32_t);
-        break;
-      default:
-        break;
+      case Section::TYPE::SYMTAB_SHNDX: expected_entsize = sizeof(uint32_t); break;
+      default: break;
     }
 
     if (expected_entsize > 0 && sec.entry_size() != expected_entsize) {
-      return error("Section[{}] ('{}') has invalid sh_entsize: {:#x} (expected: {:#x})",
-                   i, sec.name(), sec.entry_size(), expected_entsize);
+      return error(
+          "Section[{}] ('{}') has invalid sh_entsize: {:#x} (expected: {:#x})", i,
+          sec.name(), sec.entry_size(), expected_entsize
+      );
     }
 
     if (sec.entry_size() > 0 && (sec.size() % sec.entry_size()) != 0) {
-      return error("Section[{}] ('{}') size ({:#x}) is not a multiple of sh_entsize ({:#x})",
+      return error("Section[{}] ('{}') size ({:#x}) is not a multiple of "
+                   "sh_entsize ({:#x})",
                    i, sec.name(), sec.size(), sec.entry_size());
     }
 
@@ -341,12 +370,14 @@ bool LayoutChecker::check_sections() {
       case Section::TYPE::SYMTAB:
       case Section::TYPE::DYNSYM:
         if (sec.link() >= sections.size()) {
-          return error("Section[{}] ('{}') has invalid sh_link: {}", i, sec.name(), sec.link());
+          return error("Section[{}] ('{}') has invalid sh_link: {}", i, sec.name(),
+                       sec.link());
         }
         {
           const Section& strtab = sections[sec.link()];
           if (strtab.type() != Section::TYPE::STRTAB) {
-            return error("Section[{}] ('{}') has invalid sh_link: {} (expected SHT_STRTAB, but got {})",
+            return error("Section[{}] ('{}') has invalid sh_link: {} (expected "
+                         "SHT_STRTAB, but got {})",
                          i, sec.name(), sec.link(), to_string(strtab.type()));
           }
         }
@@ -356,38 +387,44 @@ bool LayoutChecker::check_sections() {
       case Section::TYPE::HASH:
       case Section::TYPE::GNU_HASH:
         if (sec.link() >= sections.size()) {
-          return error("Section[{}] ('{}') has invalid sh_link: {}",
-                       i, sec.name(), sec.link());
+          return error("Section[{}] ('{}') has invalid sh_link: {}", i, sec.name(),
+                       sec.link());
         }
         break;
-      default:
-        break;
+      default: break;
     }
 
     // sh_info checks
     switch (sec.type()) {
       case Section::TYPE::SYMTAB:
       case Section::TYPE::DYNSYM:
-        if (sec.entry_size() > 0 && sec.information() > sec.size() / sec.entry_size()) {
-          return error("Section[{}] ('{}') has invalid sh_info: {} (larger than symbol count {})",
-                       i, sec.name(), sec.information(), sec.size() / sec.entry_size());
+        if (sec.entry_size() > 0 &&
+            sec.information() > sec.size() / sec.entry_size())
+        {
+          return error("Section[{}] ('{}') has invalid sh_info: {} (larger than "
+                       "symbol count {})",
+                       i, sec.name(), sec.information(),
+                       sec.size() / sec.entry_size());
         }
         break;
-      default:
-        break;
+      default: break;
     }
   }
 
   if (const Segment* pt_dynamic = elf.get(Segment::TYPE::DYNAMIC)) {
     if (dynamic_sec != nullptr) {
       if (dynamic_sec->offset() != pt_dynamic->file_offset()) {
-        return error("SHT_DYNAMIC section header and PT_DYNAMIC program header disagree about "
-                     "the location of the dynamic table: section offset {:#x} vs segment offset {:#x}",
+        return error("SHT_DYNAMIC section header and PT_DYNAMIC program header "
+                     "disagree about "
+                     "the location of the dynamic table: section offset {:#x} vs "
+                     "segment offset {:#x}",
                      dynamic_sec->offset(), pt_dynamic->file_offset());
       }
       if (dynamic_sec->size() != pt_dynamic->physical_size()) {
-        return error("SHT_DYNAMIC section header and PT_DYNAMIC program header disagree about "
-                     "the size of the dynamic table: section size {:#x} vs segment size {:#x}",
+        return error("SHT_DYNAMIC section header and PT_DYNAMIC program header "
+                     "disagree about "
+                     "the size of the dynamic table: section size {:#x} vs "
+                     "segment size {:#x}",
                      dynamic_sec->size(), pt_dynamic->physical_size());
       }
     }
@@ -398,11 +435,13 @@ bool LayoutChecker::check_sections() {
         return error(".dynamic section header was not found");
       }
       if (dynamic_sec->link() >= sections.size()) {
-        return error(".dynamic section has invalid sh_link: {}", dynamic_sec->link());
+        return error(".dynamic section has invalid sh_link: {}",
+                     dynamic_sec->link());
       }
       const Section& strtab = sections[dynamic_sec->link()];
       if (strtab.type() != Section::TYPE::STRTAB) {
-        return error(".dynamic section has invalid link({}) sh_type: {} (expected SHT_STRTAB)",
+        return error(".dynamic section has invalid link({}) sh_type: {} (expected "
+                     "SHT_STRTAB)",
                      dynamic_sec->link(), (uint32_t)strtab.type());
       }
     }
@@ -432,10 +471,12 @@ bool LayoutChecker::check_dynamic() {
       case DynamicEntry::TAG::STRSZ: strsz = entry.value(); break;
       case DynamicEntry::TAG::STRTAB: strtab = entry.value(); break;
       case DynamicEntry::TAG::SYMTAB: symtab = entry.value(); break;
-      case DynamicEntry::TAG::PLTREL: {
+      case DynamicEntry::TAG::PLTREL:
+      {
         uint64_t val = entry.value();
         if (val != (uint64_t)DynamicEntry::TAG::REL &&
-            val != (uint64_t)DynamicEntry::TAG::RELA) {
+            val != (uint64_t)DynamicEntry::TAG::RELA)
+        {
           return error("Invalid DT_PLTREL value: {}", val);
         }
         break;
@@ -446,7 +487,7 @@ bool LayoutChecker::check_dynamic() {
 
   if (relaent > 0) {
     const uint64_t expected =
-      is64 ? sizeof(details::Elf64_Rela) : sizeof(details::Elf32_Rela);
+        is64 ? sizeof(details::Elf64_Rela) : sizeof(details::Elf32_Rela);
     if (relaent != expected) {
       return error("DT_RELAENT ({:#x}) does not match expected size ({:#x})",
                    relaent, expected);
@@ -454,7 +495,7 @@ bool LayoutChecker::check_dynamic() {
   }
   if (relent > 0) {
     const uint64_t expected =
-      is64 ? sizeof(details::Elf64_Rel) : sizeof(details::Elf32_Rel);
+        is64 ? sizeof(details::Elf64_Rel) : sizeof(details::Elf32_Rel);
     if (relent != expected) {
       return error("DT_RELENT ({:#x}) does not match expected size ({:#x})",
                    relent, expected);
@@ -467,13 +508,13 @@ bool LayoutChecker::check_dynamic() {
   }
 
   if (relsz > 0 && relent > 0 && (relsz % relent) != 0) {
-    return error("DT_RELSZ ({:#x}) is not a multiple of DT_RELENT ({:#x})",
-                 relsz, relent);
+    return error("DT_RELSZ ({:#x}) is not a multiple of DT_RELENT ({:#x})", relsz,
+                 relent);
   }
 
   if (syment > 0) {
     const uint64_t expected =
-      is64 ? sizeof(details::Elf64_Sym) : sizeof(details::Elf32_Sym);
+        is64 ? sizeof(details::Elf64_Sym) : sizeof(details::Elf32_Sym);
     if (syment != expected) {
       return error("DT_SYMENT ({:#x}) does not match expected size ({:#x})",
                    syment, expected);
@@ -496,7 +537,8 @@ bool LayoutChecker::check_dynamic() {
     if (dynsym != nullptr && dynsym->virtual_address() != symtab) {
       return error("SHT_DYNSYM section header and DT_SYMTAB disagree about "
                    "the location of the dynamic symbol table: section VA {:#x} "
-                   "vs dynamic VA {:#x}", dynsym->virtual_address(), symtab);
+                   "vs dynamic VA {:#x}",
+                   dynsym->virtual_address(), symtab);
     }
   }
 
@@ -519,8 +561,12 @@ bool LayoutChecker::check_dynamic() {
 bool LayoutChecker::check_notes() {
   const uint64_t filesz = elf.original_size();
   for (const Segment& seg : elf.segments()) {
-    if (seg.type() != Segment::TYPE::NOTE) continue;
-    if (seg.physical_size() == 0) continue;
+    if (seg.type() != Segment::TYPE::NOTE) {
+      continue;
+    }
+    if (seg.physical_size() == 0) {
+      continue;
+    }
 
     if (seg.file_offset() + seg.physical_size() > filesz) {
       return error("PT_NOTE segment runs off end of file");
@@ -554,10 +600,12 @@ bool LayoutChecker::check_tls() {
     }
 
     uint64_t addr = sym.value();
-    if (addr > tls_seg->virtual_size() || (addr + sym.size()) > tls_seg->virtual_size()) {
+    if (addr > tls_seg->virtual_size() ||
+        (addr + sym.size()) > tls_seg->virtual_size())
+    {
       return error("TLS symbol {:#010}: {} out of PT_TLS segment range"
-                   "([{:#010x}, {:#010x}])", sym.value(), sym.name(),
-                   0, tls_seg->virtual_size());
+                   "([{:#010x}, {:#010x}])",
+                   sym.value(), sym.name(), 0, tls_seg->virtual_size());
     }
   }
 
@@ -576,4 +624,3 @@ bool check_layout(const Binary& bin, std::string* error_info) {
 }
 
 }
-

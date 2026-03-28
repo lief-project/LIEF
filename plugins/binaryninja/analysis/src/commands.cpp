@@ -26,9 +26,8 @@ namespace bn = BinaryNinja;
 namespace analysis_plugin::commands {
 void register_commands() {
   bn::PluginCommand::Register(
-    "LIEF\\Enhance Analysis",
-    "Enhance the analysis of the current binary with LIEF",
-    run_analysis
+      "LIEF\\Enhance Analysis",
+      "Enhance the analysis of the current binary with LIEF", run_analysis
   );
 
   BN_INFO("LIEF analysis plugin registered");
@@ -36,11 +35,11 @@ void register_commands() {
   BN_INFO("LIEF Extended: {}", LIEF::is_extended());
   if (LIEF::is_extended()) {
     LIEF::lief_version_t version = LIEF::extended_version();
-    BN_INFO("Extended version: {}.{}.{}.{}",
-            version.major, version.minor, version.patch, version.id);
+    BN_INFO("Extended version: {}.{}.{}.{}", version.major, version.minor,
+            version.patch, version.id);
   } else {
-    BN_INFO("Version: {}.{}.{}",
-            LIEF_VERSION_MAJOR, LIEF_VERSION_MINOR, LIEF_VERSION_PATCH);
+    BN_INFO("Version: {}.{}.{}", LIEF_VERSION_MAJOR, LIEF_VERSION_MINOR,
+            LIEF_VERSION_PATCH);
   }
 }
 

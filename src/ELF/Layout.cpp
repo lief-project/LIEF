@@ -62,9 +62,11 @@ size_t Layout::section_strtab_size() {
     return 0;
   }
 
-  std::vector<std::string> symstr_opt = optimize(binary_->symtab_symbols_,
-                      [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
-                      offset_counter, &strtab_name_map_);
+  std::vector<std::string> symstr_opt = optimize(
+      binary_->symtab_symbols_,
+      [](const std::unique_ptr<Symbol>& sym) { return sym->name(); },
+      offset_counter, &strtab_name_map_
+  );
 
   for (const std::string& name : symstr_opt) {
     raw_strtab.write(name);
@@ -88,9 +90,7 @@ size_t Layout::section_shstr_size() {
   sec_names.reserve(binary_->sections_.size());
   std::transform(binary_->sections_.begin(), binary_->sections_.end(),
                  std::back_inserter(sec_names),
-                 [] (const std::unique_ptr<Section>& s) {
-                   return s->name();
-                 });
+                 [](const std::unique_ptr<Section>& s) { return s->name(); });
 
   if (!binary_->symtab_symbols_.empty()) {
     if (binary_->get(Section::TYPE::SYMTAB) == nullptr) {
@@ -114,8 +114,10 @@ size_t Layout::section_shstr_size() {
 
   // First write section names
   size_t offset_counter = raw_shstrtab.tellp();
-  std::vector<std::string> shstrtab_opt = optimize(sec_names, [] (const std::string& s) { return s; },
-                      offset_counter, &shstr_name_map_);
+  std::vector<std::string> shstrtab_opt = optimize(
+      sec_names, [](const std::string& s) { return s; }, offset_counter,
+      &shstr_name_map_
+  );
 
   for (const std::string& name : shstrtab_opt) {
     raw_shstrtab.write(name);
@@ -125,9 +127,11 @@ size_t Layout::section_shstr_size() {
   // in this case, include the symtab symbol names
   if (!binary_->symtab_symbols_.empty() && is_strtab_shared_shstrtab()) {
     offset_counter = raw_shstrtab.tellp();
-    std::vector<std::string> symstr_opt = optimize(binary_->symtab_symbols_,
-                       [] (const std::unique_ptr<Symbol>& sym) { return sym->name(); },
-                       offset_counter, &shstr_name_map_);
+    std::vector<std::string> symstr_opt = optimize(
+        binary_->symtab_symbols_,
+        [](const std::unique_ptr<Symbol>& sym) { return sym->name(); },
+        offset_counter, &shstr_name_map_
+    );
     for (const std::string& name : symstr_opt) {
       raw_shstrtab.write(name);
     }
@@ -138,4 +142,3 @@ size_t Layout::section_shstr_size() {
 }
 
 }
-

@@ -25,7 +25,8 @@
 #include "logging.hpp"
 
 namespace LIEF::PE {
-std::unique_ptr<CHPEMetadata> CHPEMetadata::parse(Parser& ctx, BinaryStream& stream) {
+std::unique_ptr<CHPEMetadata> CHPEMetadata::parse(Parser& ctx,
+                                                  BinaryStream& stream) {
   LIEF_DEBUG("Parsing CHPEMetadata");
   auto version = stream.read<uint32_t>();
   if (!version) {

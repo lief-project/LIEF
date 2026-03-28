@@ -30,12 +30,12 @@ void SpcIndirectData::accept(Visitor& visitor) const {
 
 void SpcIndirectData::print(std::ostream& os) const {
   if (!file().empty()) {
-    os << fmt::format("{} - {} - {}\n", to_string(digest_algorithm()),
-                      file(), hex_dump(digest()));
+    os << fmt::format("{} - {} - {}\n", to_string(digest_algorithm()), file(),
+                      hex_dump(digest()));
   } else {
-    os << fmt::format("{}: {}\n", to_string(digest_algorithm()), hex_dump(digest()));
+    os << fmt::format("{}: {}\n", to_string(digest_algorithm()),
+                      hex_dump(digest()));
   }
 }
 
 }
-

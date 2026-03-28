@@ -38,8 +38,7 @@ class LIEF_API AuxiliarySymbol {
   AuxiliarySymbol() = default;
   AuxiliarySymbol(std::vector<uint8_t> payload) :
     type_(TYPE::UNKNOWN),
-    payload_(std::move(payload))
-  {}
+    payload_(std::move(payload)) {}
   AuxiliarySymbol(const AuxiliarySymbol&) = default;
   AuxiliarySymbol& operator=(const AuxiliarySymbol&) = default;
 
@@ -47,7 +46,7 @@ class LIEF_API AuxiliarySymbol {
   AuxiliarySymbol& operator=(AuxiliarySymbol&&) = default;
 
   LIEF_LOCAL static std::unique_ptr<AuxiliarySymbol>
-    parse(Symbol& sym, std::vector<uint8_t> payload);
+      parse(Symbol& sym, std::vector<uint8_t> payload);
 
   virtual std::unique_ptr<AuxiliarySymbol> clone() const {
     return std::unique_ptr<AuxiliarySymbol>(new AuxiliarySymbol(*this));
@@ -70,8 +69,7 @@ class LIEF_API AuxiliarySymbol {
   };
 
   AuxiliarySymbol(TYPE ty) :
-    type_(ty)
-  {}
+    type_(ty) {}
 
   static TYPE get_aux_type(const Symbol& sym);
 
@@ -108,9 +106,8 @@ class LIEF_API AuxiliarySymbol {
     return const_cast<T*>(static_cast<const AuxiliarySymbol*>(this)->as<T>());
   }
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const AuxiliarySymbol& aux)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const AuxiliarySymbol& aux) {
     os << aux.to_string();
     return os;
   }

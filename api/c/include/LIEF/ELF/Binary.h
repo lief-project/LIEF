@@ -34,21 +34,21 @@ extern "C" {
 
 /** LIEF::ELF::Binary C Handler */
 struct Elf_Binary_t {
-  void*              handler;
-  const char*        interpreter;
-  uint32_t           type;
-  Elf_Header_t       header;
-  Elf_Section_t      **sections;
-  Elf_Segment_t      **segments;
-  Elf_DynamicEntry_t **dynamic_entries;
-  Elf_Symbol_t       **dynamic_symbols;
-  Elf_Symbol_t       **symtab_symbols;
+  void* handler;
+  const char* interpreter;
+  uint32_t type;
+  Elf_Header_t header;
+  Elf_Section_t** sections;
+  Elf_Segment_t** segments;
+  Elf_DynamicEntry_t** dynamic_entries;
+  Elf_Symbol_t** dynamic_symbols;
+  Elf_Symbol_t** symtab_symbols;
 };
 
 typedef struct Elf_Binary_t Elf_Binary_t;
 
 /** Wrapper for LIEF::ELF::Parser::parse */
-LIEF_API Elf_Binary_t* elf_parse(const char *file);
+LIEF_API Elf_Binary_t* elf_parse(const char* file);
 
 LIEF_API void elf_binary_destroy(Elf_Binary_t* binary);
 

@@ -27,8 +27,8 @@ namespace LIEF {
 namespace pdb {
 namespace types {
 
-/// This class abstracts the following PDB types: `LF_STRUCTURE`, `LF_INTERFACE`, `LF_CLASS`
-/// or `LF_UNION`.
+/// This class abstracts the following PDB types: `LF_STRUCTURE`, `LF_INTERFACE`,
+/// `LF_CLASS` or `LF_UNION`.
 class LIEF_API ClassLike : public Type {
   public:
   using Type::Type;
@@ -48,9 +48,11 @@ class LIEF_API ClassLike : public Type {
   /// Iterator over the different methods implemented in this class-type type
   methods_iterator methods() const;
 
-  template <class T>
-  static bool classof(const T*, typename std::enable_if<std::is_base_of<ClassLike, T>::value>::type* = 0)
-  {
+  template<class T>
+  static bool classof(
+      const T*,
+      typename std::enable_if<std::is_base_of<ClassLike, T>::value>::type* = 0
+  ) {
     return true;
   }
 
@@ -99,5 +101,3 @@ class LIEF_API Interface : public ClassLike {
 }
 }
 #endif
-
-

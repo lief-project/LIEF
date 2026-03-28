@@ -28,11 +28,10 @@ namespace COFF {
 class LIEF_API AuxiliarybfAndefSymbol : public AuxiliarySymbol {
   public:
   LIEF_LOCAL static std::unique_ptr<AuxiliarybfAndefSymbol>
-    parse(Symbol& sym, const std::vector<uint8_t>& payload);
+      parse(Symbol& sym, const std::vector<uint8_t>& payload);
 
   AuxiliarybfAndefSymbol() :
-    AuxiliarySymbol(AuxiliarySymbol::TYPE::BF_AND_EF)
-  {}
+    AuxiliarySymbol(AuxiliarySymbol::TYPE::BF_AND_EF) {}
 
   AuxiliarybfAndefSymbol(const AuxiliarybfAndefSymbol&) = default;
   AuxiliarybfAndefSymbol& operator=(const AuxiliarybfAndefSymbol&) = default;
@@ -41,7 +40,9 @@ class LIEF_API AuxiliarybfAndefSymbol : public AuxiliarySymbol {
   AuxiliarybfAndefSymbol& operator=(AuxiliarybfAndefSymbol&&) = default;
 
   std::unique_ptr<AuxiliarySymbol> clone() const override {
-    return std::unique_ptr<AuxiliarybfAndefSymbol>(new AuxiliarybfAndefSymbol{*this});
+    return std::unique_ptr<AuxiliarybfAndefSymbol>(
+        new AuxiliarybfAndefSymbol{*this}
+    );
   }
 
   std::string to_string() const override {

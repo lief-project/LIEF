@@ -47,14 +47,19 @@ class LIEF_API CompilationUnit {
     class LIEF_API PointerProxy {
       // Inspired from LLVM's iterator_facade_base
       friend class Iterator;
+
       public:
-      pointer operator->() const { return R.get(); }
+      pointer operator->() const {
+        return R.get();
+      }
 
       private:
       value_type R;
 
-      template <typename RefT>
-      PointerProxy(RefT &&R) : R(std::forward<RefT>(R)) {} // NOLINT(bugprone-forwarding-reference-overload)
+      template<typename RefT>
+      PointerProxy(RefT&& R) :
+        R(std::forward<RefT>(R)) {
+      } // NOLINT(bugprone-forwarding-reference-overload)
     };
 
     Iterator(const Iterator&);
@@ -72,13 +77,13 @@ class LIEF_API CompilationUnit {
 
     Iterator operator--(int) {
       Iterator tmp = *static_cast<Iterator*>(this);
-      --*static_cast<Iterator *>(this);
+      --*static_cast<Iterator*>(this);
       return tmp;
     }
 
     Iterator operator++(int) {
       Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator *>(this);
+      ++*static_cast<Iterator*>(this);
       return tmp;
     }
 
@@ -130,11 +135,10 @@ class LIEF_API CompilationUnit {
 
     Language() = default;
     Language(LANG lang, uint32_t version) :
-      lang(lang), version(version)
-    {}
+      lang(lang),
+      version(version) {}
     Language(LANG lang) :
-      Language(lang, 0)
-    {}
+      Language(lang, 0) {}
 
     Language(const Language&) = default;
     Language& operator=(const Language&) = default;
@@ -279,4 +283,3 @@ class LIEF_API CompilationUnit {
 }
 }
 #endif
-

@@ -39,8 +39,7 @@ std::unique_ptr<BigObjHeader> BigObjHeader::create(BinaryStream& stream) {
 
   // BigObj specific
   hdr->version_ = raw->version;
-  std::copy(std::begin(raw->uuid), std::end(raw->uuid),
-            std::begin(hdr->uuid_));
+  std::copy(std::begin(raw->uuid), std::end(raw->uuid), std::begin(hdr->uuid_));
   hdr->sizeof_data_ = raw->unused1;
   hdr->flags_ = raw->unused2;
   hdr->metadata_size_ = raw->unused3;

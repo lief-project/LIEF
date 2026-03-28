@@ -26,44 +26,61 @@ class PDB_DebugInfo : public AbstracDebugInfo {
   public:
   using lief_t = LIEF::pdb::DebugInfo;
 
-  class it_compilation_units :
-      public ForwardIterator<PDB_CompilationUnit, LIEF::pdb::CompilationUnit::Iterator>
-  {
+  class it_compilation_units
+    : public ForwardIterator<PDB_CompilationUnit,
+                             LIEF::pdb::CompilationUnit::Iterator> {
     public:
-    it_compilation_units(const PDB_DebugInfo::lief_t& src)
-      : ForwardIterator(src.compilation_units()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_compilation_units(const PDB_DebugInfo::lief_t& src) :
+      ForwardIterator(src.compilation_units()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_public_symbols :
-      public ForwardIterator<PDB_PublicSymbol, LIEF::pdb::PublicSymbol::Iterator>
-  {
+  class it_public_symbols
+    : public ForwardIterator<PDB_PublicSymbol, LIEF::pdb::PublicSymbol::Iterator> {
     public:
-    it_public_symbols(const PDB_DebugInfo::lief_t& src)
-      : ForwardIterator(src.public_symbols()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_public_symbols(const PDB_DebugInfo::lief_t& src) :
+      ForwardIterator(src.public_symbols()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_types :
-      public ForwardIterator<PDB_Type, LIEF::pdb::Type::Iterator>
-  {
+  class it_types : public ForwardIterator<PDB_Type, LIEF::pdb::Type::Iterator> {
     public:
-    it_types(const PDB_DebugInfo::lief_t& src)
-      : ForwardIterator(src.types()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_types(const PDB_DebugInfo::lief_t& src) :
+      ForwardIterator(src.types()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  PDB_DebugInfo(std::unique_ptr<lief_t> bin) : AbstracDebugInfo(std::move(bin)) {}
+  PDB_DebugInfo(std::unique_ptr<lief_t> bin) :
+    AbstracDebugInfo(std::move(bin)) {}
 
-  static auto from_file(std::string file) { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PDB_DebugInfo>(LIEF::pdb::DebugInfo::from_file(file));
+  static auto
+      from_file(std::string file) { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PDB_DebugInfo>(
+        LIEF::pdb::DebugInfo::from_file(file)
+    );
   }
 
-  auto age() const { return impl().age(); }
-  auto guid() const { return impl().guid(); }
+  auto age() const {
+    return impl().age();
+  }
+  auto guid() const {
+    return impl().guid();
+  }
 
   auto compilation_units() const {
     return std::make_unique<it_compilation_units>(impl());
@@ -77,16 +94,28 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     return std::make_unique<it_types>(impl());
   }
 
-  auto public_symbol_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PDB_PublicSymbol>(impl().find_public_symbol(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto public_symbol_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PDB_PublicSymbol>(
+        impl().find_public_symbol(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto find_type(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PDB_Type>(impl().find_type(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto find_type(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PDB_Type>(
+        impl().find_type(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto find_type_by_index(uint32_t index) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PDB_Type>(impl().find_type(index)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto find_type_by_index(
+      uint32_t index
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PDB_Type>(
+        impl().find_type(index)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   std::string to_string() const {
@@ -94,9 +123,13 @@ class PDB_DebugInfo : public AbstracDebugInfo {
   }
 
   static bool classof(const AbstracDebugInfo& reloc) {
-    return lief_t::classof(static_cast<const AbstracDebugInfo::lief_t*>(&reloc.get()));
+    return lief_t::classof(
+        static_cast<const AbstracDebugInfo::lief_t*>(&reloc.get())
+    );
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

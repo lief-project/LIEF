@@ -25,16 +25,17 @@ namespace PE {
 /// This class represents the `IMAGE_DEBUG_TYPE_VC_FEATURE` debug entry
 class LIEF_API VCFeature : public Debug {
   public:
-  static std::unique_ptr<VCFeature>
-    parse(const details::pe_debug& hdr, Section* section, span<uint8_t> payload);
+  static std::unique_ptr<VCFeature> parse(const details::pe_debug& hdr,
+                                          Section* section, span<uint8_t> payload);
 
-  VCFeature(const details::pe_debug& debug, Section* sec,
-            uint32_t pre_vc, uint32_t c_cpp, uint32_t gs, uint32_t sdl,
-            uint32_t guards) :
+  VCFeature(const details::pe_debug& debug, Section* sec, uint32_t pre_vc,
+            uint32_t c_cpp, uint32_t gs, uint32_t sdl, uint32_t guards) :
     Debug(debug, sec),
-    pre_vc_(pre_vc), c_cpp_(c_cpp),
-    gs_(gs), sdl_(sdl), guards_(guards)
-  {}
+    pre_vc_(pre_vc),
+    c_cpp_(c_cpp),
+    gs_(gs),
+    sdl_(sdl),
+    guards_(guards) {}
 
   VCFeature(const VCFeature& other) = default;
   VCFeature& operator=(const VCFeature& other) = default;
@@ -107,6 +108,7 @@ class LIEF_API VCFeature : public Debug {
   ~VCFeature() override = default;
 
   std::string to_string() const override;
+
   private:
   uint32_t pre_vc_ = 0;
   uint32_t c_cpp_ = 0;

@@ -23,12 +23,28 @@ class PE_RsaInfo : private Mirror<LIEF::PE::RsaInfo> {
   using lief_t = LIEF::PE::RsaInfo;
   using Mirror::Mirror;
 
-  uint32_t key_size() const { return get().key_size(); }
-  bool has_public_key() const { return get().has_public_key(); }
-  bool has_private_key() const { return get().has_private_key(); }
-  std::vector<uint8_t> N() const { return get().N(); }
-  std::vector<uint8_t> E() const { return get().E(); }
-  std::vector<uint8_t> D() const { return get().D(); }
-  std::vector<uint8_t> P() const { return get().P(); }
-  std::vector<uint8_t> Q() const { return get().Q(); }
+  uint32_t key_size() const {
+    return get().key_size();
+  }
+  bool has_public_key() const {
+    return get().has_public_key();
+  }
+  bool has_private_key() const {
+    return get().has_private_key();
+  }
+  std::vector<uint8_t> N() const {
+    return get().N();
+  }
+  std::vector<uint8_t> E() const {
+    return get().E();
+  }
+  std::vector<uint8_t> D() const {
+    return get().D();
+  }
+  std::vector<uint8_t> P() const {
+    return get().P();
+  }
+  std::vector<uint8_t> Q() const {
+    return get().Q();
+  }
 };

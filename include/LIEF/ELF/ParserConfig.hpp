@@ -26,10 +26,11 @@ struct LIEF_API ParserConfig {
   /** Methods that can be used by the LIEF::ELF::Parser
       to count the number of dynamic symbols */
   enum class DYNSYM_COUNT {
-    AUTO        = 0, /**< Automatic detection */
-    SECTION     = 1, /**< Count based on sections (not very reliable) */
-    HASH        = 2, /**< Count based on hash table (reliable) */
-    RELOCATIONS = 3, /**< Count based on PLT/GOT relocations (very reliable but not accurate) */
+    AUTO = 0,        /**< Automatic detection */
+    SECTION = 1,     /**< Count based on sections (not very reliable) */
+    HASH = 2,        /**< Count based on hash table (reliable) */
+    RELOCATIONS = 3, /**< Count based on PLT/GOT relocations (very reliable but not
+                        accurate) */
   };
 
   /// This returns a ParserConfig object configured to process all the ELF
@@ -39,12 +40,16 @@ struct LIEF_API ParserConfig {
     return DEFAULT;
   }
 
-  bool parse_relocations     = true; ///< Whether relocations (including plt-like relocations) should be parsed.
-  bool parse_dyn_symbols     = true; ///< Whether dynamic symbols (those from `.dynsym`) should be parsed
-  bool parse_symtab_symbols  = true; ///< Whether debug symbols (those from `.symtab`) should be parsed
-  bool parse_symbol_versions = true; ///< Whether versioning symbols should be parsed
-  bool parse_notes           = true; ///< Whether ELF notes  information should be parsed
-  bool parse_overlay         = true; ///< Whether the overlay data should be parsed
+  bool parse_relocations = true; ///< Whether relocations (including plt-like
+                                 ///< relocations) should be parsed.
+  bool parse_dyn_symbols =
+      true; ///< Whether dynamic symbols (those from `.dynsym`) should be parsed
+  bool parse_symtab_symbols =
+      true; ///< Whether debug symbols (those from `.symtab`) should be parsed
+  bool parse_symbol_versions =
+      true;                  ///< Whether versioning symbols should be parsed
+  bool parse_notes = true;   ///< Whether ELF notes  information should be parsed
+  bool parse_overlay = true; ///< Whether the overlay data should be parsed
 
   /** The method used to count the number of dynamic symbols */
   DYNSYM_COUNT count_mtd = DYNSYM_COUNT::AUTO;

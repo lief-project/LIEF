@@ -26,8 +26,12 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::Variable;
 
-  auto name() const { return get().name(); }
-  auto linkage_name() const { return get().linkage_name(); }
+  auto name() const {
+    return get().name();
+  }
+  auto linkage_name() const {
+    return get().linkage_name();
+  }
 
   int64_t address(uint32_t& err) const {
     return details::make_error<int64_t>(get().address(), err);
@@ -50,7 +54,9 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
   }
 
   auto get_type() const {
-    return details::try_unique<DWARF_Type>(get().type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Type>(
+        get().type()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto scope() const {

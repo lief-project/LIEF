@@ -39,5 +39,4 @@ TEST_CASE("lief.test.utils", "[lief][test][utils]") {
     REQUIRE(3_MB == 3072_KB);
     REQUIRE(4_GB == 4096_MB);
   }
-
 }

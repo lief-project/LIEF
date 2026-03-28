@@ -58,22 +58,12 @@ inline void init_alignment(Binary& bin, Segment& segment, uintptr_t ptrsz) {
       break;
     case Segment::TYPE::PHDR:
     case Segment::TYPE::DYNAMIC:
-    case Segment::TYPE::TLS:
-      segment.alignment(ptrsz);
-      break;
+    case Segment::TYPE::TLS: segment.alignment(ptrsz); break;
     case Segment::TYPE::NOTE:
-    case Segment::TYPE::GNU_EH_FRAME:
-      segment.alignment(sizeof(uint32_t));
-      break;
-    case Segment::TYPE::GNU_RELRO:
-      segment.alignment(1);
-      break;
-    case Segment::TYPE::GNU_STACK:
-      segment.alignment(0x10);
-      break;
-    default:
-      segment.alignment(ptrsz);
-      break;
+    case Segment::TYPE::GNU_EH_FRAME: segment.alignment(sizeof(uint32_t)); break;
+    case Segment::TYPE::GNU_RELRO: segment.alignment(1); break;
+    case Segment::TYPE::GNU_STACK: segment.alignment(0x10); break;
+    default: segment.alignment(ptrsz); break;
   }
 }
 
@@ -85,7 +75,7 @@ void Binary::patch_relocations<ARCH::ARM>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
 
     if (relocation.address() >= from) {
-      //shift_code(relocation.address(), shift, relocation.size() / 8);
+      // shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
 
@@ -96,16 +86,16 @@ void Binary::patch_relocations<ARCH::ARM>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::ARM_RELATIVE:
       case Relocation::TYPE::ARM_GLOB_DAT:
       case Relocation::TYPE::ARM_IRELATIVE:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
 
       default:
-        {
-          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
-        }
+      {
+        LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+      }
     }
   }
 }
@@ -119,7 +109,7 @@ void Binary::patch_relocations<ARCH::AARCH64>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
 
     if (relocation.address() >= from) {
-      //shift_code(relocation.address(), shift, relocation.size() / 8);
+      // shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
 
@@ -131,51 +121,51 @@ void Binary::patch_relocations<ARCH::AARCH64>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::AARCH64_GLOB_DAT:
       case Relocation::TYPE::AARCH64_IRELATIVE:
       case Relocation::TYPE::AARCH64_ABS64:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint64_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint64_t>(relocation, from, shift);
+        break;
+      }
 
       case Relocation::TYPE::AARCH64_ABS32:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
 
       case Relocation::TYPE::AARCH64_ABS16:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint16_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint16_t>(relocation, from, shift);
+        break;
+      }
 
       case Relocation::TYPE::AARCH64_PREL64:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint64_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint64_t>(relocation, from, shift);
+        break;
+      }
 
       case Relocation::TYPE::AARCH64_PREL32:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
 
       case Relocation::TYPE::AARCH64_PREL16:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint16_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint16_t>(relocation, from, shift);
+        break;
+      }
 
       default:
-        {
-          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
-        }
+      {
+        LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+      }
     }
   }
 }
@@ -187,7 +177,7 @@ template<>
 void Binary::patch_relocations<ARCH::I386>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
-      //shift_code(relocation.address(), shift, relocation.size() / 8);
+      // shift_code(relocation.address(), shift, relocation.size() / 8);
       relocation.address(relocation.address() + shift);
     }
     const Relocation::TYPE type = relocation.type();
@@ -198,22 +188,22 @@ void Binary::patch_relocations<ARCH::I386>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::X86_IRELATIVE:
       case Relocation::TYPE::X86_GLOB_DAT:
       case Relocation::TYPE::X86_32:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
       case Relocation::TYPE::X86_TLS_DTPMOD32:
       case Relocation::TYPE::X86_TLS_DTPOFF32:
-        {
-          // Nothing to do for these relocations
-          continue;
-        }
+      {
+        // Nothing to do for these relocations
+        continue;
+      }
 
       default:
-        {
-          LIEF_WARN("Relocation {} not supported", to_string(type));
-        }
+      {
+        LIEF_WARN("Relocation {} not supported", to_string(type));
+      }
     }
   }
 }
@@ -225,9 +215,8 @@ template<>
 void Binary::patch_relocations<ARCH::X86_64>(uint64_t from, uint64_t shift) {
   for (Relocation& relocation : relocations()) {
     if (relocation.address() >= from) {
-      LIEF_DEBUG("{:23}: {:#012x} -> {:#012x}",
-          to_string(relocation.type()), relocation.address(),
-          relocation.address() + shift);
+      LIEF_DEBUG("{:23}: {:#012x} -> {:#012x}", to_string(relocation.type()),
+                 relocation.address(), relocation.address() + shift);
       relocation.address(relocation.address() + shift);
     }
 
@@ -239,21 +228,21 @@ void Binary::patch_relocations<ARCH::X86_64>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::X86_64_JUMP_SLOT:
       case Relocation::TYPE::X86_64_GLOB_DAT:
       case Relocation::TYPE::X86_64_64:
-        {
-          patch_addend<uint64_t>(relocation, from, shift);
-          break;
-        }
+      {
+        patch_addend<uint64_t>(relocation, from, shift);
+        break;
+      }
 
       case Relocation::TYPE::X86_64_32:
-        {
-          patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
 
       default:
-        {
-          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
-        }
+      {
+        LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+      }
     }
   }
 }
@@ -274,16 +263,16 @@ void Binary::patch_relocations<ARCH::PPC>(uint64_t from, uint64_t shift) {
     switch (type) {
       case Relocation::TYPE::PPC_RELATIVE:
       case Relocation::TYPE::PPC_JMP_SLOT:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
 
       default:
-        {
-          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
-        }
+      {
+        LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+      }
     }
   }
 }
@@ -305,35 +294,35 @@ void Binary::patch_relocations<ARCH::RISCV>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::RISCV_32:
       case Relocation::TYPE::RISCV_TLS_DTPREL32:
       case Relocation::TYPE::RISCV_TLS_TPREL32:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
 
       case Relocation::TYPE::RISCV_64:
       case Relocation::TYPE::RISCV_TLS_DTPMOD64:
       case Relocation::TYPE::RISCV_TLS_DTPREL64:
       case Relocation::TYPE::RISCV_TLS_TPREL64:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint64_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint64_t>(relocation, from, shift);
+        break;
+      }
 
       case Relocation::TYPE::RISCV_RELATIVE:
       case Relocation::TYPE::RISCV_IRELATIVE:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          is64 ? patch_addend<uint64_t>(relocation, from, shift) :
-                 patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        is64 ? patch_addend<uint64_t>(relocation, from, shift) :
+               patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
 
       default:
-        {
-          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
-        }
+      {
+        LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+      }
     }
   }
 }
@@ -355,15 +344,15 @@ void Binary::patch_relocations<ARCH::SH>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::SH_DIR32:
       case Relocation::TYPE::SH_REL32:
       case Relocation::TYPE::SH_JMP_SLOT:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
       default:
-        {
-          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
-        }
+      {
+        LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+      }
     }
   }
 }
@@ -382,15 +371,15 @@ void Binary::patch_relocations<ARCH::PPC64>(uint64_t from, uint64_t shift) {
     switch (type) {
       case Relocation::TYPE::PPC64_JMP_SLOT:
       case Relocation::TYPE::PPC64_RELATIVE:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          patch_addend<uint64_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        patch_addend<uint64_t>(relocation, from, shift);
+        break;
+      }
       default:
-        {
-          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
-        }
+      {
+        LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+      }
     }
   }
 }
@@ -415,16 +404,16 @@ void Binary::patch_relocations<ARCH::S390>(uint64_t from, uint64_t shift) {
       case Relocation::TYPE::SYSZ_IRELATIVE:
       case Relocation::TYPE::SYSZ_GLOB_DAT:
       case Relocation::TYPE::SYSZ_64:
-        {
-          LIEF_DEBUG("Patch addend of {}", to_string(relocation));
-          is64 ? patch_addend<uint64_t>(relocation, from, shift) :
-                 patch_addend<uint32_t>(relocation, from, shift);
-          break;
-        }
+      {
+        LIEF_DEBUG("Patch addend of {}", to_string(relocation));
+        is64 ? patch_addend<uint64_t>(relocation, from, shift) :
+               patch_addend<uint32_t>(relocation, from, shift);
+        break;
+      }
       default:
-        {
-          LIEF_DEBUG("Relocation {} is not patched", to_string(type));
-        }
+      {
+        LIEF_DEBUG("Relocation {} is not patched", to_string(type));
+      }
     }
   }
 }
@@ -434,8 +423,8 @@ template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {
   if (static_cast<uint64_t>(relocation.addend()) >= from) {
     LIEF_DEBUG("(addend) {:23}: {:#012x} -> {:#012x}",
-        to_string(relocation.type()), relocation.addend(),
-        relocation.addend() + shift);
+               to_string(relocation.type()), relocation.addend(),
+               relocation.addend() + shift);
     relocation.addend(relocation.addend() + shift);
   }
 
@@ -459,7 +448,9 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
     return;
   }
 
-  if (relative_offset >= segment_size || (relative_offset + sizeof(T)) > segment_size) {
+  if (relative_offset >= segment_size ||
+      (relative_offset + sizeof(T)) > segment_size)
+  {
     LIEF_DEBUG("Offset out of bound for relocation: {}", to_string(relocation));
     return;
   }
@@ -497,7 +488,8 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
 // To do so, we would just need to extend the PT_LOAD segment associated
 // with the caving.
 template<>
-Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, uint64_t base) {
+Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
+                                                      uint64_t base) {
   Header& header = this->header();
   const uint64_t new_phdr_offset = relocate_phdr_table_auto();
 
@@ -522,7 +514,8 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
   uint64_t last_offset_segments = last_offset_segment();
 
 
-  uint64_t last_offset = std::max<uint64_t>(last_offset_sections, last_offset_segments);
+  uint64_t last_offset =
+      std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
   const auto psize = page_size();
   const uint64_t last_offset_aligned = align(last_offset, psize);
@@ -546,29 +539,38 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
 
   new_segment->datahandler_ = datahandler_.get();
 
-  DataHandler::Node new_node{new_segment->file_offset(), new_segment->physical_size(),
+  DataHandler::Node new_node{new_segment->file_offset(),
+                             new_segment->physical_size(),
                              DataHandler::Node::SEGMENT};
   datahandler_->add(new_node);
-  auto alloc = datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  auto alloc =
+      datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
   if (!alloc) {
     LIEF_ERR("Allocation failed");
     return nullptr;
   }
   new_segment->content(content);
 
-  if (header.section_headers_offset() <= new_segment->file_offset() + new_segment->physical_size()) {
-    header.section_headers_offset(
-        align(new_segment->file_offset() + new_segment->physical_size(), ptr_size()));
+  if (header.section_headers_offset() <=
+      new_segment->file_offset() + new_segment->physical_size())
+  {
+    header.section_headers_offset(align(
+        new_segment->file_offset() + new_segment->physical_size(), ptr_size()
+    ));
   }
 
-  const auto it_new_segment_place = std::find_if(segments_.rbegin(), segments_.rend(),
-      [&new_segment] (const std::unique_ptr<Segment>& s) { return s->type() == new_segment->type(); });
+  const auto it_new_segment_place =
+      std::find_if(segments_.rbegin(), segments_.rend(),
+                   [&new_segment](const std::unique_ptr<Segment>& s) {
+                     return s->type() == new_segment->type();
+                   });
 
   Segment* seg_ptr = new_segment.get();
   if (it_new_segment_place == segments_.rend()) {
     segments_.push_back(std::move(new_segment));
   } else {
-    const size_t idx = std::distance(segments_.begin(), it_new_segment_place.base());
+    const size_t idx =
+        std::distance(segments_.begin(), it_new_segment_place.base());
     segments_.insert(segments_.begin() + idx, std::move(new_segment));
   }
   phdr_reloc_info_.nb_segments--;
@@ -579,7 +581,8 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
 // ET_DYN (PIE/Libraries)
 // =======================
 template<>
-Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uint64_t base) {
+Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
+                                                     uint64_t base) {
   const auto psize = page_size();
   const auto ptr_size = this->ptr_size();
   /*const uint64_t new_phdr_offset = */ relocate_phdr_table_auto();
@@ -589,18 +592,21 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
   auto new_segment = std::make_unique<Segment>(segment);
   new_segment->datahandler_ = datahandler_.get();
 
-  DataHandler::Node new_node{new_segment->file_offset(), new_segment->physical_size(),
+  DataHandler::Node new_node{new_segment->file_offset(),
+                             new_segment->physical_size(),
                              DataHandler::Node::SEGMENT};
   datahandler_->add(new_node);
 
   init_alignment(*this, *new_segment, ptr_size);
 
-  // We attempt to carry over the in-page offset for purpose of code or data alignment.
-  const uint64_t in_page_offset       = segment.file_offset() % psize;
+  // We attempt to carry over the in-page offset for purpose of code or data
+  // alignment.
+  const uint64_t in_page_offset = segment.file_offset() % psize;
 
   const uint64_t last_offset_segments = last_offset_segment();
-  const uint64_t last_offset          = last_offset_segments;
-  const uint64_t last_offset_aligned  = align_with_offset(last_offset, psize, in_page_offset);
+  const uint64_t last_offset = last_offset_segments;
+  const uint64_t last_offset_aligned =
+      align_with_offset(last_offset, psize, in_page_offset);
   if (base == 0) {
     base = align(next_virtual_address(), new_segment->alignment());
   }
@@ -624,10 +630,12 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
   // Patch SHDR
   Header& header = this->header();
   if (header.section_headers_offset() >= last_offset) {
-    header.section_headers_offset(align(header.section_headers_offset() + delta, ptr_size));
+    header.section_headers_offset(align(header.section_headers_offset() + delta,
+                                        ptr_size));
   }
 
-  auto alloc = datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  auto alloc =
+      datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
 
   if (!alloc) {
     LIEF_ERR("Allocation failed");
@@ -638,18 +646,19 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
 
   header.numberof_segments(header.numberof_segments() + 1);
 
-  const auto& it_new_segment_place = std::find_if(
-      segments_.rbegin(), segments_.rend(),
-      [&new_segment] (const std::unique_ptr<Segment>& s) {
-        return s->type() == new_segment->type();
-      });
+  const auto& it_new_segment_place =
+      std::find_if(segments_.rbegin(), segments_.rend(),
+                   [&new_segment](const std::unique_ptr<Segment>& s) {
+                     return s->type() == new_segment->type();
+                   });
 
   Segment* seg_ptr = new_segment.get();
 
   if (it_new_segment_place == segments_.rend()) {
     segments_.push_back(std::move(new_segment));
   } else {
-    const size_t idx = std::distance(segments_.begin(), it_new_segment_place.base());
+    const size_t idx =
+        std::distance(segments_.begin(), it_new_segment_place.base());
     segments_.insert(segments_.begin() + idx, std::move(new_segment));
   }
 
@@ -661,12 +670,14 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
 // Extend PT_LOAD
 // =======================
 template<>
-Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment, uint64_t size) {
+Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment,
+                                                     uint64_t size) {
 
-  const auto it_segment = std::find_if(segments_.begin(), segments_.end(),
-                                       [&segment] (const std::unique_ptr<Segment>& s) {
-                                          return *s == segment;
-                                       });
+  const auto it_segment =
+      std::find_if(segments_.begin(), segments_.end(),
+                   [&segment](const std::unique_ptr<Segment>& s) {
+                     return *s == segment;
+                   });
 
   if (it_segment == segments_.end()) {
     LIEF_ERR("Unable to find the segment in the current binary");
@@ -676,13 +687,15 @@ Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment, uin
   std::unique_ptr<Segment>& segment_to_extend = *it_segment;
 
 
-  uint64_t from_offset  = segment_to_extend->file_offset() + segment_to_extend->physical_size();
-  uint64_t from_address = segment_to_extend->virtual_address() + segment_to_extend->virtual_size();
-  uint64_t shift        = size;
+  uint64_t from_offset =
+      segment_to_extend->file_offset() + segment_to_extend->physical_size();
+  uint64_t from_address =
+      segment_to_extend->virtual_address() + segment_to_extend->virtual_size();
+  uint64_t shift = size;
 
   auto alloc = datahandler_->make_hole(
-      segment_to_extend->file_offset() + segment_to_extend->physical_size(),
-      size);
+      segment_to_extend->file_offset() + segment_to_extend->physical_size(), size
+  );
 
   if (!alloc) {
     LIEF_ERR("Allocation failed");
@@ -703,8 +716,8 @@ Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment, uin
   segment_to_extend->content(segment_content);
 
   // Patches
-  header().section_headers_offset(
-      align(header().section_headers_offset() + shift, ptr_size()));
+  header().section_headers_offset(align(header().section_headers_offset() + shift,
+                                        ptr_size()));
 
   shift_dynamic_entries(from_address, shift);
   shift_symbols(from_address, shift);
@@ -752,8 +765,7 @@ inline Segment seg_for_section(const Section& section) {
 
 template<>
 Section* Binary::add_section</*loaded=*/true>(const Section& section,
-                                              SEC_INSERT_POS pos)
-{
+                                              SEC_INSERT_POS pos) {
   LIEF_DEBUG("Adding section '{}' as LOADED", section.name());
   if (pos != SEC_INSERT_POS::AUTO && pos != SEC_INSERT_POS::POST_SEGMENT) {
     LIEF_ERR("Unsupported position for inserting loaded section");
@@ -766,8 +778,8 @@ Section* Binary::add_section</*loaded=*/true>(const Section& section,
     return nullptr;
   }
 
-  LIEF_DEBUG("Segment associated: {}@{:#x}",
-             to_string(segment_added->type()), segment_added->virtual_address());
+  LIEF_DEBUG("Segment associated: {}@{:#x}", to_string(segment_added->type()),
+             segment_added->virtual_address());
 
   auto new_section = std::make_unique<Section>(section);
   new_section->datahandler_ = datahandler_.get();
@@ -791,8 +803,7 @@ Section* Binary::add_section</*loaded=*/true>(const Section& section,
 // Add a non-loaded section
 template<>
 Section* Binary::add_section</*loaded=*/false>(const Section& section,
-                                               SEC_INSERT_POS pos)
-{
+                                               SEC_INSERT_POS pos) {
   auto new_section = std::make_unique<Section>(section);
   new_section->datahandler_ = datahandler_.get();
 
@@ -806,9 +817,7 @@ Section* Binary::add_section</*loaded=*/false>(const Section& section,
   uint64_t last_offset = 0;
   switch (pos) {
     case SEC_INSERT_POS::AUTO:
-    case SEC_INSERT_POS::POST_SEGMENT:
-      last_offset = last_offset_segments;
-      break;
+    case SEC_INSERT_POS::POST_SEGMENT: last_offset = last_offset_segments; break;
     case SEC_INSERT_POS::POST_SECTION:
       last_offset = std::max(last_offset_segments, last_offset_sections);
       break;
@@ -845,7 +854,8 @@ void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
     return;
   }
   const uint64_t addr = dt_pltgot->value();
-  span<const uint8_t> content = get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
+  span<const uint8_t> content =
+      get_content_from_virtual_address(addr, 3 * sizeof(ptr_t));
   std::vector<uint8_t> content_vec(content.begin(), content.end());
   if (content.size() != 3 * sizeof(ptr_t)) {
     LIEF_ERR("Failed to read GOT entries");
@@ -864,4 +874,3 @@ void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
 }
 
 }
-

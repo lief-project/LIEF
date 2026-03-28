@@ -29,14 +29,14 @@ namespace COFF {
 /// Some of these strings can be used for section names that are greater than 8
 /// bytes. See: LIEF::PE::Section::coff_string()
 ///
-/// Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#coff-string-table
+/// Reference:
+/// https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#coff-string-table
 class LIEF_API String {
   public:
   String() = default;
   String(uint32_t offset, std::string str) :
     str_(std::move(str)),
-    offset_(offset)
-  {}
+    offset_(offset) {}
 
   String(const String&) = default;
   String& operator=(const String&) = default;
@@ -67,9 +67,7 @@ class LIEF_API String {
     return *this;
   }
 
-  friend LIEF_API
-    std::ostream& operator<<(std::ostream& os, const String& str)
-  {
+  friend LIEF_API std::ostream& operator<<(std::ostream& os, const String& str) {
     os << str.str();
     return os;
   }

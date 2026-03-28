@@ -34,17 +34,17 @@ class SubCacheIt;
 /// This class represents a subcache in the case of large/split dyld shared
 /// cache.
 ///
-/// It mirror (and abstracts) the original `dyld_subcache_entry` / `dyld_subcache_entry_v1`
+/// It mirror (and abstracts) the original `dyld_subcache_entry` /
+/// `dyld_subcache_entry_v1`
 class LIEF_API SubCache {
   public:
   /// SubCache Iterator
-  class LIEF_API Iterator :
-    public iterator_facade_base<Iterator, std::random_access_iterator_tag,
-                                std::unique_ptr<SubCache>, std::ptrdiff_t, SubCache*,
-                                std::unique_ptr<SubCache>
+  class LIEF_API Iterator
+    : public iterator_facade_base<
+          Iterator, std::random_access_iterator_tag, std::unique_ptr<SubCache>,
+          std::ptrdiff_t, SubCache*, std::unique_ptr<SubCache>
 
-    >
-  {
+      > {
     public:
     using implementation = details::SubCacheIt;
 
@@ -85,14 +85,15 @@ class LIEF_API SubCache {
   /// The offset of this subcache from the main cache base address
   uint64_t vm_offset() const;
 
-  /// The file name suffix of the subCache file (e.g. `.25.data`, `.03.development`)
+  /// The file name suffix of the subCache file (e.g. `.25.data`,
+  /// `.03.development`)
   std::string suffix() const;
 
   /// The associated DyldSharedCache object for this subcache
   std::unique_ptr<const DyldSharedCache> cache() const;
 
-  friend LIEF_API
-    std::ostream& operator<<(std::ostream& os, const SubCache& subcache);
+  friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                           const SubCache& subcache);
 
   private:
   std::unique_ptr<details::SubCache> impl_;

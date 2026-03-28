@@ -33,14 +33,14 @@ class Class;
 
 class LIEF_API Method : public Object {
   friend class Parser;
-  public:
 
+  public:
   /// Container for the Quick Code
   using quick_code_t = std::vector<uint8_t>;
 
   public:
   Method();
-  Method(DEX::Method* method, Class* oat_class, std::vector<uint8_t>  code = {});
+  Method(DEX::Method* method, Class* oat_class, std::vector<uint8_t> code = {});
   Method(const Method&);
   Method& operator=(const Method&);
 

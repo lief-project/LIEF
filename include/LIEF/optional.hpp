@@ -25,8 +25,7 @@ class optional : public result<T> {
   using result<T>::result;
 
   optional() :
-    result<T>(tl::make_unexpected(lief_errors::not_found))
-  {}
+    result<T>(tl::make_unexpected(lief_errors::not_found)) {}
 
   void reset() noexcept {
     new (this) optional();

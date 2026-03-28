@@ -35,19 +35,19 @@ extern "C" {
 
 /** @brief LIEF::PE::Binary C Handler */
 struct Pe_Binary_t {
-  void*                handler;
-  Pe_DosHeader_t       dos_header;
-  Pe_Header_t          header;
-  Pe_OptionalHeader_t  optional_header;
+  void* handler;
+  Pe_DosHeader_t dos_header;
+  Pe_Header_t header;
+  Pe_OptionalHeader_t optional_header;
   Pe_DataDirectory_t** data_directories;
-  Pe_Section_t**       sections;
-  Pe_Import_t**        imports;
+  Pe_Section_t** sections;
+  Pe_Import_t** imports;
 };
 
 typedef struct Pe_Binary_t Pe_Binary_t;
 
 /** Wrapper on LIEF::PE::Parser::parse */
-LIEF_API Pe_Binary_t* pe_parse(const char *file);
+LIEF_API Pe_Binary_t* pe_parse(const char* file);
 
 LIEF_API void pe_binary_destroy(Pe_Binary_t* binary);
 

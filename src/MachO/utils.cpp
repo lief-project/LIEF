@@ -31,7 +31,6 @@
 #include "logging.hpp"
 
 
-
 namespace LIEF::MachO {
 
 inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream,
@@ -56,9 +55,7 @@ bool is_macho(BinaryStream& stream) {
   }
 
   // Check for Java class file: CA FE BA BE + valid minor/major version
-  if (header[0] == 0xCA &&
-      header[1] == 0xFE &&
-      header[2] == 0xBA &&
+  if (header[0] == 0xCA && header[1] == 0xFE && header[2] == 0xBA &&
       header[3] == 0xBE)
   {
     static constexpr auto MIN_JAVA_VERSION = 45;
@@ -111,8 +108,7 @@ bool is_fat(const std::string& file) {
   if (auto stream = FileStream::from_file(file)) {
     if (auto magic_res = magic_from_stream(*stream)) {
       const MACHO_TYPES magic = *magic_res;
-      return magic == MACHO_TYPES::MAGIC_FAT ||
-             magic == MACHO_TYPES::CIGAM_FAT;
+      return magic == MACHO_TYPES::MAGIC_FAT || magic == MACHO_TYPES::CIGAM_FAT;
     }
   }
   return false;
@@ -122,8 +118,7 @@ bool is_64(BinaryStream& stream) {
   ScopedStream scoped(stream, 0);
   if (auto magic_res = magic_from_stream(*scoped)) {
     const MACHO_TYPES magic = *magic_res;
-    return magic == MACHO_TYPES::MAGIC_64 ||
-           magic == MACHO_TYPES::CIGAM_64;
+    return magic == MACHO_TYPES::MAGIC_64 || magic == MACHO_TYPES::CIGAM_64;
   }
   return false;
 }
@@ -152,8 +147,8 @@ void foreach_segment_impl(BinaryStream& stream, const segment_callback_t cbk) {
       break;
     }
     const auto cmd = LoadCommand::TYPE(raw_cmd->cmd);
-    const bool is_segment = cmd == LoadCommand::TYPE::SEGMENT ||
-                            cmd == LoadCommand::TYPE::SEGMENT_64;
+    const bool is_segment =
+        cmd == LoadCommand::TYPE::SEGMENT || cmd == LoadCommand::TYPE::SEGMENT_64;
     if (is_segment) {
       auto res_segment = stream.peek<segment_command_t>();
       if (!res_segment) {
@@ -182,11 +177,10 @@ void foreach_segment(BinaryStream& stream, const segment_callback_t cbk) {
     return;
   }
 
-  const bool is64 = magic == MACHO_TYPES::MAGIC_64 ||
-                    magic == MACHO_TYPES::CIGAM_64;
+  const bool is64 =
+      magic == MACHO_TYPES::MAGIC_64 || magic == MACHO_TYPES::CIGAM_64;
 
-  const bool is32 = magic == MACHO_TYPES::MAGIC ||
-                    magic == MACHO_TYPES::CIGAM;
+  const bool is32 = magic == MACHO_TYPES::MAGIC || magic == MACHO_TYPES::CIGAM;
 
   if (!is64 && !is32) {
     return;
@@ -197,5 +191,3 @@ void foreach_segment(BinaryStream& stream, const segment_callback_t cbk) {
 }
 
 }
-
-

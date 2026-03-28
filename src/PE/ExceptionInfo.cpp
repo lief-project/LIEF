@@ -23,35 +23,35 @@
 
 namespace LIEF::PE {
 
-std::unique_ptr<ExceptionInfo>
-  ExceptionInfo::parse(Parser& ctx, BinaryStream& strm, Header::MACHINE_TYPES arch)
-{
+std::unique_ptr<ExceptionInfo> ExceptionInfo::parse(Parser& ctx,
+                                                    BinaryStream& strm,
+                                                    Header::MACHINE_TYPES arch) {
   uint64_t pos = strm.pos();
   switch (arch) {
     case Header::MACHINE_TYPES::AMD64:
-      {
-        if (auto F = RuntimeFunctionX64::parse(ctx, strm)) {
-          F->offset(pos);
-          return F;
-        }
-        return nullptr;
+    {
+      if (auto F = RuntimeFunctionX64::parse(ctx, strm)) {
+        F->offset(pos);
+        return F;
       }
-    case Header::MACHINE_TYPES::ARM64:
-      {
-        if (auto F = RuntimeFunctionAArch64::parse(ctx, strm)) {
-          F->offset(pos);
-          return F;
-        }
-        return nullptr;
-      }
-
-    default:
       return nullptr;
+    }
+    case Header::MACHINE_TYPES::ARM64:
+    {
+      if (auto F = RuntimeFunctionAArch64::parse(ctx, strm)) {
+        F->offset(pos);
+        return F;
+      }
+      return nullptr;
+    }
+
+    default: return nullptr;
   }
   return nullptr;
 }
 
-std::unique_ptr<ExceptionInfo> ExceptionInfo::parse(Parser& ctx, BinaryStream& strm) {
+std::unique_ptr<ExceptionInfo> ExceptionInfo::parse(Parser& ctx,
+                                                    BinaryStream& strm) {
   const Header::MACHINE_TYPES arch = ctx.bin().header().machine();
   return parse(ctx, strm, arch);
 }

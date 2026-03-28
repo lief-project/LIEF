@@ -111,174 +111,234 @@ class ELF_ParserConfig {
 class ELF_Binary : public AbstractBinary {
   public:
   using lief_t = LIEF::ELF::Binary;
-  ELF_Binary(std::unique_ptr<lief_t> bin) : AbstractBinary(std::move(bin)) {}
+  ELF_Binary(std::unique_ptr<lief_t> bin) :
+    AbstractBinary(std::move(bin)) {}
 
-  static auto parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
+  static auto
+      parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(path));
   }
 
-  static auto parse_with_config(std::string path, const ELF_ParserConfig& config) { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(path, config.conf()));
+  static auto parse_with_config(
+      std::string path, const ELF_ParserConfig& config
+  ) { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<ELF_Binary>(
+        LIEF::ELF::Parser::parse(path, config.conf())
+    );
   }
 
-  class it_sections :
-      public Iterator<ELF_Section, LIEF::ELF::Binary::it_const_sections>
-  {
+  class it_sections
+    : public Iterator<ELF_Section, LIEF::ELF::Binary::it_const_sections> {
     public:
-    it_sections(const ELF_Binary::lief_t& src)
-      : Iterator(src.sections()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_sections(const ELF_Binary::lief_t& src) :
+      Iterator(src.sections()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_segments :
-      public Iterator<ELF_Segment, LIEF::ELF::Binary::it_const_segments>
-  {
+  class it_segments
+    : public Iterator<ELF_Segment, LIEF::ELF::Binary::it_const_segments> {
     public:
-    it_segments(const ELF_Binary::lief_t& src)
-      : Iterator(src.segments()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_segments(const ELF_Binary::lief_t& src) :
+      Iterator(src.segments()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_dynamic_entries :
-      public Iterator<ELF_DynamicEntry, LIEF::ELF::Binary::it_const_dynamic_entries>
-  {
+  class it_dynamic_entries
+    : public Iterator<ELF_DynamicEntry,
+                      LIEF::ELF::Binary::it_const_dynamic_entries> {
     public:
-    it_dynamic_entries(const ELF_Binary::lief_t& src)
-      : Iterator(src.dynamic_entries()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_dynamic_entries(const ELF_Binary::lief_t& src) :
+      Iterator(src.dynamic_entries()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_dynamic_symbols :
-      public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_dynamic_symbols>
-  {
+  class it_dynamic_symbols
+    : public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_dynamic_symbols> {
     public:
-    it_dynamic_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.dynamic_symbols()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_dynamic_symbols(const ELF_Binary::lief_t& src) :
+      Iterator(src.dynamic_symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_exported_symbols :
-      public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_exported_symbols>
-  {
+  class it_exported_symbols
+    : public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_exported_symbols> {
     public:
-    it_exported_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.exported_symbols()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_exported_symbols(const ELF_Binary::lief_t& src) :
+      Iterator(src.exported_symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_imported_symbols :
-      public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_imported_symbols>
-  {
+  class it_imported_symbols
+    : public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_imported_symbols> {
     public:
-    it_imported_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.imported_symbols()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_imported_symbols(const ELF_Binary::lief_t& src) :
+      Iterator(src.imported_symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_notes :
-      public Iterator<ELF_Note, LIEF::ELF::Binary::it_const_notes>
-  {
+  class it_notes : public Iterator<ELF_Note, LIEF::ELF::Binary::it_const_notes> {
     public:
-    it_notes(const ELF_Binary::lief_t& src)
-      : Iterator(src.notes()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_notes(const ELF_Binary::lief_t& src) :
+      Iterator(src.notes()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_symtab_symbols :
-      public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_symtab_symbols>
-  {
+  class it_symtab_symbols
+    : public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_symtab_symbols> {
     public:
-    it_symtab_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.symtab_symbols()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_symtab_symbols(const ELF_Binary::lief_t& src) :
+      Iterator(src.symtab_symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_relocations :
-      public Iterator<ELF_Relocation, LIEF::ELF::Binary::it_const_relocations>
-  {
+  class it_relocations
+    : public Iterator<ELF_Relocation, LIEF::ELF::Binary::it_const_relocations> {
     public:
-    it_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(src.relocations()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_relocations(const ELF_Binary::lief_t& src) :
+      Iterator(src.relocations()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_pltgot_relocations :
-      public Iterator<ELF_Relocation, LIEF::ELF::Binary::it_const_pltgot_relocations>
-  {
+  class it_pltgot_relocations
+    : public Iterator<ELF_Relocation,
+                      LIEF::ELF::Binary::it_const_pltgot_relocations> {
     public:
-    it_pltgot_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(src.pltgot_relocations()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_pltgot_relocations(const ELF_Binary::lief_t& src) :
+      Iterator(src.pltgot_relocations()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_dynamic_relocations :
-      public Iterator<ELF_Relocation, LIEF::ELF::Binary::it_const_dynamic_relocations>
-  {
+  class it_dynamic_relocations
+    : public Iterator<ELF_Relocation,
+                      LIEF::ELF::Binary::it_const_dynamic_relocations> {
     public:
-    it_dynamic_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(src.dynamic_relocations()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_dynamic_relocations(const ELF_Binary::lief_t& src) :
+      Iterator(src.dynamic_relocations()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_object_relocations :
-      public Iterator<ELF_Relocation, LIEF::ELF::Binary::it_const_object_relocations>
-  {
+  class it_object_relocations
+    : public Iterator<ELF_Relocation,
+                      LIEF::ELF::Binary::it_const_object_relocations> {
     public:
-    it_object_relocations(const ELF_Binary::lief_t& src)
-      : Iterator(src.object_relocations()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_object_relocations(const ELF_Binary::lief_t& src) :
+      Iterator(src.object_relocations()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_symbols_version :
-      public Iterator<ELF_SymbolVersion, LIEF::ELF::Binary::it_const_symbols_version>
-  {
+  class it_symbols_version
+    : public Iterator<ELF_SymbolVersion,
+                      LIEF::ELF::Binary::it_const_symbols_version> {
     public:
-    it_symbols_version(const ELF_Binary::lief_t& src)
-      : Iterator(src.symbols_version()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_symbols_version(const ELF_Binary::lief_t& src) :
+      Iterator(src.symbols_version()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_symbols_version_requirement :
-      public Iterator<ELF_SymbolVersionRequirement, LIEF::ELF::Binary::it_const_symbols_version_requirement>
-  {
+  class it_symbols_version_requirement
+    : public Iterator<ELF_SymbolVersionRequirement,
+                      LIEF::ELF::Binary::it_const_symbols_version_requirement> {
     public:
-    it_symbols_version_requirement(const ELF_Binary::lief_t& src)
-      : Iterator(src.symbols_version_requirement()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_symbols_version_requirement(const ELF_Binary::lief_t& src) :
+      Iterator(src.symbols_version_requirement()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_symbols_version_definition :
-      public Iterator<ELF_SymbolVersionDefinition, LIEF::ELF::Binary::it_const_symbols_version_definition>
-  {
+  class it_symbols_version_definition
+    : public Iterator<ELF_SymbolVersionDefinition,
+                      LIEF::ELF::Binary::it_const_symbols_version_definition> {
     public:
-    it_symbols_version_definition(const ELF_Binary::lief_t& src)
-      : Iterator(src.symbols_version_definition()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_symbols_version_definition(const ELF_Binary::lief_t& src) :
+      Iterator(src.symbols_version_definition()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_symbols :
-      public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_symbols>
-  {
+  class it_symbols
+    : public Iterator<ELF_Symbol, LIEF::ELF::Binary::it_const_symbols> {
     public:
-    it_symbols(const ELF_Binary::lief_t& src)
-      : Iterator(src.symbols()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_symbols(const ELF_Binary::lief_t& src) :
+      Iterator(src.symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
   auto header() const {
@@ -286,11 +346,15 @@ class ELF_Binary : public AbstractBinary {
   }
 
   auto gnu_hash() const {
-    return details::try_unique<ELF_GnuHash>(impl().gnu_hash()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<ELF_GnuHash>(
+        impl().gnu_hash()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto sysv_hash() const {
-    return details::try_unique<ELF_SysvHash>(impl().sysv_hash()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<ELF_SysvHash>(
+        impl().sysv_hash()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto sections() const {
@@ -318,7 +382,7 @@ class ELF_Binary : public AbstractBinary {
   }
 
   auto add_dynamic_entry(const ELF_DynamicEntry& entry) {
-     return std::make_unique<ELF_DynamicEntry>(impl().add(entry.get()));
+    return std::make_unique<ELF_DynamicEntry>(impl().add(entry.get()));
   }
 
   auto dynamic_symbols() const {
@@ -369,53 +433,86 @@ class ELF_Binary : public AbstractBinary {
     return std::make_unique<it_symbols_version_definition>(impl());
   }
 
-  auto section_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<ELF_Section>(impl().get_section(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto section_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<ELF_Section>(
+        impl().get_section(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto relocation_by_addr(uint64_t addr) const {
-    return details::try_unique<ELF_Relocation>(impl().get_relocation(addr)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<ELF_Relocation>(
+        impl().get_relocation(addr)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto relocation_for_symbol(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<ELF_Relocation>(impl().get_relocation(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto relocation_for_symbol(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<ELF_Relocation>(
+        impl().get_relocation(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto get_dynamic_symbol(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<ELF_Symbol>(impl().get_dynamic_symbol(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto get_dynamic_symbol(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<ELF_Symbol>(
+        impl().get_dynamic_symbol(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto get_symtab_symbol(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<ELF_Symbol>(impl().get_symtab_symbol(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto get_symtab_symbol(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<ELF_Symbol>(
+        impl().get_symtab_symbol(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto get_library(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<ELF_DynamicEntryLibrary>(impl().get_library(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto get_library(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<ELF_DynamicEntryLibrary>(
+        impl().get_library(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto section_from_offset(uint64_t offset, bool skip_nobits) const {
-    return details::try_unique<ELF_Section>(impl().section_from_offset(offset, skip_nobits)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<ELF_Section>(
+        impl().section_from_offset(offset, skip_nobits)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto section_from_virtual_address(uint64_t address, bool skip_nobits) const {
-    return details::try_unique<ELF_Section>(impl().section_from_virtual_address(address, skip_nobits)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<ELF_Section>(
+        impl().section_from_virtual_address(address, skip_nobits)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto segment_from_virtual_address(uint64_t address) const {
-    return details::try_unique<ELF_Segment>(impl().segment_from_virtual_address(address)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<ELF_Segment>(
+        impl().segment_from_virtual_address(address)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto segment_from_offset(uint64_t offset) const {
-    return details::try_unique<ELF_Segment>(impl().segment_from_offset(offset)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<ELF_Segment>(
+        impl().segment_from_offset(offset)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  Span get_content_from_virtual_address(uint64_t virtual_address, uint64_t size) const {
-    return make_span(impl().get_content_from_virtual_address(virtual_address, size));
+  Span get_content_from_virtual_address(uint64_t virtual_address,
+                                        uint64_t size) const {
+    return make_span(impl().get_content_from_virtual_address(virtual_address,
+                                                             size));
   }
 
-  uint64_t virtual_address_to_offset(uint64_t virtual_address, uint32_t& error) const {
+  uint64_t virtual_address_to_offset(uint64_t virtual_address,
+                                     uint32_t& error) const {
     return details::make_error<uint64_t>(
-      impl().virtual_address_to_offset(virtual_address), error
+        impl().virtual_address_to_offset(virtual_address), error
     );
   }
 
@@ -448,11 +545,15 @@ class ELF_Binary : public AbstractBinary {
   }
 
   auto dynamic_entry_by_tag(uint64_t tag) const {
-    return details::try_unique<ELF_DynamicEntry>(impl().get((LIEF::ELF::DynamicEntry::TAG)tag));
+    return details::try_unique<ELF_DynamicEntry>(
+        impl().get((LIEF::ELF::DynamicEntry::TAG)tag)
+    );
   }
 
   auto segment_by_type(uint64_t ty) const {
-    return details::try_unique<ELF_Segment>(impl().get((LIEF::ELF::Segment::TYPE)ty));
+    return details::try_unique<ELF_Segment>(
+        impl().get((LIEF::ELF::Segment::TYPE)ty)
+    );
   }
 
   void remove_library(std::string name) {
@@ -460,13 +561,13 @@ class ELF_Binary : public AbstractBinary {
   }
 
   auto add_segment(const ELF_Segment& segment) {
-    return details::try_unique<ELF_Segment>(
-        impl().add(segment.get())
-    );
+    return details::try_unique<ELF_Segment>(impl().add(segment.get()));
   }
 
   auto find_version_requirement(std::string libname) const {
-    return details::try_unique<ELF_SymbolVersionRequirement>(impl().find_version_requirement(libname));
+    return details::try_unique<ELF_SymbolVersionRequirement>(
+        impl().find_version_requirement(libname)
+    );
   }
 
   auto remove_version_requirement(std::string libname) {
@@ -481,20 +582,34 @@ class ELF_Binary : public AbstractBinary {
     impl().remove(LIEF::ELF::Segment::TYPE(ty), clear);
   }
 
-  auto symbols() const { return std::make_unique<it_symbols>(impl()); }
+  auto symbols() const {
+    return std::make_unique<it_symbols>(impl());
+  }
 
-  auto strings(uint64_t min_size) const { return impl().strings(min_size); }
+  auto strings(uint64_t min_size) const {
+    return impl().strings(min_size);
+  }
 
-  auto last_offset_section() const { return impl().last_offset_section(); }
-  auto last_offset_segment() const { return impl().last_offset_segment(); }
-  auto next_virtual_address() const { return impl().next_virtual_address(); }
-  auto eof_offset() const { return impl().eof_offset(); }
+  auto last_offset_section() const {
+    return impl().last_offset_section();
+  }
+  auto last_offset_segment() const {
+    return impl().last_offset_segment();
+  }
+  auto next_virtual_address() const {
+    return impl().next_virtual_address();
+  }
+  auto eof_offset() const {
+    return impl().eof_offset();
+  }
 
   auto dtor_functions() const {
     return std::make_unique<AbstractBinary::it_functions>(impl().dtor_functions());
   }
 
-  Span get_overlay() const { return make_span(impl().overlay()); }
+  Span get_overlay() const {
+    return make_span(impl().overlay());
+  }
 
   void set_overlay(const uint8_t* data, uint64_t size) {
     impl().overlay(std::vector<uint8_t>(data, data + size));
@@ -521,7 +636,9 @@ class ELF_Binary : public AbstractBinary {
   }
 
   auto get_section_by_type(uint64_t ty) const {
-    return details::try_unique<ELF_Section>(impl().get(LIEF::ELF::Section::TYPE(ty)));
+    return details::try_unique<ELF_Section>(
+        impl().get(LIEF::ELF::Section::TYPE(ty))
+    );
   }
 
   bool has_section(std::string name) const {
@@ -562,8 +679,8 @@ class ELF_Binary : public AbstractBinary {
 
   auto add_section(const ELF_Section& section, bool loaded, uint32_t pos) {
     return details::try_unique<ELF_Section>(
-      impl().add(as<LIEF::ELF::Section>(&section), loaded,
-                 LIEF::ELF::Binary::SEC_INSERT_POS(pos))
+        impl().add(as<LIEF::ELF::Section>(&section), loaded,
+                   LIEF::ELF::Binary::SEC_INSERT_POS(pos))
     );
   }
 
@@ -573,43 +690,40 @@ class ELF_Binary : public AbstractBinary {
 
   auto add_dynamic_relocation(const ELF_Relocation& reloc) {
     return std::make_unique<ELF_Relocation>(
-      impl().add_dynamic_relocation(as<LIEF::ELF::Relocation>(&reloc))
+        impl().add_dynamic_relocation(as<LIEF::ELF::Relocation>(&reloc))
     );
   }
 
   auto add_pltgot_relocation(const ELF_Relocation& reloc) {
     return std::make_unique<ELF_Relocation>(
-      impl().add_pltgot_relocation(as<LIEF::ELF::Relocation>(&reloc))
+        impl().add_pltgot_relocation(as<LIEF::ELF::Relocation>(&reloc))
     );
   }
 
   auto add_symtab_symbol(const ELF_Symbol& symbol) {
     return std::make_unique<ELF_Symbol>(
-      impl().add_symtab_symbol(as<LIEF::ELF::Symbol>(&symbol))
+        impl().add_symtab_symbol(as<LIEF::ELF::Symbol>(&symbol))
     );
   }
 
   auto add_dynamic_symbol(const ELF_Symbol& symbol) {
     return std::make_unique<ELF_Symbol>(
-      impl().add_dynamic_symbol(as<LIEF::ELF::Symbol>(&symbol))
+        impl().add_dynamic_symbol(as<LIEF::ELF::Symbol>(&symbol))
     );
   }
 
   auto add_exported_function(uint64_t address, std::string name) {
-    return std::make_unique<ELF_Symbol>(
-      impl().add_exported_function(address, name)
-    );
+    return std::make_unique<ELF_Symbol>(impl().add_exported_function(address,
+                                                                     name));
   }
 
   auto export_symbol_by_name(std::string symbol_name, uint64_t value) {
-    return std::make_unique<ELF_Symbol>(
-      impl().export_symbol(symbol_name, value)
-    );
+    return std::make_unique<ELF_Symbol>(impl().export_symbol(symbol_name, value));
   }
 
   auto export_symbol_obj(const ELF_Symbol& symbol) {
     return std::make_unique<ELF_Symbol>(
-      impl().export_symbol(as<LIEF::ELF::Symbol>(&symbol))
+        impl().export_symbol(as<LIEF::ELF::Symbol>(&symbol))
     );
   }
 
@@ -630,18 +744,18 @@ class ELF_Binary : public AbstractBinary {
   }
 
   auto extend_segment(const ELF_Segment& segment, uint64_t size) {
-    return details::try_unique<ELF_Segment>(
-      impl().extend(segment.get(), size)
-    );
+    return details::try_unique<ELF_Segment>(impl().extend(segment.get(), size));
   }
 
   auto extend_section(const ELF_Section& section, uint64_t size) {
     return details::try_unique<ELF_Section>(
-      impl().extend(as<LIEF::ELF::Section>(&section), size)
+        impl().extend(as<LIEF::ELF::Section>(&section), size)
     );
   }
 
-  void strip() { impl().strip(); }
+  void strip() {
+    impl().strip();
+  }
 
 
   int64_t get_section_idx_by_name(std::string name) const {
@@ -662,34 +776,40 @@ class ELF_Binary : public AbstractBinary {
     return impl().relocate_phdr_table(LIEF::ELF::Binary::PHDR_RELOC(type));
   }
 
-  void write(std::string output) { impl().write(output); }
+  void write(std::string output) {
+    impl().write(output);
+  }
   void write_with_config(std::string output, ELF_Binary_write_config_t config) {
-    impl().write(output, LIEF::ELF::Builder::config_t {
-      config.dt_hash,
-      config.dyn_str,
-      config.dynamic_section,
-      config.fini_array,
-      config.gnu_hash,
-      config.init_array,
-      config.interpreter,
-      config.jmprel,
-      config.notes,
-      config.preinit_array,
-      config.relr,
-      config.android_rela,
-      config.rela,
-      config.static_symtab,
-      config.sym_verdef,
-      config.sym_verneed,
-      config.sym_versym,
-      config.symtab,
-      config.coredump_notes,
-      config.force_relocate,
-      config.keep_empty_version_requirement,
-    });
+    impl().write(output, LIEF::ELF::Builder::config_t{
+                             config.dt_hash,
+                             config.dyn_str,
+                             config.dynamic_section,
+                             config.fini_array,
+                             config.gnu_hash,
+                             config.init_array,
+                             config.interpreter,
+                             config.jmprel,
+                             config.notes,
+                             config.preinit_array,
+                             config.relr,
+                             config.android_rela,
+                             config.rela,
+                             config.static_symtab,
+                             config.sym_verdef,
+                             config.sym_verneed,
+                             config.sym_versym,
+                             config.symtab,
+                             config.coredump_notes,
+                             config.force_relocate,
+                             config.keep_empty_version_requirement,
+                         });
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

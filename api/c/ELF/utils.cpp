@@ -19,4 +19,3 @@
 uint8_t is_elf(const char* file) {
   return LIEF::ELF::is_elf(file);
 }
-

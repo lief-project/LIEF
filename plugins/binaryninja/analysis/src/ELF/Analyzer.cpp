@@ -27,10 +27,10 @@
 using namespace LIEF;
 
 namespace analysis_plugin::elf {
-Analyzer::Analyzer(std::unique_ptr<LIEF::ELF::Binary> impl, BinaryNinja::BinaryView& bv) :
+Analyzer::Analyzer(std::unique_ptr<LIEF::ELF::Binary> impl,
+                   BinaryNinja::BinaryView& bv) :
   analysis_plugin::Analyzer(bv, std::make_unique<TypeBuilder>(bv)),
-  elf_(std::move(impl))
-{
+  elf_(std::move(impl)) {
   using namespace analyzers;
 
   if (Relocations::can_run(*bv_, *elf_)) {

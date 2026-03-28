@@ -19,17 +19,35 @@
 
 class PE_DelayImportEntry : public AbstractSymbol {
   using lief_t = LIEF::PE::DelayImportEntry;
-  public:
-  PE_DelayImportEntry(const lief_t& info) : AbstractSymbol(const_cast<lief_t&>(info)) {}
 
-  bool is_ordinal() const { return impl().is_ordinal(); };
-  uint16_t ordinal() const { return impl().ordinal(); };
-  uint64_t hint_name_rva() const { return impl().hint_name_rva(); };
-  uint16_t hint() const { return impl().hint(); };
-  uint64_t iat_value() const { return impl().iat_value(); };
-  uint64_t data() const { return impl().data(); };
-  auto demangled_name() const { return impl().demangled_name(); }
+  public:
+  PE_DelayImportEntry(const lief_t& info) :
+    AbstractSymbol(const_cast<lief_t&>(info)) {}
+
+  bool is_ordinal() const {
+    return impl().is_ordinal();
+  };
+  uint16_t ordinal() const {
+    return impl().ordinal();
+  };
+  uint64_t hint_name_rva() const {
+    return impl().hint_name_rva();
+  };
+  uint16_t hint() const {
+    return impl().hint();
+  };
+  uint64_t iat_value() const {
+    return impl().iat_value();
+  };
+  uint64_t data() const {
+    return impl().data();
+  };
+  auto demangled_name() const {
+    return impl().demangled_name();
+  }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

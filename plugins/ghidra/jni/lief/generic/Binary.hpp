@@ -23,23 +23,25 @@
 
 namespace lief_jni::generic {
 
-class Binary : public JNI<
-  Binary, canbe_unique<LIEF::Binary>>
-{
+class Binary : public JNI<Binary, canbe_unique<LIEF::Binary>> {
   public:
   using JNI::JNI;
-  static constexpr jni::Class kClass {
-    "lief/generic/Binary",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/generic/Binary",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static jlong jni_get_imagebase(JNIEnv* env, jobject thiz) {
     return (jlong)from_jni(thiz)->impl().imagebase();
   }
 
-  static jobject jni_offset_to_virtual_address(JNIEnv* env, jobject thiz, jlong offset, jlong slide) {
-    return java::util::make_optional(from_jni(thiz)->impl().offset_to_virtual_address(offset, slide));
+  static jobject jni_offset_to_virtual_address(JNIEnv* env, jobject thiz,
+                                               jlong offset, jlong slide) {
+    return java::util::make_optional(
+        from_jni(thiz)->impl().offset_to_virtual_address(offset, slide)
+    );
   }
 
   static int register_natives(JNIEnv* env);

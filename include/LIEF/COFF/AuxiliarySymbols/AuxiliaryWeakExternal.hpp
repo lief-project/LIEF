@@ -34,37 +34,36 @@ namespace COFF {
 ///
 /// If a definition of `sym1` is linked, then an external reference to the
 /// symbol is resolved normally. If a definition of `sym1` is not linked, then all
-/// references to the weak external for `sym1` refer to `sym2` instead. The external
-/// symbol, `sym2`, must always be linked; typically, it is defined in the module
-/// that contains the weak reference to `sym1`.
+/// references to the weak external for `sym1` refer to `sym2` instead. The
+/// external symbol, `sym2`, must always be linked; typically, it is defined in the
+/// module that contains the weak reference to `sym1`.
 ///
-/// Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#auxiliary-format-3-weak-externals
+/// Reference:
+/// https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#auxiliary-format-3-weak-externals
 class LIEF_API AuxiliaryWeakExternal : public AuxiliarySymbol {
   public:
   enum class CHARACTERISTICS : uint32_t {
     /// No library search for `sym1` should be performed.
     SEARCH_NOLIBRARY = 1,
-    ///A library search for `sym1` should be performed.
+    /// A library search for `sym1` should be performed.
     SEARCH_LIBRARY = 2,
     /// `sym1` is an alias for sym2
     SEARCH_ALIAS = 3,
-    ANTI_DEPENDENCY = 4
+    ANTI_DEPENDENCY = 4,
   };
 
   LIEF_LOCAL static std::unique_ptr<AuxiliaryWeakExternal>
-    parse(const std::vector<uint8_t>& payload);
+      parse(const std::vector<uint8_t>& payload);
 
   AuxiliaryWeakExternal() :
-    AuxiliarySymbol(AuxiliarySymbol::TYPE::WEAK_EXTERNAL)
-  {}
+    AuxiliarySymbol(AuxiliarySymbol::TYPE::WEAK_EXTERNAL) {}
 
   AuxiliaryWeakExternal(uint32_t sym_idx, uint32_t characteristics,
                         std::vector<uint8_t> padding) :
     AuxiliarySymbol(AuxiliarySymbol::TYPE::WEAK_EXTERNAL),
     sym_idx_(sym_idx),
     characteristics_(characteristics),
-    padding_(std::move(padding))
-  {
+    padding_(std::move(padding)) {
     assert(padding_.size() == 10);
   }
 
@@ -75,7 +74,9 @@ class LIEF_API AuxiliaryWeakExternal : public AuxiliarySymbol {
   AuxiliaryWeakExternal& operator=(AuxiliaryWeakExternal&&) = default;
 
   std::unique_ptr<AuxiliarySymbol> clone() const override {
-    return std::unique_ptr<AuxiliaryWeakExternal>(new AuxiliaryWeakExternal{*this});
+    return std::unique_ptr<AuxiliaryWeakExternal>(
+        new AuxiliaryWeakExternal{*this}
+    );
   }
 
   /// The symbol-table index of `sym2`, the symbol to be linked if `sym1` is not

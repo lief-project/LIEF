@@ -37,6 +37,7 @@ class LIEF_API FunctionType : public Type {
     Parameter(std::unique_ptr<details::FunctionTyParameter> impl);
 
     ~Parameter();
+
     private:
     std::unique_ptr<details::FunctionTyParameter> impl_;
   };

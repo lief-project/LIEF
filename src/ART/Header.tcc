@@ -47,22 +47,16 @@ Header::Header(const details::ART_17::header* header) :
   boot_oat_begin_{0},
   boot_oat_size_{0},
   storage_mode_{STORAGE_MODES::STORAGE_UNCOMPRESSED},
-  data_size_{0}
-{
-  std::copy(
-      std::begin(header->magic),
-      std::end(header->magic),
-      std::begin(magic_)
-  );
-  if (std::all_of(
-        header->version,
-        header->version + sizeof(header->version) - 1,
-        ::isdigit))
+  data_size_{0} {
+  std::copy(std::begin(header->magic), std::end(header->magic),
+            std::begin(magic_));
+  if (std::all_of(header->version, header->version + sizeof(header->version) - 1,
+                  ::isdigit))
   {
-    version_ = static_cast<uint32_t>(
-        std::stoi(std::string{reinterpret_cast<const char*>(header->version), sizeof(header->version)}));
+    version_ = static_cast<uint32_t>(std::stoi(std::string{
+        reinterpret_cast<const char*>(header->version), sizeof(header->version)
+    }));
   }
-
 }
 
 template<class T>
@@ -88,25 +82,18 @@ Header::Header(const T* header) :
   boot_oat_begin_{header->boot_oat_begin},
   boot_oat_size_{header->boot_oat_size},
   storage_mode_{static_cast<STORAGE_MODES>(header->storage_mode)},
-  data_size_{header->data_size}
-{
-  std::copy(
-      std::begin(header->magic),
-      std::end(header->magic),
-      std::begin(magic_)
-  );
-  if (std::all_of(
-        header->version,
-        header->version + sizeof(header->version) - 1,
-        ::isdigit))
+  data_size_{header->data_size} {
+  std::copy(std::begin(header->magic), std::end(header->magic),
+            std::begin(magic_));
+  if (std::all_of(header->version, header->version + sizeof(header->version) - 1,
+                  ::isdigit))
   {
-    version_ = static_cast<uint32_t>(
-        std::stoi(std::string{reinterpret_cast<const char*>(header->version), sizeof(header->version)}));
+    version_ = static_cast<uint32_t>(std::stoi(std::string{
+        reinterpret_cast<const char*>(header->version), sizeof(header->version)
+    }));
   }
 
   LIEF_DEBUG("{}", to_string(storage_mode_));
-
 }
 
 } // namespace LIEF::ART
-

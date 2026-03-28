@@ -26,102 +26,181 @@ class PE_CHPEMetadata : public Mirror<LIEF::PE::CHPEMetadata> {
   using lief_t = LIEF::PE::CHPEMetadata;
   using Mirror::Mirror;
 
-  auto version() const { return get().version(); }
-  auto to_string() const { return get().to_string(); }
+  auto version() const {
+    return get().version();
+  }
+  auto to_string() const {
+    return get().to_string();
+  }
 };
 
-class PE_CHPEMetadataARM64_range_entry_t :
-  public Mirror<LIEF::PE::CHPEMetadataARM64::range_entry_t>
-{
+class PE_CHPEMetadataARM64_range_entry_t
+  : public Mirror<LIEF::PE::CHPEMetadataARM64::range_entry_t> {
   public:
   using lief_t = LIEF::PE::CHPEMetadataARM64::range_entry_t;
   using Mirror::Mirror;
 
-  auto start_offset() const { return get().start_offset; }
-  auto length() const { return get().length; }
-  auto start() const { return get().start(); }
-  auto get_type() const { return (uint32_t)to_int(get().type()); }
-  auto end() const { return get().end(); }
+  auto start_offset() const {
+    return get().start_offset;
+  }
+  auto length() const {
+    return get().length;
+  }
+  auto start() const {
+    return get().start();
+  }
+  auto get_type() const {
+    return (uint32_t)to_int(get().type());
+  }
+  auto end() const {
+    return get().end();
+  }
 };
 
 
-class PE_CHPEMetadataARM64_redirection_entry_t :
-  public Mirror<LIEF::PE::CHPEMetadataARM64::redirection_entry_t>
-{
+class PE_CHPEMetadataARM64_redirection_entry_t
+  : public Mirror<LIEF::PE::CHPEMetadataARM64::redirection_entry_t> {
   public:
   using lief_t = LIEF::PE::CHPEMetadataARM64::redirection_entry_t;
   using Mirror::Mirror;
-  auto src() const { return get().src; }
-  auto dst() const { return get().dst; }
+  auto src() const {
+    return get().src;
+  }
+  auto dst() const {
+    return get().dst;
+  }
 };
 
-class PE_CHPEMetadataARM64_code_range_entry_point_t :
-  public Mirror<LIEF::PE::CHPEMetadataARM64::code_range_entry_point_t>
-{
+class PE_CHPEMetadataARM64_code_range_entry_point_t
+  : public Mirror<LIEF::PE::CHPEMetadataARM64::code_range_entry_point_t> {
   public:
   using lief_t = LIEF::PE::CHPEMetadataARM64::code_range_entry_point_t;
   using Mirror::Mirror;
-  auto start_rva() const { return get().start_rva; }
-  auto end_rva() const { return get().end_rva; }
-  auto entrypoint() const { return get().entrypoint; }
+  auto start_rva() const {
+    return get().start_rva;
+  }
+  auto end_rva() const {
+    return get().end_rva;
+  }
+  auto entrypoint() const {
+    return get().entrypoint;
+  }
 };
 
 class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
   public:
   using lief_t = LIEF::PE::CHPEMetadataARM64;
 
-  class it_const_range_entries :
-      public Iterator<PE_CHPEMetadataARM64_range_entry_t, LIEF::PE::CHPEMetadataARM64::it_const_range_entries>
-  {
+  class it_const_range_entries
+    : public Iterator<PE_CHPEMetadataARM64_range_entry_t,
+                      LIEF::PE::CHPEMetadataARM64::it_const_range_entries> {
     public:
-    it_const_range_entries(const PE_CHPEMetadataARM64::lief_t& src)
-      : Iterator(src.code_ranges()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_const_range_entries(const PE_CHPEMetadataARM64::lief_t& src) :
+      Iterator(src.code_ranges()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_const_redirection_entries :
-      public Iterator<PE_CHPEMetadataARM64_redirection_entry_t, LIEF::PE::CHPEMetadataARM64::it_const_redirection_entries>
-  {
+  class it_const_redirection_entries
+    : public Iterator<PE_CHPEMetadataARM64_redirection_entry_t,
+                      LIEF::PE::CHPEMetadataARM64::it_const_redirection_entries> {
     public:
-    it_const_redirection_entries(const PE_CHPEMetadataARM64::lief_t& src)
-      : Iterator(src.redirections()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_const_redirection_entries(const PE_CHPEMetadataARM64::lief_t& src) :
+      Iterator(src.redirections()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_const_code_range_entry_point :
-      public Iterator<PE_CHPEMetadataARM64_code_range_entry_point_t, LIEF::PE::CHPEMetadataARM64::it_const_code_range_entry_point>
-  {
+  class it_const_code_range_entry_point
+    : public Iterator<
+          PE_CHPEMetadataARM64_code_range_entry_point_t,
+          LIEF::PE::CHPEMetadataARM64::it_const_code_range_entry_point
+      > {
     public:
-    it_const_code_range_entry_point(const PE_CHPEMetadataARM64::lief_t& src)
-      : Iterator(src.code_range_entry_point()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_const_code_range_entry_point(const PE_CHPEMetadataARM64::lief_t& src) :
+      Iterator(src.code_range_entry_point()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  auto code_map() const { return impl().code_map(); }
-  auto code_map_count() const { return impl().code_map_count(); }
-  auto code_ranges_to_entrypoints() const { return impl().code_ranges_to_entrypoints(); }
-  auto redirection_metadata() const { return impl().redirection_metadata(); }
-  auto os_arm64x_dispatch_call_no_redirect() const { return impl().os_arm64x_dispatch_call_no_redirect(); }
-  auto os_arm64x_dispatch_ret() const { return impl().os_arm64x_dispatch_ret(); }
-  auto os_arm64x_dispatch_call() const { return impl().os_arm64x_dispatch_call(); }
-  auto os_arm64x_dispatch_icall() const { return impl().os_arm64x_dispatch_icall(); }
-  auto os_arm64x_dispatch_icall_cfg() const { return impl().os_arm64x_dispatch_icall_cfg(); }
-  auto alternate_entry_point() const { return impl().alternate_entry_point(); }
-  auto auxiliary_iat() const { return impl().auxiliary_iat(); }
-  auto code_ranges_to_entry_points_count() const { return impl().code_ranges_to_entry_points_count(); }
-  auto redirection_metadata_count() const { return impl().redirection_metadata_count(); }
-  auto get_x64_information_function_pointer() const { return impl().get_x64_information_function_pointer(); }
-  auto set_x64_information_function_pointer() const { return impl().set_x64_information_function_pointer(); }
-  auto extra_rfe_table() const { return impl().extra_rfe_table(); }
-  auto extra_rfe_table_size() const { return impl().extra_rfe_table_size(); }
-  auto os_arm64x_dispatch_fptr() const { return impl().os_arm64x_dispatch_fptr(); }
-  auto auxiliary_iat_copy() const { return impl().auxiliary_iat_copy(); }
-  auto auxiliary_delay_import() const { return impl().auxiliary_delay_import(); }
-  auto auxiliary_delay_import_copy() const { return impl().auxiliary_delay_import_copy(); }
-  auto bitfield_info() const { return impl().bitfield_info(); }
+  auto code_map() const {
+    return impl().code_map();
+  }
+  auto code_map_count() const {
+    return impl().code_map_count();
+  }
+  auto code_ranges_to_entrypoints() const {
+    return impl().code_ranges_to_entrypoints();
+  }
+  auto redirection_metadata() const {
+    return impl().redirection_metadata();
+  }
+  auto os_arm64x_dispatch_call_no_redirect() const {
+    return impl().os_arm64x_dispatch_call_no_redirect();
+  }
+  auto os_arm64x_dispatch_ret() const {
+    return impl().os_arm64x_dispatch_ret();
+  }
+  auto os_arm64x_dispatch_call() const {
+    return impl().os_arm64x_dispatch_call();
+  }
+  auto os_arm64x_dispatch_icall() const {
+    return impl().os_arm64x_dispatch_icall();
+  }
+  auto os_arm64x_dispatch_icall_cfg() const {
+    return impl().os_arm64x_dispatch_icall_cfg();
+  }
+  auto alternate_entry_point() const {
+    return impl().alternate_entry_point();
+  }
+  auto auxiliary_iat() const {
+    return impl().auxiliary_iat();
+  }
+  auto code_ranges_to_entry_points_count() const {
+    return impl().code_ranges_to_entry_points_count();
+  }
+  auto redirection_metadata_count() const {
+    return impl().redirection_metadata_count();
+  }
+  auto get_x64_information_function_pointer() const {
+    return impl().get_x64_information_function_pointer();
+  }
+  auto set_x64_information_function_pointer() const {
+    return impl().set_x64_information_function_pointer();
+  }
+  auto extra_rfe_table() const {
+    return impl().extra_rfe_table();
+  }
+  auto extra_rfe_table_size() const {
+    return impl().extra_rfe_table_size();
+  }
+  auto os_arm64x_dispatch_fptr() const {
+    return impl().os_arm64x_dispatch_fptr();
+  }
+  auto auxiliary_iat_copy() const {
+    return impl().auxiliary_iat_copy();
+  }
+  auto auxiliary_delay_import() const {
+    return impl().auxiliary_delay_import();
+  }
+  auto auxiliary_delay_import_copy() const {
+    return impl().auxiliary_delay_import_copy();
+  }
+  auto bitfield_info() const {
+    return impl().bitfield_info();
+  }
 
   auto code_ranges() const {
     return std::make_unique<it_const_range_entries>(impl());
@@ -140,7 +219,9 @@ class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_CHPEMetadataX86 : public PE_CHPEMetadata {
@@ -196,5 +277,7 @@ class PE_CHPEMetadataX86 : public PE_CHPEMetadata {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

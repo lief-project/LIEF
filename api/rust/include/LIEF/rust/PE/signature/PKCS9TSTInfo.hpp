@@ -25,7 +25,7 @@ class PE_PKCS9TSTInfo : public PE_ContentInfo_Content {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
-
-

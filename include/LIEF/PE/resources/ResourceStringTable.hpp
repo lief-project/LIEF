@@ -57,9 +57,8 @@ class LIEF_API ResourceStringTable : public Object {
       return key_u8() + ": " + value_u8();
     }
 
-    friend LIEF_API
-      std::ostream& operator<<(std::ostream& os, const entry_t& entry)
-    {
+    friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                             const entry_t& entry) {
       os << entry.to_string();
       return os;
     }
@@ -111,11 +110,9 @@ class LIEF_API ResourceStringTable : public Object {
   }
 
   optional<std::u16string> get(const std::u16string& key) const {
-    auto it = std::find_if(entries_.begin(), entries_.end(),
-      [&key] (const entry_t& entry) {
-        return entry.key == key;
-      }
-    );
+    auto it =
+        std::find_if(entries_.begin(), entries_.end(),
+                     [&key](const entry_t& entry) { return entry.key == key; });
     if (it == entries_.end()) {
       return nullopt();
     }
@@ -153,8 +150,8 @@ class LIEF_API ResourceStringTable : public Object {
     return get(str);
   }
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const ResourceStringTable& table);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceStringTable& table);
 
   private:
   uint16_t type_ = 0;

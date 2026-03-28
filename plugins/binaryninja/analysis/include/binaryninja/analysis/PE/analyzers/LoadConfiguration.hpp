@@ -33,7 +33,7 @@ class LoadConfiguration : public AnalyzerBase {
   void update_loadconfig_ty();
 
   BinaryNinja::Ref<BinaryNinja::Type>
-    process(const LIEF::PE::CHPEMetadataARM64& arm64);
+      process(const LIEF::PE::CHPEMetadataARM64& arm64);
 
   LIEF::PE::LoadConfiguration* load_config_ = nullptr;
   LIEF::PE::CHPEMetadataARM64* arm64_metadata_ = nullptr;

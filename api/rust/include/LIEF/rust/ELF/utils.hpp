@@ -20,11 +20,13 @@
 
 class ELF_Utils {
   public:
-  static bool is_elf(std::string file)  {
+  static bool is_elf(std::string file) {
     return LIEF::ELF::is_elf(file);
   }
 
   static bool check_layout(const ELF_Binary& bin, std::string* error) {
-    return LIEF::ELF::check_layout(static_cast<const LIEF::ELF::Binary&>(bin.get()), error);
+    return LIEF::ELF::check_layout(
+        static_cast<const LIEF::ELF::Binary&>(bin.get()), error
+    );
   }
 };

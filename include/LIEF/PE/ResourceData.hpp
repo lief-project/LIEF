@@ -36,19 +36,16 @@ class LIEF_API ResourceData : public ResourceNode {
 
   public:
   ResourceData() :
-    ResourceNode(ResourceNode::TYPE::DATA)
-  {}
+    ResourceNode(ResourceNode::TYPE::DATA) {}
   ResourceData(std::vector<uint8_t> content, uint32_t code_page = 0) :
     ResourceNode(ResourceNode::TYPE::DATA),
     content_(std::move(content)),
-    code_page_(code_page)
-  {}
+    code_page_(code_page) {}
 
   ResourceData(const std::string& str, uint32_t code_page = 0) :
     ResourceNode(ResourceNode::TYPE::DATA),
     content_{str.begin(), str.end()},
-    code_page_(code_page)
-  {}
+    code_page_(code_page) {}
 
   ResourceData(const ResourceData& other) = default;
   ResourceData& operator=(const ResourceData& other) = default;

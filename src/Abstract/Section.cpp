@@ -43,14 +43,11 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
   if (size == 0) {
     if (integer < std::numeric_limits<uint8_t>::max()) {
       minimal_size = sizeof(uint8_t);
-    }
-    else if (integer < std::numeric_limits<uint16_t>::max()) {
+    } else if (integer < std::numeric_limits<uint16_t>::max()) {
       minimal_size = sizeof(uint16_t);
-    }
-    else if (integer < std::numeric_limits<uint32_t>::max()) {
+    } else if (integer < std::numeric_limits<uint32_t>::max()) {
       minimal_size = sizeof(uint32_t);
-    }
-    else if (integer < std::numeric_limits<uint64_t>::max()) {
+    } else if (integer < std::numeric_limits<uint64_t>::max()) {
       minimal_size = sizeof(uint64_t);
     } else {
       return npos;
@@ -65,9 +62,8 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
 size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
   span<const uint8_t> content = this->content();
 
-  const auto* it_found = std::search(
-      content.begin() + pos, content.end(),
-      pattern.begin(), pattern.end());
+  const auto* it_found = std::search(content.begin() + pos, content.end(),
+                                     pattern.begin(), pattern.end());
 
   if (it_found == content.end()) {
     return npos;
@@ -98,7 +94,7 @@ std::vector<size_t> Section::search_all(uint64_t v, size_t size) const {
   do {
     result.push_back(pos);
     pos = search(v, pos + 1, size);
-  } while(pos != Section::npos);
+  } while (pos != Section::npos);
 
   return result;
 }
@@ -113,7 +109,7 @@ std::vector<size_t> Section::search_all(const std::string& v) const {
 
 
 double Section::entropy() const {
-  std::array<uint64_t, 256> frequencies = { {0} };
+  std::array<uint64_t, 256> frequencies = {{0}};
   span<const uint8_t> content = this->content();
   if (content.empty() || content.size() == 1) {
     return 0.;
@@ -126,7 +122,7 @@ double Section::entropy() const {
   for (uint64_t p : frequencies) {
     if (p > 0) {
       double freq = static_cast<double>(p) / static_cast<double>(content.size());
-      entropy += freq * std::log2l(freq) ;
+      entropy += freq * std::log2l(freq);
     }
   }
   return (-entropy);
@@ -138,16 +134,11 @@ void Section::accept(Visitor& visitor) const {
 }
 
 
-
-
 std::ostream& operator<<(std::ostream& os, const Section& entry) {
   os << std::hex;
-  os << std::left
-     << std::setw(30) << entry.name()
-     << std::setw(10) << entry.virtual_address()
-     << std::setw(10) << entry.size()
-     << std::setw(10) << entry.offset()
-     << std::setw(10) << entry.entropy();
+  os << std::left << std::setw(30) << entry.name() << std::setw(10)
+     << entry.virtual_address() << std::setw(10) << entry.size() << std::setw(10)
+     << entry.offset() << std::setw(10) << entry.entropy();
 
   return os;
 }

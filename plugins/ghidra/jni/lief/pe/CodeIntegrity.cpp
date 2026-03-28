@@ -21,40 +21,20 @@
 namespace lief_jni::pe {
 
 int CodeIntegrity::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "getFlags",
-      "()S",
-      jni_get_flags
-    ),
+  static const std::array NATIVE_METHODS{
+      make("getFlags", "()S", jni_get_flags),
 
-    make(
-      "getCatalog",
-      "()S",
-      jni_get_catalog
-    ),
+      make("getCatalog", "()S", jni_get_catalog),
 
-    make(
-      "getCatalogOffset",
-      "()I",
-      jni_get_catalog_offset
-    ),
+      make("getCatalogOffset", "()I", jni_get_catalog_offset),
 
-    make(
-      "getReserved",
-      "()I",
-      jni_get_reserved
-    ),
+      make("getReserved", "()I", jni_get_reserved),
 
-    make_destroy(
-      &jni_destroy
-    ),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

@@ -77,6 +77,7 @@ class LIEF_API ClassLike : public Type {
     bool is_declaration() const;
 
     ~Member();
+
     private:
     std::unique_ptr<details::Member> impl_;
   };
@@ -85,7 +86,8 @@ class LIEF_API ClassLike : public Type {
 
   static bool classof(const Type* type) {
     const auto kind = type->kind();
-    return kind == Type::KIND::CLASS || kind == Type::KIND::STRUCT || kind == Type::KIND::UNION;
+    return kind == Type::KIND::CLASS || kind == Type::KIND::STRUCT ||
+           kind == Type::KIND::UNION;
   }
 
   /// Return the list of all the attributes defined in this class-like type
@@ -152,5 +154,3 @@ class LIEF_API Packed : public ClassLike {
 }
 }
 #endif
-
-

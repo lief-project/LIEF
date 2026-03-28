@@ -26,14 +26,11 @@ namespace LIEF::MachO {
 
 SourceVersion::SourceVersion(const details::source_version_command& ver) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(ver.cmd), ver.cmdsize},
-  version_{{
-    static_cast<uint32_t>((ver.version >> 40) & 0xffffff),
-    static_cast<uint32_t>((ver.version >> 30) & 0x3ff),
-    static_cast<uint32_t>((ver.version >> 20) & 0x3ff),
-    static_cast<uint32_t>((ver.version >> 10) & 0x3ff),
-    static_cast<uint32_t>((ver.version >>  0) & 0x3ff)
-  }}
-{}
+  version_{{static_cast<uint32_t>((ver.version >> 40) & 0xffffff),
+            static_cast<uint32_t>((ver.version >> 30) & 0x3ff),
+            static_cast<uint32_t>((ver.version >> 20) & 0x3ff),
+            static_cast<uint32_t>((ver.version >> 10) & 0x3ff),
+            static_cast<uint32_t>((ver.version >> 0) & 0x3ff)}} {}
 
 void SourceVersion::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -47,4 +44,3 @@ std::ostream& SourceVersion::print(std::ostream& os) const {
 
 
 }
-

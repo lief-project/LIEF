@@ -37,12 +37,10 @@ class LIEF_API ResourceDirectory : public ResourceNode {
 
   public:
   ResourceDirectory() :
-    ResourceNode(ResourceNode::TYPE::DIRECTORY)
-  {}
+    ResourceNode(ResourceNode::TYPE::DIRECTORY) {}
 
   ResourceDirectory(uint32_t id) :
-    ResourceNode(ResourceNode::TYPE::DIRECTORY)
-  {
+    ResourceNode(ResourceNode::TYPE::DIRECTORY) {
     this->id(id);
   }
 

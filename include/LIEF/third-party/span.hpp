@@ -17,9 +17,9 @@
 #include "LIEF/config.h"
 
 #ifndef LIEF_EXTERNAL_SPAN
-#include <LIEF/third-party/internal/span.hpp>
+  #include <LIEF/third-party/internal/span.hpp>
 #else
-#include <tcb/span.hpp>
+  #include <tcb/span.hpp>
 #endif
 
 #endif

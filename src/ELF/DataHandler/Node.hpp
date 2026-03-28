@@ -26,12 +26,13 @@ class LIEF_LOCAL Node {
   enum Type : uint8_t {
     SECTION = 0,
     SEGMENT = 1,
-    UNKNOWN = 2
+    UNKNOWN = 2,
   };
   Node() = default;
   Node(uint64_t offset, uint64_t size, Type type) :
-    size_{size}, offset_{offset}, type_{type}
-  {}
+    size_{size},
+    offset_{offset},
+    type_{type} {}
 
   Node& operator=(const Node&) = default;
   Node(const Node&) = default;

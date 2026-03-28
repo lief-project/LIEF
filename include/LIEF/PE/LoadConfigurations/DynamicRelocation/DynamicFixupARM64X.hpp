@@ -51,9 +51,8 @@ class LIEF_API DynamicFixupARM64X : public DynamicFixup {
 
     std::string to_string() const;
 
-    LIEF_API friend
-      std::ostream& operator<<(std::ostream& os, const reloc_entry_t& entry)
-    {
+    LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                             const reloc_entry_t& entry) {
       os << entry.to_string();
       return os;
     }
@@ -64,8 +63,7 @@ class LIEF_API DynamicFixupARM64X : public DynamicFixup {
   using it_const_relocations = const_ref_iterator<const reloc_entries_t&>;
 
   DynamicFixupARM64X() :
-    DynamicFixup(KIND::ARM64X)
-  {}
+    DynamicFixup(KIND::ARM64X) {}
 
   DynamicFixupARM64X(const DynamicFixupARM64X&) = default;
   DynamicFixupARM64X& operator=(const DynamicFixupARM64X&) = default;
@@ -95,12 +93,11 @@ class LIEF_API DynamicFixupARM64X : public DynamicFixup {
   ~DynamicFixupARM64X() override = default;
 
   /// \private
-  LIEF_LOCAL static
-    std::unique_ptr<DynamicFixupARM64X> parse(Parser& ctx, SpanStream& strm);
+  LIEF_LOCAL static std::unique_ptr<DynamicFixupARM64X> parse(Parser& ctx,
+                                                              SpanStream& strm);
 
   private:
   reloc_entries_t entries_;
-
 };
 
 

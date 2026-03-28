@@ -25,10 +25,16 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
   using lief_t = LIEF::PE::x509;
   using Mirror::Mirror;
 
-  uint32_t version() const { return get().version(); }
-  std::vector<uint8_t> serial_number() const { return get().serial_number(); }
+  uint32_t version() const {
+    return get().version();
+  }
+  std::vector<uint8_t> serial_number() const {
+    return get().serial_number();
+  }
 
-  std::string signature_algorithm() const { return get().signature_algorithm(); }
+  std::string signature_algorithm() const {
+    return get().signature_algorithm();
+  }
   std::vector<uint64_t> valid_from() const {
     return details::make_vector(get().valid_from());
   }
@@ -37,24 +43,35 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
     return details::make_vector(get().valid_to());
   }
 
-  std::string issuer() const { return get().issuer(); }
-  std::string subject() const { return get().subject(); }
-  std::vector<uint8_t> raw() const { return get().raw(); }
+  std::string issuer() const {
+    return get().issuer();
+  }
+  std::string subject() const {
+    return get().subject();
+  }
+  std::vector<uint8_t> raw() const {
+    return get().raw();
+  }
 
-  uint32_t key_type() const { return to_int(get().key_type()); }
-  bool is_ca() const { return get().is_ca(); }
-  std::vector<uint8_t> signature() const { return get().signature(); }
+  uint32_t key_type() const {
+    return to_int(get().key_type());
+  }
+  bool is_ca() const {
+    return get().is_ca();
+  }
+  std::vector<uint8_t> signature() const {
+    return get().signature();
+  }
 
   auto rsa_info() const {
     return std::make_unique<PE_RsaInfo>(get().rsa_info());
   }
 
-  auto check_signature(const uint8_t* hash, size_t hsize,
-                       const uint8_t* signature, size_t sigsiz,
-                       uint32_t algo) const
-  {
-    return get().check_signature({hash, hash + hsize}, {signature, signature + sigsiz},
-                           LIEF::PE::ALGORITHMS(algo));
+  auto check_signature(const uint8_t* hash, size_t hsize, const uint8_t* signature,
+                       size_t sigsiz, uint32_t algo) const {
+    return get().check_signature({hash, hash + hsize},
+                                 {signature, signature + sigsiz},
+                                 LIEF::PE::ALGORITHMS(algo));
   }
 
   auto verify(const PE_x509& ca) const {

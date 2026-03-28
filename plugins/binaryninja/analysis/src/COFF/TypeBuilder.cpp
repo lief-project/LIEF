@@ -13,6 +13,4 @@
  * limitations under the License.
  */
 #include "binaryninja/analysis/COFF/TypeBuilder.hpp"
-namespace analysis_plugin::coff {
-
-}
+namespace analysis_plugin::coff {}

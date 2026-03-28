@@ -41,8 +41,7 @@ DebugInfo* Binary::load_debug_info(const std::string& /*path*/) {
 // DebugInfo/DebugInfo.hpp
 // ----------------------------------------------------------------------------
 DebugInfo::DebugInfo(std::unique_ptr<details::DebugInfo>) :
-    impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 DebugInfo::~DebugInfo() = default;
 

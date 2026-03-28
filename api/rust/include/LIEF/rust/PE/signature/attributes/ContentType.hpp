@@ -5,7 +5,8 @@
 class PE_ContentType : public PE_Attribute {
   public:
   using lief_t = LIEF::PE::ContentType;
-  PE_ContentType(const lief_t& base) : PE_Attribute(base) {}
+  PE_ContentType(const lief_t& base) :
+    PE_Attribute(base) {}
 
   std::string oid() const {
     return impl().oid();
@@ -16,5 +17,7 @@ class PE_ContentType : public PE_Attribute {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

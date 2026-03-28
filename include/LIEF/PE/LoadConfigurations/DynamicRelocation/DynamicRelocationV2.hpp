@@ -33,8 +33,7 @@ class Parser;
 class LIEF_API DynamicRelocationV2 : public DynamicRelocation {
   public:
   DynamicRelocationV2() :
-    DynamicRelocation(2)
-  {}
+    DynamicRelocation(2) {}
 
   DynamicRelocationV2(const DynamicRelocationV2&) = default;
   DynamicRelocationV2& operator=(const DynamicRelocationV2&) = default;
@@ -55,9 +54,9 @@ class LIEF_API DynamicRelocationV2 : public DynamicRelocation {
   ~DynamicRelocationV2() override = default;
 
   /// \private
-  template<class PE_T> LIEF_LOCAL static
-    std::unique_ptr<DynamicRelocationV2> parse(Parser& ctx, BinaryStream& strm);
-
+  template<class PE_T>
+  LIEF_LOCAL static std::unique_ptr<DynamicRelocationV2> parse(Parser& ctx,
+                                                               BinaryStream& strm);
 };
 
 }

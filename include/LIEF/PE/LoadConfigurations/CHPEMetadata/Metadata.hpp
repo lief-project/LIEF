@@ -31,17 +31,17 @@ class Parser;
 /// This class is inherited by architecture-specific implementation.
 class LIEF_API CHPEMetadata {
   public:
-
   /// Discriminator for the subclasses
   enum class KIND {
     UNKNOWN = 0,
-    ARM64, X86,
+    ARM64,
+    X86,
   };
 
   CHPEMetadata() = default;
   CHPEMetadata(KIND kind, uint32_t version) :
-    kind_(kind), version_(version)
-  {}
+    kind_(kind),
+    version_(version) {}
 
   CHPEMetadata(const CHPEMetadata&) = default;
   CHPEMetadata& operator=(const CHPEMetadata&) = default;
@@ -84,9 +84,8 @@ class LIEF_API CHPEMetadata {
     return const_cast<CHPEMetadata*>(this)->as<T>();
   }
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const CHPEMetadata& meta)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CHPEMetadata& meta) {
     os << meta.to_string();
     return os;
   }

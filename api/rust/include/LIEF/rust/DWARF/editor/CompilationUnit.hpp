@@ -27,7 +27,8 @@
 #include "LIEF/rust/DWARF/editor/PointerType.hpp"
 #include "LIEF/rust/DWARF/editor/ArrayType.hpp"
 
-class DWARF_editor_CompilationUnit : public Mirror<LIEF::dwarf::editor::CompilationUnit> {
+class DWARF_editor_CompilationUnit
+  : public Mirror<LIEF::dwarf::editor::CompilationUnit> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::CompilationUnit;
@@ -53,42 +54,43 @@ class DWARF_editor_CompilationUnit : public Mirror<LIEF::dwarf::editor::Compilat
   }
 
   auto create_typedef(std::string name, const DWARF_editor_Type& ty) {
-    return details::try_unique<DWARF_editor_TypeDef>(get().create_typedef(name, ty.get()));
+    return details::try_unique<DWARF_editor_TypeDef>(
+        get().create_typedef(name, ty.get())
+    );
   }
 
   auto create_structure(std::string name, uint32_t kind) {
     return details::try_unique<DWARF_editor_StructType>(
-      get().create_structure(name, (LIEF::dwarf::editor::StructType::TYPE)kind)
+        get().create_structure(name, (LIEF::dwarf::editor::StructType::TYPE)kind)
     );
   }
 
   auto create_base_type(std::string name, uint64_t size, uint32_t encoding) {
-    return details::try_unique<DWARF_editor_BaseType>(
-      get().create_base_type(name, size, (LIEF::dwarf::editor::BaseType::ENCODING)encoding)
-    );
+    return details::try_unique<DWARF_editor_BaseType>(get().create_base_type(
+        name, size, (LIEF::dwarf::editor::BaseType::ENCODING)encoding
+    ));
   }
 
   auto create_function_type(std::string name) {
     return details::try_unique<DWARF_editor_FunctionType>(
-      get().create_function_type(name)
+        get().create_function_type(name)
     );
   }
 
   auto create_pointer_type(const DWARF_editor_Type& ty) {
     return details::try_unique<DWARF_editor_PointerType>(
-      get().create_pointer_type(ty.get())
+        get().create_pointer_type(ty.get())
     );
   }
 
   auto create_void_type() {
-    return details::try_unique<DWARF_editor_Type>(
-      get().create_void_type()
-    );
+    return details::try_unique<DWARF_editor_Type>(get().create_void_type());
   }
 
-  auto create_array_type(std::string name, const DWARF_editor_Type& ty, uint64_t count) {
+  auto create_array_type(std::string name, const DWARF_editor_Type& ty,
+                         uint64_t count) {
     return details::try_unique<DWARF_editor_ArrayType>(
-      get().create_array(name, ty.get(), count)
+        get().create_array(name, ty.get(), count)
     );
   }
 };

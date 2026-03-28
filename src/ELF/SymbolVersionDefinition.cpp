@@ -28,44 +28,48 @@ namespace LIEF::ELF {
 
 SymbolVersionDefinition::~SymbolVersionDefinition() = default;
 
-SymbolVersionDefinition::SymbolVersionDefinition(const details::Elf64_Verdef& header) :
+SymbolVersionDefinition::SymbolVersionDefinition(
+    const details::Elf64_Verdef& header
+) :
   version_{header.vd_version},
   flags_{header.vd_flags},
   ndx_{header.vd_ndx},
-  hash_{header.vd_hash}
-{}
+  hash_{header.vd_hash} {}
 
-SymbolVersionDefinition::SymbolVersionDefinition(const details::Elf32_Verdef& header) :
+SymbolVersionDefinition::SymbolVersionDefinition(
+    const details::Elf32_Verdef& header
+) :
   version_{header.vd_version},
   flags_{header.vd_flags},
   ndx_{header.vd_ndx},
-  hash_{header.vd_hash}
-{}
+  hash_{header.vd_hash} {}
 
 
-SymbolVersionDefinition::SymbolVersionDefinition(const SymbolVersionDefinition& other) :
+SymbolVersionDefinition::SymbolVersionDefinition(
+    const SymbolVersionDefinition& other
+) :
   Object{other},
   version_{other.version_},
   flags_{other.flags_},
   ndx_{other.ndx_},
-  hash_{other.hash_}
-{
+  hash_{other.hash_} {
   symbol_version_aux_.reserve(other.symbol_version_aux_.size());
   for (const std::unique_ptr<SymbolVersionAux>& aux : other.symbol_version_aux_) {
     symbol_version_aux_.emplace_back(new SymbolVersionAux{*aux});
   }
 }
 
-SymbolVersionDefinition& SymbolVersionDefinition::operator=(SymbolVersionDefinition other) {
+SymbolVersionDefinition&
+    SymbolVersionDefinition::operator=(SymbolVersionDefinition other) {
   swap(other);
   return *this;
 }
 
 void SymbolVersionDefinition::swap(SymbolVersionDefinition& other) {
-  std::swap(version_,            other.version_);
-  std::swap(flags_,              other.flags_);
-  std::swap(ndx_,                other.ndx_);
-  std::swap(hash_,               other.hash_);
+  std::swap(version_, other.version_);
+  std::swap(flags_, other.flags_);
+  std::swap(ndx_, other.ndx_);
+  std::swap(hash_, other.hash_);
   std::swap(symbol_version_aux_, other.symbol_version_aux_);
 }
 
@@ -83,4 +87,3 @@ std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym) {
   return os;
 }
 }
-

@@ -68,7 +68,6 @@ class LIEF_API Editor {
 
   private:
   std::unique_ptr<details::Editor> impl_;
-
 };
 
 }

@@ -24,13 +24,11 @@ namespace LIEF::PE {
 static constexpr const char GENERIC_OBJID[] = "LIEF_CONTENT_GENERIC";
 
 GenericContent::GenericContent() :
-  ContentInfo::Content(GENERIC_OBJID)
-{}
+  ContentInfo::Content(GENERIC_OBJID) {}
 
 GenericContent::GenericContent(oid_t oid) :
   ContentInfo::Content(GENERIC_OBJID),
-  oid_(std::move(oid))
-{}
+  oid_(std::move(oid)) {}
 
 GenericContent::~GenericContent() = default;
 
@@ -48,4 +46,3 @@ void GenericContent::print(std::ostream& os) const {
 
 
 }
-

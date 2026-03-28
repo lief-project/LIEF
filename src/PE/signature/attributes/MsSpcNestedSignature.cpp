@@ -34,4 +34,3 @@ std::string MsSpcNestedSignature::print() const {
 
 
 }
-

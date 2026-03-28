@@ -37,6 +37,7 @@ struct mach_header;
 /// Class that represents the Mach-O header
 class LIEF_API Header : public Object {
   friend class BinaryParser;
+
   public:
   Header() = default;
 
@@ -46,77 +47,77 @@ class LIEF_API Header : public Object {
   ~Header() override = default;
 
   enum class FILE_TYPE : uint32_t {
-    UNKNOWN     = 0,
-    OBJECT      = 0x1u,
-    EXECUTE     = 0x2u,
-    FVMLIB      = 0x3u,
-    CORE        = 0x4u,
-    PRELOAD     = 0x5u,
-    DYLIB       = 0x6u,
-    DYLINKER    = 0x7u,
-    BUNDLE      = 0x8u,
-    DYLIB_STUB  = 0x9u,
-    DSYM        = 0xAu,
+    UNKNOWN = 0,
+    OBJECT = 0x1u,
+    EXECUTE = 0x2u,
+    FVMLIB = 0x3u,
+    CORE = 0x4u,
+    PRELOAD = 0x5u,
+    DYLIB = 0x6u,
+    DYLINKER = 0x7u,
+    BUNDLE = 0x8u,
+    DYLIB_STUB = 0x9u,
+    DSYM = 0xAu,
     KEXT_BUNDLE = 0xBu,
-    FILESET     = 0xCu,
+    FILESET = 0xCu,
     GPU_EXECUTE = 0xDu,
-    GPU_DYLIB   = 0xEu,
+    GPU_DYLIB = 0xEu,
   };
 
   enum class FLAGS : uint32_t {
-    NOUNDEFS                      = 0x00000001u,
-    INCRLINK                      = 0x00000002u,
-    DYLDLINK                      = 0x00000004u,
-    BINDATLOAD                    = 0x00000008u,
-    PREBOUND                      = 0x00000010u,
-    SPLIT_SEGS                    = 0x00000020u,
-    LAZY_INIT                     = 0x00000040u,
-    TWOLEVEL                      = 0x00000080u,
-    FORCE_FLAT                    = 0x00000100u,
-    NOMULTIDEFS                   = 0x00000200u,
-    NOFIXPREBINDING               = 0x00000400u,
-    PREBINDABLE                   = 0x00000800u,
-    ALLMODSBOUND                  = 0x00001000u,
-    SUBSECTIONS_VIA_SYMBOLS       = 0x00002000u,
-    CANONICAL                     = 0x00004000u,
-    WEAK_DEFINES                  = 0x00008000u,
-    BINDS_TO_WEAK                 = 0x00010000u,
-    ALLOW_STACK_EXECUTION         = 0x00020000u,
-    ROOT_SAFE                     = 0x00040000u,
-    SETUID_SAFE                   = 0x00080000u,
-    NO_REEXPORTED_DYLIBS          = 0x00100000u,
-    PIE                           = 0x00200000u,
-    DEAD_STRIPPABLE_DYLIB         = 0x00400000u,
-    HAS_TLV_DESCRIPTORS           = 0x00800000u,
-    NO_HEAP_EXECUTION             = 0x01000000u,
-    APP_EXTENSION_SAFE            = 0x02000000u,
+    NOUNDEFS = 0x00000001u,
+    INCRLINK = 0x00000002u,
+    DYLDLINK = 0x00000004u,
+    BINDATLOAD = 0x00000008u,
+    PREBOUND = 0x00000010u,
+    SPLIT_SEGS = 0x00000020u,
+    LAZY_INIT = 0x00000040u,
+    TWOLEVEL = 0x00000080u,
+    FORCE_FLAT = 0x00000100u,
+    NOMULTIDEFS = 0x00000200u,
+    NOFIXPREBINDING = 0x00000400u,
+    PREBINDABLE = 0x00000800u,
+    ALLMODSBOUND = 0x00001000u,
+    SUBSECTIONS_VIA_SYMBOLS = 0x00002000u,
+    CANONICAL = 0x00004000u,
+    WEAK_DEFINES = 0x00008000u,
+    BINDS_TO_WEAK = 0x00010000u,
+    ALLOW_STACK_EXECUTION = 0x00020000u,
+    ROOT_SAFE = 0x00040000u,
+    SETUID_SAFE = 0x00080000u,
+    NO_REEXPORTED_DYLIBS = 0x00100000u,
+    PIE = 0x00200000u,
+    DEAD_STRIPPABLE_DYLIB = 0x00400000u,
+    HAS_TLV_DESCRIPTORS = 0x00800000u,
+    NO_HEAP_EXECUTION = 0x01000000u,
+    APP_EXTENSION_SAFE = 0x02000000u,
     NLIST_OUTOFSYNC_WITH_DYLDINFO = 0x04000000u,
-    SIM_SUPPORT                   = 0x08000000u,
-    IMPLICIT_PAGEZERO             = 0x10000000u,
-    DYLIB_IN_CACHE                = 0x80000000u,
+    SIM_SUPPORT = 0x08000000u,
+    IMPLICIT_PAGEZERO = 0x10000000u,
+    DYLIB_IN_CACHE = 0x80000000u,
   };
 
   static constexpr int ABI64 = 0x01000000;
 
-  enum class CPU_TYPE: int32_t {
-    ANY       = -1,
-    X86       = 7,
-    X86_64    = 7 | ABI64,
-    MIPS      = 8,
-    MC98000   = 10,
-    HPPA      = 11,
-    ARM       = 12,
-    ARM64     = 12 | ABI64,
-    MC88000   = 13,
-    SPARC     = 14,
-    I860      = 15,
-    ALPHA	    = 16,
-    POWERPC   = 18,
+  enum class CPU_TYPE : int32_t {
+    ANY = -1,
+    X86 = 7,
+    X86_64 = 7 | ABI64,
+    MIPS = 8,
+    MC98000 = 10,
+    HPPA = 11,
+    ARM = 12,
+    ARM64 = 12 | ABI64,
+    MC88000 = 13,
+    SPARC = 14,
+    I860 = 15,
+    ALPHA = 16,
+    POWERPC = 18,
     POWERPC64 = 18 | ABI64,
     APPLE_GPU = 19 | ABI64,
-    AMD_GPU   = 20 | ABI64,
+    AMD_GPU = 20 | ABI64,
     INTEL_GPU = 21 | ABI64,
-    AIR64     = 23 | ABI64,
+    AIR64 = 23 | ABI64,
   };
 
   static constexpr uint32_t SUBTYPE_MASK = 0xff000000;
@@ -206,14 +207,12 @@ class LIEF_API Header : public Object {
 
   /// True if the binary is 32-bit
   bool is_32bit() const {
-    return magic_ == MACHO_TYPES::MAGIC ||
-           magic_ == MACHO_TYPES::CIGAM;
+    return magic_ == MACHO_TYPES::MAGIC || magic_ == MACHO_TYPES::CIGAM;
   }
 
   /// True if the binary is 64-bit
   bool is_64bit() const {
-    return magic_ == MACHO_TYPES::MAGIC_64 ||
-           magic_ == MACHO_TYPES::CIGAM_64;
+    return magic_ == MACHO_TYPES::MAGIC_64 || magic_ == MACHO_TYPES::CIGAM_64;
   }
 
   void remove(FLAGS flag);
@@ -240,13 +239,13 @@ class LIEF_API Header : public Object {
   LIEF_LOCAL Header(const T& header);
 
   MACHO_TYPES magic_ = MACHO_TYPES::UNKNOWN;
-  CPU_TYPE   cputype_ = CPU_TYPE::ANY;
-  uint32_t   cpusubtype_;
-  FILE_TYPE  filetype_ = FILE_TYPE::UNKNOWN;
-  uint32_t   ncmds_ = 0;
-  uint32_t   sizeofcmds_ = 0;
-  uint32_t   flags_ = 0;
-  uint32_t   reserved_ = 0;
+  CPU_TYPE cputype_ = CPU_TYPE::ANY;
+  uint32_t cpusubtype_;
+  FILE_TYPE filetype_ = FILE_TYPE::UNKNOWN;
+  uint32_t ncmds_ = 0;
+  uint32_t sizeofcmds_ = 0;
+  uint32_t flags_ = 0;
+  uint32_t reserved_ = 0;
 };
 
 LIEF_API const char* to_string(Header::FILE_TYPE e);

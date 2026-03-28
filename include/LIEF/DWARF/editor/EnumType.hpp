@@ -40,6 +40,7 @@ class LIEF_API EnumType : public Type {
     Value(std::unique_ptr<details::EnumValue> impl);
 
     ~Value();
+
     private:
     std::unique_ptr<details::EnumValue> impl_;
   };

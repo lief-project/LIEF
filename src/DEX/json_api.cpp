@@ -18,7 +18,7 @@
 #include "LIEF/DEX/json.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
-#include "DEX/json_internal.hpp"
+  #include "DEX/json_internal.hpp"
 #endif
 #include "LIEF/DEX.hpp"
 
@@ -37,4 +37,3 @@ std::string to_json(const Object& v) {
 }
 
 }
-

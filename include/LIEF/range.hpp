@@ -28,7 +28,7 @@ struct range_t {
     if (strict) {
       return low <= value && value < high;
     }
-      return low <= value && value <= high;
+    return low <= value && value <= high;
   }
 
   uint64_t size() const {
@@ -43,8 +43,7 @@ struct range_t {
     return !(lhs == rhs);
   }
 
-  friend LIEF_API
-    std::ostream& operator<<(std::ostream& os, const range_t& range);
+  friend LIEF_API std::ostream& operator<<(std::ostream& os, const range_t& range);
 };
 
 }

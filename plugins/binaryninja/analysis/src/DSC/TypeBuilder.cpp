@@ -13,6 +13,4 @@
  * limitations under the License.
  */
 #include "binaryninja/analysis/DSC/TypeBuilder.hpp"
-namespace analysis_plugin::dsc {
-
-}
+namespace analysis_plugin::dsc {}

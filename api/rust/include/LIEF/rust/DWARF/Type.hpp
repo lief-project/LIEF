@@ -42,7 +42,9 @@ class DWARF_Type : public Mirror<LIEF::dwarf::Type> {
   }
 
   auto scope() const {
-    return details::try_unique<DWARF_Scope>(get().scope()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Scope>(
+        get().scope()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto to_decl() const {

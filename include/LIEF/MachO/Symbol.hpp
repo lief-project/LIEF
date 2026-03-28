@@ -50,12 +50,13 @@ class LIEF_API Symbol : public LIEF::Symbol {
   friend class Binary;
 
   public:
-  static constexpr int SELF_LIBRARY_ORD = 0x0; // Mirror SELF_LIBRARY_ORDINAL
+  static constexpr int SELF_LIBRARY_ORD = 0x0;     // Mirror SELF_LIBRARY_ORDINAL
   static constexpr int MAIN_EXECUTABLE_ORD = 0xff; // Mirror DYNAMIC_LOOKUP_ORDINAL
-  static constexpr int DYNAMIC_LOOKUP_ORD = 0xfe; // EXECUTABLE_ORDINAL
+  static constexpr int DYNAMIC_LOOKUP_ORD = 0xfe;  // EXECUTABLE_ORDINAL
 
   /// Category of the symbol when the symbol comes from the `LC_SYMTAB` command.
-  /// The category is defined according to the `LC_DYSYMTAB` (DynamicSymbolCommand) command.
+  /// The category is defined according to the `LC_DYSYMTAB` (DynamicSymbolCommand)
+  /// command.
   enum class CATEGORY : uint32_t {
     NONE = 0,
     LOCAL,
@@ -68,18 +69,26 @@ class LIEF_API Symbol : public LIEF::Symbol {
   };
 
   enum class ORIGIN : uint32_t {
-    UNKNOWN     = 0,
+    UNKNOWN = 0,
     DYLD_EXPORT = 1,
-    DYLD_BIND   = 2, /// The symbol comes from the binding opcodes
-    SYMTAB      = 3, /// The symbol comes from the LC_SYMTAB command
+    DYLD_BIND = 2, /// The symbol comes from the binding opcodes
+    SYMTAB = 3,    /// The symbol comes from the LC_SYMTAB command
   };
 
-  enum class TYPE : uint32_t{
-    UNDEFINED     = 0x0u, ///< The symbol is undefined. It is referenced in a different module.
-    ABSOLUTE_SYM  = 0x2u, ///< The symbol is absolute. The linker doesn't update his value.
-    SECTION       = 0xeu, ///< The symbol is defined in the section number given in nlist_base.n_sect .
-    PREBOUND      = 0xcu, ///< The symbol is undefined and the image is using a prebound value for the symbol. Set the n_sect field to NO_SECT .
-    INDIRECT      = 0xau  ///< The symbol is defined to be the same as another symbol. The n_value field is an index into the string table specifying the name of the other symbol. When that symbol is linked, both this and the other symbol point to the same defined type and value.
+  enum class TYPE : uint32_t {
+    UNDEFINED =
+        0x0u, ///< The symbol is undefined. It is referenced in a different module.
+    ABSOLUTE_SYM =
+        0x2u, ///< The symbol is absolute. The linker doesn't update his value.
+    SECTION = 0xeu,  ///< The symbol is defined in the section number given in
+                     ///< nlist_base.n_sect .
+    PREBOUND = 0xcu, ///< The symbol is undefined and the image is using a prebound
+                     ///< value for the symbol. Set the n_sect field to NO_SECT .
+    INDIRECT =
+        0xau, ///< The symbol is defined to be the same as another symbol. The
+              ///< n_value field is an index into the string table specifying the
+              ///< name of the other symbol. When that symbol is linked, both this
+              ///< and the other symbol point to the same defined type and value.
   };
 
 
@@ -94,8 +103,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
     type_{n_type},
     numberof_sections_{n_sect},
     description_{n_desc},
-    origin_{ORIGIN::SYMTAB}
-  {
+    origin_{ORIGIN::SYMTAB} {
     value_ = value;
   }
 
@@ -157,7 +165,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
     return binding_info() != nullptr;
   }
 
-  /// Return the BindingInfo associated with this symbol (or nullptr if not present)
+  /// Return the BindingInfo associated with this symbol (or nullptr if not
+  /// present)
   /// @see has_binding_info
   const BindingInfo* binding_info() const {
     return binding_info_;
@@ -185,7 +194,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
     return library_;
   }
 
-  /// Return the origin of the symbol: from LC_SYMTAB command or from the Dyld information
+  /// Return the origin of the symbol: from LC_SYMTAB command or from the Dyld
+  /// information
   ORIGIN origin() const {
     return origin_;
   }
@@ -215,8 +225,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   private:
   Symbol(CATEGORY cat) :
-    category_(cat)
-  {}
+    category_(cat) {}
   void library(DylibCommand& library) {
     this->library_ = &library;
   }

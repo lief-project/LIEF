@@ -31,5 +31,7 @@ class asm_ebpf_Instruction : public asm_Instruction {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

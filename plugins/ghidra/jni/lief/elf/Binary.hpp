@@ -29,21 +29,22 @@ class Binary : public generic::Binary {
   public:
   using lief_t = LIEF::ELF::Binary;
   using generic::Binary::Binary;
-  static constexpr jni::Class kClass {
-    "lief/elf/Binary",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/elf/Binary",
+      jni::Constructor{jlong{}},
   };
 
-  class RelocationsIterator : public lief_jni::Iterator<
-    RelocationsIterator, LIEF::ELF::Binary::it_relocations, lief_jni::elf::Relocation
-  >
-  {
+  class RelocationsIterator
+    : public lief_jni::Iterator<RelocationsIterator,
+                                LIEF::ELF::Binary::it_relocations,
+                                lief_jni::elf::Relocation> {
     public:
-    static constexpr jni::Class kClass {
-      "lief/elf/Binary$RelocationsIterator",
-      jni::Constructor{ jlong{} },
-      jni::Field { "impl", jlong{}, }
-    };
+    static constexpr jni::Class kClass{"lief/elf/Binary$RelocationsIterator",
+                                       jni::Constructor{jlong{}},
+                                       jni::Field{
+                                           "impl",
+                                           jlong{},
+                                       }};
 
     static void jni_destroy(JNIEnv* env, jobject thiz) {
       destroy(thiz);
@@ -58,15 +59,15 @@ class Binary : public generic::Binary {
     jni::ThreadGuard TG;
     jni::LocalString jpath = path;
     return Binary::create<Binary>(
-      LIEF::ELF::Parser::parse(
-        std::string(jpath.Pin().ToString())
-      )
+        LIEF::ELF::Parser::parse(std::string(jpath.Pin().ToString()))
     );
   }
 
   static jobject jni_get_relocations(JNIEnv* env, jobject thiz) {
     jni::ThreadGuard TG;
-    return RelocationsIterator::create(from_jni(thiz)->cast<lief_t>().relocations());
+    return RelocationsIterator::create(
+        from_jni(thiz)->cast<lief_t>().relocations()
+    );
   }
 
 

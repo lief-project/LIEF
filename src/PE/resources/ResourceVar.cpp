@@ -36,7 +36,9 @@ result<ResourceVar> ResourceVar::parse(BinaryStream& stream) {
   // } Var;
   ResourceVar var;
   auto wLength = stream.read<uint16_t>();
-  if (!wLength) { return make_error_code(wLength.error()); }
+  if (!wLength) {
+    return make_error_code(wLength.error());
+  }
 
   if (*wLength == 0) {
     return make_error_code(lief_errors::read_error);
@@ -45,25 +47,29 @@ result<ResourceVar> ResourceVar::parse(BinaryStream& stream) {
   const uint32_t end_offset = stream.pos() - sizeof(uint16_t) + *wLength;
 
   auto wValueLength = stream.read<uint16_t>();
-  if (!wValueLength) { return make_error_code(wValueLength.error()); }
+  if (!wValueLength) {
+    return make_error_code(wValueLength.error());
+  }
 
   auto wType = stream.read<uint16_t>();
-  if (!wType) { return make_error_code(wType.error()); }
+  if (!wType) {
+    return make_error_code(wType.error());
+  }
 
   if (*wType != 0 && wType != 1) {
     return make_error_code(lief_errors::corrupted);
   }
 
   auto szKey = stream.read_u16string();
-  if (!szKey) { return make_error_code(wType.error()); }
+  if (!szKey) {
+    return make_error_code(wType.error());
+  }
 
   if (u16tou8(*szKey) != "Translation") {
     return make_error_code(lief_errors::corrupted);
   }
 
-  var
-    .key(std::move(*szKey))
-    .type(*wType);
+  var.key(std::move(*szKey)).type(*wType);
 
   stream.align(sizeof(uint32_t));
 
@@ -102,4 +108,3 @@ std::ostream& operator<<(std::ostream& os, const ResourceVar& var) {
 
 
 }
-

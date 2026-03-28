@@ -22,10 +22,15 @@
 class COFF_AuxiliaryWeakExternal : public COFF_AuxiliarySymbol {
   public:
   using lief_t = LIEF::COFF::AuxiliaryWeakExternal;
-  COFF_AuxiliaryWeakExternal(const lief_t& obj) : COFF_AuxiliarySymbol(obj) {}
+  COFF_AuxiliaryWeakExternal(const lief_t& obj) :
+    COFF_AuxiliarySymbol(obj) {}
 
-  auto sym_idx() const { return impl().sym_idx(); }
-  auto characteristics() const { return to_int(impl().characteristics()); }
+  auto sym_idx() const {
+    return impl().sym_idx();
+  }
+  auto characteristics() const {
+    return to_int(impl().characteristics());
+  }
 
   auto padding() const {
     return make_span(impl().padding());
@@ -36,5 +41,7 @@ class COFF_AuxiliaryWeakExternal : public COFF_AuxiliarySymbol {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

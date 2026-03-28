@@ -21,6 +21,10 @@ class ObjC_IVar : private Mirror<LIEF::objc::IVar> {
   using lief_t = LIEF::objc::IVar;
   using Mirror::Mirror;
 
-  auto name() const { return get().name(); }
-  auto mangled_type() const { return get().mangled_type(); }
+  auto name() const {
+    return get().name();
+  }
+  auto mangled_type() const {
+    return get().mangled_type();
+  }
 };

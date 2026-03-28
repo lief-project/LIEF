@@ -36,15 +36,11 @@ std::string CodeView::to_string() const {
 }
 
 const char* to_string(CodeView::SIGNATURES e) {
-  #define ENTRY(X) std::pair(CodeView::SIGNATURES::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(UNKNOWN),
-    ENTRY(PDB_70),
-    ENTRY(PDB_20),
-    ENTRY(CV_50),
-    ENTRY(CV_41),
+#define ENTRY(X) std::pair(CodeView::SIGNATURES::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(UNKNOWN), ENTRY(PDB_70), ENTRY(PDB_20), ENTRY(CV_50), ENTRY(CV_41),
   };
-  #undef ENTRY
+#undef ENTRY
   if (const auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
   }
@@ -52,4 +48,3 @@ const char* to_string(CodeView::SIGNATURES e) {
 }
 
 }
-

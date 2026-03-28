@@ -25,8 +25,7 @@ namespace LIEF::MachO {
 FilesetCommand::FilesetCommand(const details::fileset_entry_command& cmd) :
   LoadCommand{LoadCommand::TYPE::FILESET_ENTRY, cmd.cmdsize},
   virtual_address_{cmd.vmaddr},
-  file_offset_{cmd.fileoff}
-{}
+  file_offset_{cmd.fileoff} {}
 
 FilesetCommand& FilesetCommand::operator=(FilesetCommand other) {
   swap(other);
@@ -37,23 +36,21 @@ FilesetCommand::FilesetCommand(const FilesetCommand& other) :
   LoadCommand{other},
   name_{other.name_},
   virtual_address_{other.virtual_address_},
-  file_offset_{other.file_offset_}
-{}
+  file_offset_{other.file_offset_} {}
 
 void FilesetCommand::swap(FilesetCommand& other) noexcept {
   LoadCommand::swap(other);
 
   std::swap(virtual_address_, other.virtual_address_);
-  std::swap(file_offset_,     other.file_offset_);
+  std::swap(file_offset_, other.file_offset_);
 }
 
 std::ostream& FilesetCommand::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("name={}, va={:#08x}, offset={:#x}",
-                    name(), virtual_address(), file_offset());
+  os << fmt::format("name={}, va={:#08x}, offset={:#x}", name(), virtual_address(),
+                    file_offset());
   return os;
 }
 
 
 }
-

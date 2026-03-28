@@ -41,35 +41,34 @@
 #include "mbedtls_wraps.h"
 
 namespace {
-  // Copy this function from mbedtls since it is not exported
-  inline int x509_get_current_time( mbedtls_x509_time *now )
-  {
-      struct tm *lt, tm_buf;
-      mbedtls_time_t tt;
-      int ret = 0;
+// Copy this function from mbedtls since it is not exported
+inline int x509_get_current_time(mbedtls_x509_time* now) {
+  struct tm *lt, tm_buf;
+  mbedtls_time_t tt;
+  int ret = 0;
 
-      tt = mbedtls_time(nullptr);
-      lt = mbedtls_platform_gmtime_r( &tt, &tm_buf );
+  tt = mbedtls_time(nullptr);
+  lt = mbedtls_platform_gmtime_r(&tt, &tm_buf);
 
-      if (lt == nullptr) {
-          ret = -1;
-      } else {
-          now->year = lt->tm_year + 1900;
-          now->mon  = lt->tm_mon  + 1;
-          now->day  = lt->tm_mday;
-          now->hour = lt->tm_hour;
-          now->min  = lt->tm_min;
-          now->sec  = lt->tm_sec;
-      }
-
-      return( ret );
+  if (lt == nullptr) {
+    ret = -1;
+  } else {
+    now->year = lt->tm_year + 1900;
+    now->mon = lt->tm_mon + 1;
+    now->day = lt->tm_mday;
+    now->hour = lt->tm_hour;
+    now->min = lt->tm_min;
+    now->sec = lt->tm_sec;
   }
 
-/* mbedtls escapes non printable character with '?' which can be an issue as described
- * in https://github.com/lief-project/LIEF/issues/703.
- * As there is no way to programmatically tweak this behavior, here is a copy
- * of the original function (from <src>/library/x509.c) which skips the non printable character.
- * It seems that Windows follows this behavior as descbied in the Github's issue
+  return (ret);
+}
+
+/* mbedtls escapes non printable character with '?' which can be an issue as
+ * described in https://github.com/lief-project/LIEF/issues/703. As there is no way
+ * to programmatically tweak this behavior, here is a copy of the original function
+ * (from <src>/library/x509.c) which skips the non printable character. It seems
+ * that Windows follows this behavior as descbied in the Github's issue
  */
 // NOLINTBEGIN
 // clang-format off
@@ -159,31 +158,38 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
 }
 
 
-
 namespace LIEF::PE {
 
 inline x509::VERIFICATION_FLAGS from_mbedtls_err(uint32_t err) {
-  CONST_MAP(uint32_t, x509::VERIFICATION_FLAGS, 20) MBEDTLS_ERR_TO_LIEF = {
-    { MBEDTLS_X509_BADCERT_EXPIRED,       x509::VERIFICATION_FLAGS::BADCERT_EXPIRED},
-    { MBEDTLS_X509_BADCERT_REVOKED,       x509::VERIFICATION_FLAGS::BADCERT_REVOKED},
-    { MBEDTLS_X509_BADCERT_CN_MISMATCH,   x509::VERIFICATION_FLAGS::BADCERT_CN_MISMATCH},
-    { MBEDTLS_X509_BADCERT_NOT_TRUSTED,   x509::VERIFICATION_FLAGS::BADCERT_NOT_TRUSTED},
-    { MBEDTLS_X509_BADCRL_NOT_TRUSTED,    x509::VERIFICATION_FLAGS::BADCRL_NOT_TRUSTED},
-    { MBEDTLS_X509_BADCRL_EXPIRED,        x509::VERIFICATION_FLAGS::BADCRL_EXPIRED},
-    { MBEDTLS_X509_BADCERT_MISSING,       x509::VERIFICATION_FLAGS::BADCERT_MISSING},
-    { MBEDTLS_X509_BADCERT_SKIP_VERIFY,   x509::VERIFICATION_FLAGS::BADCERT_SKIP_VERIFY},
-    { MBEDTLS_X509_BADCERT_OTHER,         x509::VERIFICATION_FLAGS::BADCERT_OTHER},
-    { MBEDTLS_X509_BADCERT_FUTURE,        x509::VERIFICATION_FLAGS::BADCERT_FUTURE},
-    { MBEDTLS_X509_BADCRL_FUTURE,         x509::VERIFICATION_FLAGS::BADCRL_FUTURE},
-    { MBEDTLS_X509_BADCERT_KEY_USAGE,     x509::VERIFICATION_FLAGS::BADCERT_KEY_USAGE},
-    { MBEDTLS_X509_BADCERT_EXT_KEY_USAGE, x509::VERIFICATION_FLAGS::BADCERT_EXT_KEY_USAGE},
-    { MBEDTLS_X509_BADCERT_NS_CERT_TYPE,  x509::VERIFICATION_FLAGS::BADCERT_NS_CERT_TYPE},
-    { MBEDTLS_X509_BADCERT_BAD_MD,        x509::VERIFICATION_FLAGS::BADCERT_BAD_MD},
-    { MBEDTLS_X509_BADCERT_BAD_PK,        x509::VERIFICATION_FLAGS::BADCERT_BAD_PK},
-    { MBEDTLS_X509_BADCERT_BAD_KEY,       x509::VERIFICATION_FLAGS::BADCERT_BAD_KEY},
-    { MBEDTLS_X509_BADCRL_BAD_MD,         x509::VERIFICATION_FLAGS::BADCRL_BAD_MD},
-    { MBEDTLS_X509_BADCRL_BAD_PK,         x509::VERIFICATION_FLAGS::BADCRL_BAD_PK},
-    { MBEDTLS_X509_BADCRL_BAD_KEY,        x509::VERIFICATION_FLAGS::BADCRL_BAD_KEY},
+  CONST_MAP(uint32_t, x509::VERIFICATION_FLAGS, 20)
+  MBEDTLS_ERR_TO_LIEF = {
+      {MBEDTLS_X509_BADCERT_EXPIRED, x509::VERIFICATION_FLAGS::BADCERT_EXPIRED},
+      {MBEDTLS_X509_BADCERT_REVOKED, x509::VERIFICATION_FLAGS::BADCERT_REVOKED},
+      {MBEDTLS_X509_BADCERT_CN_MISMATCH,
+       x509::VERIFICATION_FLAGS::BADCERT_CN_MISMATCH},
+      {MBEDTLS_X509_BADCERT_NOT_TRUSTED,
+       x509::VERIFICATION_FLAGS::BADCERT_NOT_TRUSTED},
+      {MBEDTLS_X509_BADCRL_NOT_TRUSTED,
+       x509::VERIFICATION_FLAGS::BADCRL_NOT_TRUSTED},
+      {MBEDTLS_X509_BADCRL_EXPIRED, x509::VERIFICATION_FLAGS::BADCRL_EXPIRED},
+      {MBEDTLS_X509_BADCERT_MISSING, x509::VERIFICATION_FLAGS::BADCERT_MISSING},
+      {MBEDTLS_X509_BADCERT_SKIP_VERIFY,
+       x509::VERIFICATION_FLAGS::BADCERT_SKIP_VERIFY},
+      {MBEDTLS_X509_BADCERT_OTHER, x509::VERIFICATION_FLAGS::BADCERT_OTHER},
+      {MBEDTLS_X509_BADCERT_FUTURE, x509::VERIFICATION_FLAGS::BADCERT_FUTURE},
+      {MBEDTLS_X509_BADCRL_FUTURE, x509::VERIFICATION_FLAGS::BADCRL_FUTURE},
+      {MBEDTLS_X509_BADCERT_KEY_USAGE,
+       x509::VERIFICATION_FLAGS::BADCERT_KEY_USAGE},
+      {MBEDTLS_X509_BADCERT_EXT_KEY_USAGE,
+       x509::VERIFICATION_FLAGS::BADCERT_EXT_KEY_USAGE},
+      {MBEDTLS_X509_BADCERT_NS_CERT_TYPE,
+       x509::VERIFICATION_FLAGS::BADCERT_NS_CERT_TYPE},
+      {MBEDTLS_X509_BADCERT_BAD_MD, x509::VERIFICATION_FLAGS::BADCERT_BAD_MD},
+      {MBEDTLS_X509_BADCERT_BAD_PK, x509::VERIFICATION_FLAGS::BADCERT_BAD_PK},
+      {MBEDTLS_X509_BADCERT_BAD_KEY, x509::VERIFICATION_FLAGS::BADCERT_BAD_KEY},
+      {MBEDTLS_X509_BADCRL_BAD_MD, x509::VERIFICATION_FLAGS::BADCRL_BAD_MD},
+      {MBEDTLS_X509_BADCRL_BAD_PK, x509::VERIFICATION_FLAGS::BADCRL_BAD_PK},
+      {MBEDTLS_X509_BADCRL_BAD_KEY, x509::VERIFICATION_FLAGS::BADCRL_BAD_KEY},
   };
   x509::VERIFICATION_FLAGS flags = x509::VERIFICATION_FLAGS::OK;
   for (const auto& p : MBEDTLS_ERR_TO_LIEF) {
@@ -195,14 +201,7 @@ inline x509::VERIFICATION_FLAGS from_mbedtls_err(uint32_t err) {
 }
 
 inline x509::date_t from_mbedtls(const mbedtls_x509_time& time) {
-  return {
-    time.year,
-    time.mon,
-    time.day,
-    time.hour,
-    time.min,
-    time.sec
-  };
+  return {time.year, time.mon, time.day, time.hour, time.min, time.sec};
 }
 
 x509::certificates_t x509::parse(const std::string& path) {
@@ -254,76 +253,47 @@ x509::certificates_t x509::parse(const std::vector<uint8_t>& content) {
 
 bool x509::check_time(const date_t& before, const date_t& after) {
   // Implementation taken
-  // from https://github.com/ARMmbed/mbedtls/blob/1c54b5410fd48d6bcada97e30cac417c5c7eea67/library/x509.c#L926-L962
+  // from
+  // https://github.com/ARMmbed/mbedtls/blob/1c54b5410fd48d6bcada97e30cac417c5c7eea67/library/x509.c#L926-L962
   if (before[0] > after[0]) {
     LIEF_DEBUG("{} > {}", before[0], after[0]);
     return false;
   }
 
-  if (
-      before[0] == after[0] &&
-      before[1]  > after[1]
-     )
-  {
+  if (before[0] == after[0] && before[1] > after[1]) {
     LIEF_DEBUG("{} > {}", before[1], after[1]);
     return false;
   }
 
-  if (
-      before[0] == after[0] &&
-      before[1] == after[1] &&
-      before[2]  > after[2]
-     )
-  {
+  if (before[0] == after[0] && before[1] == after[1] && before[2] > after[2]) {
     LIEF_DEBUG("{} > {}", before[2], after[2]);
     return false;
   }
 
-  if (
-      before[0] == after[0] &&
-      before[1] == after[1] &&
-      before[2] == after[2] &&
-      before[3]  > after[3]
-     )
+  if (before[0] == after[0] && before[1] == after[1] && before[2] == after[2] &&
+      before[3] > after[3])
   {
     LIEF_DEBUG("{} > {}", before[3], after[3]);
     return false;
   }
 
-  if (
-      before[0] == after[0] &&
-      before[1] == after[1] &&
-      before[2] == after[2] &&
-      before[3] == after[3] &&
-      before[4]  > after[4]
-     )
+  if (before[0] == after[0] && before[1] == after[1] && before[2] == after[2] &&
+      before[3] == after[3] && before[4] > after[4])
   {
     LIEF_DEBUG("{} > {}", before[4], after[4]);
     return false;
   }
 
-  if (
-      before[0] == after[0] &&
-      before[1] == after[1] &&
-      before[2] == after[2] &&
-      before[3] == after[3] &&
-      before[4] == after[4] &&
-      before[5]  > after[5]
-     )
+  if (before[0] == after[0] && before[1] == after[1] && before[2] == after[2] &&
+      before[3] == after[3] && before[4] == after[4] && before[5] > after[5])
   {
     LIEF_DEBUG("{} > {}", before[5], after[5]);
     return false;
   }
 
-  if (
-      before[0] == after[0] &&
-      before[1] == after[1] &&
-      before[2] == after[2] &&
-      before[3] == after[3] &&
-      before[4] == after[4] &&
-      before[5] == after[5] &&
-      before[6]  > after[6]
-     )
+  if (before[0] == after[0] && before[1] == after[1] && before[2] == after[2] &&
+      before[3] == after[3] && before[4] == after[4] && before[5] == after[5] &&
+      before[6] > after[6])
   {
     LIEF_DEBUG("{} > {}", before[6], after[6]);
     return false;
@@ -354,12 +324,10 @@ bool x509::time_is_future(const date_t& from) {
 x509::x509() = default;
 
 x509::x509(mbedtls_x509_crt* ca) :
-  x509_cert_{ca}
-{}
+  x509_cert_{ca} {}
 
 x509::x509(const x509& other) :
-  Object::Object{other}
-{
+  Object::Object{other} {
   auto* crt = new mbedtls_x509_crt{};
   mbedtls_x509_crt_init(crt);
   int ret = mbedtls_x509_crt_parse_der(crt, other.x509_cert_->raw.p,
@@ -388,15 +356,14 @@ uint32_t x509::version() const {
 }
 
 std::vector<uint8_t> x509::serial_number() const {
-  return {x509_cert_->serial.p,
-          x509_cert_->serial.p + x509_cert_->serial.len};
+  return {x509_cert_->serial.p, x509_cert_->serial.p + x509_cert_->serial.len};
 }
 
 oid_t x509::signature_algorithm() const {
   std::array<char, 256> oid_str;
-  mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(), &x509_cert_->sig_oid);
+  mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(),
+                                 &x509_cert_->sig_oid);
   return oid_t{oid_str.data()};
-
 }
 
 x509::date_t x509::valid_from() const {
@@ -421,23 +388,23 @@ std::string x509::subject() const {
 }
 
 std::vector<uint8_t> x509::raw() const {
-  return {x509_cert_->raw.p,
-          x509_cert_->raw.p + x509_cert_->raw.len};
+  return {x509_cert_->raw.p, x509_cert_->raw.p + x509_cert_->raw.len};
 }
 
 
 x509::KEY_TYPES x509::key_type() const {
-  CONST_MAP(mbedtls_pk_type_t, x509::KEY_TYPES, 6) mtype2asi = {
-    {MBEDTLS_PK_NONE,       KEY_TYPES::NONE       },
-    {MBEDTLS_PK_RSA,        KEY_TYPES::RSA        },
-    {MBEDTLS_PK_ECKEY,      KEY_TYPES::ECKEY      },
-    {MBEDTLS_PK_ECKEY_DH,   KEY_TYPES::ECKEY_DH   },
-    {MBEDTLS_PK_ECDSA,      KEY_TYPES::ECDSA      },
-    {MBEDTLS_PK_RSASSA_PSS, KEY_TYPES::RSASSA_PSS },
+  CONST_MAP(mbedtls_pk_type_t, x509::KEY_TYPES, 6)
+  mtype2asi = {
+      {MBEDTLS_PK_NONE, KEY_TYPES::NONE},
+      {MBEDTLS_PK_RSA, KEY_TYPES::RSA},
+      {MBEDTLS_PK_ECKEY, KEY_TYPES::ECKEY},
+      {MBEDTLS_PK_ECKEY_DH, KEY_TYPES::ECKEY_DH},
+      {MBEDTLS_PK_ECDSA, KEY_TYPES::ECDSA},
+      {MBEDTLS_PK_RSASSA_PSS, KEY_TYPES::RSASSA_PSS},
   };
 
   mbedtls_pk_context* ctx = &(x509_cert_->pk);
-  mbedtls_pk_type_t type  = mbedtls_pk_get_type(ctx);
+  mbedtls_pk_type_t type = mbedtls_pk_get_type(ctx);
 
   const auto it_key = mtype2asi.find(type);
   if (it_key != mtype2asi.end()) {
@@ -481,13 +448,13 @@ std::vector<uint8_t> pkcs1_15_unpad(const std::vector<uint8_t>& input) {
 
   auto padding_start = input.begin() + 2;
   auto padding_end = std::find_if(padding_start, input.end(),
-                                  [] (uint8_t x) { return x != 0xFF; });
+                                  [](uint8_t x) { return x != 0xFF; });
   if (padding_end == input.end()) {
     return {};
   }
 
   auto content_start = padding_end + 1;
-  size_t content_size  = input.size() - (content_start - input.begin());
+  size_t content_size = input.size() - (content_start - input.begin());
   if (content_start == input.end()) {
     return {};
   }
@@ -523,16 +490,19 @@ std::vector<uint8_t> pkcs1_15_unpad(const std::vector<uint8_t>& input) {
   return stream.content();
 }
 
-bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<uint8_t>& signature, ALGORITHMS algo) const {
-  CONST_MAP(ALGORITHMS, mbedtls_md_type_t, 5) LIEF2MBED_MD = {
-    //{ALGORITHMS::MD2, MBEDTLS_MD_MD2},
-    //{ALGORITHMS::MD4, MBEDTLS_MD_MD4},
-    {ALGORITHMS::MD5, MBEDTLS_MD_MD5},
+bool x509::check_signature(const std::vector<uint8_t>& hash,
+                           const std::vector<uint8_t>& signature,
+                           ALGORITHMS algo) const {
+  CONST_MAP(ALGORITHMS, mbedtls_md_type_t, 5)
+  LIEF2MBED_MD = {
+      //{ALGORITHMS::MD2, MBEDTLS_MD_MD2},
+      //{ALGORITHMS::MD4, MBEDTLS_MD_MD4},
+      {ALGORITHMS::MD5, MBEDTLS_MD_MD5},
 
-    {ALGORITHMS::SHA_1,   MBEDTLS_MD_SHA1},
-    {ALGORITHMS::SHA_256, MBEDTLS_MD_SHA256},
-    {ALGORITHMS::SHA_384, MBEDTLS_MD_SHA384},
-    {ALGORITHMS::SHA_512, MBEDTLS_MD_SHA512},
+      {ALGORITHMS::SHA_1, MBEDTLS_MD_SHA1},
+      {ALGORITHMS::SHA_256, MBEDTLS_MD_SHA256},
+      {ALGORITHMS::SHA_384, MBEDTLS_MD_SHA384},
+      {ALGORITHMS::SHA_512, MBEDTLS_MD_SHA512},
   };
 
   auto it_md = LIEF2MBED_MD.find(algo);
@@ -542,18 +512,20 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
   }
   mbedtls_pk_context& ctx = x509_cert_->pk;
   int ret = mbedtls_pk_verify(&ctx,
-    /* MD_HASH_ALGO       */ it_md->second,
-    /* Input Hash         */ hash.data(), hash.size(),
-    /* Signature provided */ signature.data(), signature.size());
+                              /* MD_HASH_ALGO       */ it_md->second,
+                              /* Input Hash         */ hash.data(), hash.size(),
+                              /* Signature provided */ signature.data(),
+                              signature.size());
 
   /* If the verification failed with mbedtls_pk_verify it
    * does not necessarily means that the signatures don't match.
    *
-   * For RSA public-key scheme, mbedtls encodes the hash with rsa_rsassa_pkcs1_v15_encode() so that it expands
-   * the hash value with encoded data. On some samples, this encoding failed.
+   * For RSA public-key scheme, mbedtls encodes the hash with
+   * rsa_rsassa_pkcs1_v15_encode() so that it expands the hash value with encoded
+   * data. On some samples, this encoding failed.
    *
-   * In the approach below, we manually decrypt and unpad the output of the DEC(signature)
-   * as defined in the RFC #2313
+   * In the approach below, we manually decrypt and unpad the output of the
+   * DEC(signature) as defined in the RFC #2313
    */
   if (ret != 0) {
     if (mbedtls_pk_get_type(&ctx) == MBEDTLS_PK_RSA) {
@@ -566,12 +538,14 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
       mbedtls_rsa_context ctx_rsa;
       rsa_from_pk(&ctx, &ctx_rsa);
 
-      int ret_rsa_public = mbedtls_rsa_public(&ctx_rsa, signature.data(), decrypted.data());
+      int ret_rsa_public =
+          mbedtls_rsa_public(&ctx_rsa, signature.data(), decrypted.data());
       mbedtls_rsa_free(&ctx_rsa);
 
       if (ret_rsa_public != 0) {
         std::string strerr(1024, 0);
-        mbedtls_strerror(ret_rsa_public, const_cast<char*>(strerr.data()), strerr.size());
+        mbedtls_strerror(ret_rsa_public, const_cast<char*>(strerr.data()),
+                         strerr.size());
         LIEF_INFO("RSA public key operation failed: '{}'", strerr);
         return false;
       }
@@ -599,8 +573,9 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
     LIEF_WARN("Certificate chain is empty");
     return VERIFICATION_FLAGS::BADCERT_MISSING;
   }
-  std::vector<x509> ca_list = ca; // NOLINT(performance-unnecessary-copy-initialization)
-                                  // Explicit copy since we will modify mbedtls_x509_crt->next
+  std::vector<x509> ca_list =
+      ca; // NOLINT(performance-unnecessary-copy-initialization)
+          // Explicit copy since we will modify mbedtls_x509_crt->next
   for (size_t i = 0; i < ca_list.size() - 1; ++i) {
     ca_list[i].x509_cert_->next = ca_list[i + 1].x509_cert_;
   }
@@ -608,15 +583,15 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
   VERIFICATION_FLAGS result = VERIFICATION_FLAGS::OK;
   uint32_t flags = 0;
   mbedtls_x509_crt_profile profile = {
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_MD5)   |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA1)   |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA224) |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA256) |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA384) |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA512),
-    0xFFFFFFF, /* Any PK alg    */
-    0xFFFFFFF, /* Any curve     */
-    1          /* Min RSA key   */,
+      MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_MD5) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA1) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA224) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA256) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA384) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA512),
+      0xFFFFFFF, /* Any PK alg    */
+      0xFFFFFFF, /* Any curve     */
+      1 /* Min RSA key   */,
   };
 
   int ret = mbedtls_x509_crt_verify_with_profile(
@@ -627,13 +602,15 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
       /* Common Name  */ nullptr,
       /* Verification */ &flags,
       /* verification function */ nullptr,
-      /* verification params   */ nullptr);
+      /* verification params   */ nullptr
+  );
 
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
     std::string out(1024, 0);
-    mbedtls_x509_crt_verify_info(const_cast<char*>(out.data()), out.size(), "", flags);
+    mbedtls_x509_crt_verify_info(const_cast<char*>(out.data()), out.size(), "",
+                                 flags);
     LIEF_WARN("X509 verify failed with: {} ({:#x})\n{}", strerr, ret, out);
     result = from_mbedtls_err(flags);
   }
@@ -649,14 +626,14 @@ x509::VERIFICATION_FLAGS x509::verify(const x509& ca) const {
   uint32_t flags = 0;
   VERIFICATION_FLAGS result = VERIFICATION_FLAGS::OK;
   mbedtls_x509_crt_profile profile = {
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA1)   |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA224) |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA256) |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA384) |
-    MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA512),
-    0xFFFFFFF, /* Any PK alg    */
-    0xFFFFFFF, /* Any curve     */
-    1          /* Min RSA key */,
+      MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA1) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA224) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA256) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA384) |
+          MBEDTLS_X509_ID_FLAG(MBEDTLS_MD_SHA512),
+      0xFFFFFFF, /* Any PK alg    */
+      0xFFFFFFF, /* Any curve     */
+      1 /* Min RSA key */,
   };
 
   int ret = mbedtls_x509_crt_verify_with_profile(
@@ -667,13 +644,15 @@ x509::VERIFICATION_FLAGS x509::verify(const x509& ca) const {
       /* Common Name  */ nullptr,
       /* Verification */ &flags,
       /* verification function */ nullptr,
-      /* verification params   */ nullptr);
+      /* verification params   */ nullptr
+  );
 
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
     std::string out(1024, 0);
-    mbedtls_x509_crt_verify_info(const_cast<char*>(out.data()), out.size(), "", flags);
+    mbedtls_x509_crt_verify_info(const_cast<char*>(out.data()), out.size(), "",
+                                 flags);
     LIEF_WARN("X509 verify failed with: {} ({:#x})\n{}", strerr, ret, out);
     result = from_mbedtls_err(flags);
   }
@@ -688,7 +667,8 @@ std::vector<oid_t> x509::ext_key_usage() const {
   std::vector<oid_t> oids;
   while (current != nullptr) {
     char oid_str[256] = {0};
-    int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->buf);
+    int ret =
+        mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->buf);
     if (ret != MBEDTLS_ERR_ASN1_BUF_TOO_SMALL) {
       LIEF_DEBUG("OID: {}", oid_str);
       oids.emplace_back(oid_str);
@@ -706,7 +686,8 @@ std::vector<oid_t> x509::ext_key_usage() const {
 }
 
 std::vector<oid_t> x509::certificate_policies() const {
-  if ((x509_cert_->private_ext_types & MBEDTLS_X509_EXT_CERTIFICATE_POLICIES) == 0) {
+  if ((x509_cert_->private_ext_types & MBEDTLS_X509_EXT_CERTIFICATE_POLICIES) == 0)
+  {
     return {};
   }
 
@@ -715,7 +696,8 @@ std::vector<oid_t> x509::certificate_policies() const {
   std::vector<oid_t> oids;
   while (current != nullptr) {
     char oid_str[256] = {0};
-    int ret = mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->buf);
+    int ret =
+        mbedtls_oid_get_numeric_string(oid_str, sizeof(oid_str), &current->buf);
     if (ret != MBEDTLS_ERR_ASN1_BUF_TOO_SMALL) {
       oids.emplace_back(oid_str);
     } else {
@@ -740,15 +722,15 @@ bool x509::is_ca() const {
 
 std::vector<x509::KEY_USAGE> x509::key_usage() const {
   static const std::map<uint32_t, KEY_USAGE> MBEDTLS_MAP = {
-    {MBEDTLS_X509_KU_DIGITAL_SIGNATURE, KEY_USAGE::DIGITAL_SIGNATURE},
-    {MBEDTLS_X509_KU_NON_REPUDIATION,   KEY_USAGE::NON_REPUDIATION},
-    {MBEDTLS_X509_KU_KEY_ENCIPHERMENT,  KEY_USAGE::KEY_ENCIPHERMENT},
-    {MBEDTLS_X509_KU_DATA_ENCIPHERMENT, KEY_USAGE::DATA_ENCIPHERMENT},
-    {MBEDTLS_X509_KU_KEY_AGREEMENT,     KEY_USAGE::KEY_AGREEMENT},
-    {MBEDTLS_X509_KU_KEY_CERT_SIGN,     KEY_USAGE::KEY_CERT_SIGN},
-    {MBEDTLS_X509_KU_CRL_SIGN,          KEY_USAGE::CRL_SIGN},
-    {MBEDTLS_X509_KU_ENCIPHER_ONLY,     KEY_USAGE::ENCIPHER_ONLY},
-    {MBEDTLS_X509_KU_DECIPHER_ONLY,     KEY_USAGE::DECIPHER_ONLY},
+      {MBEDTLS_X509_KU_DIGITAL_SIGNATURE, KEY_USAGE::DIGITAL_SIGNATURE},
+      {MBEDTLS_X509_KU_NON_REPUDIATION, KEY_USAGE::NON_REPUDIATION},
+      {MBEDTLS_X509_KU_KEY_ENCIPHERMENT, KEY_USAGE::KEY_ENCIPHERMENT},
+      {MBEDTLS_X509_KU_DATA_ENCIPHERMENT, KEY_USAGE::DATA_ENCIPHERMENT},
+      {MBEDTLS_X509_KU_KEY_AGREEMENT, KEY_USAGE::KEY_AGREEMENT},
+      {MBEDTLS_X509_KU_KEY_CERT_SIGN, KEY_USAGE::KEY_CERT_SIGN},
+      {MBEDTLS_X509_KU_CRL_SIGN, KEY_USAGE::CRL_SIGN},
+      {MBEDTLS_X509_KU_ENCIPHER_ONLY, KEY_USAGE::ENCIPHER_ONLY},
+      {MBEDTLS_X509_KU_DECIPHER_ONLY, KEY_USAGE::DECIPHER_ONLY},
   };
 
   if ((x509_cert_->private_ext_types & MBEDTLS_X509_EXT_KEY_USAGE) == 0) {
@@ -766,7 +748,7 @@ std::vector<x509::KEY_USAGE> x509::key_usage() const {
 }
 
 std::vector<uint8_t> x509::signature() const {
-  mbedtls_x509_buf sig =  x509_cert_->private_sig;
+  mbedtls_x509_buf sig = x509_cert_->private_sig;
   return {sig.p, sig.p + sig.len};
 }
 
@@ -781,7 +763,8 @@ x509::~x509() {
 
 std::ostream& operator<<(std::ostream& os, const x509& x509_cert) {
   std::vector<char> buffer(2048, 0);
-  int ret = mbedtls_x509_crt_info(buffer.data(), buffer.size(), "", x509_cert.x509_cert_);
+  int ret = mbedtls_x509_crt_info(buffer.data(), buffer.size(), "",
+                                  x509_cert.x509_cert_);
   if (ret < 0) {
     os << "Can't print certificate information\n";
     return os;
@@ -792,4 +775,3 @@ std::ostream& operator<<(std::ostream& os, const x509& x509_cert) {
 }
 
 }
-

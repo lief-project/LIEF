@@ -26,8 +26,7 @@ namespace analysis_plugin::macho {
 using namespace BinaryNinja;
 
 static std::unique_ptr<MachO::Binary>
-  get_matching_macho(MachO::FatBinary& fat, BinaryNinja::BinaryView& bv)
-{
+    get_matching_macho(MachO::FatBinary& fat, BinaryNinja::BinaryView& bv) {
   if (fat.size() == 1) {
     return fat.take(0);
   }
@@ -59,22 +58,23 @@ static std::unique_ptr<MachO::Binary>
     return fat.take(LIEF::MachO::Header::CPU_TYPE::POWERPC64);
   }
 
-  BN_ERR("Unsupported architecture: {} ({})",
-         arch_name, bv.GetDefaultPlatform()->GetName());
+  BN_ERR("Unsupported architecture: {} ({})", arch_name,
+         bv.GetDefaultPlatform()->GetName());
   return nullptr;
 }
 
-Analyzer::Analyzer(std::unique_ptr<LIEF::MachO::Binary> impl, BinaryNinja::BinaryView& bv) :
+Analyzer::Analyzer(std::unique_ptr<LIEF::MachO::Binary> impl,
+                   BinaryNinja::BinaryView& bv) :
   analysis_plugin::Analyzer(bv, std::make_unique<TypeBuilder>(bv)),
-  macho_(std::move(impl))
-{}
+  macho_(std::move(impl)) {}
 
 std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
   static const MachO::ParserConfig CONFIG = MachO::ParserConfig::deep();
 
   std::string original_file = bv.GetFile()->GetOriginalFilename();
 
-  std::unique_ptr<LIEF::MachO::FatBinary> fat = LIEF::MachO::Parser::parse(original_file);
+  std::unique_ptr<LIEF::MachO::FatBinary> fat =
+      LIEF::MachO::Parser::parse(original_file);
   if (fat == nullptr) {
     BN_ERR("Can't parse '{}'", original_file);
     return nullptr;
@@ -83,13 +83,11 @@ std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
   std::unique_ptr<MachO::Binary> bin = get_matching_macho(*fat, bv);
   if (bin == nullptr) {
     BN_ERR("Can't get MachO binary matching  architecture: '{}'",
-        bv.GetDefaultArchitecture()->GetName());
+           bv.GetDefaultArchitecture()->GetName());
     return nullptr;
   }
   return std::make_unique<Analyzer>(std::move(bin), bv);
 }
 
-void Analyzer::run() {
-
-}
+void Analyzer::run() {}
 }

@@ -30,8 +30,7 @@ class Layout {
   Layout(Binary& bin, bool should_swap, const Builder::config_t& config) :
     binary_(&bin),
     should_swap_(should_swap),
-    config_(&config)
-  {}
+    config_(&config) {}
 
   virtual const std::unordered_map<std::string, size_t>& shstr_map() const {
     return shstr_name_map_;

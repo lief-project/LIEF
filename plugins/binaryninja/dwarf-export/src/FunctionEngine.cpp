@@ -25,11 +25,14 @@
 namespace bn = BinaryNinja;
 namespace dw = LIEF::dwarf::editor;
 
-template <> class fmt::formatter<bn::InstructionTextToken> {
-public:
-  constexpr auto parse (format_parse_context& ctx) { return ctx.begin(); }
-  template <typename Context>
-  constexpr auto format (const bn::InstructionTextToken& T, Context& ctx) const {
+template<>
+class fmt::formatter<bn::InstructionTextToken> {
+  public:
+  constexpr auto parse(format_parse_context& ctx) {
+    return ctx.begin();
+  }
+  template<typename Context>
+  constexpr auto format(const bn::InstructionTextToken& T, Context& ctx) const {
     // or: format_to(ctx.out(), "{}", T.text);
     return detail::write(ctx.out(), T.text.c_str());
   }
@@ -76,7 +79,8 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
     const bn::FunctionParameter& p = parameters[i];
     std::string name = p.name.empty() ? fmt::format("arg_{}", i) : p.name;
     dw::Type& type = types_.add_type(api_compat::get_type(p.type));
-    std::unique_ptr<dw::Function::Parameter> P = dw_func->add_parameter(name, type);
+    std::unique_ptr<dw::Function::Parameter> P =
+        dw_func->add_parameter(name, type);
     if (!p.defaultLocation) {
       if (p.location.type == BNVariableSourceType::RegisterVariableSourceType) {
         int64_t reg = p.location.storage;
@@ -96,7 +100,8 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
         continue;
       }
 
-      std::unique_ptr<dw::Variable> dw_var = dw_func->create_stack_variable(info.name);
+      std::unique_ptr<dw::Variable> dw_var =
+          dw_func->create_stack_variable(info.name);
       dw_var->set_stack_offset(std::abs(addr));
       if (auto var_type = info.type; api_compat::as_bool(var_type)) {
         dw::Type& dw_type = types_.add_type(api_compat::get_type(var_type));
@@ -112,7 +117,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
   if (blocks.size() > 1) {
     for (bn::Ref<bn::BasicBlock> BB : blocks) {
       std::unique_ptr<dw::Function::LexicalBlock> LB =
-        dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
+          dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
       if (LB == nullptr) {
         BN_WARN("Failed to add lexical block {}:[0x{:010x}, 0x{:010x}]", func_name,
                 BB->GetStart(), BB->GetEnd());
@@ -123,21 +128,21 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
         LB->add_description(comment);
       }
 
-      auto it = std::lower_bound(commented_addresses.begin(), commented_addresses.end(),
-        BB->GetStart() + 1
-      );
+      auto it = std::lower_bound(commented_addresses.begin(),
+                                 commented_addresses.end(), BB->GetStart() + 1);
 
       if (it != commented_addresses.end()) {
         for (; it != commented_addresses.end() && *it < BB->GetEnd(); ++it) {
           const uint64_t addr = *it;
-          size_t inst_size = bv_.GetInstructionLength(func.GetArchitecture(), addr);
+          size_t inst_size =
+              bv_.GetInstructionLength(func.GetArchitecture(), addr);
           const std::string& comment = func.GetCommentForAddress(addr);
           assert(inst_size > 0);
           assert(!comment.empty());
           BN_DEBUG("Adding comment for: {:#x}: {}", addr, comment);
 
           std::unique_ptr<dw::Function::LexicalBlock> inst_block =
-            LB->add_block(addr, addr + inst_size);
+              LB->add_block(addr, addr + inst_size);
           if (inst_block == nullptr) {
             BN_WARN("Failed to create inst block for addr: {}:{:#x}", func_name,
                     addr);
@@ -155,9 +160,9 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
       dw_func->add_description(comment);
     }
 
-    auto it = std::lower_bound(commented_addresses.begin(), commented_addresses.end(),
-      main_block->GetStart() + 1
-    );
+    auto it =
+        std::lower_bound(commented_addresses.begin(), commented_addresses.end(),
+                         main_block->GetStart() + 1);
 
     if (it != commented_addresses.end()) {
       for (; it != commented_addresses.end() && *it < main_block->GetEnd(); ++it) {
@@ -171,7 +176,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
         BN_DEBUG("Adding comment for: {:#x}: {}", addr, comment);
 
         std::unique_ptr<dw::Function::LexicalBlock> inst_block =
-          dw_func->add_lexical_block(addr, addr + inst_size);
+            dw_func->add_lexical_block(addr, addr + inst_size);
         if (inst_block == nullptr) {
           BN_WARN("Failed to create inst block for addr: {}:{:#x}", func_name,
                   addr);
@@ -189,29 +194,28 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
     dw_func->set_external();
   }
 
-  return functions_.insert(
-    {func.GetStart(), std::move(dw_func)}
-  ).first->second.get();
+  return functions_.insert({func.GetStart(), std::move(dw_func)})
+      .first->second.get();
 }
 
-std::string FunctionEngine::get_hlil_for_addr(BinaryNinja::Function& F, uint64_t addr) {
+std::string FunctionEngine::get_hlil_for_addr(BinaryNinja::Function& F,
+                                              uint64_t addr) {
   std::string out;
   bn::Ref<bn::HighLevelILFunction> HLIL = F.GetHighLevelIL();
   if (HLIL == nullptr) {
     return out;
   }
-  HLIL->VisitAllExprs([&] (const bn::HighLevelILInstruction& I) {
-      for (const bn::DisassemblyTextLine& T : HLIL->GetExprText(I)) {
-        if (T.addr != addr) {
-          continue;
-        }
-        out = fmt::format("{:#x} {}", T.addr, fmt::join(T.tokens, ""));
-        return true;
+  HLIL->VisitAllExprs([&](const bn::HighLevelILInstruction& I) {
+    for (const bn::DisassemblyTextLine& T : HLIL->GetExprText(I)) {
+      if (T.addr != addr) {
+        continue;
       }
-
-      return false;
+      out = fmt::format("{:#x} {}", T.addr, fmt::join(T.tokens, ""));
+      return true;
     }
-  );
+
+    return false;
+  });
   return out;
 }
 

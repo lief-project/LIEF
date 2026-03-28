@@ -17,7 +17,7 @@
 #include <memory>
 #include <LIEF/ELF.hpp>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "ELF Strip" << '\n';
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << '\n';

@@ -13,6 +13,4 @@
  * limitations under the License.
  */
 #include "binaryninja/analysis/ELF/TypeBuilder.hpp"
-namespace analysis_plugin::elf {
-
-}
+namespace analysis_plugin::elf {}

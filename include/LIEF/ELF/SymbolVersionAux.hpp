@@ -29,10 +29,10 @@ class Parser;
 /// Class which represents an Auxiliary Symbol version
 class LIEF_API SymbolVersionAux : public Object {
   friend class Parser;
+
   public:
   SymbolVersionAux(std::string name) :
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
   SymbolVersionAux() = default;
   ~SymbolVersionAux() override = default;
 
@@ -50,8 +50,8 @@ class LIEF_API SymbolVersionAux : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const SymbolVersionAux& aux) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SymbolVersionAux& aux) {
     os << aux.name();
     return os;
   }

@@ -32,7 +32,8 @@ class Relocation;
 
 /// Class which represents an entry of the PE relocation table
 ///
-/// It extends the LIEF::Relocation object to provide an uniform API across the file formats
+/// It extends the LIEF::Relocation object to provide an uniform API across the
+/// file formats
 class LIEF_API RelocationEntry : public LIEF::Relocation {
 
   friend class Parser;
@@ -117,7 +118,7 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
     /// ```cpp
     /// write<int64_t_t>(ADDR, read<int64_t_t>(ADDR) + DELTA)
     /// ```
-    DIR64  = 10,
+    DIR64 = 10,
     HIGH3ADJ = 11,
   };
 
@@ -137,8 +138,7 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
     position_(other.position_),
     type_(other.type_),
     // Parent relocation is not forwarded during copy
-    relocation_(nullptr)
-  {}
+    relocation_(nullptr) {}
 
   RelocationEntry& operator=(RelocationEntry other) {
     swap(other);
@@ -150,8 +150,7 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
 
   RelocationEntry(uint16_t position, BASE_TYPES type) :
     position_(position),
-    type_(type)
-  {
+    type_(type) {
     assert(position_ < MAX_ADDR);
   }
 
@@ -159,8 +158,8 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
 
   void swap(RelocationEntry& other) {
     LIEF::Relocation::swap(other);
-    std::swap(position_,   other.position_);
-    std::swap(type_,       other.type_);
+    std::swap(position_, other.position_);
+    std::swap(type_, other.type_);
     std::swap(relocation_, other.relocation_);
   }
 
@@ -202,7 +201,8 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const RelocationEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const RelocationEntry& entry);
 
   /// \private
   LIEF_LOCAL PE::Relocation* parent() {

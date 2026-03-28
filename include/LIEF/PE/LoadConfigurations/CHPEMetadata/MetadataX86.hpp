@@ -29,8 +29,7 @@ namespace PE {
 class LIEF_API CHPEMetadataX86 : public CHPEMetadata {
   public:
   CHPEMetadataX86(uint32_t version) :
-    CHPEMetadata(KIND::X86, version)
-  {}
+    CHPEMetadata(KIND::X86, version) {}
 
   CHPEMetadataX86(const CHPEMetadataX86&) = default;
   CHPEMetadataX86& operator=(const CHPEMetadataX86&) = default;
@@ -42,8 +41,8 @@ class LIEF_API CHPEMetadataX86 : public CHPEMetadata {
     return std::unique_ptr<CHPEMetadataX86>(new CHPEMetadataX86(*this));
   }
 
-  static std::unique_ptr<CHPEMetadataX86> parse(
-    Parser& ctx, BinaryStream& stream, uint32_t version);
+  static std::unique_ptr<CHPEMetadataX86> parse(Parser& ctx, BinaryStream& stream,
+                                                uint32_t version);
 
 
   uint32_t chpe_code_address_range_offset() const {
@@ -115,7 +114,8 @@ class LIEF_API CHPEMetadataX86 : public CHPEMetadata {
     return *this;
   }
 
-  CHPEMetadataX86& wowa64_dispatch_indirect_call_cfg_function_pointer(uint32_t value) {
+  CHPEMetadataX86&
+      wowa64_dispatch_indirect_call_cfg_function_pointer(uint32_t value) {
     wowa64_dispatch_indirect_call_cfg_function_pointer_ = value;
     return *this;
   }

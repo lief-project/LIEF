@@ -21,6 +21,10 @@ class ObjC_Property : private Mirror<LIEF::objc::Property> {
   using lief_t = LIEF::objc::Property;
   using Mirror::Mirror;
 
-  auto name() const { return get().name(); }
-  auto attribute() const { return get().attribute(); }
+  auto name() const {
+    return get().name();
+  }
+  auto attribute() const {
+    return get().attribute();
+  }
 };

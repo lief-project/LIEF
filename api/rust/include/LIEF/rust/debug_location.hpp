@@ -20,11 +20,14 @@ class DebugLocation {
   public:
   DebugLocation(std::string file, uint64_t line) :
     line_(line),
-    file_(std::move(file))
-  {}
+    file_(std::move(file)) {}
 
-  auto file() const { return file_; }
-  auto line() const { return line_; }
+  auto file() const {
+    return file_;
+  }
+  auto line() const {
+    return line_;
+  }
 
   private:
   uint64_t line_ = 0;
@@ -36,4 +39,3 @@ inline auto make_location(const LIEF::debug_location_t& loc) {
   return std::make_unique<DebugLocation>(loc.file, loc.line);
 }
 }
-

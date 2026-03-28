@@ -35,8 +35,7 @@ class LIEF_API BigObjHeader : public Header {
   public:
   static constexpr auto UUID_SZ = 16;
   BigObjHeader() :
-    Header(KIND::BIGOBJ)
-  {}
+    Header(KIND::BIGOBJ) {}
 
   static std::unique_ptr<BigObjHeader> create(BinaryStream& stream);
 
@@ -55,7 +54,8 @@ class LIEF_API BigObjHeader : public Header {
     return version_;
   }
 
-  /// Originally named `ClassID`, this uuid should match: `{D1BAA1C7-BAEE-4ba9-AF20-FAF66AA4DCB8}`
+  /// Originally named `ClassID`, this uuid should match:
+  /// `{D1BAA1C7-BAEE-4ba9-AF20-FAF66AA4DCB8}`
   span<const uint8_t> uuid() const {
     return uuid_;
   }

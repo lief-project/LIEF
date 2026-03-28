@@ -19,18 +19,31 @@
 class PE_VCFeature : public PE_Debug {
   public:
   using lief_t = LIEF::PE::VCFeature;
-  PE_VCFeature(const lief_t& obj) : PE_Debug(obj) {}
+  PE_VCFeature(const lief_t& obj) :
+    PE_Debug(obj) {}
 
-  auto pre_vcpp() const { return impl().pre_vcpp(); }
-  auto c_cpp() const { return impl().c_cpp(); }
-  auto gs() const { return impl().gs(); }
-  auto sdl() const { return impl().sdl(); }
-  auto guards() const { return impl().guards(); }
+  auto pre_vcpp() const {
+    return impl().pre_vcpp();
+  }
+  auto c_cpp() const {
+    return impl().c_cpp();
+  }
+  auto gs() const {
+    return impl().gs();
+  }
+  auto sdl() const {
+    return impl().sdl();
+  }
+  auto guards() const {
+    return impl().guards();
+  }
 
   static bool classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

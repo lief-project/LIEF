@@ -29,8 +29,7 @@
 namespace LIEF::PE {
 
 std::unique_ptr<RuntimeFunctionAArch64>
-  RuntimeFunctionAArch64::parse(Parser& ctx, BinaryStream& strm)
-{
+    RuntimeFunctionAArch64::parse(Parser& ctx, BinaryStream& strm) {
   auto rva_start = strm.read<uint32_t>();
   if (!rva_start) {
     LIEF_WARN("Failed to read exception info RVA start (line: {})", __LINE__);
@@ -39,7 +38,8 @@ std::unique_ptr<RuntimeFunctionAArch64>
 
   auto unwind_data = strm.read<uint32_t>();
   if (!unwind_data) {
-    LIEF_DEBUG("Failed to read exception info unwind data (line: {}, RVA={:#010x}, pos={}, size={})",
+    LIEF_DEBUG("Failed to read exception info unwind data (line: {}, "
+               "RVA={:#010x}, pos={}, size={})",
                __LINE__, *rva_start, strm.pos(), strm.size());
     return nullptr;
   }
@@ -59,7 +59,7 @@ std::unique_ptr<RuntimeFunctionAArch64>
                                                    *rva_start);
   }
 
-  return std::make_unique<RuntimeFunctionAArch64>(*rva_start, /*length*/0, flag);
+  return std::make_unique<RuntimeFunctionAArch64>(*rva_start, /*length*/ 0, flag);
 }
 
 std::string RuntimeFunctionAArch64::to_string() const {

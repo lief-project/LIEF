@@ -26,8 +26,7 @@ EncryptionInfo::EncryptionInfo(const details::encryption_info_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   coff_{cmd.cryptoff},
   csize_{cmd.cryptsize},
-  cid_{cmd.cryptid}
-{}
+  cid_{cmd.cryptid} {}
 
 void EncryptionInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -36,10 +35,9 @@ void EncryptionInfo::accept(Visitor& visitor) const {
 std::ostream& EncryptionInfo::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
   os << fmt::format("crypt offset={:#08x}, crypt size={:#08x}, crypt id={}",
-                     crypt_offset(), crypt_size(), crypt_id());
+                    crypt_offset(), crypt_size(), crypt_id());
   return os;
 }
 
 
 }
-

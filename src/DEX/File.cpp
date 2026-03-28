@@ -29,15 +29,14 @@
 #include "DEX/Structures.hpp"
 
 #if defined(LIEF_JSON_SUPPORT)
-#include "visitors/json.hpp"
+  #include "visitors/json.hpp"
 #endif
 
 
 namespace LIEF::DEX {
 
 File::File() :
-  name_{"classes.dex"}
-{}
+  name_{"classes.dex"} {}
 File::~File() = default;
 
 dex_version_t File::version() const {
@@ -60,7 +59,8 @@ std::string File::save(const std::string& path, bool deoptimize) const {
       const std::vector<uint8_t> raw = this->raw(deoptimize);
       ifs.write(reinterpret_cast<const char*>(raw.data()), raw.size());
     } else {
-      ifs.write(reinterpret_cast<const char*>(original_data_.data()), original_data_.size());
+      ifs.write(reinterpret_cast<const char*>(original_data_.data()),
+                original_data_.size());
     }
     return path;
   }
@@ -106,242 +106,270 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
         continue;
       }
 
-      switch(opcode) {
+      switch (opcode) {
         case OPCODES::OP_NOP:
-          {
-            //deoptimize_nop(inst_ptr, 0);
-            break;
-          }
+        {
+          // deoptimize_nop(inst_ptr, 0);
+          break;
+        }
 
         case OPCODES::OP_RETURN_VOID_NO_BARRIER:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] return-void-no-barrier -> return-void", dex_pc);
-            deoptimize_return(inst_ptr, 0);
-            break;
-          }
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] return-void-no-barrier -> return-void", dex_pc);
+          deoptimize_return(inst_ptr, 0);
+          break;
+        }
 
         case OPCODES::OP_IGET_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iget-quick -> iget@{:#x}", dex_pc, value);
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iget-quick -> iget@{:#x}", dex_pc, value);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET);
+          break;
+        }
 
         case OPCODES::OP_IGET_WIDE_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iget-wide-quick -> iget-wide@{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iget-wide-quick -> iget-wide@{:d}", dex_pc, value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-wide-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_WIDE);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-wide-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_WIDE);
+          break;
+        }
 
         case OPCODES::OP_IGET_OBJECT_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iget-object-quick -> iget-object@{:d}", dex_pc, value);
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-object-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_OBJECT);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iget-object-quick -> iget-object@{:d}", dex_pc,
+                     value);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN(
+                "Unresolved instruction {}.{} at {:#06x} (iget-object-quick)",
+                method->cls()->fullname(), method->name(), dex_pc
+            );
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value,
+                                           OPCODES::OP_IGET_OBJECT);
+          break;
+        }
 
         case OPCODES::OP_IPUT_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iput-quick -> iput@{:d}", dex_pc, value);
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-quick)",
-                  method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iput-quick -> iput@{:d}", dex_pc, value);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT);
+          break;
+        }
 
         case OPCODES::OP_IPUT_WIDE_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iput-wide-quick -> iput-wide@{:d}", dex_pc, value);
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-wide-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_WIDE);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iput-wide-quick -> iput-wide@{:d}", dex_pc, value);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-wide-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_WIDE);
+          break;
+        }
 
         case OPCODES::OP_IPUT_OBJECT_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iput-object-quick -> iput-objecte@{:d}", dex_pc, value);
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-object-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_OBJECT);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iput-object-quick -> iput-objecte@{:d}", dex_pc,
+                     value);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN(
+                "Unresolved instruction {}.{} at {:#06x} (iput-object-quick)",
+                method->cls()->fullname(), method->name(), dex_pc
+            );
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value,
+                                           OPCODES::OP_IPUT_OBJECT);
+          break;
+        }
 
         case OPCODES::OP_INVOKE_VIRTUAL_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] invoke-virtual-quick -> invoke-virtual@{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] invoke-virtual-quick -> invoke-virtual@{:d}",
+                     dex_pc, value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (invoke-virtual-quick)",
-                  method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_invoke_virtual(inst_ptr, value, OPCODES::OP_INVOKE_VIRTUAL);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN(
+                "Unresolved instruction {}.{} at {:#06x} (invoke-virtual-quick)",
+                method->cls()->fullname(), method->name(), dex_pc
+            );
             break;
           }
+          deoptimize_invoke_virtual(inst_ptr, value, OPCODES::OP_INVOKE_VIRTUAL);
+          break;
+        }
 
         case OPCODES::OP_INVOKE_VIRTUAL_RANGE_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] invoke-virtual-quick/range -> invoke-virtual/range @{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE(
+              "[{:06x}] invoke-virtual-quick/range -> invoke-virtual/range @{:d}",
+              dex_pc, value
+          );
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (invoke-virtual-quick/range)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_invoke_virtual(inst_ptr, value, OPCODES::OP_INVOKE_VIRTUAL_RANGE);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} "
+                      "(invoke-virtual-quick/range)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_invoke_virtual(inst_ptr, value,
+                                    OPCODES::OP_INVOKE_VIRTUAL_RANGE);
+          break;
+        }
 
         case OPCODES::OP_IPUT_BOOLEAN_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iput-boolean-quick -> iput-boolean@{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iput-boolean-quick -> iput-boolean@{:d}", dex_pc,
+                     value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-boolean-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_BOOLEAN);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN(
+                "Unresolved instruction {}.{} at {:#06x} (iput-boolean-quick)",
+                method->cls()->fullname(), method->name(), dex_pc
+            );
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value,
+                                           OPCODES::OP_IPUT_BOOLEAN);
+          break;
+        }
 
         case OPCODES::OP_IPUT_BYTE_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iput-byte-quick -> iput-byte @{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iput-byte-quick -> iput-byte @{:d}", dex_pc, value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-byte-quick)",
-                  method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_BYTE);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-byte-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_BYTE);
+          break;
+        }
 
         case OPCODES::OP_IPUT_CHAR_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iput-char-quick -> iput-char @{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iput-char-quick -> iput-char @{:d}", dex_pc, value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-char-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_CHAR);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-char-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_CHAR);
+          break;
+        }
 
         case OPCODES::OP_IPUT_SHORT_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iput-short-quick -> iput-short @{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iput-short-quick -> iput-short @{:d}", dex_pc,
+                     value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-short)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IPUT_SHORT);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iput-short)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value,
+                                           OPCODES::OP_IPUT_SHORT);
+          break;
+        }
 
         case OPCODES::OP_IGET_BOOLEAN_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iget-boolean-quick -> iget-boolean @{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iget-boolean-quick -> iget-boolean @{:d}", dex_pc,
+                     value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-boolean-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_BOOLEAN);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN(
+                "Unresolved instruction {}.{} at {:#06x} (iget-boolean-quick)",
+                method->cls()->fullname(), method->name(), dex_pc
+            );
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value,
+                                           OPCODES::OP_IGET_BOOLEAN);
+          break;
+        }
 
         case OPCODES::OP_IGET_BYTE_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iget-byte-quick -> iget-byte @{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iget-byte-quick -> iget-byte @{:d}", dex_pc, value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-byte-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_BYTE);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-byte-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_BYTE);
+          break;
+        }
 
         case OPCODES::OP_IGET_CHAR_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iget-char-quick -> iget-char @{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iget-char-quick -> iget-char @{:d}", dex_pc, value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-char-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_CHAR);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-char-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_CHAR);
+          break;
+        }
 
         case OPCODES::OP_IGET_SHORT_QUICK:
-          {
-            LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
-            LIEF_TRACE("[{:06x}] iget-short-quick -> iget-short @{:d}", dex_pc, value);
+        {
+          LIEF_TRACE("{}.{}", method->cls()->fullname(), method->name());
+          LIEF_TRACE("[{:06x}] iget-short-quick -> iget-short @{:d}", dex_pc,
+                     value);
 
-            if (static_cast<int32_t>(value) == -1) {
-              LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-short-quick)",
-                        method->cls()->fullname(), method->name(), dex_pc);
-              break;
-            }
-            deoptimize_instance_field_access(inst_ptr, value, OPCODES::OP_IGET_SHORT);
+          if (static_cast<int32_t>(value) == -1) {
+            LIEF_WARN("Unresolved instruction {}.{} at {:#06x} (iget-short-quick)",
+                      method->cls()->fullname(), method->name(), dex_pc);
             break;
           }
+          deoptimize_instance_field_access(inst_ptr, value,
+                                           OPCODES::OP_IGET_SHORT);
+          break;
+        }
         default:
-          {
-          }
+        {
+        }
       }
       inst_ptr += inst_size_from_opcode(opcode);
     }
@@ -358,12 +386,14 @@ void File::deoptimize_return(uint8_t* inst_ptr, uint32_t /*value*/) {
   *inst_ptr = OPCODES::OP_RETURN_VOID;
 }
 
-void File::deoptimize_invoke_virtual(uint8_t* inst_ptr, uint32_t value, OPCODES new_inst) {
+void File::deoptimize_invoke_virtual(uint8_t* inst_ptr, uint32_t value,
+                                     OPCODES new_inst) {
   *inst_ptr = new_inst;
   reinterpret_cast<uint16_t*>(inst_ptr)[1] = value;
 }
 
-void File::deoptimize_instance_field_access(uint8_t* inst_ptr, uint32_t value, OPCODES new_inst) {
+void File::deoptimize_instance_field_access(uint8_t* inst_ptr, uint32_t value,
+                                            OPCODES new_inst) {
   *inst_ptr = new_inst;
   reinterpret_cast<uint16_t*>(inst_ptr)[1] = value;
 }
@@ -454,7 +484,8 @@ std::string File::dex2dex_json_info() const {
       mapping[class_name][std::to_string(index)] = json::object();
 
       for (const auto& pc_index : method_map.second) {
-        mapping[class_name][std::to_string(index)][std::to_string(pc_index.first)] = pc_index.second;
+        mapping[class_name][std::to_string(index)]
+               [std::to_string(pc_index.first)] = pc_index.second;
       }
     }
   }
@@ -530,7 +561,6 @@ void File::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const File& file) {
   os << "DEX File " << file.name() << " Version: " << std::dec << file.version();
   if (!file.location().empty()) {
@@ -555,8 +585,4 @@ std::ostream& operator<<(std::ostream& os, const File& file) {
 }
 
 
-
-
-
 }
-

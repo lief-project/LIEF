@@ -19,24 +19,37 @@
 #include "LIEF/rust/Iterator.hpp"
 #include <memory>
 
-class ELF_SymbolVersionRequirement : private Mirror<LIEF::ELF::SymbolVersionRequirement> {
+class ELF_SymbolVersionRequirement
+  : private Mirror<LIEF::ELF::SymbolVersionRequirement> {
   public:
   using lief_t = LIEF::ELF::SymbolVersionRequirement;
   using Mirror::Mirror;
 
-  class it_auxiliary_symbols :
-      public Iterator<ELF_SymbolVersionAuxRequirement, LIEF::ELF::SymbolVersionRequirement::it_const_aux_requirement>
-  {
+  class it_auxiliary_symbols
+    : public Iterator<
+          ELF_SymbolVersionAuxRequirement,
+          LIEF::ELF::SymbolVersionRequirement::it_const_aux_requirement
+      > {
     public:
-    it_auxiliary_symbols(const ELF_SymbolVersionRequirement::lief_t& src)
-      : Iterator(src.auxiliary_symbols()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_auxiliary_symbols(const ELF_SymbolVersionRequirement::lief_t& src) :
+      Iterator(src.auxiliary_symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  auto version() const { return get().version(); }
-  uint32_t cnt() const { return get().cnt(); }
-  std::string name() const { return get().name(); }
+  auto version() const {
+    return get().version();
+  }
+  uint32_t cnt() const {
+    return get().cnt();
+  }
+  std::string name() const {
+    return get().name();
+  }
 
   auto auxiliary_symbols() const {
     return std::make_unique<it_auxiliary_symbols>(get());
@@ -51,11 +64,12 @@ class ELF_SymbolVersionRequirement : private Mirror<LIEF::ELF::SymbolVersionRequ
   }
 
   auto find_aux(std::string name) const {
-    return details::try_unique<ELF_SymbolVersionAuxRequirement>(get().find_aux(name));
+    return details::try_unique<ELF_SymbolVersionAuxRequirement>(
+        get().find_aux(name)
+    );
   }
 
   auto remove_aux_requirement_by_name(std::string name) {
     return get().remove_aux_requirement(name);
   }
-
 };

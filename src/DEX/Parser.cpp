@@ -32,7 +32,7 @@
 namespace LIEF::DEX {
 
 Parser::~Parser() = default;
-Parser::Parser()  = default;
+Parser::Parser() = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
   if (!is_dex(filename)) {
@@ -45,7 +45,8 @@ std::unique_ptr<File> Parser::parse(const std::string& filename) {
   return std::move(parser.file_);
 }
 
-std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
+std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data,
+                                    const std::string& name) {
   if (!is_dex(data)) {
     LIEF_ERR("'{}' is not a DEX file", name);
     return nullptr;
@@ -60,12 +61,10 @@ std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string
 
 Parser::Parser(std::vector<uint8_t> data) :
   file_{new File{}},
-  stream_{std::make_unique<VectorStream>(std::move(data))}
-{}
+  stream_{std::make_unique<VectorStream>(std::move(data))} {}
 
 Parser::Parser(const std::string& file) :
-  file_{new File{}}
-{
+  file_{new File{}} {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
     LIEF_ERR("Failed to create stream");
@@ -114,7 +113,8 @@ void Parser::resolve_inheritance() {
 }
 
 void Parser::resolve_external_methods() {
-  LIEF_DEBUG("Resolving external methods for #{:d} methods", class_method_map_.size());
+  LIEF_DEBUG("Resolving external methods for #{:d} methods",
+             class_method_map_.size());
 
   for (const std::pair<const std::string, Method*>& p : class_method_map_) {
     const std::string& clazz = p.first;
@@ -131,12 +131,12 @@ void Parser::resolve_external_methods() {
       method->parent_ = cls;
       cls->methods_.push_back(method);
     }
-
   }
 }
 
 void Parser::resolve_external_fields() {
-  LIEF_DEBUG("Resolving external fields for #{:d} fields", class_field_map_.size());
+  LIEF_DEBUG("Resolving external fields for #{:d} fields",
+             class_field_map_.size());
 
   for (const std::pair<const std::string, Field*>& p : class_field_map_) {
     const std::string& clazz = p.first;
@@ -153,13 +153,12 @@ void Parser::resolve_external_fields() {
       field->parent_ = cls;
       cls->fields_.push_back(field);
     }
-
   }
 }
 
 void Parser::resolve_types() {
   for (const auto& p : class_type_map_) {
-    if(Class* cls = file_->get_class(p.first)) {
+    if (Class* cls = file_->get_class(p.first)) {
       p.second->underlying_array_type().cls_ = cls;
     } else {
       auto new_cls = std::make_unique<Class>(p.first);
@@ -170,6 +169,4 @@ void Parser::resolve_types() {
 }
 
 
-
 } // namespace LIEF::DEX
-

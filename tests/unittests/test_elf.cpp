@@ -33,10 +33,14 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
       REQUIRE(LIEF::ELF::Binary::classof(bin.get()));
 
 
-      CHECK(bin->get_int_from_virtual_address<uint8_t>(0x5531).value_or(0) == 0xC6);
-      CHECK(bin->get_int_from_virtual_address<uint16_t>(0xAE7A).value_or(0) == 0x58e4);
-      CHECK(bin->get_int_from_virtual_address<uint32_t>(0xAF3C).value_or(0) == 0x11eb9);
-      CHECK(bin->get_int_from_virtual_address<uint64_t>(0xAEF6).value_or(0) == 0xd1042803bdf82001);
+      CHECK(bin->get_int_from_virtual_address<uint8_t>(0x5531).value_or(0) ==
+            0xC6);
+      CHECK(bin->get_int_from_virtual_address<uint16_t>(0xAE7A).value_or(0) ==
+            0x58e4);
+      CHECK(bin->get_int_from_virtual_address<uint32_t>(0xAF3C).value_or(0) ==
+            0x11eb9);
+      CHECK(bin->get_int_from_virtual_address<uint64_t>(0xAEF6).value_or(0) ==
+            0xd1042803bdf82001);
     }
     {
       std::string path = test::get_oat_sample("OAT_138_AArch64_xdivert.oat");
@@ -45,5 +49,3 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
     }
   }
 }
-
-

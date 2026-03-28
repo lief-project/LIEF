@@ -21,12 +21,19 @@
 class MachO_NoteCommand : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::NoteCommand;
-  MachO_NoteCommand(const lief_t& base) : MachO_Command(base) {}
+  MachO_NoteCommand(const lief_t& base) :
+    MachO_Command(base) {}
 
-  auto note_offset() const { return impl().note_offset(); }
-  auto note_size() const { return impl().note_size(); }
+  auto note_offset() const {
+    return impl().note_offset();
+  }
+  auto note_size() const {
+    return impl().note_size();
+  }
 
-  Span owner() const { return make_span(impl().owner()); }
+  Span owner() const {
+    return make_span(impl().owner());
+  }
 
   void set_note_offset(uint64_t value) {
     impl().note_offset(value);
@@ -41,6 +48,10 @@ class MachO_NoteCommand : public MachO_Command {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

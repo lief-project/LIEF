@@ -31,28 +31,34 @@ namespace LIEF::PE {
 result<ResourceVarFileInfo> ResourceVarFileInfo::parse(BinaryStream& stream) {
   ResourceVarFileInfo info;
   auto wLength = stream.read<uint16_t>();
-  if (!wLength) { return make_error_code(wLength.error()); }
+  if (!wLength) {
+    return make_error_code(wLength.error());
+  }
 
   auto wValueLength = stream.read<uint16_t>();
-  if (!wValueLength) { return make_error_code(wValueLength.error()); }
+  if (!wValueLength) {
+    return make_error_code(wValueLength.error());
+  }
 
   auto wType = stream.read<uint16_t>();
-  if (!wType) { return make_error_code(wType.error()); }
+  if (!wType) {
+    return make_error_code(wType.error());
+  }
 
   if (*wType != 0 && wType != 1) {
     return make_error_code(lief_errors::corrupted);
   }
 
   auto szKey = stream.read_u16string();
-  if (!szKey) { return make_error_code(wType.error()); }
+  if (!szKey) {
+    return make_error_code(wType.error());
+  }
 
   if (u16tou8(*szKey) != "VarFileInfo") {
     return make_error_code(lief_errors::corrupted);
   }
 
-  info
-    .type(*wType)
-    .key(std::move(*szKey));
+  info.type(*wType).key(std::move(*szKey));
 
 
   while (stream) {
@@ -90,4 +96,3 @@ std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& info) {
 
 
 }
-

@@ -19,7 +19,7 @@
 #include "LIEF/OAT/json.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
-#include "OAT/json_internal.hpp"
+  #include "OAT/json_internal.hpp"
 #endif
 
 #include "LIEF/OAT.hpp"
@@ -39,4 +39,3 @@ std::string to_json(const Object& v) {
 }
 
 } // namespace LIEF::OAT
-

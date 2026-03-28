@@ -16,34 +16,27 @@
 #include "ELF/DataHandler/Node.hpp"
 
 
-
 namespace LIEF::ELF::DataHandler {
 
 bool Node::operator==(const Node& rhs) const {
   if (this == &rhs) {
     return true;
   }
-  return type() == rhs.type() &&
-         size() == rhs.size() &&
-         offset() == rhs.offset();
+  return type() == rhs.type() && size() == rhs.size() && offset() == rhs.offset();
 }
 
 bool Node::operator<(const Node& rhs) const {
-  return ((type() == rhs.type() &&
-         offset() <= rhs.offset() &&
-         (offset() + size()) < (rhs.offset() + rhs.size())) ||
-         (type() == rhs.type() &&
-         offset() < rhs.offset() &&
-         (offset() + size()) <= (rhs.offset() + rhs.size())));
-
+  return ((type() == rhs.type() && offset() <= rhs.offset() &&
+           (offset() + size()) < (rhs.offset() + rhs.size())) ||
+          (type() == rhs.type() && offset() < rhs.offset() &&
+           (offset() + size()) <= (rhs.offset() + rhs.size())));
 }
 
 
 bool Node::operator>(const Node& rhs) const {
   return type() == rhs.type() &&
-        (offset() > rhs.offset() || (offset() + size()) > (rhs.offset() + rhs.size()));
+         (offset() > rhs.offset() ||
+          (offset() + size()) > (rhs.offset() + rhs.size()));
 }
 
 }
-
-

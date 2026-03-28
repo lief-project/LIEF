@@ -31,7 +31,7 @@ std::vector<size_t> Section::search_all_(const T& v) const {
   do {
     result.push_back(pos);
     pos = search(v, pos + 1);
-  } while(pos != Section::npos);
+  } while (pos != Section::npos);
 
   return result;
 }

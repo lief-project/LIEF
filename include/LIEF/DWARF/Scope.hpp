@@ -57,6 +57,7 @@ class LIEF_API Scope {
   std::string chained(const std::string& sep = "::") const;
 
   ~Scope();
+
   private:
   std::unique_ptr<details::Scope> impl_;
 };

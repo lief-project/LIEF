@@ -18,7 +18,7 @@
 
 namespace LIEF {
 
-template <typename ElementType, std::size_t Extent = tcb::dynamic_extent>
+template<typename ElementType, std::size_t Extent = tcb::dynamic_extent>
 using span = tcb::span<ElementType, Extent>;
 }
 

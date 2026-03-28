@@ -36,15 +36,15 @@ class LIEF_API Pogo : public Debug {
   friend class Parser;
 
   public:
-  using entries_t        = std::vector<PogoEntry>;
-  using it_entries       = ref_iterator<entries_t&>;
+  using entries_t = std::vector<PogoEntry>;
+  using it_entries = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
   enum class SIGNATURES {
     UNKNOWN = 0x0fffffff,
-    ZERO    = 0x00000000,
-    LCTG    = 0x4C544347, // LCTG
-    PGI     = 0x50474900, // PGI\0
+    ZERO = 0x00000000,
+    LCTG = 0x4C544347, // LCTG
+    PGI = 0x50474900,  // PGI\0
   };
 
   Pogo() {
@@ -53,13 +53,11 @@ class LIEF_API Pogo : public Debug {
 
   Pogo(SIGNATURES sig) :
     Debug{Debug::TYPES::POGO},
-    sig_{sig}
-  {}
+    sig_{sig} {}
 
   Pogo(const details::pe_debug& debug, SIGNATURES sig, Section* sec) :
     Debug(debug, sec),
-    sig_(sig)
-  {}
+    sig_(sig) {}
 
   Pogo(const Pogo&) = default;
   Pogo& operator=(const Pogo&) = default;

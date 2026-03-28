@@ -23,16 +23,16 @@
 
 namespace lief_jni::dwarf::editor {
 
-class Variable : public JNI<
-  Variable, std::unique_ptr<LIEF::dwarf::editor::Variable>>
-{
+class Variable
+  : public JNI<Variable, std::unique_ptr<LIEF::dwarf::editor::Variable>> {
   public:
   using JNI::JNI;
-  static constexpr jni::Class kClass {
-    "lief/dwarf/editor/Variable",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/dwarf/editor/Variable",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static int register_natives(JNIEnv* env);
 
@@ -56,9 +56,7 @@ class Variable : public JNI<
   }
 
   static jobject jni_set_type(JNIEnv* env, jobject thiz, jobject type) {
-    from_jni(thiz)->impl().set_type(
-      Type::from_jni(type)->impl()
-    );
+    from_jni(thiz)->impl().set_type(Type::from_jni(type)->impl());
     return thiz;
   }
 

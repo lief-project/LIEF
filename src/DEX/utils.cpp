@@ -34,7 +34,7 @@ inline bool is_dex(BinaryStream& stream) {
   return false;
 }
 
- dex_version_t version(BinaryStream& stream) {
+dex_version_t version(BinaryStream& stream) {
   using version_t = std::array<char, 4>;
   stream.setpos(0);
   if (!is_dex(stream)) {
@@ -43,8 +43,9 @@ inline bool is_dex(BinaryStream& stream) {
   stream.increment_pos(sizeof(details::magic));
   if (auto ver_res = stream.peek<version_t>()) {
     const auto version = *ver_res;
-    const bool are_digits = std::all_of(version.begin(), version.end(),
-        [] (char c) { return c == 0 || ::isdigit(c); });
+    const bool are_digits =
+        std::all_of(version.begin(), version.end(),
+                    [](char c) { return c == 0 || ::isdigit(c); });
     if (!are_digits) {
       return 0;
     }
@@ -52,7 +53,6 @@ inline bool is_dex(BinaryStream& stream) {
     return static_cast<dex_version_t>(std::stoul(version_str));
   }
   return 0;
-
 }
 
 bool is_dex(const std::string& file) {
@@ -85,4 +85,3 @@ dex_version_t version(const std::vector<uint8_t>& raw) {
 
 
 }
-

@@ -21,26 +21,15 @@
 namespace lief_jni::dwarf::editor {
 
 int EnumType::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "setSize",
-      "(J)Llief/dwarf/editor/EnumType;",
-      &jni_set_size
-    ),
-    make(
-      "addValue",
-      "(Ljava/lang/String;J)Llief/dwarf/editor/EnumType$Value;",
-      &jni_add_value
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("setSize", "(J)Llief/dwarf/editor/EnumType;", &jni_set_size),
+      make("addValue", "(Ljava/lang/String;J)Llief/dwarf/editor/EnumType$Value;",
+           &jni_add_value),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   Value::register_natives(env);
 
@@ -50,16 +39,12 @@ int EnumType::register_natives(JNIEnv* env) {
 }
 
 int EnumType::Value::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

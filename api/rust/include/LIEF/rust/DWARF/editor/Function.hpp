@@ -27,7 +27,8 @@ class DWARF_editor_Function_Range {
   uint64_t end = 0;
 };
 
-class DWARF_editor_Function_Parameter : public Mirror<LIEF::dwarf::editor::Function::Parameter> {
+class DWARF_editor_Function_Parameter
+  : public Mirror<LIEF::dwarf::editor::Function::Parameter> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::Function::Parameter;
@@ -41,27 +42,30 @@ class DWARF_editor_Function_Parameter : public Mirror<LIEF::dwarf::editor::Funct
   }
 };
 
-class DWARF_editor_Function_LexicalBlock : public Mirror<LIEF::dwarf::editor::Function::LexicalBlock> {
+class DWARF_editor_Function_LexicalBlock
+  : public Mirror<LIEF::dwarf::editor::Function::LexicalBlock> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::Function::LexicalBlock;
 
   auto add_block(uint64_t start, uint64_t end) {
     return details::try_unique<DWARF_editor_Function_LexicalBlock>(
-      get().add_block(start, end)
+        get().add_block(start, end)
     );
   }
 
-  auto add_block_from_range(const std::vector<DWARF_editor_Function_Range>& ranges) {
+  auto add_block_from_range(
+      const std::vector<DWARF_editor_Function_Range>& ranges
+  ) {
     std::vector<LIEF::dwarf::editor::Function::range_t> conv_ranges;
     conv_ranges.reserve(ranges.size());
     std::transform(ranges.begin(), ranges.end(), std::back_inserter(conv_ranges),
-      [] (const DWARF_editor_Function_Range& R) {
-        return LIEF::dwarf::editor::Function::range_t{R.start, R.end};
-      });
+                   [](const DWARF_editor_Function_Range& R) {
+                     return LIEF::dwarf::editor::Function::range_t{R.start, R.end};
+                   });
 
     return details::try_unique<DWARF_editor_Function_LexicalBlock>(
-      get().add_block(conv_ranges)
+        get().add_block(conv_ranges)
     );
   }
 
@@ -74,7 +78,8 @@ class DWARF_editor_Function_LexicalBlock : public Mirror<LIEF::dwarf::editor::Fu
   }
 };
 
-class DWARF_editor_Function_Label : public Mirror<LIEF::dwarf::editor::Function::Label> {
+class DWARF_editor_Function_Label
+  : public Mirror<LIEF::dwarf::editor::Function::Label> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::Function::Label;
@@ -85,18 +90,24 @@ class DWARF_editor_Function : public Mirror<LIEF::dwarf::editor::Function> {
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::Function;
 
-  auto set_address(uint64_t addr) { get().set_address(addr); }
-  auto set_low_high(uint64_t low, uint64_t high) { get().set_low_high(low, high); }
+  auto set_address(uint64_t addr) {
+    get().set_address(addr);
+  }
+  auto set_low_high(uint64_t low, uint64_t high) {
+    get().set_low_high(low, high);
+  }
   auto set_ranges(const std::vector<DWARF_editor_Function_Range>& ranges) {
     std::vector<lief_t::range_t> conv_ranges;
     conv_ranges.reserve(ranges.size());
     std::transform(ranges.begin(), ranges.end(), std::back_inserter(conv_ranges),
-      [] (const DWARF_editor_Function_Range& R) {
-        return lief_t::range_t{R.start, R.end};
-      });
+                   [](const DWARF_editor_Function_Range& R) {
+                     return lief_t::range_t{R.start, R.end};
+                   });
     return conv_ranges;
   }
-  auto set_external() { get().set_external(); }
+  auto set_external() {
+    get().set_external();
+  }
 
   auto set_return_type(const DWARF_editor_Type& ty) {
     get().set_return_type(ty.get());
@@ -104,27 +115,29 @@ class DWARF_editor_Function : public Mirror<LIEF::dwarf::editor::Function> {
 
   auto add_parameter(std::string name, const DWARF_editor_Type& ty) {
     return details::try_unique<DWARF_editor_Function_Parameter>(
-      get().add_parameter(name, ty.get())
+        get().add_parameter(name, ty.get())
     );
   }
 
   auto create_stack_variable(std::string name) {
     return details::try_unique<DWARF_editor_Variable>(
-      get().create_stack_variable(name)
+        get().create_stack_variable(name)
     );
   }
 
   auto add_lexical_block(uint64_t start, uint64_t end) {
     return details::try_unique<DWARF_editor_Function_LexicalBlock>(
-      get().add_lexical_block(start, end)
+        get().add_lexical_block(start, end)
     );
   }
 
   auto add_label(uint64_t addr, std::string label) {
     return details::try_unique<DWARF_editor_Function_Label>(
-      get().add_label(addr, label)
+        get().add_label(addr, label)
     );
   }
 
-  auto add_description(std::string desc) { get().add_description(desc); }
+  auto add_description(std::string desc) {
+    get().add_description(desc);
+  }
 };

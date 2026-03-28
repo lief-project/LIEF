@@ -81,7 +81,7 @@ DebugInfo::types_it DebugInfo::types() const {
   return make_empty_iterator<Type>();
 }
 
-std::unique_ptr<Type> DebugInfo::find_type(const std::string&/*name*/) const {
+std::unique_ptr<Type> DebugInfo::find_type(const std::string& /*name*/) const {
   return nullptr;
 }
 
@@ -102,7 +102,7 @@ std::string DebugInfo::to_string() const {
 }
 
 std::unique_ptr<PublicSymbol>
-DebugInfo::find_public_symbol(const std::string&) const {
+    DebugInfo::find_public_symbol(const std::string&) const {
   return nullptr;
 }
 
@@ -111,7 +111,8 @@ std::unique_ptr<DebugInfo> DebugInfo::from_file(const std::string&) {
   return nullptr;
 }
 
-optional<uint64_t> DebugInfo::find_function_address(const std::string& /*name*/) const {
+optional<uint64_t>
+    DebugInfo::find_function_address(const std::string& /*name*/) const {
   return nullopt();
 }
 
@@ -127,8 +128,7 @@ bool is_pdb(const std::string& /*path*/) {
 // PDB/CompilationUnit.hpp
 // ----------------------------------------------------------------------------
 CompilationUnit::CompilationUnit(std::unique_ptr<details::CompilationUnit> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 CompilationUnit::~CompilationUnit() = default;
 
@@ -155,22 +155,18 @@ std::unique_ptr<BuildMetadata> CompilationUnit::build_metadata() const {
 }
 
 CompilationUnit::Iterator::Iterator(std::unique_ptr<details::CompilationUnitIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 CompilationUnit::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 CompilationUnit::Iterator::Iterator(Iterator&&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 CompilationUnit::Iterator::~Iterator() = default;
 
 bool operator==(const CompilationUnit::Iterator&,
-                const CompilationUnit::Iterator&)
-{
+                const CompilationUnit::Iterator&) {
   return true;
 }
 
@@ -194,29 +190,23 @@ std::string CompilationUnit::to_string() const {
 // PDB/PublicSymbol.hpp
 // ----------------------------------------------------------------------------
 PublicSymbol::PublicSymbol(std::unique_ptr<details::PublicSymbol> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 PublicSymbol::~PublicSymbol() = default;
 
 
 PublicSymbol::Iterator::Iterator(std::unique_ptr<details::PublicSymbolIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 PublicSymbol::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 PublicSymbol::Iterator::Iterator(Iterator&&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 PublicSymbol::Iterator::~Iterator() = default;
 
-bool operator==(const PublicSymbol::Iterator&,
-                const PublicSymbol::Iterator&)
-{
+bool operator==(const PublicSymbol::Iterator&, const PublicSymbol::Iterator&) {
   return true;
 }
 
@@ -252,29 +242,23 @@ std::string PublicSymbol::to_string() const {
 // PDB/Function.hpp
 // ----------------------------------------------------------------------------
 Function::Function(std::unique_ptr<details::Function> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 Function::~Function() = default;
 
 
 Function::Iterator::Iterator(std::unique_ptr<details::FunctionIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Function::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Function::Iterator::Iterator(Iterator&&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Function::Iterator::~Iterator() = default;
 
-bool operator==(const Function::Iterator&,
-                const Function::Iterator&)
-{
+bool operator==(const Function::Iterator&, const Function::Iterator&) {
   return true;
 }
 
@@ -313,7 +297,7 @@ std::string Function::to_string() const {
 // ----------------------------------------------------------------------------
 // PDB/Type.hpp
 // ----------------------------------------------------------------------------
-std::unique_ptr<Type> Type::create(std::unique_ptr<details::Type>/* impl*/) {
+std::unique_ptr<Type> Type::create(std::unique_ptr<details::Type> /* impl*/) {
   return nullptr;
 }
 
@@ -337,26 +321,20 @@ Type::~Type() = default;
 
 
 Type::Type(std::unique_ptr<details::Type> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 Type::Iterator::Iterator(std::unique_ptr<details::TypeIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Type::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Type::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Type::Iterator::~Iterator() = default;
 
-bool operator==(const Type::Iterator&,
-                const Type::Iterator&)
-{
+bool operator==(const Type::Iterator&, const Type::Iterator&) {
   return true;
 }
 
@@ -435,8 +413,7 @@ Enum::Entry& Enum::Entry::operator=(Entry&& other) noexcept = default;
 Enum::Entry::~Entry() = default;
 
 Enum::Entry::Entry(std::unique_ptr<details::EnumEntry> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 std::string Enum::Entry::name() const {
   return "";
@@ -504,26 +481,20 @@ Union::~Union() = default;
 // PDB/types/Attribute.hpp
 // ----------------------------------------------------------------------------
 Attribute::Attribute(std::unique_ptr<details::Attribute> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 Attribute::Iterator::Iterator(std::unique_ptr<details::AttributeIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Attribute::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Attribute::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Attribute::Iterator::~Iterator() = default;
 
-bool operator==(const Attribute::Iterator&,
-                const Attribute::Iterator&)
-{
+bool operator==(const Attribute::Iterator&, const Attribute::Iterator&) {
   return true;
 }
 
@@ -553,26 +524,20 @@ Attribute::~Attribute() = default;
 // PDB/types/Method.hpp
 // ----------------------------------------------------------------------------
 Method::Method(std::unique_ptr<details::Method> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 Method::Iterator::Iterator(std::unique_ptr<details::MethodIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Method::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Method::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Method::Iterator::~Iterator() = default;
 
-bool operator==(const Method::Iterator&,
-                const Method::Iterator&)
-{
+bool operator==(const Method::Iterator&, const Method::Iterator&) {
   return true;
 }
 
@@ -604,8 +569,7 @@ Method::~Method() = default;
 // PDB/BuildMetadata.hpp
 // ----------------------------------------------------------------------------
 BuildMetadata::BuildMetadata(std::unique_ptr<details::BuildMetadata> /*impl*/) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 BuildMetadata::~BuildMetadata() = default;
 

@@ -38,9 +38,9 @@ class LIEF_API MapList : public Object {
   friend class Parser;
 
   public:
-  using items_t           = std::map<MapItem::TYPES, MapItem>;
-  using it_items_t        = ref_iterator<std::vector<MapItem*>>;
-  using it_const_items_t  = const_ref_iterator<std::vector<MapItem*>>;
+  using items_t = std::map<MapItem::TYPES, MapItem>;
+  using it_items_t = ref_iterator<std::vector<MapItem*>>;
+  using it_const_items_t = const_ref_iterator<std::vector<MapItem*>>;
 
   public:
   MapList();
@@ -76,7 +76,6 @@ class LIEF_API MapList : public Object {
 
   private:
   items_t items_;
-
 };
 
 } // Namespace DEX

@@ -25,13 +25,15 @@
 #include "fmt_formatter.hpp"
 
 FMT_FORMATTER(LIEF::PE::ResourceDialog::DIALOG_STYLES, LIEF::PE::to_string);
-FMT_FORMATTER(LIEF::PE::ResourceDialog::WINDOW_EXTENDED_STYLES, LIEF::PE::to_string);
+FMT_FORMATTER(LIEF::PE::ResourceDialog::WINDOW_EXTENDED_STYLES,
+              LIEF::PE::to_string);
 FMT_FORMATTER(LIEF::PE::ResourceDialog::WINDOW_STYLES, LIEF::PE::to_string);
 FMT_FORMATTER(LIEF::PE::ResourceDialog::CONTROL_STYLES, LIEF::PE::to_string);
 
 namespace LIEF::PE {
 
-result<ResourceDialogExtended::Item> ResourceDialogExtended::Item::parse(BinaryStream& stream) {
+result<ResourceDialogExtended::Item>
+    ResourceDialogExtended::Item::parse(BinaryStream& stream) {
   // typedef struct {
   //   DWORD     helpID;
   //   DWORD     exStyle;
@@ -88,13 +90,14 @@ result<ResourceDialogExtended::Item> ResourceDialogExtended::Item::parse(BinaryS
   }
 
   ResourceDialogExtended::Item item;
-  item
-    .help_id(*helpID)
-    .style(*style)
-    .extended_style(*exStyle)
-    .x(*x).y(*y)
-    .cx(*cx).cy(*cy)
-    .id(*id);
+  item.help_id(*helpID)
+      .style(*style)
+      .extended_style(*exStyle)
+      .x(*x)
+      .y(*y)
+      .cx(*cx)
+      .cy(*cy)
+      .id(*id);
 
   stream.align(sizeof(uint16_t));
 
@@ -147,8 +150,7 @@ ok_error_t parse_typeface(ResourceDialogExtended& dialog, BinaryStream& stream) 
     return make_error_code(typeface.error());
   }
 
-  dialog.font(*point_size, *weight, (bool)*italic,
-              *charset, std::move(*typeface));
+  dialog.font(*point_size, *weight, (bool)*italic, *charset, std::move(*typeface));
 
   stream.align(sizeof(uint16_t));
   return ok();
@@ -156,8 +158,7 @@ ok_error_t parse_typeface(ResourceDialogExtended& dialog, BinaryStream& stream) 
 
 
 std::unique_ptr<ResourceDialogExtended>
-  ResourceDialogExtended::create(BinaryStream& stream)
-{
+    ResourceDialogExtended::create(BinaryStream& stream) {
   auto version = stream.read<uint16_t>();
   if (!version) {
     return nullptr;
@@ -211,14 +212,15 @@ std::unique_ptr<ResourceDialogExtended>
 
   auto dialog = std::make_unique<ResourceDialogExtended>();
   (*dialog)
-    .version(*version)
-    .signature(*signature)
-    .help_id(*help_id)
-    .extended_style(*ext_style)
-    .style(*style)
-    .x(*x).y(*y)
-    .cx(*cx).cy(*cy)
-  ;
+      .version(*version)
+      .signature(*signature)
+      .help_id(*help_id)
+      .extended_style(*ext_style)
+      .style(*style)
+      .x(*x)
+      .y(*y)
+      .cx(*cx)
+      .cy(*cy);
 
   if (auto is_ok = parse_menu(*dialog, stream); !is_ok) {
     return dialog;
@@ -260,27 +262,13 @@ std::string ResourceDialogExtended::Item::to_string() const {
   {
     if (auto ord = clazz().ordinal) {
       switch ((WINDOW_CLASS)*ord) {
-        case WINDOW_CLASS::BUTTON:
-          win_class_str = "Button";
-          break;
-        case WINDOW_CLASS::EDIT:
-          win_class_str = "Edit";
-          break;
-        case WINDOW_CLASS::STATIC:
-          win_class_str = "Static";
-          break;
-        case WINDOW_CLASS::LIST_BOX:
-          win_class_str = "List box";
-          break;
-        case WINDOW_CLASS::SCROLL_BAR:
-          win_class_str = "Scroll bar";
-          break;
-        case WINDOW_CLASS::COMBO_BOX:
-          win_class_str = "Combo box";
-          break;
-        default:
-          win_class_str = fmt::format("unknown ({:#06x})", *ord);
-          break;
+        case WINDOW_CLASS::BUTTON: win_class_str = "Button"; break;
+        case WINDOW_CLASS::EDIT: win_class_str = "Edit"; break;
+        case WINDOW_CLASS::STATIC: win_class_str = "Static"; break;
+        case WINDOW_CLASS::LIST_BOX: win_class_str = "List box"; break;
+        case WINDOW_CLASS::SCROLL_BAR: win_class_str = "Scroll bar"; break;
+        case WINDOW_CLASS::COMBO_BOX: win_class_str = "Combo box"; break;
+        default: win_class_str = fmt::format("unknown ({:#06x})", *ord); break;
       }
     } else {
       win_class_str = u16tou8(clazz().string);
@@ -290,8 +278,7 @@ std::string ResourceDialogExtended::Item::to_string() const {
   return fmt::format("CONTROL '{}', {}, {}, {} {}, {}, {}, {}, {}",
                      title().to_string(), id(), win_class_str,
                      fmt::join(control_styles(), " | "),
-                     fmt::join(window_styles(), " | "),
-                     x(), y(), cx(), cy());
+                     fmt::join(window_styles(), " | "), x(), y(), cx(), cy());
 }
 
 std::string ResourceDialogExtended::to_string() const {

@@ -32,8 +32,7 @@ class LIEF_API Section : public Object {
 
   Section() = default;
   Section(std::string name) :
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
 
   ~Section() override = default;
 
@@ -118,9 +117,9 @@ class LIEF_API Section : public Object {
 
   protected:
   std::string name_;
-  uint64_t    virtual_address_ = 0;
-  uint64_t    size_ = 0;
-  uint64_t    offset_ = 0;
+  uint64_t virtual_address_ = 0;
+  uint64_t size_ = 0;
+  uint64_t offset_ = 0;
 
   private:
   template<typename T>

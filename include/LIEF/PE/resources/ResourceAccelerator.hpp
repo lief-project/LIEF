@@ -37,8 +37,8 @@ struct pe_resource_acceltableentry;
 
 class LIEF_API ResourceAccelerator : public Object {
   friend class ResourcesManager;
-  public:
 
+  public:
   /// From: https://docs.microsoft.com/en-us/windows/win32/menurc/acceltableentry
   enum class FLAGS : uint32_t {
     /// The accelerator key is a virtual-key code. If this flag is not specified,
@@ -122,7 +122,8 @@ class LIEF_API ResourceAccelerator : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceAccelerator& acc);
 
   private:
   int16_t flags_ = 0;

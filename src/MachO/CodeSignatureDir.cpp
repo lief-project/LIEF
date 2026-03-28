@@ -26,8 +26,7 @@ namespace LIEF::MachO {
 CodeSignatureDir::CodeSignatureDir(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   data_offset_{cmd.dataoff},
-  data_size_{cmd.datasize}
-{}
+  data_size_{cmd.datasize} {}
 
 void CodeSignatureDir::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -35,11 +34,9 @@ void CodeSignatureDir::accept(Visitor& visitor) const {
 
 std::ostream& CodeSignatureDir::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("offset={:#08x}, size={:#08x}",
-                     data_offset(), data_size());
+  os << fmt::format("offset={:#08x}, size={:#08x}", data_offset(), data_size());
   return os;
 }
 
 
 }
-

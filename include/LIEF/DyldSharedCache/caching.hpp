@@ -35,7 +35,8 @@ namespace dsc {
 /// directory (in this priority):
 ///
 /// 1. System or user cache directory
-///   - macOS: `DARWIN_USER_TEMP_DIR` / `DARWIN_USER_CACHE_DIR` + `/dyld_shared_cache`
+///   - macOS: `DARWIN_USER_TEMP_DIR` / `DARWIN_USER_CACHE_DIR` +
+///   `/dyld_shared_cache`
 ///   - Linux: `${XDG_CACHE_HOME}/dyld_shared_cache`
 ///   - Windows: `%LOCALAPPDATA%\dyld_shared_cache`
 /// 2. Home directory
@@ -52,4 +53,3 @@ LIEF_API bool enable_cache(const std::string& dir);
 }
 }
 #endif
-

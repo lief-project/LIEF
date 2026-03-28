@@ -31,28 +31,30 @@ Header::Header(const T* header) :
   i2i_bridge_offset_{header->i2i_bridge_offset},
   i2c_code_bridge_offset_{header->i2c_code_bridge_offset},
   jni_dlsym_lookup_offset_{header->jni_dlsym_lookup_offset},
-  quick_generic_jni_trampoline_offset_{header->quick_generic_jni_trampoline_offset},
-  quick_imt_conflict_trampoline_offset_{header->quick_imt_conflict_trampoline_offset},
+  quick_generic_jni_trampoline_offset_{
+      header->quick_generic_jni_trampoline_offset
+  },
+  quick_imt_conflict_trampoline_offset_{
+      header->quick_imt_conflict_trampoline_offset
+  },
   quick_resolution_trampoline_offset_{header->quick_resolution_trampoline_offset},
   quick_to_interpreter_bridge_offset_{header->quick_to_interpreter_bridge_offset},
   image_patch_delta_{header->image_patch_delta},
   image_file_location_oat_checksum_{header->image_file_location_oat_checksum},
   image_file_location_oat_data_begin_{header->image_file_location_oat_data_begin},
   key_value_store_size_{header->key_value_store_size},
-  dex2oat_context_{}
-{
+  dex2oat_context_{} {
 
   std::copy(std::begin(header->magic), std::end(header->magic),
-            std::begin(magic_)
-  );
-  if (std::all_of(std::begin(header->oat_version), std::end(header->oat_version) - 1,
-                  ::isdigit))
+            std::begin(magic_));
+  if (std::all_of(std::begin(header->oat_version),
+                  std::end(header->oat_version) - 1, ::isdigit))
   {
     version_ = static_cast<uint32_t>(
-        std::stoi(
-          std::string{reinterpret_cast<const char*>(header->oat_version), sizeof(header->oat_version)}));
+        std::stoi(std::string{reinterpret_cast<const char*>(header->oat_version),
+                              sizeof(header->oat_version)})
+    );
   }
-
 }
 
 
@@ -64,37 +66,38 @@ Header::Header(const details::OAT_131::oat_header* header) :
   instruction_set_{static_cast<INSTRUCTION_SETS>(header->instruction_set)},
   instruction_set_features_bitmap_{header->instruction_set_features_bitmap},
   dex_file_count_{header->dex_file_count},
-  oat_dex_files_offset_{header->oat_dex_files_offset}, // Since OAT 131 / Android 8.1.0
+  oat_dex_files_offset_{
+      header->oat_dex_files_offset
+  }, // Since OAT 131 / Android 8.1.0
   executable_offset_{header->executable_offset},
   i2i_bridge_offset_{header->i2i_bridge_offset},
   i2c_code_bridge_offset_{header->i2c_code_bridge_offset},
   jni_dlsym_lookup_offset_{header->jni_dlsym_lookup_offset},
-  quick_generic_jni_trampoline_offset_{header->quick_generic_jni_trampoline_offset},
-  quick_imt_conflict_trampoline_offset_{header->quick_imt_conflict_trampoline_offset},
+  quick_generic_jni_trampoline_offset_{
+      header->quick_generic_jni_trampoline_offset
+  },
+  quick_imt_conflict_trampoline_offset_{
+      header->quick_imt_conflict_trampoline_offset
+  },
   quick_resolution_trampoline_offset_{header->quick_resolution_trampoline_offset},
   quick_to_interpreter_bridge_offset_{header->quick_to_interpreter_bridge_offset},
   image_patch_delta_{header->image_patch_delta},
   image_file_location_oat_checksum_{header->image_file_location_oat_checksum},
   image_file_location_oat_data_begin_{header->image_file_location_oat_data_begin},
   key_value_store_size_{header->key_value_store_size},
-  dex2oat_context_{}
-{
+  dex2oat_context_{} {
 
-  std::copy(
-      std::begin(header->magic),
-      std::end(header->magic),
-      std::begin(magic_)
-  );
-  if (std::all_of(
-        std::begin(header->oat_version),
-        std::end(header->oat_version) - 1,
-        ::isdigit))
+  std::copy(std::begin(header->magic), std::end(header->magic),
+            std::begin(magic_));
+  if (std::all_of(std::begin(header->oat_version),
+                  std::end(header->oat_version) - 1, ::isdigit))
   {
-    version_ = static_cast<uint32_t>(std::stoi(std::string{reinterpret_cast<const char*>(header->oat_version), sizeof(header->oat_version)}));
+    version_ = static_cast<uint32_t>(
+        std::stoi(std::string{reinterpret_cast<const char*>(header->oat_version),
+                              sizeof(header->oat_version)})
+    );
   }
-
 }
 
 
 } // namespace LIEF::OAT
-

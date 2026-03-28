@@ -21,7 +21,8 @@
 class MachO_SourceVersion : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::SourceVersion;
-  MachO_SourceVersion(const lief_t& base) : MachO_Command(base) {}
+  MachO_SourceVersion(const lief_t& base) :
+    MachO_Command(base) {}
   auto version() const {
     return details::make_vector(impl().version());
   }
@@ -31,5 +32,7 @@ class MachO_SourceVersion : public MachO_Command {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

@@ -21,18 +21,20 @@
 
 namespace LIEF::ELF {
 
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const details::Elf64_Vernaux& header) :
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(
+    const details::Elf64_Vernaux& header
+) :
   hash_{header.vna_hash},
   flags_{header.vna_flags},
-  other_{header.vna_other}
-{}
+  other_{header.vna_other} {}
 
 
-SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const details::Elf32_Vernaux& header) :
+SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(
+    const details::Elf32_Vernaux& header
+) :
   hash_{header.vna_hash},
   flags_{header.vna_flags},
-  other_{header.vna_other}
-{}
+  other_{header.vna_other} {}
 
 void SymbolVersionAuxRequirement::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -40,4 +42,3 @@ void SymbolVersionAuxRequirement::accept(Visitor& visitor) const {
 
 
 }
-

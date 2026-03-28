@@ -34,7 +34,11 @@ namespace binaryninja {
 
 enum class FileFormat {
   Unknown = 0,
-  ELF, PE, MachO, COFF, DSC
+  ELF,
+  PE,
+  MachO,
+  COFF,
+  DSC,
 };
 
 FileFormat get_file_format(BinaryNinja::BinaryView& bv);

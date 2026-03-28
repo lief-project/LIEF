@@ -18,7 +18,7 @@
 #include "LIEF/Abstract/json.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
-#include "Abstract/json_internal.hpp"
+  #include "Abstract/json_internal.hpp"
 #endif
 
 namespace LIEF {

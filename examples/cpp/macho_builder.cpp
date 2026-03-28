@@ -20,7 +20,7 @@
 
 using namespace LIEF;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "MachO Rebuilder" << '\n';
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << "\n";

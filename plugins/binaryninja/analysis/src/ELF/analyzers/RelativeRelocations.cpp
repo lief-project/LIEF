@@ -29,10 +29,8 @@ bool RelativeRelocations::can_run(BinaryNinja::BinaryView& bv, Binary& elf) {
   for (const DynamicEntry& DT : elf.dynamic_entries()) {
     switch (DT.tag()) {
       case DynamicEntry::TAG::RELR:
-      case DynamicEntry::TAG::ANDROID_RELR:
-        return true;
-      default:
-        continue;
+      case DynamicEntry::TAG::ANDROID_RELR: return true;
+      default: continue;
     }
   }
   return false;
@@ -56,7 +54,6 @@ void RelativeRelocations::run() {
       process_relative(dt_addr->value(), dt_sz->value());
     }
   }
-
 }
 
 }

@@ -76,8 +76,7 @@ class LIEF_API Factory {
 
   protected:
   Factory() :
-    pe_(std::unique_ptr<Binary>(new Binary{}))
-  {}
+    pe_(std::unique_ptr<Binary>(new Binary{})) {}
   std::unique_ptr<Binary> process();
 
   ok_error_t check_overlapping() const;
@@ -93,4 +92,3 @@ class LIEF_API Factory {
 }
 }
 #endif
-

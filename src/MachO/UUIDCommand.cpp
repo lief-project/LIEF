@@ -24,8 +24,7 @@ namespace LIEF::MachO {
 
 
 UUIDCommand::UUIDCommand(const details::uuid_command& uuid) :
-  LoadCommand::LoadCommand{LoadCommand::TYPE(uuid.cmd), uuid.cmdsize}
-{
+  LoadCommand::LoadCommand{LoadCommand::TYPE(uuid.cmd), uuid.cmdsize} {
   std::copy(std::begin(uuid.uuid), std::end(uuid.uuid), std::begin(uuid_));
 }
 
@@ -44,4 +43,3 @@ std::ostream& UUIDCommand::print(std::ostream& os) const {
 
 
 }
-

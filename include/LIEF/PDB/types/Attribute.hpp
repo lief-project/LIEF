@@ -47,14 +47,19 @@ class LIEF_API Attribute {
     class LIEF_API PointerProxy {
       // Inspired from LLVM's iterator_facade_base
       friend class Iterator;
+
       public:
-      pointer operator->() const { return R.get(); }
+      pointer operator->() const {
+        return R.get();
+      }
 
       private:
       value_type R;
 
-      template <typename RefT>
-      PointerProxy(RefT &&R) : R(std::forward<RefT>(R)) {} // NOLINT(bugprone-forwarding-reference-overload)
+      template<typename RefT>
+      PointerProxy(RefT&& R) :
+        R(std::forward<RefT>(R)) {
+      } // NOLINT(bugprone-forwarding-reference-overload)
     };
     Iterator(const Iterator&);
     Iterator(Iterator&&) noexcept;
@@ -70,7 +75,7 @@ class LIEF_API Attribute {
 
     Iterator operator++(int) {
       Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator *>(this);
+      ++*static_cast<Iterator*>(this);
       return tmp;
     }
 
@@ -83,6 +88,7 @@ class LIEF_API Attribute {
     private:
     std::unique_ptr<details::AttributeIt> impl_;
   };
+
   public:
   Attribute(std::unique_ptr<details::Attribute> impl);
 
@@ -105,4 +111,3 @@ class LIEF_API Attribute {
 }
 }
 #endif
-

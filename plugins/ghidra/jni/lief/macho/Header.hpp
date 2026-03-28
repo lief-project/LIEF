@@ -21,33 +21,31 @@
 
 namespace lief_jni::macho {
 
-class Header : public JNI<
-  Header, LIEF::MachO::Header*>
-{
+class Header : public JNI<Header, LIEF::MachO::Header*> {
   public:
   using JNI::JNI;
-  static constexpr jni::Class kClass {
-    "lief/macho/Header",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
+  static constexpr jni::Class kClass{"lief/macho/Header",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
+
+  class CpuType
+    : public JNIEnum<LIEF::MachO::Header::CPU_TYPE, "lief/macho/Header$CpuType"> {
   };
 
-  class CpuType : public JNIEnum<
-    LIEF::MachO::Header::CPU_TYPE, "lief/macho/Header$CpuType">
-  {};
-
-  class FileType : public JNIEnum<
-    LIEF::MachO::Header::FILE_TYPE, "lief/macho/Header$FileType">
-  {};
+  class FileType : public JNIEnum<LIEF::MachO::Header::FILE_TYPE,
+                                  "lief/macho/Header$FileType"> {};
 
   static jobject jni_get_cpu_type(JNIEnv* env, jobject thiz) {
-    return CpuType::create(
-      from_jni(thiz)->impl().cpu_type(), &LIEF::MachO::to_string);
+    return CpuType::create(from_jni(thiz)->impl().cpu_type(),
+                           &LIEF::MachO::to_string);
   }
 
   static jobject jni_get_file_type(JNIEnv* env, jobject thiz) {
-    return FileType::create(
-      from_jni(thiz)->impl().file_type(), &LIEF::MachO::to_string);
+    return FileType::create(from_jni(thiz)->impl().file_type(),
+                            &LIEF::MachO::to_string);
   }
 
   static jint jni_get_cpu_sub_type(JNIEnv* env, jobject thiz) {

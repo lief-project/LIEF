@@ -21,16 +21,25 @@
 class MachO_FunctionVariantFixups : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::FunctionVariantFixups;
-  MachO_FunctionVariantFixups(const lief_t& base) : MachO_Command(base) {}
-  uint32_t data_offset() const { return impl().data_offset(); }
-  uint32_t data_size() const { return impl().data_size(); }
+  MachO_FunctionVariantFixups(const lief_t& base) :
+    MachO_Command(base) {}
+  uint32_t data_offset() const {
+    return impl().data_offset();
+  }
+  uint32_t data_size() const {
+    return impl().data_size();
+  }
 
-  auto content() const { return make_span(impl().content()); }
+  auto content() const {
+    return make_span(impl().content());
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

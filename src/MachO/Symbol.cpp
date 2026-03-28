@@ -41,16 +41,14 @@ Symbol::Symbol(const Symbol& other) :
   type_{other.type_},
   numberof_sections_{other.numberof_sections_},
   description_{other.description_},
-  origin_{other.origin_}
-{}
+  origin_{other.origin_} {}
 
 
 Symbol::Symbol(const details::nlist_32& cmd) :
   type_{cmd.n_type},
   numberof_sections_{cmd.n_sect},
   description_{static_cast<uint16_t>(cmd.n_desc)},
-  origin_{ORIGIN::SYMTAB}
-{
+  origin_{ORIGIN::SYMTAB} {
   value_ = cmd.n_value;
 }
 
@@ -58,20 +56,19 @@ Symbol::Symbol(const details::nlist_64& cmd) :
   type_{cmd.n_type},
   numberof_sections_{cmd.n_sect},
   description_{cmd.n_desc},
-  origin_{ORIGIN::SYMTAB}
-{
+  origin_{ORIGIN::SYMTAB} {
   value_ = cmd.n_value;
 }
 
 void Symbol::swap(Symbol& other) noexcept {
   LIEF::Symbol::swap(other);
 
-  std::swap(type_,              other.type_);
+  std::swap(type_, other.type_);
   std::swap(numberof_sections_, other.numberof_sections_);
-  std::swap(description_,       other.description_);
-  std::swap(binding_info_,      other.binding_info_);
-  std::swap(export_info_,       other.export_info_);
-  std::swap(origin_,            other.origin_);
+  std::swap(description_, other.description_);
+  std::swap(binding_info_, other.binding_info_);
+  std::swap(export_info_, other.export_info_);
+  std::swap(origin_, other.origin_);
 }
 
 std::string Symbol::demangled_name() const {
@@ -85,7 +82,8 @@ std::string Symbol::demangled_name() const {
 #if defined(__unix__)
     int status;
     const std::string& name = this->name().c_str();
-    char* demangled_name = abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
+    char* demangled_name =
+        abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
 
     if (status == 0) {
       std::string realname = demangled_name;
@@ -94,7 +92,7 @@ std::string Symbol::demangled_name() const {
     }
     return name;
 #else
-      return "";
+    return "";
 #endif
   }
 }
@@ -119,23 +117,21 @@ const Symbol& Symbol::indirect_abs_local() {
 }
 
 std::ostream& operator<<(std::ostream& os, const Symbol& symbol) {
-  os << fmt::format(
-    "name={}, type={}, desc={}, value={:#010x}, origin={}",
-    symbol.name(), symbol.raw_type(), symbol.description(), symbol.value(),
-    to_string(symbol.origin())
-  );
+  os << fmt::format("name={}, type={}, desc={}, value={:#010x}, origin={}",
+                    symbol.name(), symbol.raw_type(), symbol.description(),
+                    symbol.value(), to_string(symbol.origin()));
   return os;
 }
 
 const char* to_string(Symbol::ORIGIN e) {
-  #define ENTRY(X) std::pair(Symbol::ORIGIN::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(UNKNOWN),
-    ENTRY(DYLD_EXPORT),
-    ENTRY(DYLD_BIND),
-    ENTRY(SYMTAB),
+#define ENTRY(X) std::pair(Symbol::ORIGIN::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(UNKNOWN),
+      ENTRY(DYLD_EXPORT),
+      ENTRY(DYLD_BIND),
+      ENTRY(SYMTAB),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -144,16 +140,12 @@ const char* to_string(Symbol::ORIGIN e) {
 }
 
 const char* to_string(Symbol::CATEGORY e) {
-  #define ENTRY(X) std::pair(Symbol::CATEGORY::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(NONE),
-    ENTRY(LOCAL),
-    ENTRY(EXTERNAL),
-    ENTRY(UNDEFINED),
-    ENTRY(INDIRECT_ABS),
-    ENTRY(INDIRECT_LOCAL),
+#define ENTRY(X) std::pair(Symbol::CATEGORY::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(NONE),      ENTRY(LOCAL),        ENTRY(EXTERNAL),
+      ENTRY(UNDEFINED), ENTRY(INDIRECT_ABS), ENTRY(INDIRECT_LOCAL),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -162,16 +154,12 @@ const char* to_string(Symbol::CATEGORY e) {
 }
 
 const char* to_string(Symbol::TYPE e) {
-  #define ENTRY(X) std::pair(Symbol::TYPE::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(UNDEFINED),
-    ENTRY(ABSOLUTE_SYM),
-    ENTRY(SECTION),
-    ENTRY(UNDEFINED),
-    ENTRY(PREBOUND),
-    ENTRY(INDIRECT),
+#define ENTRY(X) std::pair(Symbol::TYPE::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(UNDEFINED), ENTRY(ABSOLUTE_SYM), ENTRY(SECTION),
+      ENTRY(UNDEFINED), ENTRY(PREBOUND),     ENTRY(INDIRECT),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -180,4 +168,3 @@ const char* to_string(Symbol::TYPE e) {
 }
 
 } // namespace LIEF::MachO
-

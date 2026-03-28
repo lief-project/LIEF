@@ -18,9 +18,15 @@
 
 class LIEF_Logging {
   public:
-  static void disable() { LIEF::logging::disable(); }
-  static void reset() { LIEF::logging::reset(); }
-  static void enable() { LIEF::logging::enable(); }
+  static void disable() {
+    LIEF::logging::disable();
+  }
+  static void reset() {
+    LIEF::logging::reset();
+  }
+  static void enable() {
+    LIEF::logging::enable();
+  }
   static void set_level(uint32_t lvl) {
     LIEF::logging::set_level(LIEF::logging::LEVEL(lvl));
   }

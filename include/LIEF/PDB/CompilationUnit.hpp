@@ -48,14 +48,19 @@ class LIEF_API CompilationUnit {
     class PointerProxy {
       // Inspired from LLVM's iterator_facade_base
       friend class Iterator;
+
       public:
-      pointer operator->() const { return R.get(); }
+      pointer operator->() const {
+        return R.get();
+      }
 
       private:
       value_type R;
 
-      template <typename RefT>
-      PointerProxy(RefT &&R) : R(std::forward<RefT>(R)) {} // NOLINT(bugprone-forwarding-reference-overload)
+      template<typename RefT>
+      PointerProxy(RefT&& R) :
+        R(std::forward<RefT>(R)) {
+      } // NOLINT(bugprone-forwarding-reference-overload)
     };
 
     Iterator(const Iterator&);
@@ -73,13 +78,13 @@ class LIEF_API CompilationUnit {
 
     Iterator operator--(int) {
       Iterator tmp = *static_cast<Iterator*>(this);
-      --*static_cast<Iterator *>(this);
+      --*static_cast<Iterator*>(this);
       return tmp;
     }
 
     Iterator operator++(int) {
       Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator *>(this);
+      ++*static_cast<Iterator*>(this);
       return tmp;
     }
 
@@ -94,7 +99,8 @@ class LIEF_API CompilationUnit {
   };
 
   /// Iterator over the sources file (std::string)
-  using sources_iterator = iterator_range<std::vector<std::string>::const_iterator>;
+  using sources_iterator =
+      iterator_range<std::vector<std::string>::const_iterator>;
 
   using function_iterator = iterator_range<Function::Iterator>;
 
@@ -102,7 +108,8 @@ class LIEF_API CompilationUnit {
   ~CompilationUnit();
 
   /// Name (or path) to the COFF object (`.obj`) associated with this
-  /// compilation unit (e.g. `e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvlp.obj`)
+  /// compilation unit (e.g.
+  /// `e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvlp.obj`)
   std::string module_name() const;
 
   /// Name of path to the original binary object (COFF, Archive) in which
@@ -125,9 +132,8 @@ class LIEF_API CompilationUnit {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const CompilationUnit& CU)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CompilationUnit& CU) {
     os << CU.to_string();
     return os;
   }
@@ -139,4 +145,3 @@ class LIEF_API CompilationUnit {
 }
 }
 #endif
-

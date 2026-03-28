@@ -27,8 +27,8 @@
 #include "logging.hpp"
 
 #if defined(_MSC_VER)
-#  include <intrin.h>
-#  define __builtin_popcount __popcnt
+  #include <intrin.h>
+  #define __builtin_popcount __popcnt
 #endif
 
 
@@ -39,13 +39,12 @@ Class& Class::operator=(const Class&) = default;
 
 Class::Class() = default;
 
-Class::Class(OAT_CLASS_STATUS status, OAT_CLASS_TYPES type,
-             DEX::Class* dex_class, std::vector<uint32_t> bitmap) :
+Class::Class(OAT_CLASS_STATUS status, OAT_CLASS_TYPES type, DEX::Class* dex_class,
+             std::vector<uint32_t> bitmap) :
   dex_class_{dex_class},
   status_{status},
   type_{type},
-  method_bitmap_{std::move(bitmap)}
-{}
+  method_bitmap_{std::move(bitmap)} {}
 
 
 bool Class::has_dex_class() const {
@@ -110,10 +109,9 @@ bool Class::is_quickened(const DEX::Method& m) const {
   }
 
   const auto& methods = cls.methods();
-  const auto it_method_index = std::find_if(methods.begin(), methods.end(),
-      [&m] (const DEX::Method& mth) {
-        return &m == &mth;
-      });
+  const auto it_method_index =
+      std::find_if(methods.begin(), methods.end(),
+                   [&m](const DEX::Method& mth) { return &m == &mth; });
 
   if (it_method_index == methods.end()) {
     LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
@@ -122,7 +120,6 @@ bool Class::is_quickened(const DEX::Method& m) const {
 
   uint32_t relative_index = std::distance(methods.begin(), it_method_index);
   return is_quickened(relative_index);
-
 }
 
 bool Class::is_quickened(uint32_t relative_index) const {
@@ -135,7 +132,7 @@ bool Class::is_quickened(uint32_t relative_index) const {
   }
 
   if (type() == OAT_CLASS_TYPES::OAT_CLASS_SOME_COMPILED) {
-    const uint32_t bitmap_idx  = relative_index >> 5;
+    const uint32_t bitmap_idx = relative_index >> 5;
     const uint32_t bitmap_mask = 1 << (relative_index & 0x1F);
     if (bitmap_idx > method_bitmap_.size()) {
       LIEF_ERR("Corrupted bitmap index: {:#x}", bitmap_idx);
@@ -154,10 +151,9 @@ uint32_t Class::method_offsets_index(const DEX::Method& m) const {
   const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
-  const auto it_method_index = std::find_if(methods.begin(), methods.end(),
-      [&m] (const DEX::Method& mth) {
-        return &m == &mth;
-      });
+  const auto it_method_index =
+      std::find_if(methods.begin(), methods.end(),
+                   [&m](const DEX::Method& mth) { return &m == &mth; });
 
   if (it_method_index == methods.end()) {
     LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
@@ -170,7 +166,9 @@ uint32_t Class::method_offsets_index(const DEX::Method& m) const {
 
 uint32_t Class::method_offsets_index(uint32_t relative_index) const {
 
-  if (!is_quickened(relative_index) || type() == OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED) {
+  if (!is_quickened(relative_index) ||
+      type() == OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED)
+  {
     return UINT_MAX;
   }
 
@@ -179,7 +177,7 @@ uint32_t Class::method_offsets_index(uint32_t relative_index) const {
   }
 
   if (type() == OAT_CLASS_TYPES::OAT_CLASS_SOME_COMPILED) {
-    const uint32_t bitmap_end_idx    = relative_index >> 5;
+    const uint32_t bitmap_end_idx = relative_index >> 5;
     const uint32_t partial_word_bits = relative_index & 0x1f;
     uint32_t count = 0;
     for (uint32_t word = 0; word < bitmap_end_idx; ++word) {
@@ -187,7 +185,8 @@ uint32_t Class::method_offsets_index(uint32_t relative_index) const {
     }
 
     if (partial_word_bits != 0) {
-      count += __builtin_popcount(method_bitmap_[bitmap_end_idx] & ~(0xffffffffu << partial_word_bits));
+      count += __builtin_popcount(method_bitmap_[bitmap_end_idx] &
+                                  ~(0xffffffffu << partial_word_bits));
     }
 
     return count;
@@ -203,10 +202,9 @@ uint32_t Class::relative_index(const DEX::Method& m) const {
   const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
-  const auto it_method_index = std::find_if(methods.begin(), methods.end(),
-      [&m] (const DEX::Method& mth) {
-        return &m == &mth;
-      });
+  const auto it_method_index =
+      std::find_if(methods.begin(), methods.end(),
+                   [&m](const DEX::Method& mth) { return &m == &mth; });
 
   if (it_method_index == methods.end()) {
     LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
@@ -223,18 +221,19 @@ uint32_t Class::relative_index(uint32_t method_absolute_index) const {
   const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
-  const auto it_method_index = std::find_if(methods.begin(), methods.end(),
-      [method_absolute_index] (const DEX::Method& mth) {
-        return mth.index() == method_absolute_index;
-      });
+  const auto it_method_index =
+      std::find_if(methods.begin(), methods.end(),
+                   [method_absolute_index](const DEX::Method& mth) {
+                     return mth.index() == method_absolute_index;
+                   });
 
   if (it_method_index == methods.end()) {
-    LIEF_ERR("Method index {:d} not found in {}", method_absolute_index, cls.fullname());
+    LIEF_ERR("Method index {:d} not found in {}", method_absolute_index,
+             cls.fullname());
     return UINT_MAX;
   }
 
   return std::distance(methods.begin(), it_method_index);
-
 }
 
 
@@ -243,18 +242,14 @@ void Class::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const Class& cls) {
-  os << cls.fullname() << " - "
-     << to_string(cls.status()) << " - "
-     << to_string(cls.type()) << " - "
-     << std::dec << cls.methods().size() << " methods";
+  os << cls.fullname() << " - " << to_string(cls.status()) << " - "
+     << to_string(cls.type()) << " - " << std::dec << cls.methods().size()
+     << " methods";
   return os;
 }
 
 Class::~Class() = default;
 
 
-
 }
-

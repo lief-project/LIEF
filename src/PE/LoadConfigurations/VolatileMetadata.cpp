@@ -55,8 +55,8 @@ std::string VolatileMetadata::to_string() const {
   if (auto ranges = info_ranges(); !ranges.empty()) {
     os << "\nVolatile Info Range Table: {\n";
     for (const range_t& range : ranges) {
-      os << format("  [{:#010x}, {:#010x}] ({} bytes)\n", range.start,
-                   range.end(), range.size);
+      os << format("  [{:#010x}, {:#010x}] ({} bytes)\n", range.start, range.end(),
+                   range.size);
     }
     os << "}\n";
   }
@@ -64,9 +64,8 @@ std::string VolatileMetadata::to_string() const {
   return os.str();
 }
 
-std::unique_ptr<VolatileMetadata>
-    VolatileMetadata::parse(Parser& ctx, BinaryStream& stream)
-{
+std::unique_ptr<VolatileMetadata> VolatileMetadata::parse(Parser& ctx,
+                                                          BinaryStream& stream) {
   auto size = stream.read<uint32_t>();
   if (!size) {
     LIEF_DEBUG("{}:{}", __FUNCTION__, __LINE__);
@@ -111,12 +110,11 @@ std::unique_ptr<VolatileMetadata>
 
   auto meta = std::make_unique<VolatileMetadata>();
   (*meta)
-    .size(*size)
-    .min_version(*min_version)
-    .max_version(*max_version)
-    .access_table_rva(*access_table_rva)
-    .info_range_rva(*info_range_rva)
-  ;
+      .size(*size)
+      .min_version(*min_version)
+      .max_version(*max_version)
+      .access_table_rva(*access_table_rva)
+      .info_range_rva(*info_range_rva);
 
   if (*access_table_rva > 0 && *access_table_sz > 0) {
     uint32_t offset = ctx.bin().rva_to_offset(*access_table_rva);

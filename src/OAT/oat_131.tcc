@@ -111,7 +111,9 @@ void Parser::parse_dex_files<details::OAT131_t>() {
       uint32_t classes_offset = classes_offsets_offset[i];
       oat_dex_file->classes_offsets_.reserve(nb_classes);
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        if (auto off = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t))) {
+        if (auto off = stream_->peek<uint32_t>(classes_offset +
+                                               cls_idx * sizeof(uint32_t)))
+        {
           oat_dex_file->classes_offsets_.push_back(*off);
         } else {
           break;
@@ -120,11 +122,6 @@ void Parser::parse_dex_files<details::OAT131_t>() {
     }
   }
 }
-
-
-
-
-
 
 
 } // Namespace OAT

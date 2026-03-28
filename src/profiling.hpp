@@ -25,15 +25,15 @@ namespace LIEF {
 class Profile {
   public:
   explicit Profile(std::string msg) :
-    msg_(std::move(msg))
-  {
+    msg_(std::move(msg)) {
     sw_.reset();
   }
 
   ~Profile() {
-    LIEF_DEBUG("{}: {}",
-        msg_, duration_cast<std::chrono::milliseconds>(sw_.elapsed()));
+    LIEF_DEBUG("{}: {}", msg_,
+               duration_cast<std::chrono::milliseconds>(sw_.elapsed()));
   }
+
   private:
   spdlog::stopwatch sw_;
   std::string msg_;

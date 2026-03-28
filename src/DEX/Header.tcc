@@ -51,10 +51,8 @@ Header::Header(const T& header) :
   class_defs_off_{header.class_defs_off},
 
   data_size_{header.data_size},
-  data_off_{header.data_off}
-{
-  std::copy(std::begin(header.magic), std::end(header.magic),
-            std::begin(magic_));
+  data_off_{header.data_off} {
+  std::copy(std::begin(header.magic), std::end(header.magic), std::begin(magic_));
 
   std::copy(std::begin(header.signature), std::end(header.signature),
             std::begin(signature_));
@@ -62,4 +60,3 @@ Header::Header(const T& header) :
 
 
 } // namespace LIEF::DEX
-

@@ -41,23 +41,22 @@ class LIEF_API Export : public Object {
   friend class Parser;
 
   public:
-  using entries_t        = std::vector<std::unique_ptr<ExportEntry>>;
-  using it_entries       = ref_iterator<entries_t&, ExportEntry*>;
-  using it_const_entries = const_ref_iterator<const entries_t&, const ExportEntry*>;
+  using entries_t = std::vector<std::unique_ptr<ExportEntry>>;
+  using it_entries = ref_iterator<entries_t&, ExportEntry*>;
+  using it_const_entries =
+      const_ref_iterator<const entries_t&, const ExportEntry*>;
 
   Export() = default;
 
   Export(std::string name, const std::vector<ExportEntry>& entries) :
-    name_(std::move(name))
-  {
+    name_(std::move(name)) {
     for (const ExportEntry& E : entries) {
       add_entry(E);
     }
   }
 
   Export(std::string name) :
-    Export(std::move(name), {})
-  {}
+    Export(std::move(name), {}) {}
 
   Export(const details::pe_export_directory_table& header);
 
@@ -167,21 +166,27 @@ class LIEF_API Export : public Object {
   const ExportEntry* find_entry(const std::string& name) const;
 
   ExportEntry* find_entry(const std::string& name) {
-    return const_cast<ExportEntry*>(static_cast<const Export*>(this)->find_entry(name));
+    return const_cast<ExportEntry*>(
+        static_cast<const Export*>(this)->find_entry(name)
+    );
   }
 
   /// Find the export entry with the given ordinal number
   const ExportEntry* find_entry(uint32_t ordinal) const;
 
   ExportEntry* find_entry(uint32_t ordinal) {
-    return const_cast<ExportEntry*>(static_cast<const Export*>(this)->find_entry(ordinal));
+    return const_cast<ExportEntry*>(
+        static_cast<const Export*>(this)->find_entry(ordinal)
+    );
   }
 
   /// Find the export entry at the provided RVA
   const ExportEntry* find_entry_at(uint32_t rva) const;
 
   ExportEntry* find_entry_at(uint32_t rva) {
-    return const_cast<ExportEntry*>(static_cast<const Export*>(this)->find_entry_at(rva));
+    return const_cast<ExportEntry*>(
+        static_cast<const Export*>(this)->find_entry_at(rva)
+    );
   }
 
   /// Add the given export and return the newly created and added export

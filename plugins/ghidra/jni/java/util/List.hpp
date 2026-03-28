@@ -20,16 +20,15 @@ template<class T>
 class List {
   public:
   using Element = T;
-  static constexpr jni::Class kClass {
-    "java/util/List",
-    jni::Method{"size", jni::Return{jint{}}},
-    jni::Method{"get", jni::Return{jni::kJavaLangObject}, jni::Params{jint{}}},
+  static constexpr jni::Class kClass{
+      "java/util/List",
+      jni::Method{"size", jni::Return{jint{}}},
+      jni::Method{"get", jni::Return{jni::kJavaLangObject}, jni::Params{jint{}}},
   };
 
   List() = delete;
   List(jobject thiz) :
-    thiz_(thiz)
-  {}
+    thiz_(thiz) {}
 
   size_t size() const {
     return thiz_.template Call<"size">();

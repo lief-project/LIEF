@@ -35,5 +35,3 @@ TEST_CASE("lief.test.oat", "[lief][test][oat]") {
     }
   }
 }
-
-

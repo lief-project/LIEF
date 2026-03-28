@@ -31,27 +31,23 @@ using namespace binaryninja;
 
 namespace analysis_plugin {
 
-Analyzer::Analyzer(BinaryNinja::BinaryView& bv, std::unique_ptr<TypeBuilder> ty_builder) :
-  bv_(&bv), type_builder_(std::move(ty_builder))
-{}
+Analyzer::Analyzer(BinaryNinja::BinaryView& bv,
+                   std::unique_ptr<TypeBuilder> ty_builder) :
+  bv_(&bv),
+  type_builder_(std::move(ty_builder)) {}
 
 std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
   const FileFormat file_format = get_file_format(bv);
   switch (file_format) {
-    case FileFormat::PE:
-      return pe::Analyzer::from_bv(bv);
+    case FileFormat::PE: return pe::Analyzer::from_bv(bv);
 
-    case FileFormat::ELF:
-      return elf::Analyzer::from_bv(bv);
+    case FileFormat::ELF: return elf::Analyzer::from_bv(bv);
 
-    case FileFormat::MachO:
-      return macho::Analyzer::from_bv(bv);
+    case FileFormat::MachO: return macho::Analyzer::from_bv(bv);
 
-    case FileFormat::COFF:
-      return coff::Analyzer::from_bv(bv);
+    case FileFormat::COFF: return coff::Analyzer::from_bv(bv);
 
-    case FileFormat::DSC:
-      return dsc::Analyzer::from_bv(bv);
+    case FileFormat::DSC: return dsc::Analyzer::from_bv(bv);
 
     case FileFormat::Unknown:
       BN_ERR("Unknown format for {}", bv.GetFile()->GetFilename());
@@ -61,4 +57,3 @@ std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
 
 Analyzer::~Analyzer() = default;
 }
-

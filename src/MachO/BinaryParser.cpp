@@ -40,14 +40,16 @@ std::unique_ptr<Binary> BinaryParser::parse(const std::string& file) {
   return parse(file, ParserConfig::deep());
 }
 
-std::unique_ptr<Binary> BinaryParser::parse(const std::string& file, const ParserConfig& conf) {
+std::unique_ptr<Binary> BinaryParser::parse(const std::string& file,
+                                            const ParserConfig& conf) {
   if (!is_macho(file)) {
     LIEF_DEBUG("{} is not a Mach-O file", file);
     return nullptr;
   }
 
   if (!is_fat(file)) {
-    LIEF_ERR("{} is a Fat Mach-O file. Please use MachO::Parser::parse(...)", file);
+    LIEF_ERR("{} is a Fat Mach-O file. Please use MachO::Parser::parse(...)",
+             file);
     return nullptr;
   }
 
@@ -63,20 +65,21 @@ std::unique_ptr<Binary> BinaryParser::parse(const std::string& file, const Parse
   parser.binary_ = std::unique_ptr<Binary>(new Binary{});
   parser.binary_->fat_offset_ = 0;
 
-  if(!parser.init_and_parse()) {
+  if (!parser.init_and_parse()) {
     LIEF_WARN("Parsing errors detected; binary may be inconsistent");
   }
 
   return std::move(parser.binary_);
 }
 
-std::unique_ptr<Binary> BinaryParser::parse(const std::vector<uint8_t>& data, const ParserConfig& conf) {
+std::unique_ptr<Binary> BinaryParser::parse(const std::vector<uint8_t>& data,
+                                            const ParserConfig& conf) {
   return parse(data, 0, conf);
 }
 
-std::unique_ptr<Binary> BinaryParser::parse(const std::vector<uint8_t>& data, uint64_t fat_offset,
-                                            const ParserConfig& conf)
-{
+std::unique_ptr<Binary> BinaryParser::parse(const std::vector<uint8_t>& data,
+                                            uint64_t fat_offset,
+                                            const ParserConfig& conf) {
   if (!is_macho(data)) {
     return nullptr;
   }
@@ -93,7 +96,7 @@ std::unique_ptr<Binary> BinaryParser::parse(const std::vector<uint8_t>& data, ui
   parser.binary_ = std::unique_ptr<Binary>(new Binary{});
   parser.binary_->fat_offset_ = fat_offset;
 
-  if(!parser.init_and_parse()) {
+  if (!parser.init_and_parse()) {
     LIEF_WARN("Parsing errors detected; binary may be inconsistent");
   }
 
@@ -101,16 +104,16 @@ std::unique_ptr<Binary> BinaryParser::parse(const std::vector<uint8_t>& data, ui
 }
 
 
-std::unique_ptr<Binary> BinaryParser::parse(std::unique_ptr<BinaryStream> stream, uint64_t fat_offset,
-                                            const ParserConfig& conf)
-{
+std::unique_ptr<Binary> BinaryParser::parse(std::unique_ptr<BinaryStream> stream,
+                                            uint64_t fat_offset,
+                                            const ParserConfig& conf) {
   BinaryParser parser;
   parser.config_ = conf;
   parser.stream_ = std::move(stream);
   parser.binary_ = std::unique_ptr<Binary>(new Binary{});
   parser.binary_->fat_offset_ = fat_offset;
 
-  if(!parser.init_and_parse()) {
+  if (!parser.init_and_parse()) {
     LIEF_WARN("Parsing errors detected; binary may be inconsistent");
   }
 
@@ -125,30 +128,25 @@ ok_error_t BinaryParser::init_and_parse() {
   }
   const auto type = static_cast<MACHO_TYPES>(*stream_->peek<uint32_t>());
 
-  is64_ = type == MACHO_TYPES::MAGIC_64 ||
-          type == MACHO_TYPES::CIGAM_64 ||
+  is64_ = type == MACHO_TYPES::MAGIC_64 || type == MACHO_TYPES::CIGAM_64 ||
           type == MACHO_TYPES::NEURAL_MODEL;
 
   binary_->is64_ = is64_;
-  type_          = type;
+  type_ = type;
   binary_->original_size_ = stream_->size();
 
-  bool should_swap = type == MACHO_TYPES::CIGAM_64 ||
-                     type == MACHO_TYPES::CIGAM;
+  bool should_swap = type == MACHO_TYPES::CIGAM_64 || type == MACHO_TYPES::CIGAM;
 
   stream_->set_endian_swap(should_swap);
 
-  return is64_ ? parse<details::MachO64>() :
-                 parse<details::MachO32>();
+  return is64_ ? parse<details::MachO64>() : parse<details::MachO32>();
 }
 
 
 ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
-                                           BinaryStream& stream,
-                                           uint64_t start,
+                                           BinaryStream& stream, uint64_t start,
                                            const std::string& prefix,
-                                           bool* invalid_names)
-{
+                                           bool* invalid_names) {
   if (!stream) {
     return make_error_code(lief_errors::read_error);
   }
@@ -177,12 +175,14 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       return make_error_code(lief_errors::read_error);
     }
     uint64_t flags = *res_flags;
-    //uint64_t address = stream_->read_uleb128();
+    // uint64_t address = stream_->read_uleb128();
 
     const std::string& symbol_name = prefix;
     auto export_info = std::make_unique<ExportInfo>(0, flags, offset);
     Symbol* symbol = nullptr;
-    if (auto search = memoized_symbols_.find(symbol_name); search != memoized_symbols_.end()) {
+    if (auto search = memoized_symbols_.find(symbol_name);
+        search != memoized_symbols_.end())
+    {
       symbol = search->second;
     } else {
       LIEF_DEBUG("Cache miss for symbol: {}", symbol_name);
@@ -194,16 +194,16 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     } else { // Register it into the symbol table
       auto symbol = std::make_unique<Symbol>();
 
-      symbol->origin_            = Symbol::ORIGIN::DYLD_EXPORT;
-      symbol->value_             = 0;
-      symbol->type_              = 0;
+      symbol->origin_ = Symbol::ORIGIN::DYLD_EXPORT;
+      symbol->value_ = 0;
+      symbol->type_ = 0;
       symbol->numberof_sections_ = 0;
-      symbol->description_       = 0;
+      symbol->description_ = 0;
       symbol->name(symbol_name);
 
       // Weak bind of the pointer
-      symbol->export_info_       = export_info.get();
-      export_info->symbol_       = symbol.get();
+      symbol->export_info_ = export_info.get();
+      export_info->symbol_ = symbol.get();
       memoized_symbols_[symbol_name] = symbol.get();
       binary_->symbols_.push_back(std::move(symbol));
     }
@@ -232,28 +232,30 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       }
 
       Symbol* symbol = nullptr;
-      if (auto search = memoized_symbols_.find(imported_name); search != memoized_symbols_.end()) {
+      if (auto search = memoized_symbols_.find(imported_name);
+          search != memoized_symbols_.end())
+      {
         symbol = search->second;
       } else {
         LIEF_DEBUG("Cache miss for symbol: {}", imported_name);
         symbol = nullptr;
       }
       if (symbol != nullptr) {
-        export_info->alias_  = symbol;
+        export_info->alias_ = symbol;
         symbol->export_info_ = export_info.get();
-        symbol->value_       = export_info->address();
+        symbol->value_ = export_info->address();
       } else {
         auto symbol = std::make_unique<Symbol>();
-        symbol->origin_            = Symbol::ORIGIN::DYLD_EXPORT;
-        symbol->value_             = export_info->address();
-        symbol->type_              = 0;
+        symbol->origin_ = Symbol::ORIGIN::DYLD_EXPORT;
+        symbol->value_ = export_info->address();
+        symbol->type_ = 0;
         symbol->numberof_sections_ = 0;
-        symbol->description_       = 0;
+        symbol->description_ = 0;
         symbol->name(symbol_name);
 
         // Weak bind of the pointer
-        symbol->export_info_      = export_info.get();
-        export_info->alias_       = symbol.get();
+        symbol->export_info_ = export_info.get();
+        export_info->alias_ = symbol.get();
         memoized_symbols_[symbol_name] = symbol.get();
         binary_->symbols_.push_back(std::move(symbol));
       }
@@ -286,7 +288,6 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     }
 
     exports.push_back(std::move(export_info));
-
   }
   stream.setpos(children_offset);
   const auto nb_children = stream.read<uint8_t>();
@@ -322,7 +323,8 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     }
 
     if (!visited_.insert(child_node_offet).second) {
-      LIEF_DEBUG("Cycle detected in export trie at offset {:#x}", child_node_offet);
+      LIEF_DEBUG("Cycle detected in export trie at offset {:#x}",
+                 child_node_offet);
       break;
     }
 
@@ -343,7 +345,7 @@ ok_error_t BinaryParser::parse_dyld_exports() {
   }
 
   uint32_t offset = exports->data_offset();
-  uint32_t size   = exports->data_size();
+  uint32_t size = exports->data_size();
 
   if (offset == 0 || size == 0) {
     return ok();
@@ -385,7 +387,7 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
   }
 
   uint32_t offset = std::get<0>(dyldinfo->export_info());
-  uint32_t size   = std::get<1>(dyldinfo->export_info());
+  uint32_t size = std::get<1>(dyldinfo->export_info());
 
   if (offset == 0 || size == 0) {
     return ok();
@@ -414,7 +416,8 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
   SpanStream trie_stream(dyldinfo->export_trie_);
 
   bool invalid_names = false;
-  parse_export_trie(dyldinfo->export_info_, trie_stream, offset, "", &invalid_names);
+  parse_export_trie(dyldinfo->export_info_, trie_stream, offset, "",
+                    &invalid_names);
   return ok();
 }
 
@@ -437,8 +440,7 @@ ok_error_t BinaryParser::parse_overlay() {
 
 ok_error_t BinaryParser::parse_indirect_symbols(DynamicSymbolCommand& cmd,
                                                 std::vector<Symbol*>& symtab,
-                                                BinaryStream& indirect_stream)
-{
+                                                BinaryStream& indirect_stream) {
   if (symtab.empty()) {
     LIEF_WARN("Empty symtab: cannot process indirect symbols");
     return make_error_code(lief_errors::corrupted);
@@ -454,23 +456,29 @@ ok_error_t BinaryParser::parse_indirect_symbols(DynamicSymbolCommand& cmd,
     index = *res;
 
     if (index == details::INDIRECT_SYMBOL_ABS) {
-      cmd.indirect_symbols_.push_back(const_cast<Symbol*>(&Symbol::indirect_abs()));
+      cmd.indirect_symbols_.push_back(
+          const_cast<Symbol*>(&Symbol::indirect_abs())
+      );
       continue;
     }
 
     if (index == details::INDIRECT_SYMBOL_LOCAL) {
-      cmd.indirect_symbols_.push_back(const_cast<Symbol*>(&Symbol::indirect_local()));
+      cmd.indirect_symbols_.push_back(
+          const_cast<Symbol*>(&Symbol::indirect_local())
+      );
       continue;
     }
 
     if (index == (details::INDIRECT_SYMBOL_LOCAL | details::INDIRECT_SYMBOL_ABS)) {
-      cmd.indirect_symbols_.push_back(const_cast<Symbol*>(&Symbol::indirect_abs_local()));
+      cmd.indirect_symbols_.push_back(
+          const_cast<Symbol*>(&Symbol::indirect_abs_local())
+      );
       continue;
     }
 
     if (index >= symtab.size()) {
-      LIEF_ERR("Indirect symbol index out of range ({}/{:#x}, max: {})",
-               index, index, symtab.size());
+      LIEF_ERR("Indirect symbol index out of range ({}/{:#x}, max: {})", index,
+               index, symtab.size());
       continue;
     }
 
@@ -484,4 +492,3 @@ ok_error_t BinaryParser::parse_indirect_symbols(DynamicSymbolCommand& cmd,
 }
 
 } // namespace LIEF::MachO
-

@@ -22,7 +22,7 @@
 #include <LIEF/logging.hpp>
 #include <LIEF/ELF.hpp>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "ELF builder" << '\n';
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << '\n';
@@ -32,11 +32,11 @@ int main(int argc, char **argv) {
   std::unique_ptr<LIEF::ELF::Binary> binary = LIEF::ELF::Parser::parse(argv[1]);
   LIEF::ELF::Segment seg;
   seg.type(LIEF::ELF::Segment::TYPE::LOAD);
-  //seg.content(std::vector<uint8_t>(0x100));
-  //binary->add(seg);
+  // seg.content(std::vector<uint8_t>(0x100));
+  // binary->add(seg);
   LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
-  //LIEF::logging::set_level(LIEF::logging::LEVEL::LOG_WARN);
-  //binary->get(LIEF::ELF::SEGMENT_TYPES::PT_GNU_RELRO).type(LIEF::ELF::SEGMENT_TYPES::PT_NULL);
+  // LIEF::logging::set_level(LIEF::logging::LEVEL::LOG_WARN);
+  // binary->get(LIEF::ELF::SEGMENT_TYPES::PT_GNU_RELRO).type(LIEF::ELF::SEGMENT_TYPES::PT_NULL);
   LIEF::ELF::Builder::config_t config;
   config.force_relocate = true;
 

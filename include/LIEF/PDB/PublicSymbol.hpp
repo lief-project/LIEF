@@ -45,14 +45,19 @@ class LIEF_API PublicSymbol {
     class LIEF_API PointerProxy {
       // Inspired from LLVM's iterator_facade_base
       friend class Iterator;
+
       public:
-      pointer operator->() const { return R.get(); }
+      pointer operator->() const {
+        return R.get();
+      }
 
       private:
       value_type R;
 
-      template <typename RefT>
-      PointerProxy(RefT &&R) : R(std::forward<RefT>(R)) {} // NOLINT(bugprone-forwarding-reference-overload)
+      template<typename RefT>
+      PointerProxy(RefT&& R) :
+        R(std::forward<RefT>(R)) {
+      } // NOLINT(bugprone-forwarding-reference-overload)
     };
 
     Iterator(const Iterator&);
@@ -70,7 +75,7 @@ class LIEF_API PublicSymbol {
 
     Iterator operator++(int) {
       Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator *>(this);
+      ++*static_cast<Iterator*>(this);
       return tmp;
     }
 
@@ -87,11 +92,11 @@ class LIEF_API PublicSymbol {
   ~PublicSymbol();
 
   enum class FLAGS : uint32_t {
-    NONE     = 0,
-    CODE     = 1 << 0,
+    NONE = 0,
+    CODE = 1 << 0,
     FUNCTION = 1 << 1,
-    MANAGED  = 1 << 2,
-    MSIL     = 1 << 3,
+    MANAGED = 1 << 2,
+    MSIL = 1 << 3,
   };
 
   /// Name of the symbol
@@ -112,9 +117,8 @@ class LIEF_API PublicSymbol {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const PublicSymbol& sym)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const PublicSymbol& sym) {
     os << sym.to_string();
     return os;
   }
@@ -126,4 +130,3 @@ class LIEF_API PublicSymbol {
 }
 }
 #endif
-

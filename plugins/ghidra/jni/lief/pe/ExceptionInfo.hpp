@@ -23,18 +23,18 @@
 
 namespace lief_jni::pe {
 
-class ExceptionInfo : public JNI<
-  ExceptionInfo, canbe_unique<LIEF::PE::ExceptionInfo>>
-{
+class ExceptionInfo
+  : public JNI<ExceptionInfo, canbe_unique<LIEF::PE::ExceptionInfo>> {
   public:
   using JNI::JNI;
   using lief_t = LIEF::PE::ExceptionInfo;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/ExceptionInfo",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/pe/ExceptionInfo",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static jint jni_get_rva(JNIEnv* env, jobject thiz) {
     return (jint)from_jni(thiz)->cast<lief_t>().rva_start();

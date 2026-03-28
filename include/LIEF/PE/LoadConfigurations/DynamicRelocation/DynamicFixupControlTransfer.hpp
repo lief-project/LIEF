@@ -43,9 +43,8 @@ class LIEF_API DynamicFixupControlTransfer : public DynamicFixup {
 
     std::string to_string() const;
 
-    friend LIEF_API
-      std::ostream& operator<<(std::ostream& os, const reloc_entry_t& entry)
-    {
+    friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                             const reloc_entry_t& entry) {
       os << entry.to_string();
       return os;
     }
@@ -56,17 +55,19 @@ class LIEF_API DynamicFixupControlTransfer : public DynamicFixup {
   using it_const_relocations = const_ref_iterator<const reloc_entries_t&>;
 
   DynamicFixupControlTransfer() :
-    DynamicFixup(KIND::GUARD_IMPORT_CONTROL_TRANSFER)
-  {}
+    DynamicFixup(KIND::GUARD_IMPORT_CONTROL_TRANSFER) {}
 
   DynamicFixupControlTransfer(const DynamicFixupControlTransfer&) = default;
-  DynamicFixupControlTransfer& operator=(const DynamicFixupControlTransfer&) = default;
+  DynamicFixupControlTransfer&
+      operator=(const DynamicFixupControlTransfer&) = default;
 
   DynamicFixupControlTransfer(DynamicFixupControlTransfer&&) = default;
   DynamicFixupControlTransfer& operator=(DynamicFixupControlTransfer&&) = default;
 
   std::unique_ptr<DynamicFixup> clone() const override {
-    return std::unique_ptr<DynamicFixupControlTransfer>(new DynamicFixupControlTransfer(*this));
+    return std::unique_ptr<DynamicFixupControlTransfer>(
+        new DynamicFixupControlTransfer(*this)
+    );
   }
 
   std::string to_string() const override;
@@ -87,8 +88,8 @@ class LIEF_API DynamicFixupControlTransfer : public DynamicFixup {
   ~DynamicFixupControlTransfer() override = default;
 
   /// \private
-  LIEF_LOCAL static
-    std::unique_ptr<DynamicFixupControlTransfer> parse(Parser& ctx, SpanStream& strm);
+  LIEF_LOCAL static std::unique_ptr<DynamicFixupControlTransfer>
+      parse(Parser& ctx, SpanStream& strm);
 
   private:
   reloc_entries_t entries_;

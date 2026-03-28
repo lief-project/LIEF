@@ -77,7 +77,8 @@ class LIEF_API SysvHash : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SysvHash& sysvhash);
 
   private:
   std::vector<uint32_t> buckets_;

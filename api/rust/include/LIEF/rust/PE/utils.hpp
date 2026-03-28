@@ -21,12 +21,14 @@
 
 class PE_Utils {
   public:
-  static bool is_pe(std::string file) { // NOLINT(performance-unnecessary-value-param)
+  static bool
+      is_pe(std::string file) { // NOLINT(performance-unnecessary-value-param)
     return LIEF::PE::is_pe(file);
   }
 
   static bool check_layout(const PE_Binary& bin, std::string* error) {
-    return LIEF::PE::check_layout(static_cast<const LIEF::PE::Binary&>(bin.get()), error);
+    return LIEF::PE::check_layout(static_cast<const LIEF::PE::Binary&>(bin.get()),
+                                  error);
   }
 
   static uint32_t get_type(std::string file) { // NOLINT(performance-unnecessary-value-param)

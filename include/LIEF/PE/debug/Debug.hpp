@@ -104,8 +104,8 @@ class LIEF_API Debug : public Object {
     type_ = type;
   }
 
-  static span<uint8_t> get_payload(Section& section, uint32_t rva,
-                                   uint32_t offset, uint32_t size);
+  static span<uint8_t> get_payload(Section& section, uint32_t rva, uint32_t offset,
+                                   uint32_t size);
   static span<uint8_t> get_payload(Section& section, const details::pe_debug& hdr);
   static span<uint8_t> get_payload(Section& section, const Debug& dbg) {
     return get_payload(section, dbg.addressof_rawdata(), dbg.pointerto_rawdata(),
@@ -228,9 +228,7 @@ class LIEF_API Debug : public Object {
 
   virtual std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const Debug& entry)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Debug& entry) {
     os << entry.to_string();
     return os;
   }

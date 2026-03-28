@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 struct Pe_DosHeader_t {
-  uint16_t magic ;
+  uint16_t magic;
   uint16_t used_bytes_in_last_page;
   uint16_t file_size_in_pages;
   uint16_t numberof_relocation;

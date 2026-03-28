@@ -17,8 +17,8 @@
 namespace LIEF::COFF {
 
 std::unique_ptr<AuxiliarybfAndefSymbol>
-  AuxiliarybfAndefSymbol::parse(Symbol& /*sym*/, const std::vector<uint8_t>& /*payload*/)
-{
+    AuxiliarybfAndefSymbol::parse(Symbol& /*sym*/,
+                                  const std::vector<uint8_t>& /*payload*/) {
   return std::make_unique<AuxiliarybfAndefSymbol>();
 }
 }

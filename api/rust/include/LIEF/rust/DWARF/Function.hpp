@@ -32,85 +32,116 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::Function;
 
-  class it_variables :
-      public ForwardIterator<DWARF_Variable, LIEF::dwarf::Variable::Iterator>
-  {
+  class it_variables
+    : public ForwardIterator<DWARF_Variable, LIEF::dwarf::Variable::Iterator> {
     public:
-    it_variables(const DWARF_Function::lief_t& src)
-      : ForwardIterator(src.variables()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_variables(const DWARF_Function::lief_t& src) :
+      ForwardIterator(src.variables()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_parameters :
-      public ContainerIterator<
-        DWARF_Parameter, std::vector<std::unique_ptr<LIEF::dwarf::Parameter>>>
-  {
+  class it_parameters
+    : public ContainerIterator<
+          DWARF_Parameter, std::vector<std::unique_ptr<LIEF::dwarf::Parameter>>
+      > {
     public:
     using container_t = std::vector<std::unique_ptr<LIEF::dwarf::Parameter>>;
-    it_parameters(container_t content)
-      : ContainerIterator(std::move(content)) { }
-    auto next() { return ContainerIterator::next(); }
-    auto size() const { return ContainerIterator::size(); }
+    it_parameters(container_t content) :
+      ContainerIterator(std::move(content)) {}
+    auto next() {
+      return ContainerIterator::next();
+    }
+    auto size() const {
+      return ContainerIterator::size();
+    }
   };
 
-  class it_thrown_types :
-      public ContainerIterator<
-        DWARF_Type, std::vector<std::unique_ptr<LIEF::dwarf::Type>>>
-  {
+  class it_thrown_types
+    : public ContainerIterator<DWARF_Type,
+                               std::vector<std::unique_ptr<LIEF::dwarf::Type>>> {
     public:
     using container_t = std::vector<std::unique_ptr<LIEF::dwarf::Type>>;
-    it_thrown_types(container_t content)
-      : ContainerIterator(std::move(content)) { }
-    auto next() { return ContainerIterator::next(); }
-    auto size() const { return ContainerIterator::size(); }
+    it_thrown_types(container_t content) :
+      ContainerIterator(std::move(content)) {}
+    auto next() {
+      return ContainerIterator::next();
+    }
+    auto size() const {
+      return ContainerIterator::size();
+    }
   };
 
-  class it_instructions :
-      public ForwardIterator<asm_Instruction, LIEF::assembly::Instruction::Iterator>
-  {
+  class it_instructions
+    : public ForwardIterator<asm_Instruction,
+                             LIEF::assembly::Instruction::Iterator> {
     public:
-    it_instructions(const DWARF_Function::lief_t& src)
-      : ForwardIterator(src.instructions()) { }
-    auto next() { return ForwardIterator::next(); }
+    it_instructions(const DWARF_Function::lief_t& src) :
+      ForwardIterator(src.instructions()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
   };
 
-  class it_lexical_blocks :
-      public ForwardIterator<DWARF_LexicalBlock, LIEF::dwarf::LexicalBlock::Iterator>
-  {
+  class it_lexical_blocks
+    : public ForwardIterator<DWARF_LexicalBlock,
+                             LIEF::dwarf::LexicalBlock::Iterator> {
     public:
-    it_lexical_blocks(const DWARF_Function::lief_t& src)
-      : ForwardIterator(src.lexical_blocks()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_lexical_blocks(const DWARF_Function::lief_t& src) :
+      ForwardIterator(src.lexical_blocks()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  auto name() const { return get().name(); }
-  auto linkage_name() const { return get().linkage_name(); }
+  auto name() const {
+    return get().name();
+  }
+  auto linkage_name() const {
+    return get().linkage_name();
+  }
 
   auto variables() const {
     return std::make_unique<it_variables>(get());
   }
 
   uint64_t address(uint32_t& err) const {
-    return details::make_error<uint64_t>(
-        get().address(), err
-    );
+    return details::make_error<uint64_t>(get().address(), err);
   }
 
-  auto is_artificial() const { return get().is_artificial(); }
-  auto is_external() const { return get().is_external(); }
+  auto is_artificial() const {
+    return get().is_artificial();
+  }
+  auto is_external() const {
+    return get().is_external();
+  }
 
-  auto size() const { return get().size(); }
-  auto ranges() const { return details::make_range(get().ranges()); }
-  auto debug_location() const { return details::make_location(get().debug_location()); }
+  auto size() const {
+    return get().size();
+  }
+  auto ranges() const {
+    return details::make_range(get().ranges());
+  }
+  auto debug_location() const {
+    return details::make_location(get().debug_location());
+  }
 
   auto get_type() const {
-    return details::try_unique<DWARF_Type>(get().type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Type>(
+        get().type()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto parameters() const {
-    std::vector<std::unique_ptr<LIEF::dwarf::Parameter>> params = get().parameters();
+    std::vector<std::unique_ptr<LIEF::dwarf::Parameter>> params =
+        get().parameters();
     return std::make_unique<it_parameters>(std::move(params));
   }
 
@@ -120,7 +151,9 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   }
 
   auto scope() const {
-    return details::try_unique<DWARF_Scope>(get().scope()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Scope>(
+        get().scope()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto instructions() const {

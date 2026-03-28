@@ -33,7 +33,7 @@
 namespace LIEF::OAT {
 
 Parser::~Parser() = default;
-Parser::Parser()  = default;
+Parser::Parser() = default;
 
 
 std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
@@ -45,12 +45,15 @@ std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
   Parser parser{oat_file};
   parser.init();
 
-  std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
+  std::unique_ptr<Binary> oat_binary{
+      static_cast<Binary*>(parser.binary_.release())
+  };
   return oat_binary;
 }
 
 
-std::unique_ptr<Binary> Parser::parse(const std::string& oat_file, const std::string& vdex_file) {
+std::unique_ptr<Binary> Parser::parse(const std::string& oat_file,
+                                      const std::string& vdex_file) {
   if (!is_oat(oat_file)) {
     return nullptr;
   }
@@ -66,22 +69,25 @@ std::unique_ptr<Binary> Parser::parse(const std::string& oat_file, const std::st
     LIEF_WARN("Failed to parse VDEX file '{}'", vdex_file);
   }
   parser.init();
-  std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
+  std::unique_ptr<Binary> oat_binary{
+      static_cast<Binary*>(parser.binary_.release())
+  };
   return oat_binary;
-
 }
 
 std::unique_ptr<Binary> Parser::parse(std::vector<uint8_t> data) {
   Parser parser{std::move(data)};
   parser.init();
-  std::unique_ptr<Binary> oat_binary{static_cast<Binary*>(parser.binary_.release())};
+  std::unique_ptr<Binary> oat_binary{
+      static_cast<Binary*>(parser.binary_.release())
+  };
   return oat_binary;
 }
 
 
 Parser::Parser(std::vector<uint8_t> data) {
-  stream_    = std::make_unique<VectorStream>(std::move(data));
-  binary_    = std::unique_ptr<Binary>(new Binary{});
+  stream_ = std::make_unique<VectorStream>(std::move(data));
+  binary_ = std::unique_ptr<Binary>(new Binary{});
   config_.count_mtd = ELF::ParserConfig::DYNSYM_COUNT::AUTO;
 }
 
@@ -89,7 +95,7 @@ Parser::Parser(const std::string& file) {
   if (auto s = VectorStream::from_file(file)) {
     stream_ = std::make_unique<VectorStream>(std::move(*s));
   }
-  binary_    = std::unique_ptr<Binary>(new Binary{});
+  binary_ = std::unique_ptr<Binary>(new Binary{});
   config_.count_mtd = ELF::ParserConfig::DYNSYM_COUNT::AUTO;
 }
 
@@ -136,8 +142,6 @@ void Parser::init() {
   if (version <= details::OAT_138::oat_version) {
     return parse_binary<details::OAT138_t>();
   }
-
 }
 
 } // namespace LIEF::OAT
-

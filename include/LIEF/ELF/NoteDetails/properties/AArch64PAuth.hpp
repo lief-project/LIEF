@@ -50,20 +50,18 @@ class LIEF_API AArch64PAuth : public NoteGnuProperty::Property {
 
   static std::unique_ptr<AArch64PAuth> create(BinaryStream& stream);
 
-  void dump(std::ostream &os) const override;
+  void dump(std::ostream& os) const override;
 
   ~AArch64PAuth() override = default;
 
   protected:
   AArch64PAuth() :
-    NoteGnuProperty::Property(NoteGnuProperty::Property::TYPE::AARCH64_PAUTH)
-  {}
+    NoteGnuProperty::Property(NoteGnuProperty::Property::TYPE::AARCH64_PAUTH) {}
 
   AArch64PAuth(uint64_t platform, uint64_t version) :
     NoteGnuProperty::Property(NoteGnuProperty::Property::TYPE::AARCH64_PAUTH),
     platform_(platform),
-    version_(version)
-  {}
+    version_(version) {}
 
   uint64_t platform_ = 0;
   uint64_t version_ = 0;

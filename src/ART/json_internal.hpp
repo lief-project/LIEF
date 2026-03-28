@@ -27,7 +27,7 @@ class JsonVisitor : public LIEF::JsonVisitor {
   using LIEF::JsonVisitor::JsonVisitor;
 
   public:
-  void visit(const File& header)   override;
+  void visit(const File& header) override;
   void visit(const Header& header) override;
 };
 

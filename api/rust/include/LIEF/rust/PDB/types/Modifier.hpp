@@ -29,5 +29,7 @@ class PDB_types_Modifier : public PDB_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

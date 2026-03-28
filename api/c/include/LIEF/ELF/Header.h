@@ -24,7 +24,7 @@ extern "C" {
 #endif
 
 struct Elf_Header_t {
-  uint8_t  identity[LIEF_EI_NIDENT];
+  uint8_t identity[LIEF_EI_NIDENT];
   uint32_t file_type;
   uint32_t machine_type;
   uint32_t object_file_version;

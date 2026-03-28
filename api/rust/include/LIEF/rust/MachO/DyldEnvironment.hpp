@@ -20,14 +20,19 @@
 class MachO_DyldEnvironment : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::DyldEnvironment;
-  MachO_DyldEnvironment(const lief_t& base) : MachO_Command(base) {}
+  MachO_DyldEnvironment(const lief_t& base) :
+    MachO_Command(base) {}
 
-  std::string value() const { return impl().value(); };
+  std::string value() const {
+    return impl().value();
+  };
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

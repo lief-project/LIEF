@@ -26,9 +26,9 @@ class CHPEMetadataX86 : public CHPEMetadata {
 
   using CHPEMetadata::CHPEMetadata;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/CHPEMetadataX86",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/pe/CHPEMetadataX86",
+      jni::Constructor{jlong{}},
   };
 
   static int register_natives(JNIEnv* env);

@@ -21,51 +21,19 @@
 namespace lief_jni::pe::aarch64 {
 
 int UnpackedFunction::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "isExtended",
-      "()Z",
-      jni_is_extended
-    ),
-    make(
-      "getXdataRVA",
-      "()I",
-      jni_get_xdata_rva
-    ),
-    make(
-      "getUnwindCodeOffset",
-      "()J",
-      jni_get_unwind_code_offset
-    ),
-    make(
-      "getEpilogScopesOffset",
-      "()J",
-      jni_get_epilog_scopes_offset
-    ),
-    make(
-      "getNbEpilogScopes",
-      "()J",
-      jni_get_nb_epilog_scopes
-    ),
-    make(
-      "getExceptionHandlerOffset",
-      "()J",
-      jni_get_exception_handler_offset
-    ),
-    make(
-      "getUnwindCode",
-      "()[B",
-      jni_get_unwind_code
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("isExtended", "()Z", jni_is_extended),
+      make("getXdataRVA", "()I", jni_get_xdata_rva),
+      make("getUnwindCodeOffset", "()J", jni_get_unwind_code_offset),
+      make("getEpilogScopesOffset", "()J", jni_get_epilog_scopes_offset),
+      make("getNbEpilogScopes", "()J", jni_get_nb_epilog_scopes),
+      make("getExceptionHandlerOffset", "()J", jni_get_exception_handler_offset),
+      make("getUnwindCode", "()[B", jni_get_unwind_code),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

@@ -23,7 +23,9 @@ class DWARF_types_Enum_Entry : public Mirror<LIEF::dwarf::types::Enum::Entry> {
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::types::Enum::Entry;
 
-  auto name() const { return get().name(); }
+  auto name() const {
+    return get().name();
+  }
 
   int64_t value(uint32_t& is_set) const {
     return details::make_optional(get().value(), is_set);
@@ -34,16 +36,19 @@ class DWARF_types_Enum : public DWARF_Type {
   public:
   using lief_t = LIEF::dwarf::types::Enum;
 
-  class it_entries :
-      public ContainerIterator<DWARF_types_Enum_Entry,
-                               std::vector<LIEF::dwarf::types::Enum::Entry>>
-  {
+  class it_entries
+    : public ContainerIterator<DWARF_types_Enum_Entry,
+                               std::vector<LIEF::dwarf::types::Enum::Entry>> {
     public:
     using container_t = std::vector<LIEF::dwarf::types::Enum::Entry>;
-    it_entries(container_t content)
-      : ContainerIterator(std::move(content)) { }
-    auto next() { return ContainerIterator::next(); }
-    auto size() const { return ContainerIterator::size(); }
+    it_entries(container_t content) :
+      ContainerIterator(std::move(content)) {}
+    auto next() {
+      return ContainerIterator::next();
+    }
+    auto size() const {
+      return ContainerIterator::size();
+    }
   };
 
   auto entries() const {
@@ -52,7 +57,9 @@ class DWARF_types_Enum : public DWARF_Type {
   }
 
   auto underlying_type() const {
-    return details::try_unique<DWARF_Type>(impl().underlying_type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Type>(
+        impl().underlying_type()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   std::unique_ptr<DWARF_types_Enum_Entry> find_entry(int64_t value) const {
@@ -67,5 +74,7 @@ class DWARF_types_Enum : public DWARF_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

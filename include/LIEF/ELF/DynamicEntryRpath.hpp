@@ -26,24 +26,22 @@ namespace LIEF {
 namespace ELF {
 
 /// Class which represents a ``DT_RPATH`` entry. This attribute is
-/// deprecated (cf. ``man ld``) in favor of ``DT_RUNPATH`` (See DynamicEntryRunPath)
+/// deprecated (cf. ``man ld``) in favor of ``DT_RUNPATH`` (See
+/// DynamicEntryRunPath)
 class LIEF_API DynamicEntryRpath : public DynamicEntry {
   public:
   static constexpr char delimiter = ':';
   using DynamicEntry::DynamicEntry;
   DynamicEntryRpath() :
-    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RPATH, 0)
-  {}
+    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RPATH, 0) {}
 
   DynamicEntryRpath(std::string rpath) :
     DynamicEntry::DynamicEntry(DynamicEntry::TAG::RPATH, 0),
-    rpath_(std::move(rpath))
-  {}
+    rpath_(std::move(rpath)) {}
 
   /// Constructor from a list of paths
   DynamicEntryRpath(const std::vector<std::string>& paths) :
-    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RPATH, 0)
-  {
+    DynamicEntry::DynamicEntry(DynamicEntry::TAG::RPATH, 0) {
     this->paths(paths);
   }
 

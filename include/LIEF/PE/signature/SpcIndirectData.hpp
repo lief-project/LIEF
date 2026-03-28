@@ -34,8 +34,7 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
   static constexpr auto SPC_INDIRECT_DATA_OBJID = "1.3.6.1.4.1.311.2.1.4";
 
   SpcIndirectData() :
-    ContentInfo::Content(SPC_INDIRECT_DATA_OBJID)
-  {}
+    ContentInfo::Content(SPC_INDIRECT_DATA_OBJID) {}
   SpcIndirectData(const SpcIndirectData&) = default;
   SpcIndirectData& operator=(const SpcIndirectData&) = default;
 
@@ -69,7 +68,8 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SpcIndirectData& content) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SpcIndirectData& content) {
     content.print(os);
     return os;
   }

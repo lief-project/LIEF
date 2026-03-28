@@ -20,20 +20,21 @@ int main(int argc, const char** argv) {
   }
 
   std::unique_ptr<LIEF::PE::Binary> pe = LIEF::PE::Parser::parse(argv[1]);
-  std::unique_ptr<LIEF::dwarf::Editor> editor = LIEF::dwarf::Editor::from_binary(*pe);
+  std::unique_ptr<LIEF::dwarf::Editor> editor =
+      LIEF::dwarf::Editor::from_binary(*pe);
 
-  std::unique_ptr<LIEF::dwarf::editor::CompilationUnit> unit = editor->create_compilation_unit();
+  std::unique_ptr<LIEF::dwarf::editor::CompilationUnit> unit =
+      editor->create_compilation_unit();
   unit->set_producer("LIEF");
 
-  std::unique_ptr<LIEF::dwarf::editor::Function> func = unit->create_function("hello");
+  std::unique_ptr<LIEF::dwarf::editor::Function> func =
+      unit->create_function("hello");
   func->set_address(0x123);
 
-  func->set_return_type(
-    *unit->create_structure("my_struct_t")->pointer_to()
-  );
+  func->set_return_type(*unit->create_structure("my_struct_t")->pointer_to());
 
   std::unique_ptr<LIEF::dwarf::editor::Variable> var =
-    func->create_stack_variable("local_var");
+      func->create_stack_variable("local_var");
 
   var->set_stack_offset(8);
   editor->write("/tmp/out.debug");

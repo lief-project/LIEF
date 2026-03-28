@@ -24,31 +24,26 @@ namespace bn = BinaryNinja;
 
 namespace dwarf_plugin::commands {
 void register_commands() {
-  bn::PluginCommand::Register(
-    "LIEF\\Export as DWARF", "Generate a DWARF file",
-    dwarf_export
-  );
+  bn::PluginCommand::Register("LIEF\\Export as DWARF", "Generate a DWARF file",
+                              dwarf_export);
 
   BN_INFO("LIEF DWARF plugin registered");
 
   BN_INFO("LIEF Extended: {}", LIEF::is_extended());
   if (LIEF::is_extended()) {
     LIEF::lief_version_t version = LIEF::extended_version();
-    BN_INFO("Extended version: {}.{}.{}.{}",
-            version.major, version.minor, version.patch, version.id);
+    BN_INFO("Extended version: {}.{}.{}.{}", version.major, version.minor,
+            version.patch, version.id);
   } else {
-    BN_INFO("Version: {}.{}.{}",
-            LIEF_VERSION_MAJOR, LIEF_VERSION_MINOR, LIEF_VERSION_PATCH);
+    BN_INFO("Version: {}.{}.{}", LIEF_VERSION_MAJOR, LIEF_VERSION_MINOR,
+            LIEF_VERSION_PATCH);
   }
-
 }
 
 void dwarf_export(BinaryNinja::BinaryView* bv) {
   if (!LIEF::is_extended()) {
-    bn::ShowMessageBox(
-      "Error", "This feature requires LIEF extended.",
-      /*buttons=*/OKButtonSet, /*icon=*/ErrorIcon
-    );
+    bn::ShowMessageBox("Error", "This feature requires LIEF extended.",
+                       /*buttons=*/OKButtonSet, /*icon=*/ErrorIcon);
     return;
   }
   std::string result;
@@ -57,11 +52,8 @@ void dwarf_export(BinaryNinja::BinaryView* bv) {
   }
   auto exporter = DwarfExport::from_bv(*bv);
   exporter->save(result);
-  bn::ShowMessageBox(
-    "Info", fmt::format("DWARF saved here: {}", result),
-    /*buttons=*/OKButtonSet, /*icon=*/InformationIcon
-  );
-
+  bn::ShowMessageBox("Info", fmt::format("DWARF saved here: {}", result),
+                     /*buttons=*/OKButtonSet, /*icon=*/InformationIcon);
 }
 
 }

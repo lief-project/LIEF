@@ -58,7 +58,6 @@ class Engine;
 /// Subclasses like LIEF::PE::Binary implement format-specific API
 class LIEF_API Binary : public Object {
   public:
-
   /// Enumeration of virtual address types used for patching and memory access.
   enum class VA_TYPES {
     /// Automatically determine if the address is absolute or relative
@@ -69,7 +68,7 @@ class LIEF_API Binary : public Object {
     RVA = 1,
 
     /// Absolute Virtual Address.
-    VA = 2
+    VA = 2,
   };
 
   enum FORMATS {
@@ -131,12 +130,14 @@ class LIEF_API Binary : public Object {
     return get_abstract_header();
   }
 
-  /// Return an iterator over the abstracted symbols in which the elements **can** be modified
+  /// Return an iterator over the abstracted symbols in which the elements **can**
+  /// be modified
   it_symbols symbols() {
     return get_abstract_symbols();
   }
 
-  /// Return an iterator over the abstracted symbols in which the elements **can't** be modified
+  /// Return an iterator over the abstracted symbols in which the elements
+  /// **can't** be modified
   it_const_symbols symbols() const {
     return const_cast<Binary*>(this)->get_abstract_symbols();
   }
@@ -199,7 +200,8 @@ class LIEF_API Binary : public Object {
   }
 
   /// Return the address of the given function name
-  virtual result<uint64_t> get_function_address(const std::string& func_name) const;
+  virtual result<uint64_t>
+      get_function_address(const std::string& func_name) const;
 
   /// Method so that a ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
@@ -212,7 +214,8 @@ class LIEF_API Binary : public Object {
   /// @param[in] patch_value    Patch to apply
   /// @param[in] addr_type      Specify if the address should be used as an
   ///                           absolute virtual address or a RVA
-  virtual void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value,
+  virtual void patch_address(uint64_t address,
+                             const std::vector<uint8_t>& patch_value,
                              VA_TYPES addr_type = VA_TYPES::AUTO) = 0;
 
   /// Patch the address with the given value
@@ -220,23 +223,26 @@ class LIEF_API Binary : public Object {
   /// @param[in] address      Address to patch
   /// @param[in] patch_value  Patch to apply
   /// @param[in] size         Size of the value in **bytes** (1, 2, ... 8)
-  /// @param[in] addr_type    Specify if the address should be used as an absolute virtual address or an RVA
-  virtual void patch_address(uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t),
+  /// @param[in] addr_type    Specify if the address should be used as an absolute
+  /// virtual address or an RVA
+  virtual void patch_address(uint64_t address, uint64_t patch_value,
+                             size_t size = sizeof(uint64_t),
                              VA_TYPES addr_type = VA_TYPES::AUTO) = 0;
 
   /// Return the content located at the given virtual address
-  virtual span<const uint8_t>
-    get_content_from_virtual_address(uint64_t virtual_address, uint64_t size,
-                                     VA_TYPES addr_type = VA_TYPES::AUTO) const = 0;
+  virtual span<const uint8_t> get_content_from_virtual_address(
+      uint64_t virtual_address, uint64_t size, VA_TYPES addr_type = VA_TYPES::AUTO
+  ) const = 0;
 
   /// Get the integer value at the given virtual address
   template<class T>
-  LIEF::result<T> get_int_from_virtual_address(
-    uint64_t va, VA_TYPES addr_type = VA_TYPES::AUTO) const
-  {
+  LIEF::result<T>
+      get_int_from_virtual_address(uint64_t va,
+                                   VA_TYPES addr_type = VA_TYPES::AUTO) const {
     T value;
     static_assert(std::is_integral<T>::value, "Require an integral type");
-    span<const uint8_t> raw = get_content_from_virtual_address(va, sizeof(T), addr_type);
+    span<const uint8_t> raw =
+        get_content_from_virtual_address(va, sizeof(T), addr_type);
     if (raw.empty() || raw.size() < sizeof(T)) {
       return make_error_code(lief_errors::read_error);
     }
@@ -270,14 +276,17 @@ class LIEF_API Binary : public Object {
   /// Convert the given offset into a virtual address.
   ///
   /// @param[in] offset   The offset to convert.
-  /// @param[in] slide    If not 0, it will replace the default base address (if any)
-  virtual result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const = 0;
+  /// @param[in] slide    If not 0, it will replace the default base address (if
+  /// any)
+  virtual result<uint64_t> offset_to_virtual_address(uint64_t offset,
+                                                     uint64_t slide = 0) const = 0;
 
   virtual std::ostream& print(std::ostream& os) const {
     return os;
   }
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Binary& binary) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Binary& binary) {
     binary.print(os);
     return os;
   }
@@ -356,7 +365,8 @@ class LIEF_API Binary : public Object {
     return disassemble(buffer.data(), buffer.size(), address);
   }
 
-  instructions_it disassemble(LIEF::span<uint8_t> buffer, uint64_t address = 0) const {
+  instructions_it disassemble(LIEF::span<uint8_t> buffer,
+                              uint64_t address = 0) const {
     return disassemble(buffer.data(), buffer.size(), address);
   }
 
@@ -374,7 +384,8 @@ class LIEF_API Binary : public Object {
   /// If you need to configure the assembly engine or to define addresses for
   /// symbols, you can provide your own assembly::AssemblerConfig.
   std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
-      assembly::AssemblerConfig& config = assembly::AssemblerConfig::default_config());
+                                assembly::AssemblerConfig& config =
+                                    assembly::AssemblerConfig::default_config());
 
   /// Assemble **and patch** the address with the given LLVM MCInst.
   ///
@@ -393,20 +404,23 @@ class LIEF_API Binary : public Object {
   /// the format of the current binary
   virtual uint64_t page_size() const;
 
-  /// Load and associate an external debug file (e.g., DWARF or PDB) with this binary.
+  /// Load and associate an external debug file (e.g., DWARF or PDB) with this
+  /// binary.
   ///
-  /// This method attempts to load the debug information from the file located at the given path,
-  /// and binds it to the current binary instance. If successful, it returns a pointer to the
-  /// loaded DebugInfo object.
+  /// This method attempts to load the debug information from the file located at
+  /// the given path, and binds it to the current binary instance. If successful,
+  /// it returns a pointer to the loaded DebugInfo object.
   ///
   /// \param path Path to the external debug file (e.g., `.dwarf`, `.pdb`)
-  /// \return Pointer to the loaded DebugInfo object on success, or `nullptr` on failure.
+  /// \return Pointer to the loaded DebugInfo object on success, or `nullptr` on
+  /// failure.
   ///
   /// \warning It is the caller's responsibility to ensure that the debug file is
   ///          compatible with the binary. Incorrect associations may lead to
   ///          inconsistent or invalid results.
   ///
-  /// \note This function does not verify that the debug file matches the binary's unique
+  /// \note This function does not verify that the debug file matches the binary's
+  /// unique
   ///       identifier (e.g., build ID, GUID).
   DebugInfo* load_debug_info(const std::string& path);
 
@@ -426,14 +440,15 @@ class LIEF_API Binary : public Object {
   template<uint32_t Key, class F>
   LIEF_LOCAL assembly::Engine* get_cache_engine(uint64_t address, F&& f) const;
 
-  // These functions need to be overloaded by the object that claims to extend this Abstract Binary
+  // These functions need to be overloaded by the object that claims to extend this
+  // Abstract Binary
   virtual Header get_abstract_header() const = 0;
   virtual symbols_t get_abstract_symbols() = 0;
   virtual sections_t get_abstract_sections() = 0;
   virtual relocations_t get_abstract_relocations() = 0;
 
-  virtual functions_t  get_abstract_exported_functions() const = 0;
-  virtual functions_t  get_abstract_imported_functions() const = 0;
+  virtual functions_t get_abstract_exported_functions() const = 0;
+  virtual functions_t get_abstract_imported_functions() const = 0;
   virtual std::vector<std::string> get_abstract_imported_libraries() const = 0;
 };
 

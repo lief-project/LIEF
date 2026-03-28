@@ -21,7 +21,7 @@
 
 class MachO_Utils {
   public:
-  static bool is_macho(std::string file)  {
+  static bool is_macho(std::string file) {
     return LIEF::MachO::is_macho(file);
   }
 
@@ -34,11 +34,14 @@ class MachO_Utils {
   }
 
   static bool check_layout(const MachO_Binary& bin, std::string* error) {
-    return LIEF::MachO::check_layout(static_cast<const LIEF::MachO::Binary&>(bin.get()), error);
+    return LIEF::MachO::check_layout(
+        static_cast<const LIEF::MachO::Binary&>(bin.get()), error
+    );
   }
 
   static bool check_layout_fat(const MachO_FatBinary& bin, std::string* error) {
-    return LIEF::MachO::check_layout(static_cast<const LIEF::MachO::FatBinary&>(bin.get()), error);
+    return LIEF::MachO::check_layout(
+        static_cast<const LIEF::MachO::FatBinary&>(bin.get()), error
+    );
   }
 };
-

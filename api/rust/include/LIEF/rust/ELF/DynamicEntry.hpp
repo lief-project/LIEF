@@ -30,13 +30,15 @@ class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry> {
   using Mirror::Mirror;
 
   static auto create(uint64_t tag) {
-    return std::make_unique<ELF_DynamicEntry>(
-        lief_t::create((lief_t::TAG)tag)
-    );
+    return std::make_unique<ELF_DynamicEntry>(lief_t::create((lief_t::TAG)tag));
   }
 
-  auto tag() const { return to_int(get().tag()); }
-  auto value() const { return get().value(); }
+  auto tag() const {
+    return to_int(get().tag());
+  }
+  auto value() const {
+    return get().value();
+  }
 
   auto set_value(uint64_t value) {
     get().value(value);
@@ -49,5 +51,4 @@ class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry> {
   const void* raw_ptr() const {
     return &get();
   }
-
 };

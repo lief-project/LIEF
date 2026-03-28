@@ -64,31 +64,29 @@ void Parser::parse_binary<details::OAT64_t>() {
     raw_oat.reserve(oat_data->size());
 
     span<const uint8_t> raw_data =
-      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+        oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
 
-    std::copy(raw_data.begin(), raw_data.end(),
-              std::back_inserter(raw_oat));
+    std::copy(raw_data.begin(), raw_data.end(), std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
-    data_size_    = oat_data->size();
+    data_size_ = oat_data->size();
   }
 
   const auto* oat_exec = oat.get_symbol("oatexec")->as<ELF::Symbol>();
   if (oat_exec != nullptr) {
 
     exec_start_ = oat_exec->value();
-    exec_size_  = oat_exec->size();
+    exec_size_ = oat_exec->size();
 
     span<const uint8_t> raw_oatexec =
-      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+        oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
 
-    std::copy(raw_oatexec.begin(), raw_oatexec.end(),
-              std::back_inserter(raw_oat));
+    std::copy(raw_oatexec.begin(), raw_oatexec.end(), std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -111,30 +109,28 @@ void Parser::parse_binary<details::OAT79_t>() {
     raw_oat.reserve(oat_data->size());
 
     span<const uint8_t> raw_data =
-      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::move(raw_data.begin(), raw_data.end(),
-              std::back_inserter(raw_oat));
+        oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+    std::move(raw_data.begin(), raw_data.end(), std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
-    data_size_    = oat_data->size();
+    data_size_ = oat_data->size();
   }
 
   const auto* oat_exec = oat.get_symbol("oatexec")->as<ELF::Symbol>();
   if (oat_exec != nullptr) {
 
     exec_start_ = oat_exec->value();
-    exec_size_  = oat_exec->size();
+    exec_size_ = oat_exec->size();
 
     span<const uint8_t> raw_oatexec =
-      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+        oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
 
-    std::copy(raw_oatexec.begin(), raw_oatexec.end(),
-              std::back_inserter(raw_oat));
+    std::copy(raw_oatexec.begin(), raw_oatexec.end(), std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -159,29 +155,27 @@ void Parser::parse_binary<details::OAT88_t>() {
     raw_oat.reserve(oat_data->size());
 
     span<const uint8_t> raw_data =
-      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::copy(raw_data.begin(), raw_data.end(),
-              std::back_inserter(raw_oat));
+        oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+    std::copy(raw_data.begin(), raw_data.end(), std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
-    data_size_    = oat_data->size();
+    data_size_ = oat_data->size();
   }
 
   const auto* oat_exec = oat.get_symbol("oatexec")->as<ELF::Symbol>();
   if (oat_exec != nullptr) {
     exec_start_ = oat_exec->value();
-    exec_size_  = oat_exec->size();
+    exec_size_ = oat_exec->size();
 
     span<const uint8_t> raw_oatexec =
-      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+        oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
 
-    std::copy(raw_oatexec.begin(), raw_oatexec.end(),
-              std::back_inserter(raw_oat));
+    std::copy(raw_oatexec.begin(), raw_oatexec.end(), std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -206,29 +200,27 @@ void Parser::parse_binary<details::OAT124_t>() {
     raw_oat.reserve(oat_data->size());
 
     span<const uint8_t> raw_data =
-      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::copy(raw_data.begin(), raw_data.end(),
-              std::back_inserter(raw_oat));
+        oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+    std::copy(raw_data.begin(), raw_data.end(), std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
-    data_size_    = oat_data->size();
+    data_size_ = oat_data->size();
   }
 
   const auto* oat_exec = oat.get_symbol("oatexec")->as<ELF::Symbol>();
   if (oat_exec != nullptr) {
     exec_start_ = oat_exec->value();
-    exec_size_  = oat_exec->size();
+    exec_size_ = oat_exec->size();
 
     span<const uint8_t> raw_oatexec =
-      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+        oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
 
-    std::copy(raw_oatexec.begin(), raw_oatexec.end(),
-              std::back_inserter(raw_oat));
+    std::copy(raw_oatexec.begin(), raw_oatexec.end(), std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -253,29 +245,27 @@ void Parser::parse_binary<details::OAT131_t>() {
     raw_oat.reserve(oat_data->size());
 
     span<const uint8_t> raw_data =
-      oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
-    std::copy(raw_data.begin(), raw_data.end(),
-              std::back_inserter(raw_oat));
+        oat.get_content_from_virtual_address(oat_data->value(), oat_data->size());
+    std::copy(raw_data.begin(), raw_data.end(), std::back_inserter(raw_oat));
 
     data_address_ = oat_data->value();
-    data_size_    = oat_data->size();
+    data_size_ = oat_data->size();
   }
 
   const auto* oat_exec = oat.get_symbol("oatexec")->as<ELF::Symbol>();
   if (oat_exec != nullptr) {
     exec_start_ = oat_exec->value();
-    exec_size_  = oat_exec->size();
+    exec_size_ = oat_exec->size();
 
     span<const uint8_t> raw_oatexec =
-      oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
+        oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
     uint32_t padding = exec_start_ - (data_address_ + data_size_);
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
 
-    std::copy(raw_oatexec.begin(), raw_oatexec.end(),
-              std::back_inserter(raw_oat));
+    std::copy(raw_oatexec.begin(), raw_oatexec.end(), std::back_inserter(raw_oat));
   }
 
   uint32_t padding = align(raw_oat.size(), sizeof(uint32_t) * 8) - raw_oat.size();
@@ -301,7 +291,6 @@ void Parser::parse_binary<details::OAT138_t>() {
 }
 
 
-
 template<typename OAT_T>
 void Parser::parse_header() {
   using oat_header = typename OAT_T::oat_header;
@@ -315,7 +304,7 @@ void Parser::parse_header() {
   const auto oat_hdr = std::move(*res_oat_hdr);
   oat.header_ = &oat_hdr;
   LIEF_DEBUG("DEX file count: #{:d}", oat.header_.nb_dex_files());
-  //LIEF_DEBUG("OAT version: {}", oat_hdr.oat_version);
+  // LIEF_DEBUG("OAT version: {}", oat_hdr.oat_version);
 
   parse_header_keys<OAT_T>();
 }
@@ -341,37 +330,40 @@ void Parser::parse_header_keys() {
     size_t pos = key_values.find(key_str);
 
     if (pos != std::string::npos) {
-      std::string value = std::string{key_values.data() + pos + key_str.size() + 1};
+      std::string value =
+          std::string{key_values.data() + pos + key_str.size() + 1};
       oat.header_.dex2oat_context_.emplace(key, value);
     }
   }
 }
 
 
-
 template<typename OAT_T>
 void Parser::parse_type_lookup_table() {
-  //using oat_header           = typename OAT_T::oat_header;
-  //using dex_file             = typename OAT_T::dex_file;
-  //using lookup_table_entry_t = typename OAT_T::lookup_table_entry_t;
+  // using oat_header           = typename OAT_T::oat_header;
+  // using dex_file             = typename OAT_T::dex_file;
+  // using lookup_table_entry_t = typename OAT_T::lookup_table_entry_t;
 
 
-  //VLOG(VDEBUG) << "Parsing TypeLookupTable";
-  //for (size_t i = 0; i < oat.dex_files_.size(); ++i) {
+  // VLOG(VDEBUG) << "Parsing TypeLookupTable";
+  // for (size_t i = 0; i < oat.dex_files_.size(); ++i) {
 
   //  const DexFile* oat_dex_file = oat.oat_dex_files_[i];
   //  uint64_t tlt_offset = oat_dex_file->lookup_table_offset();
 
   //  VLOG(VDEBUG) << "Getting TypeLookupTable for DexFile "
   //                << oat_dex_file->location()
-  //                << " (#" << std::dec << oat_dex_file->dex_file().header().nb_classes() << ")";
+  //                << " (#" << std::dec <<
+  //                oat_dex_file->dex_file().header().nb_classes() << ")";
   //  for (size_t j = 0; j < oat_dex_file->dex_file().header().nb_classes();) {
-  //    const lookup_table_entry_t* entry = reinterpret_cast<const lookup_table_entry_t*>(stream_->read(tlt_offset, sizeof(lookup_table_entry_t)));
+  //    const lookup_table_entry_t* entry = reinterpret_cast<const
+  //    lookup_table_entry_t*>(stream_->read(tlt_offset,
+  //    sizeof(lookup_table_entry_t)));
 
   //    if (entry->str_offset) {
   //      uint64_t string_offset = oat_dex_file->dex_offset() + entry->str_offset;
-  //      std::pair<uint64_t, uint64_t> len_size = stream_->read_uleb128(string_offset);
-  //      string_offset += len_size.second;
+  //      std::pair<uint64_t, uint64_t> len_size =
+  //      stream_->read_uleb128(string_offset); string_offset += len_size.second;
   //      std::string class_name = stream_->get_string(string_offset);
   //      //VLOG(VDEBUG) << "    " << "#" << std::dec << j << " " << class_name;
   //      ++j;
@@ -414,7 +406,7 @@ void Parser::parse_oat_classes() {
       stream_->setpos(oat_class_offset);
 
       // OAT Status
-      auto res_status  = stream_->read<int16_t>();
+      auto res_status = stream_->read<int16_t>();
       if (!res_status) {
         break;
       }
@@ -446,7 +438,9 @@ void Parser::parse_oat_classes() {
         }
       }
 
-      auto oat_class = std::make_unique<Class>(status, type, const_cast<DEX::Class*>(cls), bitmap);
+      auto oat_class =
+          std::make_unique<Class>(status, type, const_cast<DEX::Class*>(cls),
+                                  bitmap);
 
       Class& oat_cls_ref = *oat_class;
       oat.add_class(std::move(oat_class));
@@ -459,7 +453,8 @@ void Parser::parse_oat_classes() {
 }
 
 template<typename OAT_T>
-void Parser::parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX::Class& dex_class) {
+void Parser::parse_oat_methods(uint64_t methods_offsets, Class& clazz,
+                               const DEX::Class& dex_class) {
   using oat_quick_method_header = typename OAT_T::oat_quick_method_header;
   DEX::Class::it_const_methods methods = dex_class.methods();
 
@@ -470,7 +465,8 @@ void Parser::parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX
     }
 
     uint32_t computed_index = clazz.method_offsets_index(method);
-    auto code_off = stream_->peek<uint32_t>(methods_offsets + computed_index * sizeof(uint32_t));
+    auto code_off = stream_->peek<uint32_t>(methods_offsets +
+                                            computed_index * sizeof(uint32_t));
     if (!code_off) {
       break;
     }
@@ -479,7 +475,8 @@ void Parser::parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX
     uint32_t quick_method_header_off = *code_off - sizeof(oat_quick_method_header);
     quick_method_header_off &= ~1u;
 
-    const auto res_quick_header = stream_->peek<oat_quick_method_header>(quick_method_header_off);
+    const auto res_quick_header =
+        stream_->peek<oat_quick_method_header>(quick_method_header_off);
     if (!res_quick_header) {
       break;
     }
@@ -488,11 +485,13 @@ void Parser::parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX
 
     uint32_t vmap_table_offset = *code_off - quick_header.vmap_table_offset;
 
-    auto oat_method = std::make_unique<Method>(const_cast<DEX::Method*>(&method), &clazz);
+    auto oat_method =
+        std::make_unique<Method>(const_cast<DEX::Method*>(&method), &clazz);
 
     if (quick_header.code_size > 0) {
 
-      const auto* code = stream_->peek_array<uint8_t>(*code_off, quick_header.code_size);
+      const auto* code =
+          stream_->peek_array<uint8_t>(*code_off, quick_header.code_size);
       if (code != nullptr) {
         oat_method->quick_code_ = {code, code + quick_header.code_size};
       }
@@ -534,13 +533,10 @@ void Parser::parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX
         auto index = static_cast<uint32_t>(*res_index);
         oat_method->dex_method()->insert_dex2dex_info(pc, index);
       }
-
     }
     clazz.methods_.push_back(oat_method.get());
     oat.methods_.push_back(std::move(oat_method));
   }
-
 }
 
 }
-

@@ -19,28 +19,18 @@ namespace java::util {
 
 class OptionalInt {
   public:
-  static constexpr jni::Class kClass {
-    "java/util/OptionalInt",
-    jni::Static {
-      jni::Method {
-        "empty", jni::Return{jni::Self{}}
-      },
-      jni::Method {
-        "of", jni::Return{jni::Self{}}, jni::Params {
-          jint{}
-        }
-      }
-    }
+  static constexpr jni::Class kClass{
+      "java/util/OptionalInt",
+      jni::Static{jni::Method{"empty", jni::Return{jni::Self{}}},
+                  jni::Method{"of", jni::Return{jni::Self{}}, jni::Params{jint{}}}}
   };
 
   static jobject empty() {
-    return jni::StaticRef<kClass>{}. template Call<"empty">().Release();
+    return jni::StaticRef<kClass>{}.template Call<"empty">().Release();
   }
 
   static jobject of(int32_t value) {
-    return jni::StaticRef<kClass>{}. template Call<"of">(
-        (jint)value
-    ).Release();
+    return jni::StaticRef<kClass>{}.template Call<"of">((jint)value).Release();
   }
 };
 }

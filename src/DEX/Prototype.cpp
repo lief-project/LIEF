@@ -45,7 +45,6 @@ void Prototype::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const Prototype& type) {
 
   Prototype::it_const_params ps = type.parameters_type();
@@ -68,4 +67,3 @@ std::ostream& operator<<(std::ostream& os, const Prototype& type) {
 Prototype::~Prototype() = default;
 
 }
-

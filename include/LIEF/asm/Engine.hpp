@@ -51,23 +51,26 @@ class LIEF_API Engine {
   /// parameter.
   instructions_it disassemble(const uint8_t* buffer, size_t size, uint64_t addr);
 
-  /// Disassemble the given vector of bytes with the address specified in the second
-  /// parameter.
+  /// Disassemble the given vector of bytes with the address specified in the
+  /// second parameter.
   instructions_it disassemble(const std::vector<uint8_t>& bytes, uint64_t addr) {
     return disassemble(bytes.data(), bytes.size(), addr);
   }
 
-  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
-      AssemblerConfig& config = AssemblerConfig::default_config());
+  std::vector<uint8_t>
+      assemble(uint64_t address, const std::string& Asm,
+               AssemblerConfig& config = AssemblerConfig::default_config());
 
-  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
-      LIEF::Binary& bin, AssemblerConfig& config = AssemblerConfig::default_config());
+  std::vector<uint8_t>
+      assemble(uint64_t address, const std::string& Asm, LIEF::Binary& bin,
+               AssemblerConfig& config = AssemblerConfig::default_config());
 
   std::vector<uint8_t> assemble(uint64_t address, const llvm::MCInst& inst,
                                 LIEF::Binary& bin);
 
-  std::vector<uint8_t> assemble(
-      uint64_t address, const std::vector<llvm::MCInst>& inst, LIEF::Binary& bin);
+  std::vector<uint8_t> assemble(uint64_t address,
+                                const std::vector<llvm::MCInst>& inst,
+                                LIEF::Binary& bin);
 
   ~Engine();
 

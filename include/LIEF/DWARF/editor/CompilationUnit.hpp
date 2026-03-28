@@ -63,15 +63,18 @@ class LIEF_API CompilationUnit {
 
   /// Create a typdef with the name provided in the first parameter which aliases
   /// the type provided in the second parameter
-  std::unique_ptr<TypeDef> create_typedef(const std::string& name, const Type& type);
+  std::unique_ptr<TypeDef> create_typedef(const std::string& name,
+                                          const Type& type);
 
   /// Create a struct-like type (struct, class, union) with the given name.
-  std::unique_ptr<StructType> create_structure(
-    const std::string& name, StructType::TYPE kind = StructType::TYPE::STRUCT);
+  std::unique_ptr<StructType>
+      create_structure(const std::string& name,
+                       StructType::TYPE kind = StructType::TYPE::STRUCT);
 
   /// Create a primitive type with the given name and size.
-  std::unique_ptr<BaseType> create_base_type(const std::string& name, size_t size,
-    BaseType::ENCODING encoding = BaseType::ENCODING::NONE);
+  std::unique_ptr<BaseType>
+      create_base_type(const std::string& name, size_t size,
+                       BaseType::ENCODING encoding = BaseType::ENCODING::NONE);
 
   /// Create a function type with the given name.
   std::unique_ptr<FunctionType> create_function_type(const std::string& name);
@@ -85,8 +88,8 @@ class LIEF_API CompilationUnit {
   std::unique_ptr<Type> create_void_type();
 
   /// Create an array type with the given name, type and size.
-  std::unique_ptr<ArrayType>
-    create_array(const std::string& name, const Type& type, size_t count);
+  std::unique_ptr<ArrayType> create_array(const std::string& name,
+                                          const Type& type, size_t count);
 
   ~CompilationUnit();
 

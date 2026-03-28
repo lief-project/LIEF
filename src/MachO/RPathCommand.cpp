@@ -24,16 +24,15 @@ namespace LIEF::MachO {
 
 RPathCommand::RPathCommand(std::string path) :
   LoadCommand::LoadCommand(LoadCommand::TYPE::RPATH, 0),
-  path_(std::move(path))
-{
-  size_ = align(sizeof(details::rpath_command) + path_.size() + 1, sizeof(uint64_t));
+  path_(std::move(path)) {
+  size_ =
+      align(sizeof(details::rpath_command) + path_.size() + 1, sizeof(uint64_t));
   original_data_.resize(size_);
 }
 
 RPathCommand::RPathCommand(const details::rpath_command& rpath) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(rpath.cmd), rpath.cmdsize},
-  path_offset_(rpath.path)
-{}
+  path_offset_(rpath.path) {}
 
 void RPathCommand::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -47,4 +46,3 @@ std::ostream& RPathCommand::print(std::ostream& os) const {
 
 
 }
-

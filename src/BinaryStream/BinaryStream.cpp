@@ -26,43 +26,42 @@ namespace LIEF {
 
 
 result<int64_t> BinaryStream::read_dwarf_encoded(uint8_t encoding) const {
-  const auto encodevalue =  static_cast<LIEF::dwarf::EH_ENCODING>(encoding & 0x0F);
+  const auto encodevalue = static_cast<LIEF::dwarf::EH_ENCODING>(encoding & 0x0F);
 
   switch (encodevalue) {
     case LIEF::dwarf::EH_ENCODING::ULEB128:
-      {
-        return read_uleb128();
-      }
+    {
+      return read_uleb128();
+    }
 
     case LIEF::dwarf::EH_ENCODING::SDATA2:
     case LIEF::dwarf::EH_ENCODING::UDATA2:
-      {
-        return read<int16_t>();
-      }
+    {
+      return read<int16_t>();
+    }
 
     case LIEF::dwarf::EH_ENCODING::SDATA4:
     case LIEF::dwarf::EH_ENCODING::UDATA4:
-      {
-        return read<int32_t>();
-      }
+    {
+      return read<int32_t>();
+    }
 
     case LIEF::dwarf::EH_ENCODING::SDATA8:
     case LIEF::dwarf::EH_ENCODING::UDATA8:
-      {
-        return read<int64_t>();
-      }
+    {
+      return read<int64_t>();
+    }
 
     case LIEF::dwarf::EH_ENCODING::SLEB128:
-      {
-        return read_sleb128();
-      }
+    {
+      return read_sleb128();
+    }
 
     default:
-      {
-        return 0;
-      }
+    {
+      return 0;
+    }
   }
-
 }
 
 result<uint64_t> BinaryStream::read_uleb128(size_t* size) const {
@@ -89,7 +88,7 @@ result<uint64_t> BinaryStream::read_uleb128(size_t* size) const {
 }
 
 result<uint64_t> BinaryStream::read_sleb128(size_t* size) const {
-  int64_t  value = 0;
+  int64_t value = 0;
   unsigned shift = 0;
   result<uint8_t> byte_read = 0;
   const uint64_t opos = pos();
@@ -146,10 +145,10 @@ result<std::string> BinaryStream::peek_string(size_t maxsize) const {
   } while (count < maxsize && c && *c != '\0' && off < size());
   str_result.back() = '\0';
   return str_result.c_str();
-
 }
 
-result<std::string> BinaryStream::peek_string_at(size_t offset, size_t maxsize) const {
+result<std::string> BinaryStream::peek_string_at(size_t offset,
+                                                 size_t maxsize) const {
   size_t saved_offset = pos();
   setpos(offset);
   result<std::string> tmp = peek_string(maxsize);
@@ -213,7 +212,8 @@ result<std::u16string> BinaryStream::peek_u16string(size_t length) const {
   return make_error_code(lief_errors::read_error);
 }
 
-result<std::u16string> BinaryStream::peek_u16string_at(size_t offset, size_t length) const {
+result<std::u16string> BinaryStream::peek_u16string_at(size_t offset,
+                                                       size_t length) const {
   size_t saved_offset = pos();
   setpos(offset);
   result<std::u16string> tmp = peek_u16string(length);
@@ -264,21 +264,22 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
       }
       u32str.push_back(static_cast<char32_t>((((a & 0x1F) << 6) | (b & 0x3F))));
     } else if ((a & 0xf0) == 0xe0) {
-        result<uint8_t> res_b = read<uint8_t>();
-        result<uint8_t> res_c = read<uint8_t>();
-        if (!res_b) {
-          return make_error_code(res_b.error());
-        }
-        if (!res_c) {
-          return make_error_code(res_c.error());
-        }
-        uint8_t b = *res_b;
-        uint8_t c = *res_c;
+      result<uint8_t> res_b = read<uint8_t>();
+      result<uint8_t> res_c = read<uint8_t>();
+      if (!res_b) {
+        return make_error_code(res_b.error());
+      }
+      if (!res_c) {
+        return make_error_code(res_c.error());
+      }
+      uint8_t b = *res_b;
+      uint8_t c = *res_c;
 
-        if (((b & 0xC0) != 0x80) || ((c & 0xC0) != 0x80)) {
-          break;
-        }
-        u32str.push_back(static_cast<char32_t>(((a & 0x1F) << 12) | ((b & 0x3F) << 6) | (c & 0x3F)));
+      if (((b & 0xC0) != 0x80) || ((c & 0xC0) != 0x80)) {
+        break;
+      }
+      u32str.push_back(static_cast<char32_t>(((a & 0x1F) << 12) |
+                                             ((b & 0x3F) << 6) | (c & 0x3F)));
     } else {
       break;
     }
@@ -286,10 +287,10 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
 
   std::string u8str;
 
-  std::replace_if(u32str.begin(), u32str.end(),
-      [] (const char32_t c) {
-        return !utf8::internal::is_code_point_valid(c);
-      }, '.');
+  std::replace_if(
+      u32str.begin(), u32str.end(),
+      [](const char32_t c) { return !utf8::internal::is_code_point_valid(c); }, '.'
+  );
 
   utf8::unchecked::utf32to8(u32str.begin(), u32str.end(),
                             std::back_inserter(u8str));

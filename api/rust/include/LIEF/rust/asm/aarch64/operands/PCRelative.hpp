@@ -21,12 +21,16 @@ class asm_aarch64_operands_PCRelative : public asm_aarch64_Operand {
   public:
   using lief_t = LIEF::assembly::aarch64::operands::PCRelative;
 
-  auto value() const { return impl().value(); }
+  auto value() const {
+    return impl().value();
+  }
 
   static bool classof(const asm_aarch64_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

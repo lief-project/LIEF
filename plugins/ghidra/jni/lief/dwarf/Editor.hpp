@@ -25,23 +25,24 @@ namespace lief_jni::dwarf {
 
 class Editor : public JNI<Editor, std::unique_ptr<LIEF::dwarf::Editor>> {
   public:
-  static constexpr jni::Class kClass {
-    "lief/dwarf/Editor",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/dwarf/Editor",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   class Format {
     public:
-    static constexpr jni::Class kClass {
-      "lief/dwarf/Editor$Format",
+    static constexpr jni::Class kClass{
+        "lief/dwarf/Editor$Format",
     };
   };
 
   class Arch {
     public:
-    static constexpr jni::Class kClass {
-      "lief/dwarf/Editor$Arch",
+    static constexpr jni::Class kClass{
+        "lief/dwarf/Editor$Arch",
     };
   };
 

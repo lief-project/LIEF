@@ -19,9 +19,9 @@
 #undef TL_EXPECTED_EXCEPTIONS_ENABLED
 
 #ifndef LIEF_EXTERNAL_EXPECTED
-#include <LIEF/third-party/internal/expected.hpp>
+  #include <LIEF/third-party/internal/expected.hpp>
 #else
-#include <tl/expected.hpp>
+  #include <tl/expected.hpp>
 #endif
 
 #endif

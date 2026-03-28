@@ -85,7 +85,7 @@ class LIEF_API Header : public Object {
   ~Header() override;
 
   private:
-  magic_t       magic_;
+  magic_t magic_;
   art_version_t version_;
 
   uint32_t image_begin_;

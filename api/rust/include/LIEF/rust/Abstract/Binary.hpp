@@ -28,67 +28,92 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
   using lief_t = LIEF::Binary;
   using Mirror::Mirror;
 
-  class it_instructions :
-      public ForwardIterator<asm_Instruction, LIEF::assembly::Instruction::Iterator>
-  {
+  class it_instructions
+    : public ForwardIterator<asm_Instruction,
+                             LIEF::assembly::Instruction::Iterator> {
     public:
-    it_instructions(const AbstractBinary::lief_t& src, uint64_t addr, size_t size)
-      : ForwardIterator(src.disassemble(addr, size)) { }
+    it_instructions(const AbstractBinary::lief_t& src, uint64_t addr,
+                    size_t size) :
+      ForwardIterator(src.disassemble(addr, size)) {}
 
-    it_instructions(const AbstractBinary::lief_t& src, uint64_t addr)
-      : ForwardIterator(src.disassemble(addr)) { }
+    it_instructions(const AbstractBinary::lief_t& src, uint64_t addr) :
+      ForwardIterator(src.disassemble(addr)) {}
 
-    it_instructions(const AbstractBinary::lief_t& src, const std::string& func)
-      : ForwardIterator(src.disassemble(func)) { }
+    it_instructions(const AbstractBinary::lief_t& src, const std::string& func) :
+      ForwardIterator(src.disassemble(func)) {}
 
-    it_instructions(const AbstractBinary::lief_t& src,
-                    const uint8_t* ptr, size_t size,
-                    uint64_t address)
-      : ForwardIterator(src.disassemble(ptr, size, address)) { }
+    it_instructions(const AbstractBinary::lief_t& src, const uint8_t* ptr,
+                    size_t size, uint64_t address) :
+      ForwardIterator(src.disassemble(ptr, size, address)) {}
 
-    auto next() { return ForwardIterator::next(); }
+    auto next() {
+      return ForwardIterator::next();
+    }
   };
 
 
-  class it_functions :
-    public ContainerIterator<AbstractFunction, LIEF::Binary::functions_t>
-  {
+  class it_functions
+    : public ContainerIterator<AbstractFunction, LIEF::Binary::functions_t> {
     public:
-    it_functions(LIEF::Binary::functions_t content)
-      : ContainerIterator(std::move(content)) { }
-    auto next() { return ContainerIterator::next(); }
-    auto size() const { return ContainerIterator::size(); }
+    it_functions(LIEF::Binary::functions_t content) :
+      ContainerIterator(std::move(content)) {}
+    auto next() {
+      return ContainerIterator::next();
+    }
+    auto size() const {
+      return ContainerIterator::size();
+    }
   };
 
-  uint64_t entrypoint() const { return get().entrypoint(); }
-  uint64_t imagebase() const { return get().imagebase(); }
-  uint64_t virtual_size() const { return get().virtual_size(); }
-  uint64_t original_size() const { return get().original_size(); }
-  bool is_pie() const { return get().is_pie(); }
-  bool has_nx() const { return get().has_nx(); }
+  uint64_t entrypoint() const {
+    return get().entrypoint();
+  }
+  uint64_t imagebase() const {
+    return get().imagebase();
+  }
+  uint64_t virtual_size() const {
+    return get().virtual_size();
+  }
+  uint64_t original_size() const {
+    return get().original_size();
+  }
+  bool is_pie() const {
+    return get().is_pie();
+  }
+  bool has_nx() const {
+    return get().has_nx();
+  }
 
   uint8_t get_u8(uint64_t addr, uint32_t& err) const {
-    return details::make_error(get().get_int_from_virtual_address<uint8_t>(addr), err);
+    return details::make_error(get().get_int_from_virtual_address<uint8_t>(addr),
+                               err);
   }
 
   uint16_t get_u16(uint64_t addr, uint32_t& err) const {
-    return details::make_error(get().get_int_from_virtual_address<uint16_t>(addr), err);
+    return details::make_error(get().get_int_from_virtual_address<uint16_t>(addr),
+                               err);
   }
 
   uint32_t get_u32(uint64_t addr, uint32_t& err) const {
-    return details::make_error(get().get_int_from_virtual_address<uint32_t>(addr), err);
+    return details::make_error(get().get_int_from_virtual_address<uint32_t>(addr),
+                               err);
   }
 
   uint64_t get_u64(uint64_t addr, uint32_t& err) const {
-    return details::make_error(get().get_int_from_virtual_address<uint64_t>(addr), err);
+    return details::make_error(get().get_int_from_virtual_address<uint64_t>(addr),
+                               err);
   }
 
-  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide, uint32_t& err) const {
-    return details::make_error(get().offset_to_virtual_address(offset, slide), err);
+  uint64_t offset_to_virtual_address(uint64_t offset, uint64_t slide,
+                                     uint32_t& err) const {
+    return details::make_error(get().offset_to_virtual_address(offset, slide),
+                               err);
   }
 
   auto debug_info() const {
-    return details::try_unique<AbstracDebugInfo>(get().debug_info()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<AbstracDebugInfo>(
+        get().debug_info()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto disassemble(uint64_t addr, uint64_t size) const {
@@ -111,8 +136,10 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
     return get().assemble(address, Asm);
   }
 
-  auto assemble_with_config(uint64_t address, std::string Asm, const AssemblerConfig_r& ffi_config) {
-    std::unique_ptr<LIEF::assembly::AssemblerConfig> config = from_rust(ffi_config);
+  auto assemble_with_config(uint64_t address, std::string Asm,
+                            const AssemblerConfig_r& ffi_config) {
+    std::unique_ptr<LIEF::assembly::AssemblerConfig> config =
+        from_rust(ffi_config);
     assert(config != nullptr);
     return get().assemble(address, Asm, *config);
   }

@@ -23,8 +23,14 @@ class dsc_SubCache : private Mirror<LIEF::dsc::SubCache> {
   using lief_t = LIEF::dsc::SubCache;
   using Mirror::Mirror;
 
-  auto vm_offset() const { return get().vm_offset(); }
-  auto suffix() const { return get().suffix(); }
-  auto uuid() const { return details::make_vector(get().uuid()); }
+  auto vm_offset() const {
+    return get().vm_offset();
+  }
+  auto suffix() const {
+    return get().suffix();
+  }
+  auto uuid() const {
+    return details::make_vector(get().uuid());
+  }
   LIEF_API std::unique_ptr<dsc_DyldSharedCache> cache() const;
 };

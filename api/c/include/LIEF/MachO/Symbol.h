@@ -25,10 +25,10 @@ extern "C" {
 
 struct Macho_Symbol_t {
   const char* name;
-  uint8_t     type;
-  uint8_t     numberof_sections;
-  uint16_t    description;
-  uint64_t    value;
+  uint8_t type;
+  uint8_t numberof_sections;
+  uint16_t description;
+  uint64_t value;
 };
 
 typedef struct Macho_Symbol_t Macho_Symbol_t;

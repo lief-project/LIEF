@@ -46,9 +46,9 @@ class LIEF_API Relocation : public LIEF::Relocation {
   using LIEF::Relocation::size;
 
   enum class ORIGIN {
-    UNKNOWN        = 0,
-    DYLDINFO       = 1,
-    RELOC_TABLE    = 2,
+    UNKNOWN = 0,
+    DYLDINFO = 1,
+    RELOC_TABLE = 2,
     CHAINED_FIXUPS = 3,
   };
 
@@ -69,8 +69,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
   /// Indicates whether the item containing the address to be
   /// relocated is part of a CPU instruction that uses PC-relative addressing.
   ///
-  /// For addresses contained in PC-relative instructions, the CPU adds the address of
-  /// the instruction to the address contained in the instruction.
+  /// For addresses contained in PC-relative instructions, the CPU adds the address
+  /// of the instruction to the address contained in the instruction.
   virtual bool is_pc_relative() const = 0;
 
   /// Type of the relocation according to the
@@ -139,7 +139,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<Relocation, T>::value, "Require Relocation inheritance");
+    static_assert(std::is_base_of<Relocation, T>::value,
+                  "Require Relocation inheritance");
     if (T::classof(*this)) {
       return static_cast<const T*>(this);
     }
@@ -158,13 +159,14 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   virtual std::ostream& print(std::ostream& os) const;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Relocation& relocation);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Relocation& relocation);
 
   protected:
-  Symbol*         symbol_ = nullptr;
-  uint8_t         type_ = 0;
+  Symbol* symbol_ = nullptr;
+  uint8_t type_ = 0;
   Header::CPU_TYPE architecture_ = Header::CPU_TYPE::ANY;
-  Section*        section_ = nullptr;
+  Section* section_ = nullptr;
   SegmentCommand* segment_ = nullptr;
 };
 

@@ -18,20 +18,19 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
 
-#define FMT_FORMATTER(T, F)                                          \
-template <typename Char> struct fmt::formatter<T, Char> {            \
-  template <typename ParseContext>                                   \
-  constexpr auto parse(ParseContext& ctx) -> decltype(ctx.begin()) { \
-    return ctx.begin();                                              \
-  }                                                                  \
-  template <typename FormatContext>                                  \
-  auto format(const T& p, FormatContext& ctx) const                  \
-      -> decltype(ctx.out()) {                                       \
-    auto out = ctx.out();                                            \
-    out = detail::write<Char>(out, F(p));                            \
-    return out;                                                      \
-  }                                                                  \
-}
+#define FMT_FORMATTER(T, F)                                                       \
+  template<typename Char>                                                         \
+  struct fmt::formatter<T, Char> {                                                \
+    template<typename ParseContext>                                               \
+    constexpr auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {            \
+      return ctx.begin();                                                         \
+    }                                                                             \
+    template<typename FormatContext>                                              \
+    auto format(const T& p, FormatContext& ctx) const -> decltype(ctx.out()) {    \
+      auto out = ctx.out();                                                       \
+      out = detail::write<Char>(out, F(p));                                       \
+      return out;                                                                 \
+    }                                                                             \
+  }
 
 #endif
-

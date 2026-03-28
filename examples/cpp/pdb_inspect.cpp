@@ -27,8 +27,8 @@ int main(int argc, const char** argv) {
   log(LEVEL::INFO, "age={}, guid={}", std::to_string(pdb->age()), pdb->guid());
 
   for (std::unique_ptr<LIEF::pdb::PublicSymbol> symbol : pdb->public_symbols()) {
-    log(LEVEL::INFO, "name={}, section={}, RVA={}",
-        symbol->name(), symbol->section_name(), std::to_string(symbol->RVA()));
+    log(LEVEL::INFO, "name={}, section={}, RVA={}", symbol->name(),
+        symbol->section_name(), std::to_string(symbol->RVA()));
   }
 
   for (std::unique_ptr<LIEF::pdb::Type> ty : pdb->types()) {
@@ -45,12 +45,11 @@ int main(int argc, const char** argv) {
     }
 
     for (std::unique_ptr<LIEF::pdb::Function> func : CU->functions()) {
-      log(LEVEL::INFO, "name={}, section={}, RVA={}, code size={}",
-          func->name(), func->section_name(), std::to_string(func->RVA()),
+      log(LEVEL::INFO, "name={}, section={}, RVA={}, code size={}", func->name(),
+          func->section_name(), std::to_string(func->RVA()),
           std::to_string(func->code_size()));
     }
   }
-
 
 
   return EXIT_SUCCESS;

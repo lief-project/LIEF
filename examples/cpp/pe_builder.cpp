@@ -20,7 +20,7 @@
 #include <LIEF/PE.hpp>
 
 using namespace LIEF::PE;
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "PE Rebuilder" << '\n';
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << '\n';

@@ -22,11 +22,12 @@
 
 namespace LIEF::MachO {
 
-FunctionVariantFixups::FunctionVariantFixups(const details::linkedit_data_command& cmd) :
+FunctionVariantFixups::FunctionVariantFixups(
+    const details::linkedit_data_command& cmd
+) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   data_offset_{cmd.dataoff},
-  data_size_{cmd.datasize}
-{}
+  data_size_{cmd.datasize} {}
 
 std::ostream& FunctionVariantFixups::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
@@ -35,4 +36,3 @@ std::ostream& FunctionVariantFixups::print(std::ostream& os) const {
 
 
 }
-

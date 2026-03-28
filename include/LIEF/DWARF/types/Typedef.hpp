@@ -46,12 +46,9 @@ class LIEF_API Typedef : public Type {
 
   protected:
   mutable std::unique_ptr<Type> underlying_;
-
 };
 
 }
 }
 }
 #endif
-
-

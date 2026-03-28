@@ -43,14 +43,19 @@ class LIEF_API Function {
     class LIEF_API PointerProxy {
       // Inspired from LLVM's iterator_facade_base
       friend class Iterator;
+
       public:
-      pointer operator->() const { return R.get(); }
+      pointer operator->() const {
+        return R.get();
+      }
 
       private:
       value_type R;
 
-      template <typename RefT>
-      PointerProxy(RefT &&R) : R(std::forward<RefT>(R)) {} // NOLINT(bugprone-forwarding-reference-overload)
+      template<typename RefT>
+      PointerProxy(RefT&& R) :
+        R(std::forward<RefT>(R)) {
+      } // NOLINT(bugprone-forwarding-reference-overload)
     };
 
     Iterator(const Iterator&);
@@ -67,7 +72,7 @@ class LIEF_API Function {
 
     Iterator operator++(int) {
       Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator *>(this);
+      ++*static_cast<Iterator*>(this);
       return tmp;
     }
 
@@ -100,9 +105,7 @@ class LIEF_API Function {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const Function& F)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Function& F) {
     os << F.to_string();
     return os;
   }
@@ -114,4 +117,3 @@ class LIEF_API Function {
 }
 }
 #endif
-

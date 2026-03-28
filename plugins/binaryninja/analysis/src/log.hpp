@@ -17,16 +17,25 @@
 
 #define BN_PLUGIN_ANALYSIS_LOG_NAME "lief-analysis-plugin"
 
-#define BN_TRACE(...) binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME).trace(__VA_ARGS__)
-#define BN_DEBUG(...) binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME).debug(__VA_ARGS__)
-#define BN_INFO(...)  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME).info(__VA_ARGS__)
-#define BN_WARN(...)  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME).warn(__VA_ARGS__)
-#define BN_ERR(...)   binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME).err(__VA_ARGS__)
+#define BN_TRACE(...)                                                             \
+  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)                \
+      .trace(__VA_ARGS__)
+#define BN_DEBUG(...)                                                             \
+  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)                \
+      .debug(__VA_ARGS__)
+#define BN_INFO(...)                                                              \
+  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)                \
+      .info(__VA_ARGS__)
+#define BN_WARN(...)                                                              \
+  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)                \
+      .warn(__VA_ARGS__)
+#define BN_ERR(...)                                                               \
+  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME).err(__VA_ARGS__)
 
 
 namespace analysis_plugin {
 inline void enable_debug_log() {
   binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)
-    .set_level(binaryninja::core::Logger::LEVEL::DEBUG);
+      .set_level(binaryninja::core::Logger::LEVEL::DEBUG);
 }
 }

@@ -75,7 +75,8 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// Find the type with at the given index
   std::unique_ptr<Type> find_type(uint32_t index) const;
 
-  /// Try to find the PublicSymbol from the given name (based on the public symbol stream)
+  /// Try to find the PublicSymbol from the given name (based on the public symbol
+  /// stream)
   ///
   /// The function returns a nullptr if the symbol can't be found
   ///
@@ -99,9 +100,8 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// Pretty representation
   std::string to_string() const;
 
-  friend LIEF_API
-    std::ostream& operator<<(std::ostream& os, const DebugInfo& dbg)
-  {
+  friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                           const DebugInfo& dbg) {
     os << dbg.to_string();
     return os;
   }

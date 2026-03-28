@@ -36,7 +36,8 @@ class ResourceData;
 /// an extended Dialog. These different kinds of Dialogs are documented by MS
 /// at the following addresses:
 ///
-/// - https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-dlgtemplate
+/// -
+/// https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-dlgtemplate
 /// - https://learn.microsoft.com/fr-fr/windows/win32/dlgbox/dlgitemtemplateex
 class LIEF_API ResourceDialog : public Object {
   public:
@@ -63,86 +64,90 @@ class LIEF_API ResourceDialog : public Object {
   /// Enum for discriminating the kind of the Dialog (regular vs extended)
   enum class TYPE {
     UNKNOWN = 0,
-    REGULAR, EXTENDED,
+    REGULAR,
+    EXTENDED,
   };
 
-  /// From: https://learn.microsoft.com/en-us/windows/win32/dlgbox/dialog-box-styles
+  /// From:
+  /// https://learn.microsoft.com/en-us/windows/win32/dlgbox/dialog-box-styles
   enum class DIALOG_STYLES : uint32_t {
-    ABSALIGN      = 0x0001,
-    SYSMODAL      = 0x0002,
-    LOCALEDIT     = 0x0020,
-    SETFONT       = 0x0040,
-    MODALFRAME    = 0x0080,
-    NOIDLEMSG     = 0x0100,
+    ABSALIGN = 0x0001,
+    SYSMODAL = 0x0002,
+    LOCALEDIT = 0x0020,
+    SETFONT = 0x0040,
+    MODALFRAME = 0x0080,
+    NOIDLEMSG = 0x0100,
     SETFOREGROUND = 0x0200,
-    S3DLOOK       = 0x0004,
-    FIXEDSYS      = 0x0008,
-    NOFAILCREATE  = 0x0010,
-    CONTROL       = 0x0400,
-    CENTER        = 0x0800,
-    CENTERMOUSE   = 0x1000,
-    CONTEXTHELP   = 0x2000,
-    SHELLFONT     = SETFONT | FIXEDSYS,
+    S3DLOOK = 0x0004,
+    FIXEDSYS = 0x0008,
+    NOFAILCREATE = 0x0010,
+    CONTROL = 0x0400,
+    CENTER = 0x0800,
+    CENTERMOUSE = 0x1000,
+    CONTEXTHELP = 0x2000,
+    SHELLFONT = SETFONT | FIXEDSYS,
   };
 
   /// From: https://docs.microsoft.com/en-us/windows/win32/winmsg/window-styles
   enum class WINDOW_STYLES : uint32_t {
-    OVERLAPPED      = 0x00000000,
-    POPUP           = 0x80000000,
-    CHILD           = 0x40000000,
-    MINIMIZE        = 0x20000000,
-    VISIBLE         = 0x10000000,
-    DISABLED        = 0x08000000,
-    CLIPSIBLINGS    = 0x04000000,
-    CLIPCHILDREN    = 0x02000000,
-    MAXIMIZE        = 0x01000000,
-    CAPTION         = 0x00C00000,
-    BORDER          = 0x00800000,
-    DLGFRAME        = 0x00400000,
-    VSCROLL         = 0x00200000,
-    HSCROLL         = 0x00100000,
-    SYSMENU         = 0x00080000,
-    THICKFRAME      = 0x00040000,
-    GROUP           = 0x00020000,
-    TABSTOP         = 0x00010000,
+    OVERLAPPED = 0x00000000,
+    POPUP = 0x80000000,
+    CHILD = 0x40000000,
+    MINIMIZE = 0x20000000,
+    VISIBLE = 0x10000000,
+    DISABLED = 0x08000000,
+    CLIPSIBLINGS = 0x04000000,
+    CLIPCHILDREN = 0x02000000,
+    MAXIMIZE = 0x01000000,
+    CAPTION = 0x00C00000,
+    BORDER = 0x00800000,
+    DLGFRAME = 0x00400000,
+    VSCROLL = 0x00200000,
+    HSCROLL = 0x00100000,
+    SYSMENU = 0x00080000,
+    THICKFRAME = 0x00040000,
+    GROUP = 0x00020000,
+    TABSTOP = 0x00010000,
   };
 
-  /// From https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles
+  /// From
+  /// https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles
   enum class WINDOW_EXTENDED_STYLES : uint32_t {
-    DLGMODALFRAME    = 0x00000001,
-    NOPARENTNOTIFY   = 0x00000004,
-    TOPMOST          = 0x00000008,
-    ACCEPTFILES      = 0x00000010,
-    TRANSPARENT_STY  = 0x00000020,
-    MDICHILD         = 0x00000040,
-    TOOLWINDOW       = 0x00000080,
-    WINDOWEDGE       = 0x00000100,
-    CLIENTEDGE       = 0x00000200,
-    CONTEXTHELP      = 0x00000400,
+    DLGMODALFRAME = 0x00000001,
+    NOPARENTNOTIFY = 0x00000004,
+    TOPMOST = 0x00000008,
+    ACCEPTFILES = 0x00000010,
+    TRANSPARENT_STY = 0x00000020,
+    MDICHILD = 0x00000040,
+    TOOLWINDOW = 0x00000080,
+    WINDOWEDGE = 0x00000100,
+    CLIENTEDGE = 0x00000200,
+    CONTEXTHELP = 0x00000400,
 
-    RIGHT            = 0x00001000,
-    LEFT             = 0x00000000,
-    RTLREADING       = 0x00002000,
-    LEFTSCROLLBAR    = 0x00004000,
+    RIGHT = 0x00001000,
+    LEFT = 0x00000000,
+    RTLREADING = 0x00002000,
+    LEFTSCROLLBAR = 0x00004000,
 
-    CONTROLPARENT    = 0x00010000,
-    STATICEDGE       = 0x00020000,
-    APPWINDOW        = 0x00040000,
+    CONTROLPARENT = 0x00010000,
+    STATICEDGE = 0x00020000,
+    APPWINDOW = 0x00040000,
   };
 
-  /// From: https://learn.microsoft.com/en-us/windows/win32/controls/common-control-styles
+  /// From:
+  /// https://learn.microsoft.com/en-us/windows/win32/controls/common-control-styles
   enum class CONTROL_STYLES : uint32_t {
-    TOP            = 0x00000001,
-    NOMOVEY        = 0x00000002,
-    BOTTOM         = 0x00000003,
-    NORESIZE       = 0x00000004,
-    NOPARENTALIGN  = 0x00000008,
-    ADJUSTABLE     = 0x00000020,
-    NODIVIDER      = 0x00000040,
-    VERT           = 0x00000080,
-    LEFT           = VERT | TOP,
-    RIGHT          = VERT | BOTTOM,
-    NOMOVEX        = VERT | NOMOVEY
+    TOP = 0x00000001,
+    NOMOVEY = 0x00000002,
+    BOTTOM = 0x00000003,
+    NORESIZE = 0x00000004,
+    NOPARENTALIGN = 0x00000008,
+    ADJUSTABLE = 0x00000020,
+    NODIVIDER = 0x00000040,
+    VERT = 0x00000080,
+    LEFT = VERT | TOP,
+    RIGHT = VERT | BOTTOM,
+    NOMOVEX = VERT | NOMOVEY,
   };
 
   /// This class represents an element of the dialog. It can be for instance,
@@ -161,12 +166,12 @@ class LIEF_API ResourceDialog : public Object {
     Item& operator=(Item&&) = default;
 
     enum class WINDOW_CLASS : uint32_t {
-      BUTTON     = 0x0080,
-      EDIT       = 0x0081,
-      STATIC     = 0x0082,
-      LIST_BOX   = 0x0083,
+      BUTTON = 0x0080,
+      EDIT = 0x0081,
+      STATIC = 0x0082,
+      LIST_BOX = 0x0083,
       SCROLL_BAR = 0x0084,
-      COMBO_BOX  = 0x0085,
+      COMBO_BOX = 0x0085,
     };
 
     /// The style of the control. This can be a combination of WINDOW_STYLES or
@@ -208,18 +213,26 @@ class LIEF_API ResourceDialog : public Object {
     /// The x-coordinate, in dialog box units, of the upper-left corner of the
     /// control. This coordinate is always relative to the upper-left corner of
     /// the dialog box's client area.
-    int16_t x() const { return x_; }
+    int16_t x() const {
+      return x_;
+    }
 
     /// The y-coordinate, in dialog box units, of the upper-left corner of the
     /// control. This coordinate is always relative to the upper-left corner of
     /// the dialog box's client area.
-    int16_t y() const { return y_; }
+    int16_t y() const {
+      return y_;
+    }
 
     /// The width, in dialog box units, of the control.
-    int16_t cx() const { return cx_; }
+    int16_t cx() const {
+      return cx_;
+    }
 
     /// The height, in dialog box units, of the control.
-    int16_t cy() const { return cy_; }
+    int16_t cy() const {
+      return cy_;
+    }
 
     Item& style(uint32_t value) {
       style_ = value;
@@ -231,12 +244,27 @@ class LIEF_API ResourceDialog : public Object {
       return *this;
     }
 
-    Item& x(int16_t value) { x_ = value; return *this; }
-    Item& y(int16_t value) { y_ = value; return *this; }
-    Item& cx(int16_t value) { cx_ = value; return *this; }
-    Item& cy(int16_t value) { cy_ = value; return *this; }
+    Item& x(int16_t value) {
+      x_ = value;
+      return *this;
+    }
+    Item& y(int16_t value) {
+      y_ = value;
+      return *this;
+    }
+    Item& cx(int16_t value) {
+      cx_ = value;
+      return *this;
+    }
+    Item& cy(int16_t value) {
+      cy_ = value;
+      return *this;
+    }
 
-    Item& id(int32_t value) { id_ = value; return *this; }
+    Item& id(int32_t value) {
+      id_ = value;
+      return *this;
+    }
 
     Item& data(std::vector<uint8_t> creation_data) {
       creation_data_ = std::move(creation_data);
@@ -325,8 +353,7 @@ class LIEF_API ResourceDialog : public Object {
   ResourceDialog& operator=(ResourceDialog&&) = default;
 
   ResourceDialog(TYPE ty) :
-    type_(ty)
-  {}
+    type_(ty) {}
 
   virtual std::unique_ptr<ResourceDialog> clone() const = 0;
 
@@ -350,17 +377,25 @@ class LIEF_API ResourceDialog : public Object {
 
   /// The x-coordinate, in dialog box units, of the upper-left corner of the
   /// dialog box.
-  int16_t x() const { return x_; }
+  int16_t x() const {
+    return x_;
+  }
 
   /// The y-coordinate, in dialog box units, of the upper-left corner of the
   /// dialog box.
-  int16_t y() const { return y_; }
+  int16_t y() const {
+    return y_;
+  }
 
   /// The width, in dialog box units, of the dialog box.
-  int16_t cx() const { return cx_; }
+  int16_t cx() const {
+    return cx_;
+  }
 
   /// The height, in dialog box units, of the dialog box.
-  int16_t cy() const { return cy_; }
+  int16_t cy() const {
+    return cy_;
+  }
 
   ResourceDialog& style(uint32_t value) {
     style_ = value;
@@ -372,10 +407,22 @@ class LIEF_API ResourceDialog : public Object {
     return *this;
   }
 
-  ResourceDialog& x(int16_t value) { x_ = value; return *this; }
-  ResourceDialog& y(int16_t value) { y_ = value; return *this; }
-  ResourceDialog& cx(int16_t value) { cx_ = value; return *this; }
-  ResourceDialog& cy(int16_t value) { cy_ = value; return *this; }
+  ResourceDialog& x(int16_t value) {
+    x_ = value;
+    return *this;
+  }
+  ResourceDialog& y(int16_t value) {
+    y_ = value;
+    return *this;
+  }
+  ResourceDialog& cx(int16_t value) {
+    cx_ = value;
+    return *this;
+  }
+  ResourceDialog& cy(int16_t value) {
+    cy_ = value;
+    return *this;
+  }
 
   ResourceDialog& menu(std::u16string title) {
     menu_.string = std::move(title);
@@ -466,7 +513,8 @@ class LIEF_API ResourceDialog : public Object {
     return nullptr;
   }
 
-  friend LIEF_API std::ostream& operator<<(std::ostream& os, const ResourceDialog& dialog) {
+  friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                           const ResourceDialog& dialog) {
     os << dialog.to_string();
     return os;
   }
@@ -474,10 +522,13 @@ class LIEF_API ResourceDialog : public Object {
   protected:
   static ok_error_t parse_menu(ResourceDialog& dialog, BinaryStream& stream);
   static ok_error_t parse_class(ResourceDialog& dialog, BinaryStream& stream);
-  static ok_error_t parse_class(ResourceDialog::Item& dialog, BinaryStream& stream);
+  static ok_error_t parse_class(ResourceDialog::Item& dialog,
+                                BinaryStream& stream);
   static ok_error_t parse_title(ResourceDialog& dialog, BinaryStream& stream);
-  static ok_error_t parse_title(ResourceDialog::Item& dialog, BinaryStream& stream);
-  static ok_error_t parse_creation_data(ResourceDialog::Item& item, BinaryStream& stream);
+  static ok_error_t parse_title(ResourceDialog::Item& dialog,
+                                BinaryStream& stream);
+  static ok_error_t parse_creation_data(ResourceDialog::Item& item,
+                                        BinaryStream& stream);
   TYPE type_ = TYPE::UNKNOWN;
 
   uint32_t style_ = 0;

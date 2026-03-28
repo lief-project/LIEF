@@ -32,8 +32,9 @@ class AnalyzerBase : public analysis_plugin::AnalyzerBase {
   AnalyzerBase() = delete;
   AnalyzerBase(BinaryNinja::BinaryView& bv, LIEF::PE::Binary& pe,
                TypeBuilder& type_builder) :
-    analysis_plugin::AnalyzerBase(bv), pe_(pe), type_builder_(type_builder)
-  {}
+    analysis_plugin::AnalyzerBase(bv),
+    pe_(pe),
+    type_builder_(type_builder) {}
 
   ~AnalyzerBase() override = default;
 

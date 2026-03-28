@@ -40,15 +40,15 @@ class LIEF_API DelayImport : public Object {
   friend class Builder;
 
   public:
-  using entries_t        = std::vector<std::unique_ptr<DelayImportEntry>>;
-  using it_entries       = ref_iterator<entries_t&, DelayImportEntry*>;
-  using it_const_entries = const_ref_iterator<const entries_t&, const DelayImportEntry*>;
+  using entries_t = std::vector<std::unique_ptr<DelayImportEntry>>;
+  using it_entries = ref_iterator<entries_t&, DelayImportEntry*>;
+  using it_const_entries =
+      const_ref_iterator<const entries_t&, const DelayImportEntry*>;
 
   DelayImport() = default;
   DelayImport(const details::delay_imports& import, PE_TYPE type);
   DelayImport(std::string name) :
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
 
   ~DelayImport() override = default;
 
@@ -149,7 +149,8 @@ class LIEF_API DelayImport : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const DelayImport& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DelayImport& entry);
 
   private:
   uint32_t attribute_ = 0;

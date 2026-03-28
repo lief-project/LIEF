@@ -19,7 +19,7 @@
 
 class PDB_Utils {
   public:
-  static bool is_pdb(std::string file)  {
+  static bool is_pdb(std::string file) {
     return LIEF::pdb::is_pdb(file);
   }
 };

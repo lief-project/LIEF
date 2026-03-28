@@ -40,13 +40,14 @@ class LIEF_API Function {
   struct LIEF_API range_t {
     range_t() = default;
     range_t(uint64_t start, uint64_t end) :
-      start(start), end(end)
-    {}
+      start(start),
+      end(end) {}
     uint64_t start = 0;
     uint64_t end = 0;
   };
 
-  /// This class represents a parameter of the current function (`DW_TAG_formal_parameter`)
+  /// This class represents a parameter of the current function
+  /// (`DW_TAG_formal_parameter`)
   class LIEF_API Parameter {
     public:
     Parameter() = delete;
@@ -96,6 +97,7 @@ class LIEF_API Function {
     Label(std::unique_ptr<details::FunctionLabel> impl);
 
     ~Label();
+
     private:
     std::unique_ptr<details::FunctionLabel> impl_;
   };
@@ -127,7 +129,8 @@ class LIEF_API Function {
   Function& set_return_type(const Type& type);
 
   /// Add a parameter to the current function
-  std::unique_ptr<Parameter> add_parameter(const std::string& name, const Type& type);
+  std::unique_ptr<Parameter> add_parameter(const std::string& name,
+                                           const Type& type);
 
   /// Create a stack-based variable owned by the current function
   std::unique_ptr<Variable> create_stack_variable(const std::string& name);

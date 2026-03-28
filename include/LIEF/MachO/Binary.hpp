@@ -96,7 +96,7 @@ class LIEF_API Binary : public LIEF::Binary {
   public:
   struct range_t {
     uint64_t start = 0;
-    uint64_t end   = 0;
+    uint64_t end = 0;
 
     uint64_t size() const {
       return end - start;
@@ -129,13 +129,15 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_exported_symbols = filter_iterator<symbols_t&, Symbol*>;
 
   /// Iterator that outputs exported const Symbol&
-  using it_const_exported_symbols = const_filter_iterator<const symbols_t&, const Symbol*>;
+  using it_const_exported_symbols =
+      const_filter_iterator<const symbols_t&, const Symbol*>;
 
   /// Iterator that outputs imported Symbol&
   using it_imported_symbols = filter_iterator<symbols_t&, Symbol*>;
 
   /// Iterator that outputs imported const Symbol&
-  using it_const_imported_symbols = const_filter_iterator<const symbols_t&, const Symbol*>;
+  using it_const_imported_symbols =
+      const_filter_iterator<const symbols_t&, const Symbol*>;
 
   /// Internal container for caching Mach-O Section
   using sections_cache_t = std::vector<Section*>;
@@ -171,10 +173,11 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_fileset_binaries = ref_iterator<fileset_binaries_t&, Binary*>;
 
   /// Iterator that outputs const Binary&
-  using it_const_fileset_binaries = const_ref_iterator<const fileset_binaries_t&, Binary*>;
+  using it_const_fileset_binaries =
+      const_ref_iterator<const fileset_binaries_t&, Binary*>;
 
   struct KeyCmp {
-    bool operator() (const Relocation* lhs, const Relocation* rhs) const;
+    bool operator()(const Relocation* lhs, const Relocation* rhs) const;
   };
 
   /// Internal container that store all the relocations
@@ -186,19 +189,22 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   /// Iterator which outputs const Relocation&
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
   /// Iterator which outputs RPathCommand&
   using it_rpaths = filter_iterator<commands_t&, RPathCommand*>;
 
   /// Iterator which outputs const RPathCommand&
-  using it_const_rpaths = const_filter_iterator<const commands_t&, const RPathCommand*>;
+  using it_const_rpaths =
+      const_filter_iterator<const commands_t&, const RPathCommand*>;
 
   /// Iterator which outputs SubClient&
   using it_sub_clients = filter_iterator<commands_t&, SubClient*>;
 
   /// Iterator which outputs const SubClient&
-  using it_const_sub_clients = const_filter_iterator<const commands_t&, const SubClient*>;
+  using it_const_sub_clients =
+      const_filter_iterator<const commands_t&, const SubClient*>;
 
   using it_bindings = iterator_range<BindingInfoIterator>;
 
@@ -209,7 +215,8 @@ class LIEF_API Binary : public LIEF::Binary {
   using it_notes = filter_iterator<commands_t&, NoteCommand*>;
 
   /// Iterator which outputs const NoteCommand&
-  using it_const_notes = const_filter_iterator<const commands_t&, const NoteCommand*>;
+  using it_const_notes =
+      const_filter_iterator<const commands_t&, const NoteCommand*>;
 
   public:
   Binary(const Binary&) = delete;
@@ -269,14 +276,14 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return binary's exported symbols (iterator over LIEF::MachO::Symbol)
   it_exported_symbols exported_symbols() {
-    return {symbols_, [] (const std::unique_ptr<Symbol>& symbol) {
-      return is_exported(*symbol); }
-    };
+    return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
+              return is_exported(*symbol);
+            }};
   }
   it_const_exported_symbols exported_symbols() const {
-    return {symbols_, [] (const std::unique_ptr<Symbol>& symbol) {
-      return is_exported(*symbol);
-    }};
+    return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
+              return is_exported(*symbol);
+            }};
   }
 
   /// Check if the given symbol is an imported one
@@ -284,15 +291,15 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return binary's imported symbols (iterator over LIEF::MachO::Symbol)
   it_imported_symbols imported_symbols() {
-    return {symbols_, [] (const std::unique_ptr<Symbol>& symbol) {
-      return is_imported(*symbol);
-    }};
+    return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
+              return is_imported(*symbol);
+            }};
   }
 
   it_const_imported_symbols imported_symbols() const {
-    return {symbols_, [] (const std::unique_ptr<Symbol>& symbol) {
-      return is_imported(*symbol);
-    }};
+    return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
+              return is_imported(*symbol);
+            }};
   }
 
   /// Return binary imported libraries (MachO::DylibCommand)
@@ -321,7 +328,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return an iterator over the MachO::Relocation
-  it_relocations       relocations();
+  it_relocations relocations();
   it_const_relocations relocations() const;
 
   /// Reconstruct the binary object and write the result in the given `filename`
@@ -392,7 +399,9 @@ class LIEF_API Binary : public LIEF::Binary {
   const DylibCommand* find_library(const std::string& name) const;
 
   DylibCommand* find_library(const std::string& name) {
-    return const_cast<DylibCommand*>(static_cast<const Binary*>(this)->find_library(name));
+    return const_cast<DylibCommand*>(
+        static_cast<const Binary*>(this)->find_library(name)
+    );
   }
 
   /// Add a section in the given MachO::SegmentCommand.
@@ -414,7 +423,8 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @param segname     Name of the MachO::Segment
   /// @param secname     Name of the MachO::Section to remove
   /// @param clear       If `true` clear the content of the section before removing
-  void remove_section(const std::string& segname, const std::string& secname, bool clear = false);
+  void remove_section(const std::string& segname, const std::string& secname,
+                      bool clear = false);
 
   /// Remove the given LoadCommand
   bool remove(const LoadCommand& command);
@@ -435,7 +445,8 @@ class LIEF_API Binary : public LIEF::Binary {
   bool extend_segment(const SegmentCommand& segment, size_t size);
 
   /// Extend the **content** of the given Section.
-  /// @note This method may extend the section more than `size` preventing creation a gap
+  /// @note This method may extend the section more than `size` preventing creation
+  /// a gap
   ///       between the current section and the next one.
   ///       This may happen trying to satisfy alignment requirement of sections.
   /// @note This method works only with sections that belong to the first segment.
@@ -464,7 +475,9 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return the section from the given name of a nullptr
   /// if the section can't be found.
   Section* get_section(const std::string& name) {
-    return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(name));
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->get_section(name)
+    );
   }
 
   /// Return the section from the given name or a nullptr
@@ -475,10 +488,13 @@ class LIEF_API Binary : public LIEF::Binary {
   /// given in the first parameter and with the section's name provided in the
   /// second parameter. If the section cannot be found, it returns a nullptr
   Section* get_section(const std::string& segname, const std::string& secname) {
-    return const_cast<Section*>(static_cast<const Binary*>(this)->get_section(segname, secname));
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->get_section(segname, secname)
+    );
   }
 
-  const Section* get_section(const std::string& segname, const std::string& secname) const;
+  const Section* get_section(const std::string& segname,
+                             const std::string& secname) const;
 
   /// Check if a segment with the given name exists
   bool has_segment(const std::string& name) const {
@@ -490,7 +506,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the segment from the given name
   SegmentCommand* get_segment(const std::string& name) {
-    return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->get_segment(name));
+    return const_cast<SegmentCommand*>(
+        static_cast<const Binary*>(this)->get_segment(name)
+    );
   }
 
   /// Remove the symbol with the given name
@@ -514,14 +532,20 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return the MachO::Section that encompasses the provided offset.
   /// If a section can't be found, it returns a null pointer (`nullptr`)
   Section* section_from_offset(uint64_t offset) {
-    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_offset(offset));
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->section_from_offset(offset)
+    );
   }
   const Section* section_from_offset(uint64_t offset) const;
 
   /// Return the MachO::Section that encompasses the provided virtual address.
   /// If a section can't be found, it returns a null pointer (`nullptr`)
   Section* section_from_virtual_address(uint64_t virtual_address) {
-    return const_cast<Section*>(static_cast<const Binary*>(this)->section_from_virtual_address(virtual_address));
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->section_from_virtual_address(
+            virtual_address
+        )
+    );
   }
   const Section* section_from_virtual_address(uint64_t virtual_address) const;
 
@@ -531,14 +555,18 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Convert the given offset into a virtual address.
   ///
   /// @param[in] offset    The offset to convert.
-  /// @param[in] slide     If not 0, it will replace the default base address (if any)
-  result<uint64_t> offset_to_virtual_address(uint64_t offset, uint64_t slide = 0) const override;
+  /// @param[in] slide     If not 0, it will replace the default base address (if
+  /// any)
+  result<uint64_t> offset_to_virtual_address(uint64_t offset,
+                                             uint64_t slide = 0) const override;
 
   /// Return the binary's SegmentCommand that encompasses the provided offset
   ///
   /// If a SegmentCommand can't be found it returns a null pointer (`nullptr`).
   SegmentCommand* segment_from_offset(uint64_t offset) {
-    return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->segment_from_offset(offset));
+    return const_cast<SegmentCommand*>(
+        static_cast<const Binary*>(this)->segment_from_offset(offset)
+    );
   }
   const SegmentCommand* segment_from_offset(uint64_t offset) const;
 
@@ -550,12 +578,17 @@ class LIEF_API Binary : public LIEF::Binary {
     return fat_offset_;
   }
 
-  /// Return the binary's SegmentCommand which encompasses the given virtual address
-  /// or a nullptr if not found.
+  /// Return the binary's SegmentCommand which encompasses the given virtual
+  /// address or a nullptr if not found.
   SegmentCommand* segment_from_virtual_address(uint64_t virtual_address) {
-    return const_cast<SegmentCommand*>(static_cast<const Binary*>(this)->segment_from_virtual_address(virtual_address));
+    return const_cast<SegmentCommand*>(
+        static_cast<const Binary*>(this)->segment_from_virtual_address(
+            virtual_address
+        )
+    );
   }
-  const SegmentCommand* segment_from_virtual_address(uint64_t virtual_address) const;
+  const SegmentCommand*
+      segment_from_virtual_address(uint64_t virtual_address) const;
 
   /// Return the range of virtual addresses
   range_t va_ranges() const;
@@ -582,7 +615,8 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @param[in] addr_type     Specify if the address should be used as
   ///                          an absolute virtual address or an RVA
   void patch_address(uint64_t address, const std::vector<uint8_t>& patch_value,
-                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+                     LIEF::Binary::VA_TYPES addr_type =
+                         LIEF::Binary::VA_TYPES::AUTO) override;
 
   /// Patch the address with the given value
   ///
@@ -591,14 +625,16 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @param[in] size          Size of the value in **bytes** (1, 2, ... 8)
   /// @param[in] addr_type     Specify if the address should be used as
   ///                          an absolute virtual address or an RVA
-  void patch_address(uint64_t address, uint64_t patch_value,
-                     size_t size = sizeof(uint64_t),
-                     LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO) override;
+  void patch_address(
+      uint64_t address, uint64_t patch_value, size_t size = sizeof(uint64_t),
+      LIEF::Binary::VA_TYPES addr_type = LIEF::Binary::VA_TYPES::AUTO
+  ) override;
 
   /// Return the content located at virtual address
   span<const uint8_t> get_content_from_virtual_address(
       uint64_t virtual_address, uint64_t size,
-      Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO) const override;
+      Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO
+  ) const override;
 
   /// The binary entrypoint
   uint64_t entrypoint() const override;
@@ -749,7 +785,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the MachO::CodeSignature if present, a nullptr otherwise.
   CodeSignature* code_signature() {
-    return const_cast<CodeSignature*>(static_cast<const Binary*>(this)->code_signature());
+    return const_cast<CodeSignature*>(
+        static_cast<const Binary*>(this)->code_signature()
+    );
   }
   const CodeSignature* code_signature() const;
 
@@ -760,7 +798,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the MachO::CodeSignatureDir if present, a nullptr otherwise.
   CodeSignatureDir* code_signature_dir() {
-    return const_cast<CodeSignatureDir*>(static_cast<const Binary*>(this)->code_signature_dir());
+    return const_cast<CodeSignatureDir*>(
+        static_cast<const Binary*>(this)->code_signature_dir()
+    );
   }
   const CodeSignatureDir* code_signature_dir() const;
 
@@ -870,7 +910,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
   TwoLevelHints* two_level_hints() {
-    return const_cast<TwoLevelHints*>(static_cast<const Binary*>(this)->two_level_hints());
+    return const_cast<TwoLevelHints*>(
+        static_cast<const Binary*>(this)->two_level_hints()
+    );
   }
   const TwoLevelHints* two_level_hints() const;
 
@@ -881,7 +923,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the MachO::LinkerOptHint if present, a nullptr otherwise.
   LinkerOptHint* linker_opt_hint() {
-    return const_cast<LinkerOptHint*>(static_cast<const Binary*>(this)->linker_opt_hint());
+    return const_cast<LinkerOptHint*>(
+        static_cast<const Binary*>(this)->linker_opt_hint()
+    );
   }
   const LinkerOptHint* linker_opt_hint() const;
 
@@ -899,7 +943,8 @@ class LIEF_API Binary : public LIEF::Binary {
   /// These stubs are involved when calling an **imported** function and are
   /// similar to the ELF's plt/got mechanism.
   ///
-  /// There are located in sections like: `__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4`
+  /// There are located in sections like:
+  /// `__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4`
   stub_iterator symbol_stubs() const;
 
   /// `true` if the binary has the command LC_ATOM_INFO.
@@ -930,7 +975,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the FunctionVariants if present, a nullptr otherwise.
   FunctionVariants* function_variants() {
-    return const_cast<FunctionVariants*>(static_cast<const Binary*>(this)->function_variants());
+    return const_cast<FunctionVariants*>(
+        static_cast<const Binary*>(this)->function_variants()
+    );
   }
 
   const FunctionVariants* function_variants() const;
@@ -942,7 +989,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the FunctionVariantFixups if present, a nullptr otherwise.
   FunctionVariantFixups* function_variant_fixups() {
-    return const_cast<FunctionVariantFixups*>(static_cast<const Binary*>(this)->function_variant_fixups());
+    return const_cast<FunctionVariantFixups*>(
+        static_cast<const Binary*>(this)->function_variant_fixups()
+    );
   }
 
   const FunctionVariantFixups* function_variant_fixups() const;
@@ -990,7 +1039,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Original address associated with the `LC_FILESET_ENTRY` for this MachO.
-  uint64_t  fileset_addr() const {
+  uint64_t fileset_addr() const {
     return fileset_info_.address;
   }
 
@@ -1017,7 +1066,8 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Check if the binary is supporting ARM64 pointer authentication (arm64e)
   bool support_arm64_ptr_auth() const {
     return header().cpu_type() == Header::CPU_TYPE::ARM64 &&
-           (header().cpu_subtype() & ~Header::SUBTYPE_MASK) == Header::CPU_SUBTYPE_ARM64_ARM64E;
+           (header().cpu_subtype() & ~Header::SUBTYPE_MASK) ==
+               Header::CPU_SUBTYPE_ARM64_ARM64E;
   }
 
   /// Return an iterator over the binding info which can come from either
@@ -1067,9 +1117,12 @@ class LIEF_API Binary : public LIEF::Binary {
   LIEF_LOCAL LIEF::Binary::sections_t get_abstract_sections() override;
   LIEF_LOCAL LIEF::Binary::symbols_t get_abstract_symbols() override;
   LIEF_LOCAL LIEF::Binary::relocations_t get_abstract_relocations() override;
-  LIEF_LOCAL LIEF::Binary::functions_t get_abstract_exported_functions() const override;
-  LIEF_LOCAL LIEF::Binary::functions_t get_abstract_imported_functions() const override;
-  LIEF_LOCAL std::vector<std::string> get_abstract_imported_libraries() const override;
+  LIEF_LOCAL LIEF::Binary::functions_t
+      get_abstract_exported_functions() const override;
+  LIEF_LOCAL LIEF::Binary::functions_t
+      get_abstract_imported_functions() const override;
+  LIEF_LOCAL std::vector<std::string>
+      get_abstract_imported_libraries() const override;
 
   /// Check that a gap between the load command table and
   /// the first section is at least \p size bytes.
@@ -1090,10 +1143,10 @@ class LIEF_API Binary : public LIEF::Binary {
     return this->is64_ ? sizeof(uint64_t) : sizeof(uint32_t);
   }
 
-  bool        is64_ = true;
-  Header      header_;
-  commands_t  commands_;
-  symbols_t   symbols_;
+  bool is64_ = true;
+  Header header_;
+  commands_t commands_;
+  symbols_t symbols_;
 
   // Same purpose as sections_cache_t
   libraries_cache_t libraries_;

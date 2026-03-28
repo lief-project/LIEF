@@ -29,4 +29,3 @@
 #include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 #include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
 #endif
-

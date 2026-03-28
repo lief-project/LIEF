@@ -20,5 +20,7 @@ class ELF_SymbolVersionAux : public Mirror<LIEF::ELF::SymbolVersionAux> {
   public:
   using lief_t = LIEF::ELF::SymbolVersionAux;
   using Mirror::Mirror;
-  std::string name() const { return get().name(); }
+  std::string name() const {
+    return get().name();
+  }
 };

@@ -33,7 +33,8 @@ class Parser;
 class SignatureParser;
 
 /**
- * ContentInfo as described in the RFC2315 (https://tools.ietf.org/html/rfc2315#section-7)
+ * ContentInfo as described in the RFC2315
+ * (https://tools.ietf.org/html/rfc2315#section-7)
  *
  * ```text
  * ContentInfo ::= SEQUENCE {
@@ -44,8 +45,9 @@ class SignatureParser;
  * ContentType ::= OBJECT IDENTIFIER
  * ```
  *
- * In the case of PE signature, ContentType **must** be set to SPC_INDIRECT_DATA_OBJID
- * OID: ``1.3.6.1.4.1.311.2.1.4`` and content is defined by the structure: ``SpcIndirectDataContent``
+ * In the case of PE signature, ContentType **must** be set to
+ * SPC_INDIRECT_DATA_OBJID OID: ``1.3.6.1.4.1.311.2.1.4`` and content is defined by
+ * the structure: ``SpcIndirectDataContent``
  *
  * ```text
  * SpcIndirectDataContent ::= SEQUENCE {
@@ -60,7 +62,8 @@ class SignatureParser;
  * ```
  *
  * For PE signature, ``SpcAttributeTypeAndOptionalValue.type``
- * is set to ``SPC_PE_IMAGE_DATAOBJ`` (OID: ``1.3.6.1.4.1.311.2.1.15``) and the value is defined by
+ * is set to ``SPC_PE_IMAGE_DATAOBJ`` (OID: ``1.3.6.1.4.1.311.2.1.15``) and the
+ * value is defined by
  * ``SpcPeImageData``
  *
  * ```text
@@ -83,8 +86,7 @@ class LIEF_API ContentInfo : public Object {
   class Content : public Object {
     public:
     Content(oid_t oid) :
-      type_(std::move(oid))
-    {}
+      type_(std::move(oid)) {}
 
     const oid_t& content_type() const {
       return type_;
@@ -93,7 +95,8 @@ class LIEF_API ContentInfo : public Object {
     virtual std::unique_ptr<Content> clone() const = 0;
     virtual void print(std::ostream& os) const = 0;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const Content& content) {
+    LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                             const Content& content) {
       content.print(os);
       return os;
     }
@@ -114,6 +117,7 @@ class LIEF_API ContentInfo : public Object {
     }
 
     ~Content() override = default;
+
     private:
     oid_t type_;
   };
@@ -138,8 +142,8 @@ class LIEF_API ContentInfo : public Object {
     return *value_;
   }
 
-  /// Return the digest (authentihash) if the underlying content type is `SPC_INDIRECT_DATA_OBJID`
-  /// Otherwise, return an empty vector
+  /// Return the digest (authentihash) if the underlying content type is
+  /// `SPC_INDIRECT_DATA_OBJID` Otherwise, return an empty vector
   std::vector<uint8_t> digest() const;
 
   /// Return the digest used to hash the file
@@ -149,7 +153,8 @@ class LIEF_API ContentInfo : public Object {
 
   ~ContentInfo() override = default;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ContentInfo& content_info);
 
   private:
   std::unique_ptr<Content> value_;

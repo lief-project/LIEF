@@ -20,7 +20,8 @@ int main(int argc, const char** argv) {
   }
 
   set_level(LEVEL::INFO);
-  std::unique_ptr<LIEF::dsc::DyldSharedCache> dyld_cache = LIEF::dsc::load(argv[1]);
+  std::unique_ptr<LIEF::dsc::DyldSharedCache> dyld_cache =
+      LIEF::dsc::load(argv[1]);
   if (dyld_cache == nullptr) {
     log(LEVEL::ERR, "Can't read {} as a shared cache file", argv[0]);
     return EXIT_FAILURE;

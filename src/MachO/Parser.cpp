@@ -42,8 +42,7 @@ Parser::~Parser() = default;
 // From File
 Parser::Parser(const std::string& file, const ParserConfig& conf) :
   LIEF::Parser{file},
-  config_{conf}
-{
+  config_{conf} {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
     LIEF_ERR("Failed to create stream");
@@ -68,8 +67,7 @@ std::unique_ptr<FatBinary> Parser::parse(const std::string& filename,
 // From Vector
 Parser::Parser(std::vector<uint8_t> data, const ParserConfig& conf) :
   stream_{std::make_unique<VectorStream>(std::move(data))},
-  config_{conf}
-{}
+  config_{conf} {}
 
 
 std::unique_ptr<FatBinary> Parser::parse(const std::vector<uint8_t>& data,
@@ -108,9 +106,15 @@ std::unique_ptr<FatBinary> Parser::parse(std::unique_ptr<BinaryStream> stream,
   return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
 }
 
-std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, size_t size, const ParserConfig& conf) {
-  if (conf.fix_from_memory && (!conf.parse_dyld_rebases || !conf.parse_dyld_bindings)) {
-    LIEF_WARN("fix_from_memory requires both parse_dyld_rebases and parse_dyld_bindings");
+std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address,
+                                                     size_t size,
+                                                     const ParserConfig& conf) {
+  if (conf.fix_from_memory &&
+      (!conf.parse_dyld_rebases || !conf.parse_dyld_bindings))
+  {
+    LIEF_WARN(
+        "fix_from_memory requires both parse_dyld_rebases and parse_dyld_bindings"
+    );
     return nullptr;
   }
   Parser parser;
@@ -133,7 +137,8 @@ std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, size_t s
   return std::unique_ptr<FatBinary>(new FatBinary{std::move(parser.binaries_)});
 }
 
-std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address, const ParserConfig& conf) {
+std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address,
+                                                     const ParserConfig& conf) {
   static constexpr size_t MAX_SIZE = std::numeric_limits<size_t>::max() << 2;
   return parse_from_memory(address, MAX_SIZE, conf);
 }
@@ -163,7 +168,7 @@ ok_error_t Parser::parse_fat() {
     const auto arch = *res_arch;
 
     const uint32_t offset = get_swapped_endian(arch.offset);
-    const uint32_t size   = get_swapped_endian(arch.size);
+    const uint32_t size = get_swapped_endian(arch.size);
 
     LIEF_DEBUG("Dealing with arch[{:d}]", i);
     LIEF_DEBUG("    [{:d}].offset: {:#06x}", i, offset);
@@ -175,9 +180,7 @@ ok_error_t Parser::parse_fat() {
       continue;
     }
 
-    std::unique_ptr<Binary> bin = BinaryParser::parse(
-        macho_data, offset, config_
-    );
+    std::unique_ptr<Binary> bin = BinaryParser::parse(macho_data, offset, config_);
     if (bin == nullptr) {
       LIEF_ERR("Failed to parse binary at index {:d}", i);
       continue;
@@ -203,7 +206,8 @@ ok_error_t Parser::parse() {
   }
 
   const size_t original_size = stream_->size();
-  std::unique_ptr<Binary> bin = BinaryParser::parse(std::move(stream_), 0, config_);
+  std::unique_ptr<Binary> bin =
+      BinaryParser::parse(std::move(stream_), 0, config_);
   bin->original_size_ = original_size;
   if (bin == nullptr) {
     return make_error_code(lief_errors::parsing_error);
@@ -223,15 +227,18 @@ ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
         /* TODO(romain): We should support fixup
          * auto& fixup = static_cast<RelocationFixup&>(reloc);
          */
-      }
-      else if (RelocationDyld::classof(reloc)) {
-        span<const uint8_t> content = bin->get_content_from_virtual_address(reloc.address(), sizeof(uintptr_t));
+      } else if (RelocationDyld::classof(reloc)) {
+        span<const uint8_t> content =
+            bin->get_content_from_virtual_address(reloc.address(),
+                                                  sizeof(uintptr_t));
         if (content.empty() || content.size() != sizeof(uintptr_t)) {
           LIEF_WARN("Failed to access relocation data at {:#x}", reloc.address());
           continue;
         }
         const auto value = *reinterpret_cast<const uintptr_t*>(content.data());
-        bin->patch_address(reloc.address(), value - base_address + bin->imagebase(), sizeof(uintptr_t));
+        bin->patch_address(reloc.address(),
+                           value - base_address + bin->imagebase(),
+                           sizeof(uintptr_t));
       }
     }
     if (const DyldInfo* info = bin->dyld_info()) {
@@ -246,4 +253,3 @@ ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
 }
 
 } // namespace LIEF::MachO
-

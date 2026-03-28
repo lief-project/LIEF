@@ -31,12 +31,12 @@ class AbstractJsonVisitor : public LIEF::JsonVisitor {
   using LIEF::JsonVisitor::JsonVisitor;
 
   public:
-  void visit(const Binary& binary)         override;
-  void visit(const Header& header)         override;
-  void visit(const Section& section)       override;
-  void visit(const Symbol& symbol)         override;
+  void visit(const Binary& binary) override;
+  void visit(const Header& header) override;
+  void visit(const Section& section) override;
+  void visit(const Symbol& symbol) override;
   void visit(const Relocation& relocation) override;
-  void visit(const Function& f)            override;
+  void visit(const Function& f) override;
 };
 
 }

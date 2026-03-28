@@ -67,5 +67,3 @@ class LIEF_API Base : public Type {
 }
 }
 #endif
-
-

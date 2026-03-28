@@ -23,8 +23,7 @@
 namespace LIEF::MachO {
 
 SubFramework::SubFramework(const details::sub_framework_command& cmd) :
-  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize}
-{}
+  LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize} {}
 
 void SubFramework::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -38,4 +37,3 @@ std::ostream& SubFramework::print(std::ostream& os) const {
 
 
 }
-

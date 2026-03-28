@@ -24,7 +24,9 @@ class PDB_Type : public Mirror<LIEF::pdb::Type> {
   using Mirror::Mirror;
   using lief_t = LIEF::pdb::Type;
 
-  auto kind() const { return to_int(get().kind()); }
+  auto kind() const {
+    return to_int(get().kind());
+  }
 
   std::string name(uint32_t& is_set) const {
     return details::make_optional(get().name(), is_set);

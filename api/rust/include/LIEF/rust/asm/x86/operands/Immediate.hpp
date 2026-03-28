@@ -30,5 +30,7 @@ class asm_x86_operands_Immediate : public asm_x86_Operand {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

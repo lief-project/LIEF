@@ -54,10 +54,10 @@ class LIEF_API CorePrStatus : public Note {
     uint64_t sigpend = 0;
     uint64_t sighold = 0;
 
-    int32_t  pid = 0;
-    int32_t  ppid = 0;
-    int32_t  pgrp = 0;
-    int32_t  sid = 0;
+    int32_t pid = 0;
+    int32_t ppid = 0;
+    int32_t pgrp = 0;
+    int32_t sid = 0;
 
     timeval_t utime;
     timeval_t stime;
@@ -68,41 +68,124 @@ class LIEF_API CorePrStatus : public Note {
   struct Registers {
     /// Register for the x86 architecture (ARCH::I386).
     enum class X86 {
-      EBX = 0, ECX, EDX, ESI, EDI, EBP, EAX,
-      DS, ES, FS, GS, ORIG_EAX, EIP, CS, EFLAGS, ESP, SS,
-      _COUNT
+      EBX = 0,
+      ECX,
+      EDX,
+      ESI,
+      EDI,
+      EBP,
+      EAX,
+      DS,
+      ES,
+      FS,
+      GS,
+      ORIG_EAX,
+      EIP,
+      CS,
+      EFLAGS,
+      ESP,
+      SS,
+      _COUNT,
     };
 
     /// Register for the x86-64 architecture (ARCH::X86_64).
     enum class X86_64 {
-      R15 = 0, R14, R13, R12, RBP, RBX, R11, R10,
-      R9, R8, RAX, RCX, RDX, RSI, RDI, ORIG_RAX,
-      RIP, CS, EFLAGS, RSP, SS, FS_BASE, GS_BASE, DS, ES,
-      _COUNT
+      R15 = 0,
+      R14,
+      R13,
+      R12,
+      RBP,
+      RBX,
+      R11,
+      R10,
+      R9,
+      R8,
+      RAX,
+      RCX,
+      RDX,
+      RSI,
+      RDI,
+      ORIG_RAX,
+      RIP,
+      CS,
+      EFLAGS,
+      RSP,
+      SS,
+      FS_BASE,
+      GS_BASE,
+      DS,
+      ES,
+      _COUNT,
     };
 
     /// Register for the ARM architecture (ARCH::ARM).
     enum class ARM {
-      R0 = 0, R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12, R13, R14, R15,
+      R0 = 0,
+      R1,
+      R2,
+      R3,
+      R4,
+      R5,
+      R6,
+      R7,
+      R8,
+      R9,
+      R10,
+      R11,
+      R12,
+      R13,
+      R14,
+      R15,
       CPSR,
-      _COUNT
+      _COUNT,
     };
 
     /// Register for the AARCH64 architecture (ARCH::AARCH64).
     enum class AARCH64 {
-      X0 = 0, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15,
-      X16, X17, X18, X19, X20, X21, X22, X23, X24, X25, X26, X27, X28, X29, X30,
-      X31, PC, PSTATE,
-      _COUNT
+      X0 = 0,
+      X1,
+      X2,
+      X3,
+      X4,
+      X5,
+      X6,
+      X7,
+      X8,
+      X9,
+      X10,
+      X11,
+      X12,
+      X13,
+      X14,
+      X15,
+      X16,
+      X17,
+      X18,
+      X19,
+      X20,
+      X21,
+      X22,
+      X23,
+      X24,
+      X25,
+      X26,
+      X27,
+      X28,
+      X29,
+      X30,
+      X31,
+      PC,
+      PSTATE,
+      _COUNT,
     };
   };
 
   public:
-  CorePrStatus(ARCH arch, Header::CLASS cls, std::string name,
-               uint32_t type, description_t description) :
+  CorePrStatus(ARCH arch, Header::CLASS cls, std::string name, uint32_t type,
+               description_t description) :
     Note(std::move(name), TYPE::CORE_PRSTATUS, type, std::move(description), ""),
-    arch_(arch), class_(cls)
-  {}
+    arch_(arch),
+    class_(cls) {}
 
   std::unique_ptr<Note> clone() const override {
     return std::unique_ptr<CorePrStatus>(new CorePrStatus(*this));
@@ -179,8 +262,8 @@ class LIEF_API CorePrStatus : public Note {
 
   ~CorePrStatus() override = default;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const CorePrStatus& note) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CorePrStatus& note) {
     note.dump(os);
     return os;
   }

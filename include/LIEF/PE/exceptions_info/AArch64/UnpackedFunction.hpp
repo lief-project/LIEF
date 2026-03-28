@@ -27,10 +27,10 @@ namespace unwind_aarch64 {
 
 /// This class represents an unpacked AArch64 exception entry
 ///
-/// Reference: https://learn.microsoft.com/en-us/cpp/build/arm64-exception-handling?view=msvc-170#xdata-records
+/// Reference:
+/// https://learn.microsoft.com/en-us/cpp/build/arm64-exception-handling?view=msvc-170#xdata-records
 class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
   public:
-
   /// This structure describes an epilog scope.
   struct epilog_scope_t {
     static epilog_scope_t from_raw(uint32_t raw);
@@ -48,12 +48,11 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
   using it_epilog_scopes = ref_iterator<epilog_scopes_t&>;
   using it_const_epilog_scopes = const_ref_iterator<const epilog_scopes_t&>;
 
-  static std::unique_ptr<UnpackedFunction>
-    parse(Parser& ctx, BinaryStream& strm, uint32_t xdata_rva, uint32_t rva);
+  static std::unique_ptr<UnpackedFunction> parse(Parser& ctx, BinaryStream& strm,
+                                                 uint32_t xdata_rva, uint32_t rva);
 
   UnpackedFunction(uint32_t rva, uint32_t length) :
-    RuntimeFunctionAArch64(rva, length, PACKED_FLAGS::UNPACKED)
-  {}
+    RuntimeFunctionAArch64(rva, length, PACKED_FLAGS::UNPACKED) {}
 
   UnpackedFunction(const UnpackedFunction&) = default;
   UnpackedFunction& operator=(const UnpackedFunction&) = default;

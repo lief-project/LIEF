@@ -46,8 +46,7 @@ class LayoutChecker {
     file_alignment(bin.optional_header().file_alignment()),
     sizeof_headers(bin.optional_header().sizeof_headers()),
     vaddr_start(bin.imagebase()),
-    vaddr_end(bin.imagebase() + bin.virtual_size())
-  {}
+    vaddr_end(bin.imagebase() + bin.virtual_size()) {}
 
   bool check_dos_header();
   bool check_header();
@@ -113,8 +112,8 @@ class LayoutChecker {
     return false;
   }
 
-  template <typename... Args>
-  bool error(const char *fmt, const Args &... args) {
+  template<typename... Args>
+  bool error(const char* fmt, const Args&... args) {
     error_msg = fmt::format(fmt, args...);
     return false;
   }
@@ -163,7 +162,7 @@ class LayoutChecker {
 
 bool LayoutChecker::check_dos_header() {
   const DosHeader& dos = pe.dos_header();
-  if (dos.magic() != /* MZ */0x5A4D) {
+  if (dos.magic() != /* MZ */ 0x5A4D) {
     return error("Invalid DOS Magic");
   }
 
@@ -187,8 +186,7 @@ bool LayoutChecker::check_dos_header() {
 
 bool LayoutChecker::check_header() {
   const Header& hdr = pe.header();
-  if (arch == Header::MACHINE_TYPES::UNKNOWN &&
-      hdr.sizeof_optional_header() == 0)
+  if (arch == Header::MACHINE_TYPES::UNKNOWN && hdr.sizeof_optional_header() == 0)
   {
     return error("Header error: invalid machine type and size of optional header");
   }
@@ -229,13 +227,15 @@ bool LayoutChecker::check_header() {
 bool LayoutChecker::check_opt_header() {
   const OptionalHeader& opt_hdr = pe.optional_header();
   if (is_legacy_arch()) {
-    if (!pe.header().has_characteristic(Header::CHARACTERISTICS::RELOCS_STRIPPED)) {
+    if (!pe.header().has_characteristic(Header::CHARACTERISTICS::RELOCS_STRIPPED))
+    {
       if (opt_hdr.has(OptionalHeader::DLL_CHARACTERISTICS::APPCONTAINER)) {
         return error("AppContainer with stripped relocations");
       }
     }
   } else {
-    if (!pe.header().has_characteristic(Header::CHARACTERISTICS::RELOCS_STRIPPED)) {
+    if (!pe.header().has_characteristic(Header::CHARACTERISTICS::RELOCS_STRIPPED))
+    {
       if (!opt_hdr.has(OptionalHeader::DLL_CHARACTERISTICS::DYNAMIC_BASE)) {
         return error("Missing DYNAMIC_BASE characteristic");
       }
@@ -277,9 +277,7 @@ bool LayoutChecker::check_opt_header() {
     }
   }
 
-  if ((file_alignment & 0x1ff) != 0 &&
-      file_alignment != section_alignment)
-  {
+  if ((file_alignment & 0x1ff) != 0 && file_alignment != section_alignment) {
     return error("Bad consistency between file/section alignment");
   }
 
@@ -306,8 +304,10 @@ bool LayoutChecker::check_sections() {
 
   const uint64_t sizeof_image = pe.optional_header().sizeof_image();
   const uint32_t file_alignment_mask = file_alignment - 1;
-  uint32_t nb_pages =  (sizeof_image >> 12) + ((sizeof_image & (DEFAULT_PAGE_SIZE - 1)) != 0);
-  uint32_t nb_sec_pages = align(sizeof_headers, section_alignment) / DEFAULT_PAGE_SIZE;
+  uint32_t nb_pages =
+      (sizeof_image >> 12) + ((sizeof_image & (DEFAULT_PAGE_SIZE - 1)) != 0);
+  uint32_t nb_sec_pages =
+      align(sizeof_headers, section_alignment) / DEFAULT_PAGE_SIZE;
   uint64_t next_va = 0;
 
   if (section_alignment >= DEFAULT_PAGE_SIZE) {
@@ -329,10 +329,11 @@ bool LayoutChecker::check_sections() {
   for (size_t i = 0; i < sections.size(); ++i) {
     const Section& section = sections[i];
 
-    uint32_t offset = section.sizeof_raw_data() != 0 ? section.pointerto_raw_data() : 0;
+    uint32_t offset =
+        section.sizeof_raw_data() != 0 ? section.pointerto_raw_data() : 0;
     [[maybe_unused]] uint32_t end_offset = offset + section.sizeof_raw_data();
-    uint32_t vsize =  section.virtual_size() != 0 ? section.virtual_size() :
-                                                    section.sizeof_raw_data();
+    uint32_t vsize = section.virtual_size() != 0 ? section.virtual_size() :
+                                                   section.sizeof_raw_data();
 
     if (offset + section.size() < offset) {
       return error("Section overflow");
@@ -364,14 +365,18 @@ bool LayoutChecker::check_sections() {
 
       nb_pages -= nb_sec_pages;
 
-      if (((offset + section.sizeof_raw_data() + file_alignment_mask) & ~file_alignment_mask) < section.pointerto_raw_data()) {
+      if (((offset + section.sizeof_raw_data() + file_alignment_mask) &
+           ~file_alignment_mask) < section.pointerto_raw_data())
+      {
         return error("Invalid section raw size");
       }
 
       const bool is_last_section = i == (sections.size() - 1);
 
       if (is_last_section && section.sizeof_raw_data() != 0) {
-        if (section.pointerto_raw_data() + section.sizeof_raw_data() > pe.original_size()) {
+        if (section.pointerto_raw_data() + section.sizeof_raw_data() >
+            pe.original_size())
+        {
           return error("File is cut");
         }
       }
@@ -388,8 +393,8 @@ bool LayoutChecker::check_code_integrity() {
     return error("{}:{}", __FUNCTION__, __LINE__);
   }
 
-  const size_t sizeof_nt_headers = sizeof(details::pe_header) +
-                                   sizeof(details::pe32_optional_header);
+  const size_t sizeof_nt_headers =
+      sizeof(details::pe_header) + sizeof(details::pe32_optional_header);
   if ((e_lfanew + sizeof_nt_headers) > section_alignment) {
     return error("{}:{}", __FUNCTION__, __LINE__);
   }
@@ -416,11 +421,9 @@ bool LayoutChecker::check_code_integrity() {
     return error("{}:{}", __FUNCTION__, __LINE__);
   }
 
-  uint64_t end_of_raw =
-    e_lfanew +
-    sizeof(details::pe_header) +
-    pe.header().sizeof_optional_header() +
-    pe.sections().size() * sizeof(details::pe_section);
+  uint64_t end_of_raw = e_lfanew + sizeof(details::pe_header) +
+                        pe.header().sizeof_optional_header() +
+                        pe.sections().size() * sizeof(details::pe_section);
 
   if (end_of_raw >= DEFAULT_PAGE_SIZE) {
     return error("{}:{}", __FUNCTION__, __LINE__);
@@ -439,7 +442,9 @@ bool LayoutChecker::check_code_integrity() {
       return error("{}:{}", __FUNCTION__, __LINE__);
     }
 
-    if ((sec.pointerto_raw_data() + sec.sizeof_raw_data()) < sec.pointerto_raw_data()) {
+    if ((sec.pointerto_raw_data() + sec.sizeof_raw_data()) <
+        sec.pointerto_raw_data())
+    {
       return error("{}:{}", __FUNCTION__, __LINE__);
     }
 
@@ -447,12 +452,15 @@ bool LayoutChecker::check_code_integrity() {
       return error("{}:{}", __FUNCTION__, __LINE__);
     }
 
-    if ((sec.virtual_address() + sec.sizeof_raw_data() - 1) < sec.sizeof_raw_data()) {
+    if ((sec.virtual_address() + sec.sizeof_raw_data() - 1) <
+        sec.sizeof_raw_data())
+    {
       return error("{}:{}", __FUNCTION__, __LINE__);
     }
 
     if (sec.sizeof_raw_data() != 0) {
-      end_of_raw = std::max<uint64_t>(end_of_raw, sec.pointerto_raw_data() + sec.sizeof_raw_data());
+      end_of_raw = std::max<uint64_t>(end_of_raw, sec.pointerto_raw_data() +
+                                                      sec.sizeof_raw_data());
     }
   }
   return true;
@@ -465,8 +473,12 @@ bool LayoutChecker::check_load_config() {
   }
 
   // NOTE(romain): dynamic_value_reloctable_section starts by indexing from 1
-  if (auto value = config->dynamic_value_reloctable_section(); value.value_or(0) > 0) {
-    if ((*value - 1) < 0 || static_cast<size_t>((*value - 1)) >= pe.sections().size()) {
+  if (auto value = config->dynamic_value_reloctable_section();
+      value.value_or(0) > 0)
+  {
+    if ((*value - 1) < 0 ||
+        static_cast<size_t>((*value - 1)) >= pe.sections().size())
+    {
       return false;
     }
   }
@@ -497,93 +509,131 @@ bool LayoutChecker::check_load_config() {
   }
 
   if (!contains(config->guard_cf_check_function_pointer())) {
-    return error("Guard CF check function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_cf_check_function_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard CF check function pointer out of range: {:#010x} "
+                 "([{:#010x}, {:#010x}])",
+                 config->guard_cf_check_function_pointer().value_or(0),
+                 vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_cf_dispatch_function_pointer())) {
-    return error("Guard CF dispatch function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_cf_dispatch_function_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard CF dispatch function pointer out of range: {:#010x} "
+                 "([{:#010x}, {:#010x}])",
+                 config->guard_cf_dispatch_function_pointer().value_or(0),
+                 vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_address_taken_iat_entry_table())) {
-    return error("Guard address taken IAT entry table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_address_taken_iat_entry_table().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard address taken IAT entry table out of range: {:#010x} "
+                 "([{:#010x}, {:#010x}])",
+                 config->guard_address_taken_iat_entry_table().value_or(0),
+                 vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_long_jump_target_table())) {
-    return error("Guard long jump target table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_long_jump_target_table().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard long jump target table out of range: {:#010x} ([{:#010x}, "
+                 "{:#010x}])",
+                 config->guard_long_jump_target_table().value_or(0), vaddr_start,
+                 vaddr_end);
   }
 
   if (!contains(config->dynamic_value_reloc_table())) {
-    return error("Dynamic value reloc table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->dynamic_value_reloc_table().value_or(0), vaddr_start, vaddr_end);
+    return error(
+        "Dynamic value reloc table out of range: {:#010x} ([{:#010x}, {:#010x}])",
+        config->dynamic_value_reloc_table().value_or(0), vaddr_start, vaddr_end
+    );
   }
 
   if (!contains(config->hybrid_metadata_pointer())) {
-    return error("Hybrid metadata pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->hybrid_metadata_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error(
+        "Hybrid metadata pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
+        config->hybrid_metadata_pointer().value_or(0), vaddr_start, vaddr_end
+    );
   }
 
   if (!contains(config->guard_rf_failure_routine())) {
-    return error("Guard RF failure routine out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_rf_failure_routine().value_or(0), vaddr_start, vaddr_end);
+    return error(
+        "Guard RF failure routine out of range: {:#010x} ([{:#010x}, {:#010x}])",
+        config->guard_rf_failure_routine().value_or(0), vaddr_start, vaddr_end
+    );
   }
 
   if (!contains(config->guard_rf_failure_routine_function_pointer())) {
-    return error("Guard RF failure routine function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_rf_failure_routine_function_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard RF failure routine function pointer out of range: "
+                 "{:#010x} ([{:#010x}, {:#010x}])",
+                 config->guard_rf_failure_routine_function_pointer().value_or(0),
+                 vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_rf_verify_stackpointer_function_pointer())) {
-    return error("Guard RF verify stack pointer function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_rf_verify_stackpointer_function_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error(
+        "Guard RF verify stack pointer function pointer out of range: {:#010x} "
+        "([{:#010x}, {:#010x}])",
+        config->guard_rf_verify_stackpointer_function_pointer().value_or(0),
+        vaddr_start, vaddr_end
+    );
   }
 
   if (!contains(config->enclave_configuration_ptr())) {
-    return error("Enclave configuration pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->enclave_configuration_ptr().value_or(0), vaddr_start, vaddr_end);
+    return error("Enclave configuration pointer out of range: {:#010x} "
+                 "([{:#010x}, {:#010x}])",
+                 config->enclave_configuration_ptr().value_or(0), vaddr_start,
+                 vaddr_end);
   }
 
   if (!contains(config->volatile_metadata_pointer())) {
-    return error("Volatile metadata pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->volatile_metadata_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error(
+        "Volatile metadata pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
+        config->volatile_metadata_pointer().value_or(0), vaddr_start, vaddr_end
+    );
   }
 
   if (!contains(config->guard_eh_continuation_table())) {
-    return error("Guard EH continuation table out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_eh_continuation_table().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard EH continuation table out of range: {:#010x} ([{:#010x}, "
+                 "{:#010x}])",
+                 config->guard_eh_continuation_table().value_or(0), vaddr_start,
+                 vaddr_end);
   }
 
   if (!contains(config->guard_xfg_check_function_pointer())) {
-    return error("Guard XFG check function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_xfg_check_function_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard XFG check function pointer out of range: {:#010x} "
+                 "([{:#010x}, {:#010x}])",
+                 config->guard_xfg_check_function_pointer().value_or(0),
+                 vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_xfg_dispatch_function_pointer())) {
-    return error("Guard XFG dispatch function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_xfg_dispatch_function_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard XFG dispatch function pointer out of range: {:#010x} "
+                 "([{:#010x}, {:#010x}])",
+                 config->guard_xfg_dispatch_function_pointer().value_or(0),
+                 vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_xfg_table_dispatch_function_pointer())) {
-    return error("Guard XFG table dispatch function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_xfg_table_dispatch_function_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard XFG table dispatch function pointer out of range: "
+                 "{:#010x} ([{:#010x}, {:#010x}])",
+                 config->guard_xfg_table_dispatch_function_pointer().value_or(0),
+                 vaddr_start, vaddr_end);
   }
 
   if (!contains(config->cast_guard_os_determined_failure_mode())) {
-    return error("Cast guard OS determined failure mode out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->cast_guard_os_determined_failure_mode().value_or(0), vaddr_start, vaddr_end);
+    return error("Cast guard OS determined failure mode out of range: {:#010x} "
+                 "([{:#010x}, {:#010x}])",
+                 config->cast_guard_os_determined_failure_mode().value_or(0),
+                 vaddr_start, vaddr_end);
   }
 
   if (!contains(config->guard_memcpy_function_pointer())) {
-    return error("Guard memcpy function pointer out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->guard_memcpy_function_pointer().value_or(0), vaddr_start, vaddr_end);
+    return error("Guard memcpy function pointer out of range: {:#010x} "
+                 "([{:#010x}, {:#010x}])",
+                 config->guard_memcpy_function_pointer().value_or(0), vaddr_start,
+                 vaddr_end);
   }
 
   if (!contains(config->uma_function_pointers())) {
-    return error("UMA function pointers out of range: {:#010x} ([{:#010x}, {:#010x}])",
-                 config->uma_function_pointers().value_or(0), vaddr_start, vaddr_end);
+    return error(
+        "UMA function pointers out of range: {:#010x} ([{:#010x}, {:#010x}])",
+        config->uma_function_pointers().value_or(0), vaddr_start, vaddr_end
+    );
   }
 
   return true;
@@ -604,12 +654,12 @@ bool LayoutChecker::check_imports() {
     for (const ImportEntry& entry : imp.entries()) {
       const uint32_t iat_address = entry.iat_address(); // RVA
       std::string entry_name = entry.is_ordinal() ?
-                               fmt::format("#{:04d}", entry.ordinal()) :
-                               entry.name();
+                                   fmt::format("#{:04d}", entry.ordinal()) :
+                                   entry.name();
       // 2 bytes alignment seems sufficient
       if (iat_address % sizeof(uint16_t) != 0) {
-        return error("{}:{} IAT is wrongly aligned: {:#010x}",
-                     imp.name(), entry_name, entry.iat_address());
+        return error("{}:{} IAT is wrongly aligned: {:#010x}", imp.name(),
+                     entry_name, entry.iat_address());
       }
 
       if (iat_dir->RVA() == 0 || iat_dir->size() == 0) {
@@ -623,54 +673,63 @@ bool LayoutChecker::check_imports() {
         const Section* section = pe.section_from_rva(iat_address);
         if (section == nullptr) {
           return error("Can't find section associated with the IAT "
-                       "address: {:#010x}", iat_address);
+                       "address: {:#010x}",
+                       iat_address);
         }
         /* Not a requirement (even though most of the PE have it)
-         * if (!section->has_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)) {
-         *   return error(R"err(
-         *     {}:{} IAT: {:#010x} -- Missing CNT_INITIALIZED_DATA in the pointed section ('{}')
-         *   )err", imp.name(), entry_name, iat_address, section->name());
+         * if
+         * (!section->has_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA))
+         * { return error(R"err(
+         *     {}:{} IAT: {:#010x} -- Missing CNT_INITIALIZED_DATA in the pointed
+         * section ('{}') )err", imp.name(), entry_name, iat_address,
+         * section->name());
          * }
          */
 
         if (!section->has_characteristic(Section::CHARACTERISTICS::MEM_READ)) {
           return error(R"err(
             {}:{} IAT: {:#010x} -- Missing MEM_READ in the pointed section ('{}')
-          )err", imp.name(), entry_name, iat_address, section->name());
+          )err",
+                       imp.name(), entry_name, iat_address, section->name());
         }
       } else {
         const Section* section = pe.section_from_rva(iat_address);
         if (section == nullptr) {
           return error("Can't find section associated with the IAT "
-                       "address: {:#010x}", iat_address);
+                       "address: {:#010x}",
+                       iat_address);
         }
         /*
-         * if (!section->has_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)) {
-         *   return error(R"err(
-         *     {}:{} IAT: {:#010x} -- Missing CNT_INITIALIZED_DATA in the pointed section ('{}')
-         *   )err", imp.name(), entry_name, iat_address, section->name());
+         * if
+         * (!section->has_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA))
+         * { return error(R"err(
+         *     {}:{} IAT: {:#010x} -- Missing CNT_INITIALIZED_DATA in the pointed
+         * section ('{}') )err", imp.name(), entry_name, iat_address,
+         * section->name());
          * }
          */
 
         if (!section->has_characteristic(Section::CHARACTERISTICS::MEM_READ)) {
           return error(R"err(
             {}:{} IAT: {:#010x} -- Missing MEM_READ in the pointed section ('{}')
-          )err", imp.name(), entry_name, iat_address, section->name());
+          )err",
+                       imp.name(), entry_name, iat_address, section->name());
         }
 
         if (!section->has_characteristic(Section::CHARACTERISTICS::MEM_WRITE)) {
           return error(R"err(
             {}:{} IAT: {:#010x} -- Missing MEM_WRITE in the pointed section ('{}')
-          )err", imp.name(), entry_name, iat_address, section->name());
+          )err",
+                       imp.name(), entry_name, iat_address, section->name());
         }
 
         if (!section->has_characteristic(Section::CHARACTERISTICS::CNT_CODE)) {
           return error(R"err(
             {}:{} IAT: {:#010x} -- Missing CNT_CODE in the pointed section ('{}')
-          )err", imp.name(), entry_name, iat_address, section->name());
+          )err",
+                       imp.name(), entry_name, iat_address, section->name());
         }
       }
-
     }
   }
   return true;
@@ -695,8 +754,10 @@ bool LayoutChecker::check_tls() {
     return error("Missing MEM_READ for TLS section: '{}'", tls_sec->name());
   }
 
-  if (!tls_sec->has_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)) {
-    return error("Missing CNT_INITIALIZED_DATA for TLS section: '{}'", tls_sec->name());
+  if (!tls_sec->has_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA))
+  {
+    return error("Missing CNT_INITIALIZED_DATA for TLS section: '{}'",
+                 tls_sec->name());
   }
 
   if (tls->addressof_index() == 0) {
@@ -710,7 +771,8 @@ bool LayoutChecker::check_tls() {
     const uint64_t rva = addr - imagebase;
     const Section* sec = pe.section_from_rva(rva);
     if (sec == nullptr) {
-      return error("Can't find section associated with TLS callback: {:#018x}", addr);
+      return error("Can't find section associated with TLS callback: {:#018x}",
+                   addr);
     }
 
     if (!sec->has_characteristic(Section::CHARACTERISTICS::MEM_READ)) {
@@ -729,12 +791,13 @@ bool LayoutChecker::check_tls() {
 
   if (addr_cbk > 0 && addr_cbk_rva < 0) {
     return error("TLS's address of callbacks should be a VA. Addr={:#08x}, "
-                 "Imagebase={:#018x}", addr_cbk, imagebase);
+                 "Imagebase={:#018x}",
+                 addr_cbk, imagebase);
   }
 
   // If the binary is pie, make sure it has relocations for the TLS structures
   if (pe.is_pie()) {
-    auto relocations  = pe.relocations();
+    auto relocations = pe.relocations();
     if (relocations.empty()) {
       return error("Missing relocations for the TLS structures");
     }
@@ -764,8 +827,8 @@ bool LayoutChecker::check_tls() {
     }
 
     if (nb_cbk_reloc < nb_cbk) {
-      return error("Expecting #{} callback relocations. Found: #{}",
-                   nb_cbk, nb_cbk_reloc);
+      return error("Expecting #{} callback relocations. Found: #{}", nb_cbk,
+                   nb_cbk_reloc);
     }
 
     size_t expected_hdr_reloc = 0;
@@ -810,9 +873,11 @@ bool LayoutChecker::check_relocations() {
                    R.virtual_address());
     }
 
-    if (R.entries().size() != (R.block_size() - sizeof(details::pe_base_relocation_block)) / sizeof(uint16_t)) {
-      return error("Relocation block {:#x} is corrupted",
-                   R.virtual_address());
+    if (R.entries().size() !=
+        (R.block_size() - sizeof(details::pe_base_relocation_block)) /
+            sizeof(uint16_t))
+    {
+      return error("Relocation block {:#x} is corrupted", R.virtual_address());
     }
 
     computed_size += R.block_size();
@@ -826,8 +891,8 @@ bool LayoutChecker::check_relocations() {
   }
 
   if (computed_size != size) {
-    return error("Size mismatch. DataDirectory={:#06x}, Computed={:#06x}",
-                 size, computed_size);
+    return error("Size mismatch. DataDirectory={:#06x}, Computed={:#06x}", size,
+                 computed_size);
   }
 
   return true;
@@ -844,4 +909,3 @@ bool check_layout(const Binary& bin, std::string* error_info) {
   return true;
 }
 }
-

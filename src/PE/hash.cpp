@@ -53,7 +53,6 @@ void Hash::visit(const Binary& binary) {
   if (const RichHeader* rheader = binary.rich_header()) {
     process(*rheader);
   }
-
 }
 
 
@@ -135,7 +134,6 @@ void Hash::visit(const OptionalHeader& optional_header) {
   process(optional_header.sizeof_heap_commit());
   process(optional_header.loader_flags());
   process(optional_header.numberof_rva_and_size());
-
 }
 
 void Hash::visit(const DataDirectory& data_directory) {
@@ -158,7 +156,6 @@ void Hash::visit(const Section& section) {
   process(section.numberof_line_numbers());
   process(section.characteristics());
   process(section.content());
-
 }
 
 void Hash::visit(const Relocation& relocation) {
@@ -170,7 +167,6 @@ void Hash::visit(const RelocationEntry& relocation_entry) {
   process(relocation_entry.data());
   process(relocation_entry.position());
   process(relocation_entry.type());
-
 }
 
 void Hash::visit(const Export& export_) {
@@ -301,7 +297,8 @@ void Hash::visit(const ResourcesManager& resources_manager) {
   }
 
   if (resources_manager.has_dialogs()) {
-    process(resources_manager.dialogs().begin(), resources_manager.dialogs().end());
+    process(resources_manager.dialogs().begin(),
+            resources_manager.dialogs().end());
   }
 }
 
@@ -369,7 +366,6 @@ void Hash::visit(const ResourceIcon& resource_icon) {
   process(resource_icon.planes());
   process(resource_icon.bit_count());
   process(resource_icon.pixels());
-
 }
 
 void Hash::visit(const ResourceStringTable& table) {
@@ -411,8 +407,10 @@ void Hash::visit(const SignerInfo& signerinfo) {
   process(signerinfo.encryption_algorithm());
   process(signerinfo.digest_algorithm());
   process(signerinfo.encrypted_digest());
-  process(signerinfo.authenticated_attributes().begin(), signerinfo.authenticated_attributes().end());
-  process(signerinfo.unauthenticated_attributes().begin(), signerinfo.unauthenticated_attributes().end());
+  process(signerinfo.authenticated_attributes().begin(),
+          signerinfo.authenticated_attributes().end());
+  process(signerinfo.unauthenticated_attributes().begin(),
+          signerinfo.unauthenticated_attributes().end());
 }
 
 void Hash::visit(const Attribute& attr) {
@@ -434,7 +432,6 @@ void Hash::visit(const SpcIndirectData& content) {
   process(content.file());
   process(content.digest());
   process(content.digest_algorithm());
-
 }
 
 
@@ -502,7 +499,7 @@ void Hash::visit(const SpcRelaxedPeMarkerCheck& attr) {
 
 void Hash::visit(const SigningCertificateV2& attr) {
   visit(*attr.as<Attribute>());
-  //TODO
+  // TODO
 }
 
 void Hash::visit(const CodeIntegrity& code_integrity) {
@@ -644,9 +641,6 @@ void Hash::visit(const ResourceDialogExtended& dialog) {
     process(item.title().string);
     process(item.creation_data());
   }
-
 }
 
 } // namespace LIEF::PE
-
-

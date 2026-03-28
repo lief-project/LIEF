@@ -23,27 +23,18 @@
 namespace lief_jni::dwarf::editor {
 
 jobject Type::jni_get_pointer_to(JNIEnv* env, jobject thiz) {
-  return PointerType::create(
-    from_jni(thiz)->impl().pointer_to()
-  );
+  return PointerType::create(from_jni(thiz)->impl().pointer_to());
 }
 
 int Type::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "getPointerTo",
-      "()Llief/dwarf/editor/PointerType;",
-      &jni_get_pointer_to
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("getPointerTo", "()Llief/dwarf/editor/PointerType;",
+           &jni_get_pointer_to),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

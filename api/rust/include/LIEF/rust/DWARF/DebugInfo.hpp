@@ -24,50 +24,78 @@ class DWARF_DebugInfo : public AbstracDebugInfo {
   public:
   using lief_t = LIEF::dwarf::DebugInfo;
 
-  class it_compilation_units :
-      public ForwardIterator<DWARF_CompilationUnit, LIEF::dwarf::CompilationUnit::Iterator>
-  {
+  class it_compilation_units
+    : public ForwardIterator<DWARF_CompilationUnit,
+                             LIEF::dwarf::CompilationUnit::Iterator> {
     public:
-    it_compilation_units(const DWARF_DebugInfo::lief_t& src)
-      : ForwardIterator(src.compilation_units()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_compilation_units(const DWARF_DebugInfo::lief_t& src) :
+      ForwardIterator(src.compilation_units()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  DWARF_DebugInfo(std::unique_ptr<lief_t> bin) : AbstracDebugInfo(std::move(bin)) {}
+  DWARF_DebugInfo(std::unique_ptr<lief_t> bin) :
+    AbstracDebugInfo(std::move(bin)) {}
 
-  static auto from_file(std::string file) { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_DebugInfo>(LIEF::dwarf::DebugInfo::from_file(file));
+  static auto
+      from_file(std::string file) { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<DWARF_DebugInfo>(
+        LIEF::dwarf::DebugInfo::from_file(file)
+    );
   }
 
   auto compilation_units() const {
     return std::make_unique<it_compilation_units>(impl());
   }
 
-  auto function_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Function>(impl().find_function(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto function_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<DWARF_Function>(
+        impl().find_function(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto function_by_addr(uint64_t addr) const {
-    return details::try_unique<DWARF_Function>(impl().find_function(addr)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Function>(
+        impl().find_function(addr)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto variable_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Variable>(impl().find_variable(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto variable_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<DWARF_Variable>(
+        impl().find_variable(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto variable_by_addr(uint64_t addr) const {
-    return details::try_unique<DWARF_Variable>(impl().find_variable(addr)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Variable>(
+        impl().find_variable(addr)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto type_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Type>(impl().find_type(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto type_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<DWARF_Type>(
+        impl().find_type(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   static bool classof(const AbstracDebugInfo& reloc) {
-    return lief_t::classof(static_cast<const AbstracDebugInfo::lief_t*>(&reloc.get()));
+    return lief_t::classof(
+        static_cast<const AbstracDebugInfo::lief_t*>(&reloc.get())
+    );
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

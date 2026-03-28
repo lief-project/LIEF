@@ -32,12 +32,16 @@ std::unique_ptr<AArch64Feature> AArch64Feature::create(BinaryStream& stream) {
 
   std::vector<FEATURE> features;
   while (bitmask) {
-    uint32_t bit = bitmask & (- bitmask);
+    uint32_t bit = bitmask & (-bitmask);
     bitmask &= ~bit;
 
     switch (bit) {
-      case GNU_PROPERTY_AARCH64_FEATURE_1_BTI: features.push_back(FEATURE::BTI); break;
-      case GNU_PROPERTY_AARCH64_FEATURE_1_PAC: features.push_back(FEATURE::PAC); break;
+      case GNU_PROPERTY_AARCH64_FEATURE_1_BTI:
+        features.push_back(FEATURE::BTI);
+        break;
+      case GNU_PROPERTY_AARCH64_FEATURE_1_PAC:
+        features.push_back(FEATURE::PAC);
+        break;
       default: features.push_back(FEATURE::UNKNOWN); break;
     }
   }
@@ -46,13 +50,13 @@ std::unique_ptr<AArch64Feature> AArch64Feature::create(BinaryStream& stream) {
 }
 
 const char* to_string(AArch64Feature::FEATURE type) {
-  #define ENTRY(X) std::pair(AArch64Feature::FEATURE::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(UNKNOWN),
-    ENTRY(BTI),
-    ENTRY(PAC),
+#define ENTRY(X) std::pair(AArch64Feature::FEATURE::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(UNKNOWN),
+      ENTRY(BTI),
+      ENTRY(PAC),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
     return it->second;
@@ -61,8 +65,7 @@ const char* to_string(AArch64Feature::FEATURE type) {
   return "UNKNOWN";
 }
 
-void AArch64Feature::dump(std::ostream &os) const {
+void AArch64Feature::dump(std::ostream& os) const {
   os << "AArch64 feature(s): " << fmt::to_string(features());
 }
 }
-

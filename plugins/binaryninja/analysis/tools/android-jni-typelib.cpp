@@ -8,7 +8,10 @@ using namespace BinaryNinja;
 int main(int argc, const char** argv) {
   if (argc != 3) {
     BN_ERR("Usage: {} <path>/jni.h <output>", argv[0]);
-    BN_ERR("-- Example: {} $ANDROID_HOME/ndk/29.0.13846066/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/jni.h $HOME/android-jni.bntl", argv[0]);
+    BN_ERR("-- Example: {} "
+           "$ANDROID_HOME/ndk/29.0.13846066/toolchains/llvm/prebuilt/linux-x86_64/"
+           "sysroot/usr/include/jni.h $HOME/android-jni.bntl",
+           argv[0]);
     return EXIT_FAILURE;
   }
 
@@ -40,9 +43,7 @@ int main(int argc, const char** argv) {
       /* out: variables */ variables,
       /* out: functions */ functions,
       /* out: erro      */ error,
-      /* Include dirs   */ {
-        incdirs
-      }
+      /* Include dirs   */ {incdirs}
   );
 
   if (!is_ok) {

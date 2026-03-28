@@ -38,7 +38,7 @@
 namespace LIEF::ELF {
 
 inline std::unique_ptr<NoteGnuProperty::Property>
-parse_property(ARCH arch, SpanStream& stream) {
+    parse_property(ARCH arch, SpanStream& stream) {
 
   auto res_type = stream.read<uint32_t>();
   if (!res_type) {
@@ -61,10 +61,7 @@ parse_property(ARCH arch, SpanStream& stream) {
   SpanStream content = std::move(*res_content);
   const uint32_t type = *res_type;
   if (GNU_PROPERTY_LOPROC <= type && type <= GNU_PROPERTY_HIPROC) {
-    if (arch == ARCH::X86_64 ||
-        arch == ARCH::IAMCU ||
-        arch == ARCH::I386)
-    {
+    if (arch == ARCH::X86_64 || arch == ARCH::IAMCU || arch == ARCH::I386) {
       switch (type) {
         case GNU_PROPERTY_X86_ISA_1_USED:
         case GNU_PROPERTY_X86_ISA_1_NEEDED:
@@ -95,38 +92,36 @@ parse_property(ARCH arch, SpanStream& stream) {
 
   switch (type) {
     case GNU_PROPERTY_STACK_SIZE:
-      {
-        const size_t csize = content.size();
-        if (csize == sizeof(uint64_t)) {
-          return StackSize::create(content.read<uint64_t>().value_or(0));
-        }
-        if (csize == sizeof(uint32_t)) {
-          return StackSize::create(content.read<uint32_t>().value_or(0));
-        }
-        if (csize == sizeof(uint16_t)) {
-          return StackSize::create(content.read<uint16_t>().value_or(0));
-        }
-        if (csize == sizeof(uint8_t)) {
-          return StackSize::create(content.read<uint8_t>().value_or(0));
-        }
-        LIEF_ERR("Invalid stack size: {}", csize);
-        return StackSize::create(0);
+    {
+      const size_t csize = content.size();
+      if (csize == sizeof(uint64_t)) {
+        return StackSize::create(content.read<uint64_t>().value_or(0));
       }
+      if (csize == sizeof(uint32_t)) {
+        return StackSize::create(content.read<uint32_t>().value_or(0));
+      }
+      if (csize == sizeof(uint16_t)) {
+        return StackSize::create(content.read<uint16_t>().value_or(0));
+      }
+      if (csize == sizeof(uint8_t)) {
+        return StackSize::create(content.read<uint8_t>().value_or(0));
+      }
+      LIEF_ERR("Invalid stack size: {}", csize);
+      return StackSize::create(0);
+    }
     case GNU_PROPERTY_NO_COPY_ON_PROTECTED: return NoteNoCopyOnProtected::create();
     default:
+    {
+      if ((GNU_PROPERTY_UINT32_AND_LO <= type &&
+           type <= GNU_PROPERTY_UINT32_AND_HI) ||
+          (GNU_PROPERTY_UINT32_OR_LO <= type && type <= GNU_PROPERTY_UINT32_OR_HI))
       {
-        if (
-          (GNU_PROPERTY_UINT32_AND_LO <= type && type <= GNU_PROPERTY_UINT32_AND_HI) ||
-          (GNU_PROPERTY_UINT32_OR_LO  <= type && type <= GNU_PROPERTY_UINT32_OR_HI)
-        )
-        {
-          switch (type) {
-            // TODO(romain): We need to support GNU_PROPERTY_1_NEEDED
-            default: return Generic::create(type);
-          }
-
+        switch (type) {
+          // TODO(romain): We need to support GNU_PROPERTY_1_NEEDED
+          default: return Generic::create(type);
         }
       }
+    }
   }
   return Generic::create(type);
 }
@@ -155,13 +150,12 @@ NoteGnuProperty::properties_t NoteGnuProperty::properties() const {
 
 
 std::unique_ptr<NoteGnuProperty::Property>
-NoteGnuProperty::find(Property::TYPE type) const {
+    NoteGnuProperty::find(Property::TYPE type) const {
   properties_t props = properties();
   auto it = std::find_if(props.begin(), props.end(),
-      [type] (const std::unique_ptr<Property>& prop) {
-        return prop->type() == type;
-      }
-  );
+                         [type](const std::unique_ptr<Property>& prop) {
+                           return prop->type() == type;
+                         });
 
   if (it != props.end()) {
     return std::move(*it);
@@ -183,19 +177,13 @@ void NoteGnuProperty::accept(Visitor& visitor) const {
 }
 
 const char* to_string(NoteGnuProperty::Property::TYPE type) {
-  #define ENTRY(X) std::pair(NoteGnuProperty::Property::TYPE::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(UNKNOWN),
-    ENTRY(GENERIC),
-    ENTRY(AARCH64_FEATURES),
-    ENTRY(AARCH64_PAUTH),
-    ENTRY(STACK_SIZE),
-    ENTRY(NO_COPY_ON_PROTECTED),
-    ENTRY(X86_ISA),
-    ENTRY(X86_FEATURE),
-    ENTRY(NEEDED),
+#define ENTRY(X) std::pair(NoteGnuProperty::Property::TYPE::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(UNKNOWN),       ENTRY(GENERIC),     ENTRY(AARCH64_FEATURES),
+      ENTRY(AARCH64_PAUTH), ENTRY(STACK_SIZE),  ENTRY(NO_COPY_ON_PROTECTED),
+      ENTRY(X86_ISA),       ENTRY(X86_FEATURE), ENTRY(NEEDED),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
     return it->second;
@@ -209,4 +197,3 @@ void NoteGnuProperty::Property::dump(std::ostream& os) const {
 }
 
 } // namespace LIEF::ELF
-

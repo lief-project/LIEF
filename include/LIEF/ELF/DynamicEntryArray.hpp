@@ -40,8 +40,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   DynamicEntryArray() = delete;
   DynamicEntryArray(DynamicEntry::TAG tag, array_t array) :
     DynamicEntry(tag, 0),
-    array_(std::move(array))
-  {}
+    array_(std::move(array)) {}
 
   DynamicEntryArray& operator=(const DynamicEntryArray&) = default;
   DynamicEntryArray(const DynamicEntryArray&) = default;
@@ -88,7 +87,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   }
 
   const uint64_t& operator[](size_t idx) const;
-  uint64_t&       operator[](size_t idx);
+  uint64_t& operator[](size_t idx);
 
   void accept(Visitor& visitor) const override;
 

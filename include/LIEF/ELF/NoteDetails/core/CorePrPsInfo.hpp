@@ -54,11 +54,11 @@ class LIEF_API CorePrPsInfo : public Note {
       return args.c_str();
     }
   };
-  CorePrPsInfo(ARCH arch, Header::CLASS cls, std::string name,
-               uint32_t type, description_t description) :
+  CorePrPsInfo(ARCH arch, Header::CLASS cls, std::string name, uint32_t type,
+               description_t description) :
     Note(std::move(name), TYPE::CORE_PRPSINFO, type, std::move(description), ""),
-    arch_(arch), class_(cls)
-  {}
+    arch_(arch),
+    class_(cls) {}
 
   std::unique_ptr<Note> clone() const override {
     return std::unique_ptr<Note>(new CorePrPsInfo(*this));
@@ -78,11 +78,12 @@ class LIEF_API CorePrPsInfo : public Note {
 
   ~CorePrPsInfo() override = default;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const CorePrPsInfo& note) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CorePrPsInfo& note) {
     note.dump(os);
     return os;
   }
+
   private:
   [[maybe_unused]] ARCH arch_ = ARCH::NONE;
   Header::CLASS class_ = Header::CLASS::NONE;

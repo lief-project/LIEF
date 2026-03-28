@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#pragma  once
+#pragma once
 #include <cstdint>
 #include <memory>
 #include "LIEF/iterators.hpp"
@@ -22,15 +22,19 @@ class Iterator {
   public:
   using lief_t = V;
   std::unique_ptr<T> next() {
-    if (it_ == it_.end()) return nullptr;
+    if (it_ == it_.end()) {
+      return nullptr;
+    }
     return std::make_unique<T>(*it_++);
   }
 
   uint64_t size() const {
     return it_.size();
   }
+
   protected:
-  Iterator(V it) : it_(std::move(it)) {}
+  Iterator(V it) :
+    it_(std::move(it)) {}
   V it_;
 };
 
@@ -40,7 +44,9 @@ class ForwardIterator {
   public:
   using lief_t = V;
   std::unique_ptr<T> next() {
-    if (begin_ == end_) return nullptr;
+    if (begin_ == end_) {
+      return nullptr;
+    }
     auto&& value = *begin_;
     ++begin_;
     return std::make_unique<T>(std::move(value));
@@ -57,13 +63,11 @@ class ForwardIterator {
   protected:
   ForwardIterator(LIEF::iterator_range<V> range) :
     begin_(std::move(range.begin())),
-    end_(std::move(range.end()))
-  {}
+    end_(std::move(range.end())) {}
 
   ForwardIterator(V begin, V end) :
     begin_(std::move(begin)),
-    end_(std::move(end))
-  {}
+    end_(std::move(end)) {}
 
   V begin_;
   V end_;
@@ -74,7 +78,9 @@ class RandomRangeIterator {
   public:
   using lief_t = V;
   std::unique_ptr<T> next() {
-    if (it_ == end_) return nullptr;
+    if (it_ == end_) {
+      return nullptr;
+    }
     return std::make_unique<T>(*it_++);
   }
 
@@ -90,14 +96,12 @@ class RandomRangeIterator {
   RandomRangeIterator(LIEF::iterator_range<V> range) :
     begin_(std::move(range.begin())),
     end_(std::move(range.end())),
-    it_(begin_)
-  {}
+    it_(begin_) {}
 
   RandomRangeIterator(V begin, V end) :
     begin_(std::move(begin)),
     end_(std::move(end)),
-    it_(begin_)
-  {}
+    it_(begin_) {}
 
   V begin_;
   V end_;
@@ -108,7 +112,9 @@ template<class T, class ContainerT>
 class ContainerIterator {
   public:
   std::unique_ptr<T> next() {
-    if (begin_ == end_) return nullptr;
+    if (begin_ == end_) {
+      return nullptr;
+    }
     return std::make_unique<T>(std::move(*begin_++));
   }
 
@@ -119,16 +125,14 @@ class ContainerIterator {
   bool empty() const {
     return begin_ == end_;
   }
+
   protected:
   ContainerIterator(ContainerT&& C) :
     container_(std::forward<ContainerT>(C)),
     begin_(std::begin(container_)),
-    end_(std::end(container_))
-  {}
+    end_(std::end(container_)) {}
 
   ContainerT container_;
   typename ContainerT::iterator begin_;
   typename ContainerT::iterator end_;
-
 };
-

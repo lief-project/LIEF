@@ -52,7 +52,8 @@ std::string RegularHeader::to_string() const {
 
   static constexpr auto WIDTH = 16;
   oss << Header::to_string() << '\n';
-  oss << format("{:>{}} Size of optional header\n", sizeof_optionalheader(), WIDTH);
+  oss << format("{:>{}} Size of optional header\n", sizeof_optionalheader(),
+                WIDTH);
   oss << format("{:>#{}x} Characteristics", characteristics(), WIDTH);
   return oss.str();
 }

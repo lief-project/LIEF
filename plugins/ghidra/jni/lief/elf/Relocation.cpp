@@ -21,17 +21,13 @@
 namespace lief_jni::elf {
 
 int Relocation::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
+  static const std::array NATIVE_METHODS{
 
-    make_destroy(
-      &jni_destroy
-    ),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

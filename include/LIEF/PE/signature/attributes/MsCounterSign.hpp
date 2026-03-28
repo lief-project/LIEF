@@ -43,8 +43,7 @@ class LIEF_API MsCounterSign : public Attribute {
   using it_signers = ref_iterator<signers_t&>;
 
   MsCounterSign() :
-    Attribute(Attribute::TYPE::MS_COUNTER_SIGN)
-  {}
+    Attribute(Attribute::TYPE::MS_COUNTER_SIGN) {}
 
   MsCounterSign(const MsCounterSign&) = default;
   MsCounterSign& operator=(const MsCounterSign&) = default;

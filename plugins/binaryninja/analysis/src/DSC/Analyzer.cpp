@@ -25,7 +25,5 @@ std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
   return nullptr;
 }
 
-void Analyzer::run() {
-
-}
+void Analyzer::run() {}
 }

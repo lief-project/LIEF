@@ -44,17 +44,18 @@ std::unique_ptr<Factory> Factory::create(PE_TYPE type) {
   pe.header_ = Header::create(type);
   pe.optional_header_ = OptionalHeader::create(type);
 
-  pe.dos_stub_ = {
-    0x0e, 0x1f, 0xba, 0x0e, 0x00, 0xb4, 0x09, 0xcd, 0x21, 0xb8, 0x01, 0x4c,
-    0xcd, 0x21, 0x54, 0x68, 0x69, 0x73, 0x20, 0x70, 0x72, 0x6f, 0x67, 0x72,
-    0x61, 0x6d, 0x20, 0x63, 0x61, 0x6e, 0x6e, 0x6f, 0x74, 0x20, 0x62, 0x65,
-    0x20, 0x72, 0x75, 0x6e, 0x20, 0x69, 0x6e, 0x20, 0x44, 0x4f, 0x53, 0x20,
-    0x6d, 0x6f, 0x64, 0x65, 0x2e, 0x24, 0x00, 0x00
-  };
+  pe.dos_stub_ = {0x0e, 0x1f, 0xba, 0x0e, 0x00, 0xb4, 0x09, 0xcd, 0x21, 0xb8,
+                  0x01, 0x4c, 0xcd, 0x21, 0x54, 0x68, 0x69, 0x73, 0x20, 0x70,
+                  0x72, 0x6f, 0x67, 0x72, 0x61, 0x6d, 0x20, 0x63, 0x61, 0x6e,
+                  0x6e, 0x6f, 0x74, 0x20, 0x62, 0x65, 0x20, 0x72, 0x75, 0x6e,
+                  0x20, 0x69, 0x6e, 0x20, 0x44, 0x4f, 0x53, 0x20, 0x6d, 0x6f,
+                  0x64, 0x65, 0x2e, 0x24, 0x00, 0x00};
 
   pe.data_directories_.reserve(DataDirectory::DEFAULT_NB);
   for (size_t i = 0; i < DataDirectory::DEFAULT_NB; ++i) {
-    pe.data_directories_.push_back(std::make_unique<DataDirectory>(DataDirectory::TYPES(i)));
+    pe.data_directories_.push_back(
+        std::make_unique<DataDirectory>(DataDirectory::TYPES(i))
+    );
   }
 
   return factory;
@@ -78,8 +79,11 @@ ok_error_t Factory::assign_locations() {
   uint64_t last_offset = sizeof_headers();
   uint64_t last_rva = section_align();
   for (std::unique_ptr<Section>& section : sections_) {
-    last_offset = std::max<uint64_t>(section->offset() + section->size(), last_offset);
-    last_rva = std::max<uint64_t>(section->virtual_address() + section->virtual_size(), last_rva);
+    last_offset =
+        std::max<uint64_t>(section->offset() + section->size(), last_offset);
+    last_rva =
+        std::max<uint64_t>(section->virtual_address() + section->virtual_size(),
+                           last_rva);
   }
 
   last_offset = align(last_offset, file_align());
@@ -104,13 +108,13 @@ ok_error_t Factory::assign_locations() {
 
 uint32_t Factory::sizeof_headers() const {
   return align(
-    pe_->dos_header().addressof_new_exeheader() +
-    sizeof(details::pe_header) +
-    (is_32bit() ? sizeof(details::pe32_optional_header) :
-                  sizeof(details::pe64_optional_header)) +
-    sizeof(details::pe_data_directory) * pe_->data_directories_.size() +
-    sizeof(details::pe_section) * sections_.size(),
-    file_align());
+      pe_->dos_header().addressof_new_exeheader() + sizeof(details::pe_header) +
+          (is_32bit() ? sizeof(details::pe32_optional_header) :
+                        sizeof(details::pe64_optional_header)) +
+          sizeof(details::pe_data_directory) * pe_->data_directories_.size() +
+          sizeof(details::pe_section) * sections_.size(),
+      file_align()
+  );
 }
 
 

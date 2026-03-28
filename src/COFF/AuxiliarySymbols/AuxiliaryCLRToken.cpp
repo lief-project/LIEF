@@ -33,8 +33,7 @@ namespace LIEF::COFF {
 //     BYTE  rgbReserved[12];           // Must be 0
 // } IMAGE_AUX_SYMBOL_TOKEN_DEF
 std::unique_ptr<AuxiliaryCLRToken>
-  AuxiliaryCLRToken::parse(const std::vector<uint8_t>& payload)
-{
+    AuxiliaryCLRToken::parse(const std::vector<uint8_t>& payload) {
   SpanStream stream(payload);
 
   auto bAuxType = stream.read<uint8_t>();
@@ -60,8 +59,9 @@ std::unique_ptr<AuxiliaryCLRToken>
     LIEF_WARN("Failed to parse AuxiliaryCLRToken field (line: {})", __LINE__);
     return std::make_unique<AuxiliaryCLRToken>();
   }
-  return std::make_unique<AuxiliaryCLRToken>(
-      *bAuxType, *bReserved, *SymbolTableIndex, std::move(rgbReserved));
+  return std::make_unique<AuxiliaryCLRToken>(*bAuxType, *bReserved,
+                                             *SymbolTableIndex,
+                                             std::move(rgbReserved));
 }
 
 std::string AuxiliaryCLRToken::to_string() const {

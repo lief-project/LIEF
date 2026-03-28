@@ -47,5 +47,3 @@ class LIEF_API Array : public Type {
 }
 }
 #endif
-
-

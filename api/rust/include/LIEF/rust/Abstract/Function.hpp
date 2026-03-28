@@ -22,11 +22,18 @@
 class AbstractFunction : public AbstractSymbol {
   public:
   using lief_t = LIEF::Function;
-  AbstractFunction(const lief_t& obj) : AbstractSymbol(obj) {}
+  AbstractFunction(const lief_t& obj) :
+    AbstractSymbol(obj) {}
 
-  auto address() const { return impl().address(); }
-  auto flags() const { return to_int(impl().flags()); }
+  auto address() const {
+    return impl().address();
+  }
+  auto flags() const {
+    return to_int(impl().flags());
+  }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

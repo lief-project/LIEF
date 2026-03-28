@@ -21,7 +21,8 @@
 class COFF_AuxiliaryCLRToken : public COFF_AuxiliarySymbol {
   public:
   using lief_t = LIEF::COFF::AuxiliaryCLRToken;
-  COFF_AuxiliaryCLRToken(const lief_t& obj) : COFF_AuxiliarySymbol(obj) {}
+  COFF_AuxiliaryCLRToken(const lief_t& obj) :
+    COFF_AuxiliarySymbol(obj) {}
 
   auto aux_type() const {
     return impl().aux_type();
@@ -48,5 +49,7 @@ class COFF_AuxiliaryCLRToken : public COFF_AuxiliarySymbol {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

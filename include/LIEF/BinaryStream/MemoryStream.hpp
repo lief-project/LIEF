@@ -35,8 +35,7 @@ class LIEF_API MemoryStream : public BinaryStream {
   MemoryStream(uintptr_t base_address, uint64_t size) :
     BinaryStream(BinaryStream::STREAM_TYPE::MEMORY),
     baseaddr_(base_address),
-    size_(size)
-  {}
+    size_(size) {}
 
   MemoryStream(const MemoryStream&) = delete;
   MemoryStream& operator=(const MemoryStream&) = delete;
@@ -79,7 +78,8 @@ class LIEF_API MemoryStream : public BinaryStream {
   }
 
   protected:
-  result<const void*> read_at(uint64_t offset, uint64_t size, uint64_t va) const override;
+  result<const void*> read_at(uint64_t offset, uint64_t size,
+                              uint64_t va) const override;
   uintptr_t baseaddr_ = 0;
   uint64_t size_ = 0;
   Binary* binary_ = nullptr;

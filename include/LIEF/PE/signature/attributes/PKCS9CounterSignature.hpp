@@ -24,10 +24,12 @@ namespace LIEF {
 class VectorStream;
 namespace PE {
 
-/// Interface over the structure described by the OID ``1.2.840.113549.1.9.6`` (PKCS #9)
+/// Interface over the structure described by the OID ``1.2.840.113549.1.9.6``
+/// (PKCS #9)
 ///
 /// The internal structure is described in the
-/// [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+/// [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types
+/// Version 2.0](https://tools.ietf.org/html/rfc2985)
 ///
 /// ```text
 /// counterSignature ATTRIBUTE ::= {
@@ -44,8 +46,7 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
   PKCS9CounterSignature() = delete;
   PKCS9CounterSignature(SignerInfo signer) :
     Attribute(Attribute::TYPE::PKCS9_COUNTER_SIGNATURE),
-    signer_{std::move(signer)}
-  {}
+    signer_{std::move(signer)} {}
 
   PKCS9CounterSignature(const PKCS9CounterSignature&) = default;
   PKCS9CounterSignature& operator=(const PKCS9CounterSignature&) = default;

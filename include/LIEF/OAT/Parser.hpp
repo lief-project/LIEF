@@ -45,7 +45,7 @@ class LIEF_API Parser : public ELF::Parser {
   static std::unique_ptr<Binary> parse(std::vector<uint8_t> data);
 
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
   protected:
   Parser();
@@ -80,7 +80,8 @@ class LIEF_API Parser : public ELF::Parser {
   void parse_oat_classes();
 
   template<typename OAT_T>
-  void parse_oat_methods(uint64_t methods_offsets, Class& clazz, const DEX::Class& dex_class);
+  void parse_oat_methods(uint64_t methods_offsets, Class& clazz,
+                         const DEX::Class& dex_class);
 
   void init();
 

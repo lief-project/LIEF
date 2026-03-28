@@ -20,8 +20,8 @@ namespace LIEF {
 namespace PE {
 
 enum class PE_TYPE : uint16_t {
-  PE32      = 0x10b, ///< 32bits
-  PE32_PLUS = 0x20b  ///< 64 bits
+  PE32 = 0x10b,      ///< 32bits
+  PE32_PLUS = 0x20b, ///< 64 bits
 };
 
 /// Cryptography algorithms

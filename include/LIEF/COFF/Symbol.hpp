@@ -37,15 +37,17 @@ class LIEF_API Symbol : public LIEF::Symbol {
   friend class Parser;
 
   using auxiliary_symbols_t = std::vector<std::unique_ptr<AuxiliarySymbol>>;
-  using it_auxiliary_symbols_t = ref_iterator<auxiliary_symbols_t&, AuxiliarySymbol*>;
-  using it_const_auxiliary_symbols_t = const_ref_iterator<const auxiliary_symbols_t&, AuxiliarySymbol*>;
+  using it_auxiliary_symbols_t =
+      ref_iterator<auxiliary_symbols_t&, AuxiliarySymbol*>;
+  using it_const_auxiliary_symbols_t =
+      const_ref_iterator<const auxiliary_symbols_t&, AuxiliarySymbol*>;
 
   struct parsing_context_t {
     std::function<String*(uint32_t)> find_string;
     bool is_bigobj;
   };
-  static std::unique_ptr<Symbol> parse(
-      parsing_context_t& ctx, BinaryStream& stream, size_t* idx);
+  static std::unique_ptr<Symbol> parse(parsing_context_t& ctx,
+                                       BinaryStream& stream, size_t* idx);
 
   Symbol();
   Symbol(const Symbol&);
@@ -67,37 +69,38 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   static constexpr auto SYM_COMPLEX_TYPE_SHIFT = 4;
 
-  /// Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#storage-class
+  /// Reference:
+  /// https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#storage-class
   enum class STORAGE_CLASS : int32_t {
     INVALID = 0xFF,
 
-    END_OF_FUNCTION  = -1,  ///< Physical end of function
-    NONE             = 0,   ///< No symbol
-    AUTOMATIC        = 1,   ///< Stack variable
-    EXTERNAL         = 2,   ///< External symbol
-    STATIC           = 3,   ///< Static
-    REGISTER         = 4,   ///< Register variable
-    EXTERNAL_DEF     = 5,   ///< External definition
-    LABEL            = 6,   ///< Label
-    UNDEFINED_LABEL  = 7,   ///< Undefined label
-    MEMBER_OF_STRUCT = 8,   ///< Member of structure
-    ARGUMENT         = 9,   ///< Function argument
-    STRUCT_TAG       = 10,  ///< Structure tag
-    MEMBER_OF_UNION  = 11,  ///< Member of union
-    UNION_TAG        = 12,  ///< Union tag
-    TYPE_DEFINITION  = 13,  ///< Type definition
-    UNDEFINED_STATIC = 14,  ///< Undefined static
-    ENUM_TAG         = 15,  ///< Enumeration tag
-    MEMBER_OF_ENUM   = 16,  ///< Member of enumeration
-    REGISTER_PARAM   = 17,  ///< Register parameter
-    BIT_FIELD        = 18,  ///< Bit field
-    BLOCK            = 100,
-    FUNCTION         = 101,
-    END_OF_STRUCT    = 102, ///< End of structure
-    FILE             = 103, ///< File name
-    SECTION          = 104,
-    WEAK_EXTERNAL    = 105, ///< Duplicate tag
-    CLR_TOKEN        = 107
+    END_OF_FUNCTION = -1,  ///< Physical end of function
+    NONE = 0,              ///< No symbol
+    AUTOMATIC = 1,         ///< Stack variable
+    EXTERNAL = 2,          ///< External symbol
+    STATIC = 3,            ///< Static
+    REGISTER = 4,          ///< Register variable
+    EXTERNAL_DEF = 5,      ///< External definition
+    LABEL = 6,             ///< Label
+    UNDEFINED_LABEL = 7,   ///< Undefined label
+    MEMBER_OF_STRUCT = 8,  ///< Member of structure
+    ARGUMENT = 9,          ///< Function argument
+    STRUCT_TAG = 10,       ///< Structure tag
+    MEMBER_OF_UNION = 11,  ///< Member of union
+    UNION_TAG = 12,        ///< Union tag
+    TYPE_DEFINITION = 13,  ///< Type definition
+    UNDEFINED_STATIC = 14, ///< Undefined static
+    ENUM_TAG = 15,         ///< Enumeration tag
+    MEMBER_OF_ENUM = 16,   ///< Member of enumeration
+    REGISTER_PARAM = 17,   ///< Register parameter
+    BIT_FIELD = 18,        ///< Bit field
+    BLOCK = 100,
+    FUNCTION = 101,
+    END_OF_STRUCT = 102, ///< End of structure
+    FILE = 103,          ///< File name
+    SECTION = 104,
+    WEAK_EXTERNAL = 105, ///< Duplicate tag
+    CLR_TOKEN = 107,
   };
 
   enum class BASE_TYPE : uint32_t {
@@ -116,7 +119,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
     TY_BYTE = 12,  ///< A byte; unsigned 1-byte integer.
     TY_WORD = 13,  ///< A word; unsigned 2-byte integer.
     TY_UINT = 14,  ///< An unsigned integer of natural size.
-    TY_DWORD = 15  ///< An unsigned 4-byte integer.
+    TY_DWORD = 15, ///< An unsigned 4-byte integer.
   };
 
   enum class COMPLEX_TYPE : uint32_t {
@@ -192,8 +195,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   }
 
   bool is_undefined() const {
-    return is_external() && section_idx() == SYM_SEC_IDX_UNDEF &&
-           value() == 0;
+    return is_external() && section_idx() == SYM_SEC_IDX_UNDEF && value() == 0;
   }
 
   bool is_function_line_info() const {
@@ -256,9 +258,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const Symbol& entry)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
     os << entry.to_string();
     return os;
   }
@@ -267,8 +267,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   private:
   template<class T>
-  static std::unique_ptr<Symbol> parse_impl(
-      parsing_context_t& ctx, BinaryStream& stream, size_t* idx);
+  static std::unique_ptr<Symbol> parse_impl(parsing_context_t& ctx,
+                                            BinaryStream& stream, size_t* idx);
   String* coff_name_ = nullptr;
   uint16_t type_ = 0;
   uint8_t storage_class_ = 0;

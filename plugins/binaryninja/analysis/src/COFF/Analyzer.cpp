@@ -22,11 +22,10 @@
 using namespace LIEF;
 
 namespace analysis_plugin::coff {
-Analyzer::Analyzer(std::unique_ptr<LIEF::COFF::Binary> impl, BinaryNinja::BinaryView& bv) :
+Analyzer::Analyzer(std::unique_ptr<LIEF::COFF::Binary> impl,
+                   BinaryNinja::BinaryView& bv) :
   analysis_plugin::Analyzer(bv, std::make_unique<TypeBuilder>(bv)),
-  coff_(std::move(impl))
-{
-}
+  coff_(std::move(impl)) {}
 
 std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
   static const COFF::ParserConfig CONFIG = COFF::ParserConfig::all();
@@ -41,7 +40,5 @@ std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
   return std::make_unique<Analyzer>(std::move(coff), bv);
 }
 
-void Analyzer::run() {
-
-}
+void Analyzer::run() {}
 }

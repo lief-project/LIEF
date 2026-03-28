@@ -35,6 +35,7 @@ struct linkedit_data_command;
 class LIEF_API SegmentSplitInfo : public LoadCommand {
   friend class BinaryParser;
   friend class LinkEdit;
+
   public:
   SegmentSplitInfo() = default;
   SegmentSplitInfo(const details::linkedit_data_command& cmd);
@@ -80,9 +81,8 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
 
   private:
   uint32_t data_offset_ = 0;
-  uint32_t data_size_   = 0;
+  uint32_t data_size_ = 0;
   span<uint8_t> content_;
-
 };
 
 }

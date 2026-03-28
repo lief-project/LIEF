@@ -17,7 +17,8 @@
 #include "LIEF/rust/DWARF/editor/Type.hpp"
 
 
-class DWARF_editor_EnumType_Value : public Mirror<LIEF::dwarf::editor::EnumType::Value> {
+class DWARF_editor_EnumType_Value
+  : public Mirror<LIEF::dwarf::editor::EnumType::Value> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::EnumType::Value;
@@ -34,7 +35,7 @@ class DWARF_editor_EnumType : public DWARF_editor_Type {
 
   auto add_value(std::string name, int64_t value) {
     return details::try_unique<DWARF_editor_EnumType_Value>(
-      impl().add_value(name, value)
+        impl().add_value(name, value)
     );
   }
 
@@ -47,6 +48,10 @@ class DWARF_editor_EnumType : public DWARF_editor_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

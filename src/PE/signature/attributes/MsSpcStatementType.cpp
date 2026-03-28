@@ -27,4 +27,3 @@ std::string MsSpcStatementType::print() const {
   return oid() + " (" + oid_to_string(oid()) + ")";
 }
 }
-

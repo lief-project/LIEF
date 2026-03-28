@@ -95,16 +95,14 @@ class LIEF_API ResourceStringFileInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceStringFileInfo& info);
 
   private:
   uint16_t type_ = 0;
   std::u16string key_;
   elements_t children_;
 };
-
-
 
 
 }

@@ -24,18 +24,25 @@ class PE_Relocation : Mirror<LIEF::PE::Relocation> {
   using lief_t = LIEF::PE::Relocation;
   using Mirror::Mirror;
 
-  class it_entries :
-      public Iterator<PE_RelocationEntry, LIEF::PE::Relocation::it_const_entries>
-  {
+  class it_entries
+    : public Iterator<PE_RelocationEntry, LIEF::PE::Relocation::it_const_entries> {
     public:
-    it_entries(const PE_Relocation::lief_t& src)
-      : Iterator(src.entries()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_entries(const PE_Relocation::lief_t& src) :
+      Iterator(src.entries()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  uint32_t virtual_address() const { return get().virtual_address(); }
-  uint32_t block_size() const { return get().block_size(); }
+  uint32_t virtual_address() const {
+    return get().virtual_address();
+  }
+  uint32_t block_size() const {
+    return get().block_size();
+  }
 
   auto entries() const {
     return std::make_unique<it_entries>(get());

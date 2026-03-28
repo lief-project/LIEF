@@ -34,7 +34,8 @@ namespace logging {
 ///
 /// From a given level set, all levels below this ! level are enabled
 ///
-/// For example, if LEVEL::INFO is enabled then LEVEL::WARN, LEVEL::ERR are also enabled
+/// For example, if LEVEL::INFO is enabled then LEVEL::WARN, LEVEL::ERR are also
+/// enabled
 enum class LEVEL : uint32_t {
   OFF = 0,
 
@@ -69,10 +70,11 @@ LIEF_API void log(LEVEL level, const std::string& msg);
 LIEF_API void log(LEVEL level, const std::string& fmt,
                   const std::vector<std::string>& args);
 
-template <typename... Args>
-void log(LEVEL level, const std::string& fmt, const Args &... args) {
+template<typename... Args>
+void log(LEVEL level, const std::string& fmt, const Args&... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.insert(vec_args.end(),
+                  {static_cast<decltype(vec_args)::value_type>(args)...});
   return log(level, fmt, vec_args);
 }
 
@@ -92,10 +94,11 @@ inline void debug(const std::string& fmt, const std::vector<std::string>& args) 
   log(LEVEL::DEBUG, fmt, args);
 }
 
-template <typename... Args>
-void debug(const std::string& fmt, const Args &... args) {
+template<typename... Args>
+void debug(const std::string& fmt, const Args&... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.insert(vec_args.end(),
+                  {static_cast<decltype(vec_args)::value_type>(args)...});
   return debug(fmt, vec_args);
 }
 
@@ -109,10 +112,11 @@ inline void info(const std::string& fmt, const std::vector<std::string>& args) {
   log(LEVEL::INFO, fmt, args);
 }
 
-template <typename... Args>
-void info(const std::string& fmt, const Args &... args) {
+template<typename... Args>
+void info(const std::string& fmt, const Args&... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.insert(vec_args.end(),
+                  {static_cast<decltype(vec_args)::value_type>(args)...});
   return info(fmt, vec_args);
 }
 
@@ -126,10 +130,11 @@ inline void warn(const std::string& fmt, const std::vector<std::string>& args) {
   log(LEVEL::WARN, fmt, args);
 }
 
-template <typename... Args>
-void warn(const std::string& fmt, const Args &... args) {
+template<typename... Args>
+void warn(const std::string& fmt, const Args&... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.insert(vec_args.end(),
+                  {static_cast<decltype(vec_args)::value_type>(args)...});
   return warn(fmt, vec_args);
 }
 
@@ -143,10 +148,11 @@ inline void err(const std::string& fmt, const std::vector<std::string>& args) {
   log(LEVEL::ERR, fmt, args);
 }
 
-template <typename... Args>
-void err(const std::string& fmt, const Args &... args) {
+template<typename... Args>
+void err(const std::string& fmt, const Args&... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.insert(vec_args.end(),
+                  {static_cast<decltype(vec_args)::value_type>(args)...});
   return err(fmt, vec_args);
 }
 
@@ -156,14 +162,16 @@ inline void critical(const std::string& msg) {
   log(LEVEL::CRITICAL, msg);
 }
 
-inline void critical(const std::string& fmt, const std::vector<std::string>& args) {
+inline void critical(const std::string& fmt,
+                     const std::vector<std::string>& args) {
   log(LEVEL::CRITICAL, fmt, args);
 }
 
-template <typename... Args>
-void critical(const std::string& fmt, const Args &... args) {
+template<typename... Args>
+void critical(const std::string& fmt, const Args&... args) {
   std::vector<std::string> vec_args;
-  vec_args.insert(vec_args.end(), { static_cast<decltype(vec_args)::value_type>(args)...});
+  vec_args.insert(vec_args.end(),
+                  {static_cast<decltype(vec_args)::value_type>(args)...});
   return critical(fmt, vec_args);
 }
 
@@ -231,15 +239,13 @@ class Scoped {
   Scoped& operator=(Scoped&&) = delete;
 
   explicit Scoped(LEVEL level) :
-    level_(get_level())
-  {
+    level_(get_level()) {
     set_level(level);
   }
 
   explicit Scoped(LEVEL level, std::string name) :
     level_(get_level()),
-    name_(std::move(name))
-  {
+    name_(std::move(name)) {
     set_level(level);
   }
 

@@ -20,18 +20,31 @@
 class MachO_ThreadCommand : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::ThreadCommand;
-  MachO_ThreadCommand(const lief_t& base) : MachO_Command(base) {}
-  auto flavor() const { return impl().flavor(); }
-  auto count() const { return impl().count(); }
-  int32_t architecture() const { return to_int(impl().architecture()); }
-  auto pc() const { return impl().pc(); }
+  MachO_ThreadCommand(const lief_t& base) :
+    MachO_Command(base) {}
+  auto flavor() const {
+    return impl().flavor();
+  }
+  auto count() const {
+    return impl().count();
+  }
+  int32_t architecture() const {
+    return to_int(impl().architecture());
+  }
+  auto pc() const {
+    return impl().pc();
+  }
 
-  auto state() const { return make_span(impl().state()); }
+  auto state() const {
+    return make_span(impl().state());
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

@@ -42,7 +42,6 @@ void Hash::visit(const File& file) {
   process(file.classes().begin(), file.classes().end());
   process(file.methods().begin(), file.methods().end());
   process(file.strings().begin(), file.strings().end());
-
 }
 
 void Hash::visit(const Header& header) {
@@ -62,8 +61,7 @@ void Hash::visit(const Header& header) {
   process(header.data());
 }
 
-void Hash::visit(const CodeInfo& /*code_info*/) {
-}
+void Hash::visit(const CodeInfo& /*code_info*/) {}
 
 void Hash::visit(const Class& cls) {
 
@@ -96,29 +94,29 @@ void Hash::visit(const Method& method) {
 void Hash::visit(const Type& type) {
   switch (type.type()) {
     case Type::TYPES::ARRAY:
-      {
-        process(type.dim());
-        process(type.underlying_array_type());
-        break;
-      }
+    {
+      process(type.dim());
+      process(type.underlying_array_type());
+      break;
+    }
 
     case Type::TYPES::PRIMITIVE:
-      {
-        process(type.primitive());
-        break;
-      }
+    {
+      process(type.primitive());
+      break;
+    }
 
     case Type::TYPES::CLASS:
-      {
-        process(type.cls().fullname());
-        break;
-      }
+    {
+      process(type.cls().fullname());
+      break;
+    }
 
     case Type::TYPES::UNKNOWN:
     default:
-      {
-        process(Type::TYPES::UNKNOWN);
-      }
+    {
+      process(Type::TYPES::UNKNOWN);
+    }
   }
 }
 
@@ -126,8 +124,7 @@ void Hash::visit(const Prototype& type) {
   if (const auto* rty = type.return_type()) {
     process(*rty);
   }
-  process(type.parameters_type().begin(),
-          type.parameters_type().end());
+  process(type.parameters_type().begin(), type.parameters_type().end());
 }
 
 void Hash::visit(const MapItem& item) {
@@ -143,5 +140,3 @@ void Hash::visit(const MapList& list) {
 
 
 } // namespace LIEF::DEX
-
-

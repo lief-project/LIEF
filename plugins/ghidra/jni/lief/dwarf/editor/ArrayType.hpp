@@ -24,9 +24,9 @@ namespace lief_jni::dwarf::editor {
 class ArrayType : public Type {
   public:
   using Type::Type;
-  static constexpr jni::Class kClass {
-    "lief/dwarf/editor/ArrayType",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/dwarf/editor/ArrayType",
+      jni::Constructor{jlong{}},
   };
 
   static int register_natives(JNIEnv* env);

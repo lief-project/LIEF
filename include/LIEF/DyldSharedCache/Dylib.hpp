@@ -40,11 +40,10 @@ class DylibIt;
 class LIEF_API Dylib {
   public:
   /// Dylib Iterator
-  class LIEF_API Iterator :
-    public iterator_facade_base<Iterator, std::random_access_iterator_tag,
-                                std::unique_ptr<Dylib>, std::ptrdiff_t, Dylib*,
-                                std::unique_ptr<Dylib>>
-  {
+  class LIEF_API Iterator
+    : public iterator_facade_base<Iterator, std::random_access_iterator_tag,
+                                  std::unique_ptr<Dylib>, std::ptrdiff_t, Dylib*,
+                                  std::unique_ptr<Dylib>> {
     public:
     using implementation = details::DylibIt;
 
@@ -74,6 +73,7 @@ class LIEF_API Dylib {
     private:
     std::unique_ptr<details::DylibIt> impl_;
   };
+
   public:
   /// This structure is used to tweak the extraction process while calling
   /// Dylib::get. These options allow to deoptimize the dylib and get an
@@ -92,21 +92,24 @@ class LIEF_API Dylib {
     ///
     /// \warning Enabling this option can have a significant impact on the
     ///          performances. Make sure to enable the internal cache mechanism:
-    ///          LIEF::dsc::enable_cache or LIEF::dsc::DyldSharedCache::enable_caching
+    ///          LIEF::dsc::enable_cache or
+    ///          LIEF::dsc::DyldSharedCache::enable_caching
     bool fix_branches = false;
 
     /// Fix memory accesses performed outside the dylib's virtual space
     ///
     /// \warning Enabling this option can have a significant impact on the
     ///          performances. Make sure to enable the internal cache mechanism:
-    ///          LIEF::dsc::enable_cache or LIEF::dsc::DyldSharedCache::enable_caching
+    ///          LIEF::dsc::enable_cache or
+    ///          LIEF::dsc::DyldSharedCache::enable_caching
     bool fix_memory = false;
 
     /// Recover and fix relocations
     ///
     /// \warning Enabling this option can have a significant impact on the
     ///          performances. Make sure to enable the internal cache mechanism:
-    ///          LIEF::dsc::enable_cache or LIEF::dsc::DyldSharedCache::enable_caching
+    ///          LIEF::dsc::enable_cache or
+    ///          LIEF::dsc::DyldSharedCache::enable_caching
     bool fix_relocations = false;
 
     /// Fix Objective-C information
@@ -147,7 +150,8 @@ class LIEF_API Dylib {
   /// ```cpp
   /// dyld_cache->libraries()[12]->get()->write("liblockdown.dylib");
   /// ```
-  std::unique_ptr<LIEF::MachO::Binary> get(const extract_opt_t& opt = extract_opt_t()) const;
+  std::unique_ptr<LIEF::MachO::Binary>
+      get(const extract_opt_t& opt = extract_opt_t()) const;
 
   private:
   std::unique_ptr<details::Dylib> impl_;

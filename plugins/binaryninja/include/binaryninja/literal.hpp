@@ -17,10 +17,9 @@
 #include <binaryninja/binaryninjaapi.h>
 namespace binaryninja {
 
-inline BinaryNinja::QualifiedName operator ""_qn(const char* name, size_t) {
+inline BinaryNinja::QualifiedName operator""_qn(const char* name, size_t) {
   return BinaryNinja::QualifiedName(name);
 }
 
 
 }
-

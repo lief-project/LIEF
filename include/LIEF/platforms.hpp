@@ -41,14 +41,13 @@ constexpr PLATFORMS current_platform() {
   return PLATFORMS::PLAT_WINDOWS;
 #elif defined(__APPLE__)
   #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
-    return PLATFORMS::PLAT_IOS;
+  return PLATFORMS::PLAT_IOS;
   #else
-    return PLATFORMS::PLAT_OSX;
+  return PLATFORMS::PLAT_OSX;
   #endif
 #else
   return PLATFORMS::PLAT_UNKNOWN;
 #endif
-
 }
 
 

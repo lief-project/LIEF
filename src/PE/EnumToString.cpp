@@ -23,46 +23,43 @@ namespace LIEF::PE {
 
 const char* to_string(PE_TYPE e) {
   switch (e) {
-    case PE_TYPE::PE32:
-      return "PE32";
-    case PE_TYPE::PE32_PLUS:
-      return "PE32_PLUS";
-    default:
-      return "UNKNOWN";
+    case PE_TYPE::PE32: return "PE32";
+    case PE_TYPE::PE32_PLUS: return "PE32_PLUS";
+    default: return "UNKNOWN";
   }
 
   return "UNKNOWN";
 }
 
 const char* to_string(ALGORITHMS e) {
-  CONST_MAP(ALGORITHMS, const char*, 20) enumStrings {
-    { ALGORITHMS::UNKNOWN,  "UNKNOWN"  },
-    { ALGORITHMS::SHA_512,  "SHA_512"  },
-    { ALGORITHMS::SHA_384,  "SHA_384"  },
-    { ALGORITHMS::SHA_256,  "SHA_256"  },
-    { ALGORITHMS::SHA_1,    "SHA_1"    },
+  CONST_MAP(ALGORITHMS, const char*, 20)
+  enumStrings{
+      {ALGORITHMS::UNKNOWN, "UNKNOWN"},
+      {ALGORITHMS::SHA_512, "SHA_512"},
+      {ALGORITHMS::SHA_384, "SHA_384"},
+      {ALGORITHMS::SHA_256, "SHA_256"},
+      {ALGORITHMS::SHA_1, "SHA_1"},
 
-    { ALGORITHMS::MD5,      "MD5"      },
-    { ALGORITHMS::MD4,      "MD4"      },
-    { ALGORITHMS::MD2,      "MD2"      },
+      {ALGORITHMS::MD5, "MD5"},
+      {ALGORITHMS::MD4, "MD4"},
+      {ALGORITHMS::MD2, "MD2"},
 
-    { ALGORITHMS::RSA,      "RSA"      },
-    { ALGORITHMS::EC,       "EC"       },
+      {ALGORITHMS::RSA, "RSA"},
+      {ALGORITHMS::EC, "EC"},
 
-    { ALGORITHMS::MD5_RSA,          "MD5_RSA"       },
-    { ALGORITHMS::SHA1_DSA,         "SHA1_DSA"      },
-    { ALGORITHMS::SHA1_RSA,         "SHA1_RSA"      },
-    { ALGORITHMS::SHA_256_RSA,      "SHA_256_RSA"   },
-    { ALGORITHMS::SHA_384_RSA,      "SHA_384_RSA"   },
-    { ALGORITHMS::SHA_512_RSA,      "SHA_512_RSA"   },
-    { ALGORITHMS::SHA1_ECDSA,       "SHA1_ECDSA"    },
-    { ALGORITHMS::SHA_256_ECDSA,    "SHA_256_ECDSA" },
-    { ALGORITHMS::SHA_384_ECDSA,    "SHA_384_ECDSA" },
-    { ALGORITHMS::SHA_512_ECDSA,    "SHA_512_ECDSA" },
+      {ALGORITHMS::MD5_RSA, "MD5_RSA"},
+      {ALGORITHMS::SHA1_DSA, "SHA1_DSA"},
+      {ALGORITHMS::SHA1_RSA, "SHA1_RSA"},
+      {ALGORITHMS::SHA_256_RSA, "SHA_256_RSA"},
+      {ALGORITHMS::SHA_384_RSA, "SHA_384_RSA"},
+      {ALGORITHMS::SHA_512_RSA, "SHA_512_RSA"},
+      {ALGORITHMS::SHA1_ECDSA, "SHA1_ECDSA"},
+      {ALGORITHMS::SHA_256_ECDSA, "SHA_256_ECDSA"},
+      {ALGORITHMS::SHA_384_ECDSA, "SHA_384_ECDSA"},
+      {ALGORITHMS::SHA_512_ECDSA, "SHA_512_ECDSA"},
   };
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
 } // namespace LIEF::PE
-

@@ -21,14 +21,9 @@ class ObjC_DeclOpt {
 };
 
 inline ObjC_DeclOpt make_declopt(const LIEF::objc::DeclOpt& opt) {
-  return ObjC_DeclOpt {
-    /* .show_annotations = */ opt.show_annotations
-  };
+  return ObjC_DeclOpt{/* .show_annotations = */ opt.show_annotations};
 }
 
 inline LIEF::objc::DeclOpt from_rust_declopt(const ObjC_DeclOpt& opt) {
-  return LIEF::objc::DeclOpt {
-    /* .show_annotations = */ opt.show_annotations
-  };
+  return LIEF::objc::DeclOpt{/* .show_annotations = */ opt.show_annotations};
 }
-

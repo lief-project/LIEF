@@ -26,24 +26,43 @@ class PE_DelayImport : private Mirror<LIEF::PE::DelayImport> {
   using lief_t = LIEF::PE::DelayImport;
   using Mirror::Mirror;
 
-  class it_entries :
-      public Iterator<PE_DelayImportEntry, LIEF::PE::DelayImport::it_const_entries>
-  {
+  class it_entries : public Iterator<PE_DelayImportEntry,
+                                     LIEF::PE::DelayImport::it_const_entries> {
     public:
-    it_entries(const PE_DelayImport::lief_t& src)
-      : Iterator(src.entries()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_entries(const PE_DelayImport::lief_t& src) :
+      Iterator(src.entries()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  uint32_t attribute() const { return get().attribute(); }
-  std::string name() const { return get().name(); }
-  uint32_t handle() const { return get().handle(); }
-  uint32_t iat() const { return get().iat(); }
-  uint32_t names_table() const { return get().names_table(); }
-  uint32_t biat() const { return get().biat(); }
-  uint32_t uiat() const { return get().uiat(); }
-  uint32_t timestamp() const { return get().timestamp(); }
+  uint32_t attribute() const {
+    return get().attribute();
+  }
+  std::string name() const {
+    return get().name();
+  }
+  uint32_t handle() const {
+    return get().handle();
+  }
+  uint32_t iat() const {
+    return get().iat();
+  }
+  uint32_t names_table() const {
+    return get().names_table();
+  }
+  uint32_t biat() const {
+    return get().biat();
+  }
+  uint32_t uiat() const {
+    return get().uiat();
+  }
+  uint32_t timestamp() const {
+    return get().timestamp();
+  }
 
   auto entries() const {
     return std::make_unique<it_entries>(get());

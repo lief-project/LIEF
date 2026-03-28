@@ -44,8 +44,8 @@ class LIEF_API Class : public Object {
   public:
   Class();
 
-  Class(OAT_CLASS_STATUS status, OAT_CLASS_TYPES type,
-        DEX::Class* dex_class, std::vector<uint32_t> bitmap = {});
+  Class(OAT_CLASS_STATUS status, OAT_CLASS_TYPES type, DEX::Class* dex_class,
+        std::vector<uint32_t> bitmap = {});
 
   Class(const Class&);
   Class& operator=(const Class&);
@@ -84,15 +84,13 @@ class LIEF_API Class : public Object {
   ~Class() override;
 
   private:
-
   DEX::Class* dex_class_ = nullptr;
 
   OAT_CLASS_STATUS status_ = OAT_CLASS_STATUS::STATUS_NOTREADY;
-  OAT_CLASS_TYPES  type_   = OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED;
+  OAT_CLASS_TYPES type_ = OAT_CLASS_TYPES::OAT_CLASS_NONE_COMPILED;
 
   std::vector<uint32_t> method_bitmap_;
   methods_t methods_;
-
 };
 
 } // Namespace OAT

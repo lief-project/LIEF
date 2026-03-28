@@ -25,37 +25,47 @@ class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
   using Mirror::Mirror;
   using lief_t = LIEF::pdb::CompilationUnit;
 
-  class it_sources :
-      public ForwardIterator<std::string, std::vector<std::string>::const_iterator>
-  {
+  class it_sources
+    : public ForwardIterator<std::string,
+                             std::vector<std::string>::const_iterator> {
     public:
-    it_sources(const PDB_CompilationUnit::lief_t& src)
-      : ForwardIterator(src.sources()) { }
+    it_sources(const PDB_CompilationUnit::lief_t& src) :
+      ForwardIterator(src.sources()) {}
     std::string next() {
       auto next_string = ForwardIterator::next();
       if (next_string == nullptr) {
         // Not ideal but autocxx is not able to deal with
         // std::unique_ptr<std::string>:
-        // "Type std::unique_ptr was parameterized over something complex which we don't yet support"
+        // "Type std::unique_ptr was parameterized over something complex which we
+        // don't yet support"
         return "[LIEF_STOP]";
       }
       return *next_string;
     }
-    auto size() const { return ForwardIterator::size(); }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_functions :
-      public ForwardIterator<PDB_Function, LIEF::pdb::Function::Iterator>
-  {
+  class it_functions
+    : public ForwardIterator<PDB_Function, LIEF::pdb::Function::Iterator> {
     public:
-    it_functions(const PDB_CompilationUnit::lief_t& src)
-      : ForwardIterator(src.functions()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_functions(const PDB_CompilationUnit::lief_t& src) :
+      ForwardIterator(src.functions()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  auto module_name() const { return get().module_name(); }
-  auto object_filename() const { return get().object_filename(); }
+  auto module_name() const {
+    return get().module_name();
+  }
+  auto object_filename() const {
+    return get().object_filename();
+  }
 
   auto sources() const {
     return std::make_unique<it_sources>(get());
@@ -69,5 +79,7 @@ class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
     return details::try_unique<PDB_BuildMetadata>(get().build_metadata());
   }
 
-  auto to_string() const { return get().to_string(); }
+  auto to_string() const {
+    return get().to_string();
+  }
 };

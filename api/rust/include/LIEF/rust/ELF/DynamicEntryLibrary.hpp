@@ -22,7 +22,9 @@ class ELF_DynamicEntryLibrary : public ELF_DynamicEntry {
   ELF_DynamicEntryLibrary(const lief_t& impl) :
     ELF_DynamicEntry(static_cast<const LIEF::ELF::DynamicEntry&>(impl)) {}
 
-  std::string name() const { return impl().name(); }
+  std::string name() const {
+    return impl().name();
+  }
 
   void set_name(std::string name) {
     impl().name(std::move(name));
@@ -33,7 +35,10 @@ class ELF_DynamicEntryLibrary : public ELF_DynamicEntry {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
-
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

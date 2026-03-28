@@ -90,8 +90,8 @@ class LIEF_API ResourceVar {
     values_.push_back(val);
   }
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const ResourceVar& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceVar& entry);
 
   private:
   uint16_t type_ = 0;

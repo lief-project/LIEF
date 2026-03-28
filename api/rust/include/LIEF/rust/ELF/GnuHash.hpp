@@ -21,12 +21,26 @@ class ELF_GnuHash : private Mirror<LIEF::ELF::GnuHash> {
   using lief_t = LIEF::ELF::GnuHash;
   using Mirror::Mirror;
 
-  uint32_t nb_buckets() const { return get().nb_buckets(); }
-  uint32_t symbol_index() const { return get().symbol_index(); }
-  uint32_t shift2() const { return get().shift2(); }
-  uint32_t maskwords() const { return get().maskwords(); }
+  uint32_t nb_buckets() const {
+    return get().nb_buckets();
+  }
+  uint32_t symbol_index() const {
+    return get().symbol_index();
+  }
+  uint32_t shift2() const {
+    return get().shift2();
+  }
+  uint32_t maskwords() const {
+    return get().maskwords();
+  }
 
-  std::vector<uint64_t> bloom_filters() const { return get().bloom_filters(); }
-  std::vector<uint32_t> buckets() const { return get().buckets(); }
-  std::vector<uint32_t> hash_values() const { return get().hash_values(); }
+  std::vector<uint64_t> bloom_filters() const {
+    return get().bloom_filters();
+  }
+  std::vector<uint32_t> buckets() const {
+    return get().buckets();
+  }
+  std::vector<uint32_t> hash_values() const {
+    return get().hash_values();
+  }
 };

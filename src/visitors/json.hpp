@@ -19,9 +19,9 @@
 #include "LIEF/Visitor.hpp"
 
 #ifndef LIEF_NLOHMANN_JSON_EXTERNAL
-#include "internal/nlohmann/json.hpp"
+  #include "internal/nlohmann/json.hpp"
 #else
-#include <nlohmann/json.hpp>
+  #include <nlohmann/json.hpp>
 #endif
 
 using json = nlohmann::json;

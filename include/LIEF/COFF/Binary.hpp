@@ -61,7 +61,8 @@ class LIEF_API Binary {
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   /// Iterator that outputs const Relocation& object
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
   /// Internal container used to store COFF's strings
   using strings_table_t = std::vector<String>;
@@ -141,10 +142,9 @@ class LIEF_API Binary {
   ///          the table. Hence, the first string starts a the offset 4.
   String* find_string(uint32_t offset) {
     auto it = std::find_if(strings_table_.begin(), strings_table_.end(),
-      [offset] (const String& item) {
-        return offset == item.offset();
-      }
-    );
+                           [offset](const String& item) {
+                             return offset == item.offset();
+                           });
     return it == strings_table_.end() ? nullptr : &*it;
   }
 
@@ -161,22 +161,26 @@ class LIEF_API Binary {
   const Symbol* find_function(const std::string& name) const;
 
   Symbol* find_function(const std::string& name) {
-    return const_cast<Symbol*>(static_cast<const Binary*>(this)->find_function(name));
+    return const_cast<Symbol*>(
+        static_cast<const Binary*>(this)->find_function(name)
+    );
   }
 
   /// Try to find the function (symbol) with the given **demangled** name
   const Symbol* find_demangled_function(const std::string& name) const;
 
   Symbol* find_demangled_function(const std::string& name) {
-    return const_cast<Symbol*>(static_cast<const Binary*>(this)->find_demangled_function(name));
+    return const_cast<Symbol*>(
+        static_cast<const Binary*>(this)->find_demangled_function(name)
+    );
   }
 
   /// Disassemble code for the given symbol
   ///
   /// ```cpp
-  /// const Symbol* func = binary->find_demangled_function("int __cdecl my_function(int, int)");
-  /// auto insts = binary->disassemble(*func);
-  /// for (std::unique_ptr<assembly::Instruction> inst : insts) {
+  /// const Symbol* func = binary->find_demangled_function("int __cdecl
+  /// my_function(int, int)"); auto insts = binary->disassemble(*func); for
+  /// (std::unique_ptr<assembly::Instruction> inst : insts) {
   ///   std::cout << inst->to_string() << '\n';
   /// }
   /// ```
@@ -218,7 +222,8 @@ class LIEF_API Binary {
     return disassemble(buffer.data(), buffer.size(), address);
   }
 
-  instructions_it disassemble(LIEF::span<uint8_t> buffer, uint64_t address = 0) const {
+  instructions_it disassemble(LIEF::span<uint8_t> buffer,
+                              uint64_t address = 0) const {
     return disassemble(buffer.data(), buffer.size(), address);
   }
 

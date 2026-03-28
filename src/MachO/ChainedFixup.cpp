@@ -17,7 +17,6 @@
 #include "MachO/ChainedFixup.hpp"
 
 
-
 namespace LIEF::MachO::details {
 
 uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind24& bind) {
@@ -38,7 +37,7 @@ uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind& bind) {
 
 uint64_t sign_extended_addend(const dyld_chained_ptr_64_bind& bind) {
   uint64_t addend27 = bind.addend;
-  uint64_t top8     = addend27 & 0x00007F80000ULL;
+  uint64_t top8 = addend27 & 0x00007F80000ULL;
   uint64_t bottom19 = addend27 & 0x0000007FFFFULL;
   return (top8 << 13) | (((bottom19 << 37) >> 37) & 0x00FFFFFFFFFFFFFF);
 }
@@ -69,9 +68,10 @@ void dyld_chained_ptr_generic64::pack_target(uint64_t value) {
 }
 
 bool chained_fixup::is_rebase(uint16_t ptr_format) const {
-  /* This is a *modified* mirror of `MachOLoaded.cpp:ChainedFixupPointerOnDisk::isRebase`
-   * As we don't need to compute targetRuntimeOffset, we removed the code sections
-   * that referenced this variable
+  /* This is a *modified* mirror of
+   * `MachOLoaded.cpp:ChainedFixupPointerOnDisk::isRebase` As we don't need to
+   * compute targetRuntimeOffset, we removed the code sections that referenced this
+   * variable
    */
   const auto ptr_fmt = static_cast<DYLD_CHAINED_PTR_FORMAT>(ptr_format);
 
@@ -81,47 +81,44 @@ bool chained_fixup::is_rebase(uint16_t ptr_format) const {
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND:
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24:
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_FIRMWARE:
-      {
-        if (arm64e.bind.bind > 0) {
-          return false;
-        }
-
-        if (arm64e.auth_rebase.auth > 0) {
-          return true;
-        }
-
-        return true;
-        break;
+    {
+      if (arm64e.bind.bind > 0) {
+        return false;
       }
+
+      if (arm64e.auth_rebase.auth > 0) {
+        return true;
+      }
+
+      return true;
+      break;
+    }
     case DYLD_CHAINED_PTR_FORMAT::PTR_64:
     case DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET:
-      {
-        return generic64.bind.bind == 0;
-      }
+    {
+      return generic64.bind.bind == 0;
+    }
     case DYLD_CHAINED_PTR_FORMAT::PTR_32:
-      {
-        return generic32.bind.bind == 0;
-      }
+    {
+      return generic32.bind.bind == 0;
+    }
     case DYLD_CHAINED_PTR_FORMAT::PTR_64_KERNEL_CACHE:
     case DYLD_CHAINED_PTR_FORMAT::PTR_X86_64_KERNEL_CACHE:
-      {
-        return true;
-      }
-    case DYLD_CHAINED_PTR_FORMAT::PTR_32_FIRMWARE:
-      {
-        return true;
-      }
-    case LIEF::MachO::DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SEGMENTED:
+    {
       return true;
+    }
+    case DYLD_CHAINED_PTR_FORMAT::PTR_32_FIRMWARE:
+    {
+      return true;
+    }
+    case LIEF::MachO::DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_SEGMENTED: return true;
 
     default:
-      {
-        LIEF_ERR("Unknown pointer format: {:#06x}", ptr_format);
-        std::abort();
-      }
+    {
+      LIEF_ERR("Unknown pointer format: {:#06x}", ptr_format);
+      std::abort();
+    }
   }
 }
 
 }
-
-

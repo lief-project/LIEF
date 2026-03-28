@@ -35,48 +35,47 @@ class Section;
 class LIEF_API Symbol : public LIEF::Symbol {
   friend class Parser;
   friend class Binary;
-  public:
 
+  public:
   enum class BINDING {
-    LOCAL      = 0,  ///< Local symbol
-    GLOBAL     = 1,  ///< Global symbol
-    WEAK       = 2,  ///< Weak symbol
+    LOCAL = 0,       ///< Local symbol
+    GLOBAL = 1,      ///< Global symbol
+    WEAK = 2,        ///< Weak symbol
     GNU_UNIQUE = 10, ///< Unique symbol
   };
 
   /// Type of the symbol. This enum matches the `STT_xxx` values of the ELF
   /// specs
   enum class TYPE {
-    NOTYPE    = 0,   ///< Symbol's type is not specified
-    OBJECT    = 1,   ///< Symbol is a data object (variable, array, etc.)
-    FUNC      = 2,   ///< Symbol is executable code (function, etc.)
-    SECTION   = 3,   ///< Symbol refers to a section
-    FILE      = 4,   ///< Local, absolute symbol that refers to a file
-    COMMON    = 5,   ///< An uninitialized common block
-    TLS       = 6,   ///< Thread local data object
-    GNU_IFUNC = 10,  ///< GNU indirect function
+    NOTYPE = 0,     ///< Symbol's type is not specified
+    OBJECT = 1,     ///< Symbol is a data object (variable, array, etc.)
+    FUNC = 2,       ///< Symbol is executable code (function, etc.)
+    SECTION = 3,    ///< Symbol refers to a section
+    FILE = 4,       ///< Local, absolute symbol that refers to a file
+    COMMON = 5,     ///< An uninitialized common block
+    TLS = 6,        ///< Thread local data object
+    GNU_IFUNC = 10, ///< GNU indirect function
   };
 
   /// Visibility of the symbol. This enum matches the `STV_xxx` values of the
   /// official ELF specs
   enum class VISIBILITY {
-    DEFAULT   = 0,  ///< Visibility is specified by binding type
-    INTERNAL  = 1,  ///< Defined by processor supplements
-    HIDDEN    = 2,  ///< Not visible to other components
-    PROTECTED = 3   ///< Visible in other components but not preemptable
+    DEFAULT = 0,   ///< Visibility is specified by binding type
+    INTERNAL = 1,  ///< Defined by processor supplements
+    HIDDEN = 2,    ///< Not visible to other components
+    PROTECTED = 3, ///< Visible in other components but not preemptable
   };
 
   /// Special section indices
   enum SECTION_INDEX {
-    UNDEF  = 0,      ///< Undefined section
-    ABS    = 0xfff1, ///< Associated symbol is absolute
+    UNDEF = 0,       ///< Undefined section
+    ABS = 0xfff1,    ///< Associated symbol is absolute
     COMMON = 0xfff2, ///< Associated symbol is common
   };
 
   public:
-  Symbol(std::string name):
-    LIEF::Symbol(std::move(name), 0, 0)
-  {}
+  Symbol(std::string name) :
+    LIEF::Symbol(std::move(name), 0, 0) {}
 
   static BINDING binding_from(uint32_t value, ARCH) {
     return BINDING(value);
@@ -139,22 +138,26 @@ class LIEF_API Symbol : public LIEF::Symbol {
   }
 
   /// This member has slightly different interpretations:
-  ///   * In relocatable files, `value` holds alignment constraints for a symbol for which section index
+  ///   * In relocatable files, `value` holds alignment constraints for a symbol
+  ///   for which section index
   ///     is SHN_COMMON
-  ///   * In relocatable files, `value` holds a section offset for a defined symbol. That is, `value` is an
+  ///   * In relocatable files, `value` holds a section offset for a defined
+  ///   symbol. That is, `value` is an
   ///     offset from the beginning of the section associated with this symbol.
-  ///   * In executable and shared object files, `value` holds a virtual address. To make these files's
-  ///     symbols more useful for the dynamic linker, the section offset (file interpretation) gives way to
-  ///     a virtual address (memory interpretation) for which the section number is irrelevant.
+  ///   * In executable and shared object files, `value` holds a virtual address.
+  ///   To make these files's
+  ///     symbols more useful for the dynamic linker, the section offset (file
+  ///     interpretation) gives way to a virtual address (memory interpretation)
+  ///     for which the section number is irrelevant.
   uint64_t value() const override {
     return value_;
   }
 
   /// Symbol size
   ///
-  /// Many symbols have associated sizes. For example, a data object's size is the number of
-  /// bytes contained in the object. This member holds `0` if the symbol has no size or
-  /// an unknown size.
+  /// Many symbols have associated sizes. For example, a data object's size is the
+  /// number of bytes contained in the object. This member holds `0` if the symbol
+  /// has no size or an unknown size.
   uint64_t size() const override {
     return size_;
   }
@@ -259,10 +262,10 @@ class LIEF_API Symbol : public LIEF::Symbol {
   template<class T>
   LIEF_API Symbol(const T& header, ARCH arch);
 
-  TYPE    type_ = TYPE::NOTYPE;
+  TYPE type_ = TYPE::NOTYPE;
   BINDING binding_ = BINDING::LOCAL;
-  uint8_t other_   = 0;
-  uint16_t shndx_   = 0;
+  uint8_t other_ = 0;
+  uint16_t shndx_ = 0;
   Section* section_ = nullptr;
   SymbolVersion* symbol_version_ = nullptr;
   ARCH arch_ = ARCH::NONE;

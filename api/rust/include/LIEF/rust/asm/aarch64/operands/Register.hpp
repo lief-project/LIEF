@@ -31,8 +31,8 @@ class asm_aarch64_operands_Register : public asm_aarch64_Operand {
   asm_aarch64_operands_Register_reg_t value() const {
     lief_t::reg_t info = impl().value();
     return {
-      /*.reg =*/(uint64_t)to_int(info.reg),
-      /*.enum_type =*/(uint32_t)to_int(info.type),
+        /*.reg =*/(uint64_t)to_int(info.reg),
+        /*.enum_type =*/(uint32_t)to_int(info.type),
     };
   }
 
@@ -41,5 +41,7 @@ class asm_aarch64_operands_Register : public asm_aarch64_Operand {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

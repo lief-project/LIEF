@@ -22,9 +22,15 @@ class AbstractSymbol : public Mirror<LIEF::Symbol> {
   public:
   using Mirror::Mirror;
 
-  std::string name() const { return get().name(); }
-  auto size() const { return get().size(); }
-  auto value() const { return get().value(); }
+  std::string name() const {
+    return get().name();
+  }
+  auto size() const {
+    return get().size();
+  }
+  auto value() const {
+    return get().value();
+  }
 
   void set_name(std::string name) {
     get().name(std::move(name));

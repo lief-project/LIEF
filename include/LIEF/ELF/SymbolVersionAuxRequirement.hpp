@@ -40,7 +40,8 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
   SymbolVersionAuxRequirement(const details::Elf32_Vernaux& header);
   SymbolVersionAuxRequirement() = default;
 
-  SymbolVersionAuxRequirement& operator=(const SymbolVersionAuxRequirement&) = default;
+  SymbolVersionAuxRequirement&
+      operator=(const SymbolVersionAuxRequirement&) = default;
   SymbolVersionAuxRequirement(const SymbolVersionAuxRequirement&) = default;
 
   ~SymbolVersionAuxRequirement() override = default;
@@ -77,8 +78,8 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const SymbolVersionAuxRequirement& aux) {
+  LIEF_API friend std::ostream&
+      operator<<(std::ostream& os, const SymbolVersionAuxRequirement& aux) {
     os << aux.name();
     return os;
   }

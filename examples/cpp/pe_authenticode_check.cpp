@@ -7,7 +7,7 @@
 
 using namespace LIEF::PE;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <PE binary>" << "\n";
     return 1;

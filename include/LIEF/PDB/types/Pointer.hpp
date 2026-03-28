@@ -41,5 +41,3 @@ class LIEF_API Pointer : public Type {
 }
 }
 #endif
-
-

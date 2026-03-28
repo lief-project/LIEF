@@ -49,9 +49,8 @@ namespace LIEF::PE {
 Builder::~Builder() = default;
 
 void Builder::write(const std::string& filename) const {
-  static constexpr auto DEFAULT_MODE = std::ios::out |
-                                       std::ios::binary |
-                                       std::ios::trunc;
+  static constexpr auto DEFAULT_MODE =
+      std::ios::out | std::ios::binary | std::ios::trunc;
   std::ofstream output_file(filename, DEFAULT_MODE);
   if (!output_file) {
     LIEF_ERR("Failed to write to {}", filename);
@@ -74,45 +73,39 @@ ok_error_t Builder::build() {
     // TLS reconstruction could change relocations. Thus, it needs to be done
     // BEFORE build_relocations. Moreover, because of some relocation
     // optimization, it should be done as early as possible.
-    auto res = is_64bit ? build_tls<details::PE64>() :
-                          build_tls<details::PE32>();
+    auto res = is_64bit ? build_tls<details::PE64>() : build_tls<details::PE32>();
     if (!res) {
-      LIEF_WARN("Failed to rebuild TLS: {}",
-                to_string(res.error()));
+      LIEF_WARN("Failed to rebuild TLS: {}", to_string(res.error()));
     }
   }
 
   if (config_.resources) {
     auto is_ok = build_resources();
     if (!is_ok) {
-      LIEF_WARN("Failed to rebuild resource tree: {}",
-                to_string(is_ok.error()));
+      LIEF_WARN("Failed to rebuild resource tree: {}", to_string(is_ok.error()));
     }
   }
 
   if (config_.relocations) {
     auto is_ok = build_relocations();
     if (!is_ok) {
-      LIEF_WARN("Failed to rebuild relocations: {}",
-                to_string(is_ok.error()));
+      LIEF_WARN("Failed to rebuild relocations: {}", to_string(is_ok.error()));
     }
   }
 
   if (config_.imports) {
-    auto is_ok = is_64bit ? build_imports<details::PE64>() :
-                            build_imports<details::PE32>();
+    auto is_ok =
+        is_64bit ? build_imports<details::PE64>() : build_imports<details::PE32>();
 
     if (!is_ok) {
-      LIEF_WARN("Failed to rebuild imports: {}",
-                to_string(is_ok.error()));
+      LIEF_WARN("Failed to rebuild imports: {}", to_string(is_ok.error()));
     }
   }
 
   if (config_.exports) {
     auto is_ok = build_exports();
     if (!is_ok) {
-      LIEF_WARN("Failed to rebuild exports: {}",
-                to_string(is_ok.error()));
+      LIEF_WARN("Failed to rebuild exports: {}", to_string(is_ok.error()));
     }
   }
 
@@ -121,51 +114,46 @@ ok_error_t Builder::build() {
                             build_load_config<details::PE32>();
 
     if (!is_ok) {
-      LIEF_WARN("Failed to rebuild load config: {}",
-                to_string(is_ok.error()));
+      LIEF_WARN("Failed to rebuild load config: {}", to_string(is_ok.error()));
     }
   }
 
   if (config_.debug) {
     auto is_ok = build_debug_info();
     if (!is_ok) {
-      LIEF_WARN("Failed to rebuild debug entries: {}",
-                to_string(is_ok.error()));
+      LIEF_WARN("Failed to rebuild debug entries: {}", to_string(is_ok.error()));
     }
   }
 
   auto is_ok = build(binary_->dos_header());
   if (!is_ok) {
-    LIEF_WARN("Failed to rebuild DOS header: {}",
-              to_string(is_ok.error()));
+    LIEF_WARN("Failed to rebuild DOS header: {}", to_string(is_ok.error()));
   }
   is_ok = build(binary_->header());
 
   if (!is_ok) {
-    LIEF_WARN("Failed to rebuild header: {}",
-              to_string(is_ok.error()));
+    LIEF_WARN("Failed to rebuild header: {}", to_string(is_ok.error()));
   }
 
   is_ok = build(binary_->optional_header());
 
   if (!is_ok) {
-    LIEF_WARN("Failed to rebuild optional header: {}",
-              to_string(is_ok.error()));
+    LIEF_WARN("Failed to rebuild optional header: {}", to_string(is_ok.error()));
   }
 
   for (const DataDirectory& dir : binary_->data_directories()) {
     auto is_ok = build(dir);
     if (!is_ok) {
-      LIEF_WARN("Failed to rebuild data directory '{}': {}",
-                to_string(dir.type()), to_string(is_ok.error()));
+      LIEF_WARN("Failed to rebuild data directory '{}': {}", to_string(dir.type()),
+                to_string(is_ok.error()));
     }
   }
 
   for (const Section& sec : binary_->sections()) {
     auto is_ok = build(sec);
     if (!is_ok) {
-      LIEF_WARN("Failed to rebuild section '{}': {}",
-                sec.name(), to_string(is_ok.error()));
+      LIEF_WARN("Failed to rebuild section '{}': {}", sec.name(),
+                to_string(is_ok.error()));
     }
   }
 
@@ -182,27 +170,25 @@ ok_error_t Builder::build(const DosHeader& dos_header) {
   vector_iostream dos_hdr_strm;
   dos_hdr_strm.reserve(sizeof(details::pe_dos_header));
 
-  dos_hdr_strm
-    .write<uint16_t>(dos_header.magic())
-    .write<uint16_t>(dos_header.used_bytes_in_last_page())
-    .write<uint16_t>(dos_header.file_size_in_pages())
-    .write<uint16_t>(dos_header.numberof_relocation())
-    .write<uint16_t>(dos_header.header_size_in_paragraphs())
-    .write<uint16_t>(dos_header.minimum_extra_paragraphs())
-    .write<uint16_t>(dos_header.maximum_extra_paragraphs())
-    .write<uint16_t>(dos_header.initial_relative_ss())
-    .write<uint16_t>(dos_header.initial_sp())
-    .write<uint16_t>(dos_header.checksum())
-    .write<uint16_t>(dos_header.initial_ip())
-    .write<uint16_t>(dos_header.initial_relative_cs())
-    .write<uint16_t>(dos_header.addressof_relocation_table())
-    .write<uint16_t>(dos_header.overlay_number())
-    .write<uint16_t>(dos_header.reserved())
-    .write<uint16_t>(dos_header.oem_id())
-    .write<uint16_t>(dos_header.oem_info())
-    .write<uint16_t>(dos_header.reserved2())
-    .write<uint32_t>(dos_header.addressof_new_exeheader())
-  ;
+  dos_hdr_strm.write<uint16_t>(dos_header.magic())
+      .write<uint16_t>(dos_header.used_bytes_in_last_page())
+      .write<uint16_t>(dos_header.file_size_in_pages())
+      .write<uint16_t>(dos_header.numberof_relocation())
+      .write<uint16_t>(dos_header.header_size_in_paragraphs())
+      .write<uint16_t>(dos_header.minimum_extra_paragraphs())
+      .write<uint16_t>(dos_header.maximum_extra_paragraphs())
+      .write<uint16_t>(dos_header.initial_relative_ss())
+      .write<uint16_t>(dos_header.initial_sp())
+      .write<uint16_t>(dos_header.checksum())
+      .write<uint16_t>(dos_header.initial_ip())
+      .write<uint16_t>(dos_header.initial_relative_cs())
+      .write<uint16_t>(dos_header.addressof_relocation_table())
+      .write<uint16_t>(dos_header.overlay_number())
+      .write<uint16_t>(dos_header.reserved())
+      .write<uint16_t>(dos_header.oem_id())
+      .write<uint16_t>(dos_header.oem_info())
+      .write<uint16_t>(dos_header.reserved2())
+      .write<uint32_t>(dos_header.addressof_new_exeheader());
 
   assert(dos_hdr_strm.size() == sizeof(details::pe_dos_header));
 
@@ -210,8 +196,8 @@ ok_error_t Builder::build(const DosHeader& dos_header) {
   ios_.write(dos_hdr_strm);
 
   if (!binary_->dos_stub().empty() && config_.dos_stub) {
-    const uint64_t e_lfanew = sizeof(details::pe_dos_header) +
-                              binary_->dos_stub().size();
+    const uint64_t e_lfanew =
+        sizeof(details::pe_dos_header) + binary_->dos_stub().size();
     if (e_lfanew > dos_header.addressof_new_exeheader()) {
       LIEF_WARN("Inconsistent 'addressof_new_exeheader': {:#x}",
                 dos_header.addressof_new_exeheader());
@@ -228,37 +214,32 @@ ok_error_t Builder::build(const Header& header) {
   vector_iostream pe_hdr_strm;
   pe_hdr_strm.reserve(sizeof(details::pe_header));
 
-  pe_hdr_strm
-    .write(header.signature())
-    .write<uint16_t>((int)header.machine())
-    .write<uint16_t>(binary_->sections_.size())
-    .write<uint32_t>(header.time_date_stamp())
-    .write<uint32_t>(header.pointerto_symbol_table())
-    .write<uint32_t>(header.numberof_symbols())
-    .write<uint16_t>(header.sizeof_optional_header())
-    .write<uint16_t>(header.characteristics())
-  ;
+  pe_hdr_strm.write(header.signature())
+      .write<uint16_t>((int)header.machine())
+      .write<uint16_t>(binary_->sections_.size())
+      .write<uint32_t>(header.time_date_stamp())
+      .write<uint32_t>(header.pointerto_symbol_table())
+      .write<uint32_t>(header.numberof_symbols())
+      .write<uint16_t>(header.sizeof_optional_header())
+      .write<uint16_t>(header.characteristics());
 
   assert(pe_hdr_strm.size() == sizeof(details::pe_header));
 
-  ios_
-    .seekp(binary_->dos_header().addressof_new_exeheader())
-    .write(pe_hdr_strm);
+  ios_.seekp(binary_->dos_header().addressof_new_exeheader()).write(pe_hdr_strm);
   return ok();
 }
 
 
 ok_error_t Builder::build(const OptionalHeader& optional_header) {
   return binary_->type() == PE_TYPE::PE32 ?
-         build_optional_header<details::PE32>(optional_header) :
-         build_optional_header<details::PE64>(optional_header);
+             build_optional_header<details::PE32>(optional_header) :
+             build_optional_header<details::PE64>(optional_header);
 }
 
 
 ok_error_t Builder::build(const DataDirectory& data_directory) {
-  ios_
-    .write<uint32_t>(data_directory.RVA())
-    .write<uint32_t>(data_directory.size());
+  ios_.write<uint32_t>(data_directory.RVA())
+      .write<uint32_t>(data_directory.size());
 
   return ok();
 }
@@ -267,37 +248,32 @@ ok_error_t Builder::build(const Section& section) {
   std::array<char, 8> section_name{};
 
   const std::string& sec_name = section.fullname();
-  uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, section_name.size());
+  uint32_t name_length =
+      std::min<uint32_t>(sec_name.size() + 1, section_name.size());
   std::copy(sec_name.c_str(), sec_name.c_str() + name_length,
             section_name.begin());
-  ios_
-    .increase_capacity(sizeof(details::pe_section))
-    .write(section_name)
-    .write<uint32_t>(section.virtual_size())
-    .write<uint32_t>(section.virtual_address())
-    .write<uint32_t>(section.size())
-    .write<uint32_t>(section.pointerto_raw_data())
-    .write<uint32_t>(section.pointerto_relocation())
-    .write<uint32_t>(section.pointerto_line_numbers())
-    .write<uint16_t>(section.numberof_relocations())
-    .write<uint16_t>(section.numberof_line_numbers())
-    .write<uint32_t>(section.characteristics())
-  ;
+  ios_.increase_capacity(sizeof(details::pe_section))
+      .write(section_name)
+      .write<uint32_t>(section.virtual_size())
+      .write<uint32_t>(section.virtual_address())
+      .write<uint32_t>(section.size())
+      .write<uint32_t>(section.pointerto_raw_data())
+      .write<uint32_t>(section.pointerto_relocation())
+      .write<uint32_t>(section.pointerto_line_numbers())
+      .write<uint16_t>(section.numberof_relocations())
+      .write<uint16_t>(section.numberof_line_numbers())
+      .write<uint32_t>(section.characteristics());
 
   size_t pad_length = 0;
   if (section.content().size() > section.size()) {
-    LIEF_WARN("{} content size exceeds section header size",
-              section.name());
-  }
-  else {
+    LIEF_WARN("{} content size exceeds section header size", section.name());
+  } else {
     pad_length = section.size() - section.content().size();
   }
 
   {
     ScopeOStream scoped(ios_, section.offset());
-    (*scoped)
-      .write(section.content())
-      .pad(pad_length);
+    (*scoped).write(section.content()).pad(pad_length);
   }
 
   return ok();
@@ -311,8 +287,7 @@ ok_error_t Builder::build_overlay() {
   LIEF_DEBUG("Overlay size: {:#x}", binary_->overlay().size());
 
   ScopeOStream scoped(ios_, last_section_offset);
-  (*scoped)
-    .write(binary_->overlay());
+  (*scoped).write(binary_->overlay());
 
   return ok();
 }
@@ -334,13 +309,11 @@ ok_error_t Builder::build_relocations() {
     }
 
     const uint32_t block_size =
-      static_cast<uint32_t>((reloc.entries().size()) * sizeof(uint16_t) +
-      sizeof(details::pe_base_relocation_block));
+        static_cast<uint32_t>((reloc.entries().size()) * sizeof(uint16_t) +
+                              sizeof(details::pe_base_relocation_block));
 
-    ios
-      .write<uint32_t>(reloc.virtual_address())
-      .write<uint32_t>(align(block_size, sizeof(uint32_t)))
-    ;
+    ios.write<uint32_t>(reloc.virtual_address())
+        .write<uint32_t>(align(block_size, sizeof(uint32_t)));
 
     for (const RelocationEntry& entry : reloc.entries()) {
       ios.write(entry.data());
@@ -349,9 +322,7 @@ ok_error_t Builder::build_relocations() {
     ios.align(sizeof(uint32_t));
   }
 
-  ios
-    .align(sizeof(uint32_t))
-    .move(reloc_data_);
+  ios.align(sizeof(uint32_t)).move(reloc_data_);
 
   if (reloc_data_.size() > original_size || config_.force_relocating) {
     LIEF_DEBUG("Need to relocate BASE_RELOCATION_TABLE ({:#08x} new bytes)",
@@ -359,13 +330,12 @@ ok_error_t Builder::build_relocations() {
 
     Section reloc_section(config_.reloc_section);
     const size_t relocated_size =
-      align(reloc_data_.size(), binary_->optional_header().file_alignment());
+        align(reloc_data_.size(), binary_->optional_header().file_alignment());
 
-    reloc_section
-      .reserve(relocated_size)
-      .add_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)
-      .add_characteristic(Section::CHARACTERISTICS::MEM_READ)
-      .add_characteristic(Section::CHARACTERISTICS::MEM_DISCARDABLE);
+    reloc_section.reserve(relocated_size)
+        .add_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)
+        .add_characteristic(Section::CHARACTERISTICS::MEM_READ)
+        .add_characteristic(Section::CHARACTERISTICS::MEM_DISCARDABLE);
 
     Section* new_reloc_section = binary_->add_section(reloc_section);
     new_reloc_section->edit().write(reloc_data_);
@@ -426,8 +396,12 @@ ok_error_t Builder::build_resources() {
 
   const uint32_t original_size = rsrc_dir->size();
   const uint32_t new_size = rsrc_stream.size();
-  const uint32_t expected_size = align(sizes_info.data_size + sizes_info.header_size + sizes_info.name_size, 4);
-  LIEF_DEBUG("New size: new_size={:#018x} vs original_size={:#018x} vs expected_size={:#018x}", new_size, original_size, expected_size);
+  const uint32_t expected_size =
+      align(sizes_info.data_size + sizes_info.header_size + sizes_info.name_size,
+            4);
+  LIEF_DEBUG("New size: new_size={:#018x} vs original_size={:#018x} vs "
+             "expected_size={:#018x}",
+             new_size, original_size, expected_size);
 
   if (new_size > original_size || config_.force_relocating) {
     const uint64_t delta = new_size - original_size;
@@ -444,9 +418,11 @@ ok_error_t Builder::build_resources() {
     //   // Now check that the rsrc content is at the "end" of the section
     //   const uint64_t rsrc_offset = binary_->rva_to_offset(rsrc_dir->RVA());
     //   const uint64_t section_size = section->virtual_size() > 0 ?
-    //                                 std::min(section->virtual_size(), section->sizeof_raw_data()) :
+    //                                 std::min(section->virtual_size(),
+    //                                 section->sizeof_raw_data()) :
     //                                 section->sizeof_raw_data();
-    //   if ((section->offset() + section_size) - (rsrc_offset + original_size) == 0) {
+    //   if ((section->offset() + section_size) - (rsrc_offset + original_size) ==
+    //   0) {
     //     LIEF_ERR("ok");
     //   }
     // }
@@ -454,9 +430,8 @@ ok_error_t Builder::build_resources() {
 
     Section rsrc_section(config_.rsrc_section);
     rsrc_section.reserve(rsrc_stream.size());
-    rsrc_section
-      .add_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)
-      .add_characteristic(Section::CHARACTERISTICS::MEM_READ);
+    rsrc_section.add_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)
+        .add_characteristic(Section::CHARACTERISTICS::MEM_READ);
 
     // TODO(romain): Make sure we add this section before the FIRST
     // MEM_DISCARDABLE section.
@@ -482,8 +457,8 @@ ok_error_t Builder::build_resources() {
   LIEF_DEBUG("RESOURCE_TABLE: -{:#08x}", original_size - new_size);
   // Fill the original content with 0
   const uint64_t rva = rsrc_dir->RVA();
-  binary_->patch_address(
-    rva, std::vector<uint8_t>(original_size, 0), Binary::VA_TYPES::RVA);
+  binary_->patch_address(rva, std::vector<uint8_t>(original_size, 0),
+                         Binary::VA_TYPES::RVA);
 
   const uint64_t rsrc_rva = rsrc_dir->RVA();
   for (uint64_t fixup : ctx.rva_fixups) {
@@ -497,9 +472,8 @@ ok_error_t Builder::build_resources() {
   return ok();
 }
 
-ok_error_t Builder::compute_resources_size(
-    const ResourceNode& node, rsrc_sizing_info_t& info)
-{
+ok_error_t Builder::compute_resources_size(const ResourceNode& node,
+                                           rsrc_sizing_info_t& info) {
   if (!node.name().empty() || node.has_name()) {
     LIEF_DEBUG("{}", u16tou8(node.name()));
     info.name_size += sizeof(uint16_t) + node.name().size() * sizeof(char16_t);
@@ -507,8 +481,9 @@ ok_error_t Builder::compute_resources_size(
 
 
   if (const auto* _ = node.cast<ResourceDirectory>()) {
-    info.header_size += sizeof(details::pe_resource_directory_table) +
-                        sizeof(details::pe_resource_directory_entries) * node.childs().size();
+    info.header_size +=
+        sizeof(details::pe_resource_directory_table) +
+        sizeof(details::pe_resource_directory_entries) * node.childs().size();
     for (const ResourceNode& child : node.childs()) {
       compute_resources_size(child, info);
     }
@@ -517,53 +492,50 @@ ok_error_t Builder::compute_resources_size(
 
   if (const auto* data = node.cast<ResourceData>()) {
     info.header_size += sizeof(details::pe_resource_data_entry);
-    info.data_size   += align(data->content().size(), sizeof(uint32_t));
+    info.data_size += align(data->content().size(), sizeof(uint32_t));
     return ok();
   }
 
   return ok();
 }
-ok_error_t Builder::construct_resource(
-    vector_iostream& ios, ResourceDirectory& dir, rsrc_build_context_t& ctx)
-{
-  LIEF_DEBUG("[rsrc] writing directory header at {:#06x} (depth={}, id={}, #children={})",
-             ctx.offset_header, dir.depth(), dir.id(), dir.childs().size());
-  ios
-    .seekp(ctx.offset_header)
-    .increase_capacity(sizeof(details::pe_resource_directory_table))
-    .write<uint32_t>(dir.characteristics())
-    .write<uint32_t>(dir.time_date_stamp())
-    .write<uint16_t>(dir.major_version())
-    .write<uint16_t>(dir.minor_version())
-    .write<uint16_t>(dir.numberof_name_entries())
-    .write<uint16_t>(dir.numberof_id_entries())
-  ;
+ok_error_t Builder::construct_resource(vector_iostream& ios,
+                                       ResourceDirectory& dir,
+                                       rsrc_build_context_t& ctx) {
+  LIEF_DEBUG(
+      "[rsrc] writing directory header at {:#06x} (depth={}, id={}, #children={})",
+      ctx.offset_header, dir.depth(), dir.id(), dir.childs().size()
+  );
+  ios.seekp(ctx.offset_header)
+      .increase_capacity(sizeof(details::pe_resource_directory_table))
+      .write<uint32_t>(dir.characteristics())
+      .write<uint32_t>(dir.time_date_stamp())
+      .write<uint16_t>(dir.major_version())
+      .write<uint16_t>(dir.minor_version())
+      .write<uint16_t>(dir.numberof_name_entries())
+      .write<uint16_t>(dir.numberof_id_entries());
   ctx.offset_header = ios.tellp();
 
   uint32_t current_offset = ctx.offset_header;
-  ctx.offset_header += dir.childs().size() * sizeof(details::pe_resource_directory_entries);
+  ctx.offset_header +=
+      dir.childs().size() * sizeof(details::pe_resource_directory_entries);
 
   for (ResourceNode& child : dir.childs()) {
     if (child.has_name() || !child.name().empty()) {
       const std::u16string& name = child.name();
       child.id(0x80000000 | ctx.offset_name);
       LIEF_DEBUG("[rsrc] writing name '{}' at {:#06x} (depth={}, id={})",
-                 u16tou8(child.name()), ctx.offset_name,
-                 dir.depth(), dir.id());
-      ios
-        .seekp(ctx.offset_name)
-        .write<uint16_t>(name.size())
-        .write(name, /*with_null_char=*/false);
+                 u16tou8(child.name()), ctx.offset_name, dir.depth(), dir.id());
+      ios.seekp(ctx.offset_name)
+          .write<uint16_t>(name.size())
+          .write(name, /*with_null_char=*/false);
       ctx.offset_name = ios.tellp();
     }
 
     const uint32_t mask = child.is_directory() ? 0x80000000 : 0;
 
-    ios
-      .seekp(current_offset)
-      .write<uint32_t>(child.id())
-      .write<uint32_t>(mask | ctx.offset_header)
-    ;
+    ios.seekp(current_offset)
+        .write<uint32_t>(child.id())
+        .write<uint32_t>(mask | ctx.offset_header);
     current_offset = ios.tellp();
 
     ++ctx.depth;
@@ -573,40 +545,37 @@ ok_error_t Builder::construct_resource(
 }
 
 
-ok_error_t Builder::construct_resource(
-    vector_iostream& ios, ResourceData& data, rsrc_build_context_t& ctx)
-{
+ok_error_t Builder::construct_resource(vector_iostream& ios, ResourceData& data,
+                                       rsrc_build_context_t& ctx) {
   span<const uint8_t> content = data.content();
 
   ctx.rva_fixups.push_back(ctx.offset_header);
   LIEF_DEBUG("[rsrc] writing data header at {:#06x} (depth={}, id={})",
              ctx.offset_header, data.depth(), data.id());
 
-  ios
-    .seekp(ctx.offset_header)
-    .increase_capacity(sizeof(details::pe_resource_data_entry))
-    .write<uint32_t>(ctx.offset_data)
-    .write<uint32_t>(content.size())
-    .write<uint32_t>(data.code_page())
-    .write<uint32_t>(data.reserved())
-  ;
+  ios.seekp(ctx.offset_header)
+      .increase_capacity(sizeof(details::pe_resource_data_entry))
+      .write<uint32_t>(ctx.offset_data)
+      .write<uint32_t>(content.size())
+      .write<uint32_t>(data.code_page())
+      .write<uint32_t>(data.reserved());
   ctx.offset_header = ios.tellp();
 
-  LIEF_DEBUG("[rsrc] writing data content at {:#06x} (depth={}, id={}, size={:#06x})",
-             ctx.offset_data, data.depth(), data.id(), content.size());
-  ios
-    .seekp(ctx.offset_data)
-    .write(content.data(), content.size())
-    .align(sizeof(uint32_t));
+  LIEF_DEBUG(
+      "[rsrc] writing data content at {:#06x} (depth={}, id={}, size={:#06x})",
+      ctx.offset_data, data.depth(), data.id(), content.size()
+  );
+  ios.seekp(ctx.offset_data)
+      .write(content.data(), content.size())
+      .align(sizeof(uint32_t));
 
   ctx.offset_data = ios.tellp();
   return ok();
 }
 
 
-ok_error_t Builder::construct_resource(
-    vector_iostream& ios, ResourceNode& node, rsrc_build_context_t& ctx)
-{
+ok_error_t Builder::construct_resource(vector_iostream& ios, ResourceNode& node,
+                                       rsrc_build_context_t& ctx) {
   if (auto* dir = node.cast<ResourceDirectory>()) {
     return construct_resource(ios, *dir, ctx);
   }
@@ -624,43 +593,35 @@ ok_error_t build_codeview(const CodeView& CV, vector_iostream& ios) {
   if (cv_pdb == nullptr) {
     return make_error_code(lief_errors::not_supported);
   }
-  ios
-    .write<uint32_t>((uint32_t)CV.signature())
-    .write(cv_pdb->signature())
-    .write<uint32_t>(cv_pdb->age())
-    .write(cv_pdb->filename())
-  ;
+  ios.write<uint32_t>((uint32_t)CV.signature())
+      .write(cv_pdb->signature())
+      .write<uint32_t>(cv_pdb->age())
+      .write(cv_pdb->filename());
   return ok();
 }
 
 ok_error_t build_pogo(const Pogo& pgo, vector_iostream& ios) {
   switch (pgo.signature()) {
-    default:
-      return make_error_code(lief_errors::not_supported);
+    default: return make_error_code(lief_errors::not_supported);
     case Pogo::SIGNATURES::ZERO:
     case Pogo::SIGNATURES::LCTG:
-      {
-        ios.write<uint32_t>((uint32_t)pgo.signature());
-        for (const PogoEntry& entry : pgo.entries()) {
-          ios
-            .write<uint32_t>(entry.start_rva())
+    {
+      ios.write<uint32_t>((uint32_t)pgo.signature());
+      for (const PogoEntry& entry : pgo.entries()) {
+        ios.write<uint32_t>(entry.start_rva())
             .write<uint32_t>(entry.size())
             .write(entry.name())
-            .align(4)
-          ;
-        }
-        return ok();
+            .align(4);
       }
+      return ok();
+    }
   }
   return ok();
 }
 
 ok_error_t build_repro(const Repro& repro, vector_iostream& ios) {
   span<const uint8_t> hash = repro.hash();
-  ios
-    .write<uint32_t>(hash.size())
-    .write(hash)
-  ;
+  ios.write<uint32_t>(hash.size()).write(hash);
   return ok();
 }
 
@@ -672,10 +633,7 @@ ok_error_t build_pdbchecksum(const PDBChecksum& checksum, vector_iostream& ios) 
   const std::string& algo_name = to_string(checksum.algorithm());
   assert(algo_name != "UNKNOWN");
 
-  ios
-    .write(algo_name)
-    .write(checksum.hash())
-  ;
+  ios.write(algo_name).write(checksum.hash());
   return ok();
 }
 
@@ -709,8 +667,7 @@ ok_error_t build_vcfeatures(const VCFeature& vcfeature, vector_iostream& ios) {
 }
 
 ok_error_t build_exdllcharacteristics(const ExDllCharacteristics& characteristics,
-                                      vector_iostream& ios)
-{
+                                      vector_iostream& ios) {
   if (characteristics.sizeof_data() != sizeof(uint32_t)) {
     return make_error_code(lief_errors::not_supported);
   }
@@ -760,27 +717,23 @@ ok_error_t Builder::build_debug_info() {
     uint32_t hdr_pos = hdr_start + i * sizeof(details::pe_debug);
     span<uint8_t> payload = dbg->payload();
 
-    header_stream
-      .write<uint32_t>(dbg->characteristics())
-      .write<uint32_t>(dbg->timestamp())
-      .write<uint16_t>(dbg->major_version())
-      .write<uint16_t>(dbg->minor_version())
-      .write<uint32_t>((uint32_t)dbg->type())
-    ;
+    header_stream.write<uint32_t>(dbg->characteristics())
+        .write<uint32_t>(dbg->timestamp())
+        .write<uint16_t>(dbg->major_version())
+        .write<uint16_t>(dbg->minor_version())
+        .write<uint32_t>((uint32_t)dbg->type());
     LIEF_DEBUG("  - Header pos:  {:#08x}", hdr_pos);
     LIEF_DEBUG("  - Payload pos: {:#08x}", payload_offset);
 
-    const bool has_offset_rva = dbg->addressof_rawdata() != 0 ||
-                                dbg->pointerto_rawdata() != 0;
+    const bool has_offset_rva =
+        dbg->addressof_rawdata() != 0 || dbg->pointerto_rawdata() != 0;
 
     if (payload.empty() && has_offset_rva) {
       LIEF_INFO("Empty payload, cannot rebuild content of {}",
                 to_string(dbg->type()));
-      header_stream
-        .write<uint32_t>(dbg->sizeof_data())
-        .write<uint32_t>(dbg->addressof_rawdata())
-        .write<uint32_t>(dbg->pointerto_rawdata())
-      ;
+      header_stream.write<uint32_t>(dbg->sizeof_data())
+          .write<uint32_t>(dbg->addressof_rawdata())
+          .write<uint32_t>(dbg->pointerto_rawdata());
       continue;
     }
 
@@ -800,20 +753,16 @@ ok_error_t Builder::build_debug_info() {
       if (delta <= 0) {
         std::memset(payload.data(), 0, payload.size());
         std::copy(ios_cv.begin(), ios_cv.end(), payload.begin());
-        header_stream
-          .write<uint32_t>(dbg->addressof_rawdata())
-          .write<uint32_t>(dbg->pointerto_rawdata())
-        ;
+        header_stream.write<uint32_t>(dbg->addressof_rawdata())
+            .write<uint32_t>(dbg->pointerto_rawdata());
       } else {
         LIEF_DEBUG("Need to relocate entry #{} +{} bytes", i, delta);
         const size_t payload_off = payload_stream.tellp();
         payload_stream.write(ios_cv);
-        header_stream
-          .record_fixup(FX_BASE_RVA)
-          .write<uint32_t>(payload_off)
-          .record_fixup(FX_BASE_OFFSET)
-          .write<uint32_t>(payload_off)
-        ;
+        header_stream.record_fixup(FX_BASE_RVA)
+            .write<uint32_t>(payload_off)
+            .record_fixup(FX_BASE_OFFSET)
+            .write<uint32_t>(payload_off);
       }
       continue;
     }
@@ -834,20 +783,16 @@ ok_error_t Builder::build_debug_info() {
       if (delta <= 0) {
         std::memset(payload.data(), 0, payload.size());
         std::copy(ios_pogo.begin(), ios_pogo.end(), payload.begin());
-        header_stream
-          .write<uint32_t>(dbg->addressof_rawdata())
-          .write<uint32_t>(dbg->pointerto_rawdata())
-        ;
+        header_stream.write<uint32_t>(dbg->addressof_rawdata())
+            .write<uint32_t>(dbg->pointerto_rawdata());
       } else {
         LIEF_DEBUG("Need to relocate entry #{} +{} bytes", i, delta);
         const size_t payload_off = payload_stream.tellp();
         payload_stream.write(ios_pogo);
-        header_stream
-          .record_fixup(FX_BASE_RVA)
-          .write<uint32_t>(payload_off)
-          .record_fixup(FX_BASE_OFFSET)
-          .write<uint32_t>(payload_off)
-        ;
+        header_stream.record_fixup(FX_BASE_RVA)
+            .write<uint32_t>(payload_off)
+            .record_fixup(FX_BASE_OFFSET)
+            .write<uint32_t>(payload_off);
       }
       continue;
     }
@@ -868,20 +813,16 @@ ok_error_t Builder::build_debug_info() {
       if (delta <= 0) {
         std::memset(payload.data(), 0, payload.size());
         std::copy(ios_repro.begin(), ios_repro.end(), payload.begin());
-        header_stream
-          .write<uint32_t>(dbg->addressof_rawdata())
-          .write<uint32_t>(dbg->pointerto_rawdata())
-        ;
+        header_stream.write<uint32_t>(dbg->addressof_rawdata())
+            .write<uint32_t>(dbg->pointerto_rawdata());
       } else {
         LIEF_DEBUG("Need to relocate entry #{} +{} bytes", i, delta);
         const size_t payload_off = payload_stream.tellp();
         payload_stream.write(ios_repro);
-        header_stream
-          .record_fixup(FX_BASE_RVA)
-          .write<uint32_t>(payload_off)
-          .record_fixup(FX_BASE_OFFSET)
-          .write<uint32_t>(payload_off)
-        ;
+        header_stream.record_fixup(FX_BASE_RVA)
+            .write<uint32_t>(payload_off)
+            .record_fixup(FX_BASE_OFFSET)
+            .write<uint32_t>(payload_off);
       }
       continue;
     }
@@ -902,20 +843,16 @@ ok_error_t Builder::build_debug_info() {
       if (delta <= 0) {
         std::memset(payload.data(), 0, payload.size());
         std::copy(ios_repro.begin(), ios_repro.end(), payload.begin());
-        header_stream
-          .write<uint32_t>(dbg->addressof_rawdata())
-          .write<uint32_t>(dbg->pointerto_rawdata())
-        ;
+        header_stream.write<uint32_t>(dbg->addressof_rawdata())
+            .write<uint32_t>(dbg->pointerto_rawdata());
       } else {
         LIEF_DEBUG("Need to relocate entry #{} +{} bytes", i, delta);
         const size_t payload_off = payload_stream.tellp();
         payload_stream.write(ios_repro);
-        header_stream
-          .record_fixup(FX_BASE_RVA)
-          .write<uint32_t>(payload_off)
-          .record_fixup(FX_BASE_OFFSET)
-          .write<uint32_t>(payload_off)
-        ;
+        header_stream.record_fixup(FX_BASE_RVA)
+            .write<uint32_t>(payload_off)
+            .record_fixup(FX_BASE_OFFSET)
+            .write<uint32_t>(payload_off);
       }
       continue;
     }
@@ -936,20 +873,16 @@ ok_error_t Builder::build_debug_info() {
       if (delta <= 0) {
         std::memset(payload.data(), 0, payload.size());
         std::copy(ios_vcfeat.begin(), ios_vcfeat.end(), payload.begin());
-        header_stream
-          .write<uint32_t>(dbg->addressof_rawdata())
-          .write<uint32_t>(dbg->pointerto_rawdata())
-        ;
+        header_stream.write<uint32_t>(dbg->addressof_rawdata())
+            .write<uint32_t>(dbg->pointerto_rawdata());
       } else {
         LIEF_DEBUG("Need to relocate entry #{} +{} bytes", i, delta);
         const size_t payload_off = payload_stream.tellp();
         payload_stream.write(ios_vcfeat);
-        header_stream
-          .record_fixup(FX_BASE_RVA)
-          .write<uint32_t>(payload_off)
-          .record_fixup(FX_BASE_OFFSET)
-          .write<uint32_t>(payload_off)
-        ;
+        header_stream.record_fixup(FX_BASE_RVA)
+            .write<uint32_t>(payload_off)
+            .record_fixup(FX_BASE_OFFSET)
+            .write<uint32_t>(payload_off);
       }
       continue;
     }
@@ -962,7 +895,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_exdll.size());
 
-      LIEF_DEBUG("ExDllCharacteristics - original size {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("ExDllCharacteristics - original size {:#08x}",
+                 dbg->sizeof_data());
       LIEF_DEBUG("ExDllCharacteristics - new size      {:#08x}", ios_exdll.size());
 
       const int32_t delta = (int32_t)ios_exdll.size() - dbg->sizeof_data();
@@ -970,20 +904,16 @@ ok_error_t Builder::build_debug_info() {
       if (delta <= 0) {
         std::memset(payload.data(), 0, payload.size());
         std::copy(ios_exdll.begin(), ios_exdll.end(), payload.begin());
-        header_stream
-          .write<uint32_t>(dbg->addressof_rawdata())
-          .write<uint32_t>(dbg->pointerto_rawdata())
-        ;
+        header_stream.write<uint32_t>(dbg->addressof_rawdata())
+            .write<uint32_t>(dbg->pointerto_rawdata());
       } else {
         LIEF_DEBUG("Need to relocate entry #{} +{} bytes", i, delta);
         const size_t payload_off = payload_stream.tellp();
         payload_stream.write(ios_exdll);
-        header_stream
-          .record_fixup(FX_BASE_RVA)
-          .write<uint32_t>(payload_off)
-          .record_fixup(FX_BASE_OFFSET)
-          .write<uint32_t>(payload_off)
-        ;
+        header_stream.record_fixup(FX_BASE_RVA)
+            .write<uint32_t>(payload_off)
+            .record_fixup(FX_BASE_OFFSET)
+            .write<uint32_t>(payload_off);
       }
       continue;
     }
@@ -991,10 +921,8 @@ ok_error_t Builder::build_debug_info() {
     LIEF_DEBUG("original size {:#08x}", dbg->sizeof_data());
     LIEF_DEBUG("new size      {:#08x}", payload.size());
     header_stream.write<uint32_t>(payload.size());
-    header_stream
-      .write<uint32_t>(dbg->addressof_rawdata())
-      .write<uint32_t>(dbg->pointerto_rawdata())
-    ;
+    header_stream.write<uint32_t>(dbg->addressof_rawdata())
+        .write<uint32_t>(dbg->pointerto_rawdata());
     continue;
   }
 
@@ -1017,15 +945,14 @@ ok_error_t Builder::build_debug_info() {
   }
 
   if (relocated_size > 0) {
-    relocated_size = align(relocated_size,
-                           binary_->optional_header().file_alignment());
+    relocated_size =
+        align(relocated_size, binary_->optional_header().file_alignment());
 
     Section dbg_section(config_.debug_section);
     dbg_section.reserve(relocated_size);
-    dbg_section
-      .add_characteristic(Section::CHARACTERISTICS::MEM_DISCARDABLE)
-      .add_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)
-      .add_characteristic(Section::CHARACTERISTICS::MEM_READ);
+    dbg_section.add_characteristic(Section::CHARACTERISTICS::MEM_DISCARDABLE)
+        .add_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)
+        .add_characteristic(Section::CHARACTERISTICS::MEM_READ);
 
     Section* new_dbg_section = binary_->add_section(dbg_section);
     if (new_dbg_section == nullptr) {
@@ -1038,7 +965,8 @@ ok_error_t Builder::build_debug_info() {
     LIEF_DEBUG("{:10}: OFF: {:#010x}", new_dbg_section->name(),
                new_dbg_section->offset());
 
-    header_stream.apply_fixup<uint32_t>(FX_BASE_RVA, new_dbg_section->virtual_address());
+    header_stream.apply_fixup<uint32_t>(FX_BASE_RVA,
+                                        new_dbg_section->virtual_address());
     header_stream.apply_fixup<uint32_t>(FX_BASE_OFFSET, new_dbg_section->offset());
 
     vector_iostream sec_strm = new_dbg_section->edit();
@@ -1110,16 +1038,17 @@ ok_error_t Builder::build_exports() {
   std::vector<ExportEntry*> entries;
   entries.reserve(exp->entries_.size());
   std::transform(exp->entries_.begin(), exp->entries_.end(),
-    std::back_inserter(entries), [] (std::unique_ptr<ExportEntry>& E) { return E.get(); });
+                 std::back_inserter(entries),
+                 [](std::unique_ptr<ExportEntry>& E) { return E.get(); });
 
   std::stable_sort(entries.begin(), entries.end(),
-    [] (const ExportEntry* lhs, const ExportEntry* rhs) {
-      return lhs->name() < rhs->name();
-    }
-  );
+                   [](const ExportEntry* lhs, const ExportEntry* rhs) {
+                     return lhs->name() < rhs->name();
+                   });
 
   for (const ExportEntry* entry : entries) {
-    LIEF_DEBUG("{}: {:#08x} (ord={})", entry->name(), entry->function_rva(), entry->ordinal());
+    LIEF_DEBUG("{}: {:#08x} (ord={})", entry->name(), entry->function_rva(),
+               entry->ordinal());
     base_ord = std::min<uint32_t>(entry->ordinal(), base_ord);
     max_ord = std::max<uint32_t>(entry->ordinal(), max_ord);
     bool has_name = false;
@@ -1139,16 +1068,18 @@ ok_error_t Builder::build_exports() {
   size_t addr_table_cnt = max_ord;
 
   size_t offset_counter = 0;
-  std::vector<std::string> strings_opt =
-    optimize(strings, [] (const std::string& s) { return s; }, offset_counter,
-             &strmap_offset);
+  std::vector<std::string> strings_opt = optimize(
+      strings, [](const std::string& s) { return s; }, offset_counter,
+      &strmap_offset
+  );
 
   uint32_t head_off = 0;
   uint32_t addr_table_off = head_off + sizeof(details::pe_export_directory_table);
   uint32_t names_table_off = addr_table_off + addr_table_cnt * sizeof(uint32_t);
   uint32_t ord_table_off = names_table_off + name_table_cnt * sizeof(uint32_t);
   uint32_t str_table_off = ord_table_off + name_table_cnt * sizeof(uint16_t);
-  const uint32_t tail_off = align(str_table_off + offset_counter, sizeof(uint32_t));
+  const uint32_t tail_off =
+      align(str_table_off + offset_counter, sizeof(uint32_t));
 
   LIEF_DEBUG("Address table count: #{:03d}", addr_table_cnt);
   LIEF_DEBUG("Name table count:    #{:03d}", name_table_cnt);
@@ -1157,12 +1088,16 @@ ok_error_t Builder::build_exports() {
   LIEF_DEBUG("String table size:   {:#08x}", offset_counter);
   LIEF_DEBUG("Original size:       {:#08x}", exp_dir->size());
   LIEF_DEBUG("New size:            {:#08x}", tail_off);
-  LIEF_DEBUG("Delta size:          {:d}", (int32_t)tail_off - (int32_t)exp_dir->size());
+  LIEF_DEBUG("Delta size:          {:d}",
+             (int32_t)tail_off - (int32_t)exp_dir->size());
   LIEF_DEBUG("Offsets");
   LIEF_DEBUG("  - Header:        [{:#06x}, {:#010x}]", head_off, addr_table_off);
-  LIEF_DEBUG("  - Address Table: [{:#06x}, {:#010x}]", addr_table_off, names_table_off);
-  LIEF_DEBUG("  - Names Table:   [{:#06x}, {:#010x}]", names_table_off, ord_table_off);
-  LIEF_DEBUG("  - Ord Table:     [{:#06x}, {:#010x}]", ord_table_off, str_table_off);
+  LIEF_DEBUG("  - Address Table: [{:#06x}, {:#010x}]", addr_table_off,
+             names_table_off);
+  LIEF_DEBUG("  - Names Table:   [{:#06x}, {:#010x}]", names_table_off,
+             ord_table_off);
+  LIEF_DEBUG("  - Ord Table:     [{:#06x}, {:#010x}]", ord_table_off,
+             str_table_off);
   LIEF_DEBUG("  - Str Table:     [{:#06x}, {:#010x}]", str_table_off, tail_off);
 
   vector_iostream ios;
@@ -1176,24 +1111,23 @@ ok_error_t Builder::build_exports() {
     return make_error_code(lief_errors::build_error);
   }
 
-  ios
-    .reserve(tail_off).init_fixups(1)
-    .write<uint32_t>(exp->export_flags())
-    .write<uint32_t>(exp->timestamp())
-    .write<uint16_t>(exp->major_version())
-    .write<uint16_t>(exp->minor_version())
-    .record_fixup(FX_BASE_RVA)
-    .write<uint32_t>(name_off)
-    .write<uint32_t>(base_ord)
-    .write<uint32_t>(addr_table_cnt)
-    .write<uint32_t>(name_table_cnt)
-    .record_fixup(FX_BASE_RVA)
-    .write<uint32_t>(addr_table_off)
-    .record_fixup(FX_BASE_RVA)
-    .write<uint32_t>(names_table_off)
-    .record_fixup(FX_BASE_RVA)
-    .write<uint32_t>(ord_table_off)
-  ;
+  ios.reserve(tail_off)
+      .init_fixups(1)
+      .write<uint32_t>(exp->export_flags())
+      .write<uint32_t>(exp->timestamp())
+      .write<uint16_t>(exp->major_version())
+      .write<uint16_t>(exp->minor_version())
+      .record_fixup(FX_BASE_RVA)
+      .write<uint32_t>(name_off)
+      .write<uint32_t>(base_ord)
+      .write<uint32_t>(addr_table_cnt)
+      .write<uint32_t>(name_table_cnt)
+      .record_fixup(FX_BASE_RVA)
+      .write<uint32_t>(addr_table_off)
+      .record_fixup(FX_BASE_RVA)
+      .write<uint32_t>(names_table_off)
+      .record_fixup(FX_BASE_RVA)
+      .write<uint32_t>(ord_table_off);
   size_t name_idx = 0;
   for (const ExportEntry* E : entries) {
     int32_t idx = E->ordinal() - base_ord;
@@ -1219,19 +1153,19 @@ ok_error_t Builder::build_exports() {
         return make_error_code(lief_errors::build_error);
       }
       ios
-        // Write addr table
-        .seekp(addr_table_off + idx * sizeof(uint32_t))
-        .record_fixup(FX_BASE_RVA)
-        .write<uint32_t>(str_table_off + it->second)
-        // Write ordinal value
-        .seekp(ord_table_off + name_idx * sizeof(uint16_t))
-        .write<uint16_t>(E->ordinal() - base_ord)
-        // Write name table
-        .seekp(names_table_off + name_idx * sizeof(uint32_t))
-        .record_fixup(FX_BASE_RVA)
-        .write<uint32_t>(str_table_off + it_name->second);
+          // Write addr table
+          .seekp(addr_table_off + idx * sizeof(uint32_t))
+          .record_fixup(FX_BASE_RVA)
+          .write<uint32_t>(str_table_off + it->second)
+          // Write ordinal value
+          .seekp(ord_table_off + name_idx * sizeof(uint16_t))
+          .write<uint16_t>(E->ordinal() - base_ord)
+          // Write name table
+          .seekp(names_table_off + name_idx * sizeof(uint32_t))
+          .record_fixup(FX_BASE_RVA)
+          .write<uint32_t>(str_table_off + it_name->second);
       ++name_idx;
-    } else if (const std::string& name = E->name(); !name.empty()){
+    } else if (const std::string& name = E->name(); !name.empty()) {
       auto it = strmap_offset.find(name);
 
       if (it == strmap_offset.end()) {
@@ -1239,14 +1173,13 @@ ok_error_t Builder::build_exports() {
         return make_error_code(lief_errors::build_error);
       }
 
-      ios
-        .seekp(addr_table_off + idx * sizeof(uint32_t))
-        .write<uint32_t>(rva)
-        .seekp(ord_table_off + name_idx * sizeof(uint16_t))
-        .write<uint16_t>(E->ordinal() - base_ord)
-        .seekp(names_table_off + name_idx * sizeof(uint32_t))
-        .record_fixup(FX_BASE_RVA)
-        .write<uint32_t>(str_table_off + it->second);
+      ios.seekp(addr_table_off + idx * sizeof(uint32_t))
+          .write<uint32_t>(rva)
+          .seekp(ord_table_off + name_idx * sizeof(uint16_t))
+          .write<uint16_t>(E->ordinal() - base_ord)
+          .seekp(names_table_off + name_idx * sizeof(uint32_t))
+          .record_fixup(FX_BASE_RVA)
+          .write<uint32_t>(str_table_off + it->second);
       ;
       ++name_idx;
     }
@@ -1260,14 +1193,13 @@ ok_error_t Builder::build_exports() {
 
   ios.align(sizeof(uint32_t));
 
-  const size_t relocated_size = align(tail_off,
-                                      binary_->optional_header().file_alignment());
+  const size_t relocated_size =
+      align(tail_off, binary_->optional_header().file_alignment());
 
   Section edata_section(config_.export_section);
   edata_section.reserve(relocated_size);
-  edata_section
-    .add_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)
-    .add_characteristic(Section::CHARACTERISTICS::MEM_READ);
+  edata_section.add_characteristic(Section::CHARACTERISTICS::CNT_INITIALIZED_DATA)
+      .add_characteristic(Section::CHARACTERISTICS::MEM_READ);
 
 
   Section* new_edata_section = binary_->add_section(edata_section);
@@ -1285,4 +1217,3 @@ ok_error_t Builder::build_exports() {
 }
 
 }
-

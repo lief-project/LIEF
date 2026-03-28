@@ -45,8 +45,7 @@ class LIEF_API BinaryStream {
   };
 
   BinaryStream(STREAM_TYPE type) :
-    stype_(type)
-  {}
+    stype_(type) {}
   virtual ~BinaryStream() = default;
   virtual uint64_t size() const = 0;
 
@@ -61,7 +60,9 @@ class LIEF_API BinaryStream {
 
   result<std::string> read_string(size_t maxsize = ~static_cast<size_t>(0)) const;
   result<std::string> peek_string(size_t maxsize = ~static_cast<size_t>(0)) const;
-  result<std::string> peek_string_at(size_t offset, size_t maxsize = ~static_cast<size_t>(0)) const;
+  result<std::string>
+      peek_string_at(size_t offset,
+                     size_t maxsize = ~static_cast<size_t>(0)) const;
 
   result<std::u16string> read_u16string() const;
   result<std::u16string> peek_u16string() const;
@@ -73,19 +74,19 @@ class LIEF_API BinaryStream {
   result<std::u16string> peek_u16string_at(size_t offset, size_t length) const;
 
 
-  virtual ok_error_t peek_data(std::vector<uint8_t>& container,
-                               uint64_t offset, uint64_t size,
-                               uint64_t virtual_address = 0)
-  {
+  virtual ok_error_t peek_data(std::vector<uint8_t>& container, uint64_t offset,
+                               uint64_t size, uint64_t virtual_address = 0) {
     if (size == 0) {
       return ok();
     }
     // Even though offset + size < ... => offset < ...
     // the addition could overflow so it's worth checking both
-    const bool read_ok = offset <= this->size() && (offset + size) <= this->size()
-                                                /* Check for an overflow */
-                                                && (static_cast<int64_t>(offset) >= 0 && static_cast<int64_t>(size) >= 0)
-                                                && (static_cast<int64_t>(offset + size) >= 0);
+    const bool read_ok = offset <= this->size() &&
+                         (offset + size) <= this->size()
+                         /* Check for an overflow */
+                         && (static_cast<int64_t>(offset) >= 0 &&
+                             static_cast<int64_t>(size) >= 0) &&
+                         (static_cast<int64_t>(offset + size) >= 0);
     if (!read_ok) {
       return make_error_code(lief_errors::read_error);
     }
@@ -130,7 +131,8 @@ class LIEF_API BinaryStream {
   }
 
   template<class T>
-  ok_error_t peek_objects_at(uint64_t offset, std::vector<T>& container, uint64_t count) {
+  ok_error_t peek_objects_at(uint64_t offset, std::vector<T>& container,
+                             uint64_t count) {
     if (count == 0) {
       return ok();
     }
@@ -194,10 +196,12 @@ class LIEF_API BinaryStream {
     }
     // Even though offset + size < ... => offset < ...
     // the addition could overflow so it's worth checking both
-    const bool read_ok = pos_ <= size() && (pos_ + N) <= size()
-      /* Check for an overflow */
-      && (static_cast<int64_t>(pos_) >= 0 && static_cast<int64_t>(N) >= 0)
-      && (static_cast<int64_t>(pos_ + N) >= 0);
+    const bool read_ok =
+        pos_ <= size() &&
+        (pos_ + N) <= size()
+        /* Check for an overflow */
+        && (static_cast<int64_t>(pos_) >= 0 && static_cast<int64_t>(N) >= 0) &&
+        (static_cast<int64_t>(pos_ + N) >= 0);
 
     if (!read_ok) {
       return make_error_code(lief_errors::read_error);
@@ -240,7 +244,8 @@ class LIEF_API BinaryStream {
   bool can_read(size_t offset) const;
 
   bool can_read(int64_t offset, int64_t size) const {
-    return offset < (int64_t)this->size() && (offset + size) < (int64_t)this->size();
+    return offset < (int64_t)this->size() &&
+           (offset + size) < (int64_t)this->size();
   }
 
   size_t align(size_t align_on) const;
@@ -251,16 +256,15 @@ class LIEF_API BinaryStream {
 
   template<class T>
   static bool is_all_zero(const T& buffer) {
-    const auto* ptr = reinterpret_cast<const uint8_t *const>(&buffer);
-    return std::all_of(ptr, ptr + sizeof(T),
-                       [] (uint8_t x) { return x == 0; });
+    const auto* ptr = reinterpret_cast<const uint8_t* const>(&buffer);
+    return std::all_of(ptr, ptr + sizeof(T), [](uint8_t x) { return x == 0; });
   }
 
   bool should_swap() const {
     return endian_swap_;
   }
 
-  virtual const uint8_t* p() const  {
+  virtual const uint8_t* p() const {
     return nullptr;
   }
 
@@ -323,15 +327,13 @@ class ScopedStream {
 
   explicit ScopedStream(BinaryStream& stream, uint64_t pos) :
     pos_{stream.pos()},
-    stream_{stream}
-  {
+    stream_{stream} {
     stream_.setpos(pos);
   }
 
   explicit ScopedStream(BinaryStream& stream) :
     pos_{stream.pos()},
-    stream_{stream}
-  {}
+    stream_{stream} {}
 
   ~ScopedStream() {
     stream_.setpos(pos_);
@@ -364,15 +366,13 @@ class ToggleEndianness {
 
   explicit ToggleEndianness(BinaryStream& stream, bool value) :
     endian_swap_(stream.should_swap()),
-    stream_{stream}
-  {
+    stream_{stream} {
     stream.set_endian_swap(value);
   }
 
   explicit ToggleEndianness(BinaryStream& stream) :
     endian_swap_(stream.should_swap()),
-    stream_{stream}
-  {
+    stream_{stream} {
     stream.set_endian_swap(!stream_.should_swap());
   }
 

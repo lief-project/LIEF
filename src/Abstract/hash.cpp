@@ -68,4 +68,3 @@ void AbstractHash::visit(const Function& function) {
 
 
 } // namespace LIEF
-

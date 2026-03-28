@@ -19,7 +19,7 @@
 #include <LIEF/LIEF.hpp>
 
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <Binary>" << '\n';
@@ -33,8 +33,7 @@ int main(int argc, char **argv) {
 
   end = std::chrono::system_clock::now();
 
-  size_t elapsed_seconds = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+  size_t elapsed_seconds =
+      std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
   std::cout << "[Parser] Time: " << std::dec << elapsed_seconds << "s" << '\n';
-
 }
-

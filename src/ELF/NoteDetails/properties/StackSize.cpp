@@ -19,8 +19,7 @@
 
 namespace LIEF::ELF {
 
-void StackSize::dump(std::ostream &os) const {
+void StackSize::dump(std::ostream& os) const {
   os << fmt::format("Size: {:#06x}", stack_size());
 }
 }
-

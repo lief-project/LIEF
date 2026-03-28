@@ -31,7 +31,7 @@ class LIEF_API File : public Object {
 
   public:
   File& operator=(const File& copy) = delete;
-  File(const File& copy)            = delete;
+  File(const File& copy) = delete;
 
   const Header& header() const;
   Header& header();

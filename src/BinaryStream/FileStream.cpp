@@ -44,4 +44,3 @@ std::vector<uint8_t> FileStream::content() const {
 }
 
 }
-

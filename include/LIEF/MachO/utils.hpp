@@ -55,9 +55,9 @@ LIEF_API bool check_layout(const Binary& binary, std::string* error = nullptr);
 LIEF_API bool check_layout(const FatBinary& binary, std::string* error = nullptr);
 
 
-using segment_callback_t = std::function<
-  void(const std::string& name, uint64_t offset, uint64_t size, uint64_t addr, uint64_t vsize)
->;
+using segment_callback_t =
+    std::function<void(const std::string& name, uint64_t offset, uint64_t size,
+                       uint64_t addr, uint64_t vsize)>;
 
 LIEF_API void foreach_segment(BinaryStream& stream, const segment_callback_t cbk);
 

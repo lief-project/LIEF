@@ -32,44 +32,43 @@ std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
   os << std::hex << std::left;
 
   const std::vector<uint32_t>& buckets = sysvhash.buckets();
-  const std::vector<uint32_t>& chains  = sysvhash.chains();
+  const std::vector<uint32_t>& chains = sysvhash.chains();
 
-  std::string buckets_str = std::accumulate(
-      buckets.begin(),
-      buckets.end(), std::string{},
-      [] (const std::string& a, uint32_t b) {
-        std::ostringstream dec_bucket;
-        dec_bucket << std::dec;
-        dec_bucket << b;
+  std::string buckets_str =
+      std::accumulate(buckets.begin(), buckets.end(), std::string{},
+                      [](const std::string& a, uint32_t b) {
+                        std::ostringstream dec_bucket;
+                        dec_bucket << std::dec;
+                        dec_bucket << b;
 
-        return a.empty() ? "[" + dec_bucket.str() : a + ", " + dec_bucket.str();
-      });
+                        return a.empty() ? "[" + dec_bucket.str() :
+                                           a + ", " + dec_bucket.str();
+                      });
   buckets_str += "]";
 
 
-  std::string chains_str = std::accumulate(
-      chains.begin(),
-      chains.end(), std::string{},
-      [] (const std::string& a, uint32_t b) {
-        std::ostringstream dec_bucket;
-        dec_bucket << std::dec;
-        dec_bucket << b;
+  std::string chains_str =
+      std::accumulate(chains.begin(), chains.end(), std::string{},
+                      [](const std::string& a, uint32_t b) {
+                        std::ostringstream dec_bucket;
+                        dec_bucket << std::dec;
+                        dec_bucket << b;
 
-        return a.empty() ? "[" + dec_bucket.str() : a + ", " + dec_bucket.str();
-      });
+                        return a.empty() ? "[" + dec_bucket.str() :
+                                           a + ", " + dec_bucket.str();
+                      });
   buckets_str += "]";
 
 
+  os << std::setw(33) << std::setfill(' ')
+     << "Number of buckets:" << sysvhash.nbucket() << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Buckets:" << buckets_str << '\n';
 
-  os << std::setw(33) << std::setfill(' ') << "Number of buckets:"  << sysvhash.nbucket() << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Buckets:"            << buckets_str        << '\n';
-
-  os << std::setw(33) << std::setfill(' ') << "Number of chains:"   << sysvhash.nchain() << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Chains:"             << chains_str        << '\n';
+  os << std::setw(33) << std::setfill(' ')
+     << "Number of chains:" << sysvhash.nchain() << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Chains:" << chains_str << '\n';
 
   return os;
-
 }
 
 } // namespace LIEF::ELF
-

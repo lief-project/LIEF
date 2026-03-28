@@ -24,7 +24,6 @@
 #include <utility>
 
 
-
 namespace LIEF::DEX {
 
 Field::Field(const Field&) = default;
@@ -34,8 +33,7 @@ Field::Field() = default;
 
 Field::Field(std::string name, Class* parent) :
   name_{std::move(name)},
-  parent_{parent}
-{}
+  parent_{parent} {}
 
 const std::string& Field::name() const {
   return name_;
@@ -58,11 +56,11 @@ size_t Field::index() const {
 }
 
 bool Field::is_static() const {
-    return is_static_;
+  return is_static_;
 }
 
 void Field::set_static(bool v) {
-    is_static_ = v;
+  is_static_ = v;
 }
 
 
@@ -75,10 +73,9 @@ Field::access_flags_list_t Field::access_flags() const {
 
   std::copy_if(std::begin(access_flags_list), std::end(access_flags_list),
                std::back_inserter(flags),
-               [this] (ACCESS_FLAGS f) { return has(f); });
+               [this](ACCESS_FLAGS f) { return has(f); });
 
   return flags;
-
 }
 
 const Type* Field::type() const {
@@ -95,7 +92,6 @@ void Field::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const Field& field) {
   std::string pretty_cls_name = field.cls()->fullname();
   if (!pretty_cls_name.empty()) {
@@ -104,22 +100,19 @@ std::ostream& operator<<(std::ostream& os, const Field& field) {
   }
 
   Method::access_flags_list_t aflags = field.access_flags();
-  std::string flags_str = std::accumulate(
-      aflags.begin(),
-      aflags.end(),
-      std::string{},
-      [] (const std::string& l, ACCESS_FLAGS r) {
-        std::string str = to_string(r);
-        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-        return l.empty() ? str : l + " " + str;
-      });
+  std::string flags_str =
+      std::accumulate(aflags.begin(), aflags.end(), std::string{},
+                      [](const std::string& l, ACCESS_FLAGS r) {
+                        std::string str = to_string(r);
+                        std::transform(str.begin(), str.end(), str.begin(),
+                                       ::tolower);
+                        return l.empty() ? str : l + " " + str;
+                      });
 
   if (!flags_str.empty()) {
     os << flags_str << " ";
   }
-  os << field.type()
-     << " "
-     << pretty_cls_name << "->" << field.name();
+  os << field.type() << " " << pretty_cls_name << "->" << field.name();
 
   return os;
 }
@@ -127,4 +120,3 @@ std::ostream& operator<<(std::ostream& os, const Field& field) {
 Field::~Field() = default;
 
 }
-

@@ -25,9 +25,9 @@ namespace LIEF::PE {
 void ResourceData::swap(ResourceData& other) noexcept {
   ResourceNode::swap(other);
 
-  std::swap(content_,    other.content_);
-  std::swap(code_page_,  other.code_page_);
-  std::swap(reserved_,   other.reserved_);
+  std::swap(content_, other.content_);
+  std::swap(code_page_, other.code_page_);
+  std::swap(reserved_, other.reserved_);
 }
 
 void ResourceData::accept(Visitor& visitor) const {
@@ -36,4 +36,3 @@ void ResourceData::accept(Visitor& visitor) const {
 
 
 }
-

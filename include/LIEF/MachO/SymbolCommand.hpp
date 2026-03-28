@@ -116,11 +116,11 @@ class LIEF_API SymbolCommand : public LoadCommand {
 
   private:
   uint32_t symbols_offset_ = 0;
-  uint32_t nb_symbols_     = 0;
+  uint32_t nb_symbols_ = 0;
   uint32_t strings_offset_ = 0;
-  uint32_t strings_size_   = 0;
+  uint32_t strings_size_ = 0;
 
-  uint32_t original_str_size_   = 0;
+  uint32_t original_str_size_ = 0;
   uint32_t original_nb_symbols_ = 0;
 
   span<uint8_t> symbol_table_;

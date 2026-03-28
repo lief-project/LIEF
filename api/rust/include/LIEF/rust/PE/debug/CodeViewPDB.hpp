@@ -20,24 +20,34 @@
 class PE_CodeViewPDB : public PE_CodeView {
   public:
   using lief_t = LIEF::PE::CodeViewPDB;
-  PE_CodeViewPDB(const lief_t& obj) : PE_CodeView(obj) {}
+  PE_CodeViewPDB(const lief_t& obj) :
+    PE_CodeView(obj) {}
   PE_CodeViewPDB(std::unique_ptr<LIEF::PE::CodeViewPDB> obj) :
     PE_CodeView(std::move(obj)) {}
 
   static auto create() {
-    return std::make_unique<PE_CodeViewPDB>(std::make_unique<LIEF::PE::CodeViewPDB>());
+    return std::make_unique<PE_CodeViewPDB>(
+        std::make_unique<LIEF::PE::CodeViewPDB>()
+    );
   }
 
   static auto create_with_filename(std::string filename) {
     return std::make_unique<PE_CodeViewPDB>(
-      std::make_unique<LIEF::PE::CodeViewPDB>(std::move(filename)));
+        std::make_unique<LIEF::PE::CodeViewPDB>(std::move(filename))
+    );
   }
 
-  auto age() const { return impl().age(); }
+  auto age() const {
+    return impl().age();
+  }
 
-  std::string guid() const { return impl().guid(); }
+  std::string guid() const {
+    return impl().guid();
+  }
 
-  std::string filename() const { return impl().filename(); }
+  std::string filename() const {
+    return impl().filename();
+  }
 
   auto signature() const {
     return details::make_vector(impl().signature());
@@ -63,6 +73,10 @@ class PE_CodeViewPDB : public PE_CodeView {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

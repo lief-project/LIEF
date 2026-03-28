@@ -20,30 +20,30 @@
 #include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 
 namespace LIEF::PE::unwind_aarch64 {
-std::unique_ptr<PackedFunction> PackedFunction::parse(
-  Parser& /*ctx*/, BinaryStream& /*strm*/, uint32_t rva, uint32_t unwind_data
-) {
+std::unique_ptr<PackedFunction> PackedFunction::parse(Parser& /*ctx*/,
+                                                      BinaryStream& /*strm*/,
+                                                      uint32_t rva,
+                                                      uint32_t unwind_data) {
   static constexpr auto WIDTH = 20;
   auto packed_info = details::arm64_packed_t{unwind_data};
 
   LIEF_DEBUG("Parsing packed function {:#010x}", rva);
   const auto flag = PACKED_FLAGS(unwind_data & 0x3);
-  auto func = std::make_unique<PackedFunction>(
-    rva, packed_info.function_length(), flag
-  );
+  auto func =
+      std::make_unique<PackedFunction>(rva, packed_info.function_length(), flag);
 
   LIEF_DEBUG("  {:{}}: {:#010x}", "Raw Data", WIDTH, unwind_data);
   LIEF_DEBUG("  {:{}}: {:#010x}", "Function RVA", WIDTH, rva);
-  LIEF_DEBUG("  {:{}}: {:#010x}", "Function Length", WIDTH, packed_info.function_length());
+  LIEF_DEBUG("  {:{}}: {:#010x}", "Function Length", WIDTH,
+             packed_info.function_length());
   LIEF_DEBUG("  {:{}}: {:#010x}", "Frame size", WIDTH, packed_info.frame_size());
 
   (*func)
-    .reg_F(packed_info.RF())
-    .reg_I(packed_info.RI())
-    .H(packed_info.H())
-    .CR(packed_info.CR())
-    .frame_size(packed_info.frame_size() * 16)
-  ;
+      .reg_F(packed_info.RF())
+      .reg_I(packed_info.RI())
+      .H(packed_info.H())
+      .CR(packed_info.CR())
+      .frame_size(packed_info.frame_size() * 16);
   return func;
 }
 

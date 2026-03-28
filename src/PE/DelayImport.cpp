@@ -25,16 +25,16 @@
 namespace LIEF::PE {
 
 void DelayImport::swap(DelayImport& other) {
-  std::swap(attribute_,   other.attribute_);
-  std::swap(name_,        other.name_);
-  std::swap(handle_,      other.handle_);
-  std::swap(iat_,         other.iat_);
+  std::swap(attribute_, other.attribute_);
+  std::swap(name_, other.name_);
+  std::swap(handle_, other.handle_);
+  std::swap(iat_, other.iat_);
   std::swap(names_table_, other.names_table_);
-  std::swap(bound_iat_,   other.bound_iat_);
-  std::swap(unload_iat_,  other.unload_iat_);
-  std::swap(timestamp_,   other.timestamp_);
-  std::swap(entries_,     other.entries_);
-  std::swap(type_,        other.type_);
+  std::swap(bound_iat_, other.bound_iat_);
+  std::swap(unload_iat_, other.unload_iat_);
+  std::swap(timestamp_, other.timestamp_);
+  std::swap(entries_, other.entries_);
+  std::swap(type_, other.type_);
 }
 
 DelayImport::DelayImport(const details::delay_imports& import, PE_TYPE type) :
@@ -45,8 +45,7 @@ DelayImport::DelayImport(const details::delay_imports& import, PE_TYPE type) :
   bound_iat_{import.bound_iat},
   unload_iat_{import.unload_iat},
   timestamp_{import.timestamp},
-  type_{type}
-{}
+  type_{type} {}
 
 
 DelayImport::DelayImport(const DelayImport& other) :
@@ -59,8 +58,7 @@ DelayImport::DelayImport(const DelayImport& other) :
   bound_iat_(other.bound_iat_),
   unload_iat_(other.unload_iat_),
   timestamp_(other.timestamp_),
-  type_(other.type_)
-{
+  type_(other.type_) {
   if (!other.entries_.empty()) {
     entries_.reserve(other.entries_.size());
     for (const DelayImportEntry& entry : other.entries()) {
@@ -82,8 +80,7 @@ std::ostream& operator<<(std::ostream& os, const DelayImport& entry) {
      << format("  Import Name Table:        {:#010x}\n", entry.names_table())
      << format("  Bound Import Name Table:  {:#010x}\n", entry.biat())
      << format("  Unload Import Name Table: {:#010x}\n", entry.uiat())
-     << format("  Timestamp:                {}\n", entry.uiat())
-     << "Entries:\n";
+     << format("  Timestamp:                {}\n", entry.uiat()) << "Entries:\n";
 
   for (const DelayImportEntry& delayed : entry.entries()) {
     os << "    " << delayed << '\n';
@@ -91,4 +88,3 @@ std::ostream& operator<<(std::ostream& os, const DelayImport& entry) {
   return os;
 }
 }
-

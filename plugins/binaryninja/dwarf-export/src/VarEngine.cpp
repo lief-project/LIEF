@@ -38,12 +38,9 @@ dw::Variable* VarEngine::add_variable(const bn::DataVariable& var) {
   bool is_external = false;
   if (bn::Ref<bn::Symbol> sym = bv_.GetSymbolByAddress(var.address)) {
     BNSymbolType type = sym->GetType();
-    if (type == ExternalSymbol ||
-        type == ImportedFunctionSymbol ||
-        type == FunctionSymbol ||
-        type == LibraryFunctionSymbol ||
-        type == SymbolicFunctionSymbol
-      )
+    if (type == ExternalSymbol || type == ImportedFunctionSymbol ||
+        type == FunctionSymbol || type == LibraryFunctionSymbol ||
+        type == SymbolicFunctionSymbol)
     {
       return nullptr;
     }
@@ -67,8 +64,6 @@ dw::Variable* VarEngine::add_variable(const bn::DataVariable& var) {
     dw_var->set_external();
   }
 
-  return vars_.insert(
-    {var.address, std::move(dw_var)}
-  ).first->second.get();
+  return vars_.insert({var.address, std::move(dw_var)}).first->second.get();
 }
 }

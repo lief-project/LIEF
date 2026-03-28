@@ -32,4 +32,3 @@ std::ostream& DynamicEntryAuxiliary::print(std::ostream& os) const {
 }
 
 }
-

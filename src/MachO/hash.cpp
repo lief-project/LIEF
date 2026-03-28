@@ -179,13 +179,13 @@ void Hash::visit(const Symbol& symbol) {
   process(symbol.numberof_sections());
   process(symbol.description());
 
-  //if (symbol.has_binding_info()) {
-  //  process(symbol.binding_info());
-  //}
+  // if (symbol.has_binding_info()) {
+  //   process(symbol.binding_info());
+  // }
 
-  //if (symbol.has_export_info()) {
-  //  process(symbol.export_info());
-  //}
+  // if (symbol.has_export_info()) {
+  //   process(symbol.export_info());
+  // }
 }
 
 void Hash::visit(const Relocation& relocation) {
@@ -268,7 +268,6 @@ void Hash::visit(const FunctionStarts& fs) {
   process(fs.data_offset());
   process(fs.data_size());
   process(fs.functions());
-
 }
 
 void Hash::visit(const CodeSignature& cs) {
@@ -367,9 +366,4 @@ void Hash::visit(const LinkerOptHint& e) {
 }
 
 
-
-
-
 } // namespace LIEF::MachO
-
-

@@ -29,12 +29,10 @@ namespace ELF {
 /// Class that wraps the `NT_GNU_PROPERTY_TYPE_0` note
 class LIEF_API NoteGnuProperty : public Note {
   public:
-
   /// This class wraps the different properties that can be used in a
   /// `NT_GNU_PROPERTY_TYPE_0` note
   class LIEF_API Property {
     public:
-
     /// LIEF's mirror types of the original `GNU_PROPERTY_` values
     enum class TYPE {
       UNKNOWN = 0,
@@ -43,7 +41,8 @@ class LIEF_API NoteGnuProperty : public Note {
       AARCH64_PAUTH,        ///< Mirror of `GNU_PROPERTY_AARCH64_FEATURE_PAUTH`
       STACK_SIZE,           ///< Mirror of `GNU_PROPERTY_STACK_SIZE`
       NO_COPY_ON_PROTECTED, ///< Mirror of `GNU_PROPERTY_NO_COPY_ON_PROTECTED`
-      X86_ISA,              ///< Mirror of `GNU_PROPERTY_X86_ISA_1_*` and `GNU_PROPERTY_X86_COMPAT_*`
+      X86_ISA,              ///< Mirror of `GNU_PROPERTY_X86_ISA_1_*` and
+                            ///< `GNU_PROPERTY_X86_COMPAT_*`
       X86_FEATURE,          ///< Mirror of `GNU_PROPERTY_X86_FEATURE_*`
       NEEDED,
     };
@@ -57,8 +56,8 @@ class LIEF_API NoteGnuProperty : public Note {
 
     virtual ~Property() = default;
 
-    LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const Property& prop) {
+    LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                             const Property& prop) {
       prop.dump(os);
       return os;
     }
@@ -72,13 +71,12 @@ class LIEF_API NoteGnuProperty : public Note {
 
   using properties_t = std::vector<std::unique_ptr<NoteGnuProperty::Property>>;
 
-  NoteGnuProperty(ARCH arch, Header::CLASS cls, std::string name,
-                  uint32_t type, description_t description,
-                  std::string secname) :
+  NoteGnuProperty(ARCH arch, Header::CLASS cls, std::string name, uint32_t type,
+                  description_t description, std::string secname) :
     Note(std::move(name), TYPE::GNU_PROPERTY_TYPE_0, type, std::move(description),
          std::move(secname)),
-    arch_(arch), class_(cls)
-  {}
+    arch_(arch),
+    class_(cls) {}
 
   std::unique_ptr<Note> clone() const override {
     return std::unique_ptr<Note>(new NoteGnuProperty(*this));
@@ -100,8 +98,8 @@ class LIEF_API NoteGnuProperty : public Note {
 
   ~NoteGnuProperty() override = default;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const NoteGnuProperty& note) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const NoteGnuProperty& note) {
     note.dump(os);
     return os;
   }

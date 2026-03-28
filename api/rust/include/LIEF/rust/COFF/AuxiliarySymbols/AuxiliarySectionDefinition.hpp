@@ -21,20 +21,37 @@
 class COFF_AuxiliarySectionDefinition : public COFF_AuxiliarySymbol {
   public:
   using lief_t = LIEF::COFF::AuxiliarySectionDefinition;
-  COFF_AuxiliarySectionDefinition(const lief_t& obj) : COFF_AuxiliarySymbol(obj) {}
+  COFF_AuxiliarySectionDefinition(const lief_t& obj) :
+    COFF_AuxiliarySymbol(obj) {}
 
-  auto length() const { return impl().length(); }
-  auto nb_relocs() const { return impl().nb_relocs(); }
-  auto nb_line_numbers() const { return impl().nb_line_numbers(); }
-  auto checksum() const { return impl().checksum(); }
-  auto section_idx() const { return impl().section_idx(); }
-  auto selection() const { return to_int(impl().selection()); }
-  auto reserved() const { return impl().reserved(); }
+  auto length() const {
+    return impl().length();
+  }
+  auto nb_relocs() const {
+    return impl().nb_relocs();
+  }
+  auto nb_line_numbers() const {
+    return impl().nb_line_numbers();
+  }
+  auto checksum() const {
+    return impl().checksum();
+  }
+  auto section_idx() const {
+    return impl().section_idx();
+  }
+  auto selection() const {
+    return to_int(impl().selection());
+  }
+  auto reserved() const {
+    return impl().reserved();
+  }
 
   static bool classof(const COFF_AuxiliarySymbol& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

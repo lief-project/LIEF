@@ -21,42 +21,76 @@
 
 class MachO_SegmentCommand : public MachO_Command {
   using lief_t = LIEF::MachO::SegmentCommand;
+
   public:
-  class it_relocations :
-      public Iterator<MachO_Relocation, LIEF::MachO::SegmentCommand::it_const_relocations>
-  {
+  class it_relocations
+    : public Iterator<MachO_Relocation,
+                      LIEF::MachO::SegmentCommand::it_const_relocations> {
     public:
-    it_relocations(const MachO_SegmentCommand::lief_t& src)
-      : Iterator(src.relocations()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_relocations(const MachO_SegmentCommand::lief_t& src) :
+      Iterator(src.relocations()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_sections :
-      public Iterator<MachO_Section, LIEF::MachO::SegmentCommand::it_const_sections>
-  {
+  class it_sections
+    : public Iterator<MachO_Section,
+                      LIEF::MachO::SegmentCommand::it_const_sections> {
     public:
-    it_sections(const MachO_SegmentCommand::lief_t& src)
-      : Iterator(src.sections()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_sections(const MachO_SegmentCommand::lief_t& src) :
+      Iterator(src.sections()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  MachO_SegmentCommand(const lief_t& base) : MachO_Command(base) {}
+  MachO_SegmentCommand(const lief_t& base) :
+    MachO_Command(base) {}
 
-  std::string name() const { return impl().name(); };
-  uint64_t virtual_address() const { return impl().virtual_address(); };
-  uint64_t virtual_size() const { return impl().virtual_size(); };
-  uint64_t file_size() const { return impl().file_size(); };
-  uint64_t file_offset() const { return impl().file_offset(); };
-  uint32_t max_protection() const { return impl().max_protection(); };
-  uint32_t init_protection() const { return impl().init_protection(); };
-  uint32_t numberof_sections() const { return impl().numberof_sections(); };
-  uint32_t flags() const { return impl().flags(); };
-  auto content() const { return make_span(impl().content()); }
+  std::string name() const {
+    return impl().name();
+  };
+  uint64_t virtual_address() const {
+    return impl().virtual_address();
+  };
+  uint64_t virtual_size() const {
+    return impl().virtual_size();
+  };
+  uint64_t file_size() const {
+    return impl().file_size();
+  };
+  uint64_t file_offset() const {
+    return impl().file_offset();
+  };
+  uint32_t max_protection() const {
+    return impl().max_protection();
+  };
+  uint32_t init_protection() const {
+    return impl().init_protection();
+  };
+  uint32_t numberof_sections() const {
+    return impl().numberof_sections();
+  };
+  uint32_t flags() const {
+    return impl().flags();
+  };
+  auto content() const {
+    return make_span(impl().content());
+  }
 
-  auto sections() const { return std::make_unique<it_sections>(impl()); }
-  auto relocations() const { return std::make_unique<it_relocations>(impl()); }
+  auto sections() const {
+    return std::make_unique<it_sections>(impl());
+  }
+  auto relocations() const {
+    return std::make_unique<it_relocations>(impl());
+  }
 
   auto index() const { return impl().index(); }
 
@@ -69,5 +103,7 @@ class MachO_SegmentCommand : public MachO_Command {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

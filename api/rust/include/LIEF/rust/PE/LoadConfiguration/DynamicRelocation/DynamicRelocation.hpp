@@ -26,8 +26,12 @@ class PE_DynamicRelocation : public Mirror<LIEF::PE::DynamicRelocation> {
   using lief_t = LIEF::PE::DynamicRelocation;
   using Mirror::Mirror;
 
-  auto version() const { return get().version(); }
-  auto symbol() const { return get().symbol(); }
+  auto version() const {
+    return get().version();
+  }
+  auto symbol() const {
+    return get().symbol();
+  }
 
   auto fixups() const {
     return details::try_unique<PE_DynamicFixup>(get().fixups());
@@ -47,7 +51,9 @@ class PE_DynamicRelocationV1 : public PE_DynamicRelocation {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class PE_DynamicRelocationV2 : public PE_DynamicRelocation {
@@ -59,5 +65,7 @@ class PE_DynamicRelocationV2 : public PE_DynamicRelocation {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

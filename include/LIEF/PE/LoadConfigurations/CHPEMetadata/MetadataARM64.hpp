@@ -97,15 +97,16 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
 
   using redirection_entries_t = std::vector<redirection_entry_t>;
   using it_redirection_entries = ref_iterator<redirection_entries_t&>;
-  using it_const_redirection_entries = const_ref_iterator<const redirection_entries_t&>;
+  using it_const_redirection_entries =
+      const_ref_iterator<const redirection_entries_t&>;
 
   using code_range_entry_point_entries = std::vector<code_range_entry_point_t>;
   using it_code_range_entry_point = ref_iterator<code_range_entry_point_entries&>;
-  using it_const_code_range_entry_point = const_ref_iterator<const code_range_entry_point_entries&>;
+  using it_const_code_range_entry_point =
+      const_ref_iterator<const code_range_entry_point_entries&>;
 
   CHPEMetadataARM64(uint32_t version) :
-    CHPEMetadata(KIND::ARM64, version)
-  {}
+    CHPEMetadata(KIND::ARM64, version) {}
 
   CHPEMetadataARM64(const CHPEMetadataARM64&) = default;
   CHPEMetadataARM64& operator=(const CHPEMetadataARM64&) = default;
@@ -117,15 +118,15 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
     return std::unique_ptr<CHPEMetadataARM64>(new CHPEMetadataARM64(*this));
   }
 
-  static std::unique_ptr<CHPEMetadataARM64> parse(
-    Parser& ctx, BinaryStream& stream, uint32_t version);
+  static std::unique_ptr<CHPEMetadataARM64>
+      parse(Parser& ctx, BinaryStream& stream, uint32_t version);
 
   static ok_error_t parse_code_map(Parser& ctx, CHPEMetadataARM64& metadata);
 
   static ok_error_t parse_redirections(Parser& ctx, CHPEMetadataARM64& metadata);
 
-  static ok_error_t parse_code_ranges_to_entry_points(
-      Parser& ctx, CHPEMetadataARM64& metadata);
+  static ok_error_t parse_code_ranges_to_entry_points(Parser& ctx,
+                                                      CHPEMetadataARM64& metadata);
 
   /// RVA to the array that describes architecture-specific ranges
   uint32_t code_map() const {
@@ -388,7 +389,6 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
   range_entries_t range_entries_;
   redirection_entries_t redirection_entries_;
   code_range_entry_point_entries code_range_entry_point_entries_;
-
 };
 
 LIEF_API const char* to_string(CHPEMetadataARM64::range_entry_t::TYPE e);

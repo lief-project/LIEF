@@ -25,30 +25,21 @@ template<class T, typename U = T::lief_t>
 class Optional {
   public:
   using Element = T;
-  static constexpr jni::Class kClass {
-    "java/util/Optional",
-    jni::Static {
-      jni::Method {
-        "empty", jni::Return{jni::Self{}}
-      },
-      jni::Method {
-        "of", jni::Return{jni::Self{}}, jni::Params {
-          jni::kJavaLangObject
-        }
-      }
-    }
+  static constexpr jni::Class kClass{
+      "java/util/Optional",
+      jni::Static{jni::Method{"empty", jni::Return{jni::Self{}}},
+                  jni::Method{"of", jni::Return{jni::Self{}},
+                              jni::Params{jni::kJavaLangObject}}}
   };
 
   static jobject empty() {
-    return jni::StaticRef<kClass>{}. template Call<"empty">().Release();
+    return jni::StaticRef<kClass>{}.template Call<"empty">().Release();
   }
 
   static jobject of(U& impl) {
     jobject jobj = T::create(impl);
-    assert (jobj != nullptr);
-    return jni::StaticRef<kClass>{}. template Call<"of">(
-        jobj
-    ).Release();
+    assert(jobj != nullptr);
+    return jni::StaticRef<kClass>{}.template Call<"of">(jobj).Release();
   }
 };
 

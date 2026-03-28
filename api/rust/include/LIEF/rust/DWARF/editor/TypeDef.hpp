@@ -26,5 +26,7 @@ class DWARF_editor_TypeDef : public DWARF_editor_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

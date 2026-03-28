@@ -33,6 +33,7 @@ class Class;
 /// Class which represent a DEX Field
 class LIEF_API Field : public Object {
   friend class Parser;
+
   public:
   using access_flags_list_t = std::vector<ACCESS_FLAGS>;
 

@@ -29,7 +29,8 @@ class LIEF_API DynamicFixupGeneric : public DynamicFixup {
   public:
   using relocations_t = std::vector<std::unique_ptr<Relocation>>;
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
-  using it_const_relocations = const_ref_iterator<const relocations_t&, Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, Relocation*>;
 
   DynamicFixupGeneric();
 
@@ -61,8 +62,8 @@ class LIEF_API DynamicFixupGeneric : public DynamicFixup {
   ~DynamicFixupGeneric() override;
 
   /// \private
-  LIEF_LOCAL static
-    std::unique_ptr<DynamicFixupGeneric> parse(Parser& ctx, SpanStream& strm);
+  LIEF_LOCAL static std::unique_ptr<DynamicFixupGeneric> parse(Parser& ctx,
+                                                               SpanStream& strm);
 
   private:
   relocations_t relocations_;

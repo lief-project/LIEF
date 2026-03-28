@@ -25,5 +25,4 @@ extern "C" {
 const char* PE_TYPES_to_string(enum LIEF_PE_PE_TYPES e) {
   return LIEF::PE::to_string(static_cast<LIEF::PE::PE_TYPE>(e));
 }
-
 }

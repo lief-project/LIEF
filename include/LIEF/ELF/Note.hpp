@@ -122,7 +122,7 @@ class LIEF_API Note : public Object {
     /// Note for SystemTap probes
     STAPSDT,
     /// QNX Note
-    QNX_STACK
+    QNX_STACK,
   };
 
   public:
@@ -148,27 +148,28 @@ class LIEF_API Note : public Object {
   /// Create a new note from the given parameters. Additional information
   /// such as the architecture or the ELF class could be required for
   /// creating notes like Coredump notes.
-  static std::unique_ptr<Note> create(
-      const std::string& name, uint32_t type, description_t description,
-      std::string section_name,
-      Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE, ARCH arch = ARCH::NONE,
-      Header::CLASS cls = Header::CLASS::NONE);
+  static std::unique_ptr<Note>
+      create(const std::string& name, uint32_t type, description_t description,
+             std::string section_name,
+             Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE,
+             ARCH arch = ARCH::NONE, Header::CLASS cls = Header::CLASS::NONE);
 
   /// Create a new note from the given parameters. Additional information
   /// such as the architecture or the ELF class could be required for
   /// creating notes like Coredump notes.
-  static std::unique_ptr<Note> create(
-      const std::string& name, TYPE type, description_t description,
-      std::string section_name,
-      ARCH arch = ARCH::NONE, Header::CLASS cls = Header::CLASS::NONE);
+  static std::unique_ptr<Note> create(const std::string& name, TYPE type,
+                                      description_t description,
+                                      std::string section_name,
+                                      ARCH arch = ARCH::NONE,
+                                      Header::CLASS cls = Header::CLASS::NONE);
 
   /// Create a new note from the given stream. Additional information
   /// such as the architecture or the ELF class could be required for
   /// creating notes like Coredump notes.
-  static std::unique_ptr<Note> create(BinaryStream& stream,
-      std::string section_name,
-      Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE, ARCH arch = ARCH::NONE,
-      Header::CLASS cls = Header::CLASS::NONE);
+  static std::unique_ptr<Note>
+      create(BinaryStream& stream, std::string section_name,
+             Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE,
+             ARCH arch = ARCH::NONE, Header::CLASS cls = Header::CLASS::NONE);
 
   Note& operator=(const Note& copy) = default;
   Note(const Note& copy) = default;
@@ -227,16 +228,14 @@ class LIEF_API Note : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const Note& note) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const Note& note) {
     note.dump(os);
     return os;
   }
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<Note, T>::value,
-                  "Require Note inheritance");
+    static_assert(std::is_base_of<Note, T>::value, "Require Note inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }
@@ -256,8 +255,7 @@ class LIEF_API Note : public Object {
     type_(type),
     original_type_(original_type),
     description_(std::move(description)),
-    section_name_(std::move(section))
-  {}
+    section_name_(std::move(section)) {}
 
   template<class T>
   LIEF_LOCAL result<T> read_at(size_t offset) const;
@@ -267,10 +265,10 @@ class LIEF_API Note : public Object {
 
   LIEF_LOCAL ok_error_t write_string_at(size_t offset, const std::string& value);
 
-  LIEF_LOCAL result<std::string>
-  read_string_at(size_t offset, size_t maxsize = 0) const;
+  LIEF_LOCAL result<std::string> read_string_at(size_t offset,
+                                                size_t maxsize = 0) const;
 
-  std::string  name_;
+  std::string name_;
   TYPE type_ = TYPE::UNKNOWN;
   uint32_t original_type_ = 0;
   description_t description_;

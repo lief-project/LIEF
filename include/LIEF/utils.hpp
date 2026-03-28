@@ -47,7 +47,8 @@ inline uint64_t align_down(uint64_t value, uint64_t align_on) {
   return value;
 }
 
-inline uint64_t align_with_offset(uint64_t value, uint64_t align_on, uint64_t offset) {
+inline uint64_t align_with_offset(uint64_t value, uint64_t align_on,
+                                  uint64_t offset) {
   return align(value - offset, align_on) + offset;
 }
 
@@ -59,7 +60,7 @@ inline constexpr T round(T x) {
 
 template<>
 inline uint64_t round<uint64_t>(uint64_t x) {
-  //From http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+  // From http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
   x--;
   x |= x >> 1;  // handle  2 bit numbers
   x |= x >> 2;  // handle  4 bit numbers
@@ -72,39 +73,36 @@ inline uint64_t round<uint64_t>(uint64_t x) {
 }
 
 
-constexpr size_t operator ""_KB(unsigned long long kbs)
-{
-    return 1024LLU * kbs;
+constexpr size_t operator""_KB(unsigned long long kbs) {
+  return 1024LLU * kbs;
 }
 
-constexpr size_t operator ""_MB(unsigned long long mbs)
-{
-    return 1024LLU * 1024LLU * mbs;
+constexpr size_t operator""_MB(unsigned long long mbs) {
+  return 1024LLU * 1024LLU * mbs;
 }
 
-constexpr size_t operator ""_GB(unsigned long long gbs)
-{
-    return 1024LLU * 1024LLU * 1024LLU * gbs;
+constexpr size_t operator""_GB(unsigned long long gbs) {
+  return 1024LLU * 1024LLU * 1024LLU * gbs;
 }
 
 struct lief_version_t {
   uint64_t major = 0;
   uint64_t minor = 0;
   uint64_t patch = 0;
-  uint64_t id    = 0;
+  uint64_t id = 0;
 
   LIEF_API std::string to_string() const;
 
-  friend LIEF_API
-    std::ostream& operator<<(std::ostream& os, const lief_version_t& version)
-  {
+  friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                           const lief_version_t& version) {
     os << version.to_string();
     return os;
   }
 };
 
 /// Convert a UTF-16 string to a UTF-8 one
-LIEF_API std::string u16tou8(const std::u16string& string, bool remove_null_char = false);
+LIEF_API std::string u16tou8(const std::u16string& string,
+                             bool remove_null_char = false);
 
 /// Convert a UTF-8 string to a UTF-16 one
 LIEF_API result<std::u16string> u8tou16(const std::string& string);
@@ -138,21 +136,18 @@ LIEF_API result<std::string> demangle(const std::string& mangled);
 /// | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
 /// +---------------------------------------------------------------------+
 /// ```
-LIEF_API std::string dump(
-  const uint8_t* buffer, size_t size, const std::string& title = "",
-  const std::string& prefix = "", size_t limit = 0);
+LIEF_API std::string dump(const uint8_t* buffer, size_t size,
+                          const std::string& title = "",
+                          const std::string& prefix = "", size_t limit = 0);
 
 inline std::string dump(span<const uint8_t> data, const std::string& title = "",
-                        const std::string& prefix = "", size_t limit = 0)
-{
+                        const std::string& prefix = "", size_t limit = 0) {
   return dump(data.data(), data.size(), title, prefix, limit);
 }
 
 inline std::string dump(const std::vector<uint8_t>& data,
                         const std::string& title = "",
-                        const std::string& prefix = "",
-                        size_t limit = 0)
-{
+                        const std::string& prefix = "", size_t limit = 0) {
   return dump(data.data(), data.size(), title, prefix, limit);
 }
 }

@@ -25,11 +25,14 @@ class MachO_Stub : public Mirror<LIEF::MachO::Stub> {
   using lief_t = LIEF::MachO::Stub;
   using Mirror::Mirror;
 
-  auto address() const { return get().address(); };
-  Span raw() const { return make_span(get().raw()); }
+  auto address() const {
+    return get().address();
+  };
+  Span raw() const {
+    return make_span(get().raw());
+  }
 
   uint64_t target(uint32_t& err) const {
     return details::make_error<uint64_t>(get().target(), err);
   }
-
 };

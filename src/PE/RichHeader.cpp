@@ -36,35 +36,35 @@ std::vector<uint8_t> RichHeader::raw(uint32_t xor_key) const {
   vector_iostream wstream;
 
   wstream
-    .write(DANS_MAGIC_NUMBER ^ xor_key)
-    /*
-     * The first chunk needs to be aligned on 64-bit and padded
-     * with 0-xor. We can't use vector_iostream::align as it would not
-     * be encoded.
-     */
-    .write<uint32_t>(0 ^ xor_key)
-    .write<uint32_t>(0 ^ xor_key)
-    .write<uint32_t>(0 ^ xor_key);
+      .write(DANS_MAGIC_NUMBER ^ xor_key)
+      /*
+       * The first chunk needs to be aligned on 64-bit and padded
+       * with 0-xor. We can't use vector_iostream::align as it would not
+       * be encoded.
+       */
+      .write<uint32_t>(0 ^ xor_key)
+      .write<uint32_t>(0 ^ xor_key)
+      .write<uint32_t>(0 ^ xor_key);
 
   for (auto it = entries_.crbegin(); it != entries_.crend(); ++it) {
     const RichEntry& entry = *it;
-    const uint32_t value = (static_cast<uint32_t>(entry.id()) << 16) | entry.build_id();
-    wstream
-      .write(value ^ xor_key).write(entry.count() ^ xor_key);
+    const uint32_t value =
+        (static_cast<uint32_t>(entry.id()) << 16) | entry.build_id();
+    wstream.write(value ^ xor_key).write(entry.count() ^ xor_key);
   }
-  wstream
-    .write(RICH_MAGIC, std::size(RICH_MAGIC)).write(xor_key);
+  wstream.write(RICH_MAGIC, std::size(RICH_MAGIC)).write(xor_key);
 
   return wstream.raw();
 }
 
 std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
-  CONST_MAP(ALGORITHMS, hashstream::HASH, 5) HMAP = {
-    {ALGORITHMS::MD5,     hashstream::HASH::MD5},
-    {ALGORITHMS::SHA_1,   hashstream::HASH::SHA1},
-    {ALGORITHMS::SHA_256, hashstream::HASH::SHA256},
-    {ALGORITHMS::SHA_384, hashstream::HASH::SHA384},
-    {ALGORITHMS::SHA_512, hashstream::HASH::SHA512},
+  CONST_MAP(ALGORITHMS, hashstream::HASH, 5)
+  HMAP = {
+      {ALGORITHMS::MD5, hashstream::HASH::MD5},
+      {ALGORITHMS::SHA_1, hashstream::HASH::SHA1},
+      {ALGORITHMS::SHA_256, hashstream::HASH::SHA256},
+      {ALGORITHMS::SHA_384, hashstream::HASH::SHA384},
+      {ALGORITHMS::SHA_512, hashstream::HASH::SHA512},
   };
 
   const auto it_hash = HMAP.find(algo);
@@ -91,4 +91,3 @@ std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header) {
 }
 
 }
-

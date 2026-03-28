@@ -47,8 +47,7 @@ class LIEF_API SigningCertificateV2 : public Attribute {
 
   public:
   SigningCertificateV2() :
-    Attribute(Attribute::TYPE::SIGNING_CERTIFICATE_V2)
-  {}
+    Attribute(Attribute::TYPE::SIGNING_CERTIFICATE_V2) {}
   SigningCertificateV2(const SigningCertificateV2&) = default;
   SigningCertificateV2& operator=(const SigningCertificateV2&) = default;
 

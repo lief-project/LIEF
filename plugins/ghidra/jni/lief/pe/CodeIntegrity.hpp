@@ -23,17 +23,17 @@
 
 namespace lief_jni::pe {
 
-class CodeIntegrity : public JNI<
-  CodeIntegrity, canbe_unique<LIEF::PE::CodeIntegrity>>
-{
+class CodeIntegrity
+  : public JNI<CodeIntegrity, canbe_unique<LIEF::PE::CodeIntegrity>> {
   public:
   using lief_t = LIEF::PE::CodeIntegrity;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/CodeIntegrity",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/pe/CodeIntegrity",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static int register_natives(JNIEnv* env);
 

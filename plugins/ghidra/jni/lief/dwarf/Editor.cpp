@@ -37,61 +37,41 @@ namespace lief_jni::dwarf {
 
 jobject Editor::jni_create_compilation_unit(JNIEnv* env, jobject thiz) {
   return editor::CompilationUnit::create(
-    from_jni(thiz)->impl().create_compilation_unit()
+      from_jni(thiz)->impl().create_compilation_unit()
   );
 }
 
 jobject Editor::jni_for_binary(JNIEnv* env, jclass clazz, jobject bin) {
   jni::ThreadGuard TG;
   return Editor::create(
-    LIEF::dwarf::Editor::from_binary(
-      generic::Binary::from_jni(bin)->impl()
-    )
+      LIEF::dwarf::Editor::from_binary(generic::Binary::from_jni(bin)->impl())
   );
 }
 
 jobject Editor::jni_create(JNIEnv* env, jclass clazz, jobject fmt, jobject arch) {
   java::lang::Enum<Editor::Format> jfmt = fmt;
   java::lang::Enum<Editor::Arch> jarch = arch;
-  return Editor::create(
-    LIEF::dwarf::Editor::create(
-      jfmt.as<LIEF::dwarf::Editor::FORMAT>(),
-      jarch.as<LIEF::dwarf::Editor::ARCH>()
-    )
-  );
+  return Editor::create(LIEF::dwarf::Editor::create(
+      jfmt.as<LIEF::dwarf::Editor::FORMAT>(), jarch.as<LIEF::dwarf::Editor::ARCH>()
+  ));
 }
 
 int Editor::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "forBinary",
-      "(Llief/generic/Binary;)Llief/dwarf/Editor;",
-      &jni_for_binary
-    ),
-    make(
-      "create",
-      "(Llief/dwarf/Editor$Format;Llief/dwarf/Editor$Arch;)Llief/dwarf/Editor;",
-      &jni_create
-    ),
-    make(
-      "createCompilationUnit",
-      "()Llief/dwarf/editor/CompilationUnit;",
-      &jni_create_compilation_unit
-    ),
-    make(
-      "write",
-      "(Ljava/lang/String;)V",
-      &jni_write
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("forBinary", "(Llief/generic/Binary;)Llief/dwarf/Editor;",
+           &jni_for_binary),
+      make("create",
+           "(Llief/dwarf/Editor$Format;Llief/dwarf/Editor$Arch;)Llief/dwarf/"
+           "Editor;",
+           &jni_create),
+      make("createCompilationUnit", "()Llief/dwarf/editor/CompilationUnit;",
+           &jni_create_compilation_unit),
+      make("write", "(Ljava/lang/String;)V", &jni_write),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

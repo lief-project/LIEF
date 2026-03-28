@@ -17,7 +17,8 @@
 #include "LIEF/rust/DWARF/editor/Type.hpp"
 
 
-class DWARF_editor_StructType_Member : public Mirror<LIEF::dwarf::editor::StructType::Member> {
+class DWARF_editor_StructType_Member
+  : public Mirror<LIEF::dwarf::editor::StructType::Member> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::StructType::Member;
@@ -34,27 +35,28 @@ class DWARF_editor_StructType : public DWARF_editor_Type {
 
   auto add_member(std::string name, const DWARF_editor_Type& ty) {
     return details::try_unique<DWARF_editor_StructType_Member>(
-      impl().add_member(name, ty.get())
+        impl().add_member(name, ty.get())
     );
   }
 
   auto add_member_with_offset(std::string name, const DWARF_editor_Type& ty,
-                              uint64_t offset)
-  {
+                              uint64_t offset) {
     return details::try_unique<DWARF_editor_StructType_Member>(
-      impl().add_member(name, ty.get(), offset)
+        impl().add_member(name, ty.get(), offset)
     );
   }
 
-  auto add_bitfield(std::string name, const DWARF_editor_Type& ty, uint64_t bitsize) {
+  auto add_bitfield(std::string name, const DWARF_editor_Type& ty,
+                    uint64_t bitsize) {
     return details::try_unique<DWARF_editor_StructType_Member>(
-      impl().add_bitfield(name, ty.get(), bitsize)
+        impl().add_bitfield(name, ty.get(), bitsize)
     );
   }
 
-  auto add_bitfield_with_offset(std::string name, const DWARF_editor_Type& ty, uint64_t bitsize, uint64_t offset) {
+  auto add_bitfield_with_offset(std::string name, const DWARF_editor_Type& ty,
+                                uint64_t bitsize, uint64_t offset) {
     return details::try_unique<DWARF_editor_StructType_Member>(
-      impl().add_bitfield(name, ty.get(), bitsize, offset)
+        impl().add_bitfield(name, ty.get(), bitsize, offset)
     );
   }
 
@@ -63,6 +65,10 @@ class DWARF_editor_StructType : public DWARF_editor_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

@@ -52,5 +52,3 @@ class LIEF_API Const : public Type {
 }
 }
 #endif
-
-

@@ -23,7 +23,13 @@ class PE_PogoEntry : private Mirror<LIEF::PE::PogoEntry> {
   using lief_t = LIEF::PE::PogoEntry;
   using Mirror::Mirror;
 
-  uint32_t start_rva() const { return get().start_rva(); }
-  uint32_t size() const { return get().size(); }
-  std::string name() const { return get().name(); }
+  uint32_t start_rva() const {
+    return get().start_rva();
+  }
+  uint32_t size() const {
+    return get().size();
+  }
+  std::string name() const {
+    return get().name();
+  }
 };

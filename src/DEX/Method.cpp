@@ -25,7 +25,6 @@
 #include <utility>
 
 
-
 namespace LIEF::DEX {
 
 Method::Method(const Method&) = default;
@@ -36,8 +35,7 @@ Method::Method() = default;
 
 Method::Method(std::string name, Class* parent) :
   name_{std::move(name)},
-  parent_{parent}
-{}
+  parent_{parent} {}
 
 const std::string& Method::name() const {
   return name_;
@@ -91,13 +89,11 @@ bool Method::has(ACCESS_FLAGS f) const {
 Method::access_flags_list_t Method::access_flags() const {
   Method::access_flags_list_t flags;
 
-  std::copy_if(std::begin(access_flags_list),
-      std::end(access_flags_list),
-      std::back_inserter(flags),
-      [this] (ACCESS_FLAGS f) { return has(f); });
+  std::copy_if(std::begin(access_flags_list), std::end(access_flags_list),
+               std::back_inserter(flags),
+               [this](ACCESS_FLAGS f) { return has(f); });
 
   return flags;
-
 }
 
 const Prototype* Method::prototype() const {
@@ -115,7 +111,6 @@ const CodeInfo& Method::code_info() const {
 void Method::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
 
 
 std::ostream& operator<<(std::ostream& os, const Method& method) {
@@ -136,14 +131,14 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
   }
 
   Method::access_flags_list_t aflags = method.access_flags();
-  std::string flags_str = std::accumulate(
-      aflags.begin(), aflags.end(),
-      std::string{},
-      [] (const std::string& l, ACCESS_FLAGS r) {
-        std::string str = to_string(r);
-        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
-        return l.empty() ? str : l + " " + str;
-      });
+  std::string flags_str =
+      std::accumulate(aflags.begin(), aflags.end(), std::string{},
+                      [](const std::string& l, ACCESS_FLAGS r) {
+                        std::string str = to_string(r);
+                        std::transform(str.begin(), str.end(), str.begin(),
+                                       ::tolower);
+                        return l.empty() ? str : l + " " + str;
+                      });
 
   if (!flags_str.empty()) {
     os << flags_str << " ";
@@ -168,4 +163,3 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
 Method::~Method() = default;
 
 }
-

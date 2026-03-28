@@ -54,11 +54,12 @@ class LIEF_API CoreSigInfo : public Note {
     return note->type() == Note::TYPE::CORE_SIGINFO;
   }
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const CoreSigInfo& note) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CoreSigInfo& note) {
     note.dump(os);
     return os;
   }
+
   protected:
   using Note::Note;
 };

@@ -21,23 +21,24 @@ template<class T>
 class Enum {
   public:
   using Element = T;
-  static constexpr jni::Class kClass {
-    "java/lang/Enum",
-    jni::Method{"ordinal", jni::Return{jint{}}},
-    jni::Method{"name", jni::Return{jstring{}}},
+  static constexpr jni::Class kClass{
+      "java/lang/Enum",
+      jni::Method{"ordinal", jni::Return{jint{}}},
+      jni::Method{"name", jni::Return{jstring{}}},
   };
 
   Enum() = delete;
   Enum(jobject thiz) :
-    thiz_(thiz)
-  {}
+    thiz_(thiz) {}
 
   int ordinal() const {
     return thiz_.template Call<"ordinal">();
   }
 
   std::string name() const {
-    return std::string(jni::LocalString(thiz_.template Call<"name">()).Pin().ToString());
+    return std::string(
+        jni::LocalString(thiz_.template Call<"name">()).Pin().ToString()
+    );
   }
 
   template<typename U>

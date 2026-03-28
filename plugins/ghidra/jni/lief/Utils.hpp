@@ -21,15 +21,15 @@
 namespace lief_jni {
 class Utils {
   public:
-  static constexpr jni::Class kClass {
-    "lief/Utils",
+  static constexpr jni::Class kClass{
+      "lief/Utils",
   };
 
   class Version {
     public:
-    static constexpr jni::Class kClass {
-      "lief/Utils$Version",
-      jni::Constructor{ jlong{}, jlong{}, jlong{}, jlong{} },
+    static constexpr jni::Class kClass{
+        "lief/Utils$Version",
+        jni::Constructor{jlong{}, jlong{}, jlong{}, jlong{}},
     };
   };
 
@@ -43,23 +43,24 @@ class Utils {
     return jni::LocalString(LIEF::extended_version_info()).Release();
   }
 
-  static jobject jni_get_extended_version(JNIEnv* env, jclass/*clazz*/) {
+  static jobject jni_get_extended_version(JNIEnv* env, jclass /*clazz*/) {
     jni::ThreadGuard TG;
     LIEF::lief_version_t version = LIEF::extended_version();
-    return jni::LocalObject<Version::kClass>{
-      (jlong)version.major, (jlong)version.minor, (jlong)version.patch,
-      (jlong)version.id
-    }.Release();
+    return jni::LocalObject<Version::kClass>{(jlong)version.major,
+                                             (jlong)version.minor,
+                                             (jlong)version.patch,
+                                             (jlong)version.id}
+        .Release();
   }
 
 
-  static jobject jni_get_version(JNIEnv* env, jclass/*clazz*/) {
+  static jobject jni_get_version(JNIEnv* env, jclass /*clazz*/) {
     jni::ThreadGuard TG;
     LIEF::lief_version_t version = LIEF::extended_version();
-    return jni::LocalObject<Version::kClass>{
-      (jlong)LIEF_VERSION_MAJOR, (jlong)LIEF_VERSION_MINOR,
-      (jlong)LIEF_VERSION_PATCH, (jlong)0
-    }.Release();
+    return jni::LocalObject<Version::kClass>{(jlong)LIEF_VERSION_MAJOR,
+                                             (jlong)LIEF_VERSION_MINOR,
+                                             (jlong)LIEF_VERSION_PATCH, (jlong)0}
+        .Release();
   }
 
 

@@ -25,8 +25,7 @@ namespace LIEF::MachO {
 SegmentSplitInfo::SegmentSplitInfo(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
   data_offset_{cmd.dataoff},
-  data_size_{cmd.datasize}
-{}
+  data_size_{cmd.datasize} {}
 
 void SegmentSplitInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -34,11 +33,9 @@ void SegmentSplitInfo::accept(Visitor& visitor) const {
 
 std::ostream& SegmentSplitInfo::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("offset={:#08x}, size={:#08x}",
-                     data_offset(), data_size());
+  os << fmt::format("offset={:#08x}, size={:#08x}", data_offset(), data_size());
   return os;
 }
 
 
 }
-

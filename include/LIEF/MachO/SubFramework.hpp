@@ -45,6 +45,7 @@ struct sub_framework_command;
 /// > following structure.
 class LIEF_API SubFramework : public LoadCommand {
   friend class BinaryParser;
+
   public:
   SubFramework() = default;
   SubFramework(const details::sub_framework_command& cmd);

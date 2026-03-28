@@ -37,16 +37,15 @@ class LIEF_API vector_iostream {
   using pos_type = std::streampos;
   using off_type = std::streamoff;
   enum class RELOC_OP {
-    ADD, SUB
+    ADD,
+    SUB,
   };
 
   vector_iostream() = default;
   vector_iostream(std::vector<uint8_t>& ref) :
-    raw_(&ref)
-  {}
+    raw_(&ref) {}
   vector_iostream(bool endian_swap) :
-    endian_swap_(endian_swap)
-  {}
+    endian_swap_(endian_swap) {}
 
   vector_iostream& reserve(size_t size) {
     raw_->reserve(size);
@@ -95,7 +94,9 @@ class LIEF_API vector_iostream {
     return write(other.data());
   }
 
-  template<class T, typename = typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value>::type>
+  template<class T,
+           typename = typename std::enable_if<std::is_standard_layout<T>::value &&
+                                              std::is_trivial<T>::value>::type>
   vector_iostream& write(const T& t) {
     const auto pos = static_cast<size_t>(tellp());
     if (raw_->size() < (pos + sizeof(T))) {
@@ -318,15 +319,13 @@ class ScopeOStream {
 
   explicit ScopeOStream(vector_iostream& stream, uint64_t pos) :
     pos_{stream.tellp()},
-    stream_{stream}
-  {
+    stream_{stream} {
     stream_.seekp(pos);
   }
 
   explicit ScopeOStream(vector_iostream& stream) :
     pos_{stream.tellp()},
-    stream_{stream}
-  {}
+    stream_{stream} {}
 
   ~ScopeOStream() {
     stream_.seekp(pos_);
@@ -348,7 +347,6 @@ class ScopeOStream {
   std::streampos pos_ = 0;
   vector_iostream& stream_;
 };
-
 
 
 }

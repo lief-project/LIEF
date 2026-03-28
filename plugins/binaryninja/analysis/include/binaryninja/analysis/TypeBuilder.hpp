@@ -21,12 +21,12 @@
 namespace analysis_plugin {
 class TypeBuilder {
   public:
-  using cache_t = std::unordered_map<std::string, BinaryNinja::Ref<BinaryNinja::Type>>;
+  using cache_t =
+      std::unordered_map<std::string, BinaryNinja::Ref<BinaryNinja::Type>>;
   static constexpr auto TYPE_PREFIX = "LIEF";
   TypeBuilder() = delete;
   TypeBuilder(BinaryNinja::BinaryView& bv) :
-    bv_(bv)
-  {}
+    bv_(bv) {}
 
   template<class T>
   static constexpr bool is_power_of_2(T x) {
@@ -67,31 +67,33 @@ class TypeBuilder {
 
   BinaryNinja::Ref<BinaryNinja::Type> uleb128(size_t size) {
     if (is_power_of_2(size)) {
-      return BinaryNinja::Type::IntegerType(/*width=*/size, /*sign=*/false, "uleb128");
+      return BinaryNinja::Type::IntegerType(/*width=*/size, /*sign=*/false,
+                                            "uleb128");
     }
     return BinaryNinja::Type::ArrayType(u8("uleb128"), size);
   }
 
   BinaryNinja::Ref<BinaryNinja::Type> sleb128(size_t size) {
     if (is_power_of_2(size)) {
-      return BinaryNinja::Type::IntegerType(/*width=*/size, /*sign=*/false, "sleb128");
+      return BinaryNinja::Type::IntegerType(/*width=*/size, /*sign=*/false,
+                                            "sleb128");
     }
     return BinaryNinja::Type::ArrayType(u8("sleb128"), size);
   }
 
-  BinaryNinja::Ref<BinaryNinja::Type> ptr_t()
-  {
-    return BinaryNinja::Type::IntegerType(bv_.GetAddressSize(), /*sign=*/false, "uintptr_t");
+  BinaryNinja::Ref<BinaryNinja::Type> ptr_t() {
+    return BinaryNinja::Type::IntegerType(bv_.GetAddressSize(), /*sign=*/false,
+                                          "uintptr_t");
   }
 
-  BinaryNinja::Ref<BinaryNinja::Type> void_ptr_t()
-  {
-    return BinaryNinja::Type::PointerType(bv_.GetDefaultArchitecture(), BinaryNinja::Type::VoidType());
+  BinaryNinja::Ref<BinaryNinja::Type> void_ptr_t() {
+    return BinaryNinja::Type::PointerType(bv_.GetDefaultArchitecture(),
+                                          BinaryNinja::Type::VoidType());
   }
 
-  BinaryNinja::Ref<BinaryNinja::Type> make_pointer(
-      BinaryNinja::Ref<BinaryNinja::Type> type, BinaryNinja::Architecture* arch = nullptr)
-  {
+  BinaryNinja::Ref<BinaryNinja::Type>
+      make_pointer(BinaryNinja::Ref<BinaryNinja::Type> type,
+                   BinaryNinja::Architecture* arch = nullptr) {
     BinaryNinja::Architecture* target_arch = arch;
     if (target_arch == nullptr) {
       target_arch = bv_.GetDefaultArchitecture();
@@ -100,9 +102,9 @@ class TypeBuilder {
   }
 
 
-  BinaryNinja::Ref<BinaryNinja::Type> make_const_pointer(
-      BinaryNinja::Ref<BinaryNinja::Type> type, BinaryNinja::Architecture* arch = nullptr)
-  {
+  BinaryNinja::Ref<BinaryNinja::Type>
+      make_const_pointer(BinaryNinja::Ref<BinaryNinja::Type> type,
+                         BinaryNinja::Architecture* arch = nullptr) {
     BinaryNinja::Architecture* target_arch = arch;
     if (target_arch == nullptr) {
       target_arch = bv_.GetDefaultArchitecture();
@@ -110,9 +112,8 @@ class TypeBuilder {
     return BinaryNinja::Type::PointerType(target_arch, type, /*cnst=*/true);
   }
 
-  BinaryNinja::Ref<BinaryNinja::Type> c_str(
-     BinaryNinja::Architecture* arch = nullptr)
-  {
+  BinaryNinja::Ref<BinaryNinja::Type>
+      c_str(BinaryNinja::Architecture* arch = nullptr) {
     BinaryNinja::Architecture* target_arch = arch;
     if (target_arch == nullptr) {
       target_arch = bv_.GetDefaultArchitecture();
@@ -121,8 +122,7 @@ class TypeBuilder {
   }
 
   BinaryNinja::Ref<BinaryNinja::Type>
-    generic_func_ptr_t(BinaryNinja::Architecture* arch = nullptr)
-  {
+      generic_func_ptr_t(BinaryNinja::Architecture* arch = nullptr) {
     using namespace BinaryNinja;
 
     Architecture* target_arch = arch;
@@ -135,17 +135,17 @@ class TypeBuilder {
     Confidence<Ref<Type>> ret_type = Type::VoidType();
     ret_type.SetConfidence(BN_MINIMUM_CONFIDENCE);
 
-    Confidence<Ref<CallingConvention>> CC = bv_.GetDefaultPlatform()->GetDefaultCallingConvention();
+    Confidence<Ref<CallingConvention>> CC =
+        bv_.GetDefaultPlatform()->GetDefaultCallingConvention();
     CC.SetConfidence(BN_MINIMUM_CONFIDENCE);
 
     return Type::PointerType(target_arch, Type::FunctionType(ret_type, CC, {}));
   }
 
   BinaryNinja::Ref<BinaryNinja::Type>
-    make_function(BinaryNinja::Ref<BinaryNinja::Type> ret,
-        std::vector<BinaryNinja::Ref<BinaryNinja::Type>> args,
-        BinaryNinja::Architecture* arch = nullptr)
-  {
+      make_function(BinaryNinja::Ref<BinaryNinja::Type> ret,
+                    std::vector<BinaryNinja::Ref<BinaryNinja::Type>> args,
+                    BinaryNinja::Architecture* arch = nullptr) {
     using namespace BinaryNinja;
 
     Architecture* target_arch = arch;
@@ -156,21 +156,23 @@ class TypeBuilder {
     assert(target_arch != nullptr);
     std::vector<FunctionParameter> params;
     std::transform(args.begin(), args.end(), std::back_inserter(params),
-      [] (Ref<Type> type) {
-        return FunctionParameter(/*name=*/"", type);
-      }
-    );
+                   [](Ref<Type> type) {
+                     return FunctionParameter(/*name=*/"", type);
+                   });
 
-    Confidence<Ref<CallingConvention>> CC = bv_.GetDefaultPlatform()->GetDefaultCallingConvention();
+    Confidence<Ref<CallingConvention>> CC =
+        bv_.GetDefaultPlatform()->GetDefaultCallingConvention();
 
-    return Type::PointerType(target_arch, Type::FunctionType(ret, CC, std::move(params)));
+    return Type::PointerType(target_arch,
+                             Type::FunctionType(ret, CC, std::move(params)));
   }
 
   virtual std::string default_type_src() const {
     return "lief";
   }
 
-  virtual BinaryNinja::Ref<BinaryNinja::Type> get_or_create(const std::string& name);
+  virtual BinaryNinja::Ref<BinaryNinja::Type>
+      get_or_create(const std::string& name);
   virtual BinaryNinja::Ref<BinaryNinja::Type> get(const std::string& name);
 
   template<class T>
@@ -188,11 +190,11 @@ class TypeBuilder {
   }
 
   BinaryNinja::Ref<BinaryNinja::Type>
-    create_struct(BinaryNinja::Structure& S, const std::string& name,
-                  std::optional<std::string> typedef_ = std::nullopt);
+      create_struct(BinaryNinja::Structure& S, const std::string& name,
+                    std::optional<std::string> typedef_ = std::nullopt);
 
-  BinaryNinja::Ref<BinaryNinja::Type> create_typedef(
-      const std::string& name, const std::string& target);
+  BinaryNinja::Ref<BinaryNinja::Type> create_typedef(const std::string& name,
+                                                     const std::string& target);
 
   virtual ~TypeBuilder() = default;
 

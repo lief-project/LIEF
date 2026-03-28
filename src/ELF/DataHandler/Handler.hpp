@@ -37,8 +37,7 @@ class LIEF_API Handler {
 
   static constexpr size_t MAX_SIZE = 4_GB;
   Handler(std::vector<uint8_t> content) :
-    data_(std::move(content))
-  {}
+    data_(std::move(content)) {}
 
   ~Handler() = default;
 
@@ -72,7 +71,8 @@ class LIEF_API Handler {
 
   ok_error_t reserve(uint64_t offset, uint64_t size);
 
-  static result<std::unique_ptr<Handler>> from_stream(std::unique_ptr<BinaryStream>& stream);
+  static result<std::unique_ptr<Handler>>
+      from_stream(std::unique_ptr<BinaryStream>& stream);
 
   private:
   Handler() = default;

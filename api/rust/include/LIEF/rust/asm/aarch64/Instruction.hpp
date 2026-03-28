@@ -25,15 +25,19 @@ class asm_aarch64_Instruction : public asm_Instruction {
   public:
   using lief_t = LIEF::assembly::aarch64::Instruction;
 
-  class it_operands :
-      public ForwardIterator<asm_aarch64_Operand, LIEF::assembly::aarch64::Operand::Iterator>
-  {
+  class it_operands
+    : public ForwardIterator<asm_aarch64_Operand,
+                             LIEF::assembly::aarch64::Operand::Iterator> {
     public:
-    it_operands(const asm_aarch64_Instruction::lief_t& src)
-      : ForwardIterator(src.operands()) { }
+    it_operands(const asm_aarch64_Instruction::lief_t& src) :
+      ForwardIterator(src.operands()) {}
 
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
   uint64_t opcode() const {
@@ -48,5 +52,7 @@ class asm_aarch64_Instruction : public asm_Instruction {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

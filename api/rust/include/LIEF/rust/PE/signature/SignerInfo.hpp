@@ -28,38 +28,56 @@ class PE_SignerInfo : private Mirror<LIEF::PE::SignerInfo> {
   using lief_t = LIEF::PE::SignerInfo;
   using Mirror::Mirror;
 
-  class it_authenticated_attributes :
-      public Iterator<PE_Attribute, LIEF::PE::SignerInfo::it_const_attributes_t>
-  {
+  class it_authenticated_attributes
+    : public Iterator<PE_Attribute, LIEF::PE::SignerInfo::it_const_attributes_t> {
     public:
-    it_authenticated_attributes(const PE_SignerInfo::lief_t& src)
-      : Iterator(src.authenticated_attributes()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_authenticated_attributes(const PE_SignerInfo::lief_t& src) :
+      Iterator(src.authenticated_attributes()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_unauthenticated_attributes :
-      public Iterator<PE_Attribute, LIEF::PE::SignerInfo::it_const_attributes_t>
-  {
+  class it_unauthenticated_attributes
+    : public Iterator<PE_Attribute, LIEF::PE::SignerInfo::it_const_attributes_t> {
     public:
-    it_unauthenticated_attributes(const PE_SignerInfo::lief_t& src)
-      : Iterator(src.unauthenticated_attributes()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_unauthenticated_attributes(const PE_SignerInfo::lief_t& src) :
+      Iterator(src.unauthenticated_attributes()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  uint32_t version() const { return get().version(); }
-  std::string issuer() const { return get().issuer(); }
-  uint32_t digest_algorithm() const { return to_int(get().digest_algorithm()); }
-  uint32_t encryption_algorithm() const { return to_int(get().encryption_algorithm()); }
-  Span serial_number() const { return make_span(get().serial_number()); }
+  uint32_t version() const {
+    return get().version();
+  }
+  std::string issuer() const {
+    return get().issuer();
+  }
+  uint32_t digest_algorithm() const {
+    return to_int(get().digest_algorithm());
+  }
+  uint32_t encryption_algorithm() const {
+    return to_int(get().encryption_algorithm());
+  }
+  Span serial_number() const {
+    return make_span(get().serial_number());
+  }
 
   std::vector<uint8_t> encrypted_digest() const {
     return get().encrypted_digest();
   }
 
   auto cert() const {
-    return details::try_unique<PE_x509>(get().cert()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_x509>(
+        get().cert()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto authenticated_attributes() const {

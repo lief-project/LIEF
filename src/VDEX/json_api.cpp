@@ -20,7 +20,7 @@
 #include "LIEF/VDEX/json.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
-#include "VDEX/json_internal.hpp"
+  #include "VDEX/json_internal.hpp"
 #endif
 
 
@@ -38,5 +38,3 @@ std::string to_json(const Object& v) {
 }
 
 } // namespace LIEF::VDEX
-
-

@@ -54,8 +54,7 @@ class PropertyIt {};
 // ObjC/Metadata.hpp
 // ----------------------------------------------------------------------------
 Metadata::Metadata(std::unique_ptr<details::Metadata>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 std::string Metadata::to_decl(const DeclOpt&) const {
   return "";
@@ -69,11 +68,12 @@ Metadata::protocols_it Metadata::protocols() const {
   return make_empty_iterator<Protocol>();
 }
 
-std::unique_ptr<Class> Metadata::get_class(const std::string&/*name*/) const {
+std::unique_ptr<Class> Metadata::get_class(const std::string& /*name*/) const {
   return nullptr;
 }
 
-std::unique_ptr<Protocol> Metadata::get_protocol(const std::string&/*name*/) const {
+std::unique_ptr<Protocol>
+    Metadata::get_protocol(const std::string& /*name*/) const {
   return nullptr;
 }
 
@@ -83,22 +83,17 @@ Metadata::~Metadata() = default;
 // ObjC/Class.hpp
 // ----------------------------------------------------------------------------
 Class::Iterator::Iterator(std::unique_ptr<details::ClassIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Class::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Class::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Class::Iterator::~Iterator() = default;
 
-bool operator==(const Class::Iterator&,
-                const Class::Iterator&)
-{
+bool operator==(const Class::Iterator&, const Class::Iterator&) {
   return true;
 }
 
@@ -115,8 +110,7 @@ std::unique_ptr<Class> Class::Iterator::operator*() const {
 }
 
 Class::Class(std::unique_ptr<details::Class> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 std::string Class::name() const {
   return "";
@@ -161,22 +155,17 @@ Class::~Class() = default;
 // ObjC/Protocol.hpp
 // ----------------------------------------------------------------------------
 Protocol::Iterator::Iterator(std::unique_ptr<details::ProtocolIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Protocol::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Protocol::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Protocol::Iterator::~Iterator() = default;
 
-bool operator==(const Protocol::Iterator&,
-                const Protocol::Iterator&)
-{
+bool operator==(const Protocol::Iterator&, const Protocol::Iterator&) {
   return true;
 }
 
@@ -193,8 +182,7 @@ std::unique_ptr<Protocol> Protocol::Iterator::operator*() const {
 }
 
 Protocol::Protocol(std::unique_ptr<details::Protocol> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 Protocol::~Protocol() = default;
 
@@ -222,22 +210,17 @@ Protocol::properties_it Protocol::properties() const {
 // ObjC/Property.hpp
 // ----------------------------------------------------------------------------
 Property::Iterator::Iterator(std::unique_ptr<details::PropertyIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Property::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Property::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Property::Iterator::~Iterator() = default;
 
-bool operator==(const Property::Iterator&,
-                const Property::Iterator&)
-{
+bool operator==(const Property::Iterator&, const Property::Iterator&) {
   return true;
 }
 
@@ -254,8 +237,7 @@ std::unique_ptr<Property> Property::Iterator::operator*() const {
 }
 
 Property::Property(std::unique_ptr<details::Property> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 Property::~Property() = default;
 
@@ -272,22 +254,17 @@ std::string Property::attribute() const {
 // ObjC/Method.hpp
 // ----------------------------------------------------------------------------
 Method::Iterator::Iterator(std::unique_ptr<details::MethodIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Method::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Method::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 Method::Iterator::~Iterator() = default;
 
-bool operator==(const Method::Iterator&,
-                const Method::Iterator&)
-{
+bool operator==(const Method::Iterator&, const Method::Iterator&) {
   return true;
 }
 
@@ -304,8 +281,7 @@ std::unique_ptr<Method> Method::Iterator::operator*() const {
 }
 
 Method::Method(std::unique_ptr<details::Method> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 Method::~Method() = default;
 
@@ -329,22 +305,17 @@ bool Method::is_instance() const {
 // ObjC/IVar.hpp
 // ----------------------------------------------------------------------------
 IVar::Iterator::Iterator(std::unique_ptr<details::IVarIt>) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 IVar::Iterator::Iterator(const Iterator&) :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 IVar::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr)
-{}
+  impl_(nullptr) {}
 
 IVar::Iterator::~Iterator() = default;
 
-bool operator==(const IVar::Iterator&,
-                const IVar::Iterator&)
-{
+bool operator==(const IVar::Iterator&, const IVar::Iterator&) {
   return true;
 }
 
@@ -361,8 +332,7 @@ std::unique_ptr<IVar> IVar::Iterator::operator*() const {
 }
 
 IVar::IVar(std::unique_ptr<details::IVar> impl) :
-  impl_(std::move(impl))
-{}
+  impl_(std::move(impl)) {}
 
 IVar::~IVar() = default;
 

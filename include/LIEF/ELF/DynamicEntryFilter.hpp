@@ -32,13 +32,11 @@ class LIEF_API DynamicEntryFilter : public DynamicEntry {
   public:
   using DynamicEntry::DynamicEntry;
   DynamicEntryFilter() :
-    DynamicEntry(DynamicEntry::TAG::FILTER, 0)
-  {}
+    DynamicEntry(DynamicEntry::TAG::FILTER, 0) {}
 
   DynamicEntryFilter(std::string name) :
     DynamicEntry(DynamicEntry::TAG::FILTER, 0),
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
 
   DynamicEntryFilter& operator=(const DynamicEntryFilter&) = default;
   DynamicEntryFilter(const DynamicEntryFilter&) = default;

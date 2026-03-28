@@ -18,7 +18,7 @@
 #include "LIEF/MachO.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
-#include "MachO/json_internal.hpp"
+  #include "MachO/json_internal.hpp"
 #endif
 
 
@@ -36,4 +36,3 @@ std::string to_json(const Object& v) {
 }
 
 } // namespace LIEF::MachO
-

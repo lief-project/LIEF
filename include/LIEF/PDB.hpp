@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef  LIEF_PDB_H
-#define  LIEF_PDB_H
+#ifndef LIEF_PDB_H
+#define LIEF_PDB_H
 #include <LIEF/PDB/CompilationUnit.hpp>
 #include <LIEF/PDB/Function.hpp>
 #include <LIEF/PDB/PublicSymbol.hpp>

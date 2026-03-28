@@ -21,8 +21,7 @@
 namespace LIEF::COFF {
 
 std::unique_ptr<AuxiliaryFile>
-  AuxiliaryFile::parse(const std::vector<uint8_t>& payload)
-{
+    AuxiliaryFile::parse(const std::vector<uint8_t>& payload) {
   SpanStream stream(payload);
   auto file = stream.read_string();
   if (!file) {

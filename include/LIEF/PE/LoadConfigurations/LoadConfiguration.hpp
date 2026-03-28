@@ -42,7 +42,8 @@ class VolatileMetadata;
 ///
 /// This structure is frequently updated by Microsoft to add new metadata.
 ///
-/// Reference: https://github.com/MicrosoftDocs/sdk-api/blob/cbeab4d371e8bc7e352c4d3a4c5819caa08c6a1c/sdk-api-src/content/winnt/ns-winnt-image_load_config_directory64.md#L2
+/// Reference:
+/// https://github.com/MicrosoftDocs/sdk-api/blob/cbeab4d371e8bc7e352c4d3a4c5819caa08c6a1c/sdk-api-src/content/winnt/ns-winnt-image_load_config_directory64.md#L2
 class LIEF_API LoadConfiguration : public Object {
   public:
   friend class Parser;
@@ -114,12 +115,14 @@ class LIEF_API LoadConfiguration : public Object {
   using it_const_guard_functions = const_ref_iterator<const guard_functions_t&>;
 
   using dynamic_relocations_t = std::vector<std::unique_ptr<DynamicRelocation>>;
-  using it_dynamic_relocations_t = ref_iterator<dynamic_relocations_t&, DynamicRelocation*>;
-  using it_const_dynamic_relocations_t = const_ref_iterator<const dynamic_relocations_t&, const DynamicRelocation*>;
+  using it_dynamic_relocations_t =
+      ref_iterator<dynamic_relocations_t&, DynamicRelocation*>;
+  using it_const_dynamic_relocations_t =
+      const_ref_iterator<const dynamic_relocations_t&, const DynamicRelocation*>;
 
   template<class PE_T>
-  static LIEF_LOCAL
-    std::unique_ptr<LoadConfiguration> parse(Parser& ctx, BinaryStream& stream);
+  static LIEF_LOCAL std::unique_ptr<LoadConfiguration> parse(Parser& ctx,
+                                                             BinaryStream& stream);
 
   LoadConfiguration();
 
@@ -524,17 +527,20 @@ class LIEF_API LoadConfiguration : public Object {
     return *this;
   }
 
-  LoadConfiguration& critical_section_default_timeout(uint32_t critical_section_default_timeout) {
+  LoadConfiguration&
+      critical_section_default_timeout(uint32_t critical_section_default_timeout) {
     critical_section_default_timeout_ = critical_section_default_timeout;
     return *this;
   }
 
-  LoadConfiguration& decommit_free_block_threshold(uint64_t decommit_free_block_threshold) {
+  LoadConfiguration&
+      decommit_free_block_threshold(uint64_t decommit_free_block_threshold) {
     decommit_free_block_threshold_ = decommit_free_block_threshold;
     return *this;
   }
 
-  LoadConfiguration& decommit_total_free_threshold(uint64_t decommit_total_free_threshold) {
+  LoadConfiguration&
+      decommit_total_free_threshold(uint64_t decommit_total_free_threshold) {
     decommit_total_free_threshold_ = decommit_total_free_threshold;
     return *this;
   }
@@ -604,7 +610,8 @@ class LIEF_API LoadConfiguration : public Object {
     return *this;
   }
 
-  LoadConfiguration& guard_cf_dispatch_function_pointer(uint64_t dispatch_pointer) {
+  LoadConfiguration&
+      guard_cf_dispatch_function_pointer(uint64_t dispatch_pointer) {
     guard_cf_dispatch_function_pointer_ = dispatch_pointer;
     return *this;
   }
@@ -689,7 +696,8 @@ class LIEF_API LoadConfiguration : public Object {
     return *this;
   }
 
-  LoadConfiguration& guard_rf_verify_stackpointer_function_pointer(uint64_t value) {
+  LoadConfiguration&
+      guard_rf_verify_stackpointer_function_pointer(uint64_t value) {
     guardrf_verify_stackpointer_function_pointer_ = value;
     return *this;
   }
@@ -760,40 +768,40 @@ class LIEF_API LoadConfiguration : public Object {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const LoadConfiguration& config)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const LoadConfiguration& config) {
     os << config.to_string();
     return os;
   }
 
   /// \private
-  LIEF_LOCAL static ok_error_t parse_seh_table(
-    Parser& ctx, BinaryStream& stream, LoadConfiguration& config);
+  LIEF_LOCAL static ok_error_t parse_seh_table(Parser& ctx, BinaryStream& stream,
+                                               LoadConfiguration& config);
 
   /// \private
-  LIEF_LOCAL static ok_error_t parse_guard_functions(
-    Parser& ctx, BinaryStream& stream, LoadConfiguration& config,
-    size_t count, guard_functions_t LoadConfiguration::* dst);
+  LIEF_LOCAL static ok_error_t
+      parse_guard_functions(Parser& ctx, BinaryStream& stream,
+                            LoadConfiguration& config, size_t count,
+                            guard_functions_t LoadConfiguration::* dst);
 
   /// \private
-  LIEF_LOCAL static ok_error_t parse_dyn_relocs(
-    Parser& ctx, LoadConfiguration& config);
+  LIEF_LOCAL static ok_error_t parse_dyn_relocs(Parser& ctx,
+                                                LoadConfiguration& config);
 
   /// \private
   template<uint8_t version, class PE_T>
-  LIEF_LOCAL static ok_error_t parse_dyn_relocs_entries(
-    Parser& ctx, BinaryStream& stream, LoadConfiguration& config,
-    size_t size);
+  LIEF_LOCAL static ok_error_t
+      parse_dyn_relocs_entries(Parser& ctx, BinaryStream& stream,
+                               LoadConfiguration& config, size_t size);
 
   /// \private
   template<class PE_T>
-  LIEF_LOCAL static ok_error_t parse_enclave_config(
-    Parser& ctx, LoadConfiguration& config);
+  LIEF_LOCAL static ok_error_t parse_enclave_config(Parser& ctx,
+                                                    LoadConfiguration& config);
 
   /// \private
-  LIEF_LOCAL static ok_error_t parse_volatile_metadata(
-    Parser& ctx, LoadConfiguration& config);
+  LIEF_LOCAL static ok_error_t parse_volatile_metadata(Parser& ctx,
+                                                       LoadConfiguration& config);
 
   protected:
   uint32_t characteristics_ = 0;
@@ -816,7 +824,7 @@ class LIEF_API LoadConfiguration : public Object {
   uint64_t process_affinity_mask_ = 0;
   uint32_t process_heap_flags_ = 0;
   uint16_t csd_version_ = 0;
-  uint16_t reserved1_ = 0;  // named DependentLoadFlags in recent headers
+  uint16_t reserved1_ = 0; // named DependentLoadFlags in recent headers
   uint64_t editlist_ = 0;
   uint64_t security_cookie_ = 0;
 

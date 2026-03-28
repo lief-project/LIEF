@@ -21,8 +21,7 @@
 namespace LIEF::COFF {
 
 std::unique_ptr<AuxiliaryWeakExternal>
-  AuxiliaryWeakExternal::parse(const std::vector<uint8_t>& payload)
-{
+    AuxiliaryWeakExternal::parse(const std::vector<uint8_t>& payload) {
   SpanStream stream(payload);
 
   auto TagIndex = stream.read<uint32_t>();
@@ -43,15 +42,13 @@ std::unique_ptr<AuxiliaryWeakExternal>
     return std::make_unique<AuxiliaryWeakExternal>();
   }
 
-  return std::make_unique<AuxiliaryWeakExternal>(
-    *TagIndex, *Characteristics, std::move(padding)
-  );
+  return std::make_unique<AuxiliaryWeakExternal>(*TagIndex, *Characteristics,
+                                                 std::move(padding));
 }
 
 const char* to_string(AuxiliaryWeakExternal::CHARACTERISTICS e) {
   switch (e) {
-    default:
-      return "UNKNOWN";
+    default: return "UNKNOWN";
     case AuxiliaryWeakExternal::CHARACTERISTICS::SEARCH_NOLIBRARY:
       return "SEARCH_NOLIBRARY";
     case AuxiliaryWeakExternal::CHARACTERISTICS::SEARCH_LIBRARY:
@@ -68,7 +65,8 @@ std::string AuxiliaryWeakExternal::to_string() const {
   std::ostringstream oss;
   oss << "AuxiliaryWeakExternal {\n";
   oss << fmt::format("  Symbol index: {}\n", sym_idx());
-  oss << fmt::format("  Characteristics: {} ({})\n", LIEF::COFF::to_string(characteristics()),
+  oss << fmt::format("  Characteristics: {} ({})\n",
+                     LIEF::COFF::to_string(characteristics()),
                      (int)characteristics());
   oss << "}\n";
   return oss.str();

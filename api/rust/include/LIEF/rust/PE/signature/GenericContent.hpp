@@ -34,7 +34,7 @@ class PE_GenericContent : public PE_ContentInfo_Content {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
-
-

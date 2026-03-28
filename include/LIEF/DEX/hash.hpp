@@ -46,16 +46,16 @@ class LIEF_API Hash : public LIEF::Hash {
   using LIEF::Hash::visit;
 
   public:
-  void visit(const File& file)          override;
-  void visit(const Header& header)      override;
-  void visit(const Class& cls)          override;
-  void visit(const Field& field)        override;
-  void visit(const Method& method)      override;
+  void visit(const File& file) override;
+  void visit(const Header& header) override;
+  void visit(const Class& cls) override;
+  void visit(const Field& field) override;
+  void visit(const Method& method) override;
   void visit(const CodeInfo& code_info) override;
-  void visit(const Type& type)          override;
-  void visit(const Prototype& type)     override;
-  void visit(const MapItem& item)       override;
-  void visit(const MapList& list)       override;
+  void visit(const Type& type) override;
+  void visit(const Prototype& type) override;
+  void visit(const MapItem& item) override;
+  void visit(const MapList& list) override;
 
   ~Hash() override;
 };

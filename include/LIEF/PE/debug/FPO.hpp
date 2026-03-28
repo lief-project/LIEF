@@ -27,7 +27,6 @@ namespace PE {
 /// This class represents the `IMAGE_DEBUG_TYPE_FPO` debug entry
 class LIEF_API FPO : public Debug {
   public:
-
   enum class FRAME_TYPE {
     FPO = 0,
     TRAP = 1,
@@ -70,9 +69,8 @@ class LIEF_API FPO : public Debug {
 
     std::string to_string() const;
 
-    friend LIEF_API
-      std::ostream& operator<<(std::ostream& os, const entry_t& entry)
-    {
+    friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                             const entry_t& entry) {
       os << entry.to_string();
       return os;
     }
@@ -82,12 +80,11 @@ class LIEF_API FPO : public Debug {
   using it_entries = ref_iterator<entries_t&>;
   using it_const_entries = const_ref_iterator<const entries_t&>;
 
-  static std::unique_ptr<FPO>
-    parse(const details::pe_debug& hdr, Section* section, span<uint8_t> payload);
+  static std::unique_ptr<FPO> parse(const details::pe_debug& hdr, Section* section,
+                                    span<uint8_t> payload);
 
   FPO(const details::pe_debug& hdr, Section* section) :
-    Debug(hdr, section)
-  {}
+    Debug(hdr, section) {}
 
   FPO(const FPO& other) = default;
   FPO& operator=(const FPO& other) = default;

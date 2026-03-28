@@ -4,9 +4,9 @@
 
 // Bitfield support has been added in BinaryNinja 5.2 (Io)
 #if BN_VERSION_MAJOR >= 5 && BN_VERSION_MINOR >= 2
-#define BN_BITFIELD_SUPPORT 1
+  #define BN_BITFIELD_SUPPORT 1
 #else
-#define BN_BITFIELD_SUPPORT 0
+  #define BN_BITFIELD_SUPPORT 0
 #endif
 
 namespace binaryninja::api_compat {

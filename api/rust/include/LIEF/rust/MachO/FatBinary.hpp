@@ -65,11 +65,17 @@ class MachO_FatBinary : public Mirror<LIEF::MachO::FatBinary> {
     return details::try_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(path));
   }
 
-  static auto parse_with_config(std::string path, const MachO_ParserConfig& config) { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(path, config.conf()));
+  static auto parse_with_config(
+      std::string path, const MachO_ParserConfig& config
+  ) { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<MachO_FatBinary>(
+        LIEF::MachO::Parser::parse(path, config.conf())
+    );
   }
 
-  uint32_t size() const { return get().size(); }
+  uint32_t size() const {
+    return get().size();
+  }
 
   std::unique_ptr<MachO_Binary> binary_at(uint32_t index) const {
     if (auto* bin = get().at(index)) {

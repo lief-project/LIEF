@@ -48,10 +48,10 @@ bool is_oat(const std::vector<uint8_t>& raw) {
 bool is_oat(const ELF::Binary& elf) {
   if (const auto* oatdata = elf.get_dynamic_symbol("oatdata")) {
     span<const uint8_t> header =
-      elf.get_content_from_virtual_address(oatdata->value(), sizeof(details::oat_magic));
+        elf.get_content_from_virtual_address(oatdata->value(),
+                                             sizeof(details::oat_magic));
     return std::equal(std::begin(header), std::end(header),
                       std::begin(details::oat_magic));
-
   }
   return false;
 }
@@ -81,35 +81,34 @@ oat_version_t version(const std::vector<uint8_t>& raw) {
 
 oat_version_t version(const ELF::Binary& elf) {
   if (const auto* oatdata = elf.get_dynamic_symbol("oatdata")) {
-    span<const uint8_t> header =
-      elf.get_content_from_virtual_address(oatdata->value() + sizeof(details::oat_magic),
-                                           sizeof(details::oat_version));
+    span<const uint8_t> header = elf.get_content_from_virtual_address(
+        oatdata->value() + sizeof(details::oat_magic), sizeof(details::oat_version)
+    );
 
     if (header.size() != sizeof(details::oat_version)) {
       return 0;
     }
-    return std::stoul(std::string(reinterpret_cast<const char*>(header.data()), 3));
+    return std::stoul(std::string(reinterpret_cast<const char*>(header.data()),
+                                  3));
   }
   return 0;
 }
 
 Android::ANDROID_VERSIONS android_version(oat_version_t version) {
-  CONST_MAP(oat_version_t, Android::ANDROID_VERSIONS, 6) oat2android {
-    { 64,  Android::ANDROID_VERSIONS::VERSION_601 },
-    { 79,  Android::ANDROID_VERSIONS::VERSION_700 },
-    { 88,  Android::ANDROID_VERSIONS::VERSION_712 },
-    { 124, Android::ANDROID_VERSIONS::VERSION_800 },
-    { 131, Android::ANDROID_VERSIONS::VERSION_810 },
-    { 138, Android::ANDROID_VERSIONS::VERSION_900 },
+  CONST_MAP(oat_version_t, Android::ANDROID_VERSIONS, 6)
+  oat2android{
+      {64, Android::ANDROID_VERSIONS::VERSION_601},
+      {79, Android::ANDROID_VERSIONS::VERSION_700},
+      {88, Android::ANDROID_VERSIONS::VERSION_712},
+      {124, Android::ANDROID_VERSIONS::VERSION_800},
+      {131, Android::ANDROID_VERSIONS::VERSION_810},
+      {138, Android::ANDROID_VERSIONS::VERSION_900},
 
   };
-  auto   it  = oat2android.lower_bound(version);
-  return it == oat2android.end() ?
-               Android::ANDROID_VERSIONS::VERSION_UNKNOWN : it->second;
+  auto it = oat2android.lower_bound(version);
+  return it == oat2android.end() ? Android::ANDROID_VERSIONS::VERSION_UNKNOWN :
+                                   it->second;
 }
 
 
-
-
 } // namespace LIEF::OAT
-

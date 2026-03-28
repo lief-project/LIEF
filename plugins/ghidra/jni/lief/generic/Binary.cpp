@@ -23,26 +23,15 @@
 namespace lief_jni::generic {
 
 int Binary::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "getImageBase",
-      "()J",
-      &jni_get_imagebase
-    ),
-    make(
-      "offsetToVirtualAddress",
-      "(JJ)Ljava/util/OptionalLong;",
-      &jni_offset_to_virtual_address
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("getImageBase", "()J", &jni_get_imagebase),
+      make("offsetToVirtualAddress", "(JJ)Ljava/util/OptionalLong;",
+           &jni_offset_to_virtual_address),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   Relocation::register_natives(env);
 

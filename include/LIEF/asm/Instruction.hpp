@@ -38,10 +38,10 @@ class InstructionIt;
 class LIEF_API Instruction {
   public:
   /// **Lazy-forward** iterator that outputs Instruction
-  class Iterator final :
-    public iterator_facade_base<Iterator, std::forward_iterator_tag, std::unique_ptr<Instruction>,
-                                std::ptrdiff_t, Instruction*, std::unique_ptr<Instruction>>
-  {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::forward_iterator_tag,
+                                  std::unique_ptr<Instruction>, std::ptrdiff_t,
+                                  Instruction*, std::unique_ptr<Instruction>> {
     public:
     using implementation = details::InstructionIt;
 
@@ -71,11 +71,12 @@ class LIEF_API Instruction {
     private:
     std::unique_ptr<details::InstructionIt> impl_;
   };
+
   public:
   /// Memory operation flags
   enum class MemoryAccess : uint8_t {
-    NONE  = 0,
-    READ  = 1 << 0,
+    NONE = 0,
+    READ = 1 << 0,
     WRITE = 1 << 1,
     READ_WRITE = READ | WRITE,
   };
@@ -184,7 +185,8 @@ class LIEF_API Instruction {
     return nullptr;
   }
 
-  friend LIEF_API std::ostream& operator<<(std::ostream& os, const Instruction& inst) {
+  friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                           const Instruction& inst) {
     os << inst.to_string();
     return os;
   }
@@ -193,7 +195,7 @@ class LIEF_API Instruction {
 
   /// \private
   static LIEF_LOCAL std::unique_ptr<Instruction>
-    create(std::unique_ptr<details::Instruction> impl);
+      create(std::unique_ptr<details::Instruction> impl);
 
   /// \private
   LIEF_LOCAL const details::Instruction& impl() const {

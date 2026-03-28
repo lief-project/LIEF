@@ -107,7 +107,4 @@ void Hash::visit(const Method& meth) {
 }
 
 
-
 } // namespace LIEF::OAT
-
-

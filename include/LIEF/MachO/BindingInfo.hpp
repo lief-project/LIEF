@@ -32,8 +32,9 @@ class DyldChainedFixupsCreator;
 /// Class that provides an interface over a *binding* operation.
 ///
 /// This class does not represent a structure that exists in the Mach-O format
-/// specifications but it provides a *view* of a binding operation that is performed
-/// by the Dyld binding bytecode (`LC_DYLD_INFO`) or the Dyld chained fixups (`DYLD_CHAINED_FIXUPS`)
+/// specifications but it provides a *view* of a binding operation that is
+/// performed by the Dyld binding bytecode (`LC_DYLD_INFO`) or the Dyld chained
+/// fixups (`DYLD_CHAINED_FIXUPS`)
 ///
 /// See: LIEF::MachO::ChainedBindingInfo, LIEF::MachO::DyldBindingInfo
 class LIEF_API BindingInfo : public Object {
@@ -145,7 +146,8 @@ class LIEF_API BindingInfo : public Object {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<BindingInfo, T>::value, "Require BindingInfo inheritance");
+    static_assert(std::is_base_of<BindingInfo, T>::value,
+                  "Require BindingInfo inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }
@@ -157,16 +159,17 @@ class LIEF_API BindingInfo : public Object {
     return const_cast<T*>(static_cast<const BindingInfo*>(this)->cast<T>());
   }
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const BindingInfo& binding_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const BindingInfo& binding_info);
 
   protected:
   SegmentCommand* segment_ = nullptr;
-  Symbol*         symbol_ = nullptr;
-  int32_t         library_ordinal_ = 0;
-  int64_t         addend_ = 0;
-  bool            is_weak_import_ = false;
-  DylibCommand*   library_ = nullptr;
-  uint64_t        address_ = 0;
+  Symbol* symbol_ = nullptr;
+  int32_t library_ordinal_ = 0;
+  int64_t addend_ = 0;
+  bool is_weak_import_ = false;
+  DylibCommand* library_ = nullptr;
+  uint64_t address_ = 0;
 };
 
 }

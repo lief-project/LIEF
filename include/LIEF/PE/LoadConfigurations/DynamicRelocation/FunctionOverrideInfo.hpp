@@ -34,7 +34,8 @@ class LIEF_API FunctionOverrideInfo {
   public:
   using relocations_t = std::vector<std::unique_ptr<Relocation>>;
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
   FunctionOverrideInfo() = default;
   FunctionOverrideInfo(uint32_t original_rva, uint32_t bdd_offset,
@@ -100,9 +101,8 @@ class LIEF_API FunctionOverrideInfo {
     return *this;
   }
 
-  friend LIEF_API
-    std::ostream& operator<<(std::ostream& os, const FunctionOverrideInfo& info)
-  {
+  friend LIEF_API std::ostream& operator<<(std::ostream& os,
+                                           const FunctionOverrideInfo& info) {
     os << info.to_string();
     return os;
   }
@@ -110,8 +110,8 @@ class LIEF_API FunctionOverrideInfo {
   ~FunctionOverrideInfo();
 
   /// \private
-  LIEF_LOCAL static
-    std::unique_ptr<FunctionOverrideInfo> parse(Parser& ctx, SpanStream& strm);
+  LIEF_LOCAL static std::unique_ptr<FunctionOverrideInfo> parse(Parser& ctx,
+                                                                SpanStream& strm);
 
   private:
   uint32_t original_rva_ = 0;

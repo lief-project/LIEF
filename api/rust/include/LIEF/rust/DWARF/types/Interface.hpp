@@ -25,5 +25,7 @@ class DWARF_types_Interface : public DWARF_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

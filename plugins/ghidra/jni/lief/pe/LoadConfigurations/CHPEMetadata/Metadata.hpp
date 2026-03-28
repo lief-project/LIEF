@@ -22,16 +22,18 @@
 
 namespace lief_jni::pe {
 
-class CHPEMetadata : public JNI<CHPEMetadata, canbe_unique<LIEF::PE::CHPEMetadata>> {
+class CHPEMetadata
+  : public JNI<CHPEMetadata, canbe_unique<LIEF::PE::CHPEMetadata>> {
   public:
   using JNI::JNI;
   using lief_t = LIEF::PE::CHPEMetadata;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/CHPEMetadata",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/pe/CHPEMetadata",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static jobject create(lief_t& impl);
 

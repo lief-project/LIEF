@@ -21,17 +21,28 @@ class MachO_ChainedBindingInfo : public MachO_BindingInfo {
   public:
   using MachO_BindingInfo::address;
   using lief_t = LIEF::MachO::ChainedBindingInfo;
-  MachO_ChainedBindingInfo(const lief_t& base) : MachO_BindingInfo(base) {}
+  MachO_ChainedBindingInfo(const lief_t& base) :
+    MachO_BindingInfo(base) {}
 
-  auto format() const { return to_int(impl().format()); };
-  auto ptr_format() const { return to_int(impl().ptr_format()); };
-  uint32_t offset() const { return impl().offset(); };
-  auto sign_extended_addend() const { return impl().sign_extended_addend(); }
+  auto format() const {
+    return to_int(impl().format());
+  };
+  auto ptr_format() const {
+    return to_int(impl().ptr_format());
+  };
+  uint32_t offset() const {
+    return impl().offset();
+  };
+  auto sign_extended_addend() const {
+    return impl().sign_extended_addend();
+  }
 
   static bool classof(const MachO_BindingInfo& binding) {
     return lief_t::classof(&binding.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

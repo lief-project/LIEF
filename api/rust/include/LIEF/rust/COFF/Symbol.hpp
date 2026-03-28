@@ -26,16 +26,21 @@ class COFF_Section;
 class COFF_Symbol : public AbstractSymbol {
   public:
   using lief_t = LIEF::COFF::Symbol;
-  COFF_Symbol(const lief_t& obj) : AbstractSymbol(obj) {}
+  COFF_Symbol(const lief_t& obj) :
+    AbstractSymbol(obj) {}
 
-  class it_auxiliary_symbols :
-      public Iterator<COFF_AuxiliarySymbol, LIEF::COFF::Symbol::it_const_auxiliary_symbols_t>
-  {
+  class it_auxiliary_symbols
+    : public Iterator<COFF_AuxiliarySymbol,
+                      LIEF::COFF::Symbol::it_const_auxiliary_symbols_t> {
     public:
-    it_auxiliary_symbols(const COFF_Symbol::lief_t& src)
-      : Iterator(src.auxiliary_symbols()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_auxiliary_symbols(const COFF_Symbol::lief_t& src) :
+      Iterator(src.auxiliary_symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
   auto storage_class() const {
@@ -99,5 +104,7 @@ class COFF_Symbol : public AbstractSymbol {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

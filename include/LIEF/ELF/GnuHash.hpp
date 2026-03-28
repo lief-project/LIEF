@@ -52,8 +52,7 @@ class LIEF_API GnuHash : public Object {
     shift2_{shift2},
     bloom_filters_{std::move(bloom_filters)},
     buckets_{std::move(buckets)},
-    hash_values_{std::move(hash_values)}
-  {}
+    hash_values_{std::move(hash_values)} {}
 
   GnuHash& operator=(const GnuHash& copy) = default;
   GnuHash(const GnuHash& copy) = default;
@@ -124,10 +123,12 @@ class LIEF_API GnuHash : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const GnuHash& gnuhash);
 
   template<class ELF_T>
-  static LIEF_LOCAL std::unique_ptr<GnuHash> parse(SpanStream& strm, uint64_t dynsymcount);
+  static LIEF_LOCAL std::unique_ptr<GnuHash> parse(SpanStream& strm,
+                                                   uint64_t dynsymcount);
 
   template<class ELF_T>
   static LIEF_LOCAL result<uint32_t> nb_symbols(SpanStream& strm);
@@ -138,7 +139,7 @@ class LIEF_API GnuHash : public Object {
 
   private:
   uint32_t symbol_index_ = 0;
-  uint32_t shift2_       = 0;
+  uint32_t shift2_ = 0;
 
   std::vector<uint64_t> bloom_filters_;
   std::vector<uint32_t> buckets_;

@@ -22,9 +22,7 @@ class DWARF_editor_PointerType : public DWARF_editor_Type {
   using lief_t = LIEF::dwarf::editor::PointerType;
 
   auto pointer_to() const {
-    return details::try_unique<DWARF_editor_PointerType>(
-      get().pointer_to()
-    );
+    return details::try_unique<DWARF_editor_PointerType>(get().pointer_to());
   }
 
   static bool classof(const DWARF_editor_Type& type) {
@@ -32,5 +30,7 @@ class DWARF_editor_PointerType : public DWARF_editor_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

@@ -20,19 +20,15 @@
 
 namespace details {
 inline std::vector<uint16_t>
-  to_vector(const LIEF::pdb::BuildMetadata::version_t& v)
-{
-  return {v.major, v.minor, v.build, v.qfe };
+    to_vector(const LIEF::pdb::BuildMetadata::version_t& v) {
+  return {v.major, v.minor, v.build, v.qfe};
 }
 
 
 inline std::vector<std::string>
-  to_vector(LIEF::pdb::BuildMetadata::build_info_t v)
-{
-  return {
-    std::move(v.cwd), std::move(v.build_tool), std::move(v.source_file),
-    std::move(v.pdb), std::move(v.command_line)
-  };
+    to_vector(LIEF::pdb::BuildMetadata::build_info_t v) {
+  return {std::move(v.cwd), std::move(v.build_tool), std::move(v.source_file),
+          std::move(v.pdb), std::move(v.command_line)};
 }
 }
 
@@ -49,12 +45,20 @@ class PDB_BuildMetadata : private Mirror<LIEF::pdb::BuildMetadata> {
     return details::to_vector(get().backend_version());
   }
 
-  std::string version() const { return get().version(); }
+  std::string version() const {
+    return get().version();
+  }
 
-  auto language() const { return to_int(get().language()); }
-  auto target_cpu() const { return to_int(get().target_cpu()); }
+  auto language() const {
+    return to_int(get().language());
+  }
+  auto target_cpu() const {
+    return to_int(get().target_cpu());
+  }
 
-  auto env() const { return get().env(); }
+  auto env() const {
+    return get().env();
+  }
 
   auto build_info() const {
     if (auto opt = get().build_info()) {
@@ -63,5 +67,7 @@ class PDB_BuildMetadata : private Mirror<LIEF::pdb::BuildMetadata> {
     return std::vector<std::string>{};
   }
 
-  std::string to_string() const { return get().to_string(); }
+  std::string to_string() const {
+    return get().to_string();
+  }
 };

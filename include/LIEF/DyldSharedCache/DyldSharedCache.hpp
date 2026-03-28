@@ -39,7 +39,6 @@ class DyldSharedCache;
 /// This class represents a dyld shared cache file.
 class LIEF_API DyldSharedCache {
   public:
-
   /// This enum wraps the dyld's git tags for which the structure of
   /// dyld shared cache evolved
   enum class VERSION : uint32_t {
@@ -63,23 +62,23 @@ class LIEF_API DyldSharedCache {
 
   /// Platforms supported by the dyld shared cache
   enum class DYLD_TARGET_PLATFORM : uint32_t {
-    UNKNOWN             = 0,
-    MACOS               = 1,
-    IOS                 = 2,
-    TVOS                = 3,
-    WATCHOS             = 4,
-    BRIDGEOS            = 5,
-    IOSMAC              = 6,
-    IOS_SIMULATOR       = 7,
-    TVOS_SIMULATOR      = 8,
-    WATCHOS_SIMULATOR   = 9,
-    DRIVERKIT           = 10,
-    VISIONOS            = 11,
-    VISIONOS_SIMULATOR  = 12,
-    FIRMWARE            = 13,
-    SEPOS               = 14,
+    UNKNOWN = 0,
+    MACOS = 1,
+    IOS = 2,
+    TVOS = 3,
+    WATCHOS = 4,
+    BRIDGEOS = 5,
+    IOSMAC = 6,
+    IOS_SIMULATOR = 7,
+    TVOS_SIMULATOR = 8,
+    WATCHOS_SIMULATOR = 9,
+    DRIVERKIT = 10,
+    VISIONOS = 11,
+    VISIONOS_SIMULATOR = 12,
+    FIRMWARE = 13,
+    SEPOS = 14,
 
-    ANY                = 0xFFFFFFFF
+    ANY = 0xFFFFFFFF,
   };
 
   /// Architecture supported by the dyld shared cache
@@ -118,11 +117,13 @@ class LIEF_API DyldSharedCache {
                                                     const std::string& arch = "");
 
   /// See the \ref load functions for the details
-  static std::unique_ptr<DyldSharedCache> from_files(const std::vector<std::string>& path);
+  static std::unique_ptr<DyldSharedCache>
+      from_files(const std::vector<std::string>& path);
 
   /// Filename of the dyld shared file associated with this object.
   ///
-  /// For instance: `dyld_shared_cache_arm64e, dyld_shared_cache_arm64e.62.dyldlinkedit`
+  /// For instance: `dyld_shared_cache_arm64e,
+  /// dyld_shared_cache_arm64e.62.dyldlinkedit`
   std::string filename() const;
 
   /// Version of dyld used by this cache
@@ -188,8 +189,8 @@ class LIEF_API DyldSharedCache {
   /// ```
   mapping_info_iterator mapping_info() const;
 
-  /// Return an interator over the subcaches associated with this (main) dyld shared
-  /// cache.
+  /// Return an interator over the subcaches associated with this (main) dyld
+  /// shared cache.
   ///
   /// This iterator implements the *random access* trait. Thus, one can use
   /// iterator_range::size, iterator_range::at, iterator_range::operator[] to
@@ -218,7 +219,8 @@ class LIEF_API DyldSharedCache {
 
   /// Try to find the DyldSharedCache associated with the filename given
   /// in the first parameter.
-  std::unique_ptr<DyldSharedCache> find_subcache(const std::string& filename) const;
+  std::unique_ptr<DyldSharedCache>
+      find_subcache(const std::string& filename) const;
 
   /// Convert the given virtual address into an offset.
   ///
@@ -240,7 +242,8 @@ class LIEF_API DyldSharedCache {
   ///
   /// It is **highly** recommended to enable this function when processing
   /// a dyld shared cache several times or when extracting a large number of
-  /// LIEF::dsc::Dylib with enhanced extraction options (e.g. Dylib::extract_opt_t::fix_branches)
+  /// LIEF::dsc::Dylib with enhanced extraction options (e.g.
+  /// Dylib::extract_opt_t::fix_branches)
   ///
   /// One can enable caching by calling this function:
   ///
@@ -281,8 +284,7 @@ class LIEF_API DyldSharedCache {
 /// auto cache = LIEF::dsc::load("macos-12.6/", /*arch=*/"x86_64h");
 /// ```
 inline std::unique_ptr<DyldSharedCache> load(const std::string& path,
-                                             const std::string& arch = "")
-{
+                                             const std::string& arch = "") {
   return DyldSharedCache::from_path(path, arch);
 }
 
@@ -295,13 +297,11 @@ inline std::unique_ptr<DyldSharedCache> load(const std::string& path,
 /// };
 /// auto cache = LIEF::dsc::load(files);
 /// ```
-inline std::unique_ptr<DyldSharedCache> load(const std::vector<std::string>& files)
-{
+inline std::unique_ptr<DyldSharedCache>
+    load(const std::vector<std::string>& files) {
   return DyldSharedCache::from_files(files);
 }
 
 }
 }
 #endif
-
-

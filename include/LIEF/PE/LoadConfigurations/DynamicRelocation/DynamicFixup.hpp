@@ -44,20 +44,22 @@ class LIEF_API DynamicFixup {
     /// If DynamicRelocation::symbol is set to `IMAGE_DYNAMIC_RELOCATION_ARM64X`
     ARM64X,
 
-    /// If DynamicRelocation::symbol is set to `IMAGE_DYNAMIC_RELOCATION_FUNCTION_OVERRIDE`
+    /// If DynamicRelocation::symbol is set to
+    /// `IMAGE_DYNAMIC_RELOCATION_FUNCTION_OVERRIDE`
     FUNCTION_OVERRIDE,
 
-    /// If DynamicRelocation::symbol is set to `IMAGE_DYNAMIC_RELOCATION_ARM64_KERNEL_IMPORT_CALL_TRANSFER`
+    /// If DynamicRelocation::symbol is set to
+    /// `IMAGE_DYNAMIC_RELOCATION_ARM64_KERNEL_IMPORT_CALL_TRANSFER`
     ARM64_KERNEL_IMPORT_CALL_TRANSFER,
 
-    /// If DynamicRelocation::symbol is set to `IMAGE_DYNAMIC_RELOCATION_GUARD_IMPORT_CONTROL_TRANSFER`
+    /// If DynamicRelocation::symbol is set to
+    /// `IMAGE_DYNAMIC_RELOCATION_GUARD_IMPORT_CONTROL_TRANSFER`
     GUARD_IMPORT_CONTROL_TRANSFER,
   };
 
   DynamicFixup() = delete;
   DynamicFixup(KIND kind) :
-    kind_(kind)
-  {}
+    kind_(kind) {}
 
   DynamicFixup(const DynamicFixup&) = default;
   DynamicFixup& operator=(const DynamicFixup&) = default;
@@ -89,9 +91,8 @@ class LIEF_API DynamicFixup {
     return const_cast<DynamicFixup*>(this)->as<T>();
   }
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const DynamicFixup& fixup)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const DynamicFixup& fixup) {
     os << fixup.to_string();
     return os;
   }
@@ -99,12 +100,11 @@ class LIEF_API DynamicFixup {
   virtual ~DynamicFixup() = default;
 
   /// \private
-  static LIEF_LOCAL ok_error_t
-    parse(Parser& ctx, SpanStream& stream, DynamicRelocation& R);
+  static LIEF_LOCAL ok_error_t parse(Parser& ctx, SpanStream& stream,
+                                     DynamicRelocation& R);
 
   protected:
   KIND kind_ = KIND::UNKNOWN;
-
 };
 
 

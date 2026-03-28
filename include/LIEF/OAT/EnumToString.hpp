@@ -30,4 +30,3 @@ LIEF_API const char* to_string(INSTRUCTION_SETS e);
 } // namespace LIEF
 
 #endif
-

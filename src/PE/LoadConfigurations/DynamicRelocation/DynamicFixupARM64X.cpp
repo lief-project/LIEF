@@ -32,24 +32,23 @@ namespace details {
 // } IMAGE_DVRT_ARM64X_FIXUP_RECORD, *PIMAGE_DVRT_ARM64X_FIXUP_RECORD;
 struct fixup_record {
   uint16_t offset : 12;
-  uint16_t type   : 2;
-  uint16_t size   : 2;
+  uint16_t type : 2;
+  uint16_t size : 2;
 };
 
 static_assert(sizeof(fixup_record) == sizeof(uint16_t));
 
 struct delta_record {
   uint16_t offset : 12;
-  uint16_t type   :  2;
-  uint16_t sign   :  1;
-  uint16_t scale  :  1;
+  uint16_t type : 2;
+  uint16_t sign : 1;
+  uint16_t scale : 1;
 };
 
 }
 
-std::unique_ptr<DynamicFixupARM64X>
-  DynamicFixupARM64X::parse(Parser& ctx, SpanStream& strm)
-{
+std::unique_ptr<DynamicFixupARM64X> DynamicFixupARM64X::parse(Parser& ctx,
+                                                              SpanStream& strm) {
   auto arm64x = std::make_unique<DynamicFixupARM64X>();
   while (strm) {
     auto PageRVA = strm.read<uint32_t>();
@@ -86,65 +85,75 @@ std::unique_ptr<DynamicFixupARM64X>
 
       switch ((FIXUP_TYPE)record->type) {
         case FIXUP_TYPE::ZEROFILL:
-          {
-            arm64x->entries_.push_back({
-              /*rva=*/RVA, /*type=*/FIXUP_TYPE::ZEROFILL,
-              /*size=*/size_t(1) << record->size, /*bytes=*/{},
+        {
+          arm64x->entries_.push_back({
+              /*rva=*/RVA,
+              /*type=*/FIXUP_TYPE::ZEROFILL,
+              /*size=*/size_t(1) << record->size,
+              /*bytes=*/{},
               /*value=*/0,
-            });
-            break;
-          }
+          });
+          break;
+        }
 
         case FIXUP_TYPE::VALUE:
-          {
-            std::vector<uint8_t> data;
-            const size_t size = 1 << record->size;
-            if (!block_strm->read_data(data, size)) {
-              LIEF_WARN("Failed to read data for IMAGE_DVRT_ARM64X_FIXUP_TYPE_VALUE");
-              break;
-            }
-            arm64x->entries_.push_back({
-              /*rva=*/RVA, /*type=*/FIXUP_TYPE::VALUE,
-              /*size=*/size, /*bytes=*/std::move(data),
-              /*value=*/0,
-            });
-
-            const auto& entry = arm64x->entries_.back();
-            if (ctx.config().parse_arm64x_binary) {
-              ctx.record_relocation(entry.rva, entry.bytes);
-            }
+        {
+          std::vector<uint8_t> data;
+          const size_t size = 1 << record->size;
+          if (!block_strm->read_data(data, size)) {
+            LIEF_WARN(
+                "Failed to read data for IMAGE_DVRT_ARM64X_FIXUP_TYPE_VALUE"
+            );
             break;
           }
+          arm64x->entries_.push_back({
+              /*rva=*/RVA,
+              /*type=*/FIXUP_TYPE::VALUE,
+              /*size=*/size,
+              /*bytes=*/std::move(data),
+              /*value=*/0,
+          });
+
+          const auto& entry = arm64x->entries_.back();
+          if (ctx.config().parse_arm64x_binary) {
+            ctx.record_relocation(entry.rva, entry.bytes);
+          }
+          break;
+        }
 
         case FIXUP_TYPE::DELTA:
-          {
-            auto value = block_strm->read<uint16_t>();
-            if (!value) {
-              LIEF_WARN("Failed to read value for IMAGE_DVRT_ARM64X_FIXUP_TYPE_DELTA");
-              break;
-            }
-
-            auto& opt = *reinterpret_cast<const details::delta_record*>(&*record);
-            const uint8_t size = (opt.scale ? 8llu : 4llu);
-            int64_t delta = (uint64_t)(*value) * size;
-            arm64x->entries_.push_back({
-              /*rva=*/RVA, /*type=*/FIXUP_TYPE::DELTA,
-              /*size=*/size, /*bytes=*/{},
-              /*value=*/opt.sign ? -delta : delta,
-            });
-            const auto& entry = arm64x->entries_.back();
-            if (ctx.config().parse_arm64x_binary) {
-              ctx.record_delta_relocation(entry.rva, entry.value, size);
-            }
+        {
+          auto value = block_strm->read<uint16_t>();
+          if (!value) {
+            LIEF_WARN(
+                "Failed to read value for IMAGE_DVRT_ARM64X_FIXUP_TYPE_DELTA"
+            );
             break;
           }
+
+          auto& opt = *reinterpret_cast<const details::delta_record*>(&*record);
+          const uint8_t size = (opt.scale ? 8llu : 4llu);
+          int64_t delta = (uint64_t)(*value) * size;
+          arm64x->entries_.push_back({
+              /*rva=*/RVA,
+              /*type=*/FIXUP_TYPE::DELTA,
+              /*size=*/size,
+              /*bytes=*/{},
+              /*value=*/opt.sign ? -delta : delta,
+          });
+          const auto& entry = arm64x->entries_.back();
+          if (ctx.config().parse_arm64x_binary) {
+            ctx.record_delta_relocation(entry.rva, entry.value, size);
+          }
+          break;
+        }
 
         default:
-          {
-            LIEF_WARN("Unsupported fixup type: {} ({:#08x})",
-                      (int)record->type, (int)record->type);
-            break;
-          }
+        {
+          LIEF_WARN("Unsupported fixup type: {} ({:#08x})", (int)record->type,
+                    (int)record->type);
+          break;
+        }
       }
     }
   }
@@ -159,12 +168,11 @@ std::string DynamicFixupARM64X::reloc_entry_t::to_string() const {
       return format("RVA {:#010x}, {} bytes, zero fill", rva, size);
 
     case FIXUP_TYPE::VALUE:
-      return format("RVA {:#010x}, {} bytes, target value {}",
-                    rva, bytes.size(), hex_dump(bytes));
+      return format("RVA {:#010x}, {} bytes, target value {}", rva, bytes.size(),
+                    hex_dump(bytes));
 
     case FIXUP_TYPE::DELTA:
-      return format("RVA {:#010x}, {} bytes, delta {:#010x}",
-                    rva, size, value);
+      return format("RVA {:#010x}, {} bytes, delta {:#010x}", rva, size, value);
   }
   return "<unknown>";
 }

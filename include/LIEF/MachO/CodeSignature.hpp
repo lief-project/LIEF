@@ -89,7 +89,6 @@ class LIEF_API CodeSignature : public LoadCommand {
   uint32_t data_offset_ = 0;
   uint32_t data_size_ = 0;
   span<uint8_t> content_;
-
 };
 
 }

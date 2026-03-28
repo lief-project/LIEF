@@ -19,7 +19,7 @@
 
 class dsc_Utils {
   public:
-  static bool is_shared_cache(std::string file)  {
+  static bool is_shared_cache(std::string file) {
     return LIEF::dsc::is_shared_cache(file);
   }
 };

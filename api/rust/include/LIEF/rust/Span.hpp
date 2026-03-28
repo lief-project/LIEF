@@ -36,7 +36,8 @@ inline Span make_span(LIEF::span<char> content) {
 }
 
 inline Span make_span(LIEF::span<const char> content) {
-  return Span{reinterpret_cast<uint8_t*>(const_cast<char*>(content.data())), content.size()};
+  return Span{reinterpret_cast<uint8_t*>(const_cast<char*>(content.data())),
+              content.size()};
 }
 
 inline Span make_span(const std::vector<uint8_t>& content) {

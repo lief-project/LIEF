@@ -21,7 +21,8 @@
 class MachO_UUIDCommand : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::UUIDCommand;
-  MachO_UUIDCommand(const lief_t& base) : MachO_Command(base) {}
+  MachO_UUIDCommand(const lief_t& base) :
+    MachO_Command(base) {}
 
   auto uuid() const {
     return details::make_vector(impl().uuid());
@@ -32,5 +33,7 @@ class MachO_UUIDCommand : public MachO_Command {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

@@ -21,16 +21,12 @@
 namespace lief_jni::dwarf::editor {
 
 int StructType::Member::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 
@@ -39,26 +35,17 @@ int StructType::Member::register_natives(JNIEnv* env) {
 
 
 int StructType::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "setSize",
-      "(I)Llief/dwarf/editor/StructType;",
-      &jni_set_size
-    ),
-    make(
-      "addMember",
-      "(Ljava/lang/String;Llief/dwarf/editor/Type;J)Llief/dwarf/editor/StructType$Member;",
-      &jni_add_member
-    ),
-    make_destroy(
-      (void*)&jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("setSize", "(I)Llief/dwarf/editor/StructType;", &jni_set_size),
+      make("addMember",
+           "(Ljava/lang/String;Llief/dwarf/editor/Type;J)Llief/dwarf/editor/"
+           "StructType$Member;",
+           &jni_add_member),
+      make_destroy((void*)&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

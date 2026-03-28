@@ -28,25 +28,21 @@ MapList& MapList::operator=(const MapList&) = default;
 MapList::it_items_t MapList::items() {
   std::vector<MapItem*> items;
   items.reserve(items_.size());
-  std::transform(items_.begin(), items_.end(),
-                 std::back_inserter(items),
-                 [] (MapList::items_t::value_type& p) -> MapItem* {
+  std::transform(items_.begin(), items_.end(), std::back_inserter(items),
+                 [](MapList::items_t::value_type& p) -> MapItem* {
                    return &(p.second);
                  });
   return items;
-
 }
 
 MapList::it_const_items_t MapList::items() const {
   std::vector<MapItem*> items;
   items.reserve(items_.size());
-  std::transform(items_.begin(), items_.end(),
-                 std::back_inserter(items),
-                 [] (const MapList::items_t::value_type& p) -> MapItem* {
+  std::transform(items_.begin(), items_.end(), std::back_inserter(items),
+                 [](const MapList::items_t::value_type& p) -> MapItem* {
                    return const_cast<MapItem*>(&(p.second));
                  });
   return items;
-
 }
 
 
@@ -77,7 +73,6 @@ void MapList::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const MapList& mlist) {
   for (const MapItem& item : mlist.items()) {
     os << item << '\n';
@@ -89,4 +84,3 @@ std::ostream& operator<<(std::ostream& os, const MapList& mlist) {
 MapList::~MapList() = default;
 
 }
-

@@ -105,8 +105,8 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const ChainedBindingInfo& info) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ChainedBindingInfo& info) {
     os << static_cast<const BindingInfo&>(info);
     return os;
   }
@@ -140,12 +140,12 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
   BIND_TYPES btypes_ = BIND_TYPES::UNKNOWN;
 
   union {
-    details::dyld_chained_ptr_arm64e_bind*        arm64_bind_ = nullptr;
-    details::dyld_chained_ptr_arm64e_auth_bind*   arm64_auth_bind_;
-    details::dyld_chained_ptr_arm64e_bind24*      arm64_bind24_;
+    details::dyld_chained_ptr_arm64e_bind* arm64_bind_ = nullptr;
+    details::dyld_chained_ptr_arm64e_auth_bind* arm64_auth_bind_;
+    details::dyld_chained_ptr_arm64e_bind24* arm64_bind24_;
     details::dyld_chained_ptr_arm64e_auth_bind24* arm64_auth_bind24_;
-    details::dyld_chained_ptr_64_bind*            p64_bind_;
-    details::dyld_chained_ptr_32_bind*            p32_bind_;
+    details::dyld_chained_ptr_64_bind* p64_bind_;
+    details::dyld_chained_ptr_32_bind* p32_bind_;
   };
 };
 

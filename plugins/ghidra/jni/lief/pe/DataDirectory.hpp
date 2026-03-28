@@ -23,17 +23,17 @@
 
 namespace lief_jni::pe {
 
-class DataDirectory : public JNI<
-  DataDirectory, canbe_unique<LIEF::PE::DataDirectory>>
-{
+class DataDirectory
+  : public JNI<DataDirectory, canbe_unique<LIEF::PE::DataDirectory>> {
   public:
   using lief_t = LIEF::PE::DataDirectory;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/DataDirectory",
-    jni::Constructor{ jlong{} },
-    jni::Field { "impl", jlong{}, }
-  };
+  static constexpr jni::Class kClass{"lief/pe/DataDirectory",
+                                     jni::Constructor{jlong{}},
+                                     jni::Field{
+                                         "impl",
+                                         jlong{},
+                                     }};
 
   static jint jni_get_rva(JNIEnv* env, jobject thiz) {
     return (jint)from_jni(thiz)->cast<lief_t>().RVA();

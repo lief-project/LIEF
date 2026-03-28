@@ -34,8 +34,10 @@ std::string ImportEntry::demangled_name() const {
 }
 
 bool ImportEntry::is_ordinal() const {
-  // See: https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
-  const uint64_t ORDINAL_MASK = (type_ == PE_TYPE::PE32) ? 0x80000000 : 0x8000000000000000;
+  // See:
+  // https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
+  const uint64_t ORDINAL_MASK =
+      (type_ == PE_TYPE::PE32) ? 0x80000000 : 0x8000000000000000;
   bool ordinal_bit_is_set = (data_ & ORDINAL_MASK) != 0;
 
   // Check that bit 31 / 63 is set
@@ -55,8 +57,8 @@ void ImportEntry::accept(LIEF::Visitor& visitor) const {
 std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
   using namespace fmt;
   os << (!entry.is_ordinal() ?
-        format("{:#06x}: {}", entry.hint(), entry.name()) :
-        format("{:#06x}: {}", entry.hint(), entry.ordinal()));
+             format("{:#06x}: {}", entry.hint(), entry.name()) :
+             format("{:#06x}: {}", entry.hint(), entry.ordinal()));
   return os;
 }
 

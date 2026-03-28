@@ -37,6 +37,7 @@ class BinaryParser;
 /// > routines (used for C++ static constructors) in the library.
 class LIEF_API Routine : public LoadCommand {
   friend class BinaryParser;
+
   public:
   Routine() = default;
 
@@ -126,6 +127,7 @@ class LIEF_API Routine : public LoadCommand {
     return cmd->command() == LoadCommand::TYPE::ROUTINES ||
            cmd->command() == LoadCommand::TYPE::ROUTINES_64;
   }
+
   private:
   uint64_t init_address_ = 0;
   uint64_t init_module_ = 0;

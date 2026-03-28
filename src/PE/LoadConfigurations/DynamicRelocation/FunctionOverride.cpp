@@ -28,22 +28,19 @@ namespace LIEF::PE {
 using image_bdd_info_t = FunctionOverride::image_bdd_info_t;
 
 FunctionOverride::FunctionOverride() :
-  DynamicFixup(KIND::FUNCTION_OVERRIDE)
-{}
+  DynamicFixup(KIND::FUNCTION_OVERRIDE) {}
 
 FunctionOverride::FunctionOverride(const FunctionOverride& other) :
   DynamicFixup(other),
-  bdd_info_(other.bdd_info_)
-{
+  bdd_info_(other.bdd_info_) {
   if (!other.overriding_info_.empty()) {
     overriding_info_.reserve(other.overriding_info_.size());
     overriding_info_.reserve(other.overriding_info_.size());
     std::transform(other.overriding_info_.begin(), other.overriding_info_.end(),
                    std::back_inserter(overriding_info_),
-      [] (const std::unique_ptr<FunctionOverrideInfo>& func) {
-        return std::make_unique<FunctionOverrideInfo>(*func);
-      }
-    );
+                   [](const std::unique_ptr<FunctionOverrideInfo>& func) {
+                     return std::make_unique<FunctionOverrideInfo>(*func);
+                   });
   }
 }
 
@@ -59,10 +56,9 @@ FunctionOverride& FunctionOverride::operator=(const FunctionOverride& other) {
     overriding_info_.reserve(other.overriding_info_.size());
     std::transform(other.overriding_info_.begin(), other.overriding_info_.end(),
                    std::back_inserter(overriding_info_),
-      [] (const std::unique_ptr<FunctionOverrideInfo>& func) {
-        return std::make_unique<FunctionOverrideInfo>(*func);
-      }
-    );
+                   [](const std::unique_ptr<FunctionOverrideInfo>& func) {
+                     return std::make_unique<FunctionOverrideInfo>(*func);
+                   });
   }
   return *this;
 }
@@ -84,8 +80,8 @@ std::string FunctionOverride::to_string() const {
                     bdd_info->original_offset);
       for (size_t i = 0; i < bdd_info->relocations.size(); ++i) {
         const image_bdd_dynamic_relocation_t& R = bdd_info->relocations[i];
-        oss << format("    [{:04d}] L={:04d}, R={:04d}, V={:#010x}\n", i,
-                      R.left, R.right, R.value);
+        oss << format("    [{:04d}] L={:04d}, R={:04d}, V={:#010x}\n", i, R.left,
+                      R.right, R.value);
       }
     } else {
       oss << "  <Missing IMAGE_BDD_INFO>\n";
@@ -95,9 +91,8 @@ std::string FunctionOverride::to_string() const {
   return oss.str();
 }
 
-std::unique_ptr<FunctionOverride>
-  FunctionOverride::parse(Parser& ctx, SpanStream& strm)
-{
+std::unique_ptr<FunctionOverride> FunctionOverride::parse(Parser& ctx,
+                                                          SpanStream& strm) {
   auto FuncOverrideSize = strm.read<uint32_t>();
   if (!FuncOverrideSize) {
     LIEF_DEBUG("Error: {}: {}", __FUNCTION__, __LINE__);
@@ -137,9 +132,8 @@ std::unique_ptr<FunctionOverride>
   return func;
 }
 
-ok_error_t FunctionOverride::parse_bdd_info(
-  Parser&/*ctx*/, SpanStream& strm, FunctionOverride& func)
-{
+ok_error_t FunctionOverride::parse_bdd_info(Parser& /*ctx*/, SpanStream& strm,
+                                            FunctionOverride& func) {
   image_bdd_info_t bdd_info;
   bdd_info.original_offset = strm.pos();
 
@@ -205,11 +199,12 @@ image_bdd_info_t* FunctionOverride::find_bdd_info(uint32_t offset) {
   // with increasing offset on the stream. This means that the func.bdd_info_
   // is already sorted by image_bdd_info_t::original_offset. We can leverage
   // this property to perform a binary search in O(log2(N)) instead of a O(N)
-  auto it = std::lower_bound(bdd_info_.begin(), bdd_info_.end(),
-    image_bdd_info_t{0, 0, offset, {}, {}},
-    [] (const image_bdd_info_t& LHS, const image_bdd_info_t& RHS) {
-      return LHS.original_offset < RHS.original_offset;
-    });
+  auto it = std::lower_bound(
+      bdd_info_.begin(), bdd_info_.end(), image_bdd_info_t{0, 0, offset, {}, {}},
+      [](const image_bdd_info_t& LHS, const image_bdd_info_t& RHS) {
+        return LHS.original_offset < RHS.original_offset;
+      }
+  );
 
   if (it == bdd_info_.end()) {
     return nullptr;
@@ -217,7 +212,8 @@ image_bdd_info_t* FunctionOverride::find_bdd_info(uint32_t offset) {
   return &*it;
 }
 
-image_bdd_info_t* FunctionOverride::find_bdd_info(const FunctionOverrideInfo& info) {
+image_bdd_info_t*
+    FunctionOverride::find_bdd_info(const FunctionOverrideInfo& info) {
   return find_bdd_info(info.bdd_offset());
 }
 }

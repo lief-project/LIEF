@@ -67,9 +67,8 @@ struct LIEF_API ParserConfig {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const ParserConfig& config)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ParserConfig& config) {
     os << config.to_string();
     return os;
   }

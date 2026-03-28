@@ -29,14 +29,16 @@ namespace PE {
 
 /// Implementation for a regular/legacy dialog box.
 ///
-/// See: https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-dlgtemplate
+/// See:
+/// https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-dlgtemplate
 class LIEF_API ResourceDialogRegular : public ResourceDialog {
   public:
   using ResourceDialog::ordinal_or_str_t;
 
   /// This class represents a `DLGTEMPLATE` item: `DLGITEMTEMPLATE`
   ///
-  /// See: https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-dlgitemtemplate
+  /// See:
+  /// https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-dlgitemtemplate
   class LIEF_API Item : public ResourceDialog::Item {
     public:
     Item() = default;
@@ -69,7 +71,8 @@ class LIEF_API ResourceDialogRegular : public ResourceDialog {
 
     std::string to_string() const;
 
-    LIEF_API friend std::ostream& operator<<(std::ostream& os, const font_t& font) {
+    LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                             const font_t& font) {
       os << font.to_string();
       return os;
     }
@@ -80,8 +83,7 @@ class LIEF_API ResourceDialogRegular : public ResourceDialog {
   using it_const_items = const_ref_iterator<const items_t&>;
 
   ResourceDialogRegular() :
-    ResourceDialog(ResourceDialog::TYPE::REGULAR)
-  {}
+    ResourceDialog(ResourceDialog::TYPE::REGULAR) {}
 
   ResourceDialogRegular(const ResourceDialogRegular&) = default;
   ResourceDialogRegular& operator=(const ResourceDialogRegular&) = default;
@@ -92,7 +94,9 @@ class LIEF_API ResourceDialogRegular : public ResourceDialog {
   static std::unique_ptr<ResourceDialogRegular> create(BinaryStream& stream);
 
   std::unique_ptr<ResourceDialog> clone() const override {
-    return std::unique_ptr<ResourceDialogRegular>(new ResourceDialogRegular(*this));
+    return std::unique_ptr<ResourceDialogRegular>(
+        new ResourceDialogRegular(*this)
+    );
   }
 
   static bool classof(const ResourceDialog* dialog) {

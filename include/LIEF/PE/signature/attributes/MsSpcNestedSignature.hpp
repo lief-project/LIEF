@@ -26,7 +26,8 @@ namespace PE {
 
 /// Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
 ///
-/// The internal structure is not documented but we can infer the following structure:
+/// The internal structure is not documented but we can infer the following
+/// structure:
 ///
 /// ```text
 /// MsSpcNestedSignature ::= SET OF SignedData
@@ -42,8 +43,7 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
   MsSpcNestedSignature() = delete;
   MsSpcNestedSignature(Signature sig) :
     Attribute(Attribute::TYPE::MS_SPC_NESTED_SIGN),
-    sig_{std::move(sig)}
-  {}
+    sig_{std::move(sig)} {}
   MsSpcNestedSignature(const MsSpcNestedSignature&) = default;
   MsSpcNestedSignature& operator=(const MsSpcNestedSignature&) = default;
 

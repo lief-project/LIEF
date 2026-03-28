@@ -23,7 +23,8 @@
 class PE_Repro : public PE_Debug {
   public:
   using lief_t = LIEF::PE::Repro;
-  PE_Repro(const lief_t& obj) : PE_Debug(obj) {}
+  PE_Repro(const lief_t& obj) :
+    PE_Debug(obj) {}
 
   auto hash() const {
     return make_span(impl().hash());
@@ -34,5 +35,7 @@ class PE_Repro : public PE_Debug {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

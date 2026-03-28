@@ -41,5 +41,3 @@ class LIEF_API Modifier : public Type {
 }
 }
 #endif
-
-

@@ -19,7 +19,7 @@
 #include "LIEF/DEX/File.hpp"
 
 #if defined(LIEF_JSON_SUPPORT)
-#include "visitors/json.hpp"
+  #include "visitors/json.hpp"
 #endif
 
 
@@ -73,9 +73,6 @@ std::string File::dex2dex_json_info() {
 void File::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
-
-
-
 
 
 std::ostream& operator<<(std::ostream& os, const File& vdex_file) {

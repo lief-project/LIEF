@@ -22,7 +22,7 @@
 
 using namespace LIEF::ELF;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
   LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
   if (argc != 2) {
@@ -31,7 +31,8 @@ int main(int argc, char **argv) {
   }
 
 
-  std::unique_ptr<const Binary> binary = std::unique_ptr<const Binary>{Parser::parse(argv[1])};
+  std::unique_ptr<const Binary> binary =
+      std::unique_ptr<const Binary>{Parser::parse(argv[1])};
   if (binary == nullptr) {
     return EXIT_FAILURE;
   }
@@ -116,5 +117,4 @@ int main(int argc, char **argv) {
   }
 
   return 0;
-
 }

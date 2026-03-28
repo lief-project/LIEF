@@ -21,15 +21,21 @@
 class PE_CodeView : public PE_Debug {
   public:
   using lief_t = LIEF::PE::CodeView;
-  PE_CodeView(const lief_t& obj) : PE_Debug(obj) {}
-  PE_CodeView(std::unique_ptr<lief_t> obj) : PE_Debug(std::move(obj)) {}
+  PE_CodeView(const lief_t& obj) :
+    PE_Debug(obj) {}
+  PE_CodeView(std::unique_ptr<lief_t> obj) :
+    PE_Debug(std::move(obj)) {}
 
-  uint32_t signature() const { return to_int(impl().signature()); }
+  uint32_t signature() const {
+    return to_int(impl().signature());
+  }
 
   static bool classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

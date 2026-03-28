@@ -33,26 +33,26 @@ class LIEF_API MapItem : public Object {
 
   public:
   enum class TYPES : uint16_t {
-    HEADER                  = 0x0000,
-    STRING_ID               = 0x0001,
-    TYPE_ID                 = 0x0002,
-    PROTO_ID                = 0x0003,
-    FIELD_ID                = 0x0004,
-    METHOD_ID               = 0x0005,
-    CLASS_DEF               = 0x0006,
-    CALL_SITE_ID            = 0x0007,
-    METHOD_HANDLE           = 0x0008,
-    MAP_LIST                = 0x1000,
-    TYPE_LIST               = 0x1001,
+    HEADER = 0x0000,
+    STRING_ID = 0x0001,
+    TYPE_ID = 0x0002,
+    PROTO_ID = 0x0003,
+    FIELD_ID = 0x0004,
+    METHOD_ID = 0x0005,
+    CLASS_DEF = 0x0006,
+    CALL_SITE_ID = 0x0007,
+    METHOD_HANDLE = 0x0008,
+    MAP_LIST = 0x1000,
+    TYPE_LIST = 0x1001,
     ANNOTATION_SET_REF_LIST = 0x1002,
-    ANNOTATION_SET          = 0x1003,
-    CLASS_DATA              = 0x2000,
-    CODE                    = 0x2001,
-    STRING_DATA             = 0x2002,
-    DEBUG_INFO              = 0x2003,
-    ANNOTATION              = 0x2004,
-    ENCODED_ARRAY           = 0x2005,
-    ANNOTATIONS_DIRECTORY   = 0x2006,
+    ANNOTATION_SET = 0x1003,
+    CLASS_DATA = 0x2000,
+    CODE = 0x2001,
+    STRING_DATA = 0x2002,
+    DEBUG_INFO = 0x2003,
+    ANNOTATION = 0x2004,
+    ENCODED_ARRAY = 0x2005,
+    ANNOTATIONS_DIRECTORY = 0x2006,
 
   };
 
@@ -84,11 +84,10 @@ class LIEF_API MapItem : public Object {
   ~MapItem() override;
 
   private:
-  TYPES    type_;
+  TYPES type_;
   uint16_t reserved_;
   uint32_t size_;
   uint32_t offset_;
-
 };
 
 } // Namespace DEX

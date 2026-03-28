@@ -24,7 +24,9 @@ class DWARF_Editor : public Mirror<LIEF::dwarf::Editor> {
   using Mirror::Mirror;
 
   auto create_compilation_unit() {
-    return details::try_unique<DWARF_editor_CompilationUnit>(get().create_compilation_unit());
+    return details::try_unique<DWARF_editor_CompilationUnit>(
+        get().create_compilation_unit()
+    );
   }
 
   auto write(std::string output) {
@@ -36,6 +38,7 @@ class DWARF_Editor : public Mirror<LIEF::dwarf::Editor> {
   }
 
   static auto create(uint32_t fmt, uint32_t arch) {
-    return details::try_unique<DWARF_Editor>(lief_t::create((lief_t::FORMAT)fmt, (lief_t::ARCH)arch));
+    return details::try_unique<DWARF_Editor>(lief_t::create((lief_t::FORMAT)fmt,
+                                                            (lief_t::ARCH)arch));
   }
 };

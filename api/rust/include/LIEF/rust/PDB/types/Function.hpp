@@ -22,16 +22,19 @@ class PDB_types_Function : public PDB_Type {
   public:
   using lief_t = LIEF::pdb::types::Function;
 
-  class it_parameters :
-      public ContainerIterator<
-        PDB_Type, std::vector<std::unique_ptr<LIEF::pdb::Type>>>
-  {
+  class it_parameters
+    : public ContainerIterator<PDB_Type,
+                               std::vector<std::unique_ptr<LIEF::pdb::Type>>> {
     public:
     using container_t = std::vector<std::unique_ptr<LIEF::pdb::Type>>;
-    it_parameters(container_t content)
-      : ContainerIterator(std::move(content)) { }
-    auto next() { return ContainerIterator::next(); }
-    auto size() const { return ContainerIterator::size(); }
+    it_parameters(container_t content) :
+      ContainerIterator(std::move(content)) {}
+    auto next() {
+      return ContainerIterator::next();
+    }
+    auto size() const {
+      return ContainerIterator::size();
+    }
   };
 
   auto return_type() const {
@@ -47,5 +50,7 @@ class PDB_types_Function : public PDB_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

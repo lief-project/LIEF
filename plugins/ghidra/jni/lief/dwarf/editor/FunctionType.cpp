@@ -21,16 +21,12 @@
 namespace lief_jni::dwarf::editor {
 
 int FunctionType::Parameter::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make_destroy(
-      (void*)&jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make_destroy((void*)&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 
@@ -38,26 +34,18 @@ int FunctionType::Parameter::register_natives(JNIEnv* env) {
 }
 
 int FunctionType::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "setReturnType",
-      "(Llief/dwarf/editor/Type;)Llief/dwarf/editor/FunctionType;",
-      &jni_set_return_type
-    ),
-    make(
-      "addParameter",
-      "(Llief/dwarf/editor/Type;)Llief/dwarf/editor/FunctionType$Parameter;",
-      &jni_add_parameter
-    ),
-    make_destroy(
-      (void*)&jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("setReturnType",
+           "(Llief/dwarf/editor/Type;)Llief/dwarf/editor/FunctionType;",
+           &jni_set_return_type),
+      make("addParameter",
+           "(Llief/dwarf/editor/Type;)Llief/dwarf/editor/FunctionType$Parameter;",
+           &jni_add_parameter),
+      make_destroy((void*)&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

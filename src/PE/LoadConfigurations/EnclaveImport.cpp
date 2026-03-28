@@ -31,7 +31,8 @@ std::string EnclaveImport::to_string() const {
   std::ostringstream os;
 
   os << format("{} (RVA: {:#010x})\n", import_name(), import_name_rva())
-     << format("  {:{}}: {}\n", "Minimum Security Version", WIDTH, min_security_version())
+     << format("  {:{}}: {}\n", "Minimum Security Version", WIDTH,
+               min_security_version())
      << format("  {:{}}: {}\n", "Reserved", WIDTH, reserved())
      << format("  {:{}}: {}\n", "Type", WIDTH, PE::to_string(type()))
      << format("  {:{}}: {}\n", "Family ID", WIDTH, hex_dump(family_id(), " "))
@@ -48,8 +49,7 @@ std::string EnclaveImport::to_string() const {
   return os.str();
 }
 
-result<EnclaveImport> EnclaveImport::parse(Parser& ctx, BinaryStream& stream)
-{
+result<EnclaveImport> EnclaveImport::parse(Parser& ctx, BinaryStream& stream) {
   EnclaveImport imp;
   auto MatchType = stream.read<uint32_t>();
   if (!MatchType) {
@@ -83,12 +83,10 @@ result<EnclaveImport> EnclaveImport::parse(Parser& ctx, BinaryStream& stream)
     return make_error_code(Reserved.error());
   }
 
-  imp
-    .type((TYPE)*MatchType)
-    .min_security_version(*MinimumSecurityVersion)
-    .import_name_rva(*ImportName)
-    .reserved(*Reserved)
-  ;
+  imp.type((TYPE)*MatchType)
+      .min_security_version(*MinimumSecurityVersion)
+      .import_name_rva(*ImportName)
+      .reserved(*Reserved);
 
   {
     uint32_t name_offset = ctx.bin().rva_to_offset(*ImportName);

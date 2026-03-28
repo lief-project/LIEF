@@ -20,7 +20,7 @@
 
 using namespace LIEF::ELF;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <ELF binary>" << '\n';
     return EXIT_FAILURE;
@@ -44,5 +44,4 @@ int main(int argc, char **argv) {
 
 
   return 0;
-
 }

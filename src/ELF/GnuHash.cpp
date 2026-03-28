@@ -71,7 +71,7 @@ template<typename ELF_T>
 std::unique_ptr<GnuHash> GnuHash::parse(SpanStream& strm, uint64_t dynsymcount) {
   // See: https://github.com/lattera/glibc/blob/master/elf/dl-lookup.c#L860
   // and  https://github.com/lattera/glibc/blob/master/elf/dl-lookup.c#L226
-  using uint__  = typename ELF_T::uint;
+  using uint__ = typename ELF_T::uint;
   LIEF_DEBUG("== Parsing GNU hash ==");
   const uint64_t opos = strm.pos();
 
@@ -152,8 +152,8 @@ result<uint32_t> GnuHash::nb_symbols(SpanStream& strm) {
     return 0;
   }
 
-  const auto nbuckets  = *res_nbuckets;
-  const auto symndx    = *res_symndx;
+  const auto nbuckets = *res_nbuckets;
+  const auto symndx = *res_symndx;
   const auto maskwords = *res_maskwords;
 
   // skip shift2, unused as we don't need the bloom filter to count syms.
@@ -195,85 +195,84 @@ result<uint32_t> GnuHash::nb_symbols(SpanStream& strm) {
     hash_value = *strm.read<uint32_t>();
 
     nsyms++;
-  } while ((hash_value & 1) == 0); // "It is set to 1 when a symbol is the last symbol in a given hash bucket"
+  } while ((hash_value & 1) == 0); // "It is set to 1 when a symbol is the last
+                                   // symbol in a given hash bucket"
 
   return max_bucket + nsyms;
-
 }
 
 std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash) {
   os << std::hex << std::left;
 
   const std::vector<uint64_t>& bloom_filters = gnuhash.bloom_filters();
-  const std::vector<uint32_t>& buckets       = gnuhash.buckets();
-  const std::vector<uint32_t>& hash_values   = gnuhash.hash_values();
+  const std::vector<uint32_t>& buckets = gnuhash.buckets();
+  const std::vector<uint32_t>& hash_values = gnuhash.hash_values();
 
-  std::string bloom_filters_str = std::accumulate(
-      bloom_filters.begin(),
-      bloom_filters.end(), std::string{},
-      [] (const std::string& a, uint64_t bf) {
-        std::ostringstream hex_bf;
-        hex_bf << std::hex;
-        hex_bf << "0x" << bf;
+  std::string bloom_filters_str =
+      std::accumulate(bloom_filters.begin(), bloom_filters.end(), std::string{},
+                      [](const std::string& a, uint64_t bf) {
+                        std::ostringstream hex_bf;
+                        hex_bf << std::hex;
+                        hex_bf << "0x" << bf;
 
-        return a.empty() ? "[" + hex_bf.str() : a + ", " + hex_bf.str();
-      });
+                        return a.empty() ? "[" + hex_bf.str() :
+                                           a + ", " + hex_bf.str();
+                      });
   bloom_filters_str += "]";
 
-  std::string buckets_str = std::accumulate(
-      buckets.begin(),
-      buckets.end(), std::string{},
-      [] (const std::string& a, uint32_t b) {
-        std::ostringstream hex_bucket;
-        hex_bucket << std::dec;
-        hex_bucket  << b;
+  std::string buckets_str =
+      std::accumulate(buckets.begin(), buckets.end(), std::string{},
+                      [](const std::string& a, uint32_t b) {
+                        std::ostringstream hex_bucket;
+                        hex_bucket << std::dec;
+                        hex_bucket << b;
 
-        return a.empty() ? "[" + hex_bucket.str() : a + ", " + hex_bucket.str();
-      });
+                        return a.empty() ? "[" + hex_bucket.str() :
+                                           a + ", " + hex_bucket.str();
+                      });
   buckets_str += "]";
 
 
-  std::string hash_values_str = std::accumulate(
-      hash_values.begin(),
-      hash_values.end(), std::string{},
-      [] (const std::string& a, uint64_t hv) {
-        std::ostringstream hex_hv;
-        hex_hv << std::hex;
-        hex_hv << "0x" << hv;
+  std::string hash_values_str =
+      std::accumulate(hash_values.begin(), hash_values.end(), std::string{},
+                      [](const std::string& a, uint64_t hv) {
+                        std::ostringstream hex_hv;
+                        hex_hv << std::hex;
+                        hex_hv << "0x" << hv;
 
-        return a.empty() ? "[" + hex_hv.str() : a + ", " + hex_hv.str();
-      });
+                        return a.empty() ? "[" + hex_hv.str() :
+                                           a + ", " + hex_hv.str();
+                      });
   hash_values_str += "]";
 
-  os << std::setw(33) << std::setfill(' ') << "Number of buckets:"  << gnuhash.nb_buckets()   << '\n';
-  os << std::setw(33) << std::setfill(' ') << "First symbol index:" << gnuhash.symbol_index() << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Shift Count:"        << gnuhash.shift2()       << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Bloom filters:"      << bloom_filters_str      << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Buckets:"            << buckets_str            << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Hash values:"        << hash_values_str        << '\n';
+  os << std::setw(33) << std::setfill(' ')
+     << "Number of buckets:" << gnuhash.nb_buckets() << '\n';
+  os << std::setw(33) << std::setfill(' ')
+     << "First symbol index:" << gnuhash.symbol_index() << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Shift Count:" << gnuhash.shift2()
+     << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Bloom filters:" << bloom_filters_str
+     << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Buckets:" << buckets_str << '\n';
+  os << std::setw(33) << std::setfill(' ') << "Hash values:" << hash_values_str
+     << '\n';
 
   return os;
-
 }
 
-template
-std::unique_ptr<GnuHash> GnuHash::parse<details::ELF64>(SpanStream&, uint64_t);
-template
-std::unique_ptr<GnuHash> GnuHash::parse<details::ELF32>(SpanStream&, uint64_t);
-template
-std::unique_ptr<GnuHash> GnuHash::parse<details::ELF32_x32>(SpanStream&, uint64_t);
-template
-std::unique_ptr<GnuHash> GnuHash::parse<details::ELF32_arm64>(SpanStream&, uint64_t);
+template std::unique_ptr<GnuHash> GnuHash::parse<details::ELF64>(SpanStream&,
+                                                                 uint64_t);
+template std::unique_ptr<GnuHash> GnuHash::parse<details::ELF32>(SpanStream&,
+                                                                 uint64_t);
+template std::unique_ptr<GnuHash> GnuHash::parse<details::ELF32_x32>(SpanStream&,
+                                                                     uint64_t);
+template std::unique_ptr<GnuHash> GnuHash::parse<details::ELF32_arm64>(SpanStream&,
+                                                                       uint64_t);
 
-template
-result<uint32_t> GnuHash::nb_symbols<details::ELF64>(SpanStream&);
-template
-result<uint32_t> GnuHash::nb_symbols<details::ELF32>(SpanStream&);
-template
-result<uint32_t> GnuHash::nb_symbols<details::ELF32_x32>(SpanStream&);
-template
-result<uint32_t> GnuHash::nb_symbols<details::ELF32_arm64>(SpanStream&);
+template result<uint32_t> GnuHash::nb_symbols<details::ELF64>(SpanStream&);
+template result<uint32_t> GnuHash::nb_symbols<details::ELF32>(SpanStream&);
+template result<uint32_t> GnuHash::nb_symbols<details::ELF32_x32>(SpanStream&);
+template result<uint32_t> GnuHash::nb_symbols<details::ELF32_arm64>(SpanStream&);
 
 
 } // namespace LIEF::ELF
-

@@ -45,11 +45,10 @@ result<CodeIntegrity> CodeIntegrity::parse(Parser&, BinaryStream& stream) {
 
   CodeIntegrity code_integrity;
 
-  code_integrity
-    .flags(*flags)
-    .catalog(*catalog)
-    .catalog_offset(*catalog_offset)
-    .reserved(*reserved);
+  code_integrity.flags(*flags)
+      .catalog(*catalog)
+      .catalog_offset(*catalog_offset)
+      .reserved(*reserved);
 
   return code_integrity;
 }
@@ -67,4 +66,3 @@ std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry) {
 }
 
 }
-

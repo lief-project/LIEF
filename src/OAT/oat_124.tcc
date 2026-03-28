@@ -50,7 +50,7 @@ void Parser::parse_dex_files<details::OAT124_t>() {
   classes_offsets_offset.reserve(nb_dex_files);
 
   stream_->setpos(dexfiles_offset);
-  for (size_t i = 0; i < nb_dex_files; ++i ) {
+  for (size_t i = 0; i < nb_dex_files; ++i) {
 
     LIEF_DEBUG("Processing OAT DEX file #{:d}", i);
 
@@ -113,7 +113,9 @@ void Parser::parse_dex_files<details::OAT124_t>() {
       uint32_t classes_offset = classes_offsets_offset[i];
       oat_dex_file->classes_offsets_.reserve(nb_classes);
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
-        if (auto res = stream_->peek<uint32_t>(classes_offset + cls_idx * sizeof(uint32_t))) {
+        if (auto res = stream_->peek<uint32_t>(classes_offset +
+                                               cls_idx * sizeof(uint32_t)))
+        {
           oat_dex_file->classes_offsets_.push_back(*res);
         } else {
           break;

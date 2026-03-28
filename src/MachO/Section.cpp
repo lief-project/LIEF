@@ -36,16 +36,11 @@ FMT_FORMATTER(LIEF::MachO::Section::TYPE, LIEF::MachO::to_string);
 namespace LIEF::MachO {
 
 static constexpr auto ARRAY_FLAGS = {
-  Section::FLAGS::PURE_INSTRUCTIONS,
-  Section::FLAGS::NO_TOC,
-  Section::FLAGS::STRIP_STATIC_SYMS,
-  Section::FLAGS::NO_DEAD_STRIP,
-  Section::FLAGS::LIVE_SUPPORT,
-  Section::FLAGS::SELF_MODIFYING_CODE,
-  Section::FLAGS::DEBUG_INFO,
-  Section::FLAGS::SOME_INSTRUCTIONS,
-  Section::FLAGS::EXT_RELOC,
-  Section::FLAGS::LOC_RELOC,
+    Section::FLAGS::PURE_INSTRUCTIONS, Section::FLAGS::NO_TOC,
+    Section::FLAGS::STRIP_STATIC_SYMS, Section::FLAGS::NO_DEAD_STRIP,
+    Section::FLAGS::LIVE_SUPPORT,      Section::FLAGS::SELF_MODIFYING_CODE,
+    Section::FLAGS::DEBUG_INFO,        Section::FLAGS::SOME_INSTRUCTIONS,
+    Section::FLAGS::EXT_RELOC,         Section::FLAGS::LOC_RELOC,
 };
 
 Section::Section() = default;
@@ -75,8 +70,7 @@ Section::Section(const Section& other) :
   reserved1_{other.reserved1_},
   reserved2_{other.reserved2_},
   reserved3_{other.reserved3_},
-  content_{other.content_}
-{}
+  content_{other.content_} {}
 
 
 Section::Section(const details::section_32& sec) :
@@ -87,14 +81,13 @@ Section::Section(const details::section_32& sec) :
   nbof_relocations_{sec.nreloc},
   flags_{sec.flags},
   reserved1_{sec.reserved1},
-  reserved2_{sec.reserved2}
-{
-  name_            = {sec.sectname, sizeof(sec.sectname)};
-  size_            = sec.size;
-  offset_          = sec.offset;
+  reserved2_{sec.reserved2} {
+  name_ = {sec.sectname, sizeof(sec.sectname)};
+  size_ = sec.size;
+  offset_ = sec.offset;
   virtual_address_ = sec.addr;
 
-  name_         = name_.c_str();
+  name_ = name_.c_str();
   segment_name_ = segment_name_.c_str();
 }
 
@@ -107,36 +100,35 @@ Section::Section(const details::section_64& sec) :
   flags_{sec.flags},
   reserved1_{sec.reserved1},
   reserved2_{sec.reserved2},
-  reserved3_{sec.reserved3}
-{
-  name_            = {sec.sectname, sizeof(sec.sectname)};
-  size_            = sec.size;
-  offset_          = sec.offset;
+  reserved3_{sec.reserved3} {
+  name_ = {sec.sectname, sizeof(sec.sectname)};
+  size_ = sec.size;
+  offset_ = sec.offset;
   virtual_address_ = sec.addr;
 
-  name_         = name_.c_str();
+  name_ = name_.c_str();
   segment_name_ = segment_name_.c_str();
 }
 
 
 void Section::swap(Section& other) noexcept {
-  std::swap(name_,            other.name_);
+  std::swap(name_, other.name_);
   std::swap(virtual_address_, other.virtual_address_);
-  std::swap(size_,            other.size_);
-  std::swap(offset_,          other.offset_);
+  std::swap(size_, other.size_);
+  std::swap(offset_, other.offset_);
 
-  std::swap(segment_name_,        other.segment_name_);
-  std::swap(original_size_,       other.original_size_);
-  std::swap(align_,               other.align_);
-  std::swap(relocations_offset_,  other.relocations_offset_);
-  std::swap(nbof_relocations_,    other.nbof_relocations_);
-  std::swap(flags_,               other.flags_);
-  std::swap(reserved1_,           other.reserved1_);
-  std::swap(reserved2_,           other.reserved2_);
-  std::swap(reserved3_,           other.reserved3_);
-  std::swap(content_,             other.content_);
-  std::swap(segment_,             other.segment_);
-  std::swap(relocations_,         other.relocations_);
+  std::swap(segment_name_, other.segment_name_);
+  std::swap(original_size_, other.original_size_);
+  std::swap(align_, other.align_);
+  std::swap(relocations_offset_, other.relocations_offset_);
+  std::swap(nbof_relocations_, other.nbof_relocations_);
+  std::swap(flags_, other.flags_);
+  std::swap(reserved1_, other.reserved1_);
+  std::swap(reserved2_, other.reserved2_);
+  std::swap(reserved3_, other.reserved3_);
+  std::swap(content_, other.content_);
+  std::swap(segment_, other.segment_);
+  std::swap(relocations_, other.relocations_);
 }
 
 span<const uint8_t> Section::content() const {
@@ -157,7 +149,9 @@ span<const uint8_t> Section::content() const {
     relative_offset = virtual_address_ - segment_->virtual_address();
   }
   span<const uint8_t> content = segment_->content();
-  if (relative_offset > (int64_t)content.size() || (relative_offset + size_) > content.size()) {
+  if (relative_offset > (int64_t)content.size() ||
+      (relative_offset + size_) > content.size())
+  {
     LIEF_ERR("Section size exceeds segment size");
     return {};
   }
@@ -179,13 +173,14 @@ void Section::content(const content_t& data) {
 
   span<uint8_t> content = segment_->writable_content();
 
-  if (relative_offset > content.size() || (relative_offset + data.size()) > content.size()) {
+  if (relative_offset > content.size() ||
+      (relative_offset + data.size()) > content.size())
+  {
     LIEF_ERR("New data exceeds original size");
     return;
   }
 
-  std::move(data.begin(), data.end(),
-            content.data() + relative_offset);
+  std::move(data.begin(), data.end(), content.data() + relative_offset);
 }
 
 const std::string& Section::segment_name() const {
@@ -199,10 +194,9 @@ const std::string& Section::segment_name() const {
 std::vector<Section::FLAGS> Section::flags_list() const {
   std::vector<FLAGS> flags;
 
-  std::copy_if(
-      ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(),
-      std::inserter(flags, flags.begin()),
-      [this] (FLAGS f) { return has(f); });
+  std::copy_if(ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(),
+               std::inserter(flags, flags.begin()),
+               [this](FLAGS f) { return has(f); });
 
   return flags;
 }
@@ -223,7 +217,7 @@ void Section::add(FLAGS flag) {
 }
 
 void Section::remove(FLAGS flag) {
-  flags(raw_flags() & (~ uint32_t(flag)));
+  flags(raw_flags() & (~uint32_t(flag)));
 }
 
 void Section::clear(uint8_t v) {
@@ -242,34 +236,28 @@ std::unique_ptr<SpanStream> Section::stream() const {
 std::ostream& operator<<(std::ostream& os, const Section& section) {
   const auto& flags = section.flags_list();
   os << fmt::format(
-    "name={}, segment={}, address={:#08x}, size={:#06x} "
-    "offset={:#08x}, align={}, type={}, reloc_offset={}, nb_reloc={} "
-    "reserved1={}, reserved2={}, reserved3={}, flags={}",
-    section.name(), section.segment_name(), section.address(),
-    section.size(), section.offset(), section.alignment(), section.type(),
-    section.relocation_offset(), section.numberof_relocations(),
-    section.reserved1(), section.reserved2(), section.reserved3(),
-    flags
+      "name={}, segment={}, address={:#08x}, size={:#06x} "
+      "offset={:#08x}, align={}, type={}, reloc_offset={}, nb_reloc={} "
+      "reserved1={}, reserved2={}, reserved3={}, flags={}",
+      section.name(), section.segment_name(), section.address(), section.size(),
+      section.offset(), section.alignment(), section.type(),
+      section.relocation_offset(), section.numberof_relocations(),
+      section.reserved1(), section.reserved2(), section.reserved3(), flags
   );
   return os;
 }
 
 
 const char* to_string(Section::FLAGS e) {
-  #define ENTRY(X) std::pair(Section::FLAGS::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(PURE_INSTRUCTIONS),
-    ENTRY(NO_TOC),
-    ENTRY(STRIP_STATIC_SYMS),
-    ENTRY(NO_DEAD_STRIP),
-    ENTRY(LIVE_SUPPORT),
-    ENTRY(SELF_MODIFYING_CODE),
-    ENTRY(DEBUG_INFO),
-    ENTRY(SOME_INSTRUCTIONS),
-    ENTRY(EXT_RELOC),
-    ENTRY(LOC_RELOC),
+#define ENTRY(X) std::pair(Section::FLAGS::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(PURE_INSTRUCTIONS), ENTRY(NO_TOC),
+      ENTRY(STRIP_STATIC_SYMS), ENTRY(NO_DEAD_STRIP),
+      ENTRY(LIVE_SUPPORT),      ENTRY(SELF_MODIFYING_CODE),
+      ENTRY(DEBUG_INFO),        ENTRY(SOME_INSTRUCTIONS),
+      ENTRY(EXT_RELOC),         ENTRY(LOC_RELOC),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -278,33 +266,33 @@ const char* to_string(Section::FLAGS e) {
 }
 
 const char* to_string(Section::TYPE e) {
-  #define ENTRY(X) std::pair(Section::TYPE::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(REGULAR),
-    ENTRY(ZEROFILL),
-    ENTRY(CSTRING_LITERALS),
-    ENTRY(IS_4BYTE_LITERALS),
-    ENTRY(IS_8BYTE_LITERALS),
-    ENTRY(LITERAL_POINTERS),
-    ENTRY(NON_LAZY_SYMBOL_POINTERS),
-    ENTRY(LAZY_SYMBOL_POINTERS),
-    ENTRY(SYMBOL_STUBS),
-    ENTRY(MOD_INIT_FUNC_POINTERS),
-    ENTRY(MOD_TERM_FUNC_POINTERS),
-    ENTRY(COALESCED),
-    ENTRY(GB_ZEROFILL),
-    ENTRY(INTERPOSING),
-    ENTRY(IS_16BYTE_LITERALS),
-    ENTRY(DTRACE_DOF),
-    ENTRY(LAZY_DYLIB_SYMBOL_POINTERS),
-    ENTRY(THREAD_LOCAL_REGULAR),
-    ENTRY(THREAD_LOCAL_ZEROFILL),
-    ENTRY(THREAD_LOCAL_VARIABLES),
-    ENTRY(THREAD_LOCAL_VARIABLE_POINTERS),
-    ENTRY(THREAD_LOCAL_INIT_FUNCTION_POINTERS),
-    ENTRY(INIT_FUNC_OFFSETS),
+#define ENTRY(X) std::pair(Section::TYPE::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(REGULAR),
+      ENTRY(ZEROFILL),
+      ENTRY(CSTRING_LITERALS),
+      ENTRY(IS_4BYTE_LITERALS),
+      ENTRY(IS_8BYTE_LITERALS),
+      ENTRY(LITERAL_POINTERS),
+      ENTRY(NON_LAZY_SYMBOL_POINTERS),
+      ENTRY(LAZY_SYMBOL_POINTERS),
+      ENTRY(SYMBOL_STUBS),
+      ENTRY(MOD_INIT_FUNC_POINTERS),
+      ENTRY(MOD_TERM_FUNC_POINTERS),
+      ENTRY(COALESCED),
+      ENTRY(GB_ZEROFILL),
+      ENTRY(INTERPOSING),
+      ENTRY(IS_16BYTE_LITERALS),
+      ENTRY(DTRACE_DOF),
+      ENTRY(LAZY_DYLIB_SYMBOL_POINTERS),
+      ENTRY(THREAD_LOCAL_REGULAR),
+      ENTRY(THREAD_LOCAL_ZEROFILL),
+      ENTRY(THREAD_LOCAL_VARIABLES),
+      ENTRY(THREAD_LOCAL_VARIABLE_POINTERS),
+      ENTRY(THREAD_LOCAL_INIT_FUNCTION_POINTERS),
+      ENTRY(INIT_FUNC_OFFSETS),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -313,4 +301,3 @@ const char* to_string(Section::TYPE e) {
 }
 
 } // namespace LIEF::MachO
-

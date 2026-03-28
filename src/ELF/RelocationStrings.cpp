@@ -27,7 +27,7 @@ const char* to_string(Relocation::TYPE type);
 template<>
 const char* to_string<Relocation::R_X64>(Relocation::TYPE type) {
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/x86_64.def"
+#include "LIEF/ELF/Relocations/x86_64.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -39,7 +39,7 @@ const char* to_string<Relocation::R_X64>(Relocation::TYPE type) {
 template<>
 const char* to_string<Relocation::R_AARCH64>(Relocation::TYPE type) {
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/AArch64.def"
+#include "LIEF/ELF/Relocations/AArch64.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -51,7 +51,7 @@ const char* to_string<Relocation::R_AARCH64>(Relocation::TYPE type) {
 template<>
 const char* to_string<Relocation::R_ARM>(Relocation::TYPE type) {
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/ARM.def"
+#include "LIEF/ELF/Relocations/ARM.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -62,9 +62,9 @@ const char* to_string<Relocation::R_ARM>(Relocation::TYPE type) {
 
 template<>
 const char* to_string<Relocation::R_HEXAGON>(Relocation::TYPE type) {
-  #define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
+#define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/Hexagon.def"
+#include "LIEF/ELF/Relocations/Hexagon.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -75,9 +75,9 @@ const char* to_string<Relocation::R_HEXAGON>(Relocation::TYPE type) {
 
 template<>
 const char* to_string<Relocation::R_X86>(Relocation::TYPE type) {
-  #define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
+#define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/i386.def"
+#include "LIEF/ELF/Relocations/i386.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -89,7 +89,7 @@ const char* to_string<Relocation::R_X86>(Relocation::TYPE type) {
 template<>
 const char* to_string<Relocation::R_LARCH>(Relocation::TYPE type) {
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/LoongArch.def"
+#include "LIEF/ELF/Relocations/LoongArch.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -101,7 +101,7 @@ const char* to_string<Relocation::R_LARCH>(Relocation::TYPE type) {
 template<>
 const char* to_string<Relocation::R_MIPS>(Relocation::TYPE type) {
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/Mips.def"
+#include "LIEF/ELF/Relocations/Mips.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -113,7 +113,7 @@ const char* to_string<Relocation::R_MIPS>(Relocation::TYPE type) {
 template<>
 const char* to_string<Relocation::R_PPC>(Relocation::TYPE type) {
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/PowerPC.def"
+#include "LIEF/ELF/Relocations/PowerPC.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -125,7 +125,7 @@ const char* to_string<Relocation::R_PPC>(Relocation::TYPE type) {
 template<>
 const char* to_string<Relocation::R_PPC64>(Relocation::TYPE type) {
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/PowerPC64.def"
+#include "LIEF/ELF/Relocations/PowerPC64.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -137,7 +137,7 @@ const char* to_string<Relocation::R_PPC64>(Relocation::TYPE type) {
 template<>
 const char* to_string<Relocation::R_SPARC>(Relocation::TYPE type) {
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/Sparc.def"
+#include "LIEF/ELF/Relocations/Sparc.def"
   };
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
@@ -148,11 +148,11 @@ const char* to_string<Relocation::R_SPARC>(Relocation::TYPE type) {
 
 template<>
 const char* to_string<Relocation::R_SYSZ>(Relocation::TYPE type) {
-  #define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
+#define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/SystemZ.def"
+#include "LIEF/ELF/Relocations/SystemZ.def"
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
     return it->second;
@@ -162,11 +162,11 @@ const char* to_string<Relocation::R_SYSZ>(Relocation::TYPE type) {
 
 template<>
 const char* to_string<Relocation::R_RISCV>(Relocation::TYPE type) {
-  #define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
+#define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/RISCV.def"
+#include "LIEF/ELF/Relocations/RISCV.def"
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
     return it->second;
@@ -176,11 +176,11 @@ const char* to_string<Relocation::R_RISCV>(Relocation::TYPE type) {
 
 template<>
 const char* to_string<Relocation::R_BPF>(Relocation::TYPE type) {
-  #define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
+#define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/BPF.def"
+#include "LIEF/ELF/Relocations/BPF.def"
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
     return it->second;
@@ -190,11 +190,11 @@ const char* to_string<Relocation::R_BPF>(Relocation::TYPE type) {
 
 template<>
 const char* to_string<Relocation::R_SH4>(Relocation::TYPE type) {
-  #define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
+#define ENTRY(X) std::pair(Relocation::TYPE::X, #X)
   STRING_MAP enums2str {
-    #include "LIEF/ELF/Relocations/SH4.def"
+#include "LIEF/ELF/Relocations/SH4.def"
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
     return it->second;
@@ -266,4 +266,3 @@ const char* to_string(Relocation::TYPE type) {
   return "UNKNOWN";
 }
 }
-

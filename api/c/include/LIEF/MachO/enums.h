@@ -17,9 +17,9 @@ extern "C" {
   #undef _LIEF_EI
 #endif
 
-#define _LIEF_EN(N) LIEF_MACHO_##N
+#define _LIEF_EN(N)         LIEF_MACHO_##N
 #define _LIEF_EN_2(N, TYPE) LIEF_MACHO_##N
-#define _LIEF_EI(X) LIEF_MACHO_##X
+#define _LIEF_EI(X)         LIEF_MACHO_##X
 
 #include "LIEF/MachO/enums.inc"
 

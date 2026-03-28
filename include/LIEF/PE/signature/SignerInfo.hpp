@@ -35,7 +35,8 @@ class Parser;
 class SignatureParser;
 class x509;
 
-/** SignerInfo as described in the [RFC 2315](https://tools.ietf.org/html/rfc2315#section-9.2)
+/** SignerInfo as described in the [RFC
+ * 2315](https://tools.ietf.org/html/rfc2315#section-9.2)
  *
  * ```text
  * SignerInfo ::= SEQUENCE {
@@ -64,7 +65,8 @@ class LIEF_API SignerInfo : public Object {
   using attributes_t = std::vector<std::unique_ptr<Attribute>>;
 
   /// Iterator which outputs const Attribute&
-  using it_const_attributes_t = const_ref_iterator<const attributes_t&, const Attribute*>;
+  using it_const_attributes_t =
+      const_ref_iterator<const attributes_t&, const Attribute*>;
 
   SignerInfo();
 
@@ -133,24 +135,28 @@ class LIEF_API SignerInfo : public Object {
   /// found, it returns a nullptr.
   const Attribute* get_attribute(Attribute::TYPE type) const;
 
-  /// Return the authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
+  /// Return the authenticated attribute matching the given
+  /// PE::SIG_ATTRIBUTE_TYPES.
   ///
   /// It returns **the first** entry that matches the given type. If it can't be
   /// found, it returns a nullptr.
   const Attribute* get_auth_attribute(Attribute::TYPE type) const;
 
-  /// Return the un-authenticated attribute matching the given PE::SIG_ATTRIBUTE_TYPES.
+  /// Return the un-authenticated attribute matching the given
+  /// PE::SIG_ATTRIBUTE_TYPES.
   ///
   /// It returns **the first** entry that matches the given type. If it can't be
   /// found, it returns a nullptr.
   const Attribute* get_unauth_attribute(Attribute::TYPE type) const;
 
-  /// x509 certificate used by this signer. If it can't be found, it returns a nullptr
+  /// x509 certificate used by this signer. If it can't be found, it returns a
+  /// nullptr
   const x509* cert() const {
     return cert_.get();
   }
 
-  /// x509 certificate used by this signer. If it can't be found, it returns a nullptr
+  /// x509 certificate used by this signer. If it can't be found, it returns a
+  /// nullptr
   x509* cert() {
     return cert_.get();
   }
@@ -164,14 +170,15 @@ class LIEF_API SignerInfo : public Object {
 
   ~SignerInfo() override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SignerInfo& signer_info);
 
   private:
   uint32_t version_ = 0;
   std::string issuer_;
   std::vector<uint8_t> serialno_;
 
-  ALGORITHMS digest_algorithm_     = ALGORITHMS::UNKNOWN;
+  ALGORITHMS digest_algorithm_ = ALGORITHMS::UNKNOWN;
   ALGORITHMS digest_enc_algorithm_ = ALGORITHMS::UNKNOWN;
 
   encrypted_digest_t encrypted_digest_;

@@ -24,8 +24,12 @@ class MachO_Command : public Mirror<LIEF::MachO::LoadCommand> {
   using lief_t = LIEF::MachO::LoadCommand;
   using Mirror::Mirror;
 
-  uint32_t size() const { return get().size(); }
-  uint64_t command_offset() const { return get().command_offset(); }
+  uint32_t size() const {
+    return get().size();
+  }
+  uint64_t command_offset() const {
+    return get().command_offset();
+  }
 
 
   auto data() const {

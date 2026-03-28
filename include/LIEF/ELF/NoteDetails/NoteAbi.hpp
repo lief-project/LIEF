@@ -37,16 +37,16 @@ class LIEF_API NoteAbi : public Note {
     FREEBSD,
     NETBSD,
     SYLLABLE,
-    NACL
+    NACL,
   };
   /// Version type: (Major, Minor, Patch)
   using version_t = std::array<uint32_t, 3>;
 
-  static constexpr size_t abi_offset      = 0;
-  static constexpr size_t abi_size        = sizeof(uint32_t);
+  static constexpr size_t abi_offset = 0;
+  static constexpr size_t abi_size = sizeof(uint32_t);
 
-  static constexpr size_t version_offset  = abi_size;
-  static constexpr size_t version_size    = 3 * sizeof(uint32_t);
+  static constexpr size_t version_offset = abi_size;
+  static constexpr size_t version_size = 3 * sizeof(uint32_t);
 
   public:
   using Note::Note;
@@ -79,8 +79,7 @@ class LIEF_API NoteAbi : public Note {
 
   ~NoteAbi() override = default;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const NoteAbi& note) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os, const NoteAbi& note) {
     note.dump(os);
     return os;
   }

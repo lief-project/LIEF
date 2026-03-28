@@ -24,10 +24,12 @@
 namespace LIEF {
 namespace PE {
 
-/// Interface over the structure described by the OID ``1.2.840.113549.1.9.5`` (PKCS #9)
+/// Interface over the structure described by the OID ``1.2.840.113549.1.9.5``
+/// (PKCS #9)
 ///
 /// The internal structure is described in the
-/// [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types Version 2.0](https://tools.ietf.org/html/rfc2985)
+/// [RFC #2985: PKCS #9 - Selected Object Classes and Attribute Types
+/// Version 2.0](https://tools.ietf.org/html/rfc2985)
 ///
 /// ```text
 /// signingTime ATTRIBUTE ::= {
@@ -51,8 +53,7 @@ class LIEF_API PKCS9SigningTime : public Attribute {
   PKCS9SigningTime() = delete;
   PKCS9SigningTime(time_t time) :
     Attribute(Attribute::TYPE::PKCS9_SIGNING_TIME),
-    time_{time}
-  {}
+    time_{time} {}
 
   PKCS9SigningTime(const PKCS9SigningTime&) = default;
   PKCS9SigningTime& operator=(const PKCS9SigningTime&) = default;

@@ -36,7 +36,7 @@ class LIEF_API Parser {
                                      const std::string& name = "");
 
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
   private:
   Parser();

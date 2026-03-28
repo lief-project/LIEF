@@ -48,10 +48,11 @@
 //
 //
 //
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "ELF Section rename" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Original Binary> <Output Binary>" << '\n';
+    std::cerr << "Usage: " << argv[0] << " <Original Binary> <Output Binary>"
+              << '\n';
     return -1;
   }
 
@@ -62,6 +63,4 @@ int main(int argc, char **argv) {
   binary->write(argv[2]);
 
   return 0;
-
-
 }

@@ -20,13 +20,18 @@
 class MachO_SubFramework : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::SubFramework;
-  MachO_SubFramework(const lief_t& base) : MachO_Command(base) {}
-  std::string umbrella() const { return impl().umbrella(); }
+  MachO_SubFramework(const lief_t& base) :
+    MachO_Command(base) {}
+  std::string umbrella() const {
+    return impl().umbrella();
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

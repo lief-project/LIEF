@@ -49,7 +49,6 @@ void Parser::parse_file() {
   resolve_inheritance();
   resolve_external_methods();
   resolve_external_fields();
-
 }
 
 
@@ -98,8 +97,8 @@ void Parser::parse_strings() {
     return;
   }
 
-  LIEF_DEBUG("Parsing #{:d} STRINGS at {:#x}",
-             strings_location.second, strings_location.first);
+  LIEF_DEBUG("Parsing #{:d} STRINGS at {:#x}", strings_location.second,
+             strings_location.first);
 
   MapList& map = file_->map();
   if (map.has(MapItem::TYPES::STRING_ID)) {
@@ -115,7 +114,8 @@ void Parser::parse_strings() {
 
   file_->strings_.reserve(strings_location.second);
   for (size_t i = 0; i < strings_location.second; ++i) {
-    auto string_offset = stream_->peek<uint32_t>(strings_location.first + i * sizeof(uint32_t));
+    auto string_offset =
+        stream_->peek<uint32_t>(strings_location.first + i * sizeof(uint32_t));
     if (!string_offset) {
       break;
     }
@@ -138,7 +138,8 @@ template<typename DEX_T>
 void Parser::parse_types() {
   Header::location_t types_location = file_->header().types();
 
-  LIEF_DEBUG("Parsing #{:d} TYPES at {:#x}", types_location.second, types_location.first);
+  LIEF_DEBUG("Parsing #{:d} TYPES at {:#x}", types_location.second,
+             types_location.first);
 
   if (types_location.first == 0) {
     return;
@@ -154,14 +155,16 @@ void Parser::parse_types() {
     if (*descriptor_idx >= file_->strings_.size()) {
       break;
     }
-    std::unique_ptr<std::string>& descriptor_str = file_->strings_[*descriptor_idx];
+    std::unique_ptr<std::string>& descriptor_str =
+        file_->strings_[*descriptor_idx];
     auto type = std::make_unique<Type>(*descriptor_str);
 
     if (type->type() == Type::TYPES::CLASS) {
       class_type_map_.emplace(*descriptor_str, type.get());
     }
 
-    else if (type->type() == Type::TYPES::ARRAY) {
+    else if (type->type() == Type::TYPES::ARRAY)
+    {
       const Type& array_type = type->underlying_array_type();
       if (array_type.type() == Type::TYPES::CLASS) {
         std::string mangled_name = *descriptor_str;
@@ -181,10 +184,13 @@ void Parser::parse_fields() {
 
   const uint64_t fields_offset = fields_location.first;
 
-  LIEF_DEBUG("Parsing #{:d} FIELDS at {:#x}", fields_location.second, fields_location.first);
+  LIEF_DEBUG("Parsing #{:d} FIELDS at {:#x}", fields_location.second,
+             fields_location.first);
 
   for (size_t i = 0; i < fields_location.second; ++i) {
-    const auto res_item = stream_->peek<details::field_id_item>(fields_offset + i * sizeof(details::field_id_item));
+    const auto res_item =
+        stream_->peek<details::field_id_item>(fields_offset +
+                                              i * sizeof(details::field_id_item));
     if (!res_item) {
       break;
     }
@@ -196,7 +202,9 @@ void Parser::parse_fields() {
       continue;
     }
 
-    const auto class_name_idx = stream_->peek<uint32_t>(types_location.first + item.class_idx * sizeof(uint32_t));
+    const auto class_name_idx =
+        stream_->peek<uint32_t>(types_location.first +
+                                item.class_idx * sizeof(uint32_t));
     if (!class_name_idx) {
       continue;
     }
@@ -214,7 +222,8 @@ void Parser::parse_fields() {
     // Type
     // =======================
     if (item.type_idx >= file_->types_.size()) {
-      LIEF_WARN("Type #{:d} out of bounds ({:d})", item.type_idx, file_->types_.size());
+      LIEF_WARN("Type #{:d} out of bounds ({:d})", item.type_idx,
+                file_->types_.size());
       break;
     }
     std::unique_ptr<Type>& type = file_->types_[item.type_idx];
@@ -248,8 +257,8 @@ void Parser::parse_prototypes() {
     return;
   }
 
-  LIEF_DEBUG("Parsing #{:d} PROTOTYPES at {:#x}",
-             prototypes_locations.second, prototypes_locations.first);
+  LIEF_DEBUG("Parsing #{:d} PROTOTYPES at {:#x}", prototypes_locations.second,
+             prototypes_locations.first);
 
   stream_->setpos(prototypes_locations.first);
   for (size_t i = 0; i < prototypes_locations.second; ++i) {
@@ -264,17 +273,20 @@ void Parser::parse_prototypes() {
       LIEF_WARN("Corrupted prototype shorty index ({:d})", item.shorty_idx);
       break;
     }
-    //std::string* shorty_str = file_->strings_[item.shorty_idx];
+    // std::string* shorty_str = file_->strings_[item.shorty_idx];
 
     // Type object that is returned
     if (item.return_type_idx >= file_->types_.size()) {
-      LIEF_WARN("Corrupted prototype return type index ({:d})", item.return_type_idx);
+      LIEF_WARN("Corrupted prototype return type index ({:d})",
+                item.return_type_idx);
       break;
     }
     auto prototype = std::make_unique<Prototype>();
     prototype->return_type_ = file_->types_[item.return_type_idx].get();
 
-    if (item.parameters_off > 0 && stream_->can_read<uint32_t>(item.parameters_off)) {
+    if (item.parameters_off > 0 &&
+        stream_->can_read<uint32_t>(item.parameters_off))
+    {
       const size_t saved_pos = stream_->pos();
       stream_->setpos(item.parameters_off);
       const size_t nb_params = *stream_->read<uint32_t>();
@@ -297,8 +309,6 @@ void Parser::parse_prototypes() {
 
     file_->prototypes_.push_back(std::move(prototype));
   }
-
-
 }
 
 template<typename DEX_T>
@@ -308,10 +318,13 @@ void Parser::parse_methods() {
 
   const uint64_t methods_offset = methods_location.first;
 
-  LIEF_DEBUG("Parsing #{:d} METHODS at {:#x}", methods_location.second, methods_location.first);
+  LIEF_DEBUG("Parsing #{:d} METHODS at {:#x}", methods_location.second,
+             methods_location.first);
 
   for (size_t i = 0; i < methods_location.second; ++i) {
-    const auto res_item = stream_->peek<details::method_id_item>(methods_offset + i * sizeof(details::method_id_item));
+    const auto res_item = stream_->peek<details::method_id_item>(
+        methods_offset + i * sizeof(details::method_id_item)
+    );
     if (!res_item) {
       break;
     }
@@ -322,7 +335,9 @@ void Parser::parse_methods() {
       LIEF_WARN("Corrupted type index for method class name");
       continue;
     }
-    const auto class_name_idx = stream_->peek<uint32_t>(types_location.first + item.class_idx * sizeof(uint32_t));
+    const auto class_name_idx =
+        stream_->peek<uint32_t>(types_location.first +
+                                item.class_idx * sizeof(uint32_t));
     if (!class_name_idx) {
       break;
     }
@@ -338,13 +353,14 @@ void Parser::parse_methods() {
       clazz = clazz.substr(pos + 1);
     }
 
-    //CHECK_EQ(clazz[0], 'L') << "Not supported class: " << clazz;
+    // CHECK_EQ(clazz[0], 'L') << "Not supported class: " << clazz;
 
 
     // Prototype
     // =======================
     if (item.proto_idx >= file_->prototypes_.size()) {
-      LIEF_WARN("Prototype #{:d} out of bounds ({:d})", item.proto_idx, file_->prototypes_.size());
+      LIEF_WARN("Prototype #{:d} out of bounds ({:d})", item.proto_idx,
+                file_->prototypes_.size());
       break;
     }
     std::unique_ptr<Prototype>& pt = file_->prototypes_[item.proto_idx];
@@ -381,10 +397,13 @@ void Parser::parse_classes() {
 
   const uint64_t classes_offset = classes_location.first;
 
-  LIEF_DEBUG("Parsing #{:d} CLASSES at {:#x}", classes_location.second, classes_offset);
+  LIEF_DEBUG("Parsing #{:d} CLASSES at {:#x}", classes_location.second,
+             classes_offset);
 
   for (size_t i = 0; i < classes_location.second; ++i) {
-    const auto res_item = stream_->peek<details::class_def_item>(classes_offset + i * sizeof(details::class_def_item));
+    const auto res_item = stream_->peek<details::class_def_item>(
+        classes_offset + i * sizeof(details::class_def_item)
+    );
     if (!res_item) {
       break;
     }
@@ -397,7 +416,8 @@ void Parser::parse_classes() {
     if (type_idx > types_location.second) {
       LIEF_ERR("Corrupted type");
     } else {
-      auto class_name_idx = stream_->peek<uint32_t>(types_location.first + type_idx * sizeof(uint32_t));
+      auto class_name_idx = stream_->peek<uint32_t>(types_location.first +
+                                                    type_idx * sizeof(uint32_t));
       if (!class_name_idx) {
         break;
       }
@@ -416,7 +436,9 @@ void Parser::parse_classes() {
         LIEF_WARN("Corrupted type index for superclass name");
         continue;
       }
-      auto super_class_name_idx = stream_->peek<uint32_t>(types_location.first + item.superclass_idx * sizeof(uint32_t));
+      auto super_class_name_idx =
+          stream_->peek<uint32_t>(types_location.first +
+                                  item.superclass_idx * sizeof(uint32_t));
       if (!super_class_name_idx) {
         break;
       }
@@ -443,7 +465,8 @@ void Parser::parse_classes() {
       }
     }
 
-    auto clazz = std::make_unique<Class>(name, item.access_flags, parent_ptr, source_filename);
+    auto clazz = std::make_unique<Class>(name, item.access_flags, parent_ptr,
+                                         source_filename);
     clazz->original_index_ = i;
     if (parent_ptr == nullptr) {
       // Register in inheritance map to be resolved later
@@ -462,9 +485,7 @@ void Parser::parse_classes() {
     if (item.class_data_off > 0) {
       parse_class_data<DEX_T>(item.class_data_off, cls);
     }
-
   }
-
 }
 
 
@@ -577,7 +598,6 @@ void Parser::parse_class_data(uint32_t offset, Class& cls) {
     }
     parse_method<DEX_T>(method_idx, cls, true);
   }
-
 }
 
 
@@ -668,15 +688,16 @@ void Parser::parse_code_info(uint32_t offset, Method& method) {
   }
   method.code_info_ = codeitem.value();
 
-  const auto* bytecode = stream_->peek_array<uint8_t>(/* offset */ offset + sizeof(details::code_item),
-                                                      /* size   */ codeitem->insns_size * sizeof(uint16_t));
+  const auto* bytecode = stream_->peek_array<uint8_t>(
+      /* offset */ offset + sizeof(details::code_item),
+      /* size   */ codeitem->insns_size * sizeof(uint16_t)
+  );
   method.code_offset_ = offset + sizeof(details::code_item);
   if (bytecode != nullptr) {
-    method.bytecode_ = {bytecode, bytecode + codeitem->insns_size * sizeof(uint16_t)};
+    method.bytecode_ = {bytecode,
+                        bytecode + codeitem->insns_size * sizeof(uint16_t)};
   }
 }
 
 
-
 }
-

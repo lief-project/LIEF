@@ -41,10 +41,10 @@ class LIEF_API Simple : public Type {
     RCHAR = 0x0070, //!< "Real" Character (char)
 
     // --- Unicode / Wide Characters ---
-    WCHAR  = 0x0071, //!< Wide Character (wchar_t)
+    WCHAR = 0x0071,  //!< Wide Character (wchar_t)
     CHAR16 = 0x007a, //!< 16-bit Character (char16_t)
     CHAR32 = 0x007b, //!< 32-bit Character (char32_t)
-    CHAR8  = 0x007c, //!< 8-bit Character (char8_t)
+    CHAR8 = 0x007c,  //!< 8-bit Character (char8_t)
 
     // --- Bytes ---
     SBYTE = 0x0068, //!< Signed Byte
@@ -83,9 +83,9 @@ class LIEF_API Simple : public Type {
     FLOAT32 = 0x0040, //!< 32-bit Floating point (float)
     FLOAT32_PARTIAL_PRECISION = 0x45,
 
-    FLOAT48 = 0x0044, //!< 48-bit Floating point
-    FLOAT64 = 0x0041, //!< 64-bit Floating point (double)
-    FLOAT80 = 0x0042, //!< 80-bit Floating point
+    FLOAT48 = 0x0044,  //!< 48-bit Floating point
+    FLOAT64 = 0x0041,  //!< 64-bit Floating point (double)
+    FLOAT80 = 0x0042,  //!< 80-bit Floating point
     FLOAT128 = 0x0043, //!< 128-bit Floating point
 
     // --- Complex Numbers ---
@@ -98,10 +98,10 @@ class LIEF_API Simple : public Type {
     COMPLEX128 = 0x0053,
 
     // --- Booleans ---
-    BOOL8   = 0x0030, //!< 8-bit Boolean
-    BOOL16  = 0x0031, //!< 16-bit Boolean
-    BOOL32  = 0x0032, //!< 32-bit Boolean
-    BOOL64  = 0x0033, //!< 64-bit Boolean
+    BOOL8 = 0x0030,   //!< 8-bit Boolean
+    BOOL16 = 0x0031,  //!< 16-bit Boolean
+    BOOL32 = 0x0032,  //!< 32-bit Boolean
+    BOOL64 = 0x0033,  //!< 64-bit Boolean
     BOOL128 = 0x0034, //!< 128-bit Boolean
   };
 
@@ -109,13 +109,13 @@ class LIEF_API Simple : public Type {
   ///
   /// In the PDB Simple Type encoding, these represent pointer attributes.
   enum class MODES : uint32_t {
-    DIRECT          = 0x00000000, //!< Not a pointer (direct access)
-    FAR_POINTER     = 0x00000200, //!< Far pointer
-    HUGE_POINTER    = 0x00000300, //!< Huge pointer
-    NEAR_POINTER32  = 0x00000400, //!< 32-bit Near pointer
-    FAR_POINTER32   = 0x00000500, //!< 32-bit Far pointer
-    NEAR_POINTER64  = 0x00000600, //!< 64-bit Near pointer
-    NEAR_POINTER128 = 0x00000700  //!< 128-bit Near pointer
+    DIRECT = 0x00000000,          //!< Not a pointer (direct access)
+    FAR_POINTER = 0x00000200,     //!< Far pointer
+    HUGE_POINTER = 0x00000300,    //!< Huge pointer
+    NEAR_POINTER32 = 0x00000400,  //!< 32-bit Near pointer
+    FAR_POINTER32 = 0x00000500,   //!< 32-bit Far pointer
+    NEAR_POINTER64 = 0x00000600,  //!< 64-bit Near pointer
+    NEAR_POINTER128 = 0x00000700, //!< 128-bit Near pointer
   };
 
   /// Returns the underlying primitive type.
@@ -132,11 +132,10 @@ class LIEF_API Simple : public Type {
   /// Check if the underlying type is signed
   bool is_signed() const {
     const TYPES ty = type();
-    return ty == TYPES::SCHAR  || ty == TYPES::SBYTE  ||
-           ty == TYPES::SSHORT || ty == TYPES::SINT16 ||
-           ty == TYPES::SLONG  || ty == TYPES::SINT32 ||
-           ty == TYPES::SQUAD  || ty == TYPES::SINT64 ||
-           ty == TYPES::SOCTA  || ty == TYPES::SINT128;
+    return ty == TYPES::SCHAR || ty == TYPES::SBYTE || ty == TYPES::SSHORT ||
+           ty == TYPES::SINT16 || ty == TYPES::SLONG || ty == TYPES::SINT32 ||
+           ty == TYPES::SQUAD || ty == TYPES::SINT64 || ty == TYPES::SOCTA ||
+           ty == TYPES::SINT128;
   }
 
   static bool classof(const Type* type) {
@@ -150,5 +149,3 @@ class LIEF_API Simple : public Type {
 }
 }
 #endif
-
-

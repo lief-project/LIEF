@@ -25,7 +25,6 @@ namespace ELF {
 /// implementation.
 class Generic : public NoteGnuProperty::Property {
   public:
-
   /// The original raw type as an integer. This value might depends
   /// on the architecture and/or the file type.
   uint32_t type() const {
@@ -45,8 +44,7 @@ class Generic : public NoteGnuProperty::Property {
   protected:
   Generic(uint32_t raw_type) :
     NoteGnuProperty::Property(NoteGnuProperty::Property::TYPE::GENERIC),
-    raw_type_(raw_type)
-  {}
+    raw_type_(raw_type) {}
   uint32_t raw_type_ = 0;
 };
 }

@@ -34,8 +34,7 @@ LIEF_LOCAL Routine::Routine(const T& cmd) :
   reserved3_(cmd.reserved3),
   reserved4_(cmd.reserved4),
   reserved5_(cmd.reserved5),
-  reserved6_(cmd.reserved6)
-{}
+  reserved6_(cmd.reserved6) {}
 
 void Routine::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -43,8 +42,8 @@ void Routine::accept(Visitor& visitor) const {
 
 std::ostream& Routine::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("init_address={:#08x} init_module={:#08x}",
-                    init_address(), init_module());
+  os << fmt::format("init_address={:#08x} init_module={:#08x}", init_address(),
+                    init_module());
   return os;
 }
 
@@ -52,4 +51,3 @@ template Routine::Routine(const details::routines_command_32&);
 template Routine::Routine(const details::routines_command_64&);
 
 }
-

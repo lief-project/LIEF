@@ -17,7 +17,8 @@
 #include "LIEF/rust/DWARF/editor/Type.hpp"
 
 
-class DWARF_editor_FunctionType_Parameter : public Mirror<LIEF::dwarf::editor::FunctionType::Parameter> {
+class DWARF_editor_FunctionType_Parameter
+  : public Mirror<LIEF::dwarf::editor::FunctionType::Parameter> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::FunctionType::Parameter;
@@ -34,7 +35,7 @@ class DWARF_editor_FunctionType : public DWARF_editor_Type {
 
   auto add_parameter(const DWARF_editor_Type& ty) {
     return details::try_unique<DWARF_editor_FunctionType_Parameter>(
-      impl().add_parameter(ty.get())
+        impl().add_parameter(ty.get())
     );
   }
 
@@ -43,6 +44,10 @@ class DWARF_editor_FunctionType : public DWARF_editor_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

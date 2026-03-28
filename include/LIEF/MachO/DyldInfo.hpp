@@ -66,7 +66,8 @@ class LIEF_API DyldInfo : public LoadCommand {
   using it_binding_info = ref_iterator<binding_info_t&, DyldBindingInfo*>;
 
   /// Iterator which outputs const DyldBindingInfo&
-  using it_const_binding_info = const_ref_iterator<const binding_info_t&, DyldBindingInfo*>;
+  using it_const_binding_info =
+      const_ref_iterator<const binding_info_t&, DyldBindingInfo*>;
 
   /// Internal container for storing ExportInfo
   using export_info_t = std::vector<std::unique_ptr<ExportInfo>>;
@@ -75,57 +76,80 @@ class LIEF_API DyldInfo : public LoadCommand {
   using it_export_info = ref_iterator<export_info_t&, ExportInfo*>;
 
   /// Iterator which outputs const ExportInfo&
-  using it_const_export_info = const_ref_iterator<const export_info_t&, ExportInfo*>;
+  using it_const_export_info =
+      const_ref_iterator<const export_info_t&, ExportInfo*>;
 
   enum class BINDING_ENCODING_VERSION {
     UNKNOWN = 0,
     V1,
-    V2
+    V2,
   };
 
-  enum class REBASE_TYPE: uint64_t  {
-    POINTER         = 1u,
+  enum class REBASE_TYPE : uint64_t {
+    POINTER = 1u,
     TEXT_ABSOLUTE32 = 2u,
-    TEXT_PCREL32    = 3u,
-    THREADED        = 102u,
+    TEXT_PCREL32 = 3u,
+    THREADED = 102u,
   };
 
-  enum class REBASE_OPCODES: uint8_t {
-    DONE                               = 0x00u, ///< It's finished
-    SET_TYPE_IMM                       = 0x10u, ///< Set type to immediate (lower 4-bits). Used for ordinal numbers from 0-15
-    SET_SEGMENT_AND_OFFSET_ULEB        = 0x20u, ///< Set segment's index to immediate (lower 4-bits) and segment's offset to following ULEB128 encoding.
-    ADD_ADDR_ULEB                      = 0x30u, ///< Add segment's offset with the following ULEB128 encoding.
-    ADD_ADDR_IMM_SCALED                = 0x40u, ///< Add segment's offset with immediate scaling
-    DO_REBASE_IMM_TIMES                = 0x50u, ///< Rebase in the range of ``[segment's offset; segment's offset + immediate * sizeof(ptr)]``
-    DO_REBASE_ULEB_TIMES               = 0x60u, ///< Same as REBASE_OPCODE_DO_REBASE_IMM_TIMES but *immediate* is replaced with ULEB128 value
-    DO_REBASE_ADD_ADDR_ULEB            = 0x70u, ///< Rebase and increment segment's offset with following ULEB128 encoding + pointer's size
-    DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 0x80u  ///< Rebase and skip several bytes
+  enum class REBASE_OPCODES : uint8_t {
+    DONE = 0x00u,         ///< It's finished
+    SET_TYPE_IMM = 0x10u, ///< Set type to immediate (lower 4-bits). Used for
+                          ///< ordinal numbers from 0-15
+    SET_SEGMENT_AND_OFFSET_ULEB =
+        0x20u, ///< Set segment's index to immediate (lower 4-bits) and segment's
+               ///< offset to following ULEB128 encoding.
+    ADD_ADDR_ULEB =
+        0x30u, ///< Add segment's offset with the following ULEB128 encoding.
+    ADD_ADDR_IMM_SCALED = 0x40u, ///< Add segment's offset with immediate scaling
+    DO_REBASE_IMM_TIMES = 0x50u, ///< Rebase in the range of ``[segment's offset;
+                                 ///< segment's offset + immediate * sizeof(ptr)]``
+    DO_REBASE_ULEB_TIMES =
+        0x60u, ///< Same as REBASE_OPCODE_DO_REBASE_IMM_TIMES but *immediate* is
+               ///< replaced with ULEB128 value
+    DO_REBASE_ADD_ADDR_ULEB =
+        0x70u, ///< Rebase and increment segment's offset with following ULEB128
+               ///< encoding + pointer's size
+    DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 0x80u, ///< Rebase and skip several bytes
   };
 
   /// Opcodes used by Dyld info to bind symbols
-  enum class BIND_OPCODES: uint8_t {
-    DONE                             = 0x00u, ///< It's finished
-    SET_DYLIB_ORDINAL_IMM            = 0x10u, ///< Set ordinal to immediate (lower 4-bits). Used for ordinal numbers from 0-15
-    SET_DYLIB_ORDINAL_ULEB           = 0x20u, ///< Set ordinal to following ULEB128 encoding. Used for ordinal numbers from 16+
-    SET_DYLIB_SPECIAL_IMM            = 0x30u, ///< Set ordinal, with 0 or negative number as immediate. the value is sign extended.
-    SET_SYMBOL_TRAILING_FLAGS_IMM    = 0x40u, ///< Set the following symbol (NULL-terminated char*).
-    SET_TYPE_IMM                     = 0x50u, ///< Set the type to immediate (lower 4-bits). See BIND_TYPES
-    SET_ADDEND_SLEB                  = 0x60u, ///< Set the addend field to the following SLEB128 encoding.
-    SET_SEGMENT_AND_OFFSET_ULEB      = 0x70u, ///< Set Segment to immediate value, and address to the following SLEB128 encoding
-    ADD_ADDR_ULEB                    = 0x80u, ///< Set the address field to the following SLEB128 encoding.
-    DO_BIND                          = 0x90u, ///< Perform binding of current table row
-    DO_BIND_ADD_ADDR_ULEB            = 0xA0u, ///< Perform binding, also add following ULEB128 as address
-    DO_BIND_ADD_ADDR_IMM_SCALED      = 0xB0u, ///< Perform binding, also add immediate (lower 4-bits) using scaling
-    DO_BIND_ULEB_TIMES_SKIPPING_ULEB = 0xC0u, ///< Perform binding for several symbols (as following ULEB128), and skip several bytes.
-    THREADED                         = 0xD0u,
+  enum class BIND_OPCODES : uint8_t {
+    DONE = 0x00u,                   ///< It's finished
+    SET_DYLIB_ORDINAL_IMM = 0x10u,  ///< Set ordinal to immediate (lower 4-bits).
+                                    ///< Used for ordinal numbers from 0-15
+    SET_DYLIB_ORDINAL_ULEB = 0x20u, ///< Set ordinal to following ULEB128 encoding.
+                                    ///< Used for ordinal numbers from 16+
+    SET_DYLIB_SPECIAL_IMM = 0x30u,  ///< Set ordinal, with 0 or negative number as
+                                    ///< immediate. the value is sign extended.
+    SET_SYMBOL_TRAILING_FLAGS_IMM =
+        0x40u, ///< Set the following symbol (NULL-terminated char*).
+    SET_TYPE_IMM =
+        0x50u, ///< Set the type to immediate (lower 4-bits). See BIND_TYPES
+    SET_ADDEND_SLEB =
+        0x60u, ///< Set the addend field to the following SLEB128 encoding.
+    SET_SEGMENT_AND_OFFSET_ULEB =
+        0x70u, ///< Set Segment to immediate value, and address to the following
+               ///< SLEB128 encoding
+    ADD_ADDR_ULEB =
+        0x80u,       ///< Set the address field to the following SLEB128 encoding.
+    DO_BIND = 0x90u, ///< Perform binding of current table row
+    DO_BIND_ADD_ADDR_ULEB =
+        0xA0u, ///< Perform binding, also add following ULEB128 as address
+    DO_BIND_ADD_ADDR_IMM_SCALED = 0xB0u, ///< Perform binding, also add immediate
+                                         ///< (lower 4-bits) using scaling
+    DO_BIND_ULEB_TIMES_SKIPPING_ULEB =
+        0xC0u, ///< Perform binding for several symbols (as following ULEB128), and
+               ///< skip several bytes.
+    THREADED = 0xD0u,
 
-    THREADED_APPLY                            = 0xD0u | 0x01u,
+    THREADED_APPLY = 0xD0u | 0x01u,
     THREADED_SET_BIND_ORDINAL_TABLE_SIZE_ULEB = 0xD0u | 0x00u,
   };
 
-  enum class BIND_SUBOPCODE_THREADED: uint8_t {
+  enum class BIND_SUBOPCODE_THREADED : uint8_t {
     SET_BIND_ORDINAL_TABLE_SIZE_ULEB = 0x00u,
-    APPLY                            = 0x01u,
+    APPLY = 0x01u,
   };
 
   enum BIND_SYMBOL_FLAGS {
@@ -361,7 +385,7 @@ class LIEF_API DyldInfo : public LoadCommand {
     rebase_ = {offset, std::get<1>(rebase())};
   }
   void set_rebase_size(uint32_t size) {
-  rebase_ = {std::get<0>(rebase()), size};
+    rebase_ = {std::get<0>(rebase()), size};
   }
 
   void set_bind_offset(uint32_t offset) {
@@ -406,45 +430,57 @@ class LIEF_API DyldInfo : public LoadCommand {
   }
 
   private:
-  using bind_container_t = std::set<DyldBindingInfo*, std::function<bool(DyldBindingInfo*, DyldBindingInfo*)>>;
+  using bind_container_t =
+      std::set<DyldBindingInfo*,
+               std::function<bool(DyldBindingInfo*, DyldBindingInfo*)>>;
 
-  LIEF_LOCAL void show_bindings(std::ostream& os, span<const uint8_t> buffer, bool is_lazy = false) const;
+  LIEF_LOCAL void show_bindings(std::ostream& os, span<const uint8_t> buffer,
+                                bool is_lazy = false) const;
 
   LIEF_LOCAL void show_trie(std::ostream& output, std::string output_prefix,
                             BinaryStream& stream, uint64_t start, uint64_t end,
                             const std::string& prefix) const;
 
-  LIEF_LOCAL DyldInfo& update_standard_bindings(const bind_container_t& bindings, vector_iostream& stream);
-  LIEF_LOCAL DyldInfo& update_standard_bindings_v1(const bind_container_t& bindings, vector_iostream& stream);
-  LIEF_LOCAL DyldInfo& update_standard_bindings_v2(const bind_container_t& bindings,
-                                                   std::vector<RelocationDyld*> rebases, vector_iostream& stream);
+  LIEF_LOCAL DyldInfo& update_standard_bindings(const bind_container_t& bindings,
+                                                vector_iostream& stream);
+  LIEF_LOCAL DyldInfo&
+      update_standard_bindings_v1(const bind_container_t& bindings,
+                                  vector_iostream& stream);
+  LIEF_LOCAL DyldInfo&
+      update_standard_bindings_v2(const bind_container_t& bindings,
+                                  std::vector<RelocationDyld*> rebases,
+                                  vector_iostream& stream);
 
-  LIEF_LOCAL DyldInfo& update_weak_bindings(const bind_container_t& bindings, vector_iostream& stream);
-  LIEF_LOCAL DyldInfo& update_lazy_bindings(const bind_container_t& bindings, vector_iostream& stream);
+  LIEF_LOCAL DyldInfo& update_weak_bindings(const bind_container_t& bindings,
+                                            vector_iostream& stream);
+  LIEF_LOCAL DyldInfo& update_lazy_bindings(const bind_container_t& bindings,
+                                            vector_iostream& stream);
 
   LIEF_LOCAL DyldInfo& update_rebase_info(vector_iostream& stream);
-  LIEF_LOCAL DyldInfo& update_binding_info(vector_iostream& stream, details::dyld_info_command& cmd);
+  LIEF_LOCAL DyldInfo& update_binding_info(vector_iostream& stream,
+                                           details::dyld_info_command& cmd);
   LIEF_LOCAL DyldInfo& update_export_trie(vector_iostream& stream);
 
-  info_t   rebase_;
+  info_t rebase_;
   span<uint8_t> rebase_opcodes_;
 
-  info_t   bind_;
+  info_t bind_;
   span<uint8_t> bind_opcodes_;
 
-  info_t   weak_bind_;
+  info_t weak_bind_;
   span<uint8_t> weak_bind_opcodes_;
 
-  info_t   lazy_bind_;
+  info_t lazy_bind_;
   span<uint8_t> lazy_bind_opcodes_;
 
-  info_t   export_;
+  info_t export_;
   span<uint8_t> export_trie_;
 
-  export_info_t  export_info_;
+  export_info_t export_info_;
   binding_info_t binding_info_;
 
-  BINDING_ENCODING_VERSION binding_encoding_version_ = BINDING_ENCODING_VERSION::UNKNOWN;
+  BINDING_ENCODING_VERSION binding_encoding_version_ =
+      BINDING_ENCODING_VERSION::UNKNOWN;
 
   Binary* binary_ = nullptr;
 };

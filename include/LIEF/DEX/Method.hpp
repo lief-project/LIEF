@@ -35,6 +35,7 @@ class Prototype;
 /// Class which represents a DEX::Method
 class LIEF_API Method : public Object {
   friend class Parser;
+
   public:
   using access_flags_list_t = std::vector<ACCESS_FLAGS>;
 
@@ -110,7 +111,6 @@ class LIEF_API Method : public Object {
   CodeInfo code_info_;
 
   dex2dex_method_info_t dex2dex_info_;
-
 };
 
 } // Namespace DEX

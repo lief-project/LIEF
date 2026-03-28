@@ -41,14 +41,16 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
     REQUIRE(pe == nullptr);
   }
   SECTION("hash") {
-    std::string path = test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
+    std::string path =
+        test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
     std::unique_ptr<PE::Binary> lhs = PE::Parser::parse(path);
     std::unique_ptr<PE::Binary> rhs = PE::Parser::parse(path);
     REQUIRE(LIEF::hash(*lhs) == LIEF::hash(*rhs));
   }
   SECTION("resources_nodes") {
     using namespace PE;
-    std::string path = test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
+    std::string path =
+        test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
     std::unique_ptr<PE::Binary> bin = PE::Parser::parse(path);
     ResourceNode* node = bin->resources();
     REQUIRE(ResourceDirectory::classof(node));
@@ -98,10 +100,9 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
   }
 
   SECTION("classof") {
-    std::string path = test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
+    std::string path =
+        test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
     std::unique_ptr<LIEF::Binary> pe = LIEF::Parser::parse(path);
     REQUIRE(LIEF::PE::Binary::classof(pe.get()));
   }
 }
-
-

@@ -41,10 +41,10 @@ uintptr_t get_module_base_address(const std::string& name) {
   return 0;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
 
-  //const uintptr_t base = get_module_base_address("macho_from_memory");
+  // const uintptr_t base = get_module_base_address("macho_from_memory");
   const uintptr_t base = get_module_base_address("in_mem.test");
   if (base == 0) {
     return EXIT_FAILURE;
@@ -66,4 +66,3 @@ int main(int argc, char **argv) {
   }
   return EXIT_SUCCESS;
 }
-

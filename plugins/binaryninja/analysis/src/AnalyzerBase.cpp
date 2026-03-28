@@ -24,34 +24,33 @@ using namespace BinaryNinja;
 
 namespace analysis_plugin {
 
-void AnalyzerBase::define_type_at(
-    uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
-    std::optional<std::string> name, bool force)
-{
+void AnalyzerBase::define_type_at(uint64_t address,
+                                  BinaryNinja::Ref<BinaryNinja::Type> type,
+                                  std::optional<std::string> name, bool force) {
   if (force) {
     bv_.UndefineDataVariable(address, /*blacklist=*/false);
   }
 
   if (auto var = get_defined_var(address)) {
     BN_DEBUG("Type '{}' already defined at 0x{:016x}",
-        binaryninja::to_string(var->type->GetTypeName()), address);
+             binaryninja::to_string(var->type->GetTypeName()), address);
     return;
   }
 
   if (name) {
     Ref<Symbol> bn_sym = new Symbol(DataSymbol, *name, address, NoBinding);
-    bv_.DefineAutoSymbolAndVariableOrFunction(
-        bv_.GetDefaultPlatform(), bn_sym, type);
+    bv_.DefineAutoSymbolAndVariableOrFunction(bv_.GetDefaultPlatform(), bn_sym,
+                                              type);
   } else {
     bv_.DefineDataVariable(address, type);
   }
 }
 
 
-void AnalyzerBase::define_type_at(
-    uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
-    force_callback_t force, std::optional<std::string> name)
-{
+void AnalyzerBase::define_type_at(uint64_t address,
+                                  BinaryNinja::Ref<BinaryNinja::Type> type,
+                                  force_callback_t force,
+                                  std::optional<std::string> name) {
   if (auto var = get_defined_var(address)) {
     if (!force(*var)) {
       return;
@@ -61,31 +60,29 @@ void AnalyzerBase::define_type_at(
 
   if (name) {
     Ref<Symbol> bn_sym = new Symbol(DataSymbol, *name, address, NoBinding);
-    bv_.DefineAutoSymbolAndVariableOrFunction(
-        bv_.GetDefaultPlatform(), bn_sym, type);
+    bv_.DefineAutoSymbolAndVariableOrFunction(bv_.GetDefaultPlatform(), bn_sym,
+                                              type);
   } else {
     bv_.DefineDataVariable(address, type);
   }
-
 }
 
 void AnalyzerBase::define_struct_at(uint64_t address, Ref<Type> type,
-                                    std::optional<std::string> name, bool force)
-{
+                                    std::optional<std::string> name, bool force) {
   if (force) {
     bv_.UndefineDataVariable(address, /*blacklist=*/false);
   }
 
   if (auto var = get_defined_var(address)) {
     BN_DEBUG("Type '{}' already defined at 0x{:016x}",
-        binaryninja::to_string(var->type->GetTypeName()), address);
+             binaryninja::to_string(var->type->GetTypeName()), address);
     return;
   }
 
   if (name) {
     auto bn_sym = new Symbol(DataSymbol, *name, address, NoBinding);
-    bv_.DefineAutoSymbolAndVariableOrFunction(
-        bv_.GetDefaultPlatform(), bn_sym, type);
+    bv_.DefineAutoSymbolAndVariableOrFunction(bv_.GetDefaultPlatform(), bn_sym,
+                                              type);
   } else {
     bv_.DefineDataVariable(address, type);
   }
@@ -100,10 +97,10 @@ std::optional<DataVariable> AnalyzerBase::get_defined_var(uint64_t addr) {
   return std::nullopt;
 }
 
-void AnalyzerBase::define_array_at(
-    uint64_t addr, BinaryNinja::Ref<BinaryNinja::Type> type,
-    size_t count, std::optional<std::string> name, bool force)
-{
+void AnalyzerBase::define_array_at(uint64_t addr,
+                                   BinaryNinja::Ref<BinaryNinja::Type> type,
+                                   size_t count, std::optional<std::string> name,
+                                   bool force) {
   if (count == 0) {
     return;
   }
@@ -114,30 +111,28 @@ void AnalyzerBase::define_array_at(
 
   if (auto var = get_defined_var(addr)) {
     BN_DEBUG("Type '{}' already defined at 0x{:016x}",
-        binaryninja::to_string(var->type->GetTypeName()), addr);
+             binaryninja::to_string(var->type->GetTypeName()), addr);
     return;
   }
 
   auto array_ty = Type::ArrayType(type, count);
   if (name) {
     auto bn_sym = new Symbol(DataSymbol, *name, addr, NoBinding);
-    bv_.DefineAutoSymbolAndVariableOrFunction(
-        bv_.GetDefaultPlatform(), bn_sym, array_ty);
+    bv_.DefineAutoSymbolAndVariableOrFunction(bv_.GetDefaultPlatform(), bn_sym,
+                                              array_ty);
   } else {
     bv_.DefineDataVariable(addr, array_ty);
   }
 }
 
 void AnalyzerBase::define_blob(uint64_t addr, size_t size,
-    std::optional<std::string> name, bool force)
-{
+                               std::optional<std::string> name, bool force) {
   auto u8 = Type::IntegerType(/*width=*/1, /*sign=*/false, "uint8_t");
   return define_array_at(addr, u8, size, name, force);
 }
 
 void AnalyzerBase::define_struct_at(uint64_t address, const std::string& type,
-                                    std::optional<std::string> name, bool force)
-{
+                                    std::optional<std::string> name, bool force) {
   Ref<Type> bn_type = bv_.GetTypeByName(QualifiedName(type));
   if (!bn_type) {
     BN_ERR("Type '{}' not found", type);

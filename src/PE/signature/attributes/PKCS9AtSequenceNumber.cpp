@@ -28,4 +28,3 @@ std::string PKCS9AtSequenceNumber::print() const {
 }
 
 }
-

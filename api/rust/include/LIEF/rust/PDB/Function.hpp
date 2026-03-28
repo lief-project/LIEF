@@ -23,13 +23,23 @@ class PDB_Function : private Mirror<LIEF::pdb::Function> {
   using Mirror::Mirror;
   using lief_t = LIEF::pdb::Function;
 
-  auto name() const { return get().name(); }
-  auto RVA() const { return get().RVA(); }
-  auto code_size() const { return get().code_size(); }
-  auto section_name() const { return get().section_name(); }
+  auto name() const {
+    return get().name();
+  }
+  auto RVA() const {
+    return get().RVA();
+  }
+  auto code_size() const {
+    return get().code_size();
+  }
+  auto section_name() const {
+    return get().section_name();
+  }
   auto debug_location() const {
     return details::make_location(get().debug_location());
   }
 
-  auto to_string() const { return get().to_string(); }
+  auto to_string() const {
+    return get().to_string();
+  }
 };

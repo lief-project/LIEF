@@ -60,9 +60,11 @@ class LIEF_API Section : public LIEF::Section {
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   /// Iterator that outputs const Relocation&
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
-  /// Container for the symbols associated with this section (owned by the Binary object)
+  /// Container for the symbols associated with this section (owned by the Binary
+  /// object)
   using symbols_t = std::vector<Symbol*>;
 
   /// Iterator that outputs Symbol&
@@ -175,7 +177,7 @@ class LIEF_API Section : public LIEF::Section {
   /// Whether there is a large number of relocations whose number need
   /// to be stored in the virtual address attribute
   bool has_extended_relocations() const {
-    static constexpr auto MAX_RELOC = /*uint16_t::max*/65535;
+    static constexpr auto MAX_RELOC = /*uint16_t::max*/ 65535;
     return has_characteristic(CHARACTERISTICS::LNK_NRELOC_OVFL) &&
            numberof_relocations() == MAX_RELOC;
   }
@@ -243,12 +245,12 @@ class LIEF_API Section : public LIEF::Section {
   Section() = default;
 
   std::vector<uint8_t> content_;
-  uint32_t virtual_size_           = 0;
+  uint32_t virtual_size_ = 0;
   uint32_t pointer_to_relocations_ = 0;
   uint32_t pointer_to_linenumbers_ = 0;
-  uint16_t number_of_relocations_  = 0;
-  uint16_t number_of_linenumbers_  = 0;
-  uint32_t characteristics_        = 0;
+  uint16_t number_of_relocations_ = 0;
+  uint16_t number_of_linenumbers_ = 0;
+  uint32_t characteristics_ = 0;
 
   relocations_t relocations_;
   symbols_t symbols_;

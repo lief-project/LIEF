@@ -22,41 +22,45 @@
 namespace LIEF::COFF {
 
 std::unique_ptr<AuxiliaryFunctionDefinition>
-  AuxiliaryFunctionDefinition::parse(const std::vector<uint8_t>& payload)
-{
+    AuxiliaryFunctionDefinition::parse(const std::vector<uint8_t>& payload) {
   SpanStream stream(payload);
   auto TagIndex = stream.read<uint32_t>();
   if (!TagIndex) {
-    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliaryFunctionDefinition>();
   }
 
   auto TotalSize = stream.read<uint32_t>();
   if (!TotalSize) {
-    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliaryFunctionDefinition>();
   }
 
   auto PointerToLinenumber = stream.read<uint32_t>();
   if (!PointerToLinenumber) {
-    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliaryFunctionDefinition>();
   }
 
   auto PointerToNextFunction = stream.read<uint32_t>();
   if (!PointerToNextFunction) {
-    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliaryFunctionDefinition>();
   }
 
   auto Unused = stream.read<uint16_t>();
   if (!Unused) {
-    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})", __LINE__);
+    LIEF_WARN("Failed to parse AuxiliaryFunctionDefinition field (line: {})",
+              __LINE__);
     return std::make_unique<AuxiliaryFunctionDefinition>();
   }
 
   return std::make_unique<AuxiliaryFunctionDefinition>(
-    *TagIndex, *TotalSize, *PointerToLinenumber, *PointerToNextFunction, *Unused
+      *TagIndex, *TotalSize, *PointerToLinenumber, *PointerToNextFunction, *Unused
   );
 }
 

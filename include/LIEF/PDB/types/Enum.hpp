@@ -77,5 +77,3 @@ class LIEF_API Enum : public Type {
 }
 }
 #endif
-
-

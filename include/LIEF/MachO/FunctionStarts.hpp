@@ -51,7 +51,8 @@ class LIEF_API FunctionStarts : public LoadCommand {
     return std::unique_ptr<FunctionStarts>(new FunctionStarts(*this));
   }
 
-  /// Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are located
+  /// Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are
+  /// located
   uint32_t data_offset() const {
     return data_offset_;
   }
@@ -63,7 +64,8 @@ class LIEF_API FunctionStarts : public LoadCommand {
 
   /// Addresses of every function entry point in the executable.
   ///
-  /// This allows functions to exist for which there are no entries in the symbol table.
+  /// This allows functions to exist for which there are no entries in the symbol
+  /// table.
   ///
   /// @warning The address is relative to the ``__TEXT`` segment
   const std::vector<uint64_t>& functions() const {
@@ -107,6 +109,7 @@ class LIEF_API FunctionStarts : public LoadCommand {
   static bool classof(const LoadCommand* cmd) {
     return cmd->command() == LoadCommand::TYPE::FUNCTION_STARTS;
   }
+
   private:
   uint32_t data_offset_ = 0;
   uint32_t data_size_ = 0;

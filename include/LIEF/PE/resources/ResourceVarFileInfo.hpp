@@ -95,8 +95,8 @@ class LIEF_API ResourceVarFileInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceVarFileInfo& entry);
 
   private:
   uint16_t type_ = 0;

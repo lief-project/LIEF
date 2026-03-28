@@ -42,7 +42,7 @@ class LIEF_API Header : public Object {
   public:
   using location_t = std::pair<uint32_t, uint32_t>;
 
-  using magic_t     = std::array<uint8_t, 8>;
+  using magic_t = std::array<uint8_t, 8>;
   using signature_t = std::array<uint8_t, 20>;
 
   Header();

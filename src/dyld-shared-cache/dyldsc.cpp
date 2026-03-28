@@ -62,21 +62,18 @@ bool enable_cache(const std::string&) {
 // ----------------------------------------------------------------------------
 // DyldSharedCache/DyldSharedCache.hpp
 // ----------------------------------------------------------------------------
-DyldSharedCache::DyldSharedCache(std::unique_ptr<details::DyldSharedCache>)
-{}
+DyldSharedCache::DyldSharedCache(std::unique_ptr<details::DyldSharedCache>) {}
 
 DyldSharedCache::~DyldSharedCache() = default;
 
-std::unique_ptr<DyldSharedCache>
-  DyldSharedCache::from_path(const std::string&, const std::string&)
-{
+std::unique_ptr<DyldSharedCache> DyldSharedCache::from_path(const std::string&,
+                                                            const std::string&) {
   LIEF_ERR(DSC_NOT_SUPPORTED);
   return nullptr;
 }
 
 std::unique_ptr<DyldSharedCache>
-  DyldSharedCache::from_files(const std::vector<std::string>&)
-{
+    DyldSharedCache::from_files(const std::vector<std::string>&) {
   LIEF_ERR(DSC_NOT_SUPPORTED);
   return nullptr;
 }
@@ -113,11 +110,13 @@ std::unique_ptr<Dylib> DyldSharedCache::find_lib_from_va(uint64_t) const {
   return nullptr;
 }
 
-std::unique_ptr<Dylib> DyldSharedCache::find_lib_from_path(const std::string&) const {
+std::unique_ptr<Dylib>
+    DyldSharedCache::find_lib_from_path(const std::string&) const {
   return nullptr;
 }
 
-std::unique_ptr<Dylib> DyldSharedCache::find_lib_from_name(const std::string&) const {
+std::unique_ptr<Dylib>
+    DyldSharedCache::find_lib_from_name(const std::string&) const {
   return nullptr;
 }
 
@@ -125,18 +124,21 @@ bool DyldSharedCache::has_subcaches() const {
   return false;
 }
 
-DyldSharedCache::instructions_iterator DyldSharedCache::disassemble(uint64_t/*va*/) const {
+DyldSharedCache::instructions_iterator
+    DyldSharedCache::disassemble(uint64_t /*va*/) const {
   return make_range<assembly::Instruction::Iterator>(
-      assembly::Instruction::Iterator(),
-      assembly::Instruction::Iterator()
+      assembly::Instruction::Iterator(), assembly::Instruction::Iterator()
   );
 }
 
-std::vector<uint8_t> DyldSharedCache::get_content_from_va(uint64_t/*va*/, uint64_t/*size*/) const {
+std::vector<uint8_t>
+    DyldSharedCache::get_content_from_va(uint64_t /*va*/,
+                                         uint64_t /*size*/) const {
   return {};
 }
 
-std::unique_ptr<DyldSharedCache> DyldSharedCache::cache_for_address(uint64_t/*va*/) const {
+std::unique_ptr<DyldSharedCache>
+    DyldSharedCache::cache_for_address(uint64_t /*va*/) const {
   return nullptr;
 }
 
@@ -144,11 +146,12 @@ std::unique_ptr<DyldSharedCache> DyldSharedCache::main_cache() const {
   return nullptr;
 }
 
-std::unique_ptr<DyldSharedCache> DyldSharedCache::find_subcache(const std::string&/*filename*/) const {
+std::unique_ptr<DyldSharedCache>
+    DyldSharedCache::find_subcache(const std::string& /*filename*/) const {
   return nullptr;
 }
 
-result<uint64_t> DyldSharedCache::va_to_offset(uint64_t/*va*/) const {
+result<uint64_t> DyldSharedCache::va_to_offset(uint64_t /*va*/) const {
   return make_error_code(lief_errors::not_implemented);
 }
 
@@ -228,7 +231,8 @@ Dylib::Dylib(std::unique_ptr<details::Dylib>) {}
 
 Dylib::~Dylib() = default;
 
-std::unique_ptr<LIEF::MachO::Binary> Dylib::get(const Dylib::extract_opt_t&) const {
+std::unique_ptr<LIEF::MachO::Binary>
+    Dylib::get(const Dylib::extract_opt_t&) const {
   return nullptr;
 }
 
@@ -259,12 +263,14 @@ MappingInfo::Iterator::Iterator(std::unique_ptr<details::MappingInfoIt>) {}
 
 MappingInfo::Iterator::Iterator(MappingInfo::Iterator&&) noexcept {}
 
-MappingInfo::Iterator& MappingInfo::Iterator::operator=(MappingInfo::Iterator&&) noexcept {
+MappingInfo::Iterator&
+    MappingInfo::Iterator::operator=(MappingInfo::Iterator&&) noexcept {
   return *this;
 }
 
 MappingInfo::Iterator::Iterator(const MappingInfo::Iterator&) {}
-MappingInfo::Iterator& MappingInfo::Iterator::operator=(const MappingInfo::Iterator&) {
+MappingInfo::Iterator&
+    MappingInfo::Iterator::operator=(const MappingInfo::Iterator&) {
   return *this;
 }
 

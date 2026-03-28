@@ -26,27 +26,28 @@ class StructType : public Type {
   public:
   using Type::Type;
   using lief_t = LIEF::dwarf::editor::StructType;
-  static constexpr jni::Class kClass {
-    "lief/dwarf/editor/StructType",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/dwarf/editor/StructType",
+      jni::Constructor{jlong{}},
   };
 
   class Type {
     public:
-    static constexpr jni::Class kClass {
-      "lief/dwarf/editor/StructType$Type",
+    static constexpr jni::Class kClass{
+        "lief/dwarf/editor/StructType$Type",
     };
   };
 
-  class Member : public JNI<
-    Member, std::unique_ptr<LIEF::dwarf::editor::StructType::Member>>
-  {
+  class Member
+    : public JNI<Member,
+                 std::unique_ptr<LIEF::dwarf::editor::StructType::Member>> {
     public:
-    static constexpr jni::Class kClass {
-      "lief/dwarf/editor/StructType$Member",
-      jni::Constructor{ jlong{} },
-      jni::Field { "impl", jlong{}, }
-    };
+    static constexpr jni::Class kClass{"lief/dwarf/editor/StructType$Member",
+                                       jni::Constructor{jlong{}},
+                                       jni::Field{
+                                           "impl",
+                                           jlong{},
+                                       }};
 
     static void jni_destroy(JNIEnv* env, jobject thiz) {
       destroy(thiz);
@@ -69,16 +70,12 @@ class StructType : public Type {
 
 
   static jobject jni_add_member(JNIEnv* env, jobject thiz, jstring name,
-                                jobject type, jlong offset)
-  {
+                                jobject type, jlong offset) {
     jni::LocalString jname = name;
-    return Member::create(
-      from_jni(thiz)->cast<lief_t>().add_member(
-        std::string(jname.Pin().ToString()),
-        editor::Type::from_jni(type)->impl(),
+    return Member::create(from_jni(thiz)->cast<lief_t>().add_member(
+        std::string(jname.Pin().ToString()), editor::Type::from_jni(type)->impl(),
         (int64_t)offset
-      )
-    );
+    ));
   }
 };
 }

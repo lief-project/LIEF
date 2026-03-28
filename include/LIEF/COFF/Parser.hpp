@@ -35,16 +35,18 @@ class Parser {
   public:
   /// Parse the COFF binary referenced by the `stream` argument with the
   /// given config
-  static LIEF_API
-    std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream,
-                                  const ParserConfig& config = ParserConfig::default_conf());
+  static LIEF_API std::unique_ptr<Binary>
+      parse(std::unique_ptr<BinaryStream> stream,
+            const ParserConfig& config = ParserConfig::default_conf());
 
   /// Parse the COFF binary pointed by the `file` argument with the given config
-  static std::unique_ptr<Binary> parse(const std::string& file,
-                                       const ParserConfig& config = ParserConfig::default_conf())
-  {
+  static std::unique_ptr<Binary>
+      parse(const std::string& file,
+            const ParserConfig& config = ParserConfig::default_conf()) {
     if (auto strm = VectorStream::from_file(file)) {
-      return parse(std::unique_ptr<VectorStream>(new VectorStream(std::move(*strm))), config);
+      return parse(
+          std::unique_ptr<VectorStream>(new VectorStream(std::move(*strm))), config
+      );
     }
     return nullptr;
   }
@@ -83,8 +85,7 @@ class Parser {
          Header::KIND kind) :
     stream_(std::move(stream)),
     kind_(kind),
-    config_(config)
-  {}
+    config_(config) {}
 
   ok_error_t process();
   ok_error_t parse_header();

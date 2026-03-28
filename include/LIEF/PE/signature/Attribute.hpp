@@ -70,8 +70,8 @@ class LIEF_API Attribute : public Object {
 
   ~Attribute() override = default;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const Attribute& attribute) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const Attribute& attribute) {
     os << attribute.print();
     return os;
   }
@@ -93,8 +93,7 @@ class LIEF_API Attribute : public Object {
 
   protected:
   Attribute(TYPE type) :
-    type_(type)
-  {}
+    type_(type) {}
   TYPE type_ = TYPE::UNKNOWN;
 };
 

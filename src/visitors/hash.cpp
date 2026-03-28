@@ -23,31 +23,31 @@
 
 
 #if defined(LIEF_PE_SUPPORT)
-#include "LIEF/PE/hash.hpp"
+  #include "LIEF/PE/hash.hpp"
 #endif
 
 #if defined(LIEF_ELF_SUPPORT)
-#include "LIEF/ELF/hash.hpp"
+  #include "LIEF/ELF/hash.hpp"
 #endif
 
 #if defined(LIEF_MACHO_SUPPORT)
-#include "LIEF/MachO/hash.hpp"
+  #include "LIEF/MachO/hash.hpp"
 #endif
 
 #if defined(LIEF_OAT_SUPPORT)
-#include "LIEF/OAT/hash.hpp"
+  #include "LIEF/OAT/hash.hpp"
 #endif
 
 #if defined(LIEF_ART_SUPPORT)
-#include "LIEF/ART/hash.hpp"
+  #include "LIEF/ART/hash.hpp"
 #endif
 
 #if defined(LIEF_DEX_SUPPORT)
-#include "LIEF/DEX/hash.hpp"
+  #include "LIEF/DEX/hash.hpp"
 #endif
 
 #if defined(LIEF_VDEX_SUPPORT)
-#include "LIEF/VDEX/hash.hpp"
+  #include "LIEF/VDEX/hash.hpp"
 #endif
 
 namespace LIEF {
@@ -98,8 +98,7 @@ Hash::~Hash() = default;
 Hash::Hash() = default;
 
 Hash::Hash(Hash::value_type init_value) :
-  value_{init_value}
-{}
+  value_{init_value} {}
 
 Hash& Hash::process(const Object& obj) {
   value_ = combine(value_, LIEF::hash(obj));
@@ -145,9 +144,9 @@ Hash::value_type Hash::hash(const void* raw, size_t size) {
   mbedtls_sha256(start, size, sha256.data(), 0);
 
   return std::accumulate(sha256.begin(), sha256.end(), size_t(0),
-     [] (size_t v, uint8_t n) {
-        return (v << sizeof(uint8_t) * 8u) | n;
-     });
+                         [](size_t v, uint8_t n) {
+                           return (v << sizeof(uint8_t) * 8u) | n;
+                         });
 }
 
 Hash::value_type Hash::hash(span<const uint8_t> raw) {

@@ -43,7 +43,9 @@ class LIEF_API FunctionVariantFixups : public LoadCommand {
   FunctionVariantFixups(const FunctionVariantFixups& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<FunctionVariantFixups>(new FunctionVariantFixups(*this));
+    return std::unique_ptr<FunctionVariantFixups>(
+        new FunctionVariantFixups(*this)
+    );
   }
 
   /// Offset in the `__LINKEDIT` SegmentCommand where the payload starts

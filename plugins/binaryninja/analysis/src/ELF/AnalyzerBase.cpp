@@ -55,10 +55,12 @@ std::string is_string(LIEF::SpanStream& stream, size_t minsz = 4) {
 }
 
 AnalyzerBase::AnalyzerBase(BinaryNinja::BinaryView& bv, Binary& elf,
-             TypeBuilder& type_builder) :
-  analysis_plugin::AnalyzerBase(bv), elf_(elf), type_builder_(type_builder),
-  default_image_base_(elf_.imagebase()), default_virtual_size(elf_.virtual_size())
-{}
+                           TypeBuilder& type_builder) :
+  analysis_plugin::AnalyzerBase(bv),
+  elf_(elf),
+  type_builder_(type_builder),
+  default_image_base_(elf_.imagebase()),
+  default_virtual_size(elf_.virtual_size()) {}
 
 uint64_t AnalyzerBase::translate_addr(uint64_t addr, bool revert) const {
   if (!revert) {
@@ -111,15 +113,15 @@ bool AnalyzerBase::apply_relocation(const Relocation& R) {
 void AnalyzerBase::define_relocated_type(const Relocation& R, uint64_t ttarget) {
   uint64_t taddr = translate_addr(R.address());
 
-  // The relocation is resolved with the BinaryView's imagebase (see: apply_relocation)
-  // Therefore, to get the original target, we need to revert it
+  // The relocation is resolved with the BinaryView's imagebase (see:
+  // apply_relocation) Therefore, to get the original target, we need to revert it
   uint64_t target = translate_addr(ttarget, /*revert=*/true);
 
-  const auto default_define = [&] () {
+  const auto default_define = [&]() {
     define_type_at(taddr, type_builder_.void_ptr_t(),
-      /*force=*/[] (BinaryNinja::DataVariable& var) {
-        return !var.type->IsPointer();
-    });
+                   /*force=*/[](BinaryNinja::DataVariable& var) {
+                     return !var.type->IsPointer();
+                   });
   };
 
   const Segment* seg = elf_.segment_from_virtual_address(target);
@@ -135,11 +137,11 @@ void AnalyzerBase::define_relocated_type(const Relocation& R, uint64_t ttarget) 
     stream->setpos(target - seg->virtual_address());
     if (std::string str = is_string(*stream); !str.empty()) {
       define_array_at(ttarget, type_builder_.char_(), str.size() + 1,
-        /*name=*/std::nullopt, /*force=*/false);
+                      /*name=*/std::nullopt, /*force=*/false);
       define_type_at(taddr, type_builder_.c_str(),
-        /*force=*/[] (BinaryNinja::DataVariable& var) {
-          return !var.type->IsPointer();
-      });
+                     /*force=*/[](BinaryNinja::DataVariable& var) {
+                       return !var.type->IsPointer();
+                     });
       return;
     }
 
@@ -153,9 +155,9 @@ void AnalyzerBase::define_relocated_type(const Relocation& R, uint64_t ttarget) 
     if (bn::Ref<bn::Symbol> sym = bv_.GetSymbolByAddress(ttarget)) {
       if (sym->GetType() == BNSymbolType::FunctionSymbol) {
         define_type_at(taddr, type_builder_.generic_func_ptr_t(),
-          /*force=*/[] (BinaryNinja::DataVariable& var) {
-            return !var.type->IsPointer();
-        });
+                       /*force=*/[](BinaryNinja::DataVariable& var) {
+                         return !var.type->IsPointer();
+                       });
         return;
       }
       return default_define();
@@ -163,9 +165,9 @@ void AnalyzerBase::define_relocated_type(const Relocation& R, uint64_t ttarget) 
 
     bv_.CreateUserFunction(bv_.GetDefaultPlatform(), ttarget);
     define_type_at(taddr, type_builder_.generic_func_ptr_t(),
-      /*force=*/[] (BinaryNinja::DataVariable& var) {
-        return !var.type->IsPointer();
-    });
+                   /*force=*/[](BinaryNinja::DataVariable& var) {
+                     return !var.type->IsPointer();
+                   });
     return;
   }
 

@@ -1,0 +1,104 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: c++17
+
+# Column limit
+ColumnLimit: 83
+
+# Indentation
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ContinuationIndentWidth: 4
+ConstructorInitializerIndentWidth: 2
+IndentCaseLabels: true
+IndentCaseBlocks: false
+IndentPPDirectives: BeforeHash
+NamespaceIndentation: None
+IndentWrappedFunctionNames: true
+IndentAccessModifiers: false
+
+# Access modifiers at same level as class members
+AccessModifierOffset: 0
+
+# Constructor initializers: colon at end of line, each initializer on new line
+BreakConstructorInitializers: AfterColon
+PackConstructorInitializers: Never
+
+# Inheritance
+BreakInheritanceList: BeforeColon
+
+# Pointer/Reference alignment: attached to type
+PointerAlignment: Left
+ReferenceAlignment: Pointer
+DerivePointerAlignment: false
+
+# Spacing
+SpaceBeforeParens: ControlStatements
+SpaceBeforeCpp11BracedList: false
+SpaceInEmptyBlock: false
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeRangeBasedForLoopColon: true
+
+# Alignment
+AlignAfterOpenBracket: Align
+AlignOperands: Align
+AlignTrailingComments: true
+AlignConsecutiveAssignments: None
+AlignConsecutiveDeclarations: false
+
+# Short forms
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortLambdasOnASingleLine: All
+AllowShortEnumsOnASingleLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortCaseExpressionOnASingleLine: true
+
+# Packing
+BinPackArguments: true
+BinPackParameters: true
+
+# Includes - preserve existing order
+SortIncludes: Never
+SortUsingDeclarations: Never
+
+# Namespaces
+CompactNamespaces: false
+FixNamespaceComments: false
+
+# Empty lines
+EmptyLineAfterAccessModifier: Never
+EmptyLineBeforeAccessModifier: LogicalBlock
+MaxEmptyLinesToKeep: 2
+
+# Ternary operators stay at end of line
+BreakBeforeTernaryOperators: false
+
+# Misc
+Cpp11BracedListStyle: true
+ReflowComments: true
+InsertBraces: true
+InsertNewlineAtEOF: true
+
+BreakTemplateDeclarations: Yes
+BreakBeforeCloseBracketBracedList: true
+BreakBeforeCloseBracketFunction: true
+BreakBeforeTemplateCloser: true
+
+EnumTrailingComma: Insert
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+BreakAfterReturnType: ExceptShortType
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterControlStatement: MultiLine

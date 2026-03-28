@@ -20,9 +20,14 @@
 class MachO_Main : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::MainCommand;
-  MachO_Main(const lief_t& base) : MachO_Command(base) {}
-  uint64_t entrypoint() const { return impl().entrypoint(); }
-  uint64_t stack_size() const { return impl().stack_size(); }
+  MachO_Main(const lief_t& base) :
+    MachO_Command(base) {}
+  uint64_t entrypoint() const {
+    return impl().entrypoint();
+  }
+  uint64_t stack_size() const {
+    return impl().stack_size();
+  }
 
 
   static bool classof(const MachO_Command& cmd) {
@@ -30,5 +35,7 @@ class MachO_Main : public MachO_Command {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

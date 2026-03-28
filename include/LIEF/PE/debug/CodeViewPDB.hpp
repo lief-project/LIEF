@@ -39,14 +39,12 @@ class LIEF_API CodeViewPDB : public CodeView {
   public:
   using signature_t = std::array<uint8_t, 16>;
   CodeViewPDB() :
-    CodeView(CodeView::SIGNATURES::PDB_70)
-  {}
+    CodeView(CodeView::SIGNATURES::PDB_70) {}
 
   CodeViewPDB(std::string filename) :
     CodeView(CodeView::SIGNATURES::PDB_70),
     signature_{0},
-    filename_(std::move(filename))
-  {}
+    filename_(std::move(filename)) {}
 
   CodeViewPDB(const details::pe_debug& debug_info,
               const details::pe_pdb_70& pdb_70, Section* sec);
@@ -65,7 +63,8 @@ class LIEF_API CodeViewPDB : public CodeView {
   std::string guid() const;
 
   /// Age value to verify. The age does not necessarily correspond to any known
-  /// time value, it is used to determine if a .pdb file is out of sync with a corresponding .exe file.
+  /// time value, it is used to determine if a .pdb file is out of sync with a
+  /// corresponding .exe file.
   uint32_t age() const {
     return age_;
   }

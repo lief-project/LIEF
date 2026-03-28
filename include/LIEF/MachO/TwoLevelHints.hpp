@@ -42,8 +42,8 @@ class LIEF_API TwoLevelHints : public LoadCommand {
   friend class Builder;
 
   public:
-  using hints_list_t     = std::vector<uint32_t>;
-  using it_hints_t       = ref_iterator<hints_list_t&>;
+  using hints_list_t = std::vector<uint32_t>;
+  using it_hints_t = ref_iterator<hints_list_t&>;
   using it_const_hints_t = const_ref_iterator<const hints_list_t&>;
 
   TwoLevelHints() = default;
@@ -57,17 +57,29 @@ class LIEF_API TwoLevelHints : public LoadCommand {
   }
 
   /// Original payload of the command
-  span<const uint8_t> content() const { return content_; }
-  span<uint8_t> content() { return content_; }
+  span<const uint8_t> content() const {
+    return content_;
+  }
+  span<uint8_t> content() {
+    return content_;
+  }
 
   /// Iterator over the hints (`uint32_t` integers)
-  it_hints_t hints() { return hints_; }
-  it_const_hints_t hints() const { return hints_; }
+  it_hints_t hints() {
+    return hints_;
+  }
+  it_const_hints_t hints() const {
+    return hints_;
+  }
 
   /// Original offset of the command. It should point in the
   /// `__LINKEDIT` segment
-  uint32_t offset() const { return offset_; }
-  void offset(uint32_t offset)  { offset_ = offset; }
+  uint32_t offset() const {
+    return offset_;
+  }
+  void offset(uint32_t offset) {
+    offset_ = offset;
+  }
 
   uint32_t original_nb_hints() const {
     return original_nb_hints_;

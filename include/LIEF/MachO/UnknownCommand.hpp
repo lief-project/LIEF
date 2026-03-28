@@ -35,8 +35,7 @@ class LIEF_API UnknownCommand : public LoadCommand {
   UnknownCommand() = delete;
   UnknownCommand(const details::load_command& command) :
     LoadCommand(command),
-    original_command_(static_cast<uint64_t>(command_))
-  {
+    original_command_(static_cast<uint64_t>(command_)) {
     command_ = LoadCommand::TYPE::LIEF_UNKNOWN;
   }
 

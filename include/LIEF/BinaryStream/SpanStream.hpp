@@ -45,21 +45,17 @@ class LIEF_API SpanStream : public BinaryStream {
   }
 
   SpanStream(span<const uint8_t> data) :
-    SpanStream(data.data(), data.size())
-  {}
+    SpanStream(data.data(), data.size()) {}
 
   SpanStream(span<uint8_t> data) :
-    SpanStream(data.data(), data.size())
-  {}
+    SpanStream(data.data(), data.size()) {}
 
   SpanStream(const uint8_t* p, size_t size) :
     BinaryStream(BinaryStream::STREAM_TYPE::SPAN),
-    data_{p, p + size}
-  {}
+    data_{p, p + size} {}
 
   SpanStream(const std::vector<uint8_t>& data) :
-    SpanStream(data.data(), data.size())
-  {}
+    SpanStream(data.data(), data.size()) {}
 
   std::unique_ptr<SpanStream> clone() const {
     return std::unique_ptr<SpanStream>(new SpanStream(*this));
@@ -115,7 +111,8 @@ class LIEF_API SpanStream : public BinaryStream {
   ~SpanStream() override = default;
 
   protected:
-  result<const void*> read_at(uint64_t offset, uint64_t size, uint64_t /*va*/) const override {
+  result<const void*> read_at(uint64_t offset, uint64_t size,
+                              uint64_t /*va*/) const override {
     const uint64_t stream_size = this->size();
     if (offset > stream_size || (offset + size) > stream_size) {
       return make_error_code(lief_errors::read_error);

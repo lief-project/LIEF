@@ -49,21 +49,21 @@ LoadConfiguration& LoadConfiguration::operator=(LoadConfiguration&&) = default;
 LoadConfiguration::~LoadConfiguration() = default;
 
 static constexpr std::array IMAGE_GUARD_LIST = {
-  LoadConfiguration::IMAGE_GUARD::NONE,
-  LoadConfiguration::IMAGE_GUARD::CF_INSTRUMENTED,
-  LoadConfiguration::IMAGE_GUARD::CFW_INSTRUMENTED,
-  LoadConfiguration::IMAGE_GUARD::CF_FUNCTION_TABLE_PRESENT,
-  LoadConfiguration::IMAGE_GUARD::SECURITY_COOKIE_UNUSED,
-  LoadConfiguration::IMAGE_GUARD::PROTECT_DELAYLOAD_IAT,
-  LoadConfiguration::IMAGE_GUARD::DELAYLOAD_IAT_IN_ITS_OWN_SECTION,
-  LoadConfiguration::IMAGE_GUARD::CF_EXPORT_SUPPRESSION_INFO_PRESENT,
-  LoadConfiguration::IMAGE_GUARD::CF_ENABLE_EXPORT_SUPPRESSION,
-  LoadConfiguration::IMAGE_GUARD::CF_LONGJUMP_TABLE_PRESENT,
-  LoadConfiguration::IMAGE_GUARD::RF_INSTRUMENTED,
-  LoadConfiguration::IMAGE_GUARD::RF_ENABLE,
-  LoadConfiguration::IMAGE_GUARD::RF_STRICT,
-  LoadConfiguration::IMAGE_GUARD::RETPOLINE_PRESENT,
-  LoadConfiguration::IMAGE_GUARD::EH_CONTINUATION_TABLE_PRESENT,
+    LoadConfiguration::IMAGE_GUARD::NONE,
+    LoadConfiguration::IMAGE_GUARD::CF_INSTRUMENTED,
+    LoadConfiguration::IMAGE_GUARD::CFW_INSTRUMENTED,
+    LoadConfiguration::IMAGE_GUARD::CF_FUNCTION_TABLE_PRESENT,
+    LoadConfiguration::IMAGE_GUARD::SECURITY_COOKIE_UNUSED,
+    LoadConfiguration::IMAGE_GUARD::PROTECT_DELAYLOAD_IAT,
+    LoadConfiguration::IMAGE_GUARD::DELAYLOAD_IAT_IN_ITS_OWN_SECTION,
+    LoadConfiguration::IMAGE_GUARD::CF_EXPORT_SUPPRESSION_INFO_PRESENT,
+    LoadConfiguration::IMAGE_GUARD::CF_ENABLE_EXPORT_SUPPRESSION,
+    LoadConfiguration::IMAGE_GUARD::CF_LONGJUMP_TABLE_PRESENT,
+    LoadConfiguration::IMAGE_GUARD::RF_INSTRUMENTED,
+    LoadConfiguration::IMAGE_GUARD::RF_ENABLE,
+    LoadConfiguration::IMAGE_GUARD::RF_STRICT,
+    LoadConfiguration::IMAGE_GUARD::RETPOLINE_PRESENT,
+    LoadConfiguration::IMAGE_GUARD::EH_CONTINUATION_TABLE_PRESENT,
 };
 
 inline bool should_quit(uint64_t start, BinaryStream& stream, uint32_t size) {
@@ -72,8 +72,7 @@ inline bool should_quit(uint64_t start, BinaryStream& stream, uint32_t size) {
 
 template<class T, class Func>
 inline bool read_lc(Func f, LoadConfiguration* thiz, BinaryStream& stream,
-                    uint32_t start, uint32_t size)
-{
+                    uint32_t start, uint32_t size) {
   auto value = stream.read<T>();
   if (!value) {
     return false;
@@ -85,9 +84,8 @@ inline bool read_lc(Func f, LoadConfiguration* thiz, BinaryStream& stream,
 }
 
 template<class PE_T>
-std::unique_ptr<LoadConfiguration>
-  LoadConfiguration::parse(Parser& ctx, BinaryStream& stream)
-{
+std::unique_ptr<LoadConfiguration> LoadConfiguration::parse(Parser& ctx,
+                                                            BinaryStream& stream) {
   using ptr_t = typename PE_T::uint;
 
   const uint64_t start_off = stream.pos();
@@ -203,77 +201,85 @@ std::unique_ptr<LoadConfiguration>
   auto config = std::make_unique<LoadConfiguration>();
 
   (*config)
-    .characteristics(*Characteristics)
-    .timedatestamp(*TimeDateStamp)
-    .major_version(*MajorVersion)
-    .minor_version(*MinorVersion)
-    .global_flags_clear(*GlobalFlagsClear)
-    .global_flags_set(*GlobalFlagsSet)
-    .critical_section_default_timeout(*CriticalSectionDefaultTimeout)
-    .decommit_free_block_threshold(*DeCommitFreeBlockThreshold)
-    .decommit_total_free_threshold(*DeCommitTotalFreeThreshold)
-    .lock_prefix_table(*LockPrefixTable)
-    .maximum_allocation_size(*MaximumAllocationSize)
-    .virtual_memory_threshold(*VirtualMemoryThreshold)
-    .process_affinity_mask(*ProcessAffinityMask)
-    .process_heap_flags(*ProcessHeapFlags)
-    .csd_version(*CSDVersion)
-    .dependent_load_flags(*DependentLoadFlags)
-    .editlist(*EditList)
-    .security_cookie(*SecurityCookie)
-  ;
+      .characteristics(*Characteristics)
+      .timedatestamp(*TimeDateStamp)
+      .major_version(*MajorVersion)
+      .minor_version(*MinorVersion)
+      .global_flags_clear(*GlobalFlagsClear)
+      .global_flags_set(*GlobalFlagsSet)
+      .critical_section_default_timeout(*CriticalSectionDefaultTimeout)
+      .decommit_free_block_threshold(*DeCommitFreeBlockThreshold)
+      .decommit_total_free_threshold(*DeCommitTotalFreeThreshold)
+      .lock_prefix_table(*LockPrefixTable)
+      .maximum_allocation_size(*MaximumAllocationSize)
+      .virtual_memory_threshold(*VirtualMemoryThreshold)
+      .process_affinity_mask(*ProcessAffinityMask)
+      .process_heap_flags(*ProcessHeapFlags)
+      .csd_version(*CSDVersion)
+      .dependent_load_flags(*DependentLoadFlags)
+      .editlist(*EditList)
+      .security_cookie(*SecurityCookie);
 
   if (should_quit(start_off, stream, *Characteristics)) {
     return config;
   }
 
   /* V0 */ {
-    if (!read_lc<ptr_t>(overload_cast<uint64_t>(&LoadConfiguration::se_handler_table),
-                        config.get(), stream, start_off, *Characteristics))
+    if (!read_lc<ptr_t>(
+            overload_cast<uint64_t>(&LoadConfiguration::se_handler_table),
+            config.get(), stream, start_off, *Characteristics
+        ))
     {
       return config;
     }
 
-    if (!read_lc<ptr_t>(overload_cast<uint64_t>(&LoadConfiguration::se_handler_count),
-                        config.get(), stream, start_off, *Characteristics))
+    if (!read_lc<ptr_t>(
+            overload_cast<uint64_t>(&LoadConfiguration::se_handler_count),
+            config.get(), stream, start_off, *Characteristics
+        ))
     {
       return config;
     }
   }
 
   /* V1 */ {
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_cf_check_function_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_cf_check_function_pointer
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
+      return config;
+    }
+
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_cf_dispatch_function_pointer
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_cf_dispatch_function_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(&LoadConfiguration::guard_cf_function_table),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
 
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_cf_function_table),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
-      return config;
-    }
-
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_cf_function_count),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(&LoadConfiguration::guard_cf_function_count),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
 
     if (!read_lc<uint32_t>(
-          overload_cast<uint32_t>(&LoadConfiguration::guard_flags),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint32_t>(&LoadConfiguration::guard_flags), config.get(),
+            stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
   }
@@ -292,200 +298,228 @@ std::unique_ptr<LoadConfiguration>
   }
 
   /* V3 */ {
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_address_taken_iat_entry_table),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_address_taken_iat_entry_table
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_address_taken_iat_entry_count),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_address_taken_iat_entry_count
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_long_jump_target_table),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_long_jump_target_table
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_long_jump_target_count),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_long_jump_target_count
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
   }
 
   /* V4 */ {
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::dynamic_value_reloc_table),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(&LoadConfiguration::dynamic_value_reloc_table),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
 
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::hybrid_metadata_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(&LoadConfiguration::hybrid_metadata_pointer),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
   }
 
   /* V5 */ {
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_rf_failure_routine),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(&LoadConfiguration::guard_rf_failure_routine),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
 
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_rf_failure_routine_function_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(
+                &LoadConfiguration::guard_rf_failure_routine_function_pointer
+            ),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
 
-    if (!read_lc<uint32_t>(
-          overload_cast<uint32_t>(&LoadConfiguration::dynamic_value_reloctable_offset),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<uint32_t>(overload_cast<uint32_t>(
+                               &LoadConfiguration::dynamic_value_reloctable_offset
+                           ),
+                           config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
-    if (!read_lc<uint16_t>(
-          overload_cast<uint16_t>(&LoadConfiguration::dynamic_value_reloctable_section),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<uint16_t>(overload_cast<uint16_t>(
+                               &LoadConfiguration::dynamic_value_reloctable_section
+                           ),
+                           config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
-    if (!read_lc<uint16_t>(
-          overload_cast<uint16_t>(&LoadConfiguration::reserved2),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<uint16_t>(overload_cast<uint16_t>(&LoadConfiguration::reserved2),
+                           config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
   }
 
   /* V6 */ {
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_rf_verify_stackpointer_function_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(
+                &LoadConfiguration::guard_rf_verify_stackpointer_function_pointer
+            ),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
 
     if (!read_lc<uint32_t>(
-          overload_cast<uint32_t>(&LoadConfiguration::hotpatch_table_offset),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint32_t>(&LoadConfiguration::hotpatch_table_offset),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
   }
 
   /* V7 */ {
-    if (!read_lc<uint32_t>(
-          overload_cast<uint32_t>(&LoadConfiguration::reserved3),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<uint32_t>(overload_cast<uint32_t>(&LoadConfiguration::reserved3),
+                           config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::enclave_configuration_ptr),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(&LoadConfiguration::enclave_configuration_ptr),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
   }
 
   /* V8 */ {
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::volatile_metadata_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(&LoadConfiguration::volatile_metadata_pointer),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
   }
 
   /* V9 */ {
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_eh_continuation_table),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_eh_continuation_table
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_eh_continuation_count),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_eh_continuation_count
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
   }
 
   /* V10 */ {
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_xfg_check_function_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_xfg_check_function_pointer
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
+      return config;
+    }
+
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_xfg_dispatch_function_pointer
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
 
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_xfg_dispatch_function_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
-      return config;
-    }
-
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_xfg_table_dispatch_function_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(
+                &LoadConfiguration::guard_xfg_table_dispatch_function_pointer
+            ),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
   }
 
   /* V11 */ {
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::cast_guard_os_determined_failure_mode),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(
+                &LoadConfiguration::cast_guard_os_determined_failure_mode
+            ),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
   }
 
   /* V12 */ {
-    if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::guard_memcpy_function_pointer),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+    if (!read_lc<ptr_t>(overload_cast<uint64_t>(
+                            &LoadConfiguration::guard_memcpy_function_pointer
+                        ),
+                        config.get(), stream, start_off, *Characteristics))
+    {
       return config;
     }
   }
 
   /* V13 */ {
     if (!read_lc<ptr_t>(
-          overload_cast<uint64_t>(&LoadConfiguration::uma_function_pointers),
-          config.get(), stream, start_off, *Characteristics)
-    ) {
+            overload_cast<uint64_t>(&LoadConfiguration::uma_function_pointers),
+            config.get(), stream, start_off, *Characteristics
+        ))
+    {
       return config;
     }
   }
   return config;
 }
 
-ok_error_t LoadConfiguration::parse_seh_table(
-    Parser& /*ctx*/, BinaryStream& stream, LoadConfiguration& config)
-{
+ok_error_t LoadConfiguration::parse_seh_table(Parser& /*ctx*/,
+                                              BinaryStream& stream,
+                                              LoadConfiguration& config) {
   static constexpr auto MAX_RESERVE = 1000;
   const uint64_t count = config.se_handler_count().value_or(0);
   if (count == 0) {
@@ -508,9 +542,9 @@ ok_error_t LoadConfiguration::parse_seh_table(
 }
 
 ok_error_t LoadConfiguration::parse_guard_functions(
-    Parser& /*ctx*/, BinaryStream& stream, LoadConfiguration& config,
-    size_t count, guard_functions_t LoadConfiguration::* dst)
-{
+    Parser& /*ctx*/, BinaryStream& stream, LoadConfiguration& config, size_t count,
+    guard_functions_t LoadConfiguration::* dst
+) {
   static constexpr auto MAX_RESERVE = 1000;
   if (count == 0) {
     return ok();
@@ -526,8 +560,8 @@ ok_error_t LoadConfiguration::parse_guard_functions(
   for (size_t i = 0; i < count; ++i) {
     auto rva = stream.read<uint32_t>();
     if (!rva) {
-      LIEF_DEBUG("Failed to read RVA at index {} ({}:{})", i,
-                 __FUNCTION__, __LINE__);
+      LIEF_DEBUG("Failed to read RVA at index {} ({}:{})", i, __FUNCTION__,
+                 __LINE__);
       return make_error_code(rva.error());
     }
 
@@ -557,8 +591,7 @@ ok_error_t LoadConfiguration::parse_guard_functions(
 }
 
 ok_error_t LoadConfiguration::parse_dyn_relocs(Parser& ctx,
-                                               LoadConfiguration& lconf)
-{
+                                               LoadConfiguration& lconf) {
   auto dyn_reloc_off = lconf.dynamic_value_reloctable_offset();
   uint16_t dyn_reloc_sec = lconf.dynamic_value_reloctable_section().value_or(0);
 
@@ -606,25 +639,28 @@ ok_error_t LoadConfiguration::parse_dyn_relocs(Parser& ctx,
 
   if (ctx.bin().type() == PE_TYPE::PE32) {
     return *version == 1 ?
-            parse_dyn_relocs_entries</*version=*/1, details::PE32>(ctx, strm,
-                                                                   lconf, *size) :
-            parse_dyn_relocs_entries</*version=*/2, details::PE32>(ctx, strm,
-                                                                   lconf, *size);
+               parse_dyn_relocs_entries</*version=*/1, details::PE32>(ctx, strm,
+                                                                      lconf,
+                                                                      *size) :
+               parse_dyn_relocs_entries</*version=*/2, details::PE32>(ctx, strm,
+                                                                      lconf,
+                                                                      *size);
   }
   assert(ctx.bin().type() == PE_TYPE::PE32_PLUS);
 
   return *version == 1 ?
-          parse_dyn_relocs_entries</*version=*/1, details::PE64>(ctx, strm,
-                                                                 lconf, *size) :
-          parse_dyn_relocs_entries</*version=*/2, details::PE64>(ctx, strm,
-                                                                 lconf, *size);
+             parse_dyn_relocs_entries</*version=*/1, details::PE64>(ctx, strm,
+                                                                    lconf, *size) :
+             parse_dyn_relocs_entries</*version=*/2, details::PE64>(ctx, strm,
+                                                                    lconf, *size);
 }
 
 
 template<uint8_t version, class PE_T>
-ok_error_t LoadConfiguration::parse_dyn_relocs_entries(
-  Parser& ctx, BinaryStream& stream, LoadConfiguration& config, size_t size)
-{
+ok_error_t LoadConfiguration::parse_dyn_relocs_entries(Parser& ctx,
+                                                       BinaryStream& stream,
+                                                       LoadConfiguration& config,
+                                                       size_t size) {
   const size_t stream_start = stream.pos();
   while (stream && stream.pos() < (stream_start + size)) {
     if constexpr (version == 1) {
@@ -647,10 +683,10 @@ ok_error_t LoadConfiguration::parse_dyn_relocs_entries(
 }
 
 template<class PE_T>
-ok_error_t LoadConfiguration::parse_enclave_config(
-  Parser& ctx, LoadConfiguration& config)
-{
-  const uint64_t enclave_config_ptr = config.enclave_configuration_ptr().value_or(0);
+ok_error_t LoadConfiguration::parse_enclave_config(Parser& ctx,
+                                                   LoadConfiguration& config) {
+  const uint64_t enclave_config_ptr =
+      config.enclave_configuration_ptr().value_or(0);
   if (enclave_config_ptr == 0) {
     return ok();
   }
@@ -675,10 +711,10 @@ ok_error_t LoadConfiguration::parse_enclave_config(
 }
 
 
-ok_error_t LoadConfiguration::parse_volatile_metadata(
-  Parser& ctx, LoadConfiguration& config)
-{
-  const uint64_t volatile_metadata = config.volatile_metadata_pointer().value_or(0);
+ok_error_t LoadConfiguration::parse_volatile_metadata(Parser& ctx,
+                                                      LoadConfiguration& config) {
+  const uint64_t volatile_metadata =
+      config.volatile_metadata_pointer().value_or(0);
   if (volatile_metadata == 0) {
     return ok();
   }
@@ -737,11 +773,15 @@ LoadConfiguration::LoadConfiguration(const LoadConfiguration& other) :
   dynamic_value_reloc_table_(other.dynamic_value_reloc_table_),
   hybrid_metadata_pointer_(other.hybrid_metadata_pointer_),
   guard_rf_failure_routine_(other.guard_rf_failure_routine_),
-  guard_rf_failure_routine_function_pointer_(other.guard_rf_failure_routine_function_pointer_),
+  guard_rf_failure_routine_function_pointer_(
+      other.guard_rf_failure_routine_function_pointer_
+  ),
   dynamic_value_reloctable_offset_(other.dynamic_value_reloctable_offset_),
   dynamic_value_reloctable_section_(other.dynamic_value_reloctable_section_),
   reserved2_(other.reserved2_),
-  guardrf_verify_stackpointer_function_pointer_(other.guardrf_verify_stackpointer_function_pointer_),
+  guardrf_verify_stackpointer_function_pointer_(
+      other.guardrf_verify_stackpointer_function_pointer_
+  ),
   hotpatch_table_offset_(other.hotpatch_table_offset_),
   reserved3_(other.reserved3_),
   enclave_configuration_ptr_(other.enclave_configuration_ptr_),
@@ -750,8 +790,12 @@ LoadConfiguration::LoadConfiguration(const LoadConfiguration& other) :
   guard_eh_continuation_count_(other.guard_eh_continuation_count_),
   guard_xfg_check_function_pointer_(other.guard_xfg_check_function_pointer_),
   guard_xfg_dispatch_function_pointer_(other.guard_xfg_dispatch_function_pointer_),
-  guard_xfg_table_dispatch_function_pointer_(other.guard_xfg_table_dispatch_function_pointer_),
-  cast_guard_os_determined_failure_mode_(other.cast_guard_os_determined_failure_mode_),
+  guard_xfg_table_dispatch_function_pointer_(
+      other.guard_xfg_table_dispatch_function_pointer_
+  ),
+  cast_guard_os_determined_failure_mode_(
+      other.cast_guard_os_determined_failure_mode_
+  ),
   guard_memcpy_function_pointer_(other.guard_memcpy_function_pointer_),
   uma_function_pointers_(other.uma_function_pointers_),
 
@@ -759,8 +803,7 @@ LoadConfiguration::LoadConfiguration(const LoadConfiguration& other) :
   guard_cf_functions_(other.guard_cf_functions_),
   guard_address_taken_iat_entries_(other.guard_address_taken_iat_entries_),
   guard_long_jump_targets_(other.guard_long_jump_targets_),
-  guard_eh_continuation_functions_(other.guard_eh_continuation_functions_)
-{
+  guard_eh_continuation_functions_(other.guard_eh_continuation_functions_) {
   if (other.chpe_ != nullptr) {
     chpe_ = other.chpe_->clone();
   }
@@ -777,8 +820,9 @@ LoadConfiguration::LoadConfiguration(const LoadConfiguration& other) :
     dynamic_relocs_.reserve(other.dynamic_relocs_.size());
     std::transform(other.dynamic_relocs_.begin(), other.dynamic_relocs_.end(),
                    std::back_inserter(dynamic_relocs_),
-      [] (const std::unique_ptr<DynamicRelocation>& R) { return R->clone(); }
-    );
+                   [](const std::unique_ptr<DynamicRelocation>& R) {
+                     return R->clone();
+                   });
   }
 }
 
@@ -813,18 +857,22 @@ LoadConfiguration& LoadConfiguration::operator=(const LoadConfiguration& other) 
   guard_cf_function_count_ = other.guard_cf_function_count_;
   flags_ = other.flags_;
   code_integrity_ = other.code_integrity_;
-  guard_address_taken_iat_entry_table_ = other.guard_address_taken_iat_entry_table_;
-  guard_address_taken_iat_entry_count_ = other.guard_address_taken_iat_entry_count_;
+  guard_address_taken_iat_entry_table_ =
+      other.guard_address_taken_iat_entry_table_;
+  guard_address_taken_iat_entry_count_ =
+      other.guard_address_taken_iat_entry_count_;
   guard_long_jump_target_table_ = other.guard_long_jump_target_table_;
   guard_long_jump_target_count_ = other.guard_long_jump_target_count_;
   dynamic_value_reloc_table_ = other.dynamic_value_reloc_table_;
   hybrid_metadata_pointer_ = other.hybrid_metadata_pointer_;
   guard_rf_failure_routine_ = other.guard_rf_failure_routine_;
-  guard_rf_failure_routine_function_pointer_ = other.guard_rf_failure_routine_function_pointer_;
+  guard_rf_failure_routine_function_pointer_ =
+      other.guard_rf_failure_routine_function_pointer_;
   dynamic_value_reloctable_offset_ = other.dynamic_value_reloctable_offset_;
   dynamic_value_reloctable_section_ = other.dynamic_value_reloctable_section_;
   reserved2_ = other.reserved2_;
-  guardrf_verify_stackpointer_function_pointer_ = other.guardrf_verify_stackpointer_function_pointer_;
+  guardrf_verify_stackpointer_function_pointer_ =
+      other.guardrf_verify_stackpointer_function_pointer_;
   hotpatch_table_offset_ = other.hotpatch_table_offset_;
   reserved3_ = other.reserved3_;
   enclave_configuration_ptr_ = other.enclave_configuration_ptr_;
@@ -832,9 +880,12 @@ LoadConfiguration& LoadConfiguration::operator=(const LoadConfiguration& other) 
   guard_eh_continuation_table_ = other.guard_eh_continuation_table_;
   guard_eh_continuation_count_ = other.guard_eh_continuation_count_;
   guard_xfg_check_function_pointer_ = other.guard_xfg_check_function_pointer_;
-  guard_xfg_dispatch_function_pointer_ = other.guard_xfg_dispatch_function_pointer_;
-  guard_xfg_table_dispatch_function_pointer_ = other.guard_xfg_table_dispatch_function_pointer_;
-  cast_guard_os_determined_failure_mode_ = other.cast_guard_os_determined_failure_mode_;
+  guard_xfg_dispatch_function_pointer_ =
+      other.guard_xfg_dispatch_function_pointer_;
+  guard_xfg_table_dispatch_function_pointer_ =
+      other.guard_xfg_table_dispatch_function_pointer_;
+  cast_guard_os_determined_failure_mode_ =
+      other.cast_guard_os_determined_failure_mode_;
   guard_memcpy_function_pointer_ = other.guard_memcpy_function_pointer_;
   uma_function_pointers_ = other.uma_function_pointers_;
 
@@ -860,8 +911,9 @@ LoadConfiguration& LoadConfiguration::operator=(const LoadConfiguration& other) 
     dynamic_relocs_.reserve(other.dynamic_relocs_.size());
     std::transform(other.dynamic_relocs_.begin(), other.dynamic_relocs_.end(),
                    std::back_inserter(dynamic_relocs_),
-      [] (const std::unique_ptr<DynamicRelocation>& R) { return R->clone(); }
-    );
+                   [](const std::unique_ptr<DynamicRelocation>& R) {
+                     return R->clone();
+                   });
   }
   return *this;
 }
@@ -876,19 +928,27 @@ std::string LoadConfiguration::to_string() const {
   std::ostringstream oss;
   oss << format("{:{}} {:#08x}\n", "Size:", WIDTH, size())
       << format("{:{}} {}\n", "Timestamp:", WIDTH, timedatestamp())
-      << format("{:{}} {}.{}\n", "version:", WIDTH, major_version(), minor_version())
+      << format("{:{}} {}.{}\n", "version:", WIDTH, major_version(),
+                minor_version())
       << format("{:{}} {}\n", "GlobalFlags Clear:", WIDTH, global_flags_clear())
       << format("{:{}} {}\n", "GlobalFlags Set:", WIDTH, global_flags_set())
-      << format("{:{}} {}\n", "Critical Section Default Timeout:", WIDTH, critical_section_default_timeout())
-      << format("{:{}} {}\n", "Decommit Free Block Threshold:", WIDTH, decommit_free_block_threshold())
-      << format("{:{}} {}\n", "Decommit Total Free Threshold:", WIDTH, decommit_total_free_threshold())
+      << format("{:{}} {}\n", "Critical Section Default Timeout:", WIDTH,
+                critical_section_default_timeout())
+      << format("{:{}} {}\n", "Decommit Free Block Threshold:", WIDTH,
+                decommit_free_block_threshold())
+      << format("{:{}} {}\n", "Decommit Total Free Threshold:", WIDTH,
+                decommit_total_free_threshold())
       << format("{:{}} {}\n", "Lock Prefix Table:", WIDTH, lock_prefix_table())
-      << format("{:{}} {}\n", "Maximum Allocation Size:", WIDTH, maximum_allocation_size())
-      << format("{:{}} {}\n", "Virtual Memory Threshold:", WIDTH, virtual_memory_threshold())
-      << format("{:{}} {}\n", "Process Affinity Mask:", WIDTH, process_affinity_mask())
+      << format("{:{}} {}\n", "Maximum Allocation Size:", WIDTH,
+                maximum_allocation_size())
+      << format("{:{}} {}\n", "Virtual Memory Threshold:", WIDTH,
+                virtual_memory_threshold())
+      << format("{:{}} {}\n", "Process Affinity Mask:", WIDTH,
+                process_affinity_mask())
       << format("{:{}} {}\n", "Process Heap Flags:", WIDTH, process_heap_flags())
       << format("{:{}} {}\n", "CSD Version:", WIDTH, csd_version())
-      << format("{:{}} {}\n", "Dependent Load Flag:", WIDTH, dependent_load_flags())
+      << format("{:{}} {}\n", "Dependent Load Flag:", WIDTH,
+                dependent_load_flags())
       << format("{:{}} {}\n", "Edit List:", WIDTH, editlist())
       << format("{:{}} {:#018x}\n", "Security Cookie:", WIDTH, security_cookie());
 
@@ -901,11 +961,13 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = guard_cf_check_function_pointer()) {
-    oss << format("{:{}} {:#018x}\n", "Guard CF address of check-function pointer:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Guard CF address of check-function pointer:", WIDTH, *val);
   }
 
   if (auto val = guard_cf_dispatch_function_pointer()) {
-    oss << format("{:{}} {:#018x}\n", "Guard CF address of dispatch-function pointer:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Guard CF address of dispatch-function pointer:", WIDTH, *val);
   }
 
   if (auto val = guard_cf_function_table()) {
@@ -923,21 +985,26 @@ std::string LoadConfiguration::to_string() const {
 
   if (const CodeIntegrity* CI = code_integrity()) {
     oss << format("{:{}} {}\n", "Code Integrity Flags:", WIDTH, CI->flags())
-        << format("{:{}} {:#010x}\n", "Code Integrity Catalog:", WIDTH, CI->catalog())
-        << format("{:{}} {:#010x}\n", "Code Integrity Catalog Offset:", WIDTH, CI->catalog_offset())
+        << format("{:{}} {:#010x}\n", "Code Integrity Catalog:", WIDTH,
+                  CI->catalog())
+        << format("{:{}} {:#010x}\n", "Code Integrity Catalog Offset:", WIDTH,
+                  CI->catalog_offset())
         << format("{:{}} {}\n", "Code Integrity Reserved:", WIDTH, CI->reserved());
   }
 
   if (auto val = guard_address_taken_iat_entry_table()) {
-    oss << format("{:{}} {:#018x}\n", "Guard CF address taken IAT entry table:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Guard CF address taken IAT entry table:", WIDTH, *val);
   }
 
   if (auto val = guard_address_taken_iat_entry_count()) {
-    oss << format("{:{}} {}\n", "Guard CF address taken IAT entry count:", WIDTH, *val);
+    oss << format("{:{}} {}\n", "Guard CF address taken IAT entry count:", WIDTH,
+                  *val);
   }
 
   if (auto val = guard_long_jump_target_table()) {
-    oss << format("{:{}} {:#018x}\n", "Guard CF long jump target table:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard CF long jump target table:", WIDTH,
+                  *val);
   }
 
   if (auto val = guard_long_jump_target_count()) {
@@ -945,7 +1012,8 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = dynamic_value_reloc_table()) {
-    oss << format("{:{}} {:#018x}\n", "Dynamic value relocation table:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Dynamic value relocation table:", WIDTH,
+                  *val);
   }
 
   if (auto val = hybrid_metadata_pointer()) {
@@ -953,19 +1021,23 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = guard_rf_failure_routine()) {
-    oss << format("{:{}} {:#018x}\n", "Guard RF address of failure-function:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Guard RF address of failure-function:", WIDTH, *val);
   }
 
   if (auto val = guard_rf_failure_routine_function_pointer()) {
-    oss << format("{:{}} {:#018x}\n", "Guard RF address of failure-function pointer:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Guard RF address of failure-function pointer:", WIDTH, *val);
   }
 
   if (auto val = dynamic_value_reloctable_offset()) {
-    oss << format("{:{}} {:#018x}\n", "Dynamic value relocation table offset:", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Dynamic value relocation table offset:", WIDTH, *val);
   }
 
   if (auto val = dynamic_value_reloctable_section()) {
-    oss << format("{:{}} {}\n", "Dynamic value relocation table section:", WIDTH, *val);
+    oss << format("{:{}} {}\n", "Dynamic value relocation table section:", WIDTH,
+                  *val);
   }
 
   if (auto val = reserved2()) {
@@ -973,7 +1045,11 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = guard_rf_verify_stackpointer_function_pointer()) {
-    oss << format("{:{}} {:#018x}\n", "Guard RF address of stack pointer verification function pointer:", WIDTH, *val);
+    oss << format(
+        "{:{}} {:#018x}\n",
+        "Guard RF address of stack pointer verification function pointer:", WIDTH,
+        *val
+    );
   }
 
   if (auto val = hotpatch_table_offset()) {
@@ -985,7 +1061,8 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = enclave_configuration_ptr()) {
-    oss << format("{:{}} {:#018x}\n", "Enclave configuration pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Enclave configuration pointer", WIDTH,
+                  *val);
   }
 
   if (auto val = volatile_metadata_pointer()) {
@@ -1001,23 +1078,29 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (auto val = guard_xfg_check_function_pointer()) {
-    oss << format("{:{}} {:#018x}\n", "Guard XFG address of check-function pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Guard XFG address of check-function pointer", WIDTH, *val);
   }
 
   if (auto val = guard_xfg_dispatch_function_pointer()) {
-    oss << format("{:{}} {:#018x}\n", "Guard XFG address of dispatch-function pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Guard XFG address of dispatch-function pointer", WIDTH, *val);
   }
 
   if (auto val = guard_xfg_table_dispatch_function_pointer()) {
-    oss << format("{:{}} {:#018x}\n", "Guard XFG address of dispatch-table-function pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n",
+                  "Guard XFG address of dispatch-table-function pointer", WIDTH,
+                  *val);
   }
 
   if (auto val = cast_guard_os_determined_failure_mode()) {
-    oss << format("{:{}} {:#018x}\n", "CastGuard OS determined failure mode", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "CastGuard OS determined failure mode",
+                  WIDTH, *val);
   }
 
   if (auto val = guard_memcpy_function_pointer()) {
-    oss << format("{:{}} {:#018x}\n", "Guard memcpy function pointer", WIDTH, *val);
+    oss << format("{:{}} {:#018x}\n", "Guard memcpy function pointer", WIDTH,
+                  *val);
   }
 
   if (auto val = uma_function_pointers()) {
@@ -1025,12 +1108,11 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (const CHPEMetadata* metadata = chpe_metadata()) {
-    oss << "  CHPE Metadata:\n"
-        << indent(metadata->to_string(), 4);
+    oss << "  CHPE Metadata:\n" << indent(metadata->to_string(), 4);
   }
 
   if (!seh_rva_.empty()) {
-    oss << format("  SEH Table ({}) {{\n", seh_rva_.size()) ;
+    oss << format("  SEH Table ({}) {{\n", seh_rva_.size());
     for (uint32_t RVA : seh_rva_) {
       oss << format("    {:#010x}\n", RVA);
     }
@@ -1038,7 +1120,7 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (!guard_cf_functions_.empty()) {
-    oss << format("  Guard CF Function ({}) {{\n", guard_cf_functions_.size()) ;
+    oss << format("  Guard CF Function ({}) {{\n", guard_cf_functions_.size());
     for (const guard_function_t& F : guard_cf_functions_) {
       oss << format("    {:#010x} ({})\n", F.rva, F.extra);
     }
@@ -1046,7 +1128,8 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (!guard_address_taken_iat_entries_.empty()) {
-    oss << format("  Guard CF Address Taken IAT ({}) {{\n", guard_address_taken_iat_entries_.size()) ;
+    oss << format("  Guard CF Address Taken IAT ({}) {{\n",
+                  guard_address_taken_iat_entries_.size());
     for (const guard_function_t& F : guard_address_taken_iat_entries_) {
       oss << format("    {:#010x} ({})\n", F.rva, F.extra);
     }
@@ -1054,7 +1137,8 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (!guard_long_jump_targets_.empty()) {
-    oss << format("  Guard CF Long Jump Target ({}) {{\n", guard_long_jump_targets_.size()) ;
+    oss << format("  Guard CF Long Jump Target ({}) {{\n",
+                  guard_long_jump_targets_.size());
     for (const guard_function_t& F : guard_long_jump_targets_) {
       oss << format("    {:#010x} ({})\n", F.rva, F.extra);
     }
@@ -1062,7 +1146,8 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (!guard_eh_continuation_functions_.empty()) {
-    oss << format("  Guard EH Continuation ({}) {{\n", guard_eh_continuation_functions_.size()) ;
+    oss << format("  Guard EH Continuation ({}) {{\n",
+                  guard_eh_continuation_functions_.size());
     for (const guard_function_t& F : guard_eh_continuation_functions_) {
       oss << format("    {:#010x} ({})\n", F.rva, F.extra);
     }
@@ -1074,41 +1159,39 @@ std::string LoadConfiguration::to_string() const {
   }
 
   if (const EnclaveConfiguration* enclave = enclave_config()) {
-    oss << "  Enclave Configuration:\n"
-        << indent(enclave->to_string(), 4);
+    oss << "  Enclave Configuration:\n" << indent(enclave->to_string(), 4);
   }
 
   if (const VolatileMetadata* metadata = volatile_metadata()) {
-    oss << "  Volatile Metadata:\n"
-        << indent(metadata->to_string(), 4);
+    oss << "  Volatile Metadata:\n" << indent(metadata->to_string(), 4);
   }
 
   return oss.str();
 }
 
 const char* to_string(LoadConfiguration::IMAGE_GUARD e) {
-  #define ENTRY(X) std::pair(LoadConfiguration::IMAGE_GUARD::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(NONE),
-    ENTRY(CF_INSTRUMENTED),
-    ENTRY(CFW_INSTRUMENTED),
-    ENTRY(CF_FUNCTION_TABLE_PRESENT),
-    ENTRY(SECURITY_COOKIE_UNUSED),
-    ENTRY(PROTECT_DELAYLOAD_IAT),
-    ENTRY(DELAYLOAD_IAT_IN_ITS_OWN_SECTION),
-    ENTRY(CF_EXPORT_SUPPRESSION_INFO_PRESENT),
-    ENTRY(CF_ENABLE_EXPORT_SUPPRESSION),
-    ENTRY(CF_LONGJUMP_TABLE_PRESENT),
-    ENTRY(RF_INSTRUMENTED),
-    ENTRY(RF_ENABLE),
-    ENTRY(RF_STRICT),
-    ENTRY(RETPOLINE_PRESENT),
-    ENTRY(EH_CONTINUATION_TABLE_PRESENT),
-    ENTRY(XFG_ENABLED),
-    ENTRY(CASTGUARD_PRESENT),
-    ENTRY(MEMCPY_PRESENT),
+#define ENTRY(X) std::pair(LoadConfiguration::IMAGE_GUARD::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(NONE),
+      ENTRY(CF_INSTRUMENTED),
+      ENTRY(CFW_INSTRUMENTED),
+      ENTRY(CF_FUNCTION_TABLE_PRESENT),
+      ENTRY(SECURITY_COOKIE_UNUSED),
+      ENTRY(PROTECT_DELAYLOAD_IAT),
+      ENTRY(DELAYLOAD_IAT_IN_ITS_OWN_SECTION),
+      ENTRY(CF_EXPORT_SUPPRESSION_INFO_PRESENT),
+      ENTRY(CF_ENABLE_EXPORT_SUPPRESSION),
+      ENTRY(CF_LONGJUMP_TABLE_PRESENT),
+      ENTRY(RF_INSTRUMENTED),
+      ENTRY(RF_ENABLE),
+      ENTRY(RF_STRICT),
+      ENTRY(RETPOLINE_PRESENT),
+      ENTRY(EH_CONTINUATION_TABLE_PRESENT),
+      ENTRY(XFG_ENABLED),
+      ENTRY(CASTGUARD_PRESENT),
+      ENTRY(MEMCPY_PRESENT),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -1117,30 +1200,28 @@ const char* to_string(LoadConfiguration::IMAGE_GUARD e) {
 }
 
 std::vector<LoadConfiguration::IMAGE_GUARD>
-  LoadConfiguration::guard_cf_flags_list() const
-{
+    LoadConfiguration::guard_cf_flags_list() const {
   std::vector<IMAGE_GUARD> flags_list;
   flags_list.reserve(3);
   std::copy_if(IMAGE_GUARD_LIST.begin(), IMAGE_GUARD_LIST.end(),
                std::back_inserter(flags_list),
-               [this] (IMAGE_GUARD f) { return has(f); });
+               [this](IMAGE_GUARD f) { return has(f); });
 
   return flags_list;
-
 }
 
 template std::unique_ptr<LoadConfiguration>
-  LoadConfiguration::parse<details::PE32>(Parser& ctx, BinaryStream& stream);
+    LoadConfiguration::parse<details::PE32>(Parser& ctx, BinaryStream& stream);
 
 template std::unique_ptr<LoadConfiguration>
-  LoadConfiguration::parse<details::PE64>(Parser& ctx, BinaryStream& stream);
+    LoadConfiguration::parse<details::PE64>(Parser& ctx, BinaryStream& stream);
 
 template ok_error_t LoadConfiguration::parse_enclave_config<details::PE32>(
-  Parser& ctx, LoadConfiguration& config);
+    Parser& ctx, LoadConfiguration& config
+);
 
 template ok_error_t LoadConfiguration::parse_enclave_config<details::PE64>(
-  Parser& ctx, LoadConfiguration& config);
+    Parser& ctx, LoadConfiguration& config
+);
 
 } // namespace LIEF::PE
-
-

@@ -21,26 +21,14 @@
 namespace lief_jni::macho {
 
 int FatBinary::Iterator::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "hasNext",
-      "()Z",
-      &jni_has_next
-    ),
-    make(
-      "next",
-      "()Llief/macho/Binary;",
-      &jni_next
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("hasNext", "()Z", &jni_has_next),
+      make("next", "()Llief/macho/Binary;", &jni_next),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 
@@ -49,26 +37,14 @@ int FatBinary::Iterator::register_natives(JNIEnv* env) {
 
 
 int FatBinary::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "parse",
-      "(Ljava/lang/String;)Llief/macho/FatBinary;",
-      &jni_parse
-    ),
-    make(
-      "iterator",
-      "()Llief/macho/FatBinary$Iterator;",
-      &jni_iterator
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("parse", "(Ljava/lang/String;)Llief/macho/FatBinary;", &jni_parse),
+      make("iterator", "()Llief/macho/FatBinary$Iterator;", &jni_iterator),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

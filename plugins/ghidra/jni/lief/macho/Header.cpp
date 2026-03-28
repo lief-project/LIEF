@@ -21,31 +21,15 @@
 namespace lief_jni::macho {
 
 int Header::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "getCpuType",
-      "()Llief/macho/Header$CpuType;",
-      jni_get_cpu_type
-    ),
-    make(
-      "getFileType",
-      "()Llief/macho/Header$FileType;",
-      jni_get_file_type
-    ),
-    make(
-      "getCpuSubType",
-      "()I",
-      &jni_get_cpu_sub_type
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("getCpuType", "()Llief/macho/Header$CpuType;", jni_get_cpu_type),
+      make("getFileType", "()Llief/macho/Header$FileType;", jni_get_file_type),
+      make("getCpuSubType", "()I", &jni_get_cpu_sub_type),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

@@ -30,14 +30,11 @@ std::unique_ptr<Header> Header::create(BinaryStream& stream) {
 
 std::unique_ptr<Header> Header::create(BinaryStream& stream, KIND kind) {
   switch (kind) {
-    case KIND::REGULAR:
-      return RegularHeader::create(stream);
+    case KIND::REGULAR: return RegularHeader::create(stream);
 
-    case KIND::BIGOBJ:
-      return BigObjHeader::create(stream);
+    case KIND::BIGOBJ: return BigObjHeader::create(stream);
 
-    case KIND::UNKNOWN:
-      return nullptr;
+    case KIND::UNKNOWN: return nullptr;
   }
   return nullptr;
 }
@@ -56,7 +53,8 @@ std::string Header::to_string() const {
   oss << format("{:>{}} Number of sections\n", (uint16_t)nb_sections(), WIDTH);
   oss << format("{:>#{}x} Time date stamp: {}\n", timedatestamp(), WIDTH,
                 ts_to_str(timedatestamp()));
-  oss << format("{:>#{}x} File pointer to symbol table\n", pointerto_symbol_table(), WIDTH);
+  oss << format("{:>#{}x} File pointer to symbol table\n",
+                pointerto_symbol_table(), WIDTH);
   oss << format("{:>{}} Number of symbols", nb_symbols(), WIDTH);
   return oss.str();
 }

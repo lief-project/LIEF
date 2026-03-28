@@ -29,23 +29,39 @@ class PE_TLS : public Mirror<LIEF::PE::TLS> {
     return std::make_unique<PE_TLS>(std::make_unique<lief_t>());
   }
 
-  std::vector<uint64_t> callbacks() const { return get().callbacks(); }
+  std::vector<uint64_t> callbacks() const {
+    return get().callbacks();
+  }
 
-  auto addressof_index() const { return get().addressof_index(); }
-  auto addressof_callbacks() const { return get().addressof_callbacks(); }
-  auto sizeof_zero_fill() const { return get().sizeof_zero_fill(); }
-  auto characteristics() const { return get().characteristics(); }
+  auto addressof_index() const {
+    return get().addressof_index();
+  }
+  auto addressof_callbacks() const {
+    return get().addressof_callbacks();
+  }
+  auto sizeof_zero_fill() const {
+    return get().sizeof_zero_fill();
+  }
+  auto characteristics() const {
+    return get().characteristics();
+  }
 
-  auto data_template() const { return make_span(get().data_template()); }
+  auto data_template() const {
+    return make_span(get().data_template());
+  }
   auto addressof_raw_data() const {
     return details::make_vector(get().addressof_raw_data());
   }
 
   auto section() const {
-    return details::try_unique<PE_Section>(get().section()); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_Section>(
+        get().section()
+    ); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
   }
   auto data_directory() const {
-    return details::try_unique<PE_DataDirectory>(get().directory()); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_DataDirectory>(
+        get().directory()
+    ); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   void add_callback(uint64_t addr) {

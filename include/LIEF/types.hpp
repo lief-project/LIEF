@@ -20,9 +20,9 @@
 #include <cstddef>
 
 #if defined(_MSC_VER)
-#define ALIGNED_(x) __declspec(align(x))
+  #define ALIGNED_(x) __declspec(align(x))
 #elif defined(__GNUC__)
-#define ALIGNED_(x) __attribute__ ((__aligned__(x), __packed__))
+  #define ALIGNED_(x) __attribute__((__aligned__(x), __packed__))
 #endif
 
 

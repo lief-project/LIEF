@@ -25,14 +25,17 @@
 class PE_Pogo : public PE_Debug {
   public:
   using lief_t = LIEF::PE::Pogo;
-  class it_entries :
-      public Iterator<PE_PogoEntry, LIEF::PE::Pogo::it_const_entries>
-  {
+  class it_entries
+    : public Iterator<PE_PogoEntry, LIEF::PE::Pogo::it_const_entries> {
     public:
-    it_entries(const PE_Pogo::lief_t& src)
-      : Iterator(std::move(src.entries())) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_entries(const PE_Pogo::lief_t& src) :
+      Iterator(std::move(src.entries())) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
   auto entries() const {
@@ -46,5 +49,7 @@ class PE_Pogo : public PE_Debug {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

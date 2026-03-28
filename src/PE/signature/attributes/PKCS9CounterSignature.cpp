@@ -32,4 +32,3 @@ std::string PKCS9CounterSignature::print() const {
 
 
 }
-

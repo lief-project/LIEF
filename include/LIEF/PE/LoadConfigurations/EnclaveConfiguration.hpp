@@ -72,7 +72,8 @@ class LIEF_API EnclaveConfiguration {
   /// If `MinimumRequiredConfigSize` is zero, the minimum size of the
   /// `IMAGE_ENCLAVE_CONFIG(32,64)` structure that the image loader must be able
   /// to process in order for the enclave to be usable is assumed to be the size
-  /// of the structure through and including the `MinimumRequiredConfigSize` member.
+  /// of the structure through and including the `MinimumRequiredConfigSize`
+  /// member.
   uint32_t min_required_config_size() const {
     return min_req_size_;
   }
@@ -215,9 +216,8 @@ class LIEF_API EnclaveConfiguration {
 
   std::string to_string() const;
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const EnclaveConfiguration& meta)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const EnclaveConfiguration& meta) {
     os << meta.to_string();
     return os;
   }
@@ -225,7 +225,7 @@ class LIEF_API EnclaveConfiguration {
   /// \private
   template<class PE_T>
   LIEF_LOCAL static std::unique_ptr<EnclaveConfiguration>
-    parse(Parser& ctx, BinaryStream& stream);
+      parse(Parser& ctx, BinaryStream& stream);
 
   private:
   uint32_t size_ = 0;

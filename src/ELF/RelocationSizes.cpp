@@ -17,6 +17,7 @@
 #include "LIEF/ELF/Relocation.hpp"
 #include "frozen.hpp"
 
+// clang-format off
 
 namespace LIEF::ELF {
 

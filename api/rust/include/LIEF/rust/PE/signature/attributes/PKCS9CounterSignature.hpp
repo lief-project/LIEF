@@ -6,7 +6,8 @@
 class PE_PKCS9CounterSignature : public PE_Attribute {
   public:
   using lief_t = LIEF::PE::PKCS9CounterSignature;
-  PE_PKCS9CounterSignature(lief_t& base) : PE_Attribute(base) {}
+  PE_PKCS9CounterSignature(lief_t& base) :
+    PE_Attribute(base) {}
 
   auto signer() const {
     return std::make_unique<PE_SignerInfo>(impl().signer());
@@ -17,5 +18,7 @@ class PE_PKCS9CounterSignature : public PE_Attribute {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

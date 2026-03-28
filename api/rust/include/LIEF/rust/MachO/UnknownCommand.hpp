@@ -21,7 +21,8 @@
 class MachO_UnknownCommand : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::UnknownCommand;
-  MachO_UnknownCommand(const lief_t& base) : MachO_Command(base) {}
+  MachO_UnknownCommand(const lief_t& base) :
+    MachO_Command(base) {}
 
   auto original_command() const {
     return impl().original_command();
@@ -32,5 +33,7 @@ class MachO_UnknownCommand : public MachO_Command {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

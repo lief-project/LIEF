@@ -23,7 +23,8 @@ namespace LIEF::ELF {
 
 static constexpr auto stack_size_offset = 0;
 static constexpr auto stack_allocated_offset = sizeof(uint32_t);
-static constexpr auto is_stack_exec_offset = stack_allocated_offset + sizeof(uint32_t);
+static constexpr auto is_stack_exec_offset =
+    stack_allocated_offset + sizeof(uint32_t);
 
 uint32_t QNXStack::stack_size() const {
   return read_at<uint32_t>(stack_size_offset).value_or(0);
@@ -61,4 +62,3 @@ void QNXStack::dump(std::ostream& os) const {
 }
 
 } // namespace LIEF::ELF
-

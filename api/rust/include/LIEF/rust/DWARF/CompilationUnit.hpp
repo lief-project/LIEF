@@ -31,37 +31,46 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::CompilationUnit;
 
-  class it_functions :
-      public ForwardIterator<DWARF_Function, LIEF::dwarf::Function::Iterator>
-  {
+  class it_functions
+    : public ForwardIterator<DWARF_Function, LIEF::dwarf::Function::Iterator> {
     public:
-    it_functions(const DWARF_CompilationUnit::lief_t& src, implemented_t)
-      : ForwardIterator(src.functions()) { }
+    it_functions(const DWARF_CompilationUnit::lief_t& src, implemented_t) :
+      ForwardIterator(src.functions()) {}
 
-    it_functions(const DWARF_CompilationUnit::lief_t& src, imported_t)
-      : ForwardIterator(src.imported_functions()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_functions(const DWARF_CompilationUnit::lief_t& src, imported_t) :
+      ForwardIterator(src.imported_functions()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_types :
-      public ForwardIterator<DWARF_Type, LIEF::dwarf::Type::Iterator>
-  {
+  class it_types
+    : public ForwardIterator<DWARF_Type, LIEF::dwarf::Type::Iterator> {
     public:
-    it_types(const DWARF_CompilationUnit::lief_t& src)
-      : ForwardIterator(src.types()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_types(const DWARF_CompilationUnit::lief_t& src) :
+      ForwardIterator(src.types()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_variables :
-      public ForwardIterator<DWARF_Variable, LIEF::dwarf::Variable::Iterator>
-  {
+  class it_variables
+    : public ForwardIterator<DWARF_Variable, LIEF::dwarf::Variable::Iterator> {
     public:
-    it_variables(const DWARF_CompilationUnit::lief_t& src)
-      : ForwardIterator(src.variables()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_variables(const DWARF_CompilationUnit::lief_t& src) :
+      ForwardIterator(src.variables()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
   class Language {
@@ -70,36 +79,65 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
     uint32_t version = 0;
   };
 
-  auto name() const { return get().name(); }
-  auto producer() const { return get().producer(); }
-  auto compilation_dir() const { return get().compilation_dir(); }
+  auto name() const {
+    return get().name();
+  }
+  auto producer() const {
+    return get().producer();
+  }
+  auto compilation_dir() const {
+    return get().compilation_dir();
+  }
 
-  auto low_address() const { return get().low_address(); }
-  auto high_address() const { return get().high_address(); }
-  auto size() const { return get().size(); }
+  auto low_address() const {
+    return get().low_address();
+  }
+  auto high_address() const {
+    return get().high_address();
+  }
+  auto size() const {
+    return get().size();
+  }
   auto ranges() const {
     return details::make_range(get().ranges());
   }
 
   auto language() const {
     auto lang = get().language();
-    return std::make_unique<Language>(Language{/*lang=*/to_int(lang.lang), /*version=*/lang.version});
+    return std::make_unique<Language>(Language{/*lang=*/to_int(lang.lang),
+                                               /*version=*/lang.version});
   }
 
-  auto function_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Function>(get().find_function(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto function_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<DWARF_Function>(
+        get().find_function(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto function_by_address(uint64_t addr) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Function>(get().find_function(addr)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto function_by_address(
+      uint64_t addr
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<DWARF_Function>(
+        get().find_function(addr)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto variable_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Variable>(get().find_variable(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto variable_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<DWARF_Variable>(
+        get().find_variable(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto variable_by_address(uint64_t addr) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Variable>(get().find_variable(addr)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto variable_by_address(
+      uint64_t addr
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<DWARF_Variable>(
+        get().find_variable(addr)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto functions() const {

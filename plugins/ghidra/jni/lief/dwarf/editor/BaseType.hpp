@@ -24,15 +24,15 @@ namespace lief_jni::dwarf::editor {
 class BaseType : public Type {
   public:
   using Type::Type;
-  static constexpr jni::Class kClass {
-    "lief/dwarf/editor/BaseType",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/dwarf/editor/BaseType",
+      jni::Constructor{jlong{}},
   };
 
   class Encoding {
     public:
-    static constexpr jni::Class kClass {
-      "lief/dwarf/editor/BaseType$Encoding",
+    static constexpr jni::Class kClass{
+        "lief/dwarf/editor/BaseType$Encoding",
     };
   };
 

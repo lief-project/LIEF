@@ -26,15 +26,26 @@ class COFF_Header : public Mirror<LIEF::COFF::Header> {
   using lief_t = LIEF::COFF::Header;
   using Mirror::Mirror;
 
-  auto machine() const { return to_int(get().machine()); }
+  auto machine() const {
+    return to_int(get().machine());
+  }
 
-  auto nb_sections() const { return get().nb_sections(); }
-  auto pointerto_symbol_table() const { return get().pointerto_symbol_table(); }
-  auto nb_symbols() const { return get().nb_symbols(); }
-  auto timedatestamp() const { return get().timedatestamp(); }
+  auto nb_sections() const {
+    return get().nb_sections();
+  }
+  auto pointerto_symbol_table() const {
+    return get().pointerto_symbol_table();
+  }
+  auto nb_symbols() const {
+    return get().nb_symbols();
+  }
+  auto timedatestamp() const {
+    return get().timedatestamp();
+  }
 
-  auto to_string() const { return get().to_string(); }
-
+  auto to_string() const {
+    return get().to_string();
+  }
 };
 
 class COFF_RegularHeader : public COFF_Header {
@@ -54,7 +65,9 @@ class COFF_RegularHeader : public COFF_Header {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class COFF_BigObjHeader : public COFF_Header {
@@ -90,5 +103,7 @@ class COFF_BigObjHeader : public COFF_Header {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

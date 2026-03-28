@@ -29,13 +29,11 @@ class LIEF_API SpcRelaxedPeMarkerCheck : public Attribute {
 
   public:
   SpcRelaxedPeMarkerCheck() :
-    SpcRelaxedPeMarkerCheck(0)
-  {}
+    SpcRelaxedPeMarkerCheck(0) {}
 
   SpcRelaxedPeMarkerCheck(uint32_t value) :
     Attribute(Attribute::TYPE::SPC_RELAXED_PE_MARKER_CHECK),
-    value_(value)
-  {}
+    value_(value) {}
 
   SpcRelaxedPeMarkerCheck(const SpcRelaxedPeMarkerCheck&) = default;
   SpcRelaxedPeMarkerCheck& operator=(const SpcRelaxedPeMarkerCheck&) = default;

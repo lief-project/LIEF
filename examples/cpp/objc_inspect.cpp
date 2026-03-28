@@ -21,7 +21,8 @@ int main(int argc, const char** argv) {
   }
 
   set_level(LEVEL::INFO);
-  std::unique_ptr<LIEF::MachO::FatBinary> fat = LIEF::MachO::Parser::parse(argv[1]);
+  std::unique_ptr<LIEF::MachO::FatBinary> fat =
+      LIEF::MachO::Parser::parse(argv[1]);
   if (!fat) {
     return EXIT_FAILURE;
   }

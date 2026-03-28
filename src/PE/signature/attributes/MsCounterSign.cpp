@@ -33,4 +33,3 @@ std::string MsCounterSign::print() const {
 }
 
 }
-

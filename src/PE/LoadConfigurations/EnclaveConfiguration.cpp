@@ -66,8 +66,7 @@ std::string EnclaveConfiguration::to_string() const {
 
 template<class PE_T>
 std::unique_ptr<EnclaveConfiguration>
-  EnclaveConfiguration::parse(Parser& ctx, BinaryStream& stream)
-{
+    EnclaveConfiguration::parse(Parser& ctx, BinaryStream& stream) {
   using ptr_t = typename PE_T::uint;
   auto config = std::make_unique<EnclaveConfiguration>();
   auto Size = stream.read<uint32_t>();
@@ -151,17 +150,16 @@ std::unique_ptr<EnclaveConfiguration>
   }
 
   (*config)
-    .size(*Size)
-    .min_required_config_size(*MinimumRequiredConfigSize)
-    .policy_flags(*PolicyFlags)
-    .import_list_rva(*ImportList)
-    .import_entry_size(*ImportEntrySize)
-    .image_version(*ImageVersion)
-    .security_version(*SecurityVersion)
-    .enclave_size(*EnclaveSize)
-    .nb_threads(*NumberOfThreads)
-    .enclave_flags(*EnclaveFlags)
-  ;
+      .size(*Size)
+      .min_required_config_size(*MinimumRequiredConfigSize)
+      .policy_flags(*PolicyFlags)
+      .import_list_rva(*ImportList)
+      .import_entry_size(*ImportEntrySize)
+      .image_version(*ImageVersion)
+      .security_version(*SecurityVersion)
+      .enclave_size(*EnclaveSize)
+      .nb_threads(*NumberOfThreads)
+      .enclave_flags(*EnclaveFlags);
 
   if (*ImportEntrySize == 0 || *NumberOfImports == 0) {
     return config;
@@ -189,9 +187,9 @@ std::unique_ptr<EnclaveConfiguration>
 }
 
 template std::unique_ptr<EnclaveConfiguration>
-  EnclaveConfiguration::parse<details::PE32>(Parser& ctx, BinaryStream& stream);
+    EnclaveConfiguration::parse<details::PE32>(Parser& ctx, BinaryStream& stream);
 
 template std::unique_ptr<EnclaveConfiguration>
-  EnclaveConfiguration::parse<details::PE64>(Parser& ctx, BinaryStream& stream);
+    EnclaveConfiguration::parse<details::PE64>(Parser& ctx, BinaryStream& stream);
 
 }

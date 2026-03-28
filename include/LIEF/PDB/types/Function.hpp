@@ -45,5 +45,3 @@ class LIEF_API Function : public Type {
 }
 }
 #endif
-
-

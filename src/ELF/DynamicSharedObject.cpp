@@ -32,7 +32,3 @@ std::ostream& DynamicSharedObject::print(std::ostream& os) const {
 }
 
 }
-
-
-
-

@@ -19,14 +19,19 @@
 class PE_ExDllCharacteristics : public PE_Debug {
   public:
   using lief_t = LIEF::PE::ExDllCharacteristics;
-  PE_ExDllCharacteristics(const lief_t& obj) : PE_Debug(obj) {}
+  PE_ExDllCharacteristics(const lief_t& obj) :
+    PE_Debug(obj) {}
 
-  uint32_t characteristics() const { return to_int(impl().characteristics()); }
+  uint32_t characteristics() const {
+    return to_int(impl().characteristics());
+  }
 
   static bool classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

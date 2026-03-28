@@ -24,21 +24,32 @@ class PE_RichHeader : Mirror<LIEF::PE::RichHeader> {
   public:
   using lief_t = LIEF::PE::RichHeader;
   using Mirror::Mirror;
-  class it_entries :
-      public Iterator<PE_RichEntry, LIEF::PE::RichHeader::it_const_entries>
-  {
+  class it_entries
+    : public Iterator<PE_RichEntry, LIEF::PE::RichHeader::it_const_entries> {
     public:
-    it_entries(const PE_RichHeader::lief_t& src)
-      : Iterator(src.entries()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_entries(const PE_RichHeader::lief_t& src) :
+      Iterator(src.entries()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  uint32_t key() const { return get().key(); }
-  void set_key(uint32_t key) { get().key(key); }
+  uint32_t key() const {
+    return get().key();
+  }
+  void set_key(uint32_t key) {
+    get().key(key);
+  }
 
-  auto raw() const { return get().raw(); }
-  auto raw_with_key(uint32_t xor_key) const { return get().raw(xor_key); }
+  auto raw() const {
+    return get().raw();
+  }
+  auto raw_with_key(uint32_t xor_key) const {
+    return get().raw(xor_key);
+  }
 
   auto entries() const {
     return std::make_unique<it_entries>(get());

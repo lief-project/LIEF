@@ -35,8 +35,8 @@ class LIEF_API Hash : public LIEF::Hash {
   using LIEF::Hash::visit;
 
   public:
-  void visit(const File& file)      override;
-  void visit(const Header& header)  override;
+  void visit(const File& file) override;
+  void visit(const Header& header) override;
 
   ~Hash() override;
 };

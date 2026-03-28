@@ -33,13 +33,11 @@ class LIEF_API DynamicSharedObject : public DynamicEntry {
   public:
   using DynamicEntry::DynamicEntry;
   DynamicSharedObject() :
-    DynamicEntry(DynamicEntry::TAG::SONAME, 0)
-  {}
+    DynamicEntry(DynamicEntry::TAG::SONAME, 0) {}
 
   DynamicSharedObject(std::string name) :
     DynamicEntry(DynamicEntry::TAG::SONAME, 0),
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
 
   DynamicSharedObject& operator=(const DynamicSharedObject&) = default;
   DynamicSharedObject(const DynamicSharedObject&) = default;

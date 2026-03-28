@@ -26,13 +26,13 @@ class FunctionEngine {
   FunctionEngine() = delete;
   FunctionEngine(TypeEngine& types, LIEF::dwarf::editor::CompilationUnit& CU,
                  BinaryNinja::BinaryView& bv) :
-    types_(types), unit_(CU), bv_(bv)
-  {}
+    types_(types),
+    unit_(CU),
+    bv_(bv) {}
 
-  static std::unique_ptr<FunctionEngine> create(
-      TypeEngine& types, LIEF::dwarf::editor::CompilationUnit& CU,
-      BinaryNinja::BinaryView& bv)
-  {
+  static std::unique_ptr<FunctionEngine>
+      create(TypeEngine& types, LIEF::dwarf::editor::CompilationUnit& CU,
+             BinaryNinja::BinaryView& bv) {
     auto engine = std::make_unique<FunctionEngine>(types, CU, bv);
     return engine;
   }
@@ -51,4 +51,3 @@ class FunctionEngine {
   std::map<uint64_t, std::unique_ptr<LIEF::dwarf::editor::Function>> functions_;
 };
 }
-

@@ -24,29 +24,29 @@
 namespace LIEF::MachO {
 
 RelocationObject::RelocationObject(const details::relocation_info& relocinfo) :
-  is_pcrel_{static_cast<bool>(relocinfo.r_pcrel)}
-{
+  is_pcrel_{static_cast<bool>(relocinfo.r_pcrel)} {
   address_ = static_cast<uint32_t>(relocinfo.r_address);
-  size_    = static_cast<uint8_t>(relocinfo.r_length);
-  type_    = static_cast<uint8_t>(relocinfo.r_type);
+  size_ = static_cast<uint8_t>(relocinfo.r_length);
+  type_ = static_cast<uint8_t>(relocinfo.r_type);
 }
 
-RelocationObject::RelocationObject(const details::scattered_relocation_info& scattered_relocinfo) :
+RelocationObject::RelocationObject(
+    const details::scattered_relocation_info& scattered_relocinfo
+) :
   is_pcrel_{static_cast<bool>(scattered_relocinfo.r_pcrel)},
   is_scattered_{true},
-  value_{scattered_relocinfo.r_value}
-{
+  value_{scattered_relocinfo.r_value} {
   address_ = scattered_relocinfo.r_address;
-  size_    = static_cast<uint8_t>(scattered_relocinfo.r_length);
-  type_    = static_cast<uint8_t>(scattered_relocinfo.r_type);
+  size_ = static_cast<uint8_t>(scattered_relocinfo.r_length);
+  type_ = static_cast<uint8_t>(scattered_relocinfo.r_type);
 }
 
 void RelocationObject::swap(RelocationObject& other) noexcept {
   Relocation::swap(other);
 
-  std::swap(is_pcrel_,     other.is_pcrel_);
+  std::swap(is_pcrel_, other.is_pcrel_);
   std::swap(is_scattered_, other.is_scattered_);
-  std::swap(value_,        other.value_);
+  std::swap(value_, other.value_);
 }
 
 size_t RelocationObject::size() const {
@@ -75,8 +75,8 @@ int32_t RelocationObject::value() const {
 }
 
 void RelocationObject::size(size_t size) {
-  switch(size) {
-    case 8:  size_ = 0; break;
+  switch (size) {
+    case 8: size_ = 0; break;
     case 16: size_ = 1; break;
     case 32: size_ = 2; break;
     default: LIEF_ERR("Size exceeds 32 bits");
@@ -96,4 +96,3 @@ void RelocationObject::accept(Visitor& visitor) const {
 }
 
 }
-

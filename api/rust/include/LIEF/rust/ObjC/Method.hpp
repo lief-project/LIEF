@@ -21,8 +21,16 @@ class ObjC_Method : private Mirror<LIEF::objc::Method> {
   using lief_t = LIEF::objc::Method;
   using Mirror::Mirror;
 
-  auto name() const { return get().name(); }
-  auto mangled_type() const { return get().mangled_type(); }
-  uint64_t address() const { return get().address(); }
-  auto is_instance() const { return get().is_instance(); }
+  auto name() const {
+    return get().name();
+  }
+  auto mangled_type() const {
+    return get().mangled_type();
+  }
+  uint64_t address() const {
+    return get().address();
+  }
+  auto is_instance() const {
+    return get().is_instance();
+  }
 };

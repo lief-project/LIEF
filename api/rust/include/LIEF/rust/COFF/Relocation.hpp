@@ -25,7 +25,8 @@ class COFF_Section;
 class COFF_Relocation : public AbstractRelocation {
   public:
   using lief_t = LIEF::COFF::Relocation;
-  COFF_Relocation(const lief_t& obj) : AbstractRelocation(obj) {}
+  COFF_Relocation(const lief_t& obj) :
+    AbstractRelocation(obj) {}
 
   auto symbol_idx() const {
     return impl().symbol_idx();
@@ -48,5 +49,7 @@ class COFF_Relocation : public AbstractRelocation {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

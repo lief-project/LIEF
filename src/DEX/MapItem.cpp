@@ -25,12 +25,12 @@ MapItem::MapItem() = default;
 MapItem::MapItem(const MapItem& other) = default;
 MapItem& MapItem::operator=(const MapItem&) = default;
 
-MapItem::MapItem(MapItem::TYPES type, uint32_t offset, uint32_t size, uint16_t reserved) :
+MapItem::MapItem(MapItem::TYPES type, uint32_t offset, uint32_t size,
+                 uint16_t reserved) :
   type_{type},
   reserved_{reserved},
   size_{size},
-  offset_{offset}
-{}
+  offset_{offset} {}
 
 MapItem::TYPES MapItem::type() const {
   return type_;
@@ -53,11 +53,9 @@ void MapItem::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const MapItem& mitem) {
-  os << to_string(mitem.type())
-     << "@" << std::hex << std::showbase << mitem.offset()
-     << " (" << mitem.size() << " bytes) - " << mitem.reserved();
+  os << to_string(mitem.type()) << "@" << std::hex << std::showbase
+     << mitem.offset() << " (" << mitem.size() << " bytes) - " << mitem.reserved();
   return os;
 }
 
@@ -65,4 +63,3 @@ std::ostream& operator<<(std::ostream& os, const MapItem& mitem) {
 MapItem::~MapItem() = default;
 
 }
-

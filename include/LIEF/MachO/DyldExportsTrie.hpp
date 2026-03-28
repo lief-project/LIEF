@@ -51,7 +51,8 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   using it_export_info = ref_iterator<export_info_t&, ExportInfo*>;
 
   /// Iterator which outputs const ExportInfo&
-  using it_const_export_info = const_ref_iterator<const export_info_t&, ExportInfo*>;
+  using it_const_export_info =
+      const_ref_iterator<const export_info_t&, ExportInfo*>;
 
   DyldExportsTrie();
   DyldExportsTrie(const details::linkedit_data_command& cmd);
@@ -114,13 +115,13 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   LIEF_LOCAL DyldExportsTrie(const DyldExportsTrie& other);
 
   uint32_t data_offset_ = 0;
-  uint32_t data_size_   = 0;
+  uint32_t data_size_ = 0;
 
   // Raw payload of the DyldChainedFixups.
   // This payload is located in the __LINKEDIT segment
   span<uint8_t> content_;
 
-  export_info_t  export_info_;
+  export_info_t export_info_;
 };
 
 }

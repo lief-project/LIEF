@@ -21,7 +21,7 @@
 
 using namespace LIEF::PE;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
   std::cout << "PE Reader" << '\n';
   if (argc != 2) {

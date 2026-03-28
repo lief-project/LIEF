@@ -22,7 +22,8 @@
 class PE_PDBChecksum : public PE_Debug {
   public:
   using lief_t = LIEF::PE::PDBChecksum;
-  PE_PDBChecksum(const lief_t& obj) : PE_Debug(obj) {}
+  PE_PDBChecksum(const lief_t& obj) :
+    PE_Debug(obj) {}
 
   auto hash() const {
     return make_span(impl().hash());
@@ -37,5 +38,7 @@ class PE_PDBChecksum : public PE_Debug {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

@@ -22,9 +22,15 @@ class PDB_types_Method : private Mirror<LIEF::pdb::types::Method> {
   using Mirror::Mirror;
   using lief_t = LIEF::pdb::types::Method;
 
-  auto name() const { return get().name(); }
+  auto name() const {
+    return get().name();
+  }
 
-  auto get_type() const { return to_int(get().type()); }
+  auto get_type() const {
+    return to_int(get().type());
+  }
 
-  auto access() const { return to_int(get().access()); }
+  auto access() const {
+    return to_int(get().access());
+  }
 };

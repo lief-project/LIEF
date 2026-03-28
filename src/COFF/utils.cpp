@@ -49,7 +49,8 @@ Header::KIND get_kind(BinaryStream& stream) {
   }
 
   return LIEF::PE::Header::is_known_machine(regular->machine) ?
-         Header::KIND::REGULAR : Header::KIND::UNKNOWN;
+             Header::KIND::REGULAR :
+             Header::KIND::UNKNOWN;
 }
 
 }

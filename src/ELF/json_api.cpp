@@ -38,4 +38,3 @@ std::string to_json([[maybe_unused]] const Object& v) {
 
 } // namespace ELF
 } // namespace LIEF
-

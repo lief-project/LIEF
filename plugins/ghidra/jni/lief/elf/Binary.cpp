@@ -22,26 +22,14 @@
 namespace lief_jni::elf {
 
 int Binary::RelocationsIterator::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "hasNext",
-      "()Z",
-      &jni_has_next
-    ),
-    make(
-      "next",
-      "()Llief/elf/Relocation;",
-      &jni_next
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("hasNext", "()Z", &jni_has_next),
+      make("next", "()Llief/elf/Relocation;", &jni_next),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 
@@ -50,26 +38,15 @@ int Binary::RelocationsIterator::register_natives(JNIEnv* env) {
 
 
 int Binary::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "parse",
-      "(Ljava/lang/String;)Llief/elf/Binary;",
-      jni_parse
-    ),
-    make(
-      "getRelocations",
-      "()Llief/elf/Binary$RelocationsIterator;",
-      jni_get_relocations
-    ),
-    make_destroy(
-      &jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("parse", "(Ljava/lang/String;)Llief/elf/Binary;", jni_parse),
+      make("getRelocations", "()Llief/elf/Binary$RelocationsIterator;",
+           jni_get_relocations),
+      make_destroy(&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

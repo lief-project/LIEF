@@ -39,9 +39,9 @@ class LIEF_API StructType : public Type {
   using Type::Type;
 
   enum class TYPE : uint32_t {
-    CLASS, /// Discriminant for `DW_TAG_class_type`
+    CLASS,  /// Discriminant for `DW_TAG_class_type`
     STRUCT, /// Discriminant for `DW_TAG_structure_type`
-    UNION, /// Discriminant for `DW_TAG_union_type`
+    UNION,  /// Discriminant for `DW_TAG_union_type`
   };
 
   /// This class represents a member of the struct-like
@@ -51,6 +51,7 @@ class LIEF_API StructType : public Type {
     Member(std::unique_ptr<details::StructMember> impl);
 
     ~Member();
+
     private:
     std::unique_ptr<details::StructMember> impl_;
   };

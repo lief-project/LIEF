@@ -23,35 +23,64 @@
 class MachO_DyldChainedFixups : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::DyldChainedFixups;
-  class it_bindings :
-      public Iterator<MachO_ChainedBindingInfo, LIEF::MachO::DyldChainedFixups::it_const_binding_info>
-  {
+  class it_bindings
+    : public Iterator<MachO_ChainedBindingInfo,
+                      LIEF::MachO::DyldChainedFixups::it_const_binding_info> {
     public:
-    it_bindings(const MachO_DyldChainedFixups::lief_t& src)
-      : Iterator(src.bindings()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_bindings(const MachO_DyldChainedFixups::lief_t& src) :
+      Iterator(src.bindings()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
-  MachO_DyldChainedFixups(const lief_t& base) : MachO_Command(base) {}
+  MachO_DyldChainedFixups(const lief_t& base) :
+    MachO_Command(base) {}
 
-  uint32_t data_offset() const { return impl().data_offset(); }
-  uint32_t data_size() const { return impl().data_size(); }
-  uint32_t fixups_version() const { return impl().fixups_version(); }
-  uint32_t starts_offset() const { return impl().starts_offset(); }
-  uint32_t imports_offset() const { return impl().imports_offset(); }
-  uint32_t symbols_offset() const { return impl().symbols_offset(); }
-  uint32_t imports_count() const { return impl().imports_count(); }
-  uint32_t symbols_format() const { return impl().symbols_format(); }
-  auto imports_format() const { return to_int(impl().imports_format()); }
+  uint32_t data_offset() const {
+    return impl().data_offset();
+  }
+  uint32_t data_size() const {
+    return impl().data_size();
+  }
+  uint32_t fixups_version() const {
+    return impl().fixups_version();
+  }
+  uint32_t starts_offset() const {
+    return impl().starts_offset();
+  }
+  uint32_t imports_offset() const {
+    return impl().imports_offset();
+  }
+  uint32_t symbols_offset() const {
+    return impl().symbols_offset();
+  }
+  uint32_t imports_count() const {
+    return impl().imports_count();
+  }
+  uint32_t symbols_format() const {
+    return impl().symbols_format();
+  }
+  auto imports_format() const {
+    return to_int(impl().imports_format());
+  }
 
-  auto bindings() const { return std::make_unique<it_bindings>(impl()); }
+  auto bindings() const {
+    return std::make_unique<it_bindings>(impl());
+  }
 
-  auto payload() const { return make_span(impl().payload()); }
+  auto payload() const {
+    return make_span(impl().payload());
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

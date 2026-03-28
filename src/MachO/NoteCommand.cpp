@@ -24,8 +24,9 @@ namespace LIEF::MachO {
 
 NoteCommand::NoteCommand(const details::note_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
-  owner_(), note_offset_(cmd.offset), note_size_(cmd.size)
-{
+  owner_(),
+  note_offset_(cmd.offset),
+  note_size_(cmd.size) {
   static_assert(sizeof(owner_) == sizeof(cmd.data_owner));
   std::copy(std::begin(cmd.data_owner), std::end(cmd.data_owner),
             std::begin(owner_));
@@ -37,10 +38,9 @@ void NoteCommand::accept(Visitor& visitor) const {
 
 std::ostream& NoteCommand::print(std::ostream& os) const {
   LoadCommand::print(os) << '\n';
-  os << fmt::format("owner={} offset={:#x}, size={:#x}",
-                    owner_str(), note_offset(), note_size());
+  os << fmt::format("owner={} offset={:#x}, size={:#x}", owner_str(),
+                    note_offset(), note_size());
   return os;
 }
 
 }
-

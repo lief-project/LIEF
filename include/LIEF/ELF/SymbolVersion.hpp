@@ -38,8 +38,7 @@ class LIEF_API SymbolVersion : public Object {
   static constexpr auto GLOBAL_VERSION = 1;
 
   SymbolVersion(uint16_t value) :
-    value_(value)
-  {}
+    value_(value) {}
   SymbolVersion() = default;
 
   /// Generate a *local* SymbolVersion
@@ -120,10 +119,11 @@ class LIEF_API SymbolVersion : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const SymbolVersion& symv);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const SymbolVersion& symv);
 
   private:
-  uint16_t          value_ = 0;
+  uint16_t value_ = 0;
   SymbolVersionAux* symbol_aux_ = nullptr;
 };
 }

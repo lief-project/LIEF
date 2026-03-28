@@ -26,42 +26,66 @@ class PE_Utils;
 
 class PE_Import : private Mirror<LIEF::PE::Import> {
   friend class PE_Utils;
+
   public:
   using lief_t = LIEF::PE::Import;
   using Mirror::Mirror;
 
-  class it_entries :
-      public Iterator<PE_ImportEntry, LIEF::PE::Import::it_const_entries>
-  {
+  class it_entries
+    : public Iterator<PE_ImportEntry, LIEF::PE::Import::it_const_entries> {
     public:
-    it_entries(const PE_Import::lief_t& src)
-      : Iterator(src.entries()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_entries(const PE_Import::lief_t& src) :
+      Iterator(src.entries()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  uint32_t forwarder_chain() const { return get().forwarder_chain(); }
-  uint32_t timedatestamp() const { return get().timedatestamp(); }
-  uint32_t import_address_table_rva() const { return get().import_address_table_rva(); }
-  uint32_t import_lookup_table_rva() const { return get().import_lookup_table_rva(); }
-  std::string name() const { return get().name(); }
+  uint32_t forwarder_chain() const {
+    return get().forwarder_chain();
+  }
+  uint32_t timedatestamp() const {
+    return get().timedatestamp();
+  }
+  uint32_t import_address_table_rva() const {
+    return get().import_address_table_rva();
+  }
+  uint32_t import_lookup_table_rva() const {
+    return get().import_lookup_table_rva();
+  }
+  std::string name() const {
+    return get().name();
+  }
 
-  auto name_rva() const { return get().name_rva(); }
+  auto name_rva() const {
+    return get().name_rva();
+  }
 
   auto directory() const {
-    return details::try_unique<PE_DataDirectory>(get().directory()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_DataDirectory>(
+        get().directory()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto iat_directory() const {
-    return details::try_unique<PE_DataDirectory>(get().iat_directory()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_DataDirectory>(
+        get().iat_directory()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto entries() const {
     return std::make_unique<it_entries>(get());
   }
 
-  auto entry_by_name(std::string name) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PE_ImportEntry>(get().get_entry(name)); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto entry_by_name(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
+    return details::try_unique<PE_ImportEntry>(
+        get().get_entry(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto remove_entry_by_name(std::string name) {
@@ -77,5 +101,7 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
     return std::make_unique<PE_ImportEntry>(get().add_entry(name));
   }
 
-  void set_name(std::string name) { get().name(std::move(name)); }
+  void set_name(std::string name) {
+    get().name(std::move(name));
+  }
 };

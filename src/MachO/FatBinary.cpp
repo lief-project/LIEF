@@ -29,8 +29,7 @@ FatBinary::~FatBinary() = default;
 FatBinary::FatBinary() = default;
 
 FatBinary::FatBinary(binaries_t binaries) :
-  binaries_{std::move(binaries)}
-{}
+  binaries_{std::move(binaries)} {}
 
 std::unique_ptr<FatBinary> FatBinary::create(binaries_t binaries) {
   std::set<uint64_t> seen;
@@ -60,9 +59,9 @@ std::unique_ptr<Binary> FatBinary::pop_back() {
 
 std::unique_ptr<Binary> FatBinary::take(Header::CPU_TYPE cpu) {
   auto it = std::find_if(binaries_.begin(), binaries_.end(),
-      [cpu] (const std::unique_ptr<Binary>& bin) {
-        return bin->header().cpu_type() == cpu;
-      });
+                         [cpu](const std::unique_ptr<Binary>& bin) {
+                           return bin->header().cpu_type() == cpu;
+                         });
 
   if (it == binaries_.end()) {
     return nullptr;
@@ -76,10 +75,9 @@ std::unique_ptr<Binary> FatBinary::take(Header::CPU_TYPE cpu) {
 
 const Binary* FatBinary::get(Header::CPU_TYPE cpu) const {
   auto it = std::find_if(binaries_.begin(), binaries_.end(),
-    [cpu] (const std::unique_ptr<Binary>& bin) {
-      return bin->header().cpu_type() == cpu;
-    }
-  );
+                         [cpu](const std::unique_ptr<Binary>& bin) {
+                           return bin->header().cpu_type() == cpu;
+                         });
   if (it == binaries_.end()) {
     return nullptr;
   }
@@ -116,4 +114,3 @@ std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
 }
 
 }
-

@@ -84,12 +84,14 @@ size_t Builder::get_cmd_size(const LoadCommand& cmd) {
   }
 
   if (const auto* subframework = cmd.cast<SubFramework>()) {
-    return align(sizeof(details::sub_framework_command) + subframework->umbrella().size() + 1,
+    return align(sizeof(details::sub_framework_command) +
+                     subframework->umbrella().size() + 1,
                  sizeof(typename T::uint));
   }
 
   if (const auto* subclient = cmd.cast<SubClient>()) {
-    return align(sizeof(details::sub_client_command) + subclient->client().size() + 1,
+    return align(sizeof(details::sub_client_command) + subclient->client().size() +
+                     1,
                  sizeof(typename T::uint));
   }
 
@@ -100,7 +102,8 @@ size_t Builder::get_cmd_size(const LoadCommand& cmd) {
 
   if (const auto* bversion = cmd.cast<BuildVersion>()) {
     return align(sizeof(details::build_version_command) +
-                 bversion->tools().size() * sizeof(details::build_tool_version),
+                     bversion->tools().size() *
+                         sizeof(details::build_tool_version),
                  sizeof(typename T::uint));
   }
   return cmd.size();
@@ -159,14 +162,12 @@ ok_error_t Builder::build_linkedit() {
   }
 
   const uint64_t original_size = linkedit->file_size();
-  const uint64_t new_size      = linkedit_.size();
+  const uint64_t new_size = linkedit_.size();
   if (original_size < new_size) {
     LIEF_INFO("Delta __LINKEDIT data size: +{}", new_size - original_size);
-  }
-  else if (original_size > new_size) {
+  } else if (original_size > new_size) {
     LIEF_INFO("Delta __LINKEDIT data size: -{}", original_size - new_size);
-  }
-  else {
+  } else {
     LIEF_INFO("__LINKEDIT data built with the same size: {}", new_size);
   }
   return ok();
@@ -174,9 +175,9 @@ ok_error_t Builder::build_linkedit() {
 
 template<typename T>
 ok_error_t Builder::build_segments() {
-  using section_t  = typename T::section;
-  using segment_t  = typename T::segment_command;
-  using uint__     = typename T::uint;
+  using section_t = typename T::section;
+  using segment_t = typename T::segment_command;
+  using uint__ = typename T::uint;
 
   LIEF_DEBUG("[+] Rebuilding segments");
   Binary* binary = binaries_.back();
@@ -184,27 +185,28 @@ ok_error_t Builder::build_segments() {
     LIEF_DEBUG("{}", segment.name());
     segment_t segment_header{};
 
-    segment_header.cmd      = static_cast<uint32_t>(segment.command());
-    segment_header.cmdsize  = static_cast<uint32_t>(segment.size());
+    segment_header.cmd = static_cast<uint32_t>(segment.command());
+    segment_header.cmdsize = static_cast<uint32_t>(segment.size());
 
     const std::string& seg_name = segment.name();
-    const uint32_t segname_length = std::min<uint32_t>(seg_name.size() + 1,
-                                                       sizeof(segment_header.segname));
+    const uint32_t segname_length =
+        std::min<uint32_t>(seg_name.size() + 1, sizeof(segment_header.segname));
     std::copy(seg_name.c_str(), seg_name.c_str() + segname_length,
               std::begin(segment_header.segname));
     if (LinkEdit::segmentof(segment) && config_.linkedit) {
-      segment_header.vmsize   = static_cast<uint__>(align(linkedit_.size(), binary->page_size()));
+      segment_header.vmsize =
+          static_cast<uint__>(align(linkedit_.size(), binary->page_size()));
       segment_header.filesize = static_cast<uint__>(linkedit_.size());
     } else {
       segment_header.vmsize = static_cast<uint__>(segment.virtual_size());
       segment_header.filesize = static_cast<uint__>(segment.file_size());
     }
-    segment_header.vmaddr   = static_cast<uint__>(segment.virtual_address());
-    segment_header.fileoff  = static_cast<uint__>(segment.file_offset());
-    segment_header.maxprot  = static_cast<uint32_t>(segment.max_protection());
+    segment_header.vmaddr = static_cast<uint__>(segment.virtual_address());
+    segment_header.fileoff = static_cast<uint__>(segment.file_offset());
+    segment_header.maxprot = static_cast<uint32_t>(segment.max_protection());
     segment_header.initprot = static_cast<uint32_t>(segment.init_protection());
-    segment_header.nsects   = static_cast<uint32_t>(segment.numberof_sections());
-    segment_header.flags    = static_cast<uint32_t>(segment.flags());
+    segment_header.nsects = static_cast<uint32_t>(segment.numberof_sections());
+    segment_header.flags = static_cast<uint32_t>(segment.flags());
     LIEF_DEBUG("  - Command offset: {:#x}", segment.command_offset());
 
     span<const uint8_t> content = segment.content();
@@ -236,32 +238,34 @@ ok_error_t Builder::build_segments() {
       LIEF_DEBUG("{}", to_string(section));
       section_t header{};
 
-      const auto segname_length = std::min<uint32_t>(segment_name.size() + 1, sizeof(header.segname));
+      const auto segname_length =
+          std::min<uint32_t>(segment_name.size() + 1, sizeof(header.segname));
       std::copy(segment_name.c_str(), segment_name.c_str() + segname_length,
                 std::begin(header.segname));
 
-      const auto secname_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(header.sectname));
+      const auto secname_length =
+          std::min<uint32_t>(sec_name.size() + 1, sizeof(header.sectname));
       std::copy(sec_name.c_str(), sec_name.c_str() + secname_length,
                 std::begin(header.sectname));
 
-      header.addr      = static_cast<uint__>(section.address());
-      header.size      = static_cast<uint__>(section.size());
-      header.offset    = static_cast<uint32_t>(section.offset());
-      header.align     = static_cast<uint32_t>(section.alignment());
-      header.reloff    = static_cast<uint32_t>(section.relocation_offset());
-      header.nreloc    = static_cast<uint32_t>(section.numberof_relocations());
-      header.flags     = static_cast<uint32_t>(section.raw_flags());
+      header.addr = static_cast<uint__>(section.address());
+      header.size = static_cast<uint__>(section.size());
+      header.offset = static_cast<uint32_t>(section.offset());
+      header.align = static_cast<uint32_t>(section.alignment());
+      header.reloff = static_cast<uint32_t>(section.relocation_offset());
+      header.nreloc = static_cast<uint32_t>(section.numberof_relocations());
+      header.flags = static_cast<uint32_t>(section.raw_flags());
       header.reserved1 = static_cast<uint32_t>(section.reserved1());
       header.reserved2 = static_cast<uint32_t>(section.reserved2());
 
       if constexpr (std::is_same_v<section_t, details::section_64>) {
-        reinterpret_cast<details::section_64*>(&header)->reserved3 = static_cast<uint32_t>(section.reserved3());
+        reinterpret_cast<details::section_64*>(&header)->reserved3 =
+            static_cast<uint32_t>(section.reserved3());
       }
 
       std::move(reinterpret_cast<uint8_t*>(&header),
                 reinterpret_cast<uint8_t*>(&header) + sizeof(section_t),
                 std::back_inserter(segment.original_data_));
-
     }
   }
   return ok();
@@ -274,32 +278,36 @@ ok_error_t Builder::build(DylibCommand& library) {
 
   const uint32_t original_size = library.original_data_.size();
 
-  const uint32_t raw_size = sizeof(details::dylib_command) + library.name().size() + 1;
+  const uint32_t raw_size =
+      sizeof(details::dylib_command) + library.name().size() + 1;
   const uint32_t size_needed =
-    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+      std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
-  if (library.original_data_.size() < size_needed ||
-      library.size() < size_needed)
+  if (library.original_data_.size() < size_needed || library.size() < size_needed)
   {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: {:#x} vs {:#x}",
-              library.name(),  library.original_data_.size(), size_needed);
+              library.name(), library.original_data_.size(), size_needed);
   }
 
   details::dylib_command raw_cmd{};
 
-  raw_cmd.cmd                   = static_cast<uint32_t>(library.command());
-  raw_cmd.cmdsize               = static_cast<uint32_t>(size_needed);
-  raw_cmd.name                  = static_cast<uint32_t>(sizeof(details::dylib_command));
-  raw_cmd.timestamp             = static_cast<uint32_t>(library.timestamp());
-  raw_cmd.current_version       = static_cast<uint32_t>(DylibCommand::version2int(library.current_version()));
-  raw_cmd.compatibility_version = static_cast<uint32_t>(DylibCommand::version2int(library.compatibility_version()));
+  raw_cmd.cmd = static_cast<uint32_t>(library.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
+  raw_cmd.name = static_cast<uint32_t>(sizeof(details::dylib_command));
+  raw_cmd.timestamp = static_cast<uint32_t>(library.timestamp());
+  raw_cmd.current_version =
+      static_cast<uint32_t>(DylibCommand::version2int(library.current_version()));
+  raw_cmd.compatibility_version = static_cast<uint32_t>(
+      DylibCommand::version2int(library.compatibility_version())
+  );
 
   library.size_ = size_needed;
   library.original_data_.clear();
 
   // Write Header
-  std::move(reinterpret_cast<uint8_t*>(&raw_cmd), reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+  std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(library.original_data_));
 
   // Write String
@@ -312,35 +320,35 @@ ok_error_t Builder::build(DylibCommand& library) {
 }
 
 
-template <typename T>
+template<typename T>
 ok_error_t Builder::build(DylinkerCommand& linker) {
 
   LIEF_DEBUG("Build dylinker '{}'", linker.name());
 
   const uint32_t original_size = linker.original_data_.size();
-  const uint32_t raw_size = sizeof(details::dylinker_command) + linker.name().size() + 1;
+  const uint32_t raw_size =
+      sizeof(details::dylinker_command) + linker.name().size() + 1;
   const uint32_t size_needed =
-    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+      std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
-  if (linker.original_data_.size() < size_needed ||
-      linker.size() < size_needed)
-  {
+  if (linker.original_data_.size() < size_needed || linker.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: {:#x} vs {:#x}",
-              linker.name(),  linker.original_data_.size(), size_needed);
+              linker.name(), linker.original_data_.size(), size_needed);
   }
 
   details::dylinker_command raw_cmd{};
 
-  raw_cmd.cmd     = static_cast<uint32_t>(linker.command());
+  raw_cmd.cmd = static_cast<uint32_t>(linker.command());
   raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
-  raw_cmd.name    = static_cast<uint32_t>(sizeof(details::dylinker_command));
+  raw_cmd.name = static_cast<uint32_t>(sizeof(details::dylinker_command));
 
   linker.size_ = size_needed;
   linker.original_data_.clear();
 
   // Write Header
-  std::move(reinterpret_cast<uint8_t*>(&raw_cmd), reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+  std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(linker.original_data_));
 
   // Write String
@@ -363,17 +371,19 @@ ok_error_t Builder::build(VersionMin& version_min) {
   details::version_min_command raw_cmd{};
 
   const VersionMin::version_t& version = version_min.version();
-  const VersionMin::version_t& sdk     = version_min.sdk();
+  const VersionMin::version_t& sdk = version_min.sdk();
 
-  raw_cmd.cmd     = static_cast<uint32_t>(version_min.command());
+  raw_cmd.cmd = static_cast<uint32_t>(version_min.command());
   raw_cmd.cmdsize = static_cast<uint32_t>(version_min.size());
-  raw_cmd.version = static_cast<uint32_t>(version[0] << 16 | version[1] << 8 | version[2]);
-  raw_cmd.sdk     = static_cast<uint32_t>(sdk[0] << 16 | sdk[1] << 8 | sdk[2]);
+  raw_cmd.version =
+      static_cast<uint32_t>(version[0] << 16 | version[1] << 8 | version[2]);
+  raw_cmd.sdk = static_cast<uint32_t>(sdk[0] << 16 | sdk[1] << 8 | sdk[2]);
 
   version_min.size_ = sizeof(details::version_min_command);
   version_min.original_data_.clear();
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
-            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(details::version_min_command),
+            reinterpret_cast<uint8_t*>(&raw_cmd) +
+                sizeof(details::version_min_command),
             std::back_inserter(version_min.original_data_));
   version_min.original_data_.insert(version_min.original_data_.end(), padding, 0);
   return ok();
@@ -390,21 +400,22 @@ ok_error_t Builder::build(SourceVersion& source_version) {
   details::source_version_command raw_cmd{};
 
   const SourceVersion::version_t& version = source_version.version();
-  raw_cmd.cmd     = static_cast<uint32_t>(source_version.command());
+  raw_cmd.cmd = static_cast<uint32_t>(source_version.command());
   raw_cmd.cmdsize = static_cast<uint32_t>(source_version.size());
-  raw_cmd.version = static_cast<uint64_t>(
-      static_cast<uint64_t>(version[0]) << 40 |
-      static_cast<uint64_t>(version[1]) << 30 |
-      static_cast<uint64_t>(version[2]) << 20 |
-      static_cast<uint64_t>(version[3]) << 10 |
-      static_cast<uint64_t>(version[4]));
+  raw_cmd.version = static_cast<uint64_t>(static_cast<uint64_t>(version[0]) << 40 |
+                                          static_cast<uint64_t>(version[1]) << 30 |
+                                          static_cast<uint64_t>(version[2]) << 20 |
+                                          static_cast<uint64_t>(version[3]) << 10 |
+                                          static_cast<uint64_t>(version[4]));
 
   source_version.size_ = sizeof(details::source_version_command);
   source_version.original_data_.clear();
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
-            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(details::source_version_command),
+            reinterpret_cast<uint8_t*>(&raw_cmd) +
+                sizeof(details::source_version_command),
             std::back_inserter(source_version.original_data_));
-  source_version.original_data_.insert(source_version.original_data_.end(), padding, 0);
+  source_version.original_data_.insert(source_version.original_data_.end(),
+                                       padding, 0);
   return ok();
 }
 
@@ -415,9 +426,10 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
 
   const uint32_t original_size = rpath_cmd.original_data_.size();
 
-  const uint32_t raw_size = sizeof(details::rpath_command) + rpath_cmd.path().size() + 1;
+  const uint32_t raw_size =
+      sizeof(details::rpath_command) + rpath_cmd.path().size() + 1;
   const uint32_t size_needed =
-    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+      std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
   if (rpath_cmd.original_data_.size() < size_needed ||
@@ -431,9 +443,9 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
 
   details::rpath_command raw_cmd{};
 
-  raw_cmd.cmd     = static_cast<uint32_t>(rpath_cmd.command());
+  raw_cmd.cmd = static_cast<uint32_t>(rpath_cmd.command());
   raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
-  raw_cmd.path    = static_cast<uint32_t>(sizeof(details::rpath_command));
+  raw_cmd.path = static_cast<uint32_t>(sizeof(details::rpath_command));
 
   rpath_cmd.size_ = size_needed;
   rpath_cmd.original_data_.clear();
@@ -460,17 +472,17 @@ ok_error_t Builder::build(Routine& routine) {
 
   routine_t raw_cmd{};
 
-  raw_cmd.cmd       = static_cast<uint32_t>(routine.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(routine.size());
+  raw_cmd.cmd = static_cast<uint32_t>(routine.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(routine.size());
 
   raw_cmd.init_address = static_cast<uint__>(routine.init_address());
-  raw_cmd.init_module  = static_cast<uint__>(routine.init_module());
-  raw_cmd.reserved1    = static_cast<uint__>(routine.reserved1());
-  raw_cmd.reserved2    = static_cast<uint__>(routine.reserved2());
-  raw_cmd.reserved3    = static_cast<uint__>(routine.reserved3());
-  raw_cmd.reserved4    = static_cast<uint__>(routine.reserved4());
-  raw_cmd.reserved5    = static_cast<uint__>(routine.reserved5());
-  raw_cmd.reserved6    = static_cast<uint__>(routine.reserved6());
+  raw_cmd.init_module = static_cast<uint__>(routine.init_module());
+  raw_cmd.reserved1 = static_cast<uint__>(routine.reserved1());
+  raw_cmd.reserved2 = static_cast<uint__>(routine.reserved2());
+  raw_cmd.reserved3 = static_cast<uint__>(routine.reserved3());
+  raw_cmd.reserved4 = static_cast<uint__>(routine.reserved4());
+  raw_cmd.reserved5 = static_cast<uint__>(routine.reserved5());
+  raw_cmd.reserved6 = static_cast<uint__>(routine.reserved6());
 
   routine.size_ = sizeof(routine_t);
   routine.original_data_.clear();
@@ -489,15 +501,16 @@ ok_error_t Builder::build(MainCommand& main_cmd) {
 
   details::entry_point_command raw_cmd{};
 
-  raw_cmd.cmd       = static_cast<uint32_t>(main_cmd.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(main_cmd.size());
-  raw_cmd.entryoff  = static_cast<uint64_t>(main_cmd.entrypoint());
+  raw_cmd.cmd = static_cast<uint32_t>(main_cmd.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(main_cmd.size());
+  raw_cmd.entryoff = static_cast<uint64_t>(main_cmd.entrypoint());
   raw_cmd.stacksize = static_cast<uint64_t>(main_cmd.stack_size());
 
   main_cmd.size_ = sizeof(details::entry_point_command);
   main_cmd.original_data_.clear();
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
-            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(details::entry_point_command),
+            reinterpret_cast<uint8_t*>(&raw_cmd) +
+                sizeof(details::entry_point_command),
             std::back_inserter(main_cmd.original_data_));
   main_cmd.original_data_.insert(main_cmd.original_data_.end(), padding, 0);
   return ok();
@@ -602,13 +615,14 @@ ok_error_t Builder::build(DyldInfo& dyld_info) {
                dyld_info.export_info().second, raw_cmd.export_size);
   }
 
-  raw_cmd.cmd     = static_cast<uint32_t>(dyld_info.command());
+  raw_cmd.cmd = static_cast<uint32_t>(dyld_info.command());
   raw_cmd.cmdsize = static_cast<uint32_t>(dyld_info.size());
 
   dyld_info.size_ = sizeof(details::dyld_info_command);
   dyld_info.original_data_.clear();
   dyld_info.original_data_.resize(dyld_info.size_);
-  memcpy(dyld_info.original_data_.data(), &raw_cmd, sizeof(details::dyld_info_command));
+  memcpy(dyld_info.original_data_.data(), &raw_cmd,
+         sizeof(details::dyld_info_command));
   return ok();
 }
 
@@ -627,10 +641,10 @@ ok_error_t Builder::build(FunctionStarts& function_starts) {
   }
   linkedit_.align(sizeof(typename T::uint));
 
-  raw_cmd.cmd       = static_cast<uint32_t>(function_starts.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(function_starts.size());
-  raw_cmd.datasize  = linkedit_.size() - raw_cmd.dataoff;
-  raw_cmd.dataoff   += linkedit_offset_;
+  raw_cmd.cmd = static_cast<uint32_t>(function_starts.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(function_starts.size());
+  raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
+  raw_cmd.dataoff += linkedit_offset_;
 
 
   LIEF_DEBUG("LC_FUNCTION_STARTS.offset: {:#08x} -> {:#x}",
@@ -641,13 +655,15 @@ ok_error_t Builder::build(FunctionStarts& function_starts) {
   function_starts.size_ = sizeof(details::linkedit_data_command);
   function_starts.original_data_.clear();
   function_starts.original_data_.resize(function_starts.size_);
-  memcpy(function_starts.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(function_starts.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
 template<class MACHO_T>
-inline ok_error_t write_symbol(vector_iostream& nlist_table, Symbol& sym,
-                        std::unordered_map<std::string, size_t>& offset_name_map) {
+inline ok_error_t
+    write_symbol(vector_iostream& nlist_table, Symbol& sym,
+                 std::unordered_map<std::string, size_t>& offset_name_map) {
   using nlist_t = typename MACHO_T::nlist;
   const std::string& name = sym.name();
   const auto it_name = offset_name_map.find(name);
@@ -658,10 +674,10 @@ inline ok_error_t write_symbol(vector_iostream& nlist_table, Symbol& sym,
   }
 
   nlist_t nl;
-  nl.n_strx  = static_cast<uint32_t>(it_name->second);
-  nl.n_type  = static_cast<uint8_t>(sym.raw_type());
-  nl.n_sect  = static_cast<uint32_t>(sym.numberof_sections());
-  nl.n_desc  = static_cast<uint16_t>(sym.description());
+  nl.n_strx = static_cast<uint32_t>(it_name->second);
+  nl.n_type = static_cast<uint8_t>(sym.raw_type());
+  nl.n_sect = static_cast<uint32_t>(sym.numberof_sections());
+  nl.n_desc = static_cast<uint16_t>(sym.description());
   nl.n_value = static_cast<typename MACHO_T::uint>(sym.value());
 
   nlist_table.write(nl);
@@ -671,27 +687,30 @@ inline ok_error_t write_symbol(vector_iostream& nlist_table, Symbol& sym,
 
 template<class T>
 ok_error_t Builder::build(SymbolCommand& symbol_command) {
-  //template <typename A>
-  //void SymbolTableAtom<A>::encode()
+  // template <typename A>
+  // void SymbolTableAtom<A>::encode()
   //{
-  //  // Note: We lay out the symbol table so that the strings for the stabs (local) symbols are at the
-  //  // end of the string pool.  The stabs strings are not used when calculated the UUID for the image.
-  //  // If the stabs strings were not last, the string offsets for all other symbols may very which would alter the UUID.
+  //   // Note: We lay out the symbol table so that the strings for the stabs
+  //   (local) symbols are at the
+  //   // end of the string pool.  The stabs strings are not used when calculated
+  //   the UUID for the image.
+  //   // If the stabs strings were not last, the string offsets for all other
+  //   symbols may very which would alter the UUID.
   //
-  //  // reserve space for local symbols
-  // +---------------------+
-  // |                     |
-  // |  symtab_command     |
-  // |                     |
-  // +---------------------+
-  // |                     |
-  // |  n_list             |
-  // |                     |
-  // +---------------------+
-  // |                     |
-  // | string table        |
-  // |                     |
-  // +---------------------+
+  //   // reserve space for local symbols
+  //  +---------------------+
+  //  |                     |
+  //  |  symtab_command     |
+  //  |                     |
+  //  +---------------------+
+  //  |                     |
+  //  |  n_list             |
+  //  |                     |
+  //  +---------------------+
+  //  |                     |
+  //  | string table        |
+  //  |                     |
+  //  +---------------------+
 
   using nlist_t = typename T::nlist;
 
@@ -716,24 +735,25 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
       }
       all_syms.push_back(&s);
       switch (s.category()) {
-        case Symbol::CATEGORY::NONE:      other_syms.push_back(&s); break;
-        case Symbol::CATEGORY::LOCAL:     local_syms.push_back(&s); break;
-        case Symbol::CATEGORY::EXTERNAL:  ext_syms.push_back(&s);   break;
+        case Symbol::CATEGORY::NONE: other_syms.push_back(&s); break;
+        case Symbol::CATEGORY::LOCAL: local_syms.push_back(&s); break;
+        case Symbol::CATEGORY::EXTERNAL: ext_syms.push_back(&s); break;
         case Symbol::CATEGORY::UNDEFINED: undef_syms.push_back(&s); break;
 
         case Symbol::CATEGORY::INDIRECT_ABS:
         case Symbol::CATEGORY::INDIRECT_LOCAL:
         case Symbol::CATEGORY::INDIRECT_ABS_LOCAL:
-          {
-            break;
-          }
+        {
+          break;
+        }
       }
     }
 
     size_t offset_counter = 1;
-    std::vector<std::string> string_table_opt = optimize(all_syms,
-                                                  [] (Symbol *const &sym) { return sym->name(); },
-                                                  offset_counter, &offset_name_map);
+    std::vector<std::string> string_table_opt = optimize(
+        all_syms, [](Symbol* const& sym) { return sym->name(); }, offset_counter,
+        &offset_name_map
+    );
     all_syms.clear();
 
     // 0 index is reserved
@@ -771,7 +791,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
       if (dynsym != nullptr) {
         dynsym->idx_external_define_symbol(isym);
       }
-      for (Symbol* sym : ext_syms)   {
+      for (Symbol* sym : ext_syms) {
         indirect_symbols[sym] = isym;
         write_symbol<T>(nlist_table, *sym, offset_name_map);
         ++isym;
@@ -805,7 +825,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
     raw_nlist_table = nlist_table.raw();
     symtab.symoff = linkedit_offset_ + linkedit_.size();
-    symtab.nsyms  = nb_symbols;
+    symtab.nsyms = nb_symbols;
     LIEF_DEBUG("LC_SYMTAB.nlist:      {:#08x} -> {:#x}",
                symbol_command.symbol_offset(), symtab.symoff);
     LIEF_DEBUG("LC_SYMTAB.nb_symbols: {:#08x} -> {:#x}",
@@ -823,7 +843,8 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
    */
   if (dynsym != nullptr) {
     LIEF_DEBUG("LC_DYSYMTAB.indirectsymoff: {:#08x} -> {:#x}",
-               dynsym->indirect_symbol_offset(), linkedit_offset_ + linkedit_.size());
+               dynsym->indirect_symbol_offset(),
+               linkedit_offset_ + linkedit_.size());
     dynsym->indirect_symbol_offset(linkedit_offset_ + linkedit_.size());
     size_t count = 0;
     for (Symbol* sym : dynsym->indirect_symbols_) {
@@ -840,12 +861,15 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
       }
 
       if (sym->category() == Symbol::CATEGORY::INDIRECT_ABS_LOCAL) {
-        linkedit_.write(details::INDIRECT_SYMBOL_LOCAL | details::INDIRECT_SYMBOL_ABS);
+        linkedit_.write(details::INDIRECT_SYMBOL_LOCAL |
+                        details::INDIRECT_SYMBOL_ABS);
         ++count;
         continue;
       }
 
-      if (auto it_idx = indirect_symbols.find(sym); it_idx != indirect_symbols.end()) {
+      if (auto it_idx = indirect_symbols.find(sym);
+          it_idx != indirect_symbols.end())
+      {
         linkedit_.write(it_idx->second);
         ++count;
       } else {
@@ -857,7 +881,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
     dynsym->nb_indirect_symbols(count);
   }
 
-  symtab.stroff  = linkedit_offset_ + linkedit_.size();
+  symtab.stroff = linkedit_offset_ + linkedit_.size();
   symtab.strsize = strtab.size();
   LIEF_DEBUG("LC_SYMTAB.strtab.offset: {:#08x} -> {:#x}",
              symbol_command.strings_offset(), symtab.stroff);
@@ -866,13 +890,14 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
   linkedit_.write(std::move(strtab));
 
-  symtab.cmd     = static_cast<uint32_t>(symbol_command.command());
+  symtab.cmd = static_cast<uint32_t>(symbol_command.command());
   symtab.cmdsize = static_cast<uint32_t>(symbol_command.size());
 
   symbol_command.original_data_.clear();
   symbol_command.original_data_.resize(sizeof(details::symtab_command));
 
-  std::memcpy(symbol_command.original_data_.data(), &symtab, sizeof(details::symtab_command));
+  std::memcpy(symbol_command.original_data_.data(), &symtab,
+              sizeof(details::symtab_command));
 
   return ok();
 }
@@ -882,35 +907,44 @@ template<class T>
 ok_error_t Builder::build(DynamicSymbolCommand& symbol_command) {
   details::dysymtab_command rawcmd{};
 
-  rawcmd.cmd            = static_cast<uint32_t>(symbol_command.command());
-  rawcmd.cmdsize        = static_cast<uint32_t>(symbol_command.size());
+  rawcmd.cmd = static_cast<uint32_t>(symbol_command.command());
+  rawcmd.cmdsize = static_cast<uint32_t>(symbol_command.size());
 
-  rawcmd.ilocalsym      = static_cast<uint32_t>(symbol_command.idx_local_symbol());
-  rawcmd.nlocalsym      = static_cast<uint32_t>(symbol_command.nb_local_symbols());
+  rawcmd.ilocalsym = static_cast<uint32_t>(symbol_command.idx_local_symbol());
+  rawcmd.nlocalsym = static_cast<uint32_t>(symbol_command.nb_local_symbols());
 
-  rawcmd.iextdefsym     = static_cast<uint32_t>(symbol_command.idx_external_define_symbol());
-  rawcmd.nextdefsym     = static_cast<uint32_t>(symbol_command.nb_external_define_symbols());
+  rawcmd.iextdefsym =
+      static_cast<uint32_t>(symbol_command.idx_external_define_symbol());
+  rawcmd.nextdefsym =
+      static_cast<uint32_t>(symbol_command.nb_external_define_symbols());
 
-  rawcmd.iundefsym      = static_cast<uint32_t>(symbol_command.idx_undefined_symbol());
-  rawcmd.nundefsym      = static_cast<uint32_t>(symbol_command.nb_undefined_symbols());
+  rawcmd.iundefsym = static_cast<uint32_t>(symbol_command.idx_undefined_symbol());
+  rawcmd.nundefsym = static_cast<uint32_t>(symbol_command.nb_undefined_symbols());
 
-  rawcmd.indirectsymoff = static_cast<uint32_t>(symbol_command.indirect_symbol_offset());
-  rawcmd.nindirectsyms  = static_cast<uint32_t>(symbol_command.nb_indirect_symbols());
+  rawcmd.indirectsymoff =
+      static_cast<uint32_t>(symbol_command.indirect_symbol_offset());
+  rawcmd.nindirectsyms =
+      static_cast<uint32_t>(symbol_command.nb_indirect_symbols());
 
-  rawcmd.tocoff         = static_cast<uint32_t>(symbol_command.toc_offset());
-  rawcmd.ntoc           = static_cast<uint32_t>(symbol_command.nb_toc());
-  rawcmd.modtaboff      = static_cast<uint32_t>(symbol_command.module_table_offset());
-  rawcmd.nmodtab        = static_cast<uint32_t>(symbol_command.nb_module_table());
-  rawcmd.extrefsymoff   = static_cast<uint32_t>(symbol_command.external_reference_symbol_offset());
-  rawcmd.nextrefsyms    = static_cast<uint32_t>(symbol_command.nb_external_reference_symbols());
-  rawcmd.extreloff      = static_cast<uint32_t>(symbol_command.external_relocation_offset());
-  rawcmd.nextrel        = static_cast<uint32_t>(symbol_command.nb_external_relocations());
-  rawcmd.locreloff      = static_cast<uint32_t>(symbol_command.local_relocation_offset());
-  rawcmd.nlocrel        = static_cast<uint32_t>(symbol_command.nb_local_relocations());
+  rawcmd.tocoff = static_cast<uint32_t>(symbol_command.toc_offset());
+  rawcmd.ntoc = static_cast<uint32_t>(symbol_command.nb_toc());
+  rawcmd.modtaboff = static_cast<uint32_t>(symbol_command.module_table_offset());
+  rawcmd.nmodtab = static_cast<uint32_t>(symbol_command.nb_module_table());
+  rawcmd.extrefsymoff =
+      static_cast<uint32_t>(symbol_command.external_reference_symbol_offset());
+  rawcmd.nextrefsyms =
+      static_cast<uint32_t>(symbol_command.nb_external_reference_symbols());
+  rawcmd.extreloff =
+      static_cast<uint32_t>(symbol_command.external_relocation_offset());
+  rawcmd.nextrel = static_cast<uint32_t>(symbol_command.nb_external_relocations());
+  rawcmd.locreloff =
+      static_cast<uint32_t>(symbol_command.local_relocation_offset());
+  rawcmd.nlocrel = static_cast<uint32_t>(symbol_command.nb_local_relocations());
 
   symbol_command.original_data_.clear();
   symbol_command.original_data_.resize(sizeof(details::dysymtab_command));
-  memcpy(symbol_command.original_data_.data(), &rawcmd, sizeof(details::dysymtab_command));
+  memcpy(symbol_command.original_data_.data(), &rawcmd,
+         sizeof(details::dysymtab_command));
   return ok();
 }
 
@@ -922,30 +956,31 @@ ok_error_t Builder::build(DataInCode& datacode) {
 
   span<const uint8_t> raw_content = datacode.content();
 
-  raw_cmd.cmd       = static_cast<uint32_t>(datacode.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(datacode.size());
-  raw_cmd.dataoff   = linkedit_.size();
+  raw_cmd.cmd = static_cast<uint32_t>(datacode.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(datacode.size());
+  raw_cmd.dataoff = linkedit_.size();
 
   for (const DataCodeEntry& entry : datacode.entries()) {
     details::data_in_code_entry e;
     e.offset = entry.offset();
     e.length = entry.length();
-    e.kind   = static_cast<decltype(e.kind)>(entry.type());
+    e.kind = static_cast<decltype(e.kind)>(entry.type());
     linkedit_.write(e);
   }
   raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
-  raw_cmd.dataoff  += linkedit_offset_;
+  raw_cmd.dataoff += linkedit_offset_;
 
-  LIEF_DEBUG("LC_DATA_IN_CODE.offset: {:#08x} -> {:#x}",
-             datacode.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_DATA_IN_CODE.size:   {:#08x} -> {:#x}",
-             datacode.data_size(), raw_content.size());
+  LIEF_DEBUG("LC_DATA_IN_CODE.offset: {:#08x} -> {:#x}", datacode.data_offset(),
+             raw_cmd.dataoff);
+  LIEF_DEBUG("LC_DATA_IN_CODE.size:   {:#08x} -> {:#x}", datacode.data_size(),
+             raw_content.size());
 
   datacode.size_ = sizeof(details::linkedit_data_command);
   datacode.original_data_.clear();
   datacode.original_data_.resize(datacode.size_);
 
-  memcpy(datacode.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(datacode.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -962,10 +997,10 @@ ok_error_t Builder::build(CodeSignature& code_signature) {
    */
   linkedit_.align(16);
 
-  raw_cmd.cmd       = static_cast<uint32_t>(code_signature.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(code_signature.size());
-  raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
-  raw_cmd.datasize  = sp.size();
+  raw_cmd.cmd = static_cast<uint32_t>(code_signature.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(code_signature.size());
+  raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
+  raw_cmd.datasize = sp.size();
 
   LIEF_DEBUG("LC_CODE_SIGNATURE.offset: {:#08x} -> {:#x}",
              code_signature.data_offset(), raw_cmd.dataoff);
@@ -977,7 +1012,8 @@ ok_error_t Builder::build(CodeSignature& code_signature) {
   code_signature.original_data_.clear();
   code_signature.original_data_.resize(code_signature.size_);
 
-  memcpy(code_signature.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(code_signature.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -989,15 +1025,15 @@ ok_error_t Builder::build(SegmentSplitInfo& ssi) {
 
   span<const uint8_t> raw_content = ssi.content();
 
-  LIEF_DEBUG("LC_SEGMENT_SPLIT_INFO.offset: {:#08x} -> {:#x}",
-             ssi.data_offset(), linkedit_offset_ + linkedit_.size());
-  LIEF_DEBUG("LC_SEGMENT_SPLIT_INFO.size:   {:#08x} -> {:#x}",
-             ssi.data_size(), raw_content.size());
+  LIEF_DEBUG("LC_SEGMENT_SPLIT_INFO.offset: {:#08x} -> {:#x}", ssi.data_offset(),
+             linkedit_offset_ + linkedit_.size());
+  LIEF_DEBUG("LC_SEGMENT_SPLIT_INFO.size:   {:#08x} -> {:#x}", ssi.data_size(),
+             raw_content.size());
 
-  raw_cmd.cmd       = static_cast<uint32_t>(ssi.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(ssi.size());
-  raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
-  raw_cmd.datasize  = raw_content.size();
+  raw_cmd.cmd = static_cast<uint32_t>(ssi.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(ssi.size());
+  raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
+  raw_cmd.datasize = raw_content.size();
 
   linkedit_.write(raw_content.data(), raw_content.size());
 
@@ -1005,7 +1041,8 @@ ok_error_t Builder::build(SegmentSplitInfo& ssi) {
   ssi.original_data_.clear();
   ssi.original_data_.resize(ssi.size_);
 
-  memcpy(ssi.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(ssi.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
 
   return ok();
 }
@@ -1017,19 +1054,20 @@ ok_error_t Builder::build(SubFramework& sf) {
 
   const uint32_t original_size = sf.original_data_.size();
 
-  const uint32_t raw_size = sizeof(details::sub_framework_command) + sf.umbrella().size() + 1;
+  const uint32_t raw_size =
+      sizeof(details::sub_framework_command) + sf.umbrella().size() + 1;
   const auto size_needed =
-    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+      std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
 
   const uint32_t padding = size_needed - raw_size;
 
   if (sf.original_data_.size() < size_needed || sf.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: {:#x} vs {:#x}",
-              sf.umbrella(),  size_needed, sf.original_data_.size());
+              sf.umbrella(), size_needed, sf.original_data_.size());
   }
 
-  raw_cmd.cmd      = static_cast<uint32_t>(sf.command());
-  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
+  raw_cmd.cmd = static_cast<uint32_t>(sf.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
   raw_cmd.umbrella = static_cast<uint32_t>(sizeof(details::sub_framework_command));
 
   sf.size_ = size_needed;
@@ -1042,8 +1080,7 @@ ok_error_t Builder::build(SubFramework& sf) {
 
   // Write String
   const std::string& um = sf.umbrella();
-  std::move(um.begin(), um.end(),
-            std::back_inserter(sf.original_data_));
+  std::move(um.begin(), um.end(), std::back_inserter(sf.original_data_));
   sf.original_data_.push_back(0);
   sf.original_data_.insert(sf.original_data_.end(), padding, 0);
   return ok();
@@ -1056,19 +1093,20 @@ ok_error_t Builder::build(SubClient& sc) {
 
   const uint32_t original_size = sc.original_data_.size();
 
-  const uint32_t raw_size = sizeof(details::sub_client_command) + sc.client().size() + 1;
+  const uint32_t raw_size =
+      sizeof(details::sub_client_command) + sc.client().size() + 1;
   const uint32_t size_needed =
-    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+      std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
   if (sc.original_data_.size() < size_needed || sc.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild '{}'. Size required: {:#x} vs {:#x}",
-              sc.client(),  size_needed, sc.original_data_.size());
+              sc.client(), size_needed, sc.original_data_.size());
   }
 
-  raw_cmd.cmd      = static_cast<uint32_t>(sc.command());
-  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
-  raw_cmd.client   = static_cast<uint32_t>(sizeof(details::sub_client_command));
+  raw_cmd.cmd = static_cast<uint32_t>(sc.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
+  raw_cmd.client = static_cast<uint32_t>(sizeof(details::sub_client_command));
 
   sc.size_ = size_needed;
   sc.original_data_.clear();
@@ -1080,8 +1118,7 @@ ok_error_t Builder::build(SubClient& sc) {
 
   // Write String
   const std::string& um = sc.client();
-  std::move(um.begin(), um.end(),
-            std::back_inserter(sc.original_data_));
+  std::move(um.begin(), um.end(), std::back_inserter(sc.original_data_));
   sc.original_data_.push_back(0);
   sc.original_data_.insert(sc.original_data_.end(), padding, 0);
   return ok();
@@ -1093,20 +1130,20 @@ ok_error_t Builder::build(DyldEnvironment& de) {
 
   const uint32_t original_size = de.original_data_.size();
 
-  const uint32_t raw_size = sizeof(details::dylinker_command) + de.value().size() + 1;
+  const uint32_t raw_size =
+      sizeof(details::dylinker_command) + de.value().size() + 1;
   const uint32_t size_needed =
-    std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
+      std::max<uint32_t>(align(raw_size, sizeof(typename T::uint)), original_size);
   const uint32_t padding = size_needed - raw_size;
 
-  if (de.original_data_.size() < size_needed ||
-      de.size() < size_needed) {
+  if (de.original_data_.size() < size_needed || de.size() < size_needed) {
     LIEF_WARN("Not enough spaces to rebuild {}. Size required: {:#x} vs {:#x}",
-              de.value(),  de.original_data_.size(), size_needed);
+              de.value(), de.original_data_.size(), size_needed);
   }
 
-  raw_cmd.cmd      = static_cast<uint32_t>(de.command());
-  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
-  raw_cmd.name     = static_cast<uint32_t>(sizeof(details::dylinker_command));
+  raw_cmd.cmd = static_cast<uint32_t>(de.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
+  raw_cmd.name = static_cast<uint32_t>(sizeof(details::dylinker_command));
 
   de.size_ = size_needed;
   de.original_data_.clear();
@@ -1118,8 +1155,7 @@ ok_error_t Builder::build(DyldEnvironment& de) {
 
   // Write String
   const std::string& value = de.value();
-  std::move(value.begin(), value.end(),
-            std::back_inserter(de.original_data_));
+  std::move(value.begin(), value.end(), std::back_inserter(de.original_data_));
 
   de.original_data_.push_back(0);
   de.original_data_.insert(de.original_data_.end(), padding, 0);
@@ -1137,22 +1173,24 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   const uint32_t padding = size_needed - raw_size;
 
   if (tc.original_data_.size() < size_needed || tc.size() < size_needed) {
-    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: {:#x} vs {:#x}",
+    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: {:#x} "
+              "vs {:#x}",
               tc.original_data_.size(), size_needed);
   }
 
   const uint32_t state_size_needed = tc.count() * sizeof(uint32_t);
   if (state.size() < state_size_needed) {
 
-    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: {:#x} vs {:#x}",
+    LIEF_WARN("Not enough spaces to rebuild 'ThreadCommand'. Size required: {:#x} "
+              "vs {:#x}",
               state.size(), state_size_needed);
   }
 
 
-  raw_cmd.cmd      = static_cast<uint32_t>(tc.command());
-  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
-  raw_cmd.flavor   = static_cast<uint32_t>(tc.flavor());
-  raw_cmd.count    = static_cast<uint32_t>(tc.count());
+  raw_cmd.cmd = static_cast<uint32_t>(tc.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
+  raw_cmd.flavor = static_cast<uint32_t>(tc.flavor());
+  raw_cmd.count = static_cast<uint32_t>(tc.count());
 
   tc.size_ = size_needed;
   tc.original_data_.clear();
@@ -1163,8 +1201,7 @@ ok_error_t Builder::build(ThreadCommand& tc) {
             std::back_inserter(tc.original_data_));
 
   // Write state
-  std::move(state.begin(), state.end(),
-            std::back_inserter(tc.original_data_));
+  std::move(state.begin(), state.end(), std::back_inserter(tc.original_data_));
 
   tc.original_data_.push_back(0);
   tc.original_data_.insert(tc.original_data_.end(), padding, 0);
@@ -1175,11 +1212,11 @@ template<class T>
 ok_error_t Builder::build(EncryptionInfo& info) {
   details::encryption_info_command raw_cmd{};
 
-  raw_cmd.cmd       = static_cast<uint32_t>(info.command());
-  raw_cmd.cmdsize   = info.size();
-  raw_cmd.cryptoff  = info.crypt_offset();
+  raw_cmd.cmd = static_cast<uint32_t>(info.command());
+  raw_cmd.cmdsize = info.size();
+  raw_cmd.cryptoff = info.crypt_offset();
   raw_cmd.cryptsize = info.crypt_size();
-  raw_cmd.cryptid   = info.crypt_id();
+  raw_cmd.cryptid = info.crypt_id();
 
   std::fill(info.original_data_.begin(), info.original_data_.end(), 0);
 
@@ -1190,67 +1227,89 @@ ok_error_t Builder::build(EncryptionInfo& info) {
   return ok();
 }
 
-template <typename T>
+template<typename T>
 ok_error_t Builder::update_fixups(DyldChainedFixups& command) {
   for (const auto& seg_info : command.chained_starts_in_segments()) {
-    for (const std::unique_ptr<Relocation>& reloc : seg_info.segment.relocations_) {
+    for (const std::unique_ptr<Relocation>& reloc : seg_info.segment.relocations_)
+    {
       if (!RelocationFixup::classof(*reloc)) {
-        LIEF_WARN("Weird: a relocation in {} is not RelocationFixup", seg_info.segment.name());
+        LIEF_WARN("Weird: a relocation in {} is not RelocationFixup",
+                  seg_info.segment.name());
         continue;
       }
       const auto& fixup = static_cast<const RelocationFixup&>(*reloc);
       span<uint8_t> sdata = seg_info.segment.writable_content();
       const uint64_t seg_off = seg_info.segment.file_offset();
 
-      LIEF_DEBUG("{:#012x}: {:#012x} Offset: {:#x}", fixup.address(), fixup.target(), fixup.offset_);
+      LIEF_DEBUG("{:#012x}: {:#012x} Offset: {:#x}", fixup.address(),
+                 fixup.target(), fixup.offset_);
       const uint64_t rel_offset = fixup.offset_ - seg_off;
       switch (fixup.rtypes_) {
         case RelocationFixup::REBASE_TYPES::ARM64E_AUTH_REBASE:
-          {
-            auto& raw_fixup = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(sdata.data() + rel_offset);
-            raw_fixup.auth_rebase = *fixup.arm64_auth_rebase_;
-            break;
-          }
+        {
+          auto& raw_fixup =
+              *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(sdata.data() +
+                                                                   rel_offset);
+          raw_fixup.auth_rebase = *fixup.arm64_auth_rebase_;
+          break;
+        }
 
         case RelocationFixup::REBASE_TYPES::ARM64E_REBASE:
-          {
-            auto& raw_fixup = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(sdata.data() + rel_offset);
-            raw_fixup.rebase = *fixup.arm64_rebase_;
-            break;
-          }
+        {
+          auto& raw_fixup =
+              *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(sdata.data() +
+                                                                   rel_offset);
+          raw_fixup.rebase = *fixup.arm64_rebase_;
+          break;
+        }
 
         case RelocationFixup::REBASE_TYPES::PTR64_REBASE:
-          {
-            auto& raw_fixup = *reinterpret_cast<details::dyld_chained_ptr_generic64*>(sdata.data() + rel_offset);
-            raw_fixup.rebase = *fixup.p64_rebase_;
-            break;
-          }
+        {
+          auto& raw_fixup =
+              *reinterpret_cast<details::dyld_chained_ptr_generic64*>(
+                  sdata.data() + rel_offset
+              );
+          raw_fixup.rebase = *fixup.p64_rebase_;
+          break;
+        }
 
         case RelocationFixup::REBASE_TYPES::PTR32_REBASE:
-          {
-            auto& raw_fixup = *reinterpret_cast<details::dyld_chained_ptr_generic32*>(sdata.data() + rel_offset);
-            raw_fixup.rebase = *fixup.p32_rebase_;
-            break;
-          }
+        {
+          auto& raw_fixup =
+              *reinterpret_cast<details::dyld_chained_ptr_generic32*>(
+                  sdata.data() + rel_offset
+              );
+          raw_fixup.rebase = *fixup.p32_rebase_;
+          break;
+        }
 
         case RelocationFixup::REBASE_TYPES::SEGMENTED:
-          {
-            [[maybe_unused]] auto& raw_fixup = *reinterpret_cast<details::dyld_chained_ptr_arm64e_segmented_rebase*>(sdata.data() + rel_offset);
-            LIEF_ERR("dyld_chained_ptr_arm64e_segmented_rebase is not supported ({})", __LINE__);
-            break;
-          }
+        {
+          [[maybe_unused]] auto& raw_fixup = *reinterpret_cast<
+              details::dyld_chained_ptr_arm64e_segmented_rebase*
+          >(sdata.data() + rel_offset);
+          LIEF_ERR(
+              "dyld_chained_ptr_arm64e_segmented_rebase is not supported ({})",
+              __LINE__
+          );
+          break;
+        }
 
         case RelocationFixup::REBASE_TYPES::AUTH_SEGMENTED:
-          {
-            [[maybe_unused]] auto& raw_fixup = *reinterpret_cast<details::dyld_chained_ptr_arm64e_auth_segmented_rebase*>(sdata.data() + rel_offset);
-            LIEF_ERR("dyld_chained_ptr_arm64e_auth_segmented_rebase is not supported ({})", __LINE__);
-            break;
-          }
+        {
+          [[maybe_unused]] auto& raw_fixup = *reinterpret_cast<
+              details::dyld_chained_ptr_arm64e_auth_segmented_rebase*
+          >(sdata.data() + rel_offset);
+          LIEF_ERR("dyld_chained_ptr_arm64e_auth_segmented_rebase is not "
+                   "supported ({})",
+                   __LINE__);
+          break;
+        }
 
         case RelocationFixup::REBASE_TYPES::UNKNOWN:
-          {
-            break;
-          }
+        {
+          break;
+        }
       }
     }
   }
@@ -1263,8 +1322,9 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   using pin_t = typename T::uint;
   /*
    * Note(romain): Most of the logic that constructs this command
-   *               is located in ld64/src/ld/LinkEdit.hpp - ChainedInfoAtom<A>::encode()
-   *               The following code is highly inspired from the Apple ld64 code
+   *               is located in ld64/src/ld/LinkEdit.hpp -
+   * ChainedInfoAtom<A>::encode() The following code is highly inspired from the
+   * Apple ld64 code
    */
   LIEF_DEBUG("[->] Writing DyldChainedFixups");
 
@@ -1277,10 +1337,10 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
 
   details::dyld_chained_fixups_header header;
   header.fixups_version = 0;
-  header.starts_offset  = align(sizeof(details::dyld_chained_fixups_header), 8);
+  header.starts_offset = align(sizeof(details::dyld_chained_fixups_header), 8);
   header.imports_offset = 0;
   header.symbols_offset = 0;
-  header.imports_count  = fixups.internal_bindings_.size();
+  header.imports_count = fixups.internal_bindings_.size();
   header.imports_format = static_cast<uint32_t>(fixups.imports_format());
   header.symbols_format = 0;
 
@@ -1306,20 +1366,24 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   for (const auto& seg_info : starts_in_segment) {
     if (seg_info.segment.name() == "__TEXT") {
       text_start_address = seg_info.segment.virtual_address();
-    }
-    else if (seg_info.segment.name() == "__LINKEDIT") {
+    } else if (seg_info.segment.name() == "__LINKEDIT") {
       uint64_t base_address = text_start_address;
-      if (seg_info.pointer_format == DYLD_CHAINED_PTR_FORMAT::PTR_32 && text_start_address == 0x4000) {
+      if (seg_info.pointer_format == DYLD_CHAINED_PTR_FORMAT::PTR_32 &&
+          text_start_address == 0x4000)
+      {
         base_address = 0;
       }
-      max_rebase_address = align(seg_info.segment.virtual_address() - base_address, 0x00100000);
+      max_rebase_address =
+          align(seg_info.segment.virtual_address() - base_address, 0x00100000);
     }
   }
 
   // -----
 
 
-  for (const DyldChainedFixups::chained_starts_in_segment& seg_info : starts_in_segment) {
+  for (const DyldChainedFixups::chained_starts_in_segment& seg_info :
+       starts_in_segment)
+  {
     if (seg_info.page_count() == 0) {
       ++seg_idx;
       continue;
@@ -1333,22 +1397,26 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     }
     details::dyld_chained_starts_in_segment seg;
     const size_t page_count = seg_info.page_count();
-    seg.size              = sizeof(details::dyld_chained_starts_in_segment) + page_count * start_bytes_per_page;
-    seg.page_size         = seg_info.page_size;
-    seg.pointer_format    = static_cast<uint16_t>(seg_info.pointer_format);
-    seg.segment_offset    = seg_info.segment.virtual_address() - text_start_address;
-    seg.page_count        = page_count;
-    seg.max_valid_pointer = seg_info.pointer_format == DYLD_CHAINED_PTR_FORMAT::PTR_32 ?
-                                                       max_rebase_address : 0;
+    seg.size = sizeof(details::dyld_chained_starts_in_segment) +
+               page_count * start_bytes_per_page;
+    seg.page_size = seg_info.page_size;
+    seg.pointer_format = static_cast<uint16_t>(seg_info.pointer_format);
+    seg.segment_offset = seg_info.segment.virtual_address() - text_start_address;
+    seg.page_count = page_count;
+    seg.max_valid_pointer =
+        seg_info.pointer_format == DYLD_CHAINED_PTR_FORMAT::PTR_32 ?
+            max_rebase_address :
+            0;
 
     // According to the linker documentation, dyld_chained_starts_in_segment
     // must be 64-bit aligned.
     lnk_data.align(8);
-    auto* seg_info_offsets = reinterpret_cast<uint32_t*>(lnk_data.raw().data() + segs_info_off);
+    auto* seg_info_offsets =
+        reinterpret_cast<uint32_t*>(lnk_data.raw().data() + segs_info_off);
     seg_info_offsets[seg_idx] = lnk_data.size() - segs_header_off;
     LIEF_DEBUG("{:#08x} seg_info_offsets[{}] = {:#018x}",
-               segs_info_off + sizeof(uint32_t) * seg_idx,
-               seg_idx, seg_info_offsets[seg_idx]);
+               segs_info_off + sizeof(uint32_t) * seg_idx, seg_idx,
+               seg_info_offsets[seg_idx]);
     lnk_data.write(seg);
     for (uint16_t off : seg_info.page_start) {
       lnk_data.write(off);
@@ -1371,13 +1439,16 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   std::unordered_map<std::string, size_t> offset_name_map;
   string_pool.write<uint8_t>(0);
   size_t offset_counter = string_pool.tellp();
-  std::vector<std::string> string_table_optimized = optimize(fixups.internal_bindings_,
-                                  [] (const std::unique_ptr<ChainedBindingInfoList>& bnd) {
-                                    if (const Symbol* s = bnd->symbol()) {
-                                      return s->name();
-                                    }
-                                    return std::string();
-                                  }, offset_counter, &offset_name_map);
+  std::vector<std::string> string_table_optimized = optimize(
+      fixups.internal_bindings_,
+      [](const std::unique_ptr<ChainedBindingInfoList>& bnd) {
+        if (const Symbol* s = bnd->symbol()) {
+          return s->name();
+        }
+        return std::string();
+      },
+      offset_counter, &offset_name_map
+  );
   string_pool.reserve(string_table_optimized.size() * 10);
   for (const std::string& name : string_table_optimized) {
     string_pool.write(name);
@@ -1387,18 +1458,25 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   const size_t nb_bindings = fixups.internal_bindings_.size();
   switch (fmt) {
     case DYLD_CHAINED_FORMAT::IMPORT:
-         imports.reserve(nb_bindings * sizeof(details::dyld_chained_import)); break;
+      imports.reserve(nb_bindings * sizeof(details::dyld_chained_import));
+      break;
     case DYLD_CHAINED_FORMAT::IMPORT_ADDEND:
-         imports.reserve(nb_bindings * sizeof(details::dyld_chained_import_addend)); break;
+      imports.reserve(nb_bindings * sizeof(details::dyld_chained_import_addend));
+      break;
     case DYLD_CHAINED_FORMAT::IMPORT_ADDEND64:
-         imports.reserve(nb_bindings * sizeof(details::dyld_chained_import_addend64)); break;
+      imports.reserve(nb_bindings * sizeof(details::dyld_chained_import_addend64));
+      break;
   }
 
-  for (const std::unique_ptr<ChainedBindingInfoList>& info : fixups.internal_bindings_) {
+  for (const std::unique_ptr<ChainedBindingInfoList>& info :
+       fixups.internal_bindings_)
+  {
     uint32_t name_offset = 0;
 
     const std::string& name = info->symbol()->name();
-    if (auto it_name_off = offset_name_map.find(name); it_name_off != offset_name_map.end()) {
+    if (auto it_name_off = offset_name_map.find(name);
+        it_name_off != offset_name_map.end())
+    {
       name_offset = it_name_off->second;
     } else {
       LIEF_WARN("Can't find symbol: '{}'", name);
@@ -1406,123 +1484,140 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     }
     switch (fmt) {
       case DYLD_CHAINED_FORMAT::IMPORT:
-        {
-          details::dyld_chained_import import;
-          import.lib_ordinal = info->library_ordinal();
-          import.weak_import = info->is_weak_import();
-          import.name_offset = name_offset;
-          imports.write(import);
-          break;
-        }
+      {
+        details::dyld_chained_import import;
+        import.lib_ordinal = info->library_ordinal();
+        import.weak_import = info->is_weak_import();
+        import.name_offset = name_offset;
+        imports.write(import);
+        break;
+      }
       case DYLD_CHAINED_FORMAT::IMPORT_ADDEND:
-        {
-          details::dyld_chained_import_addend import;
-          import.lib_ordinal = info->library_ordinal();
-          import.weak_import = info->is_weak_import();
-          import.name_offset = name_offset;
-          import.addend      = info->addend();
-          imports_addend.write(import);
-          break;
-        }
+      {
+        details::dyld_chained_import_addend import;
+        import.lib_ordinal = info->library_ordinal();
+        import.weak_import = info->is_weak_import();
+        import.name_offset = name_offset;
+        import.addend = info->addend();
+        imports_addend.write(import);
+        break;
+      }
       case DYLD_CHAINED_FORMAT::IMPORT_ADDEND64:
-        {
-          details::dyld_chained_import_addend64 import;
-          import.lib_ordinal = info->library_ordinal();
-          import.weak_import = info->is_weak_import();
-          import.name_offset = name_offset;
-          import.addend      = info->addend();
-          imports_addend64.write(import);
-          break;
-        }
+      {
+        details::dyld_chained_import_addend64 import;
+        import.lib_ordinal = info->library_ordinal();
+        import.weak_import = info->is_weak_import();
+        import.name_offset = name_offset;
+        import.addend = info->addend();
+        imports_addend64.write(import);
+        break;
+      }
     }
 
     for (ChainedBindingInfo* binding : info->elements_) {
-      const uint64_t rel_offset = binding->offset_ - binding->segment()->file_offset();
-      uint8_t* data_ptr = binding->segment_->writable_content().data() + rel_offset;
-      LIEF_DEBUG("Write binding (offset={:#012x}): {:#018x} {} in {} offset={:#012x}",
-                 binding->offset_, binding->address(), binding->symbol()->name(),
-                 binding->segment_->name(),
-                 binding->segment()->file_offset() + rel_offset);
+      const uint64_t rel_offset =
+          binding->offset_ - binding->segment()->file_offset();
+      uint8_t* data_ptr =
+          binding->segment_->writable_content().data() + rel_offset;
+      LIEF_DEBUG(
+          "Write binding (offset={:#012x}): {:#018x} {} in {} offset={:#012x}",
+          binding->offset_, binding->address(), binding->symbol()->name(),
+          binding->segment_->name(), binding->segment()->file_offset() + rel_offset
+      );
 
       // Rewrite the raw chained binding
       switch (binding->btypes_) {
         case ChainedBindingInfo::BIND_TYPES::ARM64E_BIND:
-          {
-            auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
-            raw_bind.bind = *binding->arm64_bind_;
-            break;
-          }
+        {
+          auto& raw_bind =
+              *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
+          raw_bind.bind = *binding->arm64_bind_;
+          break;
+        }
         case ChainedBindingInfo::BIND_TYPES::ARM64E_AUTH_BIND:
-          {
-            auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
-            raw_bind.auth_bind = *binding->arm64_auth_bind_;
-            break;
-          }
+        {
+          auto& raw_bind =
+              *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
+          raw_bind.auth_bind = *binding->arm64_auth_bind_;
+          break;
+        }
         case ChainedBindingInfo::BIND_TYPES::ARM64E_BIND24:
-          {
-            auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
-            raw_bind.bind24 = *binding->arm64_bind24_;
-            break;
-          }
+        {
+          auto& raw_bind =
+              *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
+          raw_bind.bind24 = *binding->arm64_bind24_;
+          break;
+        }
         case ChainedBindingInfo::BIND_TYPES::ARM64E_AUTH_BIND24:
-          {
-            auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
-            raw_bind.auth_bind24 = *binding->arm64_auth_bind24_;
-            break;
-          }
+        {
+          auto& raw_bind =
+              *reinterpret_cast<details::dyld_chained_ptr_arm64e*>(data_ptr);
+          raw_bind.auth_bind24 = *binding->arm64_auth_bind24_;
+          break;
+        }
         case ChainedBindingInfo::BIND_TYPES::PTR64_BIND:
-          {
-            auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_generic64*>(data_ptr);
-            raw_bind.bind = *binding->p64_bind_;
-            break;
-          }
+        {
+          auto& raw_bind =
+              *reinterpret_cast<details::dyld_chained_ptr_generic64*>(data_ptr);
+          raw_bind.bind = *binding->p64_bind_;
+          break;
+        }
         case ChainedBindingInfo::BIND_TYPES::PTR32_BIND:
-          {
-            auto& raw_bind = *reinterpret_cast<details::dyld_chained_ptr_generic32*>(data_ptr);
-            raw_bind.bind = *binding->p32_bind_;
-            break;
-          }
+        {
+          auto& raw_bind =
+              *reinterpret_cast<details::dyld_chained_ptr_generic32*>(data_ptr);
+          raw_bind.bind = *binding->p32_bind_;
+          break;
+        }
         case ChainedBindingInfo::BIND_TYPES::UNKNOWN: break;
       }
     }
   }
 
   // Re-access the header to update the offsets
-  // NOTE/WARN: We need to 'reset' the pointer as the underlying buffer (std::vector) might
-  // be relocated.
-  auto* hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(lnk_data.raw().data());
+  // NOTE/WARN: We need to 'reset' the pointer as the underlying buffer
+  // (std::vector) might be relocated.
+  auto* hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(
+      lnk_data.raw().data()
+  );
   switch (fmt) {
     case DYLD_CHAINED_FORMAT::IMPORT:
-      {
-        lnk_data.align(4);
-        hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(lnk_data.raw().data());
-        hdr->imports_offset = lnk_data.size();
-        lnk_data.write(imports);
-        break;
-      }
+    {
+      lnk_data.align(4);
+      hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(
+          lnk_data.raw().data()
+      );
+      hdr->imports_offset = lnk_data.size();
+      lnk_data.write(imports);
+      break;
+    }
     case DYLD_CHAINED_FORMAT::IMPORT_ADDEND:
-      {
-        lnk_data.align(4);
-        hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(lnk_data.raw().data());
-        hdr->imports_offset = lnk_data.size();
-        lnk_data.write(imports_addend);
-        break;
-      }
+    {
+      lnk_data.align(4);
+      hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(
+          lnk_data.raw().data()
+      );
+      hdr->imports_offset = lnk_data.size();
+      lnk_data.write(imports_addend);
+      break;
+    }
     case DYLD_CHAINED_FORMAT::IMPORT_ADDEND64:
-      {
-        lnk_data.align(8);
-        hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(lnk_data.raw().data());
-        hdr->imports_offset = lnk_data.size();
-        lnk_data.write(imports_addend64);
-        break;
-      }
+    {
+      lnk_data.align(8);
+      hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(
+          lnk_data.raw().data()
+      );
+      hdr->imports_offset = lnk_data.size();
+      lnk_data.write(imports_addend64);
+      break;
+    }
   }
 
-  hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(lnk_data.raw().data());
+  hdr = reinterpret_cast<details::dyld_chained_fixups_header*>(
+      lnk_data.raw().data()
+  );
   hdr->symbols_offset = lnk_data.size();
-  lnk_data
-    .write(string_pool.raw())
-    .align(sizeof(pin_t));
+  lnk_data.write(string_pool.raw()).align(sizeof(pin_t));
 
   const std::vector<uint8_t>& raw = lnk_data.raw();
   LIEF_DEBUG("__chainfixups.old_size: {:#08x}", fixups.data_size());
@@ -1534,16 +1629,16 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
 
   LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS.offset: {:#08x} -> {:#x}",
              fixups.data_offset(), linkedit_offset_ + linkedit_.size());
-  LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS.size:   {:#08x} -> {:#x}",
-             fixups.data_size(), lnk_data.size());
+  LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS.size:   {:#08x} -> {:#x}", fixups.data_size(),
+             lnk_data.size());
 
   // Write back the 'linkedit' structure
   details::linkedit_data_command raw_cmd;
 
-  raw_cmd.cmd       = static_cast<uint32_t>(fixups.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(fixups.size());
-  raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
-  raw_cmd.datasize  = lnk_data.size();
+  raw_cmd.cmd = static_cast<uint32_t>(fixups.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(fixups.size());
+  raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
+  raw_cmd.datasize = lnk_data.size();
 
   linkedit_.write(std::move(lnk_data.raw()));
 
@@ -1551,7 +1646,8 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   fixups.original_data_.clear();
   fixups.original_data_.resize(fixups.size_);
 
-  memcpy(fixups.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(fixups.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -1563,21 +1659,22 @@ ok_error_t Builder::build(DyldExportsTrie& exports) {
   if (exports.data_size() > 0 && raw.size() > exports.content_.size()) {
     const uint64_t delta = raw.size() - exports.content_.size();
     LIEF_INFO("The export trie is larger than the original "
-              "LC_DYLD_EXPORTS_TRIE (+{:#x} bytes)", delta);
+              "LC_DYLD_EXPORTS_TRIE (+{:#x} bytes)",
+              delta);
   }
 
   LIEF_DEBUG("LC_DYLD_EXPORTS_TRIE.offset: {:#08x} -> {:#x}",
              exports.data_offset(), linkedit_offset_ + linkedit_.size());
-  LIEF_DEBUG("LC_DYLD_EXPORTS_TRIE.size:   {:#08x} -> {:#x}",
-             exports.data_size(), raw.size());
+  LIEF_DEBUG("LC_DYLD_EXPORTS_TRIE.size:   {:#08x} -> {:#x}", exports.data_size(),
+             raw.size());
 
   // Write back the 'linkedit' structure
   details::linkedit_data_command raw_cmd;
 
-  raw_cmd.cmd       = static_cast<uint32_t>(exports.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(exports.size());
-  raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
-  raw_cmd.datasize  = raw.size();
+  raw_cmd.cmd = static_cast<uint32_t>(exports.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(exports.size());
+  raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
+  raw_cmd.datasize = raw.size();
 
   linkedit_.write(std::move(raw));
 
@@ -1585,7 +1682,8 @@ ok_error_t Builder::build(DyldExportsTrie& exports) {
   exports.original_data_.clear();
   exports.original_data_.resize(exports.size_);
 
-  memcpy(exports.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(exports.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -1595,42 +1693,50 @@ ok_error_t Builder::build(BuildVersion& bv) {
 
   const BuildVersion::tools_list_t& tools = bv.tools();
 
-  const uint32_t raw_size    = sizeof(details::build_version_command) + tools.size() * sizeof(details::build_tool_version);
+  const uint32_t raw_size = sizeof(details::build_version_command) +
+                            tools.size() * sizeof(details::build_tool_version);
   const uint32_t size_needed = align(raw_size, sizeof(typename T::uint));
-  const uint32_t padding     = size_needed - raw_size;
+  const uint32_t padding = size_needed - raw_size;
 
   if (bv.original_data_.size() < size_needed || bv.size() < size_needed) {
-    LIEF_WARN("Not enough spaces to rebuild 'BuildVersion'. Size required: {:#x} vs {:#x}",
-               bv.original_data_.size(), size_needed);
+    LIEF_WARN("Not enough spaces to rebuild 'BuildVersion'. Size required: {:#x} "
+              "vs {:#x}",
+              bv.original_data_.size(), size_needed);
   }
 
-  const BuildVersion::version_t& minos    = bv.minos();
-  const BuildVersion::version_t& sdk      = bv.sdk();
+  const BuildVersion::version_t& minos = bv.minos();
+  const BuildVersion::version_t& sdk = bv.sdk();
 
-  raw_cmd.cmd      = static_cast<uint32_t>(bv.command());
-  raw_cmd.cmdsize  = static_cast<uint32_t>(size_needed);
+  raw_cmd.cmd = static_cast<uint32_t>(bv.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(size_needed);
 
-  raw_cmd.minos    = static_cast<uint32_t>(minos[0] << 16 | minos[1] << 8 | minos[2]);
-  raw_cmd.sdk      = static_cast<uint32_t>(sdk[0] << 16 | sdk[1] << 8 | sdk[2]);
+  raw_cmd.minos = static_cast<uint32_t>(minos[0] << 16 | minos[1] << 8 | minos[2]);
+  raw_cmd.sdk = static_cast<uint32_t>(sdk[0] << 16 | sdk[1] << 8 | sdk[2]);
   raw_cmd.platform = static_cast<uint32_t>(bv.platform());
-  raw_cmd.ntools   = tools.size();
-  //raw_cmd.name     = static_cast<uint32_t>(sizeof(build_version_command));
-  std::vector<uint8_t> raw_tools(raw_cmd.ntools * sizeof(details::build_tool_version), 0);
-  auto* tools_array = reinterpret_cast<details::build_tool_version*>(raw_tools.data());
+  raw_cmd.ntools = tools.size();
+  // raw_cmd.name     = static_cast<uint32_t>(sizeof(build_version_command));
+  std::vector<uint8_t> raw_tools(
+      raw_cmd.ntools * sizeof(details::build_tool_version), 0
+  );
+  auto* tools_array =
+      reinterpret_cast<details::build_tool_version*>(raw_tools.data());
   for (size_t i = 0; i < tools.size(); ++i) {
     BuildToolVersion::version_t version = tools[i].version();
-    tools_array[i].tool    = static_cast<uint32_t>(tools[i].tool());
-    tools_array[i].version = static_cast<uint32_t>(version[0] << 16 | version[1] << 8 | version[2]);
+    tools_array[i].tool = static_cast<uint32_t>(tools[i].tool());
+    tools_array[i].version =
+        static_cast<uint32_t>(version[0] << 16 | version[1] << 8 | version[2]);
   }
 
   bv.size_ = size_needed;
   bv.original_data_.clear();
 
   // Write Header
-  std::move(reinterpret_cast<uint8_t*>(&raw_cmd), reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
+  std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
+            reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(bv.original_data_));
 
-  std::move(raw_tools.begin(), raw_tools.end(), std::back_inserter(bv.original_data_));
+  std::move(raw_tools.begin(), raw_tools.end(),
+            std::back_inserter(bv.original_data_));
 
   bv.original_data_.insert(bv.original_data_.end(), padding, 0);
   return ok();
@@ -1642,15 +1748,15 @@ ok_error_t Builder::build(CodeSignatureDir& sig) {
 
   span<const uint8_t> sp = sig.content();
 
-  raw_cmd.cmd       = static_cast<uint32_t>(sig.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(sig.size());
-  raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
-  raw_cmd.datasize  = sp.size();
+  raw_cmd.cmd = static_cast<uint32_t>(sig.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(sig.size());
+  raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
+  raw_cmd.datasize = sp.size();
 
-  LIEF_DEBUG("LC_DYLIB_CODE_SIGN_DRS.offset: {:#08x} -> {:#x}",
-             sig.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_DYLIB_CODE_SIGN_DRS.size:   {:#08x} -> {:#x}",
-             sig.data_size(), raw_cmd.datasize);
+  LIEF_DEBUG("LC_DYLIB_CODE_SIGN_DRS.offset: {:#08x} -> {:#x}", sig.data_offset(),
+             raw_cmd.dataoff);
+  LIEF_DEBUG("LC_DYLIB_CODE_SIGN_DRS.size:   {:#08x} -> {:#x}", sig.data_size(),
+             raw_cmd.datasize);
 
   linkedit_.write(sp.data(), sp.size());
 
@@ -1658,7 +1764,8 @@ ok_error_t Builder::build(CodeSignatureDir& sig) {
   sig.original_data_.clear();
   sig.original_data_.resize(sig.size_);
 
-  memcpy(sig.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(sig.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -1668,10 +1775,10 @@ ok_error_t Builder::build(LinkerOptHint& opt) {
 
   span<const uint8_t> sp = opt.content();
 
-  raw_cmd.cmd       = static_cast<uint32_t>(opt.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(opt.size());
-  raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
-  raw_cmd.datasize  = sp.size();
+  raw_cmd.cmd = static_cast<uint32_t>(opt.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(opt.size());
+  raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
+  raw_cmd.datasize = sp.size();
 
   LIEF_DEBUG("LC_LINKER_OPTIMIZATION_HINT.offset: {:#08x} -> {:#x}",
              opt.data_offset(), raw_cmd.dataoff);
@@ -1684,7 +1791,8 @@ ok_error_t Builder::build(LinkerOptHint& opt) {
   opt.original_data_.clear();
   opt.original_data_.resize(opt.size_);
 
-  memcpy(opt.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(opt.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -1694,15 +1802,15 @@ ok_error_t Builder::build(AtomInfo& atom) {
 
   span<const uint8_t> sp = atom.content();
 
-  raw_cmd.cmd       = static_cast<uint32_t>(atom.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(atom.size());
-  raw_cmd.dataoff   = linkedit_offset_ + linkedit_.size();
-  raw_cmd.datasize  = sp.size();
+  raw_cmd.cmd = static_cast<uint32_t>(atom.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(atom.size());
+  raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
+  raw_cmd.datasize = sp.size();
 
-  LIEF_DEBUG("LC_ATOM_INFO.offset: {:#08x} -> {:#x}",
-             atom.data_offset(), raw_cmd.dataoff);
-  LIEF_DEBUG("LC_ATOM_INFO.size:   {:#08x} -> {:#x}",
-             atom.data_size(), raw_cmd.datasize);
+  LIEF_DEBUG("LC_ATOM_INFO.offset: {:#08x} -> {:#x}", atom.data_offset(),
+             raw_cmd.dataoff);
+  LIEF_DEBUG("LC_ATOM_INFO.size:   {:#08x} -> {:#x}", atom.data_size(),
+             raw_cmd.datasize);
 
   linkedit_.write(sp.data(), sp.size());
 
@@ -1710,7 +1818,8 @@ ok_error_t Builder::build(AtomInfo& atom) {
   atom.original_data_.clear();
   atom.original_data_.resize(atom.size_);
 
-  memcpy(atom.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(atom.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -1720,16 +1829,16 @@ ok_error_t Builder::build(TwoLevelHints& two) {
   details::twolevel_hints_command raw_cmd{};
   const auto it_hints = two.hints();
 
-  raw_cmd.cmd       = static_cast<uint32_t>(two.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(two.size());
+  raw_cmd.cmd = static_cast<uint32_t>(two.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(two.size());
 
-  raw_cmd.offset  = linkedit_offset_ + linkedit_.size();
-  raw_cmd.nhints  = it_hints.size();
+  raw_cmd.offset = linkedit_offset_ + linkedit_.size();
+  raw_cmd.nhints = it_hints.size();
 
-  LIEF_DEBUG("LC_TWOLEVEL_HINTS.offset: {:#08x} -> {:#x}",
-             two.offset(), raw_cmd.offset);
-  LIEF_DEBUG("LC_TWOLEVEL_HINTS.nhints: {:#08x} -> {:#x}",
-             two.original_nb_hints(), raw_cmd.nhints);
+  LIEF_DEBUG("LC_TWOLEVEL_HINTS.offset: {:#08x} -> {:#x}", two.offset(),
+             raw_cmd.offset);
+  LIEF_DEBUG("LC_TWOLEVEL_HINTS.nhints: {:#08x} -> {:#x}", two.original_nb_hints(),
+             raw_cmd.nhints);
 
   for (uint32_t value : it_hints) {
     linkedit_.write(value);
@@ -1739,7 +1848,8 @@ ok_error_t Builder::build(TwoLevelHints& two) {
   two.original_data_.clear();
   two.original_data_.resize(two.size_);
 
-  memcpy(two.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(two.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -1754,10 +1864,10 @@ ok_error_t Builder::build(FunctionVariants& func_variants) {
   // TODO(romain): We need to reconstruct the data in depth
   linkedit_.write(sp);
 
-  raw_cmd.cmd       = static_cast<uint32_t>(func_variants.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(func_variants.size());
-  raw_cmd.datasize  = linkedit_.size() - raw_cmd.dataoff;
-  raw_cmd.dataoff   += linkedit_offset_;
+  raw_cmd.cmd = static_cast<uint32_t>(func_variants.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(func_variants.size());
+  raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
+  raw_cmd.dataoff += linkedit_offset_;
 
   LIEF_DEBUG("LC_FUNCTION_VARIANTS.offset: {:#08x} -> {:#x}",
              func_variants.data_offset(), raw_cmd.dataoff);
@@ -1767,7 +1877,8 @@ ok_error_t Builder::build(FunctionVariants& func_variants) {
   func_variants.size_ = sizeof(details::linkedit_data_command);
   func_variants.original_data_.clear();
   func_variants.original_data_.resize(func_variants.size_);
-  memcpy(func_variants.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(func_variants.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 
@@ -1782,10 +1893,10 @@ ok_error_t Builder::build(FunctionVariantFixups& func_variant_fixups) {
 
   linkedit_.align(sizeof(typename T::uint));
 
-  raw_cmd.cmd       = static_cast<uint32_t>(func_variant_fixups.command());
-  raw_cmd.cmdsize   = static_cast<uint32_t>(func_variant_fixups.size());
-  raw_cmd.datasize  = linkedit_.size() - raw_cmd.dataoff;
-  raw_cmd.dataoff   += linkedit_offset_;
+  raw_cmd.cmd = static_cast<uint32_t>(func_variant_fixups.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(func_variant_fixups.size());
+  raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
+  raw_cmd.dataoff += linkedit_offset_;
 
 
   LIEF_DEBUG("LC_FUNCTION_VARIANT_FIXUPS.offset: {:#08x} -> {:#x}",
@@ -1796,7 +1907,8 @@ ok_error_t Builder::build(FunctionVariantFixups& func_variant_fixups) {
   func_variant_fixups.size_ = sizeof(details::linkedit_data_command);
   func_variant_fixups.original_data_.clear();
   func_variant_fixups.original_data_.resize(func_variant_fixups.size_);
-  memcpy(func_variant_fixups.original_data_.data(), &raw_cmd, sizeof(details::linkedit_data_command));
+  memcpy(func_variant_fixups.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
   return ok();
 }
 template<class MACHO_T>
@@ -1807,13 +1919,13 @@ ok_error_t Builder::build_header() {
 
   const Header& binary_header = binary_->header();
 
-  header.magic      = static_cast<uint32_t>(binary_header.magic());
-  header.cputype    = static_cast<uint32_t>(binary_header.cpu_type());
+  header.magic = static_cast<uint32_t>(binary_header.magic());
+  header.cputype = static_cast<uint32_t>(binary_header.cpu_type());
   header.cpusubtype = static_cast<uint32_t>(binary_header.cpu_subtype());
-  header.filetype   = static_cast<uint32_t>(binary_header.file_type());
-  header.ncmds      = static_cast<uint32_t>(binary_header.nb_cmds());
+  header.filetype = static_cast<uint32_t>(binary_header.file_type());
+  header.ncmds = static_cast<uint32_t>(binary_header.nb_cmds());
   header.sizeofcmds = static_cast<uint32_t>(binary_header.sizeof_cmds());
-  header.flags      = static_cast<uint32_t>(binary_header.flags());
+  header.flags = static_cast<uint32_t>(binary_header.flags());
 
   if constexpr (std::is_same_v<header_t, details::mach_header_64>) {
     header.reserved = static_cast<uint32_t>(binary_header.reserved());
@@ -1821,12 +1933,8 @@ ok_error_t Builder::build_header() {
 
   LIEF_DEBUG("Writing header at: 0 (size: {:#06x})", sizeof(header));
 
-  raw_
-    .seekp(0)
-    .write(header);
+  raw_.seekp(0).write(header);
 
   return ok();
-
 }
 }
-

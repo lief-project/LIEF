@@ -46,7 +46,8 @@ struct segment_command_32;
 struct segment_command_64;
 }
 
-/// Class which represents a LoadCommand::TYPE::SEGMENT / LoadCommand::TYPE::SEGMENT_64 command
+/// Class which represents a LoadCommand::TYPE::SEGMENT /
+/// LoadCommand::TYPE::SEGMENT_64 command
 class LIEF_API SegmentCommand : public LoadCommand {
 
   friend class DyldChainedFixupsCreator;
@@ -74,21 +75,27 @@ class LIEF_API SegmentCommand : public LoadCommand {
   using it_relocations = ref_iterator<relocations_t&, Relocation*>;
 
   /// Iterator which outputs const Relocation&
-  using it_const_relocations = const_ref_iterator<const relocations_t&, const Relocation*>;
+  using it_const_relocations =
+      const_ref_iterator<const relocations_t&, const Relocation*>;
 
-  enum class FLAGS: uint64_t  {
-    HIGHVM              = 0x1u, ///< The file contents for this segment are for the high part of the virtual memory space; the low part is zero filled (for stacks in core files).
-    FVMLIB              = 0x2u, ///< this segment is the VM that is allocated by a fixed VM library, for overlap checking in the link editor.
-    NORELOC             = 0x4u, ///< This segment has nothing that was relocated in it and nothing relocated to it. It may be safely replaced without relocation.
+  enum class FLAGS : uint64_t {
+    HIGHVM = 0x1u, ///< The file contents for this segment are for the high part of
+                   ///< the virtual memory space; the low part is zero filled (for
+                   ///< stacks in core files).
+    FVMLIB = 0x2u, ///< this segment is the VM that is allocated by a fixed VM
+                   ///< library, for overlap checking in the link editor.
+    NORELOC =
+        0x4u, ///< This segment has nothing that was relocated in it and nothing
+              ///< relocated to it. It may be safely replaced without relocation.
     PROTECTED_VERSION_1 = 0x8u,
-    READ_ONLY           = 0x10u,
+    READ_ONLY = 0x10u,
   };
 
   /// Values for segment_command.initprot.
   /// From <mach/vm_prot.h>
-  enum class VM_PROTECTIONS  {
-    READ    = 0x1, ///< Reading data within the segment is allowed
-    WRITE   = 0x2, ///< Writing data within the segment is allowed
+  enum class VM_PROTECTIONS {
+    READ = 0x1,    ///< Reading data within the segment is allowed
+    WRITE = 0x2,   ///< Writing data within the segment is allowed
     EXECUTE = 0x4, ///< Executing data within the segment is allowed
   };
 
@@ -170,7 +177,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
   ///
   /// For Mach-O executable or library this iterator should be empty as
   /// the relocations are managed by the Dyld::rebase_opcodes.
-  /// On the other hand, for object files (``.o``) this iterator should not be empty
+  /// On the other hand, for object files (``.o``) this iterator should not be
+  /// empty
   it_relocations relocations() {
     return relocations_;
   }
@@ -265,12 +273,13 @@ class LIEF_API SegmentCommand : public LoadCommand {
     content_resize(data_.size() + width);
   }
 
-  using update_fnc_t    = std::function<void(std::vector<uint8_t>&)>;
-  using update_fnc_ws_t = std::function<void(std::vector<uint8_t>&, size_t, size_t)>;
+  using update_fnc_t = std::function<void(std::vector<uint8_t>&)>;
+  using update_fnc_ws_t =
+      std::function<void(std::vector<uint8_t>&, size_t, size_t)>;
 
   LIEF_LOCAL virtual void update_data(const update_fnc_t& f);
-  LIEF_LOCAL virtual void update_data(const update_fnc_ws_t& f,
-                                      size_t where, size_t size);
+  LIEF_LOCAL virtual void update_data(const update_fnc_ws_t& f, size_t where,
+                                      size_t size);
 
   std::string name_;
   uint64_t virtual_address_ = 0;
@@ -281,7 +290,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   uint32_t init_protection_ = 0;
   uint32_t nb_sections_ = 0;
   uint32_t flags_ = 0;
-  int8_t  index_ = -1;
+  int8_t index_ = -1;
   content_t data_;
   sections_t sections_;
   relocations_t relocations_;

@@ -38,10 +38,11 @@ class LIEF_API ResourceIcon : public Object {
   friend class ResourcesManager;
 
   public:
-  static result<ResourceIcon>
-    from_serialization(const uint8_t* buffer, size_t size);
+  static result<ResourceIcon> from_serialization(const uint8_t* buffer,
+                                                 size_t size);
 
-  static result<ResourceIcon> from_serialization(const std::vector<uint8_t>& bytes) {
+  static result<ResourceIcon>
+      from_serialization(const std::vector<uint8_t>& bytes) {
     return from_serialization(bytes.data(), bytes.size());
   }
 
@@ -165,7 +166,8 @@ class LIEF_API ResourceIcon : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ResourceIcon& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ResourceIcon& entry);
 
   private:
   uint8_t width_ = 0;
@@ -175,7 +177,7 @@ class LIEF_API ResourceIcon : public Object {
   uint16_t planes_ = 0;
   uint16_t bit_count_ = 0;
   uint32_t id_ = uint32_t(-1);
-  uint32_t lang_ = /* LANG_NEUTRAL */0;
+  uint32_t lang_ = /* LANG_NEUTRAL */ 0;
   uint32_t sublang_ = 0 /* SUBLANG_NEUTRAL */;
   std::vector<uint8_t> pixels_;
 };

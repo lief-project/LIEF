@@ -26,50 +26,44 @@ namespace spdlog {
 namespace sinks {
 
 template<typename Mutex>
-class ghidra_sink final : public base_sink<Mutex>
-{
-public:
-    explicit ghidra_sink(std::string tag, bool use_raw_msg = true)
-        : tag_(std::move(tag)), use_raw_msg_(use_raw_msg)
-    {}
+class ghidra_sink final : public base_sink<Mutex> {
+  public:
+  explicit ghidra_sink(std::string tag, bool use_raw_msg = true) :
+    tag_(std::move(tag)),
+    use_raw_msg_(use_raw_msg) {}
 
-protected:
-    void sink_it_(const details::log_msg &msg) override
-    {
-        memory_buf_t formatted;
-        if (use_raw_msg_)
-        {
-            details::fmt_helper::append_string_view(msg.payload, formatted);
-        }
-        else
-        {
-            base_sink<Mutex>::formatter_->format(msg, formatted);
-        }
-        formatted.push_back('\0');
-        const char *msg_output = formatted.data();
-
-        switch (msg.level) {
-          case spdlog::level::trace:
-            return ghidra::util::Msg::trace(tag_, formatted.data());
-          case spdlog::level::debug:
-            return ghidra::util::Msg::debug(tag_, formatted.data());
-          case spdlog::level::info:
-            return ghidra::util::Msg::info(tag_, formatted.data());
-          case spdlog::level::warn:
-            return ghidra::util::Msg::warn(tag_, formatted.data());
-          case spdlog::level::err:
-          case spdlog::level::critical:
-            return ghidra::util::Msg::error(tag_, formatted.data());
-          default:
-            return;
-        }
+  protected:
+  void sink_it_(const details::log_msg& msg) override {
+    memory_buf_t formatted;
+    if (use_raw_msg_) {
+      details::fmt_helper::append_string_view(msg.payload, formatted);
+    } else {
+      base_sink<Mutex>::formatter_->format(msg, formatted);
     }
+    formatted.push_back('\0');
+    const char* msg_output = formatted.data();
 
-    void flush_() override {}
+    switch (msg.level) {
+      case spdlog::level::trace:
+        return ghidra::util::Msg::trace(tag_, formatted.data());
+      case spdlog::level::debug:
+        return ghidra::util::Msg::debug(tag_, formatted.data());
+      case spdlog::level::info:
+        return ghidra::util::Msg::info(tag_, formatted.data());
+      case spdlog::level::warn:
+        return ghidra::util::Msg::warn(tag_, formatted.data());
+      case spdlog::level::err:
+      case spdlog::level::critical:
+        return ghidra::util::Msg::error(tag_, formatted.data());
+      default: return;
+    }
+  }
 
-private:
-    std::string tag_;
-    bool use_raw_msg_;
+  void flush_() override {}
+
+  private:
+  std::string tag_;
+  bool use_raw_msg_;
 };
 
 using ghidra_sink_mt = ghidra_sink<std::mutex>;
@@ -82,14 +76,16 @@ using ghidra_sink_buf_st = ghidra_sink<details::null_mutex>;
 
 // Create and register Ghidra sink
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> ghidra_logger_mt(const std::string &logger_name, const std::string &tag = "spdlog")
-{
-    return Factory::template create<sinks::ghidra_sink_mt>(logger_name, tag);
+inline std::shared_ptr<logger>
+    ghidra_logger_mt(const std::string& logger_name,
+                     const std::string& tag = "spdlog") {
+  return Factory::template create<sinks::ghidra_sink_mt>(logger_name, tag);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> ghidra_logger_st(const std::string &logger_name, const std::string &tag = "spdlog")
-{
-    return Factory::template create<sinks::ghidra_sink_st>(logger_name, tag);
+inline std::shared_ptr<logger>
+    ghidra_logger_st(const std::string& logger_name,
+                     const std::string& tag = "spdlog") {
+  return Factory::template create<sinks::ghidra_sink_st>(logger_name, tag);
 }
 }

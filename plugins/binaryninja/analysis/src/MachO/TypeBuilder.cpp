@@ -13,6 +13,4 @@
  * limitations under the License.
  */
 #include "binaryninja/analysis/MachO/TypeBuilder.hpp"
-namespace analysis_plugin::macho {
-
-}
+namespace analysis_plugin::macho {}

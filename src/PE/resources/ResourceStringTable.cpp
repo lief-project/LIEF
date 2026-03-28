@@ -37,7 +37,9 @@ result<ResourceStringTable::entry_t> parse_string(BinaryStream& stream) {
   //   WORD  Value;
   // } String;
   auto wLength = stream.read<uint16_t>();
-  if (!wLength) { return make_error_code(wLength.error()); }
+  if (!wLength) {
+    return make_error_code(wLength.error());
+  }
 
   if (*wLength == 0) {
     return make_error_code(lief_errors::read_error);
@@ -46,10 +48,14 @@ result<ResourceStringTable::entry_t> parse_string(BinaryStream& stream) {
   const uint32_t end_offset = stream.pos() - sizeof(uint16_t) + *wLength;
 
   auto wValueLength = stream.read<uint16_t>();
-  if (!wValueLength) { return make_error_code(wValueLength.error()); }
+  if (!wValueLength) {
+    return make_error_code(wValueLength.error());
+  }
 
   auto wType = stream.read<uint16_t>();
-  if (!wType) { return make_error_code(wType.error()); }
+  if (!wType) {
+    return make_error_code(wType.error());
+  }
 
   if (*wType != 0 && wType != 1) {
     return make_error_code(lief_errors::corrupted);
@@ -58,7 +64,9 @@ result<ResourceStringTable::entry_t> parse_string(BinaryStream& stream) {
   ResourceStringTable::entry_t entry;
 
   auto szKey = stream.read_u16string();
-  if (!szKey) { return make_error_code(szKey.error()); }
+  if (!szKey) {
+    return make_error_code(szKey.error());
+  }
 
   entry.key = std::move(*szKey);
 
@@ -73,7 +81,9 @@ result<ResourceStringTable::entry_t> parse_string(BinaryStream& stream) {
   }
 
   auto Value = stream.read_u16string();
-  if (!Value) { return entry; }
+  if (!Value) {
+    return entry;
+  }
 
   entry.value = std::move(*Value);
 
@@ -92,20 +102,28 @@ result<ResourceStringTable> ResourceStringTable::parse(BinaryStream& stream) {
   // } StringTable;
   ResourceStringTable table;
   auto wLength = stream.read<uint16_t>();
-  if (!wLength) { return make_error_code(wLength.error()); }
+  if (!wLength) {
+    return make_error_code(wLength.error());
+  }
 
   auto wValueLength = stream.read<uint16_t>();
-  if (!wValueLength) { return make_error_code(wValueLength.error()); }
+  if (!wValueLength) {
+    return make_error_code(wValueLength.error());
+  }
 
   auto wType = stream.read<uint16_t>();
-  if (!wType) { return make_error_code(wType.error()); }
+  if (!wType) {
+    return make_error_code(wType.error());
+  }
 
   if (*wType != 0 && wType != 1) {
     return make_error_code(lief_errors::corrupted);
   }
 
   auto szKey = stream.read_u16string();
-  if (!szKey) { return make_error_code(szKey.error()); }
+  if (!szKey) {
+    return make_error_code(szKey.error());
+  }
 
   table.key(std::move(*szKey));
 
@@ -160,4 +178,3 @@ std::ostream& operator<<(std::ostream& os, const ResourceStringTable& table) {
 }
 
 }
-

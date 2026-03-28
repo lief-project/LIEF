@@ -57,8 +57,7 @@ inline bool startwith(const std::string& s, const char* prefix) {
 DwarfExport::~DwarfExport() = default;
 
 DwarfExport::DwarfExport(BinaryNinja::BinaryView& bv) :
-  bv_{&bv}
-{}
+  bv_{&bv} {}
 
 std::pair<FORMAT, ARCH> get_fmt_arch(const bn::BinaryView& bv) {
   FORMAT fmt = FORMAT::ELF;
@@ -68,14 +67,11 @@ std::pair<FORMAT, ARCH> get_fmt_arch(const bn::BinaryView& bv) {
     const std::string& name = platform->GetName();
     if (startwith(name, "linux-") || startwith(name, "freebsd-")) {
       fmt = FORMAT::ELF;
-    }
-    else if (startwith(name, "mac-")) {
+    } else if (startwith(name, "mac-")) {
       fmt = FORMAT::MACHO;
-    }
-    else if (startwith(name, "windows-") || startwith(name, "efi-")) {
+    } else if (startwith(name, "windows-") || startwith(name, "efi-")) {
       fmt = FORMAT::PE;
-    }
-    else {
+    } else {
       BN_WARN("Platform '{}' is not supported", name);
     }
   }
@@ -85,17 +81,13 @@ std::pair<FORMAT, ARCH> get_fmt_arch(const bn::BinaryView& bv) {
     const std::string& name = target_arch->GetName();
     if (name == "aarch64") {
       arch = ARCH::AARCH64;
-    }
-    else if (name == "x86") {
+    } else if (name == "x86") {
       arch = ARCH::X86;
-    }
-    else if (name == "x86_64") {
+    } else if (name == "x86_64") {
       arch = ARCH::X64;
-    }
-    else if (name == "armv7") {
+    } else if (name == "armv7") {
       arch = ARCH::ARM;
-    }
-    else {
+    } else {
       BN_WARN("Architecture '{}' is not supported", name);
     }
   }
@@ -114,10 +106,9 @@ dw::CompilationUnit* DwarfExport::create() {
 
   const LIEF::lief_version_t& version = LIEF::extended_version();
 
-  unit_->set_producer(
-    fmt::format("BinaryNinja ABI {} with LIEF: {}.{}.{}.{}",
-                BN_CURRENT_CORE_ABI_VERSION, version.major, version.minor,
-                version.patch, version.id));
+  unit_->set_producer(fmt::format("BinaryNinja ABI {} with LIEF: {}.{}.{}.{}",
+                                  BN_CURRENT_CORE_ABI_VERSION, version.major,
+                                  version.minor, version.patch, version.id));
 
   auto type_engine = TypeEngine::create(*unit_, *bv_);
   auto func_engine = FunctionEngine::create(*type_engine, *unit_, *bv_);

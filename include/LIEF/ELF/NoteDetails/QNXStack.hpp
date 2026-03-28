@@ -55,11 +55,12 @@ class LIEF_API QNXStack : public Note {
 
   ~QNXStack() override = default;
 
-  LIEF_API friend
-  std::ostream& operator<<(std::ostream& os, const QNXStack& note) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const QNXStack& note) {
     note.dump(os);
     return os;
   }
+
   protected:
   using Note::Note;
 };

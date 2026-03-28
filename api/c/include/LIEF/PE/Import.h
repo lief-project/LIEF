@@ -26,12 +26,12 @@ extern "C" {
 #endif
 
 struct Pe_Import_t {
-  const char*        name;
-  uint32_t           forwarder_chain;
-  uint32_t           timedatestamp;
+  const char* name;
+  uint32_t forwarder_chain;
+  uint32_t timedatestamp;
   Pe_ImportEntry_t** entries;
-  uint32_t           import_address_table_rva;
-  uint32_t           import_lookup_table_rva;
+  uint32_t import_address_table_rva;
+  uint32_t import_lookup_table_rva;
 };
 
 typedef struct Pe_Import_t Pe_Import_t;

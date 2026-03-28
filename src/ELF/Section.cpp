@@ -42,46 +42,64 @@ static constexpr uint64_t SHT_LOPROC = 0x70000000;
 static constexpr uint64_t SHT_HIPROC = 0x7fffffff;
 
 static constexpr auto ARRAY_FLAGS = {
-  Section::FLAGS::NONE, Section::FLAGS::WRITE,
-  Section::FLAGS::ALLOC, Section::FLAGS::EXECINSTR,
-  Section::FLAGS::MERGE, Section::FLAGS::STRINGS,
-  Section::FLAGS::INFO_LINK, Section::FLAGS::LINK_ORDER,
-  Section::FLAGS::OS_NONCONFORMING, Section::FLAGS::GROUP,
-  Section::FLAGS::TLS, Section::FLAGS::COMPRESSED,
-  Section::FLAGS::GNU_RETAIN, Section::FLAGS::EXCLUDE,
-  Section::FLAGS::XCORE_SHF_DP_SECTION, Section::FLAGS::XCORE_SHF_CP_SECTION,
-  Section::FLAGS::X86_64_LARGE, Section::FLAGS::HEX_GPREL,
-  Section::FLAGS::MIPS_NODUPES, Section::FLAGS::MIPS_NAMES,
-  Section::FLAGS::MIPS_LOCAL, Section::FLAGS::MIPS_NOSTRIP,
-  Section::FLAGS::MIPS_GPREL, Section::FLAGS::MIPS_MERGE,
-  Section::FLAGS::MIPS_ADDR, Section::FLAGS::MIPS_STRING,
-  Section::FLAGS::ARM_PURECODE,
+    Section::FLAGS::NONE,
+    Section::FLAGS::WRITE,
+    Section::FLAGS::ALLOC,
+    Section::FLAGS::EXECINSTR,
+    Section::FLAGS::MERGE,
+    Section::FLAGS::STRINGS,
+    Section::FLAGS::INFO_LINK,
+    Section::FLAGS::LINK_ORDER,
+    Section::FLAGS::OS_NONCONFORMING,
+    Section::FLAGS::GROUP,
+    Section::FLAGS::TLS,
+    Section::FLAGS::COMPRESSED,
+    Section::FLAGS::GNU_RETAIN,
+    Section::FLAGS::EXCLUDE,
+    Section::FLAGS::XCORE_SHF_DP_SECTION,
+    Section::FLAGS::XCORE_SHF_CP_SECTION,
+    Section::FLAGS::X86_64_LARGE,
+    Section::FLAGS::HEX_GPREL,
+    Section::FLAGS::MIPS_NODUPES,
+    Section::FLAGS::MIPS_NAMES,
+    Section::FLAGS::MIPS_LOCAL,
+    Section::FLAGS::MIPS_NOSTRIP,
+    Section::FLAGS::MIPS_GPREL,
+    Section::FLAGS::MIPS_MERGE,
+    Section::FLAGS::MIPS_ADDR,
+    Section::FLAGS::MIPS_STRING,
+    Section::FLAGS::ARM_PURECODE,
 };
 
 Section::TYPE Section::type_from(uint32_t value, ARCH arch) {
   if (SHT_LOPROC <= value && value <= SHT_HIPROC) {
     switch (arch) {
       case ARCH::ARM:
-        return TYPE(value + (uint64_t(TYPE::_ARM_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
+        return TYPE(value +
+                    (uint64_t(TYPE::_ARM_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
       case ARCH::HEXAGON:
-        return TYPE(value + (uint64_t(TYPE::_HEX_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
+        return TYPE(value +
+                    (uint64_t(TYPE::_HEX_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
       case ARCH::X86_64:
-        return TYPE(value + (uint64_t(TYPE::_X86_64_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
+        return TYPE(value +
+                    (uint64_t(TYPE::_X86_64_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
       case ARCH::MIPS:
-        return TYPE(value + (uint64_t(TYPE::_MIPS_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
+        return TYPE(value +
+                    (uint64_t(TYPE::_MIPS_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
       case ARCH::RISCV:
-        return TYPE(value + (uint64_t(TYPE::_RISCV_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
+        return TYPE(value +
+                    (uint64_t(TYPE::_RISCV_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
       default:
-        {
-          LIEF_ERR("Unrecognized arch-specific section {:#010x} for {}",
-                   value, to_string(arch));
-          return TYPE::SHT_NULL_;
-        }
+      {
+        LIEF_ERR("Unrecognized arch-specific section {:#010x} for {}", value,
+                 to_string(arch));
+        return TYPE::SHT_NULL_;
+      }
     }
   }
   return TYPE(value);
@@ -96,11 +114,10 @@ Section::Section(const T& header, ARCH arch) :
   link_{header.sh_link},
   info_{header.sh_info},
   address_align_{header.sh_addralign},
-  entry_size_{header.sh_entsize}
-{
+  entry_size_{header.sh_entsize} {
   virtual_address_ = header.sh_addr;
-  offset_          = header.sh_offset;
-  size_            = header.sh_size;
+  offset_ = header.sh_offset;
+  size_ = header.sh_size;
 }
 
 template Section::Section(const details::Elf32_Shdr& header, ARCH);
@@ -117,41 +134,40 @@ Section::Section(const Section& other) :
   address_align_{other.address_align_},
   entry_size_{other.entry_size_},
   is_frame_{other.is_frame_},
-  content_c_{other.content_c_}
-{}
+  content_c_{other.content_c_} {}
 
 void Section::swap(Section& other) noexcept {
-  std::swap(name_,            other.name_);
+  std::swap(name_, other.name_);
   std::swap(virtual_address_, other.virtual_address_);
-  std::swap(offset_,          other.offset_);
-  std::swap(size_,            other.size_);
+  std::swap(offset_, other.offset_);
+  std::swap(size_, other.size_);
 
-  std::swap(arch_,           other.arch_);
-  std::swap(type_,           other.type_);
-  std::swap(flags_,          other.flags_);
-  std::swap(original_size_,  other.original_size_);
-  std::swap(link_,           other.link_);
-  std::swap(info_,           other.info_);
-  std::swap(address_align_,  other.address_align_);
-  std::swap(entry_size_,     other.entry_size_);
-  std::swap(segments_,       other.segments_);
-  std::swap(is_frame_,       other.is_frame_);
-  std::swap(datahandler_,    other.datahandler_);
-  std::swap(content_c_,      other.content_c_);
+  std::swap(arch_, other.arch_);
+  std::swap(type_, other.type_);
+  std::swap(flags_, other.flags_);
+  std::swap(original_size_, other.original_size_);
+  std::swap(link_, other.link_);
+  std::swap(info_, other.info_);
+  std::swap(address_align_, other.address_align_);
+  std::swap(entry_size_, other.entry_size_);
+  std::swap(segments_, other.segments_);
+  std::swap(is_frame_, other.is_frame_);
+  std::swap(datahandler_, other.datahandler_);
+  std::swap(content_c_, other.content_c_);
 }
 
 bool Section::has(const Segment& segment) const {
   auto it_segment = std::find_if(segments_.begin(), segments_.end(),
-      [&segment] (Segment* s) {
-        return *s == segment;
-      });
+                                 [&segment](Segment* s) { return *s == segment; });
   return it_segment != segments_.end();
 }
 
 
 void Section::size(uint64_t size) {
   if (datahandler_ != nullptr && !is_frame()) {
-    if (auto node = datahandler_->get(file_offset(), this->size(), DataHandler::Node::SECTION)) {
+    if (auto node = datahandler_->get(file_offset(), this->size(),
+                                      DataHandler::Node::SECTION))
+    {
       node->get().size(size);
     } else {
       if (type() != TYPE::NOBITS) {
@@ -166,7 +182,9 @@ void Section::size(uint64_t size) {
 
 void Section::offset(uint64_t offset) {
   if (datahandler_ != nullptr && !is_frame()) {
-    if (auto node = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION)) {
+    if (auto node =
+            datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION))
+    {
       node->get().offset(offset);
     } else {
       if (type() != TYPE::NOBITS) {
@@ -210,9 +228,8 @@ span<const uint8_t> Section::content() const {
 
 std::vector<Section::FLAGS> Section::flags_list() const {
   std::vector<FLAGS> flags;
-  std::copy_if(ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(),
-               std::back_inserter(flags),
-               [this] (FLAGS f) { return has(f); });
+  std::copy_if(ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(), std::back_inserter(flags),
+               [this](FLAGS f) { return has(f); });
   return flags;
 }
 
@@ -222,12 +239,13 @@ void Section::content(const std::vector<uint8_t>& data) {
   }
 
   if (!data.empty() && type() == TYPE::NOBITS) {
-    LIEF_INFO("Inserted {:#x} bytes in SHT_NOBITS section '{}'",
-              data.size(), name());
+    LIEF_INFO("Inserted {:#x} bytes in SHT_NOBITS section '{}'", data.size(),
+              name());
   }
 
   if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Setting {:#x} bytes in cache of section '{}'", data.size(), name());
+    LIEF_DEBUG("Setting {:#x} bytes in cache of section '{}'", data.size(),
+               name());
     content_c_ = data;
     size(data.size());
     return;
@@ -261,9 +279,7 @@ void Section::content(const std::vector<uint8_t>& data) {
 
   size(data.size());
 
-  std::copy(data.begin(), data.end(),
-            binary_content.begin() + node.offset());
-
+  std::copy(data.begin(), data.end(), binary_content.begin() + node.offset());
 }
 
 
@@ -272,12 +288,13 @@ void Section::content(std::vector<uint8_t>&& data) {
     return;
   }
   if (!data.empty() && type() == TYPE::NOBITS) {
-    LIEF_INFO("Inserted {:#x} bytes in SHT_NOBITS section '{}'",
-              data.size(), name());
+    LIEF_INFO("Inserted {:#x} bytes in SHT_NOBITS section '{}'", data.size(),
+              name());
   }
 
   if (datahandler_ == nullptr) {
-    LIEF_DEBUG("Setting {:#x} bytes in cache of section '{}'", data.size(), name());
+    LIEF_DEBUG("Setting {:#x} bytes in cache of section '{}'", data.size(),
+               name());
     size(data.size());
     content_c_ = std::move(data);
     return;
@@ -309,8 +326,7 @@ void Section::content(std::vector<uint8_t>&& data) {
     return;
   }
 
-  std::move(data.begin(), data.end(),
-            binary_content.begin() + node.offset());
+  std::move(data.begin(), data.end(), binary_content.begin() + node.offset());
 }
 
 bool Section::has(Section::FLAGS flag) const {
@@ -355,7 +371,7 @@ void Section::add(Section::FLAGS flag) {
 
 void Section::remove(Section::FLAGS flag) {
   const auto raw_flag = static_cast<uint64_t>(flag) & FLAG_MASK;
-  flags(flags() & (~ raw_flag));
+  flags(flags() & (~raw_flag));
 }
 
 Section& Section::clear(uint8_t value) {
@@ -398,100 +414,100 @@ std::unique_ptr<SpanStream> Section::stream() const {
 std::ostream& operator<<(std::ostream& os, const Section& section) {
   const auto& flags = section.flags_list();
 
-  os << fmt::format("{} ({}) {:#010x}/{:#010x} {:#06x} {} {}",
-                    section.name(), section.type(), section.virtual_address(),
-                    section.file_offset(), section.size(),
-                    section.entropy(), fmt::to_string(flags));
+  os << fmt::format("{} ({}) {:#010x}/{:#010x} {:#06x} {} {}", section.name(),
+                    section.type(), section.virtual_address(),
+                    section.file_offset(), section.size(), section.entropy(),
+                    fmt::to_string(flags));
 
   return os;
 }
 
 
 const char* to_string(Section::TYPE e) {
-  #define ENTRY(X) std::pair(Section::TYPE::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(SHT_NULL_),
-    ENTRY(PROGBITS),
-    ENTRY(SYMTAB),
-    ENTRY(STRTAB),
-    ENTRY(RELA),
-    ENTRY(HASH),
-    ENTRY(DYNAMIC),
-    ENTRY(NOTE),
-    ENTRY(NOBITS),
-    ENTRY(REL),
-    ENTRY(SHLIB),
-    ENTRY(DYNSYM),
-    ENTRY(INIT_ARRAY),
-    ENTRY(FINI_ARRAY),
-    ENTRY(PREINIT_ARRAY),
-    ENTRY(GROUP),
-    ENTRY(SYMTAB_SHNDX),
-    ENTRY(RELR),
+#define ENTRY(X) std::pair(Section::TYPE::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(SHT_NULL_),
+      ENTRY(PROGBITS),
+      ENTRY(SYMTAB),
+      ENTRY(STRTAB),
+      ENTRY(RELA),
+      ENTRY(HASH),
+      ENTRY(DYNAMIC),
+      ENTRY(NOTE),
+      ENTRY(NOBITS),
+      ENTRY(REL),
+      ENTRY(SHLIB),
+      ENTRY(DYNSYM),
+      ENTRY(INIT_ARRAY),
+      ENTRY(FINI_ARRAY),
+      ENTRY(PREINIT_ARRAY),
+      ENTRY(GROUP),
+      ENTRY(SYMTAB_SHNDX),
+      ENTRY(RELR),
 
-    ENTRY(ANDROID_REL),
-    ENTRY(ANDROID_RELA),
-    ENTRY(LLVM_ADDRSIG),
-    ENTRY(ANDROID_RELR),
-    ENTRY(GNU_ATTRIBUTES),
-    ENTRY(GNU_HASH),
-    ENTRY(GNU_VERDEF),
-    ENTRY(GNU_VERNEED),
-    ENTRY(GNU_VERSYM),
+      ENTRY(ANDROID_REL),
+      ENTRY(ANDROID_RELA),
+      ENTRY(LLVM_ADDRSIG),
+      ENTRY(ANDROID_RELR),
+      ENTRY(GNU_ATTRIBUTES),
+      ENTRY(GNU_HASH),
+      ENTRY(GNU_VERDEF),
+      ENTRY(GNU_VERNEED),
+      ENTRY(GNU_VERSYM),
 
-    ENTRY(ARM_EXIDX),
-    ENTRY(ARM_PREEMPTMAP),
-    ENTRY(ARM_ATTRIBUTES),
-    ENTRY(ARM_DEBUGOVERLAY),
-    ENTRY(ARM_OVERLAYSECTION),
-    ENTRY(HEX_ORDERED),
-    ENTRY(X86_64_UNWIND),
+      ENTRY(ARM_EXIDX),
+      ENTRY(ARM_PREEMPTMAP),
+      ENTRY(ARM_ATTRIBUTES),
+      ENTRY(ARM_DEBUGOVERLAY),
+      ENTRY(ARM_OVERLAYSECTION),
+      ENTRY(HEX_ORDERED),
+      ENTRY(X86_64_UNWIND),
 
-    ENTRY(MIPS_LIBLIST),
-    ENTRY(MIPS_MSYM),
-    ENTRY(MIPS_CONFLICT),
-    ENTRY(MIPS_GPTAB),
-    ENTRY(MIPS_UCODE),
-    ENTRY(MIPS_DEBUG),
-    ENTRY(MIPS_REGINFO),
-    ENTRY(MIPS_PACKAGE),
-    ENTRY(MIPS_PACKSYM),
-    ENTRY(MIPS_RELD),
-    ENTRY(MIPS_IFACE),
-    ENTRY(MIPS_CONTENT),
-    ENTRY(MIPS_OPTIONS),
-    ENTRY(MIPS_SHDR),
-    ENTRY(MIPS_FDESC),
-    ENTRY(MIPS_EXTSYM),
-    ENTRY(MIPS_DENSE),
-    ENTRY(MIPS_PDESC),
-    ENTRY(MIPS_LOCSYM),
-    ENTRY(MIPS_AUXSYM),
-    ENTRY(MIPS_OPTSYM),
-    ENTRY(MIPS_LOCSTR),
-    ENTRY(MIPS_LINE),
-    ENTRY(MIPS_RFDESC),
-    ENTRY(MIPS_DELTASYM),
-    ENTRY(MIPS_DELTAINST),
-    ENTRY(MIPS_DELTACLASS),
-    ENTRY(MIPS_DWARF),
-    ENTRY(MIPS_DELTADECL),
-    ENTRY(MIPS_SYMBOL_LIB),
-    ENTRY(MIPS_EVENTS),
-    ENTRY(MIPS_TRANSLATE),
-    ENTRY(MIPS_PIXIE),
-    ENTRY(MIPS_XLATE),
-    ENTRY(MIPS_XLATE_DEBUG),
-    ENTRY(MIPS_WHIRL),
-    ENTRY(MIPS_EH_REGION),
-    ENTRY(MIPS_XLATE_OLD),
-    ENTRY(MIPS_PDR_EXCEPTION),
-    ENTRY(MIPS_ABIFLAGS),
-    ENTRY(MIPS_XHASH),
+      ENTRY(MIPS_LIBLIST),
+      ENTRY(MIPS_MSYM),
+      ENTRY(MIPS_CONFLICT),
+      ENTRY(MIPS_GPTAB),
+      ENTRY(MIPS_UCODE),
+      ENTRY(MIPS_DEBUG),
+      ENTRY(MIPS_REGINFO),
+      ENTRY(MIPS_PACKAGE),
+      ENTRY(MIPS_PACKSYM),
+      ENTRY(MIPS_RELD),
+      ENTRY(MIPS_IFACE),
+      ENTRY(MIPS_CONTENT),
+      ENTRY(MIPS_OPTIONS),
+      ENTRY(MIPS_SHDR),
+      ENTRY(MIPS_FDESC),
+      ENTRY(MIPS_EXTSYM),
+      ENTRY(MIPS_DENSE),
+      ENTRY(MIPS_PDESC),
+      ENTRY(MIPS_LOCSYM),
+      ENTRY(MIPS_AUXSYM),
+      ENTRY(MIPS_OPTSYM),
+      ENTRY(MIPS_LOCSTR),
+      ENTRY(MIPS_LINE),
+      ENTRY(MIPS_RFDESC),
+      ENTRY(MIPS_DELTASYM),
+      ENTRY(MIPS_DELTAINST),
+      ENTRY(MIPS_DELTACLASS),
+      ENTRY(MIPS_DWARF),
+      ENTRY(MIPS_DELTADECL),
+      ENTRY(MIPS_SYMBOL_LIB),
+      ENTRY(MIPS_EVENTS),
+      ENTRY(MIPS_TRANSLATE),
+      ENTRY(MIPS_PIXIE),
+      ENTRY(MIPS_XLATE),
+      ENTRY(MIPS_XLATE_DEBUG),
+      ENTRY(MIPS_WHIRL),
+      ENTRY(MIPS_EH_REGION),
+      ENTRY(MIPS_XLATE_OLD),
+      ENTRY(MIPS_PDR_EXCEPTION),
+      ENTRY(MIPS_ABIFLAGS),
+      ENTRY(MIPS_XHASH),
 
-    ENTRY(RISCV_ATTRIBUTES),
+      ENTRY(RISCV_ATTRIBUTES),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -500,38 +516,38 @@ const char* to_string(Section::TYPE e) {
 }
 
 const char* to_string(Section::FLAGS e) {
-  #define ENTRY(X) std::pair(Section::FLAGS::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(NONE),
-    ENTRY(WRITE),
-    ENTRY(ALLOC),
-    ENTRY(EXECINSTR),
-    ENTRY(MERGE),
-    ENTRY(STRINGS),
-    ENTRY(INFO_LINK),
-    ENTRY(LINK_ORDER),
-    ENTRY(OS_NONCONFORMING),
-    ENTRY(GROUP),
-    ENTRY(TLS),
-    ENTRY(COMPRESSED),
-    ENTRY(GNU_RETAIN),
-    ENTRY(EXCLUDE),
-    ENTRY(XCORE_SHF_DP_SECTION),
-    ENTRY(XCORE_SHF_CP_SECTION),
-    ENTRY(X86_64_LARGE),
-    ENTRY(HEX_GPREL),
+#define ENTRY(X) std::pair(Section::FLAGS::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(NONE),
+      ENTRY(WRITE),
+      ENTRY(ALLOC),
+      ENTRY(EXECINSTR),
+      ENTRY(MERGE),
+      ENTRY(STRINGS),
+      ENTRY(INFO_LINK),
+      ENTRY(LINK_ORDER),
+      ENTRY(OS_NONCONFORMING),
+      ENTRY(GROUP),
+      ENTRY(TLS),
+      ENTRY(COMPRESSED),
+      ENTRY(GNU_RETAIN),
+      ENTRY(EXCLUDE),
+      ENTRY(XCORE_SHF_DP_SECTION),
+      ENTRY(XCORE_SHF_CP_SECTION),
+      ENTRY(X86_64_LARGE),
+      ENTRY(HEX_GPREL),
 
-    ENTRY(MIPS_NODUPES),
-    ENTRY(MIPS_NAMES),
-    ENTRY(MIPS_LOCAL),
-    ENTRY(MIPS_NOSTRIP),
-    ENTRY(MIPS_GPREL),
-    ENTRY(MIPS_MERGE),
-    ENTRY(MIPS_ADDR),
-    ENTRY(MIPS_STRING),
-    ENTRY(ARM_PURECODE),
+      ENTRY(MIPS_NODUPES),
+      ENTRY(MIPS_NAMES),
+      ENTRY(MIPS_LOCAL),
+      ENTRY(MIPS_NOSTRIP),
+      ENTRY(MIPS_GPREL),
+      ENTRY(MIPS_MERGE),
+      ENTRY(MIPS_ADDR),
+      ENTRY(MIPS_STRING),
+      ENTRY(ARM_PURECODE),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
@@ -540,4 +556,3 @@ const char* to_string(Section::FLAGS e) {
 }
 
 }
-

@@ -34,18 +34,20 @@ struct thread_command;
 }
 
 /// Class that represents the LC_THREAD / LC_UNIXTHREAD commands and that
-/// can be used to get the binary entrypoint when the LC_MAIN (MainCommand) is not present
+/// can be used to get the binary entrypoint when the LC_MAIN (MainCommand) is not
+/// present
 ///
 /// Generally speaking, this command aims at defining the original state
 /// of the main thread which includes the registers' values
 class LIEF_API ThreadCommand : public LoadCommand {
   friend class BinaryParser;
+
   public:
   ThreadCommand() = default;
   ThreadCommand(const details::thread_command& cmd,
                 Header::CPU_TYPE arch = Header::CPU_TYPE::ANY);
   ThreadCommand(uint32_t flavor, uint32_t count,
-                Header::CPU_TYPE arch= Header::CPU_TYPE::ANY);
+                Header::CPU_TYPE arch = Header::CPU_TYPE::ANY);
 
   ThreadCommand& operator=(const ThreadCommand& copy) = default;
   ThreadCommand(const ThreadCommand& copy) = default;
@@ -78,10 +80,11 @@ class LIEF_API ThreadCommand : public LoadCommand {
     return architecture_;
   }
 
-  /// The actual thread state as a vector of bytes. Depending on the architecture(),
-  /// these data can be casted into x86_thread_state_t, x86_thread_state64_t, ...
+  /// The actual thread state as a vector of bytes. Depending on the
+  /// architecture(), these data can be casted into x86_thread_state_t,
+  /// x86_thread_state64_t, ...
   span<const uint8_t> state() const {
-    return  state_;
+    return state_;
   }
 
   span<uint8_t> state() {
@@ -121,9 +124,8 @@ class LIEF_API ThreadCommand : public LoadCommand {
   private:
   uint32_t flavor_ = 0;
   uint32_t count_ = 0;
-  Header::CPU_TYPE architecture_  = Header::CPU_TYPE::ANY;
+  Header::CPU_TYPE architecture_ = Header::CPU_TYPE::ANY;
   std::vector<uint8_t> state_;
-
 };
 
 }

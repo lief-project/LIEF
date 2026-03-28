@@ -38,5 +38,3 @@ class LIEF_API BitField : public Type {
 }
 }
 #endif
-
-

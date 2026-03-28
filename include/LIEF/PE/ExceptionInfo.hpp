@@ -49,17 +49,16 @@ class LIEF_API ExceptionInfo {
   /// Arch discriminator for the subclasses
   enum class ARCH {
     UNKNOWN = 0,
-    ARM64, X86_64
+    ARM64,
+    X86_64,
   };
 
   ExceptionInfo(ARCH arch, uint64_t rva) :
     arch_(arch),
-    rva_(rva)
-  {}
+    rva_(rva) {}
 
   ExceptionInfo(ARCH arch) :
-    ExceptionInfo(arch, /*rva=*/0)
-  {}
+    ExceptionInfo(arch, /*rva=*/0) {}
 
   /// Target architecture of this exception
   ARCH arch() const {
@@ -102,9 +101,8 @@ class LIEF_API ExceptionInfo {
     offset_ = value;
   }
 
-  LIEF_API friend
-    std::ostream& operator<<(std::ostream& os, const ExceptionInfo& info)
-  {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ExceptionInfo& info) {
     os << info.to_string();
     return os;
   }

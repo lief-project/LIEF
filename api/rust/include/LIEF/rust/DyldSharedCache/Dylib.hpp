@@ -29,7 +29,8 @@ class dsc_Dylib_extract_opt {
   bool create_dyld_chained_fixup_cmd_set;
 };
 
-inline LIEF::dsc::Dylib::extract_opt_t from_rust(const dsc_Dylib_extract_opt& opt) {
+inline LIEF::dsc::Dylib::extract_opt_t
+    from_rust(const dsc_Dylib_extract_opt& opt) {
   LIEF::dsc::Dylib::extract_opt_t out;
 
   out.pack = opt.pack;
@@ -48,11 +49,21 @@ class dsc_Dylib : private Mirror<LIEF::dsc::Dylib> {
   using lief_t = LIEF::dsc::Dylib;
   using Mirror::Mirror;
 
-  auto path() const { return get().path(); }
-  auto address() const { return get().address(); }
-  auto modtime() const { return get().modtime(); }
-  auto inode() const { return get().inode(); }
-  auto padding() const { return get().padding(); }
+  auto path() const {
+    return get().path();
+  }
+  auto address() const {
+    return get().address();
+  }
+  auto modtime() const {
+    return get().modtime();
+  }
+  auto inode() const {
+    return get().inode();
+  }
+  auto padding() const {
+    return get().padding();
+  }
 
   auto get_macho(dsc_Dylib_extract_opt opt) const {
     return details::try_unique<MachO_Binary>(get().get(from_rust(opt)));

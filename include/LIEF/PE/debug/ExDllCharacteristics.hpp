@@ -30,24 +30,23 @@ class LIEF_API ExDllCharacteristics : public Debug {
   public:
   /// Extended DLL Characteristics
   enum class CHARACTERISTICS : uint32_t {
-    CET_COMPAT                                 = 0x01,
-    CET_COMPAT_STRICT_MODE                     = 0x02,
+    CET_COMPAT = 0x01,
+    CET_COMPAT_STRICT_MODE = 0x02,
     CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE = 0x04,
-    CET_DYNAMIC_APIS_ALLOW_IN_PROC             = 0x08,
-    CET_RESERVED_1                             = 0x10,
-    CET_RESERVED_2                             = 0x20,
-    FORWARD_CFI_COMPAT                         = 0x40,
-    HOTPATCH_COMPATIBLE                        = 0x80,
+    CET_DYNAMIC_APIS_ALLOW_IN_PROC = 0x08,
+    CET_RESERVED_1 = 0x10,
+    CET_RESERVED_2 = 0x20,
+    FORWARD_CFI_COMPAT = 0x40,
+    HOTPATCH_COMPATIBLE = 0x80,
   };
 
   static std::unique_ptr<ExDllCharacteristics>
-    parse(const details::pe_debug& hdr, Section* section, span<uint8_t> payload);
+      parse(const details::pe_debug& hdr, Section* section, span<uint8_t> payload);
 
   ExDllCharacteristics(const details::pe_debug& debug, Section* sec,
                        uint32_t characteristics) :
     Debug(debug, sec),
-    characteristics_(characteristics)
-  {}
+    characteristics_(characteristics) {}
 
   ExDllCharacteristics(const ExDllCharacteristics& other) = default;
   ExDllCharacteristics& operator=(const ExDllCharacteristics& other) = default;

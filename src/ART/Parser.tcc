@@ -40,7 +40,8 @@ size_t Parser::parse_header() {
   const auto hdr = std::move(*res_hdr);
   imagebase_ = hdr.image_begin;
 
-  if (hdr.pointer_size != sizeof(uint32_t) && hdr.pointer_size != sizeof(uint64_t)) {
+  if (hdr.pointer_size != sizeof(uint32_t) && hdr.pointer_size != sizeof(uint64_t))
+  {
     LIEF_WARN("Inconsistent ART header pointer size");
     return 0;
   }
@@ -333,4 +334,3 @@ void Parser::parse_interned_strings(size_t offset, size_t size) {
 #endif
 
 }
-

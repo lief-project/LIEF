@@ -28,9 +28,7 @@ using namespace LIEF;
 
 TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
   SECTION("MemoryStream") {
-    std::vector<uint8_t> buffer = {
-      0x00, 0x10, 0x23, 0x40
-    };
+    std::vector<uint8_t> buffer = {0x00, 0x10, 0x23, 0x40};
     const auto buffer_addr = reinterpret_cast<uintptr_t>(buffer.data());
 
     MemoryStream stream(buffer_addr, buffer.size());
@@ -39,14 +37,15 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     REQUIRE(stream.pos() == 0);
     REQUIRE(stream.size() == buffer.size());
     REQUIRE(stream.end() == buffer.data() + buffer.size());
-    REQUIRE(stream.peek<uint8_t>()  == 0x00);
+    REQUIRE(stream.peek<uint8_t>() == 0x00);
     REQUIRE(stream.peek<uint8_t>(1) == 0x10);
     REQUIRE(stream.peek<uint8_t>(3) == 0x40);
     REQUIRE(MemoryStream::classof(stream));
   }
 
   SECTION("FileStream") {
-    const std::string& filepath = test::get_sample("PE", "PE64_x86-64_library_libLIEF.dll");
+    const std::string& filepath =
+        test::get_sample("PE", "PE64_x86-64_library_libLIEF.dll");
 
     auto fstream = FileStream::from_file(filepath);
     REQUIRE(fstream);
@@ -70,13 +69,15 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     REQUIRE(vs.p() == vs.content().data());
     REQUIRE(vs.start() == vs.p());
     REQUIRE(vs.end() == vs.content().data() + vs.content().size());
-    REQUIRE(static_cast<VectorStream&>(vs).p() == static_cast<const VectorStream&>(vs).p());
-    REQUIRE(static_cast<VectorStream&>(vs).end() == static_cast<const VectorStream&>(vs).end());
-    REQUIRE(static_cast<VectorStream&>(vs).start() == static_cast<const VectorStream&>(vs).start());
+    REQUIRE(static_cast<VectorStream&>(vs).p() ==
+            static_cast<const VectorStream&>(vs).p());
+    REQUIRE(static_cast<VectorStream&>(vs).end() ==
+            static_cast<const VectorStream&>(vs).end());
+    REQUIRE(static_cast<VectorStream&>(vs).start() ==
+            static_cast<const VectorStream&>(vs).start());
     vs.read<uint8_t>();
 
     REQUIRE(vs.p() != vs.content().data());
     REQUIRE(vs.start() != vs.p());
   }
-
 }

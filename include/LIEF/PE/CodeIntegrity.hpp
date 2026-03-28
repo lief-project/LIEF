@@ -82,7 +82,8 @@ class LIEF_API CodeIntegrity : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const CodeIntegrity& entry);
 
   private:
   uint16_t flags_ = 0;

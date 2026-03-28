@@ -30,8 +30,7 @@
 
 namespace LIEF::COFF {
 std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
-                                      const ParserConfig& config)
-{
+                                      const ParserConfig& config) {
   if (stream == nullptr) {
     return nullptr;
   }
@@ -115,7 +114,7 @@ ok_error_t Parser::parse_optional_header() {
 ok_error_t Parser::parse_sections() {
   const size_t nb_sections = bin_->header().nb_sections();
   LIEF_DEBUG("Parsing {} sections (offset={:#010x})", nb_sections,
-              (uint32_t)stream_->pos());
+             (uint32_t)stream_->pos());
   for (size_t i = 0; i < nb_sections; ++i) {
     std::unique_ptr<Section> sec = Section::parse(*stream_);
     if (sec == nullptr) {
@@ -127,18 +126,15 @@ ok_error_t Parser::parse_sections() {
     }
 
     // Resolve symbols associated with this section
-    auto [first, last] = std::equal_range(symsec_.begin(), symsec_.end(),
-        SymSec{i, nullptr}
-    );
+    auto [first, last] =
+        std::equal_range(symsec_.begin(), symsec_.end(), SymSec{i, nullptr});
     for (auto it = first; it != last; ++it) {
       assert(it->symbol != nullptr);
       it->symbol->section_ = sec.get();
       sec->symbols_.push_back(it->symbol);
     }
 
-    if (const std::string& name = sec->name();
-        name.size() > 1 && name[0] == '/')
-    {
+    if (const std::string& name = sec->name(); name.size() > 1 && name[0] == '/') {
       char* endptr = nullptr;
       uint32_t offset = std::strtol(name.c_str() + 1, &endptr, /*base=*/10);
       if (String* coff_str = bin_->find_string(offset)) {
@@ -166,7 +162,7 @@ ok_error_t Parser::parse_relocations(Section& section) {
 
   if (section.has_extended_relocations()) {
     std::unique_ptr<Relocation> reloc =
-      Relocation::parse(*strm, bin_->header().machine());
+        Relocation::parse(*strm, bin_->header().machine());
 
     if (reloc == nullptr) {
       LIEF_ERR("Failed to parse first relocation");
@@ -189,10 +185,11 @@ ok_error_t Parser::parse_relocations(Section& section) {
 
   for (size_t i = 0; i < nb_relocations; ++i) {
     std::unique_ptr<Relocation> reloc =
-      Relocation::parse(*strm, bin_->header().machine());
+        Relocation::parse(*strm, bin_->header().machine());
 
     if (reloc == nullptr) {
-      LIEF_WARN("Failed to parse relocation #{} in section '{}'", i, section.name());
+      LIEF_WARN("Failed to parse relocation #{} in section '{}'", i,
+                section.name());
       break;
     }
 
@@ -224,12 +221,10 @@ ok_error_t Parser::parse_symbols() {
   }
 
   ScopedStream strm(*stream_, symbols_offset);
-  Symbol::parsing_context_t ctx {
-    /*.find_string =*/ [this] (uint32_t offset) {
-      return this->find_coff_string(offset);
-    },
-    /*is_bigobj=*/kind_ == Header::KIND::BIGOBJ
-  };
+  Symbol::parsing_context_t ctx{/*.find_string =*/[this](uint32_t offset) {
+                                  return this->find_coff_string(offset);
+                                },
+                                /*is_bigobj=*/kind_ == Header::KIND::BIGOBJ};
   LIEF_DEBUG("Parsing {} symbols at {:#x}", nb_symbols, symbols_offset);
 
   std::vector<AuxiliaryCLRToken*> pending_resolution;
@@ -249,7 +244,9 @@ ok_error_t Parser::parse_symbols() {
       pending_resolution.push_back(crl_token);
     }
 
-    if (sym->section_idx() > 0 && (uint32_t)sym->section_idx() <= hdr.nb_sections()) {
+    if (sym->section_idx() > 0 &&
+        (uint32_t)sym->section_idx() <= hdr.nb_sections())
+    {
       symsec_.push_back({(size_t)sym->section_idx() - 1, sym.get()});
     }
 
@@ -280,9 +277,9 @@ ok_error_t Parser::parse_string_table() {
   if (symbols_offset == 0) {
     return ok();
   }
-  const size_t sizeof_sym =
-    kind_ ==  Header::KIND::BIGOBJ ? sizeof(details::symbol32) :
-                                     sizeof(details::symbol16);
+  const size_t sizeof_sym = kind_ == Header::KIND::BIGOBJ ?
+                                sizeof(details::symbol32) :
+                                sizeof(details::symbol16);
 
   const uint32_t string_tbl_offset = symbols_offset + nb_symbols * sizeof_sym;
 

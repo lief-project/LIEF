@@ -26,41 +26,65 @@
 class MachO_DyldInfo : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::DyldInfo;
-  class it_bindings :
-      public Iterator<MachO_DyldBindingInfo, LIEF::MachO::DyldInfo::it_const_binding_info>
-  {
+  class it_bindings
+    : public Iterator<MachO_DyldBindingInfo,
+                      LIEF::MachO::DyldInfo::it_const_binding_info> {
     public:
-    it_bindings(const MachO_DyldInfo::lief_t& src)
-      : Iterator(src.bindings()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_bindings(const MachO_DyldInfo::lief_t& src) :
+      Iterator(src.bindings()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_exports :
-      public Iterator<MachO_ExportInfo, LIEF::MachO::DyldInfo::it_const_export_info>
-  {
+  class it_exports : public Iterator<MachO_ExportInfo,
+                                     LIEF::MachO::DyldInfo::it_const_export_info> {
     public:
-    it_exports(const MachO_DyldInfo::lief_t& src)
-      : Iterator(src.exports()) { }
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_exports(const MachO_DyldInfo::lief_t& src) :
+      Iterator(src.exports()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  MachO_DyldInfo(const lief_t& base) : MachO_Command(base) {}
+  MachO_DyldInfo(const lief_t& base) :
+    MachO_Command(base) {}
 
-  auto bindings() const { return std::make_unique<it_bindings>(impl()); }
-  auto exports() const { return std::make_unique<it_exports>(impl()); }
+  auto bindings() const {
+    return std::make_unique<it_bindings>(impl());
+  }
+  auto exports() const {
+    return std::make_unique<it_exports>(impl());
+  }
 
-  auto rebase_opcodes() const { return make_span(impl().rebase_opcodes()); }
-  auto bind_opcodes() const { return make_span(impl().bind_opcodes()); }
-  auto weak_bind_opcodes() const { return make_span(impl().weak_bind_opcodes()); }
-  auto lazy_bind_opcodes() const { return make_span(impl().lazy_bind_opcodes()); }
-  auto export_trie() const { return make_span(impl().export_trie()); }
+  auto rebase_opcodes() const {
+    return make_span(impl().rebase_opcodes());
+  }
+  auto bind_opcodes() const {
+    return make_span(impl().bind_opcodes());
+  }
+  auto weak_bind_opcodes() const {
+    return make_span(impl().weak_bind_opcodes());
+  }
+  auto lazy_bind_opcodes() const {
+    return make_span(impl().lazy_bind_opcodes());
+  }
+  auto export_trie() const {
+    return make_span(impl().export_trie());
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

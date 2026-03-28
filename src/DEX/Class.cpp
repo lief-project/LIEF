@@ -27,20 +27,20 @@
 namespace LIEF::DEX {
 Class::Class() = default;
 
-Class::Class(std::string  fullname, uint32_t access_flags,
-             Class* parent, std::string source_filename) :
+Class::Class(std::string fullname, uint32_t access_flags, Class* parent,
+             std::string source_filename) :
   fullname_{std::move(fullname)},
   access_flags_{access_flags},
   parent_{parent},
-  source_filename_{std::move(source_filename)}
-{}
+  source_filename_{std::move(source_filename)} {}
 
 std::string Class::package_normalized(const std::string& pkg) {
   std::string package_normalized = pkg;
 
   // 1. Remove the '/' at the end
   if (package_normalized.back() == '/') {
-    package_normalized = package_normalized.substr(0, package_normalized.size() - 1);
+    package_normalized =
+        package_normalized.substr(0, package_normalized.size() - 1);
   }
 
   // 2. Replace '.' with '/'
@@ -48,7 +48,8 @@ std::string Class::package_normalized(const std::string& pkg) {
   return package_normalized;
 }
 
-std::string Class::fullname_normalized(const std::string& pkg, const std::string& cls_name) {
+std::string Class::fullname_normalized(const std::string& pkg,
+                                       const std::string& cls_name) {
   return "L" + Class::package_normalized(pkg) + "/" + cls_name + ";";
 }
 
@@ -114,7 +115,7 @@ Class::access_flags_list_t Class::access_flags() const {
 
   std::copy_if(std::begin(access_flags_list), std::end(access_flags_list),
                std::back_inserter(flags),
-               [this] (ACCESS_FLAGS f) { return has(f); });
+               [this](ACCESS_FLAGS f) { return has(f); });
 
   return flags;
 }
@@ -149,28 +150,20 @@ Class::it_fields Class::fields() {
 }
 
 Class::it_named_methods Class::methods(const std::string& name) {
-  return {methods_, [name] (const Method* meth) {
-    return meth->name() == name;
-  }};
+  return {methods_, [name](const Method* meth) { return meth->name() == name; }};
 }
 
 Class::it_const_named_methods Class::methods(const std::string& name) const {
-  return {methods_, [name] (const Method* meth) {
-    return meth->name() == name;
-  }};
+  return {methods_, [name](const Method* meth) { return meth->name() == name; }};
 }
 
 
 Class::it_named_fields Class::fields(const std::string& name) {
-  return {fields_, [name] (const Field* f) {
-    return f->name() == name;
-  }};
+  return {fields_, [name](const Field* f) { return f->name() == name; }};
 }
 
 Class::it_const_named_fields Class::fields(const std::string& name) const {
-  return {fields_, [name] (const Field* f) {
-    return f->name() == name;
-  }};
+  return {fields_, [name](const Field* f) { return f->name() == name; }};
 }
 
 size_t Class::index() const {
@@ -196,7 +189,6 @@ void Class::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const Class& cls) {
   os << cls.pretty_name();
   if (!cls.source_filename().empty()) {
@@ -211,4 +203,3 @@ std::ostream& operator<<(std::ostream& os, const Class& cls) {
 Class::~Class() = default;
 
 }
-

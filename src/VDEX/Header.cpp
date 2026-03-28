@@ -21,10 +21,10 @@
 #include <sstream>
 #include <iomanip>
 
-#define PRINT_FIELD_X(name,attr) \
+#define PRINT_FIELD_X(name, attr)                                                 \
   os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr << '\n'
 
-#define PRINT_FIELD_D(name,attr) \
+#define PRINT_FIELD_D(name, attr)                                                 \
   os << std::setw(WIDTH) << std::setfill(' ') << name << std::dec << attr << '\n'
 
 
@@ -39,11 +39,9 @@ Header::Header() :
   nb_dex_files_{0},
   dex_size_{0},
   verifier_deps_size_{0},
-  quickening_info_size_{0}
-{
+  quickening_info_size_{0} {
   std::copy(std::begin(details::magic), std::end(details::magic),
-            std::begin(magic_)
-  );
+            std::begin(magic_));
 }
 
 Header::magic_t Header::magic() const {
@@ -75,7 +73,6 @@ void Header::accept(Visitor& visitor) const {
 }
 
 
-
 std::ostream& operator<<(std::ostream& os, const Header& header) {
   static constexpr size_t WIDTH = 24;
 
@@ -92,11 +89,11 @@ std::ostream& operator<<(std::ostream& os, const Header& header) {
 
   os << std::hex << std::left << std::showbase;
 
-  PRINT_FIELD_X("Magic:",                magic_str);
-  PRINT_FIELD_D("Version:",              header.version());
-  PRINT_FIELD_D("Number of dex files:",  header.nb_dex_files());
-  PRINT_FIELD_X("Dex Size:",             header.dex_size());
-  PRINT_FIELD_X("Verifier Deps Size:",   header.verifier_deps_size());
+  PRINT_FIELD_X("Magic:", magic_str);
+  PRINT_FIELD_D("Version:", header.version());
+  PRINT_FIELD_D("Number of dex files:", header.nb_dex_files());
+  PRINT_FIELD_X("Dex Size:", header.dex_size());
+  PRINT_FIELD_X("Verifier Deps Size:", header.verifier_deps_size());
   PRINT_FIELD_X("Quickening Info Size:", header.quickening_info_size());
 
   return os;
@@ -106,4 +103,3 @@ Header::~Header() = default;
 
 } // Namespace VDEX
 // Namespace LIEF
-

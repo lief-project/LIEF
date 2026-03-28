@@ -16,19 +16,24 @@
 #include "LIEF/DWARF/types/Array.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
 
-class DWARF_types_array_size_info :
-  private Mirror<LIEF::dwarf::types::Array::size_info_t>
-{
+class DWARF_types_array_size_info
+  : private Mirror<LIEF::dwarf::types::Array::size_info_t> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::types::Array::size_info_t;
 
-  auto name() const { return get().name; }
+  auto name() const {
+    return get().name;
+  }
 
-  uint64_t size() const { return get().size; }
+  uint64_t size() const {
+    return get().size;
+  }
 
   auto get_type() const {
-    return details::try_unique<DWARF_Type>(get().type.get()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Type>(
+        get().type.get()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 };
 
@@ -41,7 +46,9 @@ class DWARF_types_Array : public DWARF_Type {
   }
 
   auto underlying_type() const {
-    return details::try_unique<DWARF_Type>(impl().underlying_type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Type>(
+        impl().underlying_type()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto size_info() const {
@@ -49,5 +56,7 @@ class DWARF_types_Array : public DWARF_Type {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

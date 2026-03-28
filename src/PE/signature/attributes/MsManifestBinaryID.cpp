@@ -23,4 +23,3 @@ void MsManifestBinaryID::accept(Visitor& visitor) const {
 }
 
 }
-

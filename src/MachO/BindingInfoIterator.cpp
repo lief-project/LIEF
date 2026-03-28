@@ -27,12 +27,9 @@ namespace LIEF::MachO {
 
 const BindingInfo& BindingInfoIterator::operator*() const {
   switch (origin_) {
-    case ORIGIN::DYLD:
-      return *dyld_info_->binding_info_.at(pos_);
-    case ORIGIN::CHAINED_FIXUPS:
-      return *chained_fixups_->all_bindings_.at(pos_);
-    case ORIGIN::INDIRECT:
-      return *binary_->indirect_bindings_.at(pos_);
+    case ORIGIN::DYLD: return *dyld_info_->binding_info_.at(pos_);
+    case ORIGIN::CHAINED_FIXUPS: return *chained_fixups_->all_bindings_.at(pos_);
+    case ORIGIN::INDIRECT: return *binary_->indirect_bindings_.at(pos_);
     case ORIGIN::NONE:
       logging::fatal_error("Can't return a BindingInfo for a NONE iterator");
   }

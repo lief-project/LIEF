@@ -29,9 +29,9 @@ class PackedFunction : public RuntimeFunctionAArch64 {
 
   using RuntimeFunctionAArch64::RuntimeFunctionAArch64;
 
-  static constexpr jni::Class kClass {
-    "lief/pe/aarch64/PackedFunction",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/pe/aarch64/PackedFunction",
+      jni::Constructor{jlong{}},
   };
 
   static int register_natives(JNIEnv* env);

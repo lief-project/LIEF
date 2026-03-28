@@ -23,14 +23,21 @@ class PE_DataDirectory : private Mirror<LIEF::PE::DataDirectory> {
   using lief_t = LIEF::PE::DataDirectory;
   using Mirror::Mirror;
 
-  uint32_t RVA() const { return get().RVA(); }
-  uint32_t size() const { return get().size(); }
-  uint32_t get_type() const { return to_int(get().type()); }
+  uint32_t RVA() const {
+    return get().RVA();
+  }
+  uint32_t size() const {
+    return get().size();
+  }
+  uint32_t get_type() const {
+    return to_int(get().type());
+  }
 
-  Span content() const { return make_span(get().content()); }
+  Span content() const {
+    return make_span(get().content());
+  }
 
   auto section() const {
     return details::try_unique<PE_Section>(get().section());
   }
-
 };

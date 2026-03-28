@@ -38,5 +38,3 @@ class LIEF_API Union : public ClassLike {
 }
 }
 #endif
-
-

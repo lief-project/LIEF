@@ -44,7 +44,8 @@ class LIEF_API Metadata {
   /// Return an iterator over the different Objective-C classes (`@interface`)
   classes_it classes() const;
 
-  /// Return an iterator over the Objective-C protocols declared in this binary (`@protocol`).
+  /// Return an iterator over the Objective-C protocols declared in this binary
+  /// (`@protocol`).
   protocols_it protocols() const;
 
   /// Try to find the Objective-C class with the given **mangled** name
@@ -59,6 +60,7 @@ class LIEF_API Metadata {
   std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   ~Metadata();
+
   private:
   std::unique_ptr<details::Metadata> impl_;
 };

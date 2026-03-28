@@ -34,8 +34,8 @@ std::string Pogo::to_string() const {
   std::ostringstream os;
   os << Debug::to_string() << '\n'
      << "Pogo:\n"
-     << format("  Signature: {} ({:#08x})\n",
-                    PE::to_string(signature()), (uint32_t)signature());
+     << format("  Signature: {} ({:#08x})\n", PE::to_string(signature()),
+               (uint32_t)signature());
 
   for (const PogoEntry& pentry : entries()) {
     os << "    " << pentry << '\n';
@@ -45,14 +45,14 @@ std::string Pogo::to_string() const {
 }
 
 const char* to_string(Pogo::SIGNATURES e) {
-  #define ENTRY(X) std::pair(Pogo::SIGNATURES::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(UNKNOWN),
-    ENTRY(ZERO),
-    ENTRY(LCTG),
-    ENTRY(PGI),
+#define ENTRY(X) std::pair(Pogo::SIGNATURES::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(UNKNOWN),
+      ENTRY(ZERO),
+      ENTRY(LCTG),
+      ENTRY(PGI),
   };
-  #undef ENTRY
+#undef ENTRY
   if (const auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
   }
@@ -60,4 +60,3 @@ const char* to_string(Pogo::SIGNATURES e) {
 }
 
 } // namespace LIEF::PE
-

@@ -17,10 +17,10 @@
 
 #include "intmem.h"
 
-#define TMPL_DECL(T)              \
-  template<> void                 \
-  swap_endian<T>(T* u) {          \
-    *u = swap_integer_endian(*u); \
+#define TMPL_DECL(T)                                                              \
+  template<>                                                                      \
+  void swap_endian<T>(T * u) {                                                    \
+    *u = swap_integer_endian(*u);                                                 \
   }
 
 namespace LIEF {

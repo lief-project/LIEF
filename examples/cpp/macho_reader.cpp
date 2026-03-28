@@ -60,10 +60,9 @@ void print_binary(const Binary& binary) {
   for (const Relocation& relocation : binary.relocations()) {
     std::cout << relocation << '\n';
   }
-
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
   std::cout << "MachO Reader" << '\n';
   if (argc != 2) {
@@ -79,4 +78,3 @@ int main(int argc, char **argv) {
 
   return 0;
 }
-

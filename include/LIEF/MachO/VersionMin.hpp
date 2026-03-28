@@ -29,7 +29,8 @@ namespace details {
 struct version_min_command;
 }
 
-/// Class that wraps the LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ... commands.
+/// Class that wraps the LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ...
+/// commands.
 class LIEF_API VersionMin : public LoadCommand {
 
   public:

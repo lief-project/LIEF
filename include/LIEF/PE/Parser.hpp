@@ -47,11 +47,10 @@ namespace details {
 struct pe_debug;
 }
 
-/// Main interface to parse PE binaries. In particular, the **static** Parser::parse
-/// functions should be used to get a LIEF::PE::Binary instance.
+/// Main interface to parse PE binaries. In particular, the **static**
+/// Parser::parse functions should be used to get a LIEF::PE::Binary instance.
 class LIEF_API Parser : public LIEF::Parser {
   public:
-
   /// Maximum size of the data read
   static constexpr size_t MAX_DATA_SIZE = 3_GB;
 
@@ -74,7 +73,8 @@ class LIEF_API Parser : public LIEF::Parser {
   /// Check if the given name is a valid import.
   ///
   /// This check verifies that:
-  ///   1. The name is not too large or empty (cf. https://stackoverflow.com/a/23340781)
+  ///   1. The name is not too large or empty (cf.
+  ///   https://stackoverflow.com/a/23340781)
   ///   2. All the characters are printable
   static bool is_valid_import_name(const std::string& name);
 
@@ -87,22 +87,26 @@ class LIEF_API Parser : public LIEF::Parser {
 
   public:
   /// Parse a PE binary from the given filename
-  static std::unique_ptr<Binary> parse(const std::string& filename,
-                                       const ParserConfig& conf = ParserConfig::default_conf());
+  static std::unique_ptr<Binary>
+      parse(const std::string& filename,
+            const ParserConfig& conf = ParserConfig::default_conf());
 
   /// Parse a PE binary from a data buffer
-  static std::unique_ptr<Binary> parse(std::vector<uint8_t> data,
-                                       const ParserConfig& conf = ParserConfig::default_conf());
+  static std::unique_ptr<Binary>
+      parse(std::vector<uint8_t> data,
+            const ParserConfig& conf = ParserConfig::default_conf());
 
-  static std::unique_ptr<Binary> parse(const uint8_t* buffer, size_t size,
-                                       const ParserConfig& conf = ParserConfig::default_conf());
+  static std::unique_ptr<Binary>
+      parse(const uint8_t* buffer, size_t size,
+            const ParserConfig& conf = ParserConfig::default_conf());
 
   /// Parse a PE binary from the given BinaryStream
-  static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream,
-                                       const ParserConfig& conf = ParserConfig::default_conf());
+  static std::unique_ptr<Binary>
+      parse(std::unique_ptr<BinaryStream> stream,
+            const ParserConfig& conf = ParserConfig::default_conf());
 
   Parser& operator=(const Parser& copy) = delete;
-  Parser(const Parser& copy)            = delete;
+  Parser(const Parser& copy) = delete;
 
   COFF::String* find_coff_string(uint32_t offset) const;
 

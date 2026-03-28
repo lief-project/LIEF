@@ -22,17 +22,29 @@ class asm_x86_operands_Memory : public asm_x86_Operand {
   public:
   using lief_t = LIEF::assembly::x86::operands::Memory;
 
-  uint64_t base() const { return to_int(impl().base()); }
-  uint64_t scaled_register() const { return to_int(impl().scaled_register()); }
-  uint64_t segment_register() const { return to_int(impl().segment_register()); }
+  uint64_t base() const {
+    return to_int(impl().base());
+  }
+  uint64_t scaled_register() const {
+    return to_int(impl().scaled_register());
+  }
+  uint64_t segment_register() const {
+    return to_int(impl().segment_register());
+  }
 
-  auto scale() const { return impl().scale(); }
-  auto displacement() const { return impl().displacement(); }
+  auto scale() const {
+    return impl().scale();
+  }
+  auto displacement() const {
+    return impl().displacement();
+  }
 
   static bool classof(const asm_x86_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

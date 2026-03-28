@@ -36,7 +36,8 @@ class Analyzer : public analysis_plugin::Analyzer {
 
   template<class T>
   std::unique_ptr<T> instantiate() {
-    return std::make_unique<T>(*bv_, *elf_, static_cast<elf::TypeBuilder&>(*type_builder_));
+    return std::make_unique<T>(*bv_, *elf_,
+                               static_cast<elf::TypeBuilder&>(*type_builder_));
   }
 
   ~Analyzer() override = default;

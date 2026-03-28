@@ -34,12 +34,11 @@ class ChainedBindingInfoList : public ChainedBindingInfo {
 
   public:
   static std::unique_ptr<ChainedBindingInfoList>
-    create(const ChainedBindingInfo& other);
+      create(const ChainedBindingInfo& other);
 
   ChainedBindingInfoList() = delete;
   explicit ChainedBindingInfoList(DYLD_CHAINED_FORMAT fmt, bool is_weak) :
-    ChainedBindingInfo(fmt, is_weak)
-  {}
+    ChainedBindingInfo(fmt, is_weak) {}
 
 
   ChainedBindingInfoList& operator=(ChainedBindingInfoList other) = delete;

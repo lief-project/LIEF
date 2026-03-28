@@ -19,28 +19,19 @@ namespace java::util {
 
 class OptionalLong {
   public:
-  static constexpr jni::Class kClass {
-    "java/util/OptionalLong",
-    jni::Static {
-      jni::Method {
-        "empty", jni::Return{jni::Self{}}
-      },
-      jni::Method {
-        "of", jni::Return{jni::Self{}}, jni::Params {
-          jlong{}
-        }
-      }
-    }
+  static constexpr jni::Class kClass{
+      "java/util/OptionalLong",
+      jni::Static{jni::Method{"empty", jni::Return{jni::Self{}}},
+                  jni::Method{"of", jni::Return{jni::Self{}},
+                              jni::Params{jlong{}}}}
   };
 
   static jobject empty() {
-    return jni::StaticRef<kClass>{}. template Call<"empty">().Release();
+    return jni::StaticRef<kClass>{}.template Call<"empty">().Release();
   }
 
   static jobject of(int64_t value) {
-    return jni::StaticRef<kClass>{}. template Call<"of">(
-        (jlong)value
-    ).Release();
+    return jni::StaticRef<kClass>{}.template Call<"of">((jlong)value).Release();
   }
 };
 }

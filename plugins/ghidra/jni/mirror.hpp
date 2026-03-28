@@ -25,16 +25,16 @@ namespace lief_jni {
 
 // from: https://stackoverflow.com/a/55377775
 namespace detail {
-  // If `*(object of type T)` is valid, this is selected and
-  // the return type is `std::true_type`
-  template<class T>
-  decltype(static_cast<void>(*std::declval<T>()), std::true_type{})
-  can_be_dereferenced_impl(int);
+// If `*(object of type T)` is valid, this is selected and
+// the return type is `std::true_type`
+template<class T>
+decltype(static_cast<void>(*std::declval<T>()),
+         std::true_type{}) can_be_dereferenced_impl(int);
 
-  // Otherwise the less specific function is selected,
-  // and the return type is `std::false_type`
-  template<class>
-  std::false_type can_be_dereferenced_impl(...);
+// Otherwise the less specific function is selected,
+// and the return type is `std::false_type`
+template<class>
+std::false_type can_be_dereferenced_impl(...);
 }
 
 template<class T>
@@ -43,25 +43,22 @@ struct can_be_dereferenced : decltype(detail::can_be_dereferenced_impl<T>(0)) {}
 template<class T>
 constexpr bool can_be_dereferenced_v = can_be_dereferenced<T>::value;
 
-template<class T,
-  typename Wrapper,
-  jni::metaprogramming::StringLiteral holder = "impl">
+template<class T, typename Wrapper,
+         jni::metaprogramming::StringLiteral holder = "impl">
 class JNI {
   public:
   using WrapperTy = Wrapper;
 
   static T* from_jni(jobject thiz) {
     return reinterpret_cast<T*>(
-      jni::LocalObject<T::kClass>{thiz}.template Access<holder>().Get()
+        jni::LocalObject<T::kClass>{thiz}.template Access<holder>().Get()
     );
   }
 
   static void destroy(jobject thiz) {
     GHIDRA_DEBUG("Destroying: {}", T::kClass.name_);
     jni::LocalObject<T::kClass> obj{thiz};
-    delete reinterpret_cast<T*>(
-      obj.template Access<holder>().Get()
-    );
+    delete reinterpret_cast<T*>(obj.template Access<holder>().Get());
     obj.template Access<holder>().Set(0);
   }
 
@@ -105,8 +102,7 @@ class JNI {
 
   template<class U>
   JNI(U&& impl) :
-    impl_(std::forward<U>(impl))
-  {}
+    impl_(std::forward<U>(impl)) {}
 
   JNI() = delete;
 
@@ -116,7 +112,7 @@ class JNI {
   JNI(JNI&&) noexcept = default;
   JNI& operator=(JNI&&) noexcept = delete;
 
-  template<typename U = T, class ...Args>
+  template<typename U = T, class... Args>
   static jobject create(Args&&... args) {
     auto* jobj = new U(std::forward<Args>(args)...);
     if constexpr (can_be_dereferenced_v<WrapperTy>) {
@@ -125,9 +121,7 @@ class JNI {
         return nullptr;
       }
     }
-    return jni::LocalObject<U::kClass>{
-      (jlong)jobj
-    }.Release();
+    return jni::LocalObject<U::kClass>{(jlong)jobj}.Release();
   }
 
   protected:
@@ -139,22 +133,18 @@ class JNIEnum {
   public:
   static_assert(std::is_enum_v<T>);
   using underlying_t = typename std::underlying_type_t<T>;
-  using convert_t = const char*(*)(T);
-  static constexpr jni::Class kClass {
-    JavaName.value,
-    jni::Static {
-      jni::Method {
-        "valueOf", jni::Return{jni::Self{}}, jni::Params{
-          jstring{},
-        }
-      }
-    }
+  using convert_t = const char* (*)(T);
+  static constexpr jni::Class kClass{
+      JavaName.value, jni::Static{jni::Method{"valueOf", jni::Return{jni::Self{}},
+                                              jni::Params{
+                                                  jstring{},
+                                              }}}
   };
 
   static jobject create(T value, const convert_t& C) {
-    return jni::StaticRef<kClass>{}. template Call<"valueOf">(
-      (jstring)jni::LocalString(C(value))
-    ).Release();
+    return jni::StaticRef<kClass>{}
+        .template Call<"valueOf">((jstring)jni::LocalString(C(value)))
+        .Release();
   }
 };
 

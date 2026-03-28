@@ -25,9 +25,8 @@ void PKCS9SigningTime::accept(Visitor& visitor) const {
 
 std::string PKCS9SigningTime::print() const {
   const time_t& time = this->time();
-  return fmt::format("{}/{}/{} - {}:{}:{}",
-                       time[0], time[1], time[2], time[3], time[4], time[5]);
+  return fmt::format("{}/{}/{} - {}:{}:{}", time[0], time[1], time[2], time[3],
+                     time[4], time[5]);
 }
 
 }
-

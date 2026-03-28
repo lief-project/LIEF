@@ -26,20 +26,21 @@ class FunctionType : public Type {
   public:
   using Type::Type;
   using lief_t = LIEF::dwarf::editor::FunctionType;
-  static constexpr jni::Class kClass {
-    "lief/dwarf/editor/FunctionType",
-    jni::Constructor{ jlong{} },
+  static constexpr jni::Class kClass{
+      "lief/dwarf/editor/FunctionType",
+      jni::Constructor{jlong{}},
   };
 
-  class Parameter : public JNI<
-    Parameter, std::unique_ptr<LIEF::dwarf::editor::FunctionType::Parameter>>
-  {
+  class Parameter
+    : public JNI<Parameter,
+                 std::unique_ptr<LIEF::dwarf::editor::FunctionType::Parameter>> {
     public:
-    static constexpr jni::Class kClass {
-      "lief/dwarf/editor/FunctionType$Parameter",
-      jni::Constructor{ jlong{} },
-      jni::Field { "impl", jlong{}, }
-    };
+    static constexpr jni::Class kClass{"lief/dwarf/editor/FunctionType$Parameter",
+                                       jni::Constructor{jlong{}},
+                                       jni::Field{
+                                           "impl",
+                                           jlong{},
+                                       }};
 
     static void jni_destroy(JNIEnv* env, jobject thiz) {
       destroy(thiz);
@@ -55,17 +56,13 @@ class FunctionType : public Type {
   }
 
   static jobject jni_set_return_type(JNIEnv* env, jobject thiz, jobject type) {
-    from_jni(thiz)->cast<lief_t>().set_return_type(
-      Type::from_jni(type)->impl()
-    );
+    from_jni(thiz)->cast<lief_t>().set_return_type(Type::from_jni(type)->impl());
     return thiz;
   }
 
   static jobject jni_add_parameter(JNIEnv* env, jobject thiz, jobject type) {
     return Parameter::create(
-      from_jni(thiz)->cast<lief_t>().add_parameter(
-        Type::from_jni(type)->impl()
-      )
+        from_jni(thiz)->cast<lief_t>().add_parameter(Type::from_jni(type)->impl())
     );
   }
 };

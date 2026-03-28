@@ -30,4 +30,3 @@ Object::output_const_t<T> Object::as() const {
 
 
 } // namespace LIEF
-

@@ -21,7 +21,7 @@
 
 using namespace LIEF::ELF;
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "ELF Section rename" << '\n';
   if (argc != 3) {
     std::cerr << "Usage: " << argv[0] << "<binary> <binary output name>" << '\n';

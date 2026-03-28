@@ -51,8 +51,7 @@ class LIEF_API Parameter {
       REG,
     };
     Location(Type ty) :
-      type(ty)
-    {}
+      type(ty) {}
 
     template<class T>
     const T* as() const {
@@ -70,8 +69,7 @@ class LIEF_API Parameter {
     public:
     RegisterLoc(uint64_t reg_id) :
       Location(Type::REG),
-      id(reg_id)
-    {}
+      id(reg_id) {}
 
     static bool classof(const Location* loc) {
       return loc->type == Type::REG;
@@ -110,8 +108,8 @@ class LIEF_API Parameter {
 
   virtual ~Parameter();
 
-  LIEF_LOCAL static
-    std::unique_ptr<Parameter> create(std::unique_ptr<details::Parameter> impl);
+  LIEF_LOCAL static std::unique_ptr<Parameter>
+      create(std::unique_ptr<details::Parameter> impl);
 
   protected:
   Parameter(std::unique_ptr<details::Parameter> impl);
@@ -175,7 +173,7 @@ class LIEF_API TemplateValue : public Parameter {
 ///
 /// The function `generic` has one parameters::TemplateType parameter: `Y`.
 class LIEF_API TemplateType : public Parameter {
-public:
+  public:
   using Parameter::Parameter;
   static bool classof(const Parameter* P) {
     return P->kind() == Parameter::KIND::TEMPLATE_TYPE;

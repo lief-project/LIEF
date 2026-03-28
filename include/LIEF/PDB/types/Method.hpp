@@ -47,14 +47,19 @@ class LIEF_API Method {
     class LIEF_API PointerProxy {
       // Inspired from LLVM's iterator_facade_base
       friend class Iterator;
+
       public:
-      pointer operator->() const { return R.get(); }
+      pointer operator->() const {
+        return R.get();
+      }
 
       private:
       value_type R;
 
-      template <typename RefT>
-      PointerProxy(RefT &&R) : R(std::forward<RefT>(R)) {} // NOLINT(bugprone-forwarding-reference-overload)
+      template<typename RefT>
+      PointerProxy(RefT&& R) :
+        R(std::forward<RefT>(R)) {
+      } // NOLINT(bugprone-forwarding-reference-overload)
     };
     Iterator(const Iterator&);
     Iterator(Iterator&&) noexcept;
@@ -71,7 +76,7 @@ class LIEF_API Method {
 
     Iterator operator++(int) {
       Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator *>(this);
+      ++*static_cast<Iterator*>(this);
       return tmp;
     }
 
@@ -84,16 +89,19 @@ class LIEF_API Method {
     private:
     std::unique_ptr<details::MethodIt> impl_;
   };
+
   public:
   /// The type (or property) of the method.
   enum class TYPE {
-    VANILLA = 0x00,                  //!< Regular instance method
-    VIRTUAL = 0x01,                  //!< Virtual method
-    STATIC = 0x02,                   //!< Static method
-    FRIEND = 0x03,                   //!< Friend method
-    INTRODUCING_VIRTUAL = 0x04,      //!< Virtual method that introduces a new vtable slot
-    PURE_VIRTUAL = 0x05,             //!< Pure virtual method (abstract)
-    PURE_INTRODUCING_VIRTUAL = 0x06  //!< Pure virtual method that introduces a new vtable slot
+    VANILLA = 0x00, //!< Regular instance method
+    VIRTUAL = 0x01, //!< Virtual method
+    STATIC = 0x02,  //!< Static method
+    FRIEND = 0x03,  //!< Friend method
+    INTRODUCING_VIRTUAL =
+        0x04,            //!< Virtual method that introduces a new vtable slot
+    PURE_VIRTUAL = 0x05, //!< Pure virtual method (abstract)
+    PURE_INTRODUCING_VIRTUAL =
+        0x06, //!< Pure virtual method that introduces a new vtable slot
   };
 
   /// Visibility access for the method.
@@ -101,7 +109,7 @@ class LIEF_API Method {
     NONE = 0,      //!< No access specifier (or unknown)
     PRIVATE = 1,   //!< Private access
     PROTECTED = 2, //!< Protected access
-    PUBLIC = 3     //!< Public access
+    PUBLIC = 3,    //!< Public access
   };
 
   Method(std::unique_ptr<details::Method> impl);
@@ -125,4 +133,3 @@ class LIEF_API Method {
 }
 }
 #endif
-

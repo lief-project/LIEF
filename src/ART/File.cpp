@@ -36,8 +36,6 @@ void File::accept(Visitor& visitor) const {
 }
 
 
-
-
 File::~File() = default;
 
 std::ostream& operator<<(std::ostream& os, const File& art_file) {

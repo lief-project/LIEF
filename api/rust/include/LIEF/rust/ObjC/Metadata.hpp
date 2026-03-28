@@ -27,31 +27,41 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
   using lief_t = LIEF::objc::Metadata;
   using Mirror::Mirror;
 
-  class it_classes :
-      public ForwardIterator<ObjC_Class, LIEF::objc::Class::Iterator>
-  {
+  class it_classes
+    : public ForwardIterator<ObjC_Class, LIEF::objc::Class::Iterator> {
     public:
-    it_classes(const ObjC_Metadata::lief_t& src)
-      : ForwardIterator(src.classes()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_classes(const ObjC_Metadata::lief_t& src) :
+      ForwardIterator(src.classes()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  class it_protocols :
-      public ForwardIterator<ObjC_Protocol, LIEF::objc::Protocol::Iterator>
-  {
+  class it_protocols
+    : public ForwardIterator<ObjC_Protocol, LIEF::objc::Protocol::Iterator> {
     public:
-    it_protocols(const ObjC_Metadata::lief_t& src)
-      : ForwardIterator(src.protocols()) { }
-    auto next() { return ForwardIterator::next(); }
-    auto size() const { return ForwardIterator::size(); }
+    it_protocols(const ObjC_Metadata::lief_t& src) :
+      ForwardIterator(src.protocols()) {}
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
   };
 
-  auto get_class(std::string name) const { // NOLINT(performance-unnecessary-value-param)
+  auto get_class(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<ObjC_Class>(get().get_class(name));
   }
 
-  auto get_protocol(std::string name) const { // NOLINT(performance-unnecessary-value-param)
+  auto get_protocol(
+      std::string name
+  ) const { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<ObjC_Protocol>(get().get_protocol(name));
   }
 

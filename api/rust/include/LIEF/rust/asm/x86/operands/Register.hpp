@@ -31,5 +31,7 @@ class asm_x86_operands_Register : public asm_x86_Operand {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

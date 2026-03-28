@@ -32,20 +32,19 @@ extern "C" {
 
 /** @brief LIEF::MachO::Binary C Handler */
 struct Macho_Binary_t {
-  void*               handler;
-  uint64_t            imagebase;
-  Macho_Header_t      header;
-  Macho_Command_t**   commands;
-  Macho_Symbol_t**    symbols;
-  Macho_Section_t**   sections;
-  Macho_Segment_t**   segments;
-
+  void* handler;
+  uint64_t imagebase;
+  Macho_Header_t header;
+  Macho_Command_t** commands;
+  Macho_Symbol_t** symbols;
+  Macho_Section_t** sections;
+  Macho_Segment_t** segments;
 };
 
 typedef struct Macho_Binary_t Macho_Binary_t;
 
 /** @brief Wrapper on LIEF::MachO::Parser::parse */
-LIEF_API Macho_Binary_t** macho_parse(const char *file);
+LIEF_API Macho_Binary_t** macho_parse(const char* file);
 
 LIEF_API void macho_binaries_destroy(Macho_Binary_t** binaries);
 

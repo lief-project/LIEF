@@ -25,4 +25,3 @@ LIEF_API const char* to_string(ARCH e);
 } // namespace LIEF
 
 #endif
-

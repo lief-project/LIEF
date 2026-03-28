@@ -5,8 +5,10 @@
 
 class PE_PKCS9MessageDigest : public PE_Attribute {
   using lief_t = LIEF::PE::PKCS9MessageDigest;
+
   public:
-  PE_PKCS9MessageDigest(const lief_t& base) : PE_Attribute(base) {}
+  PE_PKCS9MessageDigest(const lief_t& base) :
+    PE_Attribute(base) {}
 
   Span digest() const {
     return make_span(impl().digest());
@@ -17,5 +19,7 @@ class PE_PKCS9MessageDigest : public PE_Attribute {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

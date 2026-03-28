@@ -18,7 +18,7 @@
 
 #include <LIEF/Abstract.hpp>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   std::cout << "Abstract Reader" << '\n';
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <binary>" << '\n';
@@ -41,26 +41,24 @@ int main(int argc, char **argv) {
   }
 
   std::cout << "== Exported functions ==" << '\n';
-  for(const LIEF::Function& func : binary->exported_functions()) {
+  for (const LIEF::Function& func : binary->exported_functions()) {
     std::cout << func << '\n';
   }
 
   std::cout << "== Imported functions ==" << '\n';
-  for(const LIEF::Function& func : binary->imported_functions()) {
+  for (const LIEF::Function& func : binary->imported_functions()) {
     std::cout << func << '\n';
   }
 
   std::cout << "== Imported Libraries ==" << '\n';
-  for(const std::string& name : binary->imported_libraries()) {
+  for (const std::string& name : binary->imported_libraries()) {
     std::cout << name << '\n';
   }
 
   std::cout << "== Relocation ==" << '\n';
-  for(const LIEF::Relocation& relocation : binary->relocations()) {
+  for (const LIEF::Relocation& relocation : binary->relocations()) {
     std::cout << relocation << '\n';
   }
 
   return 0;
-
-
 }

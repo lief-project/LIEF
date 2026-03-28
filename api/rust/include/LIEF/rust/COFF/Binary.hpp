@@ -33,74 +33,93 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
   using lief_t = LIEF::COFF::Binary;
   using Mirror::Mirror;
 
-  class it_relocations :
-      public Iterator<COFF_Relocation, LIEF::COFF::Binary::it_const_relocations>
-  {
+  class it_relocations
+    : public Iterator<COFF_Relocation, LIEF::COFF::Binary::it_const_relocations> {
     public:
-    it_relocations(const COFF_Binary::lief_t& src)
-      : Iterator(src.relocations()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_relocations(const COFF_Binary::lief_t& src) :
+      Iterator(src.relocations()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_symbols :
-      public Iterator<COFF_Symbol, LIEF::COFF::Binary::it_const_symbols>
-  {
+  class it_symbols
+    : public Iterator<COFF_Symbol, LIEF::COFF::Binary::it_const_symbols> {
     public:
-    it_symbols(const COFF_Binary::lief_t& src)
-      : Iterator(src.symbols()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_symbols(const COFF_Binary::lief_t& src) :
+      Iterator(src.symbols()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_sections :
-      public Iterator<COFF_Section, LIEF::COFF::Binary::it_const_sections>
-  {
+  class it_sections
+    : public Iterator<COFF_Section, LIEF::COFF::Binary::it_const_sections> {
     public:
-    it_sections(const COFF_Binary::lief_t& src)
-      : Iterator(src.sections()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_sections(const COFF_Binary::lief_t& src) :
+      Iterator(src.sections()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_strings :
-      public Iterator<COFF_String, LIEF::COFF::Binary::it_const_strings_table>
-  {
+  class it_strings
+    : public Iterator<COFF_String, LIEF::COFF::Binary::it_const_strings_table> {
     public:
-    it_strings(const COFF_Binary::lief_t& src)
-      : Iterator(src.string_table()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_strings(const COFF_Binary::lief_t& src) :
+      Iterator(src.string_table()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_functions :
-      public Iterator<COFF_Symbol, LIEF::COFF::Binary::it_const_function>
-  {
+  class it_functions
+    : public Iterator<COFF_Symbol, LIEF::COFF::Binary::it_const_function> {
     public:
-    it_functions(const COFF_Binary::lief_t& src)
-      : Iterator(src.functions()) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_functions(const COFF_Binary::lief_t& src) :
+      Iterator(src.functions()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_instructions :
-      public ForwardIterator<asm_Instruction, LIEF::assembly::Instruction::Iterator>
-  {
+  class it_instructions
+    : public ForwardIterator<asm_Instruction,
+                             LIEF::assembly::Instruction::Iterator> {
     public:
-    it_instructions(const COFF_Binary::lief_t& src, const std::string& func)
-      : ForwardIterator(src.disassemble(func)) { }
+    it_instructions(const COFF_Binary::lief_t& src, const std::string& func) :
+      ForwardIterator(src.disassemble(func)) {}
 
-    it_instructions(const COFF_Binary::lief_t& src, const LIEF::COFF::Symbol& sym)
-      : ForwardIterator(src.disassemble(sym)) { }
+    it_instructions(const COFF_Binary::lief_t& src,
+                    const LIEF::COFF::Symbol& sym) :
+      ForwardIterator(src.disassemble(sym)) {}
 
     it_instructions(const COFF_Binary::lief_t& src, const uint8_t* ptr,
-                    size_t size, uint64_t address)
-      : ForwardIterator(src.disassemble(ptr, size, address)) { }
+                    size_t size, uint64_t address) :
+      ForwardIterator(src.disassemble(ptr, size, address)) {}
 
-    auto next() { return ForwardIterator::next(); }
+    auto next() {
+      return ForwardIterator::next();
+    }
   };
 
-  static auto parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
+  static auto
+      parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
     return details::try_unique<COFF_Binary>(LIEF::COFF::Parser::parse(path));
   }
 
@@ -149,12 +168,12 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
   }
 
   auto disassemble_symbol(const COFF_Symbol& sym) const {
-    return std::make_unique<it_instructions>(get(),
-        static_cast<const COFF_Symbol::lief_t&>(sym.get()));
+    return std::make_unique<it_instructions>(
+        get(), static_cast<const COFF_Symbol::lief_t&>(sym.get())
+    );
   }
 
   auto to_string() const {
     return get().to_string();
   }
 };
-

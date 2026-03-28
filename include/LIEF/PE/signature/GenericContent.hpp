@@ -53,7 +53,8 @@ class LIEF_API GenericContent : public ContentInfo::Content {
   void print(std::ostream& os) const override;
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const GenericContent& content) {
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const GenericContent& content) {
     content.print(os);
     return os;
   }

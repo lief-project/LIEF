@@ -37,4 +37,3 @@ LIEF_API const char* to_string(ART_44::IMAGE_ROOTS e);
 } // namespace LIEF
 
 #endif
-

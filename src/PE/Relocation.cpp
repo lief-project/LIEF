@@ -39,18 +39,15 @@ Relocation::Relocation() = default;
 Relocation::Relocation(uint32_t base, uint32_t block_size) :
   Object(),
   block_size_(block_size),
-  virtual_address_(base)
-{}
+  virtual_address_(base) {}
 
 Relocation::Relocation(uint32_t base) :
-  Relocation(base, 0)
-{}
+  Relocation(base, 0) {}
 
 Relocation::Relocation(const Relocation& other) :
   Object{other},
   block_size_{other.block_size_},
-  virtual_address_{other.virtual_address_}
-{
+  virtual_address_{other.virtual_address_} {
   entries_.reserve(other.entries_.size());
   for (const std::unique_ptr<RelocationEntry>& r : other.entries_) {
     auto copy = std::make_unique<RelocationEntry>(*r);
@@ -66,14 +63,13 @@ Relocation& Relocation::operator=(Relocation other) {
 
 Relocation::Relocation(const details::pe_base_relocation_block& header) :
   block_size_{header.BlockSize},
-  virtual_address_{header.PageRVA}
-{}
+  virtual_address_{header.PageRVA} {}
 
 
 void Relocation::swap(Relocation& other) {
-  std::swap(block_size_,      other.block_size_);
+  std::swap(block_size_, other.block_size_);
   std::swap(virtual_address_, other.virtual_address_);
-  std::swap(entries_,         other.entries_);
+  std::swap(entries_, other.entries_);
 }
 
 RelocationEntry& Relocation::add_entry(const RelocationEntry& entry) {
@@ -127,12 +123,14 @@ Relocation::relocations_t Relocation::parse(Parser& ctx, BinaryStream& stream) {
       for (size_t i = 0; i < nb_entries; ++i) {
         auto data = block_strm->read<uint16_t>();
         if (!data) {
-          LIEF_DEBUG("Failed to read entry at {}:{} (entry: {})", __FUNCTION__, __LINE__, i);
+          LIEF_DEBUG("Failed to read entry at {}:{} (entry: {})", __FUNCTION__,
+                     __LINE__, i);
           break;
         }
 
         uint16_t pos = RelocationEntry::get_position(*data);
-        RelocationEntry::BASE_TYPES ty = RelocationEntry::type_from_data(arch, *data);
+        RelocationEntry::BASE_TYPES ty =
+            RelocationEntry::type_from_data(arch, *data);
         auto entry = std::make_unique<RelocationEntry>(pos, ty);
         entry->relocation_ = relocation.get();
         relocation->entries_.push_back(std::move(entry));
@@ -145,4 +143,3 @@ Relocation::relocations_t Relocation::parse(Parser& ctx, BinaryStream& stream) {
 }
 
 }
-

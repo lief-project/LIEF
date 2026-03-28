@@ -27,14 +27,30 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
     return std::make_unique<ELF_Segment>(std::make_unique<lief_t>());
   }
 
-  auto stype() const { return to_int(get().type()); }
-  auto flags() const { return to_int(get().flags()); }
-  auto file_offset() const { return get().file_offset(); }
-  auto virtual_address() const { return get().virtual_address(); }
-  auto physical_address() const { return get().physical_address(); }
-  auto physical_size() const { return get().physical_size(); }
-  auto virtual_size() const { return get().virtual_size(); }
-  auto alignment() const { return get().alignment(); }
+  auto stype() const {
+    return to_int(get().type());
+  }
+  auto flags() const {
+    return to_int(get().flags());
+  }
+  auto file_offset() const {
+    return get().file_offset();
+  }
+  auto virtual_address() const {
+    return get().virtual_address();
+  }
+  auto physical_address() const {
+    return get().physical_address();
+  }
+  auto physical_size() const {
+    return get().physical_size();
+  }
+  auto virtual_size() const {
+    return get().virtual_size();
+  }
+  auto alignment() const {
+    return get().alignment();
+  }
 
   auto set_flags(uint32_t value) {
     get().flags(value);
@@ -68,10 +84,18 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
     get().content({ptr, ptr + size});
   }
 
-  Span content() const { return make_span(get().content()); }
+  Span content() const {
+    return make_span(get().content());
+  }
 
-  void fill(char c) { get().fill(c); }
-  void clear() { get().clear(); }
+  void fill(char c) {
+    get().fill(c);
+  }
+  void clear() {
+    get().clear();
+  }
 
-  std::string to_string() const { return details::to_string(get()); }
+  std::string to_string() const {
+    return details::to_string(get());
+  }
 };

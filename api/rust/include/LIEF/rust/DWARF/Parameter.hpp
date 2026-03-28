@@ -22,22 +22,29 @@ class DWARF_Parameter_Location : public Mirror<LIEF::dwarf::Parameter::Location>
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::Parameter::Location;
 
-  auto get_type() const { return to_int(get().type); }
+  auto get_type() const {
+    return to_int(get().type);
+  }
 };
 
-class DWARF_Parameter_RegisterLocation : public Mirror<LIEF::dwarf::Parameter::RegisterLoc> {
+class DWARF_Parameter_RegisterLocation
+  : public Mirror<LIEF::dwarf::Parameter::RegisterLoc> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::Parameter::RegisterLoc;
 
-  auto id() const { return impl().id; }
+  auto id() const {
+    return impl().id;
+  }
 
   static bool classof(const DWARF_Parameter_Location& loc) {
     return lief_t::classof(&loc.get());
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class DWARF_Parameter : public Mirror<LIEF::dwarf::Parameter> {
@@ -45,10 +52,14 @@ class DWARF_Parameter : public Mirror<LIEF::dwarf::Parameter> {
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::Parameter;
 
-  auto name() const { return get().name(); }
+  auto name() const {
+    return get().name();
+  }
 
   auto get_type() const {
-    return details::try_unique<DWARF_Type>(get().type()); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Type>(
+        get().type()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   auto location() const {
@@ -65,7 +76,9 @@ class DWARF_parameters_Formal : public DWARF_Parameter {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class DWARF_parameters_TemplateValue : public DWARF_Parameter {
@@ -77,7 +90,9 @@ class DWARF_parameters_TemplateValue : public DWARF_Parameter {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };
 
 class DWARF_parameters_TemplateType : public DWARF_Parameter {
@@ -89,5 +104,7 @@ class DWARF_parameters_TemplateType : public DWARF_Parameter {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

@@ -28,13 +28,27 @@ class PE_Header : private Mirror<LIEF::PE::Header> {
     return details::make_vector(get().signature());
   }
 
-  auto machine() const { return to_int(get().machine()); }
-  auto numberof_sections() const { return get().numberof_sections(); }
-  auto time_date_stamp() const { return get().time_date_stamp(); }
-  auto pointerto_symbol_table() const { return get().pointerto_symbol_table(); }
-  auto numberof_symbols() const { return get().numberof_symbols(); }
-  auto sizeof_optional_header() const { return get().sizeof_optional_header(); }
-  auto characteristics() const { return get().characteristics(); }
+  auto machine() const {
+    return to_int(get().machine());
+  }
+  auto numberof_sections() const {
+    return get().numberof_sections();
+  }
+  auto time_date_stamp() const {
+    return get().time_date_stamp();
+  }
+  auto pointerto_symbol_table() const {
+    return get().pointerto_symbol_table();
+  }
+  auto numberof_symbols() const {
+    return get().numberof_symbols();
+  }
+  auto sizeof_optional_header() const {
+    return get().sizeof_optional_header();
+  }
+  auto characteristics() const {
+    return get().characteristics();
+  }
 
   void set_machine(uint32_t value) {
     get().machine((lief_t::MACHINE_TYPES)value);
@@ -71,5 +85,4 @@ class PE_Header : private Mirror<LIEF::PE::Header> {
   void remove_characteristic(uint32_t value) {
     get().remove_characteristic((lief_t::CHARACTERISTICS)value);
   }
-
 };

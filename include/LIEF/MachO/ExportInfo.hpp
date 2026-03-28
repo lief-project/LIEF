@@ -41,17 +41,17 @@ class LIEF_API ExportInfo : public Object {
   friend class Binary;
 
   public:
-  enum class KIND: uint64_t  {
-    REGULAR           = 0x00u,
+  enum class KIND : uint64_t {
+    REGULAR = 0x00u,
     THREAD_LOCAL_KIND = 0x01u,
-    ABSOLUTE_KIND     = 0x02u
+    ABSOLUTE_KIND = 0x02u,
   };
 
-  enum class FLAGS: uint64_t  {
-    WEAK_DEFINITION     = 0x04u,
-    REEXPORT            = 0x08u,
-    STUB_AND_RESOLVER   = 0x10u,
-    STATIC_RESOLVER     = 0x20u,
+  enum class FLAGS : uint64_t {
+    WEAK_DEFINITION = 0x04u,
+    REEXPORT = 0x08u,
+    STUB_AND_RESOLVER = 0x10u,
+    STATIC_RESOLVER = 0x20u,
   };
 
   using flag_list_t = std::vector<FLAGS>;
@@ -60,8 +60,7 @@ class LIEF_API ExportInfo : public Object {
   ExportInfo(uint64_t address, uint64_t flags, uint64_t offset = 0) :
     node_offset_(offset),
     flags_(flags),
-    address_(address)
-  {}
+    address_(address) {}
 
   ExportInfo& operator=(ExportInfo copy);
   ExportInfo(const ExportInfo& copy);
@@ -141,7 +140,8 @@ class LIEF_API ExportInfo : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ExportInfo& export_info);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ExportInfo& export_info);
 
   private:
   uint64_t node_offset_ = 0;

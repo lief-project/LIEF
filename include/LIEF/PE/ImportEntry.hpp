@@ -31,8 +31,8 @@ class Builder;
 
 /// Class that represents an entry (i.e. an import) in the import table (Import).
 ///
-/// It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name and
-/// LIEF::Symbol::value API
+/// It extends the LIEF::Symbol generic class that exposes the LIEF::Symbol::name
+/// and LIEF::Symbol::value API
 class LIEF_API ImportEntry : public LIEF::Symbol {
   friend class Parser;
   friend class Builder;
@@ -41,8 +41,8 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   ImportEntry() = default;
 
   ImportEntry(uint64_t data, PE_TYPE type) :
-    data_(data), type_(type)
-  {}
+    data_(data),
+    type_(type) {}
 
   ImportEntry(std::string name) {
     this->name(std::move(name));
@@ -112,7 +112,8 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
 
   void accept(Visitor& visitor) const override;
 
-  LIEF_API friend std::ostream& operator<<(std::ostream& os, const ImportEntry& entry);
+  LIEF_API friend std::ostream& operator<<(std::ostream& os,
+                                           const ImportEntry& entry);
 
   /// \private Internal use **only**
   LIEF_LOCAL void iat_address(uint64_t rva) {
@@ -125,7 +126,7 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   uint64_t iat_value_ = 0;
   uint64_t ilt_value_ = 0;
   uint64_t rva_ = 0;
-  PE_TYPE  type_ = PE_TYPE::PE32_PLUS;
+  PE_TYPE type_ = PE_TYPE::PE32_PLUS;
 };
 
 }

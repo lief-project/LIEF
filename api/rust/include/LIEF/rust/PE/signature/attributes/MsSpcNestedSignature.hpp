@@ -6,7 +6,8 @@
 class PE_MsSpcNestedSignature : public PE_Attribute {
   public:
   using lief_t = LIEF::PE::MsSpcNestedSignature;
-  PE_MsSpcNestedSignature(const lief_t& base) : PE_Attribute(base) {}
+  PE_MsSpcNestedSignature(const lief_t& base) :
+    PE_Attribute(base) {}
 
   auto sig() const {
     return std::make_unique<PE_Signature>(impl().sig());
@@ -17,5 +18,7 @@ class PE_MsSpcNestedSignature : public PE_Attribute {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

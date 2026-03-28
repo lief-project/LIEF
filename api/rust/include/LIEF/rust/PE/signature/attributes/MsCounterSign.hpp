@@ -22,34 +22,43 @@
 class PE_MsCounterSign : public PE_Attribute {
   public:
   using lief_t = LIEF::PE::MsCounterSign;
-  PE_MsCounterSign(const lief_t& base) : PE_Attribute(base) {}
+  PE_MsCounterSign(const lief_t& base) :
+    PE_Attribute(base) {}
 
-  class it_certificates :
-      public Iterator<PE_x509, lief_t::it_const_certificates>
-  {
+  class it_certificates : public Iterator<PE_x509, lief_t::it_const_certificates> {
     public:
-    it_certificates(const PE_MsCounterSign::lief_t& src)
-      : Iterator(std::move(src.certificates())) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_certificates(const PE_MsCounterSign::lief_t& src) :
+      Iterator(std::move(src.certificates())) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
-  class it_signers :
-      public Iterator<PE_SignerInfo, lief_t::it_const_signers>
-  {
+  class it_signers : public Iterator<PE_SignerInfo, lief_t::it_const_signers> {
     public:
-    it_signers(const PE_MsCounterSign::lief_t& src)
-      : Iterator(std::move(src.signers())) { } 
-    auto next() { return Iterator::next(); }
-    auto size() const { return Iterator::size(); }
+    it_signers(const PE_MsCounterSign::lief_t& src) :
+      Iterator(std::move(src.signers())) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
   };
 
   static bool classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 
-  auto version() const { return impl().version(); }
-  auto digest_algorithm() const { return to_int(impl().digest_algorithm()); }
+  auto version() const {
+    return impl().version();
+  }
+  auto digest_algorithm() const {
+    return to_int(impl().digest_algorithm());
+  }
 
   auto content_info() const {
     return std::make_unique<PE_ContentInfo>(impl().content_info());
@@ -65,5 +74,7 @@ class PE_MsCounterSign : public PE_Attribute {
 
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
 };

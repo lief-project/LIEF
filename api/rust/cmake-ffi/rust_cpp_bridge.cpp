@@ -8,8 +8,7 @@ class RustAssemblerConfig : public LIEF::assembly::AssemblerConfig {
   public:
   RustAssemblerConfig(const AssemblerConfig_r& impl) :
     LIEF::assembly::AssemblerConfig(),
-    impl_(const_cast<AssemblerConfig_r*>(&impl))
-  {}
+    impl_(const_cast<AssemblerConfig_r*>(&impl)) {}
 
   LIEF::optional<uint64_t> resolve_symbol(const std::string& name) override {
     int64_t addr = impl_->resolve_symbol(name);
@@ -25,6 +24,7 @@ class RustAssemblerConfig : public LIEF::assembly::AssemblerConfig {
   AssemblerConfig_r* impl_ = nullptr;
 };
 
-std::unique_ptr<LIEF::assembly::AssemblerConfig> from_rust(const AssemblerConfig_r& config) {
+std::unique_ptr<LIEF::assembly::AssemblerConfig>
+    from_rust(const AssemblerConfig_r& config) {
   return std::make_unique<RustAssemblerConfig>(config);
 }

@@ -58,7 +58,8 @@ bool should_change(const Confidence<Ref<Type>>& ty) {
   return should_change(ty.GetValue());
 }
 
-static void process(FunctionParameter& original_param, FunctionParameter& new_param)  {
+static void process(FunctionParameter& original_param,
+                    FunctionParameter& new_param) {
   if (original_param.name.starts_with("arg")) {
     original_param.name = new_param.name;
   }
@@ -118,7 +119,9 @@ void AndroidJNI::process_JNI_OnLoad(Function& F) {
   QualifiedNameAndType JNI_OnLoadTy;
 
   std::string err;
-  if (!bv_.ParseTypeString("jint JNI_OnLoad(JavaVM* vm, void* reserved)", JNI_OnLoadTy, err)) {
+  if (!bv_.ParseTypeString("jint JNI_OnLoad(JavaVM* vm, void* reserved)",
+                           JNI_OnLoadTy, err))
+  {
     BN_ERR("Can't parse JNI_OnLoad prototype: {}", err);
     return;
   }
@@ -165,11 +168,8 @@ void AndroidJNI::process_JNI_function(Function& F) {
   process(params[0], P0);
   process(params[1], P1);
 
-  F.SetUserType(Type::FunctionType(
-    F.GetReturnType(),
-    F.GetCallingConvention(),
-    params
-  ));
+  F.SetUserType(Type::FunctionType(F.GetReturnType(), F.GetCallingConvention(),
+                                   params));
 }
 
 }

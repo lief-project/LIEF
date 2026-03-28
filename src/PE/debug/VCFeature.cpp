@@ -20,9 +20,9 @@
 
 namespace LIEF::PE {
 
-std::unique_ptr<VCFeature> VCFeature::parse(
-  const details::pe_debug& hdr, Section* section, span<uint8_t> payload)
-{
+std::unique_ptr<VCFeature> VCFeature::parse(const details::pe_debug& hdr,
+                                            Section* section,
+                                            span<uint8_t> payload) {
   SpanStream stream(payload);
 
   auto pre_vc = stream.read<uint32_t>().value_or(0);
@@ -31,15 +31,15 @@ std::unique_ptr<VCFeature> VCFeature::parse(
   auto sdk = stream.read<uint32_t>().value_or(0);
   auto guardn = stream.read<uint32_t>().value_or(0);
 
-  return std::make_unique<VCFeature>(hdr, section, pre_vc, c_cpp, gs, sdk,
-                                     guardn);
+  return std::make_unique<VCFeature>(hdr, section, pre_vc, c_cpp, gs, sdk, guardn);
 }
 
 std::string VCFeature::to_string() const {
   std::ostringstream os;
   os << Debug::to_string() << '\n'
      << fmt::format("  Counts: Pre-VC++ 11.00={}, C/C++={}, /GS={}, /sdl={}, "
-                    "guardN={}", pre_vcpp(), c_cpp(), gs(), sdl(), guards());
+                    "guardN={}",
+                    pre_vcpp(), c_cpp(), gs(), sdl(), guards());
   return os.str();
 }
 

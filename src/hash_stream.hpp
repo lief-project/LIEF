@@ -32,7 +32,7 @@ class hashstream {
     SHA224,
     SHA256,
     SHA384,
-    SHA512
+    SHA512,
   };
   hashstream(HASH type);
 
@@ -57,7 +57,8 @@ class hashstream {
 
   template<typename T>
   hashstream& write(span<const T> s) {
-    static_assert(std::is_same_v<T, uint8_t> || std::is_same_v<T, char>, "Require an integer");
+    static_assert(std::is_same_v<T, uint8_t> || std::is_same_v<T, char>,
+                  "Require an integer");
     return write(reinterpret_cast<const uint8_t*>(s.data()), s.size());
   }
 

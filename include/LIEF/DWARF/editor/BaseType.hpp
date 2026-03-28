@@ -36,7 +36,7 @@ class LIEF_API BaseType : public Type {
     UNSIGNED,
     UNSIGNED_CHAR,
     BOOLEAN,
-    FLOAT
+    FLOAT,
   };
 
   static bool classof(const Type* type);

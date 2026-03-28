@@ -36,10 +36,10 @@ struct LIEF_API ParserConfig {
   /// @warning Enabling this flag can slow down the parsing
   ParserConfig& full_dyldinfo(bool flag);
 
-  bool parse_dyld_exports  = true; ///< Parse the Dyld export trie
+  bool parse_dyld_exports = true;  ///< Parse the Dyld export trie
   bool parse_dyld_bindings = true; ///< Parse the Dyld binding opcodes
-  bool parse_dyld_rebases  = true; ///< Parse the Dyld rebase opcodes
-  bool parse_overlay = true; ///< Whether the overlay data should be parsed
+  bool parse_dyld_rebases = true;  ///< Parse the Dyld rebase opcodes
+  bool parse_overlay = true;       ///< Whether the overlay data should be parsed
 
   /// When parsing Mach-O from memory, this option
   /// can be used to *undo* relocations and symbols bindings.

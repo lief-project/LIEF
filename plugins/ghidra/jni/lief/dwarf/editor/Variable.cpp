@@ -21,41 +21,20 @@
 namespace lief_jni::dwarf::editor {
 
 int Variable::register_natives(JNIEnv* env) {
-  static const std::array NATIVE_METHODS {
-    make(
-      "setAddr",
-      "(J)Llief/dwarf/editor/Variable;",
-      &jni_set_addr
-    ),
-    make(
-      "setStackOffset",
-      "(J)Llief/dwarf/editor/Variable;",
-      &jni_set_stack_offset
-    ),
-    make(
-      "setExternal",
-      "()Llief/dwarf/editor/Variable;",
-      &jni_set_external
-    ),
-    make(
-      "setType",
-      "(Llief/dwarf/editor/Type;)Llief/dwarf/editor/Variable;",
-      &jni_set_type
-    ),
-    make(
-      "addDescription",
-      "(Ljava/lang/String;)Llief/dwarf/editor/Variable;",
-      &jni_add_description
-    ),
-    make_destroy(
-      (void*)&jni_destroy
-    ),
+  static const std::array NATIVE_METHODS{
+      make("setAddr", "(J)Llief/dwarf/editor/Variable;", &jni_set_addr),
+      make("setStackOffset", "(J)Llief/dwarf/editor/Variable;",
+           &jni_set_stack_offset),
+      make("setExternal", "()Llief/dwarf/editor/Variable;", &jni_set_external),
+      make("setType", "(Llief/dwarf/editor/Type;)Llief/dwarf/editor/Variable;",
+           &jni_set_type),
+      make("addDescription", "(Ljava/lang/String;)Llief/dwarf/editor/Variable;",
+           &jni_add_description),
+      make_destroy((void*)&jni_destroy),
   };
 
-  env->RegisterNatives(
-    jni::StaticRef<kClass>{}.GetJClass(),
-    NATIVE_METHODS.data(), NATIVE_METHODS.size()
-  );
+  env->RegisterNatives(jni::StaticRef<kClass>{}.GetJClass(), NATIVE_METHODS.data(),
+                       NATIVE_METHODS.size());
 
   GHIDRA_DEBUG("'{}' registered", kClass.name_);
 

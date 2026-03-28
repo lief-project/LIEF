@@ -33,5 +33,3 @@ LIEF_API const char* to_string(ALGORITHMS e);
 } // namespace PE
 } // namespace LIEF
 #endif
-
-

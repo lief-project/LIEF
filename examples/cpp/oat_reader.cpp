@@ -22,7 +22,7 @@
 using namespace LIEF::OAT;
 
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <OAT file>" << '\n';
@@ -36,4 +36,3 @@ int main(int argc, char **argv) {
 
   return EXIT_FAILURE;
 }
-

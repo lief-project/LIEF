@@ -32,4 +32,3 @@ std::ostream& DynamicEntryFilter::print(std::ostream& os) const {
 }
 
 }
-

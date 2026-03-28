@@ -49,7 +49,7 @@ struct bigobj_header {
 };
 
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
 struct relocation {
   uint32_t VirtualAddress;
   uint32_t SymbolTableIndex;

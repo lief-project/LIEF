@@ -18,7 +18,8 @@
 
 class COFF_Utils {
   public:
-  static bool is_coff(std::string file) { // NOLINT(performance-unnecessary-value-param)
+  static bool
+      is_coff(std::string file) { // NOLINT(performance-unnecessary-value-param)
     return LIEF::COFF::is_coff(file);
   }
 };

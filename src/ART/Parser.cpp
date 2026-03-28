@@ -32,7 +32,7 @@
 namespace LIEF::ART {
 
 Parser::~Parser() = default;
-Parser::Parser()  = default;
+Parser::Parser() = default;
 
 std::unique_ptr<File> Parser::parse(const std::string& filename) {
   if (!is_art(filename)) {
@@ -46,7 +46,8 @@ std::unique_ptr<File> Parser::parse(const std::string& filename) {
   return std::move(parser.file_);
 }
 
-std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string& name) {
+std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data,
+                                    const std::string& name) {
   if (!is_art(data)) {
     LIEF_ERR("'{}' is not an ART file", name);
     return nullptr;
@@ -61,13 +62,10 @@ std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data, const std::string
 
 Parser::Parser(std::vector<uint8_t> data) :
   file_{new File{}},
-  stream_{std::make_unique<VectorStream>(std::move(data))}
-{
-}
+  stream_{std::make_unique<VectorStream>(std::move(data))} {}
 
 Parser::Parser(const std::string& file) :
-  file_{new File{}}
-{
+  file_{new File{}} {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
     LIEF_ERR("Failed to create stream");
@@ -105,4 +103,3 @@ void Parser::init(const std::string& /*name*/, art_version_t version) {
 }
 
 } // namespace LIEF::ART
-

@@ -43,7 +43,6 @@ class RuntimeFunctions : public AnalyzerBase {
   private:
   void process(const LIEF::PE::RuntimeFunctionX64& x64);
   void process(const LIEF::PE::RuntimeFunctionAArch64& arm64);
-
 };
 
 }

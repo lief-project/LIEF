@@ -27,4 +27,3 @@ void SymbolVersionAux::accept(Visitor& visitor) const {
 }
 
 }
-

@@ -22,16 +22,16 @@ namespace Android {
 
 enum class ANDROID_VERSIONS {
   VERSION_UNKNOWN = 0,
-  VERSION_601     = 1,
+  VERSION_601 = 1,
 
-  VERSION_700     = 2,
-  VERSION_710     = 3,
-  VERSION_712     = 4,
+  VERSION_700 = 2,
+  VERSION_710 = 3,
+  VERSION_712 = 4,
 
-  VERSION_800     = 5,
-  VERSION_810     = 6,
+  VERSION_800 = 5,
+  VERSION_810 = 6,
 
-  VERSION_900     = 7,
+  VERSION_900 = 7,
 };
 
 LIEF_API const char* code_name(ANDROID_VERSIONS version);

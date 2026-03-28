@@ -33,9 +33,16 @@ namespace LIEF::ELF {
 /// needed to rebuild the ELF file.
 class LIEF_LOCAL ObjectFileLayout : public Layout {
   public:
-  using relocations_map_t    = std::unordered_map<Section*, std::vector<Relocation*>>; // Relocation associated with a section
-  using sections_reloc_map_t = std::unordered_map<Section*, Section*>; // Map a section with its associated relocation section
-  using rel_sections_size_t  = std::unordered_map<Section*, size_t>;   // Map relocation sections with needed size
+  using relocations_map_t =
+      std::unordered_map<Section*,
+                         std::vector<Relocation*>>; // Relocation associated with a
+                                                    // section
+  using sections_reloc_map_t =
+      std::unordered_map<Section*, Section*>; // Map a section with its associated
+                                              // relocation section
+  using rel_sections_size_t =
+      std::unordered_map<Section*,
+                         size_t>; // Map relocation sections with needed size
 
   public:
   using Layout::Layout;
@@ -67,11 +74,13 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
       if (section->type() == Section::TYPE::NOBITS) {
         continue;
       }
-      last_offset_sections = std::max<uint64_t>(section->file_offset() + section->size(),
-                                                last_offset_sections);
+      last_offset_sections =
+          std::max<uint64_t>(section->file_offset() + section->size(),
+                             last_offset_sections);
     }
     LIEF_DEBUG("Sections' last offset: {:#x}", last_offset_sections);
-    LIEF_DEBUG("SHDR Table:            {:#x}", binary_->header().section_headers_offset());
+    LIEF_DEBUG("SHDR Table:            {:#x}",
+               binary_->header().section_headers_offset());
 
     Header& hdr = binary_->header();
     for (Section& sec : binary_->sections()) {
@@ -121,13 +130,13 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
   ~ObjectFileLayout() override = default;
 
   ObjectFileLayout() = delete;
+
   private:
   std::unordered_map<const Section*, size_t> sec_reloc_info_;
 
   relocations_map_t relocation_map_;
   sections_reloc_map_t sections_reloc_map_;
   rel_sections_size_t rel_sections_size_;
-
 };
 }
 

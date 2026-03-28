@@ -29,16 +29,16 @@ class LIEF_API Symbol : public Object {
   public:
   Symbol() = default;
   Symbol(std::string name) :
-    name_(std::move(name))
-  {}
+    name_(std::move(name)) {}
 
   Symbol(std::string name, uint64_t value) :
-    name_(std::move(name)), value_(value)
-  {}
+    name_(std::move(name)),
+    value_(value) {}
 
   Symbol(std::string name, uint64_t value, uint64_t size) :
-    name_(std::move(name)), value_(value), size_(size)
-  {}
+    name_(std::move(name)),
+    value_(value),
+    size_(size) {}
 
   Symbol(const Symbol&) = default;
   Symbol& operator=(const Symbol&) = default;
@@ -94,4 +94,3 @@ class LIEF_API Symbol : public Object {
 }
 
 #endif
-

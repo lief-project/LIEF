@@ -20,12 +20,19 @@
 class MachO_Dylib : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::DylibCommand;
-  MachO_Dylib(const lief_t& base) : MachO_Command(base) {}
+  MachO_Dylib(const lief_t& base) :
+    MachO_Command(base) {}
 
-  std::string name() const { return impl().name(); }
-  uint32_t timestamp() const { return impl().timestamp(); }
+  std::string name() const {
+    return impl().name();
+  }
+  uint32_t timestamp() const {
+    return impl().timestamp();
+  }
 
-  auto name_offset() const { return impl().name_offset(); }
+  auto name_offset() const {
+    return impl().name_offset();
+  }
 
   auto current_version() const {
     return details::make_vector(impl().current_version());
@@ -64,6 +71,10 @@ class MachO_Dylib : public MachO_Command {
   }
 
   private:
-  const lief_t& impl() const { return as<lief_t>(this); }
-  lief_t& impl() { return as<lief_t>(this); }
+  const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+  lief_t& impl() {
+    return as<lief_t>(this);
+  }
 };

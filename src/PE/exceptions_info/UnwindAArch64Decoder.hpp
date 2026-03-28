@@ -41,19 +41,16 @@ class Decoder {
   };
   Decoder() = delete;
   Decoder(BinaryStream& stream) :
-    stream_(&stream)
-  {}
+    stream_(&stream) {}
 
   Decoder(BinaryStream& stream, std::ostream& os) :
     ostream_(&os),
-    stream_(&stream)
-  {}
+    stream_(&stream) {}
 
   Decoder(BinaryStream& stream, std::ostream& os, const outstream_opt_t& opt) :
     ostream_(&os),
     stream_(&stream),
-    opt_(opt)
-  {}
+    opt_(opt) {}
 
   ok_error_t run(bool prologue);
 
@@ -76,13 +73,13 @@ class Decoder {
     return *this;
   }
 
-  template <typename... Args>
-  Decoder& log(const char *fmt, const Args &... args) {
+  template<typename... Args>
+  Decoder& log(const char* fmt, const Args&... args) {
     return log(fmt::format(fmt::runtime(fmt), args...));
   }
 
-  template <typename... Args>
-  Decoder& lognf(const char *fmt, const Args &... args) {
+  template<typename... Args>
+  Decoder& lognf(const char* fmt, const Args&... args) {
     return log(fmt::format(fmt::runtime(fmt), args...), /*flush=*/false);
   }
 
@@ -109,5 +106,3 @@ class Decoder {
 }
 
 #endif
-
-

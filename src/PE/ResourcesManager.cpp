@@ -38,27 +38,28 @@ FMT_FORMATTER(LIEF::PE::ResourcesManager::TYPE, LIEF::PE::to_string);
 namespace LIEF::PE {
 
 static constexpr auto RESOURCE_TYPES = {
-  ResourcesManager::TYPE::CURSOR,         ResourcesManager::TYPE::BITMAP,
-  ResourcesManager::TYPE::ICON,           ResourcesManager::TYPE::MENU,
-  ResourcesManager::TYPE::DIALOG,         ResourcesManager::TYPE::STRING,
-  ResourcesManager::TYPE::FONTDIR,        ResourcesManager::TYPE::FONT,
-  ResourcesManager::TYPE::ACCELERATOR,    ResourcesManager::TYPE::RCDATA,
-  ResourcesManager::TYPE::MESSAGETABLE,   ResourcesManager::TYPE::GROUP_CURSOR,
-  ResourcesManager::TYPE::GROUP_ICON,     ResourcesManager::TYPE::VERSION,
-  ResourcesManager::TYPE::DLGINCLUDE,     ResourcesManager::TYPE::PLUGPLAY,
-  ResourcesManager::TYPE::VXD,            ResourcesManager::TYPE::ANICURSOR,
-  ResourcesManager::TYPE::ANIICON,        ResourcesManager::TYPE::HTML,
-  ResourcesManager::TYPE::MANIFEST,
+    ResourcesManager::TYPE::CURSOR,       ResourcesManager::TYPE::BITMAP,
+    ResourcesManager::TYPE::ICON,         ResourcesManager::TYPE::MENU,
+    ResourcesManager::TYPE::DIALOG,       ResourcesManager::TYPE::STRING,
+    ResourcesManager::TYPE::FONTDIR,      ResourcesManager::TYPE::FONT,
+    ResourcesManager::TYPE::ACCELERATOR,  ResourcesManager::TYPE::RCDATA,
+    ResourcesManager::TYPE::MESSAGETABLE, ResourcesManager::TYPE::GROUP_CURSOR,
+    ResourcesManager::TYPE::GROUP_ICON,   ResourcesManager::TYPE::VERSION,
+    ResourcesManager::TYPE::DLGINCLUDE,   ResourcesManager::TYPE::PLUGPLAY,
+    ResourcesManager::TYPE::VXD,          ResourcesManager::TYPE::ANICURSOR,
+    ResourcesManager::TYPE::ANIICON,      ResourcesManager::TYPE::HTML,
+    ResourcesManager::TYPE::MANIFEST,
 };
 
 std::string ResourcesManager::string_entry_t::string_u8() const {
   return u16tou8(string);
 }
 
-const ResourceNode* ResourcesManager::get_node_type(ResourcesManager::TYPE type) const {
+const ResourceNode*
+    ResourcesManager::get_node_type(ResourcesManager::TYPE type) const {
   ResourceNode::it_childs nodes = resources_->childs();
-  const auto it_node = std::find_if(nodes.begin(), nodes.end(),
-      [type] (const ResourceNode& node) {
+  const auto it_node =
+      std::find_if(nodes.begin(), nodes.end(), [type](const ResourceNode& node) {
         return TYPE(node.id()) == type;
       });
 
@@ -73,9 +74,7 @@ std::vector<ResourcesManager::TYPE> ResourcesManager::get_types() const {
   std::vector<TYPE> types;
   for (const ResourceNode& node : resources_->childs()) {
     const auto it = std::find_if(RESOURCE_TYPES.begin(), RESOURCE_TYPES.end(),
-        [&node] (TYPE t) {
-          return t == TYPE(node.id());
-        });
+                                 [&node](TYPE t) { return t == TYPE(node.id()); });
 
     if (it != RESOURCE_TYPES.end()) {
       types.push_back(*it);
@@ -91,7 +90,7 @@ std::string ResourcesManager::manifest() const {
   }
 
   const auto* data_node =
-    root_node->safe_get_at(0).safe_get_at(0).cast<ResourceData>();
+      root_node->safe_get_at(0).safe_get_at(0).cast<ResourceData>();
 
   if (data_node == nullptr) {
     LIEF_WARN("Corrupted manifest node");
@@ -110,9 +109,9 @@ void ResourcesManager::manifest(const std::string& manifest) {
     auto L3 = std::make_unique<ResourceData>(manifest);
 
     (*resources_)
-      .add_child(std::move(L1))
-      .add_child(std::move(L2))
-      .add_child(std::move(L3));
+        .add_child(std::move(L1))
+        .add_child(std::move(L2))
+        .add_child(std::move(L3));
 
     manifest_node = get_node_type(TYPE::MANIFEST);
   }
@@ -123,7 +122,7 @@ void ResourcesManager::manifest(const std::string& manifest) {
   }
 
   auto* data_node =
-    manifest_node->safe_get_at(0).safe_get_at(0).cast<ResourceData>();
+      manifest_node->safe_get_at(0).safe_get_at(0).cast<ResourceData>();
 
   if (data_node == nullptr) {
     LIEF_WARN("Corrupted manifest node");
@@ -160,7 +159,7 @@ std::vector<ResourceVersion> ResourcesManager::version() const {
 
 ResourcesManager::it_const_icons ResourcesManager::icons() const {
   std::vector<ResourceIcon> icons;
-  const ResourceNode* root_icon     = get_node_type(TYPE::ICON);
+  const ResourceNode* root_icon = get_node_type(TYPE::ICON);
   const ResourceNode* root_grp_icon = get_node_type(TYPE::GROUP_ICON);
   if (root_icon == nullptr) {
     LIEF_ERR("Missing '{}' entry", to_string(TYPE::ICON));
@@ -221,10 +220,11 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
 
         // Find the icon the RESOURCE_TYPES::ICON tree that matched entry.ID
         ResourceNode::it_const_childs sub_nodes_icons = root_icon->childs();
-        const auto it = std::find_if(sub_nodes_icons.begin(), sub_nodes_icons.end(),
-            [&entry] (const ResourceNode& node) {
-              return node.id() == entry.ID;
-            });
+        const auto it =
+            std::find_if(sub_nodes_icons.begin(), sub_nodes_icons.end(),
+                         [&entry](const ResourceNode& node) {
+                           return node.id() == entry.ID;
+                         });
         if (it == sub_nodes_icons.end()) {
           LIEF_WARN("Icon with id {:d} not found", entry.ID);
           continue;
@@ -240,7 +240,8 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
           LIEF_WARN("Expected data node for node id {}", icon_node.id());
           continue;
         }
-        span<const uint8_t> pixels = static_cast<const ResourceData&>(icon_node).content();
+        span<const uint8_t> pixels =
+            static_cast<const ResourceData&>(icon_node).content();
         icon.pixels_ = std::vector<uint8_t>(pixels.begin(), pixels.end());
         icons.push_back(std::move(icon));
       }
@@ -286,11 +287,10 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
                 sizeof(details::pe_icon_header));
 
     ios
-      // pe_resource_icon_dir
-      .write<uint16_t>(/*reserved*/0)
-      .write<uint16_t>(/*type*/1)
-      .write<uint16_t>(/*count*/0)
-    ;
+        // pe_resource_icon_dir
+        .write<uint16_t>(/*reserved*/ 0)
+        .write<uint16_t>(/*type*/ 1)
+        .write<uint16_t>(/*count*/ 0);
     std::vector<uint8_t> raw_header;
     ios.move(raw_header);
 
@@ -309,10 +309,9 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
   }
 
   auto* icon_group_data =
-    icon_grp_node->safe_get_at(0).safe_get_at(0).cast<ResourceData>();
+      icon_grp_node->safe_get_at(0).safe_get_at(0).cast<ResourceData>();
 
-  auto* icon_dir =
-    icon_node->safe_get_at(0).cast<ResourceDirectory>();
+  auto* icon_dir = icon_node->safe_get_at(0).cast<ResourceDirectory>();
 
   if (icon_group_data == nullptr) {
     LIEF_ERR("Icon group headers data node not found");
@@ -326,31 +325,31 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
 
   vector_iostream icon_group = icon_group_data->edit();
 
-  if (icon_group.size() < /* reserved + type + count */3 * sizeof(uint16_t)) {
+  if (icon_group.size() < /* reserved + type + count */ 3 * sizeof(uint16_t)) {
     LIEF_ERR("Icon group header too small");
     return;
   }
 
   ++icon_group.edit_as<details::pe_resource_icon_dir>()->count;
-  icon_group
-    .seek_end()
-    .write<uint8_t>(icon.width())
-    .write<uint8_t>(icon.height())
-    .write<uint8_t>(icon.color_count())
-    .write<uint8_t>(icon.reserved())
-    .write<uint16_t>(icon.planes())
-    .write<uint16_t>(icon.bit_count())
-    .write<uint16_t>(icon.size())
-    .write<uint16_t>(new_id)
-  ;
+  icon_group.seek_end()
+      .write<uint8_t>(icon.width())
+      .write<uint8_t>(icon.height())
+      .write<uint8_t>(icon.color_count())
+      .write<uint8_t>(icon.reserved())
+      .write<uint16_t>(icon.planes())
+      .write<uint16_t>(icon.bit_count())
+      .write<uint16_t>(icon.size())
+      .write<uint16_t>(new_id);
 
   auto pixel_node = std::make_unique<ResourceData>(as_vector(icon.pixels()));
-  pixel_node->id(static_cast<int>(icon.sublang()) << 10 | static_cast<int>(icon.lang()));
+  pixel_node->id(static_cast<int>(icon.sublang()) << 10 |
+                 static_cast<int>(icon.lang()));
   icon_dir->add_child(std::move(pixel_node));
 }
 
 
-void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceIcon& newone) {
+void ResourcesManager::change_icon(const ResourceIcon& original,
+                                   const ResourceIcon& newone) {
   ResourceNode* icon_node = get_node_type(TYPE::ICON);
   ResourceNode* icon_grp_node = get_node_type(TYPE::GROUP_ICON);
 
@@ -377,7 +376,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original, const ResourceI
       vector_iostream editor = icon_group_node->edit();
       SpanStream stream = icon_group_node->content();
 
-      /* reserved */stream.read<uint16_t>().value_or(0);
+      /* reserved */ stream.read<uint16_t>().value_or(0);
       /* type */ stream.read<uint16_t>().value_or(0);
       size_t count = stream.read<uint16_t>().value_or(0);
 
@@ -585,11 +584,11 @@ std::string ResourcesManager::print(uint32_t depth) const {
   return oss.str();
 }
 
-void ResourcesManager::print_tree(const ResourceNode& node, std::ostringstream& output,
+void ResourcesManager::print_tree(const ResourceNode& node,
+                                  std::ostringstream& output,
                                   uint32_t current_depth, uint32_t max_depth,
-                                  const ResourceNode*/*parent*/, std::string header,
-                                  bool is_last) const
-{
+                                  const ResourceNode* /*parent*/,
+                                  std::string header, bool is_last) const {
   static constexpr auto ELBOW = "└──";
   static constexpr auto PIPE = "│  ";
   static constexpr auto TEE = "├──";
@@ -600,16 +599,15 @@ void ResourcesManager::print_tree(const ResourceNode& node, std::ostringstream& 
   }
 
   std::string type = node.is_directory() ? "Directory" : "Data";
-  std::string info = fmt::format("{} ID: {:04d} ({:#06x})",
-                                 type, node.id(), node.id());
+  std::string info =
+      fmt::format("{} ID: {:04d} ({:#06x})", type, node.id(), node.id());
   if (node.has_name()) {
     info += fmt::format(" name: {}", u16tou8(node.name()));
   } else if (std::string ty = to_string(TYPE(node.id()));
              ty != "UNKNOWN" && node.depth() == 1)
   {
     info += fmt::format(" type: {}", ty);
-  }
-  else if (current_depth == 3) {
+  } else if (current_depth == 3) {
     uint32_t lang = lang_from_id(node.id());
     uint32_t sub_lang = sublang_from_id(node.id());
     info += fmt::format(" Lang: {:#04x} / Sublang: {:#04x}", lang, sub_lang);
@@ -617,15 +615,15 @@ void ResourcesManager::print_tree(const ResourceNode& node, std::ostringstream& 
 
   if (const auto* data = node.cast<ResourceData>()) {
     const size_t size = data->content().size();
-    info += fmt::format(" length={} ({:#08x}), offset: {:#06x}",
-                        size, size, data->offset());
+    info += fmt::format(" length={} ({:#08x}), offset: {:#06x}", size, size,
+                        data->offset());
   }
 
   if (const auto* dir = node.cast<ResourceDirectory>()) {
     info += fmt::format(" children={}", dir->childs().size());
   }
 
-  output << fmt::format("{}{} {}\n", header, is_last ? ELBOW : TEE , info);
+  output << fmt::format("{}{} {}\n", header, is_last ? ELBOW : TEE, info);
   if (const auto* data = node.cast<ResourceData>()) {
     std::string hex_content;
     std::string str_content;
@@ -649,9 +647,8 @@ void ResourcesManager::print_tree(const ResourceNode& node, std::ostringstream& 
 
   auto children = node.childs();
   for (size_t i = 0; i < children.size(); ++i) {
-    print_tree(children[i], output, current_depth + 1, max_depth,
-               &node, header + (is_last ? BLANK : PIPE),
-               i == (children.size() - 1));
+    print_tree(children[i], output, current_depth + 1, max_depth, &node,
+               header + (is_last ? BLANK : PIPE), i == (children.size() - 1));
   }
 }
 
@@ -695,31 +692,17 @@ std::ostream& operator<<(std::ostream& os, const ResourcesManager& rsrc) {
 }
 
 const char* to_string(ResourcesManager::TYPE type) {
-  #define ENTRY(X) std::pair(ResourcesManager::TYPE::X, #X)
-  STRING_MAP enums2str {
-    ENTRY(CURSOR),
-    ENTRY(BITMAP),
-    ENTRY(ICON),
-    ENTRY(MENU),
-    ENTRY(DIALOG),
-    ENTRY(STRING),
-    ENTRY(FONTDIR),
-    ENTRY(FONT),
-    ENTRY(ACCELERATOR),
-    ENTRY(RCDATA),
-    ENTRY(MESSAGETABLE),
-    ENTRY(GROUP_CURSOR),
-    ENTRY(GROUP_ICON),
-    ENTRY(VERSION),
-    ENTRY(DLGINCLUDE),
-    ENTRY(PLUGPLAY),
-    ENTRY(VXD),
-    ENTRY(ANICURSOR),
-    ENTRY(ANIICON),
-    ENTRY(HTML),
-    ENTRY(MANIFEST),
+#define ENTRY(X) std::pair(ResourcesManager::TYPE::X, #X)
+  STRING_MAP enums2str{
+      ENTRY(CURSOR),     ENTRY(BITMAP),       ENTRY(ICON),
+      ENTRY(MENU),       ENTRY(DIALOG),       ENTRY(STRING),
+      ENTRY(FONTDIR),    ENTRY(FONT),         ENTRY(ACCELERATOR),
+      ENTRY(RCDATA),     ENTRY(MESSAGETABLE), ENTRY(GROUP_CURSOR),
+      ENTRY(GROUP_ICON), ENTRY(VERSION),      ENTRY(DLGINCLUDE),
+      ENTRY(PLUGPLAY),   ENTRY(VXD),          ENTRY(ANICURSOR),
+      ENTRY(ANIICON),    ENTRY(HTML),         ENTRY(MANIFEST),
   };
-  #undef ENTRY
+#undef ENTRY
 
   if (auto it = enums2str.find(type); it != enums2str.end()) {
     return it->second;
@@ -730,4 +713,3 @@ const char* to_string(ResourcesManager::TYPE type) {
 
 
 } // namespace LIEF::PE
-
