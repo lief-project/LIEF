@@ -18,56 +18,36 @@
 #include "pyLIEF.hpp"
 #include "typing.hpp"
 #include "LIEF/config.h"
+
 #include <memory>
 #include <nanobind/nanobind.h>
-
-#if LIEF_PE_SUPPORT
-#include "LIEF/PE/Binary.hpp"
-#endif
-
-#if LIEF_ELF_SUPPORT
-#include "LIEF/ELF/Binary.hpp"
-#endif
-
-#if LIEF_OAT_SUPPORT
-#include "LIEF/OAT/Binary.hpp"
-#endif
-
-#if LIEF_MACHO_SUPPORT
-#include "LIEF/MachO/Binary.hpp"
-#endif
-
-#if LIEF_COFF_SUPPORT
-#include "LIEF/COFF/Binary.hpp"
-#endif
 
 namespace LIEF {
 class BinaryStream;
 }
-
 
 namespace LIEF::py::typing {
 
 constexpr auto out_descr() {
   return nb::detail::union_name(
 #if LIEF_PE_SUPPORT
-      nb::detail::make_caster<LIEF::PE::Binary>::Name,
+      nb::detail::const_name("_lief.PE.Binary"),
 #endif
 
 #if LIEF_OAT_SUPPORT
-      nb::detail::make_caster<LIEF::OAT::Binary>::Name,
+      nb::detail::const_name("_lief.OAT.Binary"),
 #endif
 
 #if LIEF_ELF_SUPPORT
-      nb::detail::make_caster<LIEF::ELF::Binary>::Name,
+      nb::detail::const_name("_lief.ELF.Binary"),
 #endif
 
 #if LIEF_MACHO_SUPPORT
-      nb::detail::make_caster<LIEF::MachO::Binary>::Name,
+      nb::detail::const_name("_lief.MachO.Binary"),
 #endif
 
 #if LIEF_COFF_SUPPORT
-      nb::detail::make_caster<LIEF::COFF::Binary>::Name,
+      nb::detail::const_name("_lief.COFF.Binary"),
 #endif
 
       nb::detail::const_name("None")

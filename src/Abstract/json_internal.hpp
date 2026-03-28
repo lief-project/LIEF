@@ -16,13 +16,16 @@
 #ifndef LIEF_ABSTRACT_JSON_INTERNAL_H
 #define LIEF_ABSTRACT_JSON_INTERNAL_H
 
-#include "LIEF/config.h"
-
-#include "LIEF/visibility.h"
-#include "LIEF/Abstract.hpp"
 #include "visitors/json.hpp"
 
 namespace LIEF {
+
+class Binary;
+class Header;
+class Section;
+class Symbol;
+class Relocation;
+class Function;
 
 /// Class that implements the Visitor pattern to serialize LIEF abstracted
 /// object in JSON

@@ -35,7 +35,7 @@ class JsonVisitor : public Visitor {
   JsonVisitor(const JsonVisitor&);
   JsonVisitor& operator=(const JsonVisitor&);
 
-  inline json get() const {
+  json get() const {
     return node_;
   }
 

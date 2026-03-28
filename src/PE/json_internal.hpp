@@ -16,7 +16,6 @@
 #ifndef LIEF_PE_JSON_INTERNAL_H
 #define LIEF_PE_JSON_INTERNAL_H
 
-#include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
 namespace LIEF {

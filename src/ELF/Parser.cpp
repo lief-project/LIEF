@@ -62,6 +62,8 @@ Parser::Parser(const std::string& file, ParserConfig conf) :
   if (auto s = VectorStream::from_file(file)) {
     stream_ = std::make_unique<VectorStream>(std::move(*s));
   }
+  if (false) {
+  }
 }
 
 Header::ELF_DATA determine_elf_endianess(ARCH machine) {

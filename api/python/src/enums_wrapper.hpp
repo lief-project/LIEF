@@ -17,12 +17,10 @@
 #define PY_LIEF_ENUMS_WRAPPER_H
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/string.h>
-#include "pyutils.hpp"
-#include <LIEF/logging.hpp>
-#include <map>
-#include <spdlog/fmt/fmt.h>
 
 #include "LIEF/visibility.h"
+
+namespace nb = nanobind;
 
 namespace LIEF {
 

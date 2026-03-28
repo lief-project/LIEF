@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/config.h"
+#include "LIEF/Object.hpp"
 #include "logging.hpp"
 #include "LIEF/Abstract/json.hpp"
 

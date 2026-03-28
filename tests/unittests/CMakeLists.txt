@@ -26,6 +26,8 @@ add_executable(unittests
   test_linux_header.cpp
 )
 
+target_precompile_headers(unittests PRIVATE pch.hpp)
+
 set_target_properties(unittests
   PROPERTIES CXX_STANDARD           17
              CXX_STANDARD_REQUIRED  ON)

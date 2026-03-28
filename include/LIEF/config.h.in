@@ -17,6 +17,8 @@
 #ifndef LIEF_CONFIG_H
 #define LIEF_CONFIG_H
 
+// clang-format off
+
 // Main formats
 #cmakedefine LIEF_PE_SUPPORT       @LIEF_PE_SUPPORT@
 #cmakedefine LIEF_ELF_SUPPORT      @LIEF_ELF_SUPPORT@

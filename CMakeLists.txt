@@ -216,6 +216,10 @@ target_include_directories(LIB_LIEF
   PUBLIC  "$<BUILD_INTERFACE:${LIEF_PUBLIC_INCLUDE_DIR}>"
   PRIVATE "${LIEF_PRIVATE_INCLUDE_DIR}")
 
+target_precompile_headers(LIB_LIEF PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/lief-pch.hpp
+)
+
 if(LIEF_ENABLE_JSON)
   if(LIEF_OPT_NLOHMANN_JSON_EXTERNAL)
     find_package(nlohmann_json REQUIRED)

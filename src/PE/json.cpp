@@ -13,14 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "logging.hpp"
-
 #include "PE/json_internal.hpp"
-#include "LIEF/PE.hpp"
+
+#include "LIEF/utils.hpp"
+#include "LIEF/hash.hpp"
+
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/resources/ResourceDialog.hpp"
+#include "LIEF/PE/resources/ResourceDialogExtended.hpp"
+#include "LIEF/PE/resources/ResourceDialogRegular.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/PE/RichHeader.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/PE/debug/CodeView.hpp"
+#include "LIEF/PE/debug/Pogo.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/signature/attributes/ContentType.hpp"
+#include "LIEF/PE/signature/attributes/GenericType.hpp"
+#include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
+#include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
+#include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
+#include "LIEF/PE/signature/attributes/MsSpcStatementType.hpp"
+#include "LIEF/PE/signature/attributes/PKCS9AtSequenceNumber.hpp"
+#include "LIEF/PE/signature/attributes/PKCS9CounterSignature.hpp"
+#include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
+#include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
+#include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
+#include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
+#include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
 
 #include "Object.tcc"
-
 
 namespace LIEF::PE {
 
