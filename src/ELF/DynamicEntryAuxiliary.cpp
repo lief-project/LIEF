@@ -18,8 +18,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 void DynamicEntryAuxiliary::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -32,4 +32,4 @@ std::ostream& DynamicEntryAuxiliary::print(std::ostream& os) const {
 }
 
 }
-}
+

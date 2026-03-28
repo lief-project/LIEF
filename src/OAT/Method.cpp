@@ -21,8 +21,8 @@
 #include "LIEF/OAT/Class.hpp"
 #include "LIEF/DEX/Method.hpp"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 Method::Method() = default;
 Method::Method(const Method&) = default;
@@ -112,4 +112,4 @@ Method::~Method() = default;
 
 
 }
-}
+

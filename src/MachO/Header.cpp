@@ -30,8 +30,8 @@
 
 FMT_FORMATTER(LIEF::MachO::Header::FLAGS, LIEF::MachO::to_string);
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 static constexpr auto HEADER_FLAGS = {
   Header::FLAGS::NOUNDEFS, Header::FLAGS::INCRLINK,
@@ -75,8 +75,8 @@ template Header::Header(const details::mach_header& header);
 std::vector<Header::FLAGS> Header::flags_list() const {
   std::vector<Header::FLAGS> flags;
 
-  std::copy_if(std::begin(HEADER_FLAGS), std::end(HEADER_FLAGS),
-               std::inserter(flags, std::begin(flags)),
+  std::copy_if(HEADER_FLAGS.begin(), HEADER_FLAGS.end(),
+               std::inserter(flags, flags.begin()),
                [this] (FLAGS f) { return has(f); });
 
   return flags;
@@ -211,4 +211,4 @@ const char* to_string(Header::CPU_TYPE e) {
 }
 
 }
-}
+

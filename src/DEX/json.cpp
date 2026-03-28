@@ -17,8 +17,8 @@
 #include "DEX/json_internal.hpp"
 #include "LIEF/DEX.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 json to_json_obj(const Object& v) {
   JsonVisitor visitor;
@@ -208,6 +208,6 @@ void JsonVisitor::visit(const MapList& list) {
 
 
 
-} // namespace DEX
-} // namespace LIEF
+} // namespace LIEF::DEX
+
 

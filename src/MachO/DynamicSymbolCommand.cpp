@@ -19,8 +19,8 @@
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 DynamicSymbolCommand::DynamicSymbolCommand() :
   LoadCommand::LoadCommand{LoadCommand::TYPE::DYSYMTAB,
@@ -89,4 +89,4 @@ std::ostream& DynamicSymbolCommand::print(std::ostream& os) const {
 }
 
 }
-}
+

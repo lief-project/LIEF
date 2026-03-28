@@ -26,8 +26,8 @@
 
 #include "PE/Structures.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 CodeViewPDB::CodeViewPDB(const details::pe_debug& debug_info,
                          const details::pe_pdb_70& pdb_70, Section* sec) :
@@ -81,4 +81,4 @@ std::string CodeViewPDB::to_string() const {
 }
 
 }
-}
+

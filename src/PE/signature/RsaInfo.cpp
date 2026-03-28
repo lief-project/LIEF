@@ -25,8 +25,8 @@
 #include <mbedtls/private/rsa.h>
 #include <utility>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 RsaInfo::RsaInfo() = default;
 
@@ -145,4 +145,4 @@ std::ostream& operator<<(std::ostream& os, const RsaInfo& info) {
 }
 
 }
-}
+

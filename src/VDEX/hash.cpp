@@ -19,8 +19,8 @@
 #include "LIEF/DEX/hash.hpp"
 #include "LIEF/DEX/File.hpp"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 Hash::~Hash() = default;
 
@@ -47,6 +47,6 @@ void Hash::visit(const Header& header) {
 
 
 
-} // namespace VDEX
-} // namespace LIEF
+} // namespace LIEF::VDEX
+
 

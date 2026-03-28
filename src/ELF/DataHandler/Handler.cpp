@@ -25,9 +25,9 @@
 
 #include "ELF/DataHandler/Handler.hpp"
 
-namespace LIEF {
-namespace ELF {
-namespace DataHandler {
+
+
+namespace LIEF::ELF::DataHandler {
 
 class DataHandlerStream : public BinaryStream {
   public:
@@ -91,22 +91,22 @@ result<std::unique_ptr<Handler>> Handler::from_stream(std::unique_ptr<BinaryStre
 
 bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
-  const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
+  const auto it_node = std::find_if(nodes_.begin(), nodes_.end(),
                                     [&tmp] (const std::unique_ptr<Node>& node) {
                                       return tmp == *node;
                                     });
-  return it_node != std::end(nodes_);
+  return it_node != nodes_.end();
 }
 
 result<Handler::ref_t<Node>> Handler::get(uint64_t offset, uint64_t size, Node::Type type) {
   Node tmp{offset, size, type};
 
-  const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
+  const auto it_node = std::find_if(nodes_.begin(), nodes_.end(),
                                     [&tmp] (const std::unique_ptr<Node>& node) {
                                       return tmp == *node;
                                     });
 
-  if (it_node == std::end(nodes_)) {
+  if (it_node == nodes_.end()) {
     return make_error_code(lief_errors::not_found);
   }
   return **it_node;
@@ -117,12 +117,12 @@ void Handler::remove(uint64_t offset, uint64_t size, Node::Type type) {
 
   Node tmp{offset, size, type};
 
-  const auto it_node = std::find_if(std::begin(nodes_), std::end(nodes_),
+  const auto it_node = std::find_if(nodes_.begin(), nodes_.end(),
                                     [&tmp] (const std::unique_ptr<Node>& node) {
                                       return tmp == *node;
                                     });
 
-  if (it_node == std::end(nodes_)) {
+  if (it_node == nodes_.end()) {
     LIEF_ERR("Node not found");
   }
 
@@ -146,7 +146,7 @@ ok_error_t Handler::make_hole(uint64_t offset, uint64_t size) {
   if (!res) {
     return res;
   }
-  data_.insert(std::begin(data_) + offset, size, 0);
+  data_.insert(data_.begin() + offset, size, 0);
   return ok();
 }
 
@@ -177,6 +177,6 @@ ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
 }
 
 
-} // namespace DataHandler
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF::DataHandler
+
+

@@ -18,8 +18,8 @@
 
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 const char* to_string(OAT_CLASS_TYPES e) {
   CONST_MAP(OAT_CLASS_TYPES, const char*, 3) enumStrings {
@@ -94,8 +94,8 @@ const char* to_string(INSTRUCTION_SETS e) {
 
 
 
-} // namespace OAT
-} // namespace LIEF
+} // namespace LIEF::OAT
+
 
 
 

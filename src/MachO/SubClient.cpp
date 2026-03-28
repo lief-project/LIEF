@@ -18,8 +18,8 @@
 #include "LIEF/MachO/SubClient.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 SubClient::SubClient(const details::sub_client_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize}
@@ -37,4 +37,4 @@ std::ostream& SubClient::print(std::ostream& os) const {
 
 
 }
-}
+

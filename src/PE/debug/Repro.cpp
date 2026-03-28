@@ -22,8 +22,8 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void Repro::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -40,5 +40,5 @@ std::string Repro::to_string() const {
   return os.str();
 }
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+

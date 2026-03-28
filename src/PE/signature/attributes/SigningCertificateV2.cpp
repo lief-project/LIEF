@@ -16,8 +16,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void SigningCertificateV2::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -28,5 +28,5 @@ std::string SigningCertificateV2::print() const {
 }
 
 }
-}
+
 

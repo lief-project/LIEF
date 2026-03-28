@@ -16,6 +16,7 @@
 #include <cstring>
 #include <map>
 #include <fstream>
+#include <memory>
 
 #include <mbedtls/platform.h>
 #include <mbedtls/x509_crt.h>
@@ -70,6 +71,8 @@ namespace {
  * of the original function (from <src>/library/x509.c) which skips the non printable character.
  * It seems that Windows follows this behavior as descbied in the Github's issue
  */
+// NOLINTBEGIN
+// clang-format off
 int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *dn )
 {
     int ret = MBEDTLS_ERR_ERROR_CORRUPTION_DETECTED;
@@ -151,11 +154,13 @@ int lief_mbedtls_x509_dn_gets( char *buf, size_t size, const mbedtls_x509_name *
     return( (int) ( size - n ) );
 }
 
+// clang-format on
+// NOLINTEND
 }
 
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 inline x509::VERIFICATION_FLAGS from_mbedtls_err(uint32_t err) {
   CONST_MAP(uint32_t, x509::VERIFICATION_FLAGS, 20) MBEDTLS_ERR_TO_LIEF = {
@@ -218,7 +223,7 @@ x509::certificates_t x509::parse(const std::string& path) {
 }
 
 x509::certificates_t x509::parse(const std::vector<uint8_t>& content) {
-  std::unique_ptr<mbedtls_x509_crt> ca{new mbedtls_x509_crt{}};
+  auto ca = std::make_unique<mbedtls_x509_crt>(mbedtls_x509_crt{});
   mbedtls_x509_crt_init(ca.get());
   int ret = mbedtls_x509_crt_parse(ca.get(), content.data(), content.size());
   if (ret != 0) {
@@ -435,7 +440,7 @@ x509::KEY_TYPES x509::key_type() const {
   mbedtls_pk_type_t type  = mbedtls_pk_get_type(ctx);
 
   const auto it_key = mtype2asi.find(type);
-  if (it_key != std::end(mtype2asi)) {
+  if (it_key != mtype2asi.end()) {
     return it_key->second;
   }
   return KEY_TYPES::NONE;
@@ -531,7 +536,7 @@ bool x509::check_signature(const std::vector<uint8_t>& hash, const std::vector<u
   };
 
   auto it_md = LIEF2MBED_MD.find(algo);
-  if (it_md == std::end(LIEF2MBED_MD)) {
+  if (it_md == LIEF2MBED_MD.end()) {
     LIEF_ERR("Unsupported algorithm {}", to_string(algo));
     return false;
   }
@@ -634,7 +639,7 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
   }
 
   // Clear the chain since ~x509() will delete each object
-  for (size_t i = 0; i < ca_list.size(); ++i) {
+  for (size_t i = 0; i < ca_list.size(); ++i) { // NOLINT(modernize-loop-convert)
     ca_list[i].x509_cert_->next = nullptr;
   }
   return result;
@@ -787,4 +792,4 @@ std::ostream& operator<<(std::ostream& os, const x509& x509_cert) {
 }
 
 }
-}
+

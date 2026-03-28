@@ -26,8 +26,8 @@
 #include "logging.hpp"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct runtime_table_entry_t {
@@ -79,7 +79,7 @@ FunctionVariants::RuntimeTableEntry::RuntimeTableEntry(const details::runtime_ta
 {
   flag_bit_nums_.fill(0);
   std::copy(std::begin(entry.flag_bit_nums), std::end(entry.flag_bit_nums),
-            flag_bit_nums_.begin());
+            std::begin(flag_bit_nums_));
 }
 
 span<const uint8_t> get_relevant_flags(span<const uint8_t> raw) {
@@ -247,4 +247,4 @@ const char* to_string(FLAGS f) {
 }
 
 }
-}
+

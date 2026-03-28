@@ -17,8 +17,8 @@
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 const char* oid_to_string(const oid_t& oid) {
   static const std::unordered_map<oid_t, const char*> oid_to_str  {
     { "0.2.262.1.10",                     "TELESEC" },
@@ -2250,4 +2250,4 @@ const char* oid_to_string(const oid_t& oid) {
   return it == oid_to_str.end() ? oid.c_str() : it->second;
 }
 }
-}
+

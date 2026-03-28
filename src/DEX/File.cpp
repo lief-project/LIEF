@@ -32,8 +32,8 @@
 #include "visitors/json.hpp"
 #endif
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 File::File() :
   name_{"classes.dex"}
@@ -96,7 +96,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
       auto opcode = static_cast<OPCODES>(*inst_ptr);
       uint32_t value = UINT_MAX;
 
-      if (meth_info.find(dex_pc) != std::end(meth_info)) {
+      if (meth_info.find(dex_pc) != meth_info.end()) {
         value = meth_info[dex_pc];
       }
 
@@ -394,12 +394,12 @@ File::it_classes File::classes() {
 }
 
 bool File::has_class(const std::string& class_name) const {
-  return classes_.find(Class::fullname_normalized(class_name)) != std::end(classes_);
+  return classes_.find(Class::fullname_normalized(class_name)) != classes_.end();
 }
 
 const Class* File::get_class(const std::string& class_name) const {
   auto it_cls = classes_.find(Class::fullname_normalized(class_name));
-  if (it_cls == std::end(classes_)) {
+  if (it_cls == classes_.end()) {
     return nullptr;
   }
   return it_cls->second;
@@ -559,4 +559,4 @@ std::ostream& operator<<(std::ostream& os, const File& file) {
 
 
 }
-}
+

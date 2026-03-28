@@ -28,8 +28,8 @@
 
 #include <cstddef>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class LayoutChecker {
   public:
@@ -271,7 +271,7 @@ bool LayoutChecker::check_opt_header() {
   }
 
   // This check is not accurate (c.f. PE64_x86-64_binary_winhello64-mingw.exe)
-  if (0) {
+  if (false) {
     if (opt_hdr.major_linker_version() < 3 && opt_hdr.major_linker_version() < 5) {
       return error("Bad linker version");
     }
@@ -844,4 +844,4 @@ bool check_layout(const Binary& bin, std::string* error_info) {
   return true;
 }
 }
-}
+

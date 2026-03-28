@@ -23,8 +23,8 @@
 #include "LIEF/MachO/EnumToString.hpp"
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 Relocation::Relocation(const Relocation& other) :
   LIEF::Relocation{other},
@@ -164,4 +164,4 @@ const char* to_string(Relocation::ORIGIN e) {
 }
 
 }
-}
+

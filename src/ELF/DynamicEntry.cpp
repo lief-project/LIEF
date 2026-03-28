@@ -32,8 +32,8 @@
 #include "logging.hpp"
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 DynamicEntry::TAG DynamicEntry::from_value(uint64_t value, ARCH arch) {
   static constexpr auto LOPROC = 0x70000000;
@@ -377,4 +377,4 @@ const char* to_string(DynamicEntry::TAG tag) {
 }
 
 }
-}
+

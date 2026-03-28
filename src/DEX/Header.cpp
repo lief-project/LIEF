@@ -29,8 +29,8 @@
   os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr.first \
      << std::dec << " (#" << attr.second << ")" << '\n'
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 Header::Header() = default;
 Header::Header(const Header&) = default;
@@ -129,8 +129,8 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 
   const Header::signature_t& sig = hdr.signature();
   std::string sig_str = std::accumulate(
-      std::begin(sig),
-      std::end(sig),
+      sig.begin(),
+      sig.end(),
       std::string{},
       [] (const std::string& s, uint8_t c) {
         return s + hex_str(c);
@@ -163,5 +163,5 @@ Header::~Header() = default;
 
 
 } // Namespace DEX
-} // Namespace LIEF
+// Namespace LIEF
 

@@ -34,8 +34,8 @@
 FMT_FORMATTER(LIEF::ELF::Section::FLAGS, LIEF::ELF::to_string);
 FMT_FORMATTER(LIEF::ELF::Section::TYPE, LIEF::ELF::to_string);
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 static constexpr uint64_t SHF_MASKPROC = 0xf0000000;
 static constexpr uint64_t SHT_LOPROC = 0x70000000;
@@ -141,11 +141,11 @@ void Section::swap(Section& other) noexcept {
 }
 
 bool Section::has(const Segment& segment) const {
-  auto it_segment = std::find_if(std::begin(segments_), std::end(segments_),
+  auto it_segment = std::find_if(segments_.begin(), segments_.end(),
       [&segment] (Segment* s) {
         return *s == segment;
       });
-  return it_segment != std::end(segments_);
+  return it_segment != segments_.end();
 }
 
 
@@ -210,7 +210,7 @@ span<const uint8_t> Section::content() const {
 
 std::vector<Section::FLAGS> Section::flags_list() const {
   std::vector<FLAGS> flags;
-  std::copy_if(std::begin(ARRAY_FLAGS), std::end(ARRAY_FLAGS),
+  std::copy_if(ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(),
                std::back_inserter(flags),
                [this] (FLAGS f) { return has(f); });
   return flags;
@@ -261,8 +261,8 @@ void Section::content(const std::vector<uint8_t>& data) {
 
   size(data.size());
 
-  std::copy(std::begin(data), std::end(data),
-            std::begin(binary_content) + node.offset());
+  std::copy(data.begin(), data.end(),
+            binary_content.begin() + node.offset());
 
 }
 
@@ -309,8 +309,8 @@ void Section::content(std::vector<uint8_t>&& data) {
     return;
   }
 
-  std::move(std::begin(data), std::end(data),
-            std::begin(binary_content) + node.offset());
+  std::move(data.begin(), data.end(),
+            binary_content.begin() + node.offset());
 }
 
 bool Section::has(Section::FLAGS flag) const {
@@ -318,7 +318,7 @@ bool Section::has(Section::FLAGS flag) const {
     return (flags_ & (static_cast<uint64_t>(flag) & FLAG_MASK)) != 0;
   }
 
-  uint64_t raw_flag = static_cast<uint64_t>(flag);
+  auto raw_flag = static_cast<uint64_t>(flag);
   size_t id = raw_flag >> uint8_t(FLAGS::_ID_SHIFT_);
 
   if (id > 0 && arch_ == ARCH::NONE) {
@@ -363,7 +363,7 @@ Section& Section::clear(uint8_t value) {
     return *this;
   }
   if (datahandler_ == nullptr) {
-    std::fill(std::begin(content_c_), std::end(content_c_), value);
+    std::fill(content_c_.begin(), content_c_.end(), value);
     return *this;
   }
 
@@ -375,7 +375,7 @@ Section& Section::clear(uint8_t value) {
   }
   DataHandler::Node& node = res.value();
 
-  std::fill_n(std::begin(binary_content) + node.offset(), size(), value);
+  std::fill_n(binary_content.begin() + node.offset(), size(), value);
   return *this;
 }
 
@@ -540,4 +540,4 @@ const char* to_string(Section::FLAGS e) {
 }
 
 }
-}
+

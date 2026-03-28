@@ -19,8 +19,8 @@
 #include "LIEF/DEX/hash.hpp"
 #include "DEX/Structures.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 CodeInfo::CodeInfo() = default;
 CodeInfo::CodeInfo(const CodeInfo&) = default;
@@ -50,4 +50,4 @@ std::ostream& operator<<(std::ostream& os, const CodeInfo& /*cinfo*/) {
 CodeInfo::~CodeInfo() = default;
 
 }
-}
+

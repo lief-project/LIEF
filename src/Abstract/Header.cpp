@@ -305,7 +305,7 @@ Header Header::from(const MachO::Binary& macho) {
 
 std::vector<Header::MODES> Header::modes_list() const {
   std::vector<MODES> flags;
-  std::copy_if(std::begin(ARRAY_MODES), std::end(ARRAY_MODES),
+  std::copy_if(ARRAY_MODES.begin(), ARRAY_MODES.end(),
                std::back_inserter(flags),
                [this] (MODES f) { return is(f); });
   return flags;

@@ -21,8 +21,8 @@
 #include "LIEF/DEX/utils.hpp"
 #include "DEX/Structures.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 inline bool is_dex(BinaryStream& stream) {
   using magic_t = std::array<char, sizeof(details::magic)>;
@@ -43,12 +43,12 @@ inline bool is_dex(BinaryStream& stream) {
   stream.increment_pos(sizeof(details::magic));
   if (auto ver_res = stream.peek<version_t>()) {
     const auto version = *ver_res;
-    const bool are_digits = std::all_of(std::begin(version), std::end(version),
+    const bool are_digits = std::all_of(version.begin(), version.end(),
         [] (char c) { return c == 0 || ::isdigit(c); });
     if (!are_digits) {
       return 0;
     }
-    std::string version_str(std::begin(version), std::end(version));
+    std::string version_str(version.begin(), version.end());
     return static_cast<dex_version_t>(std::stoul(version_str));
   }
   return 0;
@@ -85,4 +85,4 @@ dex_version_t version(const std::vector<uint8_t>& raw) {
 
 
 }
-}
+

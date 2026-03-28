@@ -20,8 +20,8 @@
 #include "spdlog/fmt/fmt.h"
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void CodeView::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -52,4 +52,4 @@ const char* to_string(CodeView::SIGNATURES e) {
 }
 
 }
-}
+

@@ -26,8 +26,8 @@
 
 #include "logging.hpp"
 #include "Layout.hpp"
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class used to compute the size and the offsets of the elements
 /// needed to rebuild the ELF file.
@@ -49,7 +49,7 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
   /// is greater than 0
   bool should_relocate(const Section& sec) const {
     const auto it = sec_reloc_info_.find(&sec);
-    if (it == std::end(sec_reloc_info_)) {
+    if (it == sec_reloc_info_.end()) {
       return false;
     }
     return it->second > 0;
@@ -130,6 +130,6 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
 
 };
 }
-}
+
 
 #endif

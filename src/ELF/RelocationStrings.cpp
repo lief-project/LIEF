@@ -19,8 +19,8 @@
 
 #define ELF_RELOC(X, _) std::pair(Relocation::TYPE::X, #X),
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 template<uint32_t>
 const char* to_string(Relocation::TYPE type);
 
@@ -266,4 +266,4 @@ const char* to_string(Relocation::TYPE type) {
   return "UNKNOWN";
 }
 }
-}
+

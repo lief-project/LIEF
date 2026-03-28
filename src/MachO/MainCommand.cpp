@@ -19,8 +19,8 @@
 #include "LIEF/MachO/MainCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 MainCommand::MainCommand(const details::entry_point_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -48,4 +48,4 @@ std::ostream& MainCommand::print(std::ostream& os) const {
 }
 
 }
-}
+

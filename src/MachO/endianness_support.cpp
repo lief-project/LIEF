@@ -513,8 +513,8 @@ void swap_endian<MachO::details::arm_thread_state_t>(MachO::details::arm_thread_
 
 template<>
 void swap_endian<MachO::details::arm_thread_state64_t>(MachO::details::arm_thread_state64_t* hdr) {
-  for (size_t i = 0; i < 29; ++i) {
-    swap_endian(&hdr->x[i]);
+  for (unsigned long& i : hdr->x) {
+    swap_endian(&i);
   }
   swap_endian(&hdr->fp);
   swap_endian(&hdr->lr);
@@ -527,8 +527,8 @@ template<>
 void swap_endian<MachO::details::ppc_thread_state64_t>(MachO::details::ppc_thread_state64_t* hdr) {
   swap_endian(&hdr->srr0);
   swap_endian(&hdr->srr1);
-  for (size_t i = 0; i < 32; ++i) {
-    swap_endian(&hdr->r[i]);
+  for (unsigned long& i : hdr->r) {
+    swap_endian(&i);
   }
   swap_endian(&hdr->cr);
   swap_endian(&hdr->xer);
@@ -541,8 +541,8 @@ template<>
 void swap_endian<MachO::details::ppc_thread_state_t>(MachO::details::ppc_thread_state_t* hdr) {
   swap_endian(&hdr->srr0);
   swap_endian(&hdr->srr1);
-  for (size_t i = 0; i < 32; ++i) {
-    swap_endian(&hdr->r[i]);
+  for (unsigned int& i : hdr->r) {
+    swap_endian(&i);
   }
   swap_endian(&hdr->cr);
   swap_endian(&hdr->xer);

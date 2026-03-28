@@ -38,11 +38,11 @@
 // Android 9.0.0 ART 56
 // ======================
 
-namespace LIEF {
-/// Namespace related to the LIEF's ART module
-namespace ART {
 
-namespace details {
+/// Namespace related to the LIEF's ART module
+
+
+namespace LIEF::ART::details {
 
 static constexpr uint8_t art_magic[]       = { 'a', 'r', 't', '\n' };
 static constexpr art_version_t art_version = 0;
@@ -631,7 +631,7 @@ class ART56 {
 };
 
 }
-} /* end namespace ART */
-} /* end namespace LIEF */
+
+
 #endif
 

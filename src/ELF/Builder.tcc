@@ -56,8 +56,8 @@
 #include "ObjectFileLayout.hpp"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 template<class ELF_T>
 ok_error_t Builder::build() {
@@ -565,7 +565,7 @@ ok_error_t Builder::process_object_relocations() {
     LIEF_DEBUG("Section for reloc {:#x} -> {}", reloc.address(), sec->name());
     relocations_map[sec].push_back(&reloc);
     auto it_reloc_sec = sections_reloc_map.find(sec);
-    if (it_reloc_sec == std::end(sections_reloc_map)) {
+    if (it_reloc_sec == sections_reloc_map.end()) {
       LIEF_WARN("Can find the relocation section associated with '{}'", sec->name());
       continue;
     }
@@ -573,9 +573,7 @@ ok_error_t Builder::process_object_relocations() {
     rel_sections_size[reloc_section] += sizeof_rel;
   }
 
-  for (const auto& p : rel_sections_size) {
-    const Section* section = p.first;
-    const size_t need_size = p.second;
+  for (const auto& [section, need_size] : rel_sections_size) {
     if (need_size > section->size()) {
       LIEF_DEBUG("Need to relocate '{}'", section->name());
       layout->relocate_section(*section, need_size);
@@ -669,12 +667,11 @@ ok_error_t Builder::build_relocatable() {
 
 
 template<typename ELF_T>
-ok_error_t Builder::build(const Header& header) {;
+ok_error_t Builder::build(const Header& header) {
   using Elf_Half = typename ELF_T::Elf_Half;
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
-  using Elf_Word = typename ELF_T::Elf_Word;
 
   using Elf_Ehdr = typename ELF_T::Elf_Ehdr;
 
@@ -694,7 +691,7 @@ ok_error_t Builder::build(const Header& header) {;
   ehdr.e_shnum     = static_cast<Elf_Half>(header.numberof_sections());
   ehdr.e_shstrndx  = static_cast<Elf_Half>(header.section_name_table_idx());
 
-  std::copy(std::begin(header.identity()), std::end(header.identity()),
+  std::copy(header.identity().begin(), header.identity().end(),
             std::begin(ehdr.e_ident));
 
   ios_.seekp(0);
@@ -708,7 +705,6 @@ ok_error_t Builder::build_sections() {
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
-  using Elf_Word = typename ELF_T::Elf_Word;
 
   using Elf_Shdr = typename ELF_T::Elf_Shdr;
 
@@ -759,11 +755,10 @@ ok_error_t Builder::build_sections() {
     }
 
     Elf_Off offset_name = 0;
-    const auto& it = shstr_map.find(section->name());
-    if (it == std::end(shstr_map)) {
-      LIEF_WARN("Can't find string offset for section name '{}'", section->name());
-    } else {
+    if (auto it = shstr_map.find(section->name()); it != shstr_map.end()) {
       offset_name = it->second;
+    } else {
+      LIEF_WARN("Can't find string offset for section name '{}'", section->name());
     }
 
     Elf_Shdr shdr;
@@ -827,7 +822,6 @@ ok_error_t Builder::build_segments() {
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
-  using Elf_Word = typename ELF_T::Elf_Word;
 
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
   LIEF_DEBUG("== Build segments ==");
@@ -896,19 +890,19 @@ ok_error_t Builder::build_symtab_symbols() {
   }
   LIEF_DEBUG(".symtab section: '{}'", symbol_section->name());
 
-  std::stable_sort(std::begin(binary_->symtab_symbols_), std::end(binary_->symtab_symbols_),
+  std::stable_sort(binary_->symtab_symbols_.begin(), binary_->symtab_symbols_.end(),
       [](const std::unique_ptr<Symbol>& lhs, const std::unique_ptr<Symbol>& rhs) {
         return lhs->is_local() && (rhs->is_global() || rhs->is_weak());
   });
 
   const auto it_first_exported_symbol =
-      std::find_if(std::begin(binary_->symtab_symbols_), std::end(binary_->symtab_symbols_),
+      std::find_if(binary_->symtab_symbols_.begin(), binary_->symtab_symbols_.end(),
                    [](const std::unique_ptr<Symbol>& sym) {
                     return sym->is_exported();
                    });
 
   const auto first_exported_symbol_index =
-      static_cast<uint32_t>(std::distance(std::begin(binary_->symtab_symbols_), it_first_exported_symbol));
+      static_cast<uint32_t>(std::distance(binary_->symtab_symbols_.begin(), it_first_exported_symbol));
 
   if (first_exported_symbol_index != symbol_section->information()) {
     LIEF_INFO("information of .symtab section changes from {:d} to {:d}",
@@ -933,15 +927,13 @@ ok_error_t Builder::build_symtab_symbols() {
     const std::string& name = symbol->name();
 
     Elf_Off offset_name = 0;
-    const auto it = str_map->find(name);
-    if (it == std::end(*str_map)) {
-      LIEF_ERR("Can't find string offset for symtab symbol name '{}'", name);
-    } else {
+    if (auto it = str_map->find(name); it != str_map->end()) {
       offset_name = it->second;
+    } else {
+      LIEF_ERR("Can't find string offset for symtab symbol name '{}'", name);
     }
 
-    Elf_Sym sym_hdr;
-    memset(&sym_hdr, 0, sizeof(Elf_Sym));
+    Elf_Sym sym_hdr{};
     sym_hdr.st_name  = static_cast<Elf_Word>(offset_name);
     sym_hdr.st_info  = static_cast<unsigned char>(symbol->information());
     sym_hdr.st_other = static_cast<unsigned char>(symbol->other());
@@ -972,8 +964,8 @@ ok_error_t Builder::build_dynamic_section() {
       case DynamicEntry::TAG::NEEDED:
         {
           const std::string& name = entry->as<DynamicEntryLibrary>()->name();
-          const auto& it = dynstr_map.find(name);
-          if (it == std::end(dynstr_map)) {
+          auto it = dynstr_map.find(name);
+          if (it == dynstr_map.end()) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);
             break;
           }
@@ -984,8 +976,8 @@ ok_error_t Builder::build_dynamic_section() {
       case DynamicEntry::TAG::SONAME:
         {
           const std::string& name = entry->as<DynamicSharedObject>()->name();
-          const auto& it = dynstr_map.find(name);
-          if (it == std::end(dynstr_map)) {
+          auto it = dynstr_map.find(name);
+          if (it == dynstr_map.end()) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);
             break;
           }
@@ -996,8 +988,8 @@ ok_error_t Builder::build_dynamic_section() {
       case DynamicEntry::TAG::AUXILIARY:
         {
           const std::string& name = entry->as<DynamicEntryAuxiliary>()->name();
-          const auto& it = dynstr_map.find(name);
-          if (it == std::end(dynstr_map)) {
+          auto it = dynstr_map.find(name);
+          if (it == dynstr_map.end()) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);
             break;
           }
@@ -1008,8 +1000,8 @@ ok_error_t Builder::build_dynamic_section() {
       case DynamicEntry::TAG::FILTER:
         {
           const std::string& name = entry->as<DynamicEntryFilter>()->name();
-          const auto& it = dynstr_map.find(name);
-          if (it == std::end(dynstr_map)) {
+          auto it = dynstr_map.find(name);
+          if (it == dynstr_map.end()) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);
             break;
           }
@@ -1020,8 +1012,8 @@ ok_error_t Builder::build_dynamic_section() {
       case DynamicEntry::TAG::RPATH:
         {
           const std::string& name = entry->as<DynamicEntryRpath>()->rpath();
-          const auto& it = dynstr_map.find(name);
-          if (it == std::end(dynstr_map)) {
+          auto it = dynstr_map.find(name);
+          if (it == dynstr_map.end()) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);
             break;
           }
@@ -1032,8 +1024,8 @@ ok_error_t Builder::build_dynamic_section() {
       case DynamicEntry::TAG::RUNPATH:
         {
           const std::string& name = entry->as<DynamicEntryRunPath>()->runpath();
-          const auto& it = dynstr_map.find(name);
-          if (it == std::end(dynstr_map)) {
+          auto it = dynstr_map.find(name);
+          if (it == dynstr_map.end()) {
             LIEF_ERR("Can't find string offset in .dynstr for {}", name);
             break;
           }
@@ -1270,16 +1262,14 @@ ok_error_t Builder::build_obj_symbols() {
   for (const std::unique_ptr<Symbol>& symbol : binary_->symtab_symbols_) {
     const std::string& name = symbol->name();
     const auto offset_it = str_map->find(name);
-    if (offset_it == std::end(*str_map)) {
+    if (offset_it == str_map->end()) {
       LIEF_ERR("Unable to find the symbol offset for '{}' in the string table", name);
       continue;
     }
 
     const auto name_offset = static_cast<Elf_Off>(offset_it->second);
 
-    Elf_Sym sym_header;
-    memset(&sym_header, 0, sizeof(Elf_Sym));
-
+    Elf_Sym sym_header{};
     sym_header.st_name  = static_cast<Elf_Word>(name_offset);
     sym_header.st_info  = static_cast<unsigned char>(symbol->information());
     sym_header.st_other = static_cast<unsigned char>(symbol->other());
@@ -1299,7 +1289,6 @@ ok_error_t Builder::build_dynamic_symbols() {
   using Elf_Word = typename ELF_T::Elf_Word;
   using Elf_Addr = typename ELF_T::Elf_Addr;
   using Elf_Off  = typename ELF_T::Elf_Off;
-  using Elf_Word = typename ELF_T::Elf_Word;
 
   using Elf_Sym  = typename ELF_T::Elf_Sym;
   LIEF_DEBUG("[+] Build .dynsym symbols");
@@ -1322,17 +1311,15 @@ ok_error_t Builder::build_dynamic_symbols() {
   symbol_table_raw.reserve(binary_->dynamic_symbols_.size() * sizeof(Elf_Sym));
   for (const std::unique_ptr<Symbol>& symbol : binary_->dynamic_symbols_) {
     const std::string& name = symbol->name();
-    const auto& offset_it = dynstr_map.find(name);
-    if (offset_it == std::end(dynstr_map)) {
+    auto offset_it = dynstr_map.find(name);
+    if (offset_it == dynstr_map.end()) {
       LIEF_ERR("Unable to find the symbol offset for '{}' in the string table", name);
       continue;
     }
 
     const auto name_offset = static_cast<Elf_Off>(offset_it->second);
 
-    Elf_Sym sym_header;
-
-    memset(&sym_header, 0, sizeof(sym_header));
+    Elf_Sym sym_header{};
 
     sym_header.st_name  = static_cast<Elf_Word>(name_offset);
     sym_header.st_info  = static_cast<unsigned char>(symbol->information());
@@ -1374,7 +1361,7 @@ ok_error_t Builder::build_section_relocations() {
     std::vector<Relocation*> relocs = p.second;
     // sort relocations by offset. It is not required by the ELF standard but some linkers (like ld)
     // rely on this kind of sort for sections such as .eh_frame;
-    std::sort(std::begin(relocs), std::end(relocs),
+    std::sort(relocs.begin(), relocs.end(),
               [] (const Relocation* lhs, const Relocation* rhs) {
                 return lhs->address() < rhs->address();
               });
@@ -1725,8 +1712,8 @@ ok_error_t Builder::build_symbol_requirement() {
     const std::string& name = svr.name();
 
     Elf_Off name_offset = 0;
-    const auto& it_name_offset = sym_name_offset.find(name);
-    if (it_name_offset != std::end(sym_name_offset)) {
+    auto it_name_offset = sym_name_offset.find(name);
+    if (it_name_offset != sym_name_offset.end()) {
       name_offset = it_name_offset->second;
     } else {
       LIEF_ERR("Can't find dynstr offset for '{}'", name);
@@ -1756,8 +1743,8 @@ ok_error_t Builder::build_symbol_requirement() {
 
       Elf_Off svar_name_offset = 0;
 
-      const auto& it_name_offset = sym_name_offset.find(svar_name);
-      if (it_name_offset != std::end(sym_name_offset)) {
+      auto it_name_offset = sym_name_offset.find(svar_name);
+      if (it_name_offset != sym_name_offset.end()) {
         svar_name_offset = it_name_offset->second;
       } else {
         LIEF_ERR("Can't find dynstr offset for '{}'", name);
@@ -1844,7 +1831,7 @@ ok_error_t Builder::build_symbol_definition() {
         uint64_t dynstr_offset = 0;
 
         const auto it_name_offset = sym_name_offset.find(sva_name);
-        if (it_name_offset == std::end(sym_name_offset)) {
+        if (it_name_offset == sym_name_offset.end()) {
           LIEF_ERR("Can't find dynstr offset for '{}'", sva_name);
           return make_error_code(lief_errors::not_found);
         }
@@ -2007,5 +1994,5 @@ bool Builder::should_build_notes() const {
   return config_.notes;
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

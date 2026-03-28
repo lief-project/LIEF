@@ -23,8 +23,8 @@
 #include "LIEF/DEX/Method.hpp"
 #include "LIEF/DEX/hash.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 Class::Class() = default;
 
 Class::Class(std::string  fullname, uint32_t access_flags,
@@ -32,8 +32,7 @@ Class::Class(std::string  fullname, uint32_t access_flags,
   fullname_{std::move(fullname)},
   access_flags_{access_flags},
   parent_{parent},
-  source_filename_{std::move(source_filename)},
-  original_index_{UINT_MAX}
+  source_filename_{std::move(source_filename)}
 {}
 
 std::string Class::package_normalized(const std::string& pkg) {
@@ -45,7 +44,7 @@ std::string Class::package_normalized(const std::string& pkg) {
   }
 
   // 2. Replace '.' with '/'
-  std::replace(std::begin(package_normalized), std::end(package_normalized), '.', '/');
+  std::replace(package_normalized.begin(), package_normalized.end(), '.', '/');
   return package_normalized;
 }
 
@@ -57,7 +56,7 @@ std::string Class::fullname_normalized(const std::string& pkg_cls) {
   std::string package_normalized = pkg_cls;
 
   // 1. Replace '.' with '/'
-  std::replace(std::begin(package_normalized), std::end(package_normalized), '.', '/');
+  std::replace(package_normalized.begin(), package_normalized.end(), '.', '/');
 
   // 2. Add 'L' at the beginning
   if (package_normalized.front() != 'L') {
@@ -100,7 +99,7 @@ std::string Class::pretty_name() const {
   }
 
   std::string pretty_name = fullname_.substr(1, fullname_.size() - 2);
-  std::replace(std::begin(pretty_name), std::end(pretty_name), '/', '.');
+  std::replace(pretty_name.begin(), pretty_name.end(), '/', '.');
   return pretty_name;
 }
 
@@ -212,4 +211,4 @@ std::ostream& operator<<(std::ostream& os, const Class& cls) {
 Class::~Class() = default;
 
 }
-}
+

@@ -18,8 +18,8 @@
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 SymbolVersionAuxRequirement::SymbolVersionAuxRequirement(const details::Elf64_Vernaux& header) :
   hash_{header.vna_hash},
@@ -40,4 +40,4 @@ void SymbolVersionAuxRequirement::accept(Visitor& visitor) const {
 
 
 }
-}
+

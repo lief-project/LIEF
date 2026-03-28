@@ -23,11 +23,11 @@
 #include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/types.hpp"
 
-namespace LIEF {
-/// Namespace related to the LIEF's DEX module
-namespace DEX {
 
-namespace details {
+/// Namespace related to the LIEF's DEX module
+
+
+namespace LIEF::DEX::details {
 static constexpr uint8_t magic[] = { 'd', 'e', 'x', '\n' };
 
 static constexpr uint32_t NO_INDEX = 0xffffffff;
@@ -243,8 +243,8 @@ class DEX39 {
 
   static constexpr dex_version_t dex_version = DEX_39::dex_version;
 };
-} /* end namespace details */
-} /* end namespace DEX */
-} /* end namespace LIEF */
+} // namespace LIEF::DEX::details
+
+
 #endif
 

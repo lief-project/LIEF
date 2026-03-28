@@ -22,8 +22,8 @@
 #endif
 #include "LIEF/DEX.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 std::string to_json(const Object& v) {
 #ifdef LIEF_JSON_SUPPORT
@@ -37,4 +37,4 @@ std::string to_json(const Object& v) {
 }
 
 }
-} // namespace LIEF
+

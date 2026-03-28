@@ -57,11 +57,11 @@ std::string u16tou8(const std::u16string& string, bool remove_null_char) {
   std::string name;
 
   std::u16string clean_string;
-  std::copy_if(std::begin(string), std::end(string),
+  std::copy_if(string.begin(), string.end(),
                std::back_inserter(clean_string),
                utf8::internal::is_code_point_valid);
 
-  utf8::unchecked::utf16to8(std::begin(clean_string), std::end(clean_string),
+  utf8::unchecked::utf16to8(clean_string.begin(), clean_string.end(),
                             std::back_inserter(name));
 
   if (remove_null_char) {

@@ -22,8 +22,8 @@
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 BuildVersion::BuildVersion(const details::build_version_command& ver) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(ver.cmd), ver.cmdsize},
@@ -108,4 +108,4 @@ const char* to_string(BuildVersion::PLATFORMS e) {
 }
 
 }
-}
+

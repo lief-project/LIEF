@@ -21,14 +21,14 @@
 
 #include "LIEF/PE/enums.hpp"
 
-namespace LIEF {
+
 
 /// Namespace related to the LIEF's PE module
 ///
 /// Some parts come from llvm/Support/COFF.h
-namespace PE {
 
-namespace details {
+
+namespace LIEF::PE::details {
 
 /// Sizes in bytes of various things in the COFF format.
 namespace sizes {
@@ -249,7 +249,7 @@ class PE64 {
 }
 
 
-} // end namesapce PE
-}
+// end namesapce PE
+
 
 #endif

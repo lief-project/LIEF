@@ -20,8 +20,8 @@
 #include "LIEF/MachO/DylinkerCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 DylinkerCommand::DylinkerCommand(const details::dylinker_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize}
@@ -46,4 +46,4 @@ std::ostream& DylinkerCommand::print(std::ostream& os) const {
 }
 
 }
-}
+

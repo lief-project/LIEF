@@ -19,8 +19,8 @@
 #include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 class JsonVisitor : public LIEF::JsonVisitor {
   public:
@@ -32,5 +32,5 @@ class JsonVisitor : public LIEF::JsonVisitor {
 };
 
 }
-}
+
 #endif

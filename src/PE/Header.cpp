@@ -27,8 +27,8 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 static constexpr std::array CHARACTERISTICS_LIST = {
   Header::CHARACTERISTICS::RELOCS_STRIPPED,
@@ -195,4 +195,4 @@ const char* to_string(Header::CHARACTERISTICS e) {
 
 
 }
-}
+

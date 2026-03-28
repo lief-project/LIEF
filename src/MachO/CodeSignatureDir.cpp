@@ -20,8 +20,8 @@
 #include "LIEF/MachO/CodeSignatureDir.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 CodeSignatureDir::CodeSignatureDir(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -42,4 +42,4 @@ std::ostream& CodeSignatureDir::print(std::ostream& os) const {
 
 
 }
-}
+

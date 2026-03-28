@@ -22,8 +22,8 @@
 
 FMT_FORMATTER(LIEF::ELF::DynamicEntryFlags::FLAG, LIEF::ELF::to_string);
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 static constexpr auto DF_FLAGS = {
   DynamicEntryFlags::FLAG::ORIGIN, DynamicEntryFlags::FLAG::SYMBOLIC,
@@ -210,7 +210,7 @@ const char* to_string(DynamicEntryFlags::FLAG flag) {
 
 
 }
-}
+
 
 
 

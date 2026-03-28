@@ -2,6 +2,9 @@
 #define LIEF_MBEDTLS_WRAP_H
 #include <cassert>
 
+// NOLINTBEGIN
+// clang-format off
+
 // NOTE(romain) about this file: between version 3.x and version 4.x of MbedTLS,
 // some API have been internalize and are no longer accessible from the public
 // headers. If `LIEF_OPT_MBEDTLS_EXTERNAL` is not set, we could ship this
@@ -127,4 +130,8 @@ inline int rsa_from_pk(mbedtls_pk_context* pk, mbedtls_rsa_context* ctx) {
 #if defined(__cplusplus)
 }
 #endif
+
+// NOLINTEND
+// clang-format on
+
 #endif

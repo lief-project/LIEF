@@ -19,8 +19,8 @@
 #include "LIEF/MachO/NoteCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 NoteCommand::NoteCommand(const details::note_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -43,4 +43,4 @@ std::ostream& NoteCommand::print(std::ostream& os) const {
 }
 
 }
-}
+

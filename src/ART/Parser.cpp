@@ -28,8 +28,8 @@
 #include "Header.tcc"
 #include "Parser.tcc"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 Parser::~Parser() = default;
 Parser::Parser()  = default;
@@ -104,5 +104,5 @@ void Parser::init(const std::string& /*name*/, art_version_t version) {
   }
 }
 
-} // namespace ART
-} // namespace LIEF
+} // namespace LIEF::ART
+

@@ -24,8 +24,8 @@
 
 #include "LIEF/OAT.hpp"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 std::string to_json(const Object& v) {
 #ifdef LIEF_JSON_SUPPORT
@@ -38,5 +38,5 @@ std::string to_json(const Object& v) {
 #endif
 }
 
-} // namespace OAT
-} // namespace LIEF
+} // namespace LIEF::OAT
+

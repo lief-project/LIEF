@@ -40,16 +40,16 @@
 #include "hash_stream.hpp"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 static constexpr size_t SIZEOF_OPT_HEADER_32 = 0xE0;
 static constexpr size_t SIZEOF_OPT_HEADER_64 = 0xF0;
 
 inline std::string to_lower(std::string str) {
   std::string lower = str;
-  std::transform(std::begin(str), std::end(str),
-                 std::begin(lower), ::tolower);
+  std::transform(str.begin(), str.end(),
+                 lower.begin(), ::tolower);
   return lower;
 }
 
@@ -181,7 +181,7 @@ std::string get_imphash_std(const Binary& binary) {
     if (ext_idx != std::string::npos) {
       ext = to_lower(resolved.name().substr(ext_idx + 1));
     }
-    if (ALLOWED_EXT.find(ext) != std::end(ALLOWED_EXT)) {
+    if (ALLOWED_EXT.find(ext) != ALLOWED_EXT.end()) {
       name = name.substr(0, ext_idx);
     }
 
@@ -252,7 +252,7 @@ std::string get_imphash_lief(const Binary& binary) {
     import_list += to_lower(entries_string);
   }
 
-  std::sort(std::begin(import_list), std::end(import_list),
+  std::sort(import_list.begin(), import_list.end(),
             std::less<>());
 
   mbedtls_md5(
@@ -311,7 +311,7 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
 
   Import::it_const_entries entries = import.entries();
 
-  if (std::all_of(std::begin(entries), std::end(entries),
+  if (std::all_of(entries.begin(), entries.end(),
                   [] (const ImportEntry& entry) { return !entry.is_ordinal(); })) {
     //LIEF_DEBUG("All imports use name. No ordinal!");
     return import;
@@ -322,12 +322,12 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
   ordinal_resolver_t ordinal_resolver = nullptr;
   if (use_std) {
     auto it = imphashstd_ordinals_library_tables.find(name);
-    if (it != std::end(imphashstd_ordinals_library_tables)) {
+    if (it != imphashstd_ordinals_library_tables.end()) {
       ordinal_resolver = it->second;
     }
   } else {
     auto it = ordinals_library_tables.find(name);
-    if (it != std::end(ordinals_library_tables)) {
+    if (it != ordinals_library_tables.end()) {
       ordinal_resolver = it->second;
     }
   }
@@ -387,11 +387,11 @@ ALGORITHMS algo_from_oid(const std::string& oid) {
 
 
   const auto it = OID_MAP.find(oid.c_str());
-  if (it == std::end(OID_MAP)) {
+  if (it == OID_MAP.end()) {
     return ALGORITHMS::UNKNOWN;
   }
   return it->second;
 }
 
 }
-}
+

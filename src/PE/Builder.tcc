@@ -28,8 +28,8 @@
 #include "logging.hpp"
 #include "LIEF/utils.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 template<typename PE_T>
 ok_error_t Builder::build_optional_header(const OptionalHeader& optional_header) {
@@ -203,13 +203,13 @@ ok_error_t Builder::build_tls() {
                                        RelocationEntry::BASE_TYPES::HIGHLOW;
 
     // Create relocations
-    if (auto addr_raw = tls->addressof_raw_data(); addr_raw.first > 0) {
+    if (auto [raw_start, raw_end] = tls->addressof_raw_data(); raw_start > 0) {
       const size_t pos = tls_header_start + offsetof(tls_header, RawDataStartVA);
       assert(pos >= r_base_addr && (pos - r_base_addr) < RelocationEntry::MAX_ADDR);
       r_base.add_entry({(uint16_t)(pos - r_base_addr), default_ty});
     }
 
-    if (auto addr_raw = tls->addressof_raw_data(); addr_raw.second > 0) {
+    if (auto [raw_start, raw_end] = tls->addressof_raw_data(); raw_end > 0) {
       const size_t pos = tls_header_start + offsetof(tls_header, RawDataEndVA);
       assert(pos >= r_base_addr && (pos - r_base_addr) < RelocationEntry::MAX_ADDR);
       r_base.add_entry({(uint16_t)(pos - r_base_addr), default_ty});
@@ -887,4 +887,4 @@ ok_error_t Builder::build_load_config() {
 }
 
 }
-}
+

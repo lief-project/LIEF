@@ -21,8 +21,8 @@
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 ThreadCommand::ThreadCommand(const details::thread_command& cmd, Header::CPU_TYPE arch) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -119,4 +119,4 @@ std::ostream& ThreadCommand::print(std::ostream& os) const {
 
 
 }
-}
+

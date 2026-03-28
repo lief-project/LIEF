@@ -19,8 +19,8 @@
 #include "LIEF/MachO/UUIDCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 
 UUIDCommand::UUIDCommand(const details::uuid_command& uuid) :
@@ -44,4 +44,4 @@ std::ostream& UUIDCommand::print(std::ostream& os) const {
 
 
 }
-}
+

@@ -22,8 +22,8 @@
 #include "LIEF/PE/resources/ResourceVar.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 result<ResourceVar> ResourceVar::parse(BinaryStream& stream) {
   // typedef struct {
@@ -102,4 +102,4 @@ std::ostream& operator<<(std::ostream& os, const ResourceVar& var) {
 
 
 }
-}
+

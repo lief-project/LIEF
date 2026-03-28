@@ -16,8 +16,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void GenericType::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -28,4 +28,4 @@ std::string GenericType::print() const {
 }
 
 }
-}
+

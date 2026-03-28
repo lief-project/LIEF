@@ -18,9 +18,9 @@
 
 #include <cinttypes>
 
-namespace LIEF {
-namespace PE {
-namespace imphashstd {
+
+
+namespace LIEF::PE::imphashstd {
 
 // From pefile: https://github.com/erocarrera/pefile/blob/09264be6f731bf8578aee8638cc4046154e03abf/ordlookup/ws2_32.py
 inline const char* ws2_32_dll_lookup(uint32_t i) {
@@ -147,8 +147,8 @@ inline const char* ws2_32_dll_lookup(uint32_t i) {
 }
 
 }
-}
-}
+
+
 
 #endif
 

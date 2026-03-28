@@ -21,8 +21,8 @@
 #include <numeric>
 #include <sstream>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 std::vector<std::string> DynamicEntryRunPath::paths() const {
   std::stringstream ss;
@@ -39,7 +39,7 @@ std::vector<std::string> DynamicEntryRunPath::paths() const {
 
 void DynamicEntryRunPath::paths(const std::vector<std::string>& paths) {
   runpath_ = std::accumulate(
-      std::begin(paths), std::end(paths),
+      paths.begin(), paths.end(),
       std::string(""),
       [] (const std::string& path, const std::string& new_entry) {
         return path.empty() ? new_entry : path + DynamicEntryRunPath::delimiter + new_entry;
@@ -55,9 +55,9 @@ DynamicEntryRunPath& DynamicEntryRunPath::append(const std::string& path) {
 
 DynamicEntryRunPath& DynamicEntryRunPath::remove(const std::string& path) {
   std::vector<std::string> paths = this->paths();
-  paths.erase(std::remove_if(std::begin(paths), std::end(paths),
+  paths.erase(std::remove_if(paths.begin(), paths.end(),
                              [&path] (const std::string& p) { return p == path; }),
-              std::end(paths));
+              paths.end());
   this->paths(paths);
   return *this;
 }
@@ -72,7 +72,7 @@ DynamicEntryRunPath& DynamicEntryRunPath::insert(size_t pos, const std::string& 
   if (pos > paths.size()) {
     LIEF_ERR("Position {:d} is out of range", pos);
   }
-  paths.insert(std::begin(paths) + pos, path);
+  paths.insert(paths.begin() + pos, path);
   this->paths(paths);
   return *this;
 }
@@ -88,6 +88,6 @@ std::ostream& DynamicEntryRunPath::print(std::ostream& os) const {
   return os;
 }
 }
-}
+
 
 

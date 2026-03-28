@@ -25,8 +25,8 @@
 
 #include "hash_stream.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void RichHeader::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
@@ -68,7 +68,7 @@ std::vector<uint8_t> RichHeader::hash(ALGORITHMS algo, uint32_t xor_key) const {
   };
 
   const auto it_hash = HMAP.find(algo);
-  if (it_hash == std::end(HMAP)) {
+  if (it_hash == HMAP.end()) {
     LIEF_WARN("Unsupported hash algorithm: {}", to_string(algo));
     return {};
   }
@@ -91,4 +91,4 @@ std::ostream& operator<<(std::ostream& os, const RichHeader& rich_header) {
 }
 
 }
-}
+

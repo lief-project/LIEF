@@ -36,7 +36,7 @@ static constexpr auto ARRAY_FLAGS = {
 
 std::vector<Function::FLAGS> Function::flags_list() const {
   std::vector<FLAGS> flags;
-  std::copy_if(std::begin(ARRAY_FLAGS), std::end(ARRAY_FLAGS),
+  std::copy_if(ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(),
                std::back_inserter(flags),
                [this] (FLAGS f) { return has(f); });
   return flags;

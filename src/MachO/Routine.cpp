@@ -21,8 +21,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 template<class T>
 LIEF_LOCAL Routine::Routine(const T& cmd) :
@@ -52,4 +52,4 @@ template Routine::Routine(const details::routines_command_32&);
 template Routine::Routine(const details::routines_command_64&);
 
 }
-}
+

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <iterator>
+#include <memory>
 #include <string>
 #include <numeric>
 #include "logging.hpp"
@@ -55,8 +56,8 @@
 #include "overflow_check.hpp"
 #include "Parser.tcc"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 Parser::~Parser() = default;
 Parser::Parser() = default;
@@ -88,7 +89,7 @@ ok_error_t Parser::init(const ParserConfig& config) {
   }
 
   type_   = type.value();
-  binary_ = std::unique_ptr<Binary>(new Binary{});
+  binary_ = std::make_unique<Binary>();
   binary_->type_ = type_;
   binary_->original_size_ = stream_->size();
   config_ = config;
@@ -133,7 +134,7 @@ ok_error_t Parser::parse_rich_header() {
   }
   auto rich_header = std::make_unique<RichHeader>();
 
-  const uint64_t end_offset_rich_header = std::distance(std::begin(dos_stub), it_rich);
+  const uint64_t end_offset_rich_header = std::distance(dos_stub.begin(), it_rich);
   LIEF_DEBUG("Offset to rich header: {:#x}", end_offset_rich_header);
 
   if (auto res_xor_key = stream.peek<uint32_t>(end_offset_rich_header + sizeof(RichHeader::RICH_MAGIC))) {
@@ -673,14 +674,15 @@ ok_error_t Parser::parse_exceptions() {
 
   for (auto& [f, rva] : unresolved_chains_) {
     if (auto* func = f->as<RuntimeFunctionX64>()) {
-      auto it = memoize_exception_info_.find(rva);
-      if (it == memoize_exception_info_.end()) {
+      if (auto it = memoize_exception_info_.find(rva);
+          it == memoize_exception_info_.end()) {
         LIEF_DEBUG("RuntimeFunctionX64 {:#08x}: chained info not found at {:#08x}",
                   func->rva_start(), rva);
         continue;
+      } else {
+        assert(func->unwind_info() != nullptr);
+        func->unwind_info()->chained = it->second->as<RuntimeFunctionX64>();
       }
-      assert(func->unwind_info() != nullptr);
-      func->unwind_info()->chained = it->second->as<RuntimeFunctionX64>();
     }
   }
   unresolved_chains_.clear();
@@ -1182,7 +1184,7 @@ ok_error_t Parser::parse_signature() {
 ok_error_t Parser::parse_overlay() {
   LIEF_DEBUG("Parsing Overlay");
   const uint64_t last_section_offset = std::accumulate(
-      std::begin(binary_->sections_), std::end(binary_->sections_), uint64_t{ 0u },
+      binary_->sections_.begin(), binary_->sections_.end(), uint64_t{ 0u },
       [] (uint64_t offset, const std::unique_ptr<Section>& section) {
         return std::max<uint64_t>(section->offset() + section->size(), offset);
       });
@@ -1248,7 +1250,7 @@ bool Parser::is_valid_import_name(const std::string& name) {
   if (name.empty() || name.size() > MAX_IMPORT_NAME_SIZE) {
     return false;
   }
-  const bool valid_chars = std::all_of(std::begin(name), std::end(name),
+  const bool valid_chars = std::all_of(name.begin(), name.end(),
       [] (char c) {
         return ::isprint(c);
       });
@@ -1284,11 +1286,10 @@ void Parser::memoize(COFF::String str) {
 
 
 COFF::String* Parser::find_coff_string(uint32_t offset) const {
-  auto it = memoize_coff_str_.find(offset);
-  if (it == memoize_coff_str_.end()) {
-    return nullptr;
+  if (auto it = memoize_coff_str_.find(offset); it != memoize_coff_str_.end()) {
+    return &binary_->strings_table_[it->second];
   }
-  return &binary_->strings_table_[it->second];
+  return nullptr;
 }
 
 std::unique_ptr<SpanStream> Parser::stream_from_rva(uint32_t rva, size_t size) {
@@ -1411,4 +1412,4 @@ ok_error_t Parser::record_delta_relocation(uint32_t rva, int64_t delta, size_t s
 }
 
 }
-}
+

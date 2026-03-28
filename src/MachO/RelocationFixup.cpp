@@ -21,8 +21,8 @@
 #include "LIEF/MachO/RelocationFixup.hpp"
 #include "MachO/ChainedFixup.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 inline uint64_t unpack_target(const details::dyld_chained_ptr_64_rebase& rebase) {
   details::dyld_chained_ptr_generic64 value;
@@ -283,4 +283,4 @@ void RelocationFixup::set(const details::dyld_chained_ptr_arm64e_auth_segmented_
 
 
 }
-}
+

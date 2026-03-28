@@ -31,8 +31,8 @@
 #endif
 
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 Binary::Binary() {
   format_ = LIEF::Binary::FORMATS::OAT;
@@ -80,12 +80,12 @@ Binary::it_classes Binary::classes() {
 }
 
 bool Binary::has_class(const std::string& class_name) const {
-  return classes_.find(DEX::Class::fullname_normalized(class_name)) != std::end(classes_);
+  return classes_.find(DEX::Class::fullname_normalized(class_name)) != classes_.end();
 }
 
 const Class* Binary::get_class(const std::string& class_name) const {
   auto it = classes_.find(DEX::Class::fullname_normalized(class_name));
-  if (it == std::end(classes_)) {
+  if (it == classes_.end()) {
     return nullptr;
   }
   return it->second;
@@ -101,12 +101,12 @@ const Class* Binary::get_class(size_t index) const {
     return nullptr;
   }
 
-  const auto it = std::find_if(std::begin(classes_), std::end(classes_),
+  const auto it = std::find_if(classes_.begin(), classes_.end(),
       [index] (const std::pair<std::string, Class*>& p) {
         return p.second->index() == index;
       });
 
-  if (it == std::end(classes_)) {
+  if (it == classes_.end()) {
     return nullptr;
   }
   return it->second;
@@ -185,4 +185,4 @@ std::ostream& operator<<(std::ostream& os, const Binary& binary) {
 
 
 }
-}
+

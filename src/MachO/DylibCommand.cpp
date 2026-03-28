@@ -21,8 +21,8 @@
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 DylibCommand::DylibCommand(const details::dylib_command& cmd) :
   LoadCommand::LoadCommand{static_cast<LoadCommand::TYPE>(cmd.cmd), cmd.cmdsize},
@@ -135,4 +135,4 @@ DylibCommand DylibCommand::lazy_load_dylib(const std::string& name,
 }
 
 }
-}
+

@@ -79,8 +79,8 @@
 #include "Object.tcc"
 
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 static constexpr uint8_t BYTE_BITS = std::numeric_limits<uint8_t>::digits;
 static_assert(BYTE_BITS == 8, "The number of bits in a byte is not 8");
@@ -1232,8 +1232,8 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
         const uint32_t sec_num = reloc_info.r_symbolnum;
         if (sec_num == Relocation::R_ABS) {
           // TODO(romain): Find a sample that triggers this branch ..
-          const auto it_sym = memoized_symbols_by_address_.find(reloc_info.r_address);
-          if (it_sym != std::end(memoized_symbols_by_address_)) {
+          if (const auto it_sym = memoized_symbols_by_address_.find(reloc_info.r_address);
+              it_sym != memoized_symbols_by_address_.end()) {
             reloc->symbol_ = it_sym->second;
           } else {
             LIEF_WARN("Can't find memoized symbol for the address: {:#x}", reloc_info.r_address);
@@ -2346,8 +2346,7 @@ ok_error_t BinaryParser::do_bind(DyldBindingInfo::CLASS cls,
   }
 
   Symbol* symbol = nullptr;
-  auto search = memoized_symbols_.find(symbol_name);
-  if (search != memoized_symbols_.end()) {
+  if (auto search = memoized_symbols_.find(symbol_name); search != memoized_symbols_.end()) {
     symbol = search->second;
   } else {
     symbol = binary_->get_symbol(symbol_name);
@@ -2415,8 +2414,8 @@ ok_error_t BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx, uint64_t s
   reloc->section_ = section;
 
   // Tie symbol
-  const auto it_symbol = memoized_symbols_by_address_.find(address);
-  if (it_symbol != memoized_symbols_by_address_.end()) {
+  if (const auto it_symbol = memoized_symbols_by_address_.find(address);
+      it_symbol != memoized_symbols_by_address_.end()) {
     reloc->symbol_ = it_symbol->second;
   }
 
@@ -2790,10 +2789,9 @@ ok_error_t BinaryParser::do_fixup(DYLD_CHAINED_FORMAT fmt, int32_t ord, const st
   LIEF_DEBUG("  weak_import: {}", is_weak);
   LIEF_DEBUG("  name:        {}", symbol_name);
 
-  auto search = memoized_symbols_.find(symbol_name);
-
   Symbol* symbol = nullptr;
-  if (search != std::end(memoized_symbols_)) {
+  if (auto search = memoized_symbols_.find(symbol_name);
+      search != memoized_symbols_.end()) {
     symbol = search->second;
   } else {
     symbol = binary_->get_symbol(symbol_name);
@@ -3170,8 +3168,8 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
       LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
     }
 
-    const auto it_symbol = memoized_symbols_by_address_.find(address);
-    if (it_symbol != memoized_symbols_by_address_.end()) {
+    if (const auto it_symbol = memoized_symbols_by_address_.find(address);
+        it_symbol != memoized_symbols_by_address_.end()) {
       reloc->symbol_ = it_symbol->second;
     }
 
@@ -3241,8 +3239,8 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
   }
 
-  const auto it_symbol = memoized_symbols_by_address_.find(address);
-  if (it_symbol != memoized_symbols_by_address_.end()) {
+  if (const auto it_symbol = memoized_symbols_by_address_.find(address);
+      it_symbol != memoized_symbols_by_address_.end()) {
     reloc->symbol_ = it_symbol->second;
   }
 
@@ -3329,8 +3327,8 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
   }
 
-  const auto it_symbol = memoized_symbols_by_address_.find(address);
-  if (it_symbol != memoized_symbols_by_address_.end()) {
+  if (const auto it_symbol = memoized_symbols_by_address_.find(address);
+      it_symbol != memoized_symbols_by_address_.end()) {
     reloc->symbol_ = it_symbol->second;
   }
 
@@ -3413,8 +3411,8 @@ ok_error_t BinaryParser::do_chained_fixup(SegmentCommand& segment,
     LIEF_ERR("Can't find the section associated with the virtual address {:#x}", address);
   }
 
-  const auto it_symbol = memoized_symbols_by_address_.find(address);
-  if (it_symbol != memoized_symbols_by_address_.end()) {
+  if (const auto it_symbol = memoized_symbols_by_address_.find(address);
+      it_symbol != memoized_symbols_by_address_.end()) {
     reloc->symbol_ = it_symbol->second;
   }
 
@@ -4045,4 +4043,4 @@ void BinaryParser::copy_from(ChainedBindingInfo& to, ChainedBindingInfo& from) {
 }
 
 }
-}
+

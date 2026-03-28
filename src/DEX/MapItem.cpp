@@ -18,8 +18,8 @@
 
 #include "LIEF/DEX/EnumToString.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 MapItem::MapItem() = default;
 MapItem::MapItem(const MapItem& other) = default;
@@ -65,4 +65,4 @@ std::ostream& operator<<(std::ostream& os, const MapItem& mitem) {
 MapItem::~MapItem() = default;
 
 }
-}
+

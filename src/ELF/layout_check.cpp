@@ -27,8 +27,8 @@
 #include <spdlog/fmt/fmt.h>
 #include <algorithm>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 class LayoutChecker {
   public:
@@ -576,4 +576,4 @@ bool check_layout(const Binary& bin, std::string* error_info) {
 }
 
 }
-}
+

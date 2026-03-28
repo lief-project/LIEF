@@ -56,8 +56,8 @@
 #include "messages.hpp"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 inline uint8_t stream_get_tag(BinaryStream& stream) {
   if (auto tag = stream.peek<uint8_t>()) {
@@ -1738,4 +1738,4 @@ SignatureParser::parse_spc_pe_image_data(BinaryStream& stream) {
 
 
 }
-}
+

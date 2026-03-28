@@ -19,8 +19,8 @@
 #include "LIEF/DEX/Class.hpp"
 #include "logging.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 Type::Type() = default;
 
@@ -38,8 +38,8 @@ Type::Type(const Type& other) :
       {
         array_ = new array_t{};
         std::copy(
-            std::begin(other.array()),
-            std::end(other.array()),
+            other.array().begin(),
+            other.array().end(),
             std::back_inserter(*array_));
         break;
       }
@@ -322,4 +322,4 @@ Type::~Type() {
 }
 
 }
-}
+

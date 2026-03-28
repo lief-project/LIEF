@@ -19,8 +19,8 @@
 #include "frozen.hpp"
 #include "fmt_formatter.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 std::unique_ptr<AArch64PAuth> AArch64PAuth::create(BinaryStream& stream) {
   uint64_t platform = stream.read<uint64_t>().value_or(0);
@@ -36,4 +36,4 @@ void AArch64PAuth::dump(std::ostream &os) const {
 
 
 }
-}
+

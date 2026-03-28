@@ -27,8 +27,8 @@
 #define PRINT_FIELD_D(name,attr) \
   os << std::setw(WIDTH) << std::setfill(' ') << name << std::dec << attr << '\n'
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
@@ -105,5 +105,5 @@ std::ostream& operator<<(std::ostream& os, const Header& header) {
 Header::~Header() = default;
 
 } // Namespace VDEX
-} // Namespace LIEF
+// Namespace LIEF
 

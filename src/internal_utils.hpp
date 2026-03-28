@@ -39,7 +39,7 @@ inline bool is_printable(char c) {
 }
 
 inline bool is_printable(const std::string& str) {
-  return std::all_of(std::begin(str), std::end(str),
+  return std::all_of(str.begin(), str.end(),
     [] (char c) { return is_printable(c); }
   );
 }
@@ -105,16 +105,16 @@ std::vector<std::string> optimize(const HANDLER& container,
 
   // reverse all symbol names and sort them so we can merge them in the linear time:
   // aaa, aadd, aaaa, cca, ca -> aaaa, aaa, acc, ac ddaa
-  std::transform(std::begin(container), std::end(container),
-                 std::inserter(string_table, std::end(string_table)),
+  std::transform(container.begin(), container.end(),
+                 std::inserter(string_table, string_table.end()),
                  getter);
 
   for (const auto& val: string_table) {
     string_table_optimized.emplace_back(val);
-    std::reverse(std::begin(string_table_optimized.back()), std::end(string_table_optimized.back()));
+    std::reverse(string_table_optimized.back().begin(), string_table_optimized.back().end());
   }
 
-  std::sort(std::begin(string_table_optimized), std::end(string_table_optimized),
+  std::sort(string_table_optimized.begin(), string_table_optimized.end(),
       [] (const std::string& lhs, const std::string& rhs) {
           bool ret = false;
           if (lhs.size() > rhs.size()) {
@@ -141,8 +141,8 @@ std::vector<std::string> optimize(const HANDLER& container,
             // when memorizing reverse back symbol names
             std::string rev_cur_elm = cur_elm;
             std::string rev_to_set_elm = to_set_elm;
-            std::reverse(std::begin(rev_cur_elm), std::end(rev_cur_elm));
-            std::reverse(std::begin(rev_to_set_elm), std::end(rev_to_set_elm));
+            std::reverse(rev_cur_elm.begin(), rev_cur_elm.end());
+            std::reverse(rev_to_set_elm.begin(), rev_to_set_elm.end());
             merged_map[rev_cur_elm] = rev_to_set_elm;
             continue;
           }
@@ -159,9 +159,9 @@ std::vector<std::string> optimize(const HANDLER& container,
 
   //reverse symbols back and sort them again
   for (auto &val: string_table_optimized) {
-    std::reverse(std::begin(val), std::end(val));
+    std::reverse(val.begin(), val.end());
   }
-  std::sort(std::begin(string_table_optimized), std::end(string_table_optimized));
+  std::sort(string_table_optimized.begin(), string_table_optimized.end());
 
   if (of_map_p != nullptr) {
     std::unordered_map<std::string, size_t>& offset_map = *of_map_p;
@@ -194,7 +194,7 @@ auto make_empty_iterator() {
 }
 
 inline bool is_hex_number(const std::string& str) {
-  return std::all_of(std::begin(str), std::end(str), ::isxdigit);
+  return std::all_of(str.begin(), str.end(), ::isxdigit);
 }
 
 inline std::string hex_str(uint8_t c) {
@@ -232,7 +232,7 @@ std::string ts_to_str(uint64_t timestamp);
 template <size_t N>
 inline std::string uuid_to_str_impl(uint8_t (&uuid)[N]) {
   std::vector<std::string> hexstr;
-  std::transform(std::begin(uuid), std::end(uuid), std::back_inserter(hexstr),
+  std::transform(uuid.begin(), uuid.end(), std::back_inserter(hexstr),
     [] (uint8_t x) { return fmt::format("{:02x}", x); }
   );
   return fmt::to_string(fmt::join(hexstr, ":"));
@@ -241,7 +241,7 @@ inline std::string uuid_to_str_impl(uint8_t (&uuid)[N]) {
 template <size_t N>
 inline std::string uuid_to_str_impl(const std::array<uint8_t, N>& uuid) {
   std::vector<std::string> hexstr;
-  std::transform(std::begin(uuid), std::end(uuid), std::back_inserter(hexstr),
+  std::transform(uuid.begin(), uuid.end(), std::back_inserter(hexstr),
     [] (uint8_t x) { return fmt::format("{:02x}", x); }
   );
   return fmt::to_string(fmt::join(hexstr, ":"));

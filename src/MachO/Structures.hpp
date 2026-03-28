@@ -43,11 +43,11 @@
    (((val) <<  8) & 0x000000FF00000000) | (((val) << 24) & 0x0000FF0000000000) | \
    (((val) << 40) & 0x00FF000000000000) | (((val) << 56) & 0xFF00000000000000) )
 
-namespace LIEF {
-/// Namespace related to the LIEF's MachO module
-namespace MachO {
 
-namespace details {
+/// Namespace related to the LIEF's MachO module
+
+
+namespace LIEF::MachO::details {
 
 static constexpr uint32_t INDIRECT_SYMBOL_LOCAL = 0x80000000;
 static constexpr uint32_t INDIRECT_SYMBOL_ABS   = 0x40000000;
@@ -744,6 +744,6 @@ class MachO64 {
   using uint                    = uint64_t;
 };
 }
-} // end namespace MachO
-}
+// end namespace MachO
+
 #endif

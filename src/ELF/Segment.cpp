@@ -30,8 +30,8 @@
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 static constexpr auto PT_LOPROC = 0x70000000;
 static constexpr auto PT_HIPROC = 0x7fffffff;
@@ -266,19 +266,19 @@ template void Segment::set_content_value<unsigned long>(size_t offset, unsigned 
 template void Segment::set_content_value<unsigned long long>(size_t offset, unsigned long long value);
 
 bool Segment::has(const Section& section) const {
-  auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
+  auto it_section = std::find_if(sections_.begin(), sections_.end(),
       [&section] (const Section* s) {
         return *s == section;
       });
-  return it_section != std::end(sections_);
+  return it_section != sections_.end();
 }
 
 bool Segment::has(const std::string& name) const {
-  auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
+  auto it_section = std::find_if(sections_.begin(), sections_.end(),
       [&name] (const Section* s) {
         return s->name() == name;
       });
-  return it_section != std::end(sections_);
+  return it_section != sections_.end();
 }
 
 void Segment::add(Segment::FLAGS flag) {
@@ -350,8 +350,8 @@ void Segment::content(std::vector<uint8_t> content) {
 
   physical_size(node.size());
 
-  std::move(std::begin(content), std::end(content),
-            std::begin(binary_content) + node.offset());
+  std::move(content.begin(), content.end(),
+            binary_content.begin() + node.offset());
 }
 
 void Segment::accept(Visitor& visitor) const {
@@ -463,4 +463,4 @@ const char* to_string(Segment::FLAGS e) {
   return "UNKNOWN";
 }
 }
-}
+

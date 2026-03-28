@@ -20,8 +20,8 @@
 #include "frozen.hpp"
 #include "spdlog/fmt/fmt.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 BuildToolVersion::BuildToolVersion(const details::build_tool_version& tool) :
   tool_{BuildToolVersion::TOOLS(tool.tool)},
@@ -75,4 +75,4 @@ const char* to_string(BuildToolVersion::TOOLS tool) {
 }
 
 }
-}
+

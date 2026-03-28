@@ -19,8 +19,8 @@
 #include "LIEF/MachO/FilesetCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 FilesetCommand::FilesetCommand(const details::fileset_entry_command& cmd) :
   LoadCommand{LoadCommand::TYPE::FILESET_ENTRY, cmd.cmdsize},
@@ -56,4 +56,4 @@ std::ostream& FilesetCommand::print(std::ostream& os) const {
 
 
 }
-}
+

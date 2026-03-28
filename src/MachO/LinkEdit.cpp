@@ -33,8 +33,8 @@
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 /* The DyldInfo object has span fields (rebase_opcodes_, ...) that point to segment data.
  * When resizing the ``SegmentCommand.data_`` we can break this span as the internal buffer of ``data_``
@@ -325,4 +325,4 @@ void LinkEdit::update_data(const update_fnc_ws_t& f, size_t where, size_t size) 
 }
 
 }
-}
+

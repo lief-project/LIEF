@@ -18,8 +18,8 @@
 
 #include "spdlog/fmt/fmt.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void PogoEntry::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -32,5 +32,5 @@ std::ostream& operator<<(std::ostream& os, const PogoEntry& entry) {
   return os;
 }
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+

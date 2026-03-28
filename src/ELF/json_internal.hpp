@@ -20,8 +20,8 @@
 #include "visitors/json.hpp"
 #include "LIEF/ELF.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 class AndroidIdent;
 class Binary;
@@ -94,5 +94,5 @@ class JsonVisitor : public LIEF::JsonVisitor {
 };
 
 }
-}
+
 #endif

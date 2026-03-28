@@ -31,8 +31,8 @@
 #include "internal_utils.hpp"
 #include "PE/Structures.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class TreeParser {
   public:
@@ -46,7 +46,7 @@ class TreeParser {
   TreeParser(BinaryStream& stream, Binary& pe) :
     stream_(stream),
     base_offset_(stream.pos()),
-    base_rva_(0),
+    
     pe_(&pe)
   {}
 
@@ -283,12 +283,12 @@ ResourceNode& ResourceNode::add_child(std::unique_ptr<ResourceNode> child) {
 }
 
 void ResourceNode::delete_child(uint32_t id) {
-  const auto it_node = std::find_if(std::begin(childs_), std::end(childs_),
+  const auto it_node = std::find_if(childs_.begin(), childs_.end(),
       [id] (const std::unique_ptr<ResourceNode>& node) {
         return node->id() == id;
       });
 
-  if (it_node == std::end(childs_)) {
+  if (it_node == childs_.end()) {
     LIEF_ERR("Node with id {:d} not found", id);
     return;
   }
@@ -297,12 +297,12 @@ void ResourceNode::delete_child(uint32_t id) {
 }
 
 void ResourceNode::delete_child(const ResourceNode& node) {
-  const auto it_node = std::find_if(std::begin(childs_), std::end(childs_),
+  const auto it_node = std::find_if(childs_.begin(), childs_.end(),
       [&node] (const std::unique_ptr<ResourceNode>& intree_node) {
         return *intree_node == node;
       });
 
-  if (it_node == std::end(childs_)) {
+  if (it_node == childs_.end()) {
     LIEF_ERR("Node with id {} not found", node.id());
     return;
   }
@@ -359,7 +359,7 @@ const ResourceNode& ResourceNode::safe_get_at(size_t idx) const {
       ResourceNode(ResourceNode::TYPE::UNKNOWN)
     {}
 
-    std::unique_ptr<ResourceNode> clone() const {
+    std::unique_ptr<ResourceNode> clone() const override {
       return nullptr;
     }
   };
@@ -458,4 +458,4 @@ std::ostream& operator<<(std::ostream& os, const ResourceNode& node) {
 
 
 }
-}
+

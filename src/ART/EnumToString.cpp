@@ -17,8 +17,8 @@
 #include "LIEF/ART/EnumToString.hpp"
 #include <map>
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 const char* to_string(STORAGE_MODES e) {
   const std::map<STORAGE_MODES, const char*> enumStrings {
@@ -123,6 +123,6 @@ const char* to_string(ART_44::IMAGE_ROOTS e) {
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
-} // namespace ART
-} // namespace LIEF
+} // namespace LIEF::ART
+
 

@@ -29,8 +29,8 @@
 
 #include "Parser.tcc"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 Parser::~Parser() = default;
 Parser::Parser()  = default;
@@ -139,5 +139,5 @@ void Parser::init() {
 
 }
 
-} // namespace OAT
-} // namespace LIEF
+} // namespace LIEF::OAT
+

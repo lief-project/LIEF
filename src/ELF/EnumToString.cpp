@@ -16,8 +16,8 @@
 #include "LIEF/ELF/EnumToString.hpp"
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 const char* to_string(ARCH e) {
   #define ENTRY(X) std::pair(ARCH::X, #X)
@@ -209,5 +209,5 @@ const char* to_string(ARCH e) {
   return it == enums2str.end() ? "UNDEFINED" : it->second;
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

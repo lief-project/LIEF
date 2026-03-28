@@ -18,8 +18,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 static constexpr const char GENERIC_OBJID[] = "LIEF_CONTENT_GENERIC";
 
@@ -48,4 +48,4 @@ void GenericContent::print(std::ostream& os) const {
 
 
 }
-}
+

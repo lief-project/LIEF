@@ -20,8 +20,8 @@
 #include "LIEF/VDEX.hpp"
 #include "LIEF/DEX/File.hpp"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 void JsonVisitor::visit(const File& file) {
   JsonVisitor vheader;
@@ -45,5 +45,5 @@ void JsonVisitor::visit(const Header& header) {
   node_["quickening_info_size"] = header.quickening_info_size();
 }
 
-} // namespace VDEX
-} // namespace LIEF
+} // namespace LIEF::VDEX
+

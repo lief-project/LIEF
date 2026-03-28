@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <memory>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -45,7 +46,7 @@ std::unique_ptr<SpanStream> VectorStream::slice(uint32_t offset, size_t size) co
     return nullptr;
   }
   const uint8_t* start = binary_.data() + offset;
-  return std::unique_ptr<SpanStream>(new SpanStream(start, size));
+  return std::make_unique<SpanStream>(start, size);
 }
 
 

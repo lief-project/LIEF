@@ -25,8 +25,8 @@
 #include "logging.hpp"
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 ResourceIcon::ResourceIcon(const details::pe_resource_icon_group& header) :
   width_{header.width},
@@ -152,5 +152,5 @@ std::ostream& operator<<(std::ostream& os, const ResourceIcon& icon) {
 
 
 }
-}
+
 

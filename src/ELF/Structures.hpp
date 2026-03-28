@@ -20,10 +20,10 @@
 #include "LIEF/types.hpp"
 #include "LIEF/ELF/enums.hpp"
 
-namespace LIEF {
-namespace ELF {
 
-namespace details {
+
+
+namespace LIEF::ELF::details {
 
 #include "structures.inc"
 
@@ -65,70 +65,70 @@ struct Elf32_Prpsinfo
 class ELF32 {
   public:
   static constexpr auto r_info_shift = 8;
-  typedef Elf32_Addr    Elf_Addr;
-  typedef Elf32_Off     Elf_Off;
-  typedef Elf32_Half    Elf_Half;
-  typedef Elf32_Word    Elf_Word;
-  typedef Elf32_Sword   Elf_Sword;
+  using Elf_Addr = Elf32_Addr;
+  using Elf_Off = Elf32_Off;
+  using Elf_Half = Elf32_Half;
+  using Elf_Word = Elf32_Word;
+  using Elf_Sword = Elf32_Sword;
   // Equivalent
-  typedef Elf32_Addr    Elf_Xword;
-  typedef Elf32_Sword   Elf_Sxword;
+  using Elf_Xword = Elf32_Addr;
+  using Elf_Sxword = Elf32_Sword;
 
-  typedef uint32_t      uint;
+  using uint = uint32_t;
 
-  typedef Elf32_Phdr    Elf_Phdr;
-  typedef Elf32_Ehdr    Elf_Ehdr;
-  typedef Elf32_Shdr    Elf_Shdr;
-  typedef Elf32_Sym     Elf_Sym;
-  typedef Elf32_Rel     Elf_Rel;
-  typedef Elf32_Rela    Elf_Rela;
-  typedef Elf32_Dyn     Elf_Dyn;
-  typedef Elf32_Verneed Elf_Verneed;
-  typedef Elf32_Vernaux Elf_Vernaux;
-  typedef Elf32_Auxv    Elf_Auxv;
-  typedef Elf32_Verdef  Elf_Verdef;
-  typedef Elf32_Verdaux Elf_Verdaux;
+  using Elf_Phdr = Elf32_Phdr;
+  using Elf_Ehdr = Elf32_Ehdr;
+  using Elf_Shdr = Elf32_Shdr;
+  using Elf_Sym = Elf32_Sym;
+  using Elf_Rel = Elf32_Rel;
+  using Elf_Rela = Elf32_Rela;
+  using Elf_Dyn = Elf32_Dyn;
+  using Elf_Verneed = Elf32_Verneed;
+  using Elf_Vernaux = Elf32_Vernaux;
+  using Elf_Auxv = Elf32_Auxv;
+  using Elf_Verdef = Elf32_Verdef;
+  using Elf_Verdaux = Elf32_Verdaux;
 
-  typedef Elf32_Prpsinfo  Elf_Prpsinfo;
-  typedef Elf32_FileEntry Elf_FileEntry;
-  typedef Elf32_Prstatus  Elf_Prstatus;
+  using Elf_Prpsinfo = Elf32_Prpsinfo;
+  using Elf_FileEntry = Elf32_FileEntry;
+  using Elf_Prstatus = Elf32_Prstatus;
 
-  typedef Elf32_timeval   Elf_timeval;
+  using Elf_timeval = Elf32_timeval;
 };
 
 
 class ELF64 {
   public:
   static constexpr auto r_info_shift = 32;
-  typedef Elf64_Addr    Elf_Addr;
-  typedef Elf64_Off     Elf_Off;
-  typedef Elf64_Half    Elf_Half;
-  typedef Elf64_Word    Elf_Word;
-  typedef Elf64_Sword   Elf_Sword;
+  using Elf_Addr = Elf64_Addr;
+  using Elf_Off = Elf64_Off;
+  using Elf_Half = Elf64_Half;
+  using Elf_Word = Elf64_Word;
+  using Elf_Sword = Elf64_Sword;
 
-  typedef Elf64_Xword   Elf_Xword;
-  typedef Elf64_Sxword  Elf_Sxword;
+  using Elf_Xword = Elf64_Xword;
+  using Elf_Sxword = Elf64_Sxword;
 
-  typedef uint64_t      uint;
+  using uint = uint64_t;
 
-  typedef Elf64_Phdr    Elf_Phdr;
-  typedef Elf64_Ehdr    Elf_Ehdr;
-  typedef Elf64_Shdr    Elf_Shdr;
-  typedef Elf64_Sym     Elf_Sym;
-  typedef Elf64_Rel     Elf_Rel;
-  typedef Elf64_Rela    Elf_Rela;
-  typedef Elf64_Dyn     Elf_Dyn;
-  typedef Elf64_Verneed Elf_Verneed;
-  typedef Elf64_Vernaux Elf_Vernaux;
-  typedef Elf64_Auxv    Elf_Auxv;
-  typedef Elf64_Verdef  Elf_Verdef;
-  typedef Elf64_Verdaux Elf_Verdaux;
+  using Elf_Phdr = Elf64_Phdr;
+  using Elf_Ehdr = Elf64_Ehdr;
+  using Elf_Shdr = Elf64_Shdr;
+  using Elf_Sym = Elf64_Sym;
+  using Elf_Rel = Elf64_Rel;
+  using Elf_Rela = Elf64_Rela;
+  using Elf_Dyn = Elf64_Dyn;
+  using Elf_Verneed = Elf64_Verneed;
+  using Elf_Vernaux = Elf64_Vernaux;
+  using Elf_Auxv = Elf64_Auxv;
+  using Elf_Verdef = Elf64_Verdef;
+  using Elf_Verdaux = Elf64_Verdaux;
 
-  typedef Elf64_Prpsinfo  Elf_Prpsinfo;
-  typedef Elf64_FileEntry Elf_FileEntry;
-  typedef Elf64_Prstatus  Elf_Prstatus;
+  using Elf_Prpsinfo = Elf64_Prpsinfo;
+  using Elf_FileEntry = Elf64_FileEntry;
+  using Elf_Prstatus = Elf64_Prstatus;
 
-  typedef Elf64_timeval   Elf_timeval;
+  using Elf_timeval = Elf64_timeval;
 };
 
 class ELF32_x32 : public ELF32 {
@@ -138,7 +138,7 @@ class ELF32_arm64 : public ELF32 {
 };
 
 
-} /* end namespace details */
-} /* end namespace ELF */
-} /* end namespace LIEF */
+} // namespace LIEF::ELF::details
+
+
 #endif

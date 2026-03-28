@@ -19,8 +19,8 @@
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 AtomInfo::AtomInfo() :
   LoadCommand(LoadCommand::TYPE::ATOM_INFO, sizeof(details::linkedit_data_command))
@@ -45,4 +45,4 @@ std::ostream& AtomInfo::print(std::ostream& os) const {
 
 
 }
-}
+

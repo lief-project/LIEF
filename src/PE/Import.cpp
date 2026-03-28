@@ -24,8 +24,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 Import::Import(const details::pe_import& import) :
   ilt_rva_(import.ImportLookupTableRVA),
@@ -113,28 +113,28 @@ bool Import::remove_entry(uint32_t ordinal) {
 }
 
 const ImportEntry* Import::get_entry(const std::string& name) const {
-  const auto it_entry = std::find_if(std::begin(entries_), std::end(entries_),
+  const auto it_entry = std::find_if(entries_.begin(), entries_.end(),
       [&name] (const std::unique_ptr<ImportEntry>& entry) {
         return entry->name() == name;
       });
-  if (it_entry == std::end(entries_)) {
+  if (it_entry == entries_.end()) {
     return nullptr;
   }
   return &**it_entry;
 }
 
 result<uint32_t> Import::get_function_rva_from_iat(const std::string& function) const {
-  const auto it_function = std::find_if(std::begin(entries_), std::end(entries_),
+  const auto it_function = std::find_if(entries_.begin(), entries_.end(),
       [&function] (const std::unique_ptr<ImportEntry>& entry) {
         return entry->name() == function;
       });
 
-  if (it_function == std::end(entries_)) {
+  if (it_function == entries_.end()) {
     return make_error_code(lief_errors::not_found);
   }
 
   // Index of the function in the imported functions
-  uint32_t idx = std::distance(std::begin(entries_), it_function);
+  uint32_t idx = std::distance(entries_.begin(), it_function);
 
   if (type_ == PE_TYPE::PE32) {
     return idx * sizeof(uint32_t);
@@ -168,4 +168,4 @@ std::ostream& operator<<(std::ostream& os, const Import& entry) {
   return os;
 }
 }
-}
+

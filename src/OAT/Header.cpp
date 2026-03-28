@@ -22,8 +22,8 @@
 #include <iomanip>
 #include <sstream>
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
@@ -175,7 +175,7 @@ Header::values_t Header::values() const {
 
 const std::string* Header::get(HEADER_KEYS key) const {
   const auto it = dex2oat_context_.find(key);
-  if (it == std::end(dex2oat_context_)) {
+  if (it == dex2oat_context_.end()) {
     return nullptr;
   }
   return &it->second;
@@ -188,7 +188,7 @@ std::string* Header::get(HEADER_KEYS key) {
 
 Header& Header::set(HEADER_KEYS key, const std::string& value) {
   const auto it = dex2oat_context_.find(key);
-  if (it == std::end(dex2oat_context_)) {
+  if (it == dex2oat_context_.end()) {
     LIEF_WARN("Key {} not found", to_string(key));
     return *this;
   }
@@ -262,4 +262,4 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 
 
 }
-}
+

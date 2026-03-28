@@ -17,8 +17,8 @@
 #include "LIEF/MachO/EnumToString.hpp"
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 const char* to_string(MACHO_TYPES e) {
   CONST_MAP(MACHO_TYPES, const char*, 7) enumStrings {
@@ -127,4 +127,4 @@ const char* to_string(ARM64_RELOCATION e) {
 }
 
 }
-}
+

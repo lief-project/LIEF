@@ -19,8 +19,8 @@
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 RPathCommand::RPathCommand(std::string path) :
   LoadCommand::LoadCommand(LoadCommand::TYPE::RPATH, 0),
@@ -47,4 +47,4 @@ std::ostream& RPathCommand::print(std::ostream& os) const {
 
 
 }
-}
+

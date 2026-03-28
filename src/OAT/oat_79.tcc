@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <memory>
 #include <type_traits>
 
 #include "logging.hpp"
@@ -28,8 +29,8 @@
 #include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/Binary.hpp"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 template<>
 void Parser::parse_dex_files<details::OAT79_t>() {
@@ -52,7 +53,7 @@ void Parser::parse_dex_files<details::OAT79_t>() {
   for (size_t i = 0; i < nb_dex_files; ++i ) {
 
     LIEF_DEBUG("Processing OAT DEX file #{:d}", i);
-    std::unique_ptr<DexFile> dex_file{new DexFile{}};
+    std::unique_ptr<DexFile> dex_file = std::make_unique<DexFile>();
     auto location_size = stream_->read<uint32_t>();
     if (!location_size) {
       break;
@@ -150,4 +151,4 @@ void Parser::parse_dex_files<details::OAT79_t>() {
 
 
 } // Namespace OAT
-} // Namespace LIEF
+// Namespace LIEF

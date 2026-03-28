@@ -20,8 +20,8 @@
 #include "LIEF/MachO/Section.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 RelocationObject::RelocationObject(const details::relocation_info& relocinfo) :
   is_pcrel_{static_cast<bool>(relocinfo.r_pcrel)}
@@ -96,4 +96,4 @@ void RelocationObject::accept(Visitor& visitor) const {
 }
 
 }
-}
+

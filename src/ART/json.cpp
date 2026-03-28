@@ -18,8 +18,8 @@
 #include "ART/json_internal.hpp"
 #include "LIEF/ART.hpp"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 void JsonVisitor::visit(const File& file) {
   JsonVisitor header_visitor;
@@ -51,6 +51,6 @@ void JsonVisitor::visit(const Header& header) {
   node_["data_size"]        = header.data_size();
 }
 
-} // namespace ART
-} // namespace LIEF
+} // namespace LIEF::ART
+
 

@@ -20,8 +20,8 @@
 #include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 class JsonVisitor : public LIEF::JsonVisitor {
   public:
@@ -36,6 +36,6 @@ class JsonVisitor : public LIEF::JsonVisitor {
 };
 
 }
-}
+
 #endif // LIEF_JSON_SUPPORT
 

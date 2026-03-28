@@ -20,8 +20,8 @@
 #include "LIEF/MachO/DataInCode.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 DataInCode::DataInCode(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -41,4 +41,4 @@ std::ostream& DataInCode::print(std::ostream& os) const {
 }
 
 }
-}
+

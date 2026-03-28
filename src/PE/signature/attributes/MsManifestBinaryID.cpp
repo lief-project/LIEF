@@ -15,12 +15,12 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void MsManifestBinaryID::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
 }
-}
+

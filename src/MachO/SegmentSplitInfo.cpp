@@ -19,8 +19,8 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 SegmentSplitInfo::SegmentSplitInfo(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -41,4 +41,4 @@ std::ostream& SegmentSplitInfo::print(std::ostream& os) const {
 
 
 }
-}
+

@@ -16,9 +16,9 @@
 #include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "MachO/ChainedFixup.hpp"
 
-namespace LIEF {
-namespace MachO {
-namespace details {
+
+
+namespace LIEF::MachO::details {
 
 uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind24& bind) {
   const uint64_t addend19 = bind.addend;
@@ -123,5 +123,5 @@ bool chained_fixup::is_rebase(uint16_t ptr_format) const {
 }
 
 }
-}
-}
+
+

@@ -21,8 +21,8 @@
 
 #include "LIEF/ELF/SysvHash.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 void SysvHash::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -35,8 +35,8 @@ std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
   const std::vector<uint32_t>& chains  = sysvhash.chains();
 
   std::string buckets_str = std::accumulate(
-      std::begin(buckets),
-      std::end(buckets), std::string{},
+      buckets.begin(),
+      buckets.end(), std::string{},
       [] (const std::string& a, uint32_t b) {
         std::ostringstream dec_bucket;
         dec_bucket << std::dec;
@@ -48,8 +48,8 @@ std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
 
 
   std::string chains_str = std::accumulate(
-      std::begin(chains),
-      std::end(chains), std::string{},
+      chains.begin(),
+      chains.end(), std::string{},
       [] (const std::string& a, uint32_t b) {
         std::ostringstream dec_bucket;
         dec_bucket << std::dec;
@@ -71,5 +71,5 @@ std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
 
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

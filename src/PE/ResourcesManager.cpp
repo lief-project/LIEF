@@ -34,8 +34,8 @@
 
 FMT_FORMATTER(LIEF::PE::ResourcesManager::TYPE, LIEF::PE::to_string);
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 static constexpr auto RESOURCE_TYPES = {
   ResourcesManager::TYPE::CURSOR,         ResourcesManager::TYPE::BITMAP,
@@ -57,12 +57,12 @@ std::string ResourcesManager::string_entry_t::string_u8() const {
 
 const ResourceNode* ResourcesManager::get_node_type(ResourcesManager::TYPE type) const {
   ResourceNode::it_childs nodes = resources_->childs();
-  const auto it_node = std::find_if(std::begin(nodes), std::end(nodes),
+  const auto it_node = std::find_if(nodes.begin(), nodes.end(),
       [type] (const ResourceNode& node) {
         return TYPE(node.id()) == type;
       });
 
-  if (it_node == std::end(nodes)) {
+  if (it_node == nodes.end()) {
     return nullptr;
   }
 
@@ -72,12 +72,12 @@ const ResourceNode* ResourcesManager::get_node_type(ResourcesManager::TYPE type)
 std::vector<ResourcesManager::TYPE> ResourcesManager::get_types() const {
   std::vector<TYPE> types;
   for (const ResourceNode& node : resources_->childs()) {
-    const auto it = std::find_if(std::begin(RESOURCE_TYPES), std::end(RESOURCE_TYPES),
+    const auto it = std::find_if(RESOURCE_TYPES.begin(), RESOURCE_TYPES.end(),
         [&node] (TYPE t) {
           return t == TYPE(node.id());
         });
 
-    if (it != std::end(RESOURCE_TYPES)) {
+    if (it != RESOURCE_TYPES.end()) {
       types.push_back(*it);
     }
   }
@@ -99,7 +99,7 @@ std::string ResourcesManager::manifest() const {
   }
 
   span<const uint8_t> content = data_node->content();
-  return std::string{std::begin(content), std::end(content)};
+  return std::string{content.begin(), content.end()};
 }
 
 void ResourcesManager::manifest(const std::string& manifest) {
@@ -221,11 +221,11 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
 
         // Find the icon the RESOURCE_TYPES::ICON tree that matched entry.ID
         ResourceNode::it_const_childs sub_nodes_icons = root_icon->childs();
-        const auto it = std::find_if(std::begin(sub_nodes_icons), std::end(sub_nodes_icons),
+        const auto it = std::find_if(sub_nodes_icons.begin(), sub_nodes_icons.end(),
             [&entry] (const ResourceNode& node) {
               return node.id() == entry.ID;
             });
-        if (it == std::end(sub_nodes_icons)) {
+        if (it == sub_nodes_icons.end()) {
           LIEF_WARN("Icon with id {:d} not found", entry.ID);
           continue;
         }
@@ -241,7 +241,7 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
           continue;
         }
         span<const uint8_t> pixels = static_cast<const ResourceData&>(icon_node).content();
-        icon.pixels_ = std::vector<uint8_t>(std::begin(pixels), std::end(pixels));
+        icon.pixels_ = std::vector<uint8_t>(pixels.begin(), pixels.end());
         icons.push_back(std::move(icon));
       }
     }
@@ -525,7 +525,7 @@ std::vector<std::string> ResourcesManager::html() const {
         LIEF_ERR("HTML content is empty");
         continue;
       }
-      html.push_back(std::string{std::begin(content), std::end(content)});
+      html.emplace_back(content.begin(), content.end());
     }
   }
 
@@ -729,5 +729,5 @@ const char* to_string(ResourcesManager::TYPE type) {
 }
 
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+

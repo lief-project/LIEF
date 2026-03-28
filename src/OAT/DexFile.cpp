@@ -18,8 +18,8 @@
 #include "LIEF/OAT/hash.hpp"
 #include <ostream>
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 DexFile::DexFile(const DexFile&) = default;
 DexFile& DexFile::operator=(const DexFile&) = default;
@@ -94,4 +94,4 @@ DexFile::~DexFile() = default;
 
 
 }
-}
+

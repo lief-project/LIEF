@@ -18,8 +18,8 @@
 #include "LIEF/PE.hpp"
 #include "Object.tcc"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 Hash::~Hash() = default;
 
@@ -32,14 +32,14 @@ void Hash::visit(const Binary& binary) {
   process(binary.header());
   process(binary.optional_header());
 
-  process(std::begin(binary.data_directories()), std::end(binary.data_directories()));
-  process(std::begin(binary.sections()), std::end(binary.sections()));
-  process(std::begin(binary.imports()), std::end(binary.imports()));
-  process(std::begin(binary.delay_imports()), std::end(binary.delay_imports()));
-  process(std::begin(binary.relocations()), std::end(binary.relocations()));
+  process(binary.data_directories().begin(), binary.data_directories().end());
+  process(binary.sections().begin(), binary.sections().end());
+  process(binary.imports().begin(), binary.imports().end());
+  process(binary.delay_imports().begin(), binary.delay_imports().end());
+  process(binary.relocations().begin(), binary.relocations().end());
 
   if (binary.has_debug()) {
-    process(std::begin(binary.debug()), std::end(binary.debug()));
+    process(binary.debug().begin(), binary.debug().end());
   }
 
   if (const Export* exp = binary.get_export()) {
@@ -163,7 +163,7 @@ void Hash::visit(const Section& section) {
 
 void Hash::visit(const Relocation& relocation) {
   process(relocation.virtual_address());
-  process(std::begin(relocation.entries()), std::end(relocation.entries()));
+  process(relocation.entries().begin(), relocation.entries().end());
 }
 
 void Hash::visit(const RelocationEntry& relocation_entry) {
@@ -180,7 +180,7 @@ void Hash::visit(const Export& export_) {
   process(export_.minor_version());
   process(export_.ordinal_base());
   process(export_.name());
-  process(std::begin(export_.entries()), std::end(export_.entries()));
+  process(export_.entries().begin(), export_.entries().end());
 }
 
 void Hash::visit(const ExportEntry& export_entry) {
@@ -230,7 +230,7 @@ void Hash::visit(const Import& import) {
   process(import.import_address_table_rva());
   process(import.import_lookup_table_rva());
   process(import.name());
-  process(std::begin(import.entries()), std::end(import.entries()));
+  process(import.entries().begin(), import.entries().end());
 }
 
 void Hash::visit(const ImportEntry& import_entry) {
@@ -268,7 +268,7 @@ void Hash::visit(const ResourceNode& resource_node) {
     process(resource_node.name());
   }
 
-  process(std::begin(resource_node.childs()), std::end(resource_node.childs()));
+  process(resource_node.childs().begin(), resource_node.childs().end());
 }
 
 void Hash::visit(const ResourceData& resource_data) {
@@ -297,11 +297,11 @@ void Hash::visit(const ResourcesManager& resources_manager) {
   }
 
   if (resources_manager.has_icons()) {
-    process(std::begin(resources_manager.icons()), std::end(resources_manager.icons()));
+    process(resources_manager.icons().begin(), resources_manager.icons().end());
   }
 
   if (resources_manager.has_dialogs()) {
-    process(std::begin(resources_manager.dialogs()), std::end(resources_manager.dialogs()));
+    process(resources_manager.dialogs().begin(), resources_manager.dialogs().end());
   }
 }
 
@@ -390,8 +390,8 @@ void Hash::visit(const Signature& signature) {
   process(signature.version());
   process(signature.digest_algorithm());
   process(signature.content_info());
-  process(std::begin(signature.certificates()), std::end(signature.certificates()));
-  process(std::begin(signature.signers()), std::end(signature.signers()));
+  process(signature.certificates().begin(), signature.certificates().end());
+  process(signature.signers().begin(), signature.signers().end());
 }
 
 void Hash::visit(const x509& x509) {
@@ -411,8 +411,8 @@ void Hash::visit(const SignerInfo& signerinfo) {
   process(signerinfo.encryption_algorithm());
   process(signerinfo.digest_algorithm());
   process(signerinfo.encrypted_digest());
-  process(std::begin(signerinfo.authenticated_attributes()), std::end(signerinfo.authenticated_attributes()));
-  process(std::begin(signerinfo.unauthenticated_attributes()), std::end(signerinfo.unauthenticated_attributes()));
+  process(signerinfo.authenticated_attributes().begin(), signerinfo.authenticated_attributes().end());
+  process(signerinfo.unauthenticated_attributes().begin(), signerinfo.unauthenticated_attributes().end());
 }
 
 void Hash::visit(const Attribute& attr) {
@@ -569,7 +569,7 @@ void Hash::visit(const Pogo& pogo) {
   Pogo::it_const_entries entries = pogo.entries();
   visit(static_cast<const Debug&>(pogo));
   process(pogo.signature());
-  process(std::begin(entries), std::end(entries));
+  process(entries.begin(), entries.end());
 }
 
 
@@ -647,6 +647,6 @@ void Hash::visit(const ResourceDialogExtended& dialog) {
 
 }
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+
 

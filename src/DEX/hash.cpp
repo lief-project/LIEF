@@ -25,8 +25,8 @@
 #include "LIEF/DEX/Method.hpp"
 #include "LIEF/DEX/Prototype.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 Hash::~Hash() = default;
 
@@ -39,9 +39,9 @@ void Hash::visit(const File& file) {
   process(file.location());
   process(file.header());
 
-  process(std::begin(file.classes()), std::end(file.classes()));
-  process(std::begin(file.methods()), std::end(file.methods()));
-  process(std::begin(file.strings()), std::end(file.strings()));
+  process(file.classes().begin(), file.classes().end());
+  process(file.methods().begin(), file.methods().end());
+  process(file.strings().begin(), file.strings().end());
 
 }
 
@@ -73,8 +73,8 @@ void Hash::visit(const Class& cls) {
   process(cls.source_filename());
   process(cls.access_flags());
 
-  process(std::begin(fields), std::end(fields));
-  process(std::begin(methods), std::end(methods));
+  process(fields.begin(), fields.end());
+  process(methods.begin(), methods.end());
 }
 
 void Hash::visit(const Field& field) {
@@ -126,8 +126,8 @@ void Hash::visit(const Prototype& type) {
   if (const auto* rty = type.return_type()) {
     process(*rty);
   }
-  process(std::begin(type.parameters_type()),
-          std::end(type.parameters_type()));
+  process(type.parameters_type().begin(),
+          type.parameters_type().end());
 }
 
 void Hash::visit(const MapItem& item) {
@@ -138,10 +138,10 @@ void Hash::visit(const MapItem& item) {
 }
 
 void Hash::visit(const MapList& list) {
-  process(std::begin(list.items()), std::end(list.items()));
+  process(list.items().begin(), list.items().end());
 }
 
 
-} // namespace DEX
-} // namespace LIEF
+} // namespace LIEF::DEX
+
 

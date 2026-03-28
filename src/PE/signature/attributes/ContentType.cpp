@@ -18,8 +18,8 @@
 
 #include "LIEF/Visitor.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void ContentType::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -30,4 +30,4 @@ std::string ContentType::print() const {
 }
 
 }
-}
+

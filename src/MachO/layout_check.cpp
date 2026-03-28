@@ -825,8 +825,7 @@ bool LayoutChecker::check_linkedit() {
 
   uint64_t prev_end = linkedit_file_offset_start;
   const char* prev_name = "start of __LINKEDIT";
-  for (size_t i = 0; i < chunks.size(); ++i) {
-    const chunk_t& chunk = chunks[i];
+  for (const chunk_t& chunk : chunks) {
     if (chunk.file_offset < prev_end) {
       return error("LINKEDIT overlap of {} and {}",
                    prev_name, chunk_t::to_string(chunk.kind));

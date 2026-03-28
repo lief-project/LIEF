@@ -15,8 +15,8 @@
  */
 #include "LIEF/platforms/android/version.hpp"
 #include "frozen.hpp"
-namespace LIEF {
-namespace Android {
+
+namespace LIEF::Android {
 
 const char* code_name(ANDROID_VERSIONS version) {
   CONST_MAP(ANDROID_VERSIONS, const char*, 8) version2code {
@@ -67,4 +67,4 @@ const char* to_string(ANDROID_VERSIONS version) {
 
 
 }
-}
+

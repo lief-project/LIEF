@@ -32,8 +32,8 @@
 #include "MachO/Builder.tcc"
 #include "MachO/Binary.tcc"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 Builder::~Builder() = default;
 
@@ -216,9 +216,7 @@ ok_error_t Builder::build_fat() {
 ok_error_t Builder::build_fat_header() {
   LIEF_DEBUG("[+] Building Fat Header");
   static constexpr uint32_t ALIGNMENT = 14; // 4096 / 0x1000
-  details::fat_header header;
-
-  std::memset(&header, 0, sizeof(details::fat_header));
+  details::fat_header header{};
 
   header.magic     = static_cast<uint32_t>(MACHO_TYPES::CIGAM_FAT);
   header.nfat_arch = get_swapped_endian<uint32_t>(binaries_.size());
@@ -228,8 +226,7 @@ ok_error_t Builder::build_fat_header() {
 
   for (Binary* binary : binaries_) {
     const Header& header = binary->header();
-    details::fat_arch arch_header;
-    std::memset(&arch_header, 0, sizeof(details::fat_arch));
+    details::fat_arch arch_header{};
 
     arch_header.cputype    = get_swapped_endian((uint32_t)header.cpu_type());
     arch_header.cpusubtype = get_swapped_endian((uint32_t)header.cpu_subtype());
@@ -284,14 +281,13 @@ ok_error_t Builder::build_uuid() {
     return ok();
   }
 
-  details::uuid_command raw_cmd;
-  std::memset(&raw_cmd, 0, sizeof(details::uuid_command));
+  details::uuid_command raw_cmd{};
 
   raw_cmd.cmd     = static_cast<uint32_t>(uuid_cmd->command());
   raw_cmd.cmdsize = static_cast<uint32_t>(uuid_cmd->size()); // sizeof(uuid_command)
 
   const uuid_t& uuid = uuid_cmd->uuid();
-  std::copy(std::begin(uuid), std::end(uuid), raw_cmd.uuid);
+  std::copy(uuid.begin(), uuid.end(), raw_cmd.uuid);
 
   if (uuid_cmd->size() < sizeof(details::uuid_command)) {
     LIEF_WARN("Original data size mismatch for '{}', skipping", to_string(uuid_cmd->command()));
@@ -350,7 +346,7 @@ ok_error_t Builder::write(FatBinary& fat, const std::string& filename) {
 ok_error_t Builder::write(FatBinary& fat, const std::string& filename, config_t config) {
   std::vector<Binary*> binaries;
   binaries.reserve(fat.binaries_.size());
-  std::transform(std::begin(fat.binaries_), std::end(fat.binaries_),
+  std::transform(fat.binaries_.begin(), fat.binaries_.end(),
                  std::back_inserter(binaries),
                  [] (const std::unique_ptr<Binary>& bin) {
                    return bin.get();
@@ -370,7 +366,7 @@ ok_error_t Builder::write(FatBinary& fat, std::vector<uint8_t>& out) {
 ok_error_t Builder::write(FatBinary& fat, std::vector<uint8_t>& out, config_t config) {
   std::vector<Binary*> binaries;
   binaries.reserve(fat.binaries_.size());
-  std::transform(std::begin(fat.binaries_), std::end(fat.binaries_),
+  std::transform(fat.binaries_.begin(), fat.binaries_.end(),
                  std::back_inserter(binaries),
                  [] (const std::unique_ptr<Binary>& bin) {
                    return bin.get();
@@ -390,7 +386,7 @@ ok_error_t Builder::write(FatBinary& fat, std::ostream& out) {
 ok_error_t Builder::write(FatBinary& fat, std::ostream& out, config_t config) {
   std::vector<Binary*> binaries;
   binaries.reserve(fat.binaries_.size());
-  std::transform(std::begin(fat.binaries_), std::end(fat.binaries_),
+  std::transform(fat.binaries_.begin(), fat.binaries_.end(),
                  std::back_inserter(binaries),
                  [] (const std::unique_ptr<Binary>& bin) {
                    return bin.get();
@@ -425,4 +421,4 @@ ok_error_t Builder::write(std::ostream& os) const {
 }
 
 }
-}
+

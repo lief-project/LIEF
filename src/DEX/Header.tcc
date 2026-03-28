@@ -15,8 +15,8 @@
  */
 #include <string>
 #include "LIEF/DEX/Header.hpp"
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 template<class T>
 Header::Header(const T& header) :
@@ -61,5 +61,5 @@ Header::Header(const T& header) :
 }
 
 
-} // namespace DEX
-} // namespace LIEF
+} // namespace LIEF::DEX
+

@@ -547,7 +547,7 @@ uint64_t ChainedPointerAnalysis::walk_chain(
   const size_t stride = ChainedPointerAnalysis::stride(format);
   assert(ptr_sizeof == 8 || ptr_sizeof == 4);
   const uint64_t start_pos = stream.pos();
-  while (1) {
+  while (true) {
     uint64_t value = ptr_sizeof == sizeof(uint64_t) ?
                                    stream.peek<uint64_t>().value_or(0) :
                                    stream.peek<uint32_t>().value_or(0);

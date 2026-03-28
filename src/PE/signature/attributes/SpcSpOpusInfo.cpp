@@ -15,8 +15,8 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void SpcSpOpusInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -38,4 +38,4 @@ std::string SpcSpOpusInfo::print() const {
 
 
 }
-}
+

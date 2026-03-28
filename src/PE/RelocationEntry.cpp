@@ -25,8 +25,8 @@
 
 FMT_FORMATTER(LIEF::PE::RelocationEntry::BASE_TYPES, LIEF::PE::to_string);
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 RelocationEntry::BASE_TYPES
   RelocationEntry::type_from_data(Header::MACHINE_TYPES arch, uint16_t data)
@@ -167,4 +167,4 @@ const char* to_string(RelocationEntry::BASE_TYPES type) {
 
 
 }
-}
+

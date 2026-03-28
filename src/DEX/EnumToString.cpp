@@ -16,8 +16,8 @@
 #include "LIEF/DEX/EnumToString.hpp"
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 const char* to_string(MapItem::TYPES  e) {
   CONST_MAP(MapItem::TYPES, const char*, 20) enumStrings {
@@ -100,5 +100,5 @@ const char* to_string(Type::PRIMITIVES  e) {
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
-} // namespace DEX
-} // namespace LIEF
+} // namespace LIEF::DEX
+

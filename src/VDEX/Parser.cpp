@@ -29,8 +29,8 @@
 #include "Header.tcc"
 #include "Parser.tcc"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 Parser::~Parser() = default;
 Parser::Parser()  = default;
@@ -96,5 +96,5 @@ void Parser::init(const std::string& /*name*/, vdex_version_t version) {
   }
 }
 
-} // namespace VDEX
-} // namespace LIEF
+} // namespace LIEF::VDEX
+

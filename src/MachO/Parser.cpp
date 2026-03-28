@@ -33,8 +33,8 @@
 #include "LIEF/MachO/RelocationDyld.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 Parser::Parser() = default;
 Parser::~Parser() = default;
 
@@ -245,5 +245,5 @@ ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
   return ok();
 }
 
-} //namespace MachO
-}
+} // namespace LIEF::MachO
+

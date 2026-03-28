@@ -19,8 +19,8 @@
 #include "LIEF/MachO/SubFramework.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 SubFramework::SubFramework(const details::sub_framework_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize}
@@ -38,4 +38,4 @@ std::ostream& SubFramework::print(std::ostream& os) const {
 
 
 }
-}
+

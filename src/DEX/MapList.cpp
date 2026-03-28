@@ -17,8 +17,8 @@
 #include "LIEF/DEX/hash.hpp"
 #include "logging.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 MapList::MapList() = default;
 MapList::MapList(const MapList& other) = default;
@@ -28,7 +28,7 @@ MapList& MapList::operator=(const MapList&) = default;
 MapList::it_items_t MapList::items() {
   std::vector<MapItem*> items;
   items.reserve(items_.size());
-  std::transform(std::begin(items_), std::end(items_),
+  std::transform(items_.begin(), items_.end(),
                  std::back_inserter(items),
                  [] (MapList::items_t::value_type& p) -> MapItem* {
                    return &(p.second);
@@ -40,7 +40,7 @@ MapList::it_items_t MapList::items() {
 MapList::it_const_items_t MapList::items() const {
   std::vector<MapItem*> items;
   items.reserve(items_.size());
-  std::transform(std::begin(items_), std::end(items_),
+  std::transform(items_.begin(), items_.end(),
                  std::back_inserter(items),
                  [] (const MapList::items_t::value_type& p) -> MapItem* {
                    return const_cast<MapItem*>(&(p.second));
@@ -56,7 +56,7 @@ bool MapList::has(MapItem::TYPES type) const {
 
 const MapItem& MapList::get(MapItem::TYPES type) const {
   const auto it = items_.find(type);
-  CHECK(it != std::end(items_), "Can't find type!");
+  CHECK(it != items_.end(), "Can't find type!");
   return it->second;
 }
 
@@ -89,4 +89,4 @@ std::ostream& operator<<(std::ostream& os, const MapList& mlist) {
 MapList::~MapList() = default;
 
 }
-}
+

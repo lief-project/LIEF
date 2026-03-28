@@ -21,8 +21,8 @@
 
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 DataCodeEntry::DataCodeEntry(const details::data_in_code_entry& entry) :
   offset_{entry.offset},
@@ -59,4 +59,4 @@ const char* to_string(DataCodeEntry::TYPES e) {
 }
 
 }
-}
+

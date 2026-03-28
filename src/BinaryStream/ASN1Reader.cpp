@@ -17,6 +17,7 @@
 #include "logging.hpp"
 
 #include <array>
+#include <memory>
 
 #include "mbedtls_wraps.h"
 
@@ -344,7 +345,7 @@ result<std::vector<uint8_t>> ASN1Reader::read_octet_string() {
 }
 
 result<std::unique_ptr<mbedtls_x509_crt>> ASN1Reader::read_cert() {
-  std::unique_ptr<mbedtls_x509_crt> ca{new mbedtls_x509_crt{}};
+  auto ca = std::make_unique<mbedtls_x509_crt>(mbedtls_x509_crt{});
   mbedtls_x509_crt_init(ca.get());
 
   uint8_t* p               = stream_.p();
@@ -416,7 +417,7 @@ result<std::vector<uint8_t>> ASN1Reader::x509_read_serial() {
 }
 
 result<std::unique_ptr<mbedtls_x509_time>> ASN1Reader::x509_read_time() {
-  std::unique_ptr<mbedtls_x509_time> tm{new mbedtls_x509_time{}};
+  auto tm = std::make_unique<mbedtls_x509_time>(mbedtls_x509_time{});
 
   const uint8_t* cur_p = stream_.p();
   uint8_t* p           = stream_.p();

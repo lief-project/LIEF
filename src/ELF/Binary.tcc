@@ -28,8 +28,8 @@
 
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 uint64_t default_segment_alignment(const Binary& bin) {
   std::set<uint64_t> values;
@@ -515,7 +515,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
   // ====================================================================
   header.numberof_segments(header.numberof_segments() + 1);
   span<const uint8_t> content_ref = segment.content();
-  std::vector<uint8_t> content{content_ref.data(), std::end(content_ref)};
+  std::vector<uint8_t> content{content_ref.data(), content_ref.end()};
   auto new_segment = std::make_unique<Segment>(segment);
 
   uint64_t last_offset_sections = last_offset_section();
@@ -568,8 +568,8 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment, ui
   if (it_new_segment_place == segments_.rend()) {
     segments_.push_back(std::move(new_segment));
   } else {
-    const size_t idx = std::distance(std::begin(segments_), it_new_segment_place.base());
-    segments_.insert(std::begin(segments_) + idx, std::move(new_segment));
+    const size_t idx = std::distance(segments_.begin(), it_new_segment_place.base());
+    segments_.insert(segments_.begin() + idx, std::move(new_segment));
   }
   phdr_reloc_info_.nb_segments--;
   return seg_ptr;
@@ -649,8 +649,8 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
   if (it_new_segment_place == segments_.rend()) {
     segments_.push_back(std::move(new_segment));
   } else {
-    const size_t idx = std::distance(std::begin(segments_), it_new_segment_place.base());
-    segments_.insert(std::begin(segments_) + idx, std::move(new_segment));
+    const size_t idx = std::distance(segments_.begin(), it_new_segment_place.base());
+    segments_.insert(segments_.begin() + idx, std::move(new_segment));
   }
 
   return seg_ptr;
@@ -663,12 +663,12 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment, uin
 template<>
 Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment, uint64_t size) {
 
-  const auto it_segment = std::find_if(std::begin(segments_), std::end(segments_),
+  const auto it_segment = std::find_if(segments_.begin(), segments_.end(),
                                        [&segment] (const std::unique_ptr<Segment>& s) {
                                           return *s == segment;
                                        });
 
-  if (it_segment == std::end(segments_)) {
+  if (it_segment == segments_.end()) {
     LIEF_ERR("Unable to find the segment in the current binary");
     return nullptr;
   }
@@ -697,7 +697,7 @@ Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment, uin
   segment_to_extend->virtual_size(segment_to_extend->virtual_size() + size);
 
   span<const uint8_t> content_ref = segment_to_extend->content();
-  std::vector<uint8_t> segment_content{content_ref.data(), std::end(content_ref)};
+  std::vector<uint8_t> segment_content{content_ref.data(), content_ref.end()};
 
   segment_content.resize(segment_to_extend->physical_size(), 0);
   segment_to_extend->content(segment_content);
@@ -864,4 +864,4 @@ void Binary::fix_got_entries(uint64_t from, uint64_t shift) {
 }
 
 }
-}
+

@@ -20,8 +20,8 @@
 #include "LIEF/ART/File.hpp"
 #include "LIEF/ART/EnumToString.hpp"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 template<typename ART_T>
 void Parser::parse_file() {
@@ -333,4 +333,4 @@ void Parser::parse_interned_strings(size_t offset, size_t size) {
 #endif
 
 }
-}
+

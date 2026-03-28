@@ -32,8 +32,8 @@
 FMT_FORMATTER(LIEF::MachO::Section::FLAGS, LIEF::MachO::to_string);
 FMT_FORMATTER(LIEF::MachO::Section::TYPE, LIEF::MachO::to_string);
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 static constexpr auto ARRAY_FLAGS = {
   Section::FLAGS::PURE_INSTRUCTIONS,
@@ -184,7 +184,7 @@ void Section::content(const content_t& data) {
     return;
   }
 
-  std::move(std::begin(data), std::end(data),
+  std::move(data.begin(), data.end(),
             content.data() + relative_offset);
 }
 
@@ -200,8 +200,8 @@ std::vector<Section::FLAGS> Section::flags_list() const {
   std::vector<FLAGS> flags;
 
   std::copy_if(
-      std::begin(ARRAY_FLAGS), std::end(ARRAY_FLAGS),
-      std::inserter(flags, std::begin(flags)),
+      ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(),
+      std::inserter(flags, flags.begin()),
       [this] (FLAGS f) { return has(f); });
 
   return flags;
@@ -312,5 +312,5 @@ const char* to_string(Section::TYPE e) {
   return "UNKNOWN";
 }
 
-} // namespace MachO
-} // namespace LIEF
+} // namespace LIEF::MachO
+

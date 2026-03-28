@@ -20,13 +20,13 @@
 
 #include <algorithm>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 DynamicEntryArray& DynamicEntryArray::remove(uint64_t function) {
-  array_.erase(std::remove_if(std::begin(array_), std::end(array_),
+  array_.erase(std::remove_if(array_.begin(), array_.end(),
                               [function] (uint64_t v) { return v == function; }),
-               std::end(array_));
+               array_.end());
   return *this;
 }
 
@@ -40,7 +40,7 @@ DynamicEntryArray& DynamicEntryArray::insert(size_t pos, uint64_t function) {
     return *this;
   }
 
-  array_.insert(std::begin(array_) + pos, function);
+  array_.insert(array_.begin() + pos, function);
   return *this;
 }
 
@@ -69,7 +69,7 @@ std::ostream& DynamicEntryArray::print(std::ostream& os) const {
 }
 
 }
-}
+
 
 
 

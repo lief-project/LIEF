@@ -18,8 +18,8 @@
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 TwoLevelHints::TwoLevelHints(const details::twolevel_hints_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -38,4 +38,4 @@ std::ostream& TwoLevelHints::print(std::ostream& os) const {
 
 
 }
-}
+

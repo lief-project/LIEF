@@ -25,8 +25,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 DataDirectory::DataDirectory(const details::pe_data_directory& header,
                              DataDirectory::TYPES type) :
@@ -125,4 +125,4 @@ const char* to_string(DataDirectory::TYPES e) {
 }
 
 }
-}
+

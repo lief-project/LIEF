@@ -29,8 +29,8 @@
 #include "logging.hpp"
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 bool GnuHash::check_bloom_filter(uint32_t hash) const {
   const size_t C = c_;
@@ -209,8 +209,8 @@ std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash) {
   const std::vector<uint32_t>& hash_values   = gnuhash.hash_values();
 
   std::string bloom_filters_str = std::accumulate(
-      std::begin(bloom_filters),
-      std::end(bloom_filters), std::string{},
+      bloom_filters.begin(),
+      bloom_filters.end(), std::string{},
       [] (const std::string& a, uint64_t bf) {
         std::ostringstream hex_bf;
         hex_bf << std::hex;
@@ -221,8 +221,8 @@ std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash) {
   bloom_filters_str += "]";
 
   std::string buckets_str = std::accumulate(
-      std::begin(buckets),
-      std::end(buckets), std::string{},
+      buckets.begin(),
+      buckets.end(), std::string{},
       [] (const std::string& a, uint32_t b) {
         std::ostringstream hex_bucket;
         hex_bucket << std::dec;
@@ -234,8 +234,8 @@ std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash) {
 
 
   std::string hash_values_str = std::accumulate(
-      std::begin(hash_values),
-      std::end(hash_values), std::string{},
+      hash_values.begin(),
+      hash_values.end(), std::string{},
       [] (const std::string& a, uint64_t hv) {
         std::ostringstream hex_hv;
         hex_hv << std::hex;
@@ -275,5 +275,5 @@ template
 result<uint32_t> GnuHash::nb_symbols<details::ELF32_arm64>(SpanStream&);
 
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

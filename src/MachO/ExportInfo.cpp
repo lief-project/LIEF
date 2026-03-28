@@ -28,8 +28,8 @@
 FMT_FORMATTER(LIEF::MachO::ExportInfo::FLAGS, LIEF::MachO::to_string);
 FMT_FORMATTER(LIEF::MachO::ExportInfo::KIND, LIEF::MachO::to_string);
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 static constexpr auto ARRAY_FLAGS = {
   ExportInfo::FLAGS::WEAK_DEFINITION,
@@ -67,7 +67,7 @@ bool ExportInfo::has(FLAGS flag) const {
 ExportInfo::flag_list_t ExportInfo::flags_list() const {
   flag_list_t flags;
 
-  std::copy_if(std::begin(ARRAY_FLAGS), std::end(ARRAY_FLAGS),
+  std::copy_if(ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(),
                std::back_inserter(flags),
                [this] (FLAGS f) { return has(f); });
 
@@ -130,4 +130,4 @@ const char* to_string(ExportInfo::FLAGS e) {
 
 
 }
-}
+

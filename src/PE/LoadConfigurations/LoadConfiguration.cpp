@@ -40,8 +40,8 @@
 
 FMT_FORMATTER(LIEF::PE::LoadConfiguration::IMAGE_GUARD, LIEF::PE::to_string);
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 LoadConfiguration::LoadConfiguration() = default;
 LoadConfiguration::LoadConfiguration(LoadConfiguration&&) = default;
@@ -1141,6 +1141,6 @@ template ok_error_t LoadConfiguration::parse_enclave_config<details::PE32>(
 template ok_error_t LoadConfiguration::parse_enclave_config<details::PE64>(
   Parser& ctx, LoadConfiguration& config);
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+
 

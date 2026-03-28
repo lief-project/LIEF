@@ -20,8 +20,8 @@
 #include "visitors/json.hpp" // internal
 #include "LIEF/MachO.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class Binary;
 class BindingInfo;
@@ -118,6 +118,6 @@ class JsonVisitor : public LIEF::JsonVisitor {
 };
 
 }
-}
+
 
 #endif

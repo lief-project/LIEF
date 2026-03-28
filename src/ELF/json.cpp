@@ -17,8 +17,8 @@
 #include "ELF/json_internal.hpp"
 #include "LIEF/ELF.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 void JsonVisitor::visit(const Binary& binary) {
   JsonVisitor header_visitor;
@@ -262,7 +262,7 @@ void JsonVisitor::visit(const DynamicEntryFlags& entry) {
   flags_str.reserve(flags.size());
 
   std::transform(
-      std::begin(flags), std::end(flags),
+      flags.begin(), flags.end(),
       std::back_inserter(flags_str),
       [] (DynamicEntryFlags::FLAG f) {
         return to_string(f);
@@ -386,7 +386,7 @@ void JsonVisitor::visit(const NoteGnuProperty& note_prop) {
   json_props.reserve(props.size());
 
   for (const std::unique_ptr<NoteGnuProperty::Property>& prop : props) {
-    json_props.push_back(to_string(prop->type()));
+    json_props.emplace_back(to_string(prop->type()));
   }
 
   node_["properties"] = std::move(json_props);
@@ -554,6 +554,6 @@ void JsonVisitor::visit(const SysvHash& sysvhash) {
 
 
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+
 

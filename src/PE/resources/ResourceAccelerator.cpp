@@ -25,8 +25,8 @@
 
 FMT_FORMATTER(LIEF::PE::ResourceAccelerator::FLAGS, LIEF::PE::to_string);
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 static constexpr auto ARRAY_FLAGS = {
   ResourceAccelerator::FLAGS::VIRTKEY, ResourceAccelerator::FLAGS::NOINVERT,
@@ -55,7 +55,7 @@ std::ostream& operator<<(std::ostream& os, const ResourceAccelerator& acc) {
 
 std::vector<ResourceAccelerator::FLAGS> ResourceAccelerator::flags_list() const {
   std::vector<FLAGS> flags;
-  std::copy_if(std::begin(ARRAY_FLAGS), std::end(ARRAY_FLAGS),
+  std::copy_if(ARRAY_FLAGS.begin(), ARRAY_FLAGS.end(),
                std::back_inserter(flags),
                [this] (FLAGS f) { return has(f); });
   return flags;
@@ -83,4 +83,4 @@ const char* to_string(ResourceAccelerator::FLAGS flag) {
 }
 
 }
-}
+

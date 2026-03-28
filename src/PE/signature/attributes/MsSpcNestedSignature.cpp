@@ -18,8 +18,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void MsSpcNestedSignature::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -34,4 +34,4 @@ std::string MsSpcNestedSignature::print() const {
 
 
 }
-}
+

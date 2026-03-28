@@ -19,8 +19,8 @@
 
 #include "LIEF/PE/ResourceData.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void ResourceData::swap(ResourceData& other) noexcept {
   ResourceNode::swap(other);
@@ -36,4 +36,4 @@ void ResourceData::accept(Visitor& visitor) const {
 
 
 }
-}
+

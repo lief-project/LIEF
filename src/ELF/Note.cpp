@@ -43,8 +43,8 @@
 #define IMPL_WRITE_AT(T) \
   template ok_error_t Note::write_at(size_t offset, const T& value);
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 static constexpr auto NT_CORE_NAME = "CORE";
 static constexpr auto NT_GNU_NAME = "GNU";
@@ -501,9 +501,9 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
           LIEF_WARN("CORE_PRSTATUS requires a valid architecture");
           return nullptr;
         }
-        return std::unique_ptr<CorePrStatus>(new CorePrStatus(
+        return std::make_unique<CorePrStatus>(
               arch, cls, std::move(norm_name), *int_type, std::move(description)
-        ));
+        );
       }
     case Note::TYPE::CORE_PRPSINFO:
       {
@@ -516,9 +516,9 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
           LIEF_WARN("CORE_PRPSINFO requires a valid architecture");
           return nullptr;
         }
-        return std::unique_ptr<CorePrPsInfo>(new CorePrPsInfo(
+        return std::make_unique<CorePrPsInfo>(
             arch, cls, std::move(norm_name), *int_type, std::move(description)
-        ));
+        );
       }
     case Note::TYPE::CORE_FILE:
       {
@@ -531,9 +531,9 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
           LIEF_WARN("CORE_FILE requires a valid architecture");
           return nullptr;
         }
-        return std::unique_ptr<CoreFile>(new CoreFile(
+        return std::make_unique<CoreFile>(
             arch, cls, std::move(norm_name), *int_type, std::move(description)
-        ));
+        );
       }
     case Note::TYPE::CORE_AUXV:
       {
@@ -546,9 +546,9 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
           LIEF_WARN("CORE_AUXV requires a valid architecture");
           return nullptr;
         }
-        return std::unique_ptr<CoreAuxv>(new CoreAuxv(
+        return std::make_unique<CoreAuxv>(
             arch, cls, std::move(norm_name), *int_type, std::move(description)
-        ));
+        );
       }
     case Note::TYPE::CORE_SIGINFO:
       {
@@ -568,10 +568,10 @@ Note::create(const std::string& name, Note::TYPE ntype, description_t descriptio
           LIEF_WARN("GNU_PROPERTY_TYPE_0 requires a valid architecture");
           return nullptr;
         }
-        return std::unique_ptr<NoteGnuProperty>(new NoteGnuProperty(
+        return std::make_unique<NoteGnuProperty>(
             arch, cls, std::move(norm_name), *int_type, std::move(description),
             std::move(section_name)
-        ));
+        );
       }
     case Note::TYPE::ANDROID_IDENT:
         return std::unique_ptr<AndroidIdent>(new AndroidIdent(
@@ -764,5 +764,5 @@ IMPL_WRITE_AT(int32_t)
 IMPL_WRITE_AT(uint64_t)
 IMPL_WRITE_AT(int64_t)
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

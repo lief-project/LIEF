@@ -18,8 +18,8 @@
 #include "LIEF/ART/File.hpp"
 #include "LIEF/ART/Header.hpp"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 Hash::~Hash() = default;
 
@@ -58,6 +58,6 @@ void Hash::visit(const Header& header) {
 
 
 
-} // namespace ART
-} // namespace LIEF
+} // namespace LIEF::ART
+
 

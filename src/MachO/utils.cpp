@@ -31,8 +31,8 @@
 #include "logging.hpp"
 
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 inline result<MACHO_TYPES> magic_from_stream(BinaryStream& stream,
                                              bool keep_offset = false) {
@@ -197,5 +197,5 @@ void foreach_segment(BinaryStream& stream, const segment_callback_t cbk) {
 }
 
 }
-}
+
 

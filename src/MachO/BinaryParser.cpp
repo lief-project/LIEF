@@ -29,8 +29,8 @@
 
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 BinaryParser::BinaryParser() = default;
 BinaryParser::~BinaryParser() = default;
@@ -182,8 +182,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
     const std::string& symbol_name = prefix;
     auto export_info = std::make_unique<ExportInfo>(0, flags, offset);
     Symbol* symbol = nullptr;
-    auto search = memoized_symbols_.find(symbol_name);
-    if (search != memoized_symbols_.end()) {
+    if (auto search = memoized_symbols_.find(symbol_name); search != memoized_symbols_.end()) {
       symbol = search->second;
     } else {
       LIEF_DEBUG("Cache miss for symbol: {}", symbol_name);
@@ -233,8 +232,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
       }
 
       Symbol* symbol = nullptr;
-      auto search = memoized_symbols_.find(imported_name);
-      if (search != memoized_symbols_.end()) {
+      if (auto search = memoized_symbols_.find(imported_name); search != memoized_symbols_.end()) {
         symbol = search->second;
       } else {
         LIEF_DEBUG("Cache miss for symbol: {}", imported_name);
@@ -485,5 +483,5 @@ ok_error_t BinaryParser::parse_indirect_symbols(DynamicSymbolCommand& cmd,
   return ok();
 }
 
-} // namespace MachO
-} // namespace LIEF
+} // namespace LIEF::MachO
+

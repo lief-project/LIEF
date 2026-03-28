@@ -52,8 +52,8 @@
 #include "Object.tcc"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 template<typename ELF_T>
 ok_error_t Parser::parse_binary() {
 
@@ -863,7 +863,7 @@ ok_error_t Parser::parse_sections() {
   const std::unique_ptr<Section>& string_section = binary_->sections_[section_string_index];
   for (std::unique_ptr<Section>& section : binary_->sections_) {
     const auto it_name_idx = sections_names.find(section.get());
-    if (it_name_idx == std::end(sections_names)) {
+    if (it_name_idx == sections_names.end()) {
       LIEF_WARN("Missing name_idx for section at offset {:#x}", section->file_offset());
       continue;
     }
@@ -1824,4 +1824,4 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset, uint32_t nb_
 }
 
 }
-}
+

@@ -15,9 +15,9 @@
  */
 #include "ELF/DataHandler/Node.hpp"
 
-namespace LIEF {
-namespace ELF {
-namespace DataHandler {
+
+
+namespace LIEF::ELF::DataHandler {
 
 bool Node::operator==(const Node& rhs) const {
   if (this == &rhs) {
@@ -45,5 +45,5 @@ bool Node::operator>(const Node& rhs) const {
 }
 
 }
-}
-}
+
+

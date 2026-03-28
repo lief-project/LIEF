@@ -23,8 +23,8 @@
 #include "LIEF/ELF/utils.hpp"
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 bool is_oat(const std::string& file) {
   if (!ELF::is_elf(file)) {
@@ -111,5 +111,5 @@ Android::ANDROID_VERSIONS android_version(oat_version_t version) {
 
 
 
-} // namespace OAT
-} // namespace LIEF
+} // namespace LIEF::OAT
+

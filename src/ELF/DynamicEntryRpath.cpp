@@ -23,8 +23,8 @@
 #include <sstream>
 #include <utility>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 std::vector<std::string> DynamicEntryRpath::paths() const {
   std::stringstream ss;
@@ -38,7 +38,7 @@ std::vector<std::string> DynamicEntryRpath::paths() const {
 }
 
 void DynamicEntryRpath::paths(const std::vector<std::string>& paths) {
-  rpath_ = std::accumulate(std::begin(paths), std::end(paths), std::string(),
+  rpath_ = std::accumulate(paths.begin(), paths.end(), std::string(),
       [] (const std::string& path, const std::string& new_entry) {
         return path.empty() ? new_entry :  path + DynamicEntryRpath::delimiter + new_entry;
       });
@@ -53,11 +53,11 @@ DynamicEntryRpath& DynamicEntryRpath::append(std::string path) {
 
 DynamicEntryRpath& DynamicEntryRpath::remove(const std::string& path) {
   std::vector<std::string> paths = this->paths();
-  paths.erase(std::remove_if(std::begin(paths), std::end(paths),
+  paths.erase(std::remove_if(paths.begin(), paths.end(),
                              [&path] (const std::string& p) {
                                return p == path;
                              }),
-              std::end(paths));
+              paths.end());
   this->paths(paths);
   return *this;
 }
@@ -73,7 +73,7 @@ DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, const std::string& path
     LIEF_ERR("Position {:d} is out of range", pos);
     return *this;
   }
-  paths.insert(std::begin(paths) + pos, path);
+  paths.insert(paths.begin() + pos, path);
   this->paths(paths);
   return *this;
 }
@@ -91,7 +91,7 @@ std::ostream& DynamicEntryRpath::print(std::ostream& os) const {
 }
 
 }
-}
+
 
 
 

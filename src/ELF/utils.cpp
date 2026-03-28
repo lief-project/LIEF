@@ -23,8 +23,8 @@
 #include "LIEF/ELF/utils.hpp"
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 bool is_elf(BinaryStream& stream) {
   using magic_t = std::array<char, sizeof(details::ElfMagic)>;
@@ -88,5 +88,5 @@ uint32_t dl_new_hash(const char* name) {
   return h & 0xffffffff;
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

@@ -19,8 +19,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 result<CodeIntegrity> CodeIntegrity::parse(Parser&, BinaryStream& stream) {
   auto flags = stream.read<uint16_t>();
@@ -67,4 +67,4 @@ std::ostream& operator<<(std::ostream& os, const CodeIntegrity& entry) {
 }
 
 }
-}
+

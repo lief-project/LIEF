@@ -17,8 +17,8 @@
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 #include "MachO/ChainedFixup.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 ChainedBindingInfo::ChainedBindingInfo(ChainedBindingInfo&&) noexcept = default;
 ChainedBindingInfo& ChainedBindingInfo::operator=(ChainedBindingInfo&&) noexcept = default;
@@ -134,4 +134,4 @@ void ChainedBindingInfo::clear() {
 }
 
 }
-}
+

@@ -26,8 +26,8 @@
 #include "MachO/ChainedFixup.hpp"
 #include "MachO/ChainedBindingInfoList.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 DyldChainedFixups::~DyldChainedFixups() = default;
 DyldChainedFixups::DyldChainedFixups() = default;
 
@@ -158,4 +158,4 @@ std::ostream& operator<<(std::ostream& os, const DyldChainedFixups::chained_star
 }
 
 }
-}
+

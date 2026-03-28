@@ -41,7 +41,6 @@ class Decoder {
   };
   Decoder() = delete;
   Decoder(BinaryStream& stream) :
-    ostream_(nullptr),
     stream_(&stream)
   {}
 

@@ -83,9 +83,9 @@ Stub Stub::Iterator::operator*() const {
   }
   LIEF::span<const uint8_t> stub_raw = section->content().subspan(offset, stride);
   const uint64_t addr = section->virtual_address() + offset;
-  return Stub(
+  return {
     target_info_, addr, as_vector(stub_raw)
-  );
+  };
 }
 
 #if !defined(LIEF_EXTENDED)

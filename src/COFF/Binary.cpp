@@ -90,8 +90,8 @@ std::string Binary::to_string() const {
 
   if (auto relocs = relocations(); !relocs.empty()) {
     oss << fmt::format("Relocations (#{})\n", relocs.size());
-    for (size_t i = 0; i < relocs.size(); ++i) {
-      oss << "  " << relocs[i] << '\n';
+    for (const Relocation& reloc : relocs) {
+      oss << "  " << reloc << '\n';
     }
   }
 

@@ -19,10 +19,10 @@
 #include <cstring>
 #include "LIEF/types.hpp"
 
-namespace LIEF {
+
 /// Namespace related to the LIEF's VDEX module
-namespace VDEX {
-namespace details {
+
+namespace LIEF::VDEX::details {
 using vdex_version_t = uint32_t;
 
 static constexpr uint8_t magic[] = { 'v', 'd', 'e', 'x' };
@@ -83,8 +83,8 @@ class VDEX11 {
   static constexpr vdex_version_t vdex_version = VDEX_11::vdex_version;
 };
 
-} /* end namespace details */
-} /* end namespace VDEX */
-} /* end namespace LIEF */
+} // namespace LIEF::VDEX::details
+
+
 #endif
 

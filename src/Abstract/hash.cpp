@@ -30,9 +30,9 @@ size_t AbstractHash::hash(const Object& obj) {
 void AbstractHash::visit(const Binary& binary) {
   process(binary.format());
   process(binary.header());
-  process(std::begin(binary.symbols()), std::end(binary.symbols()));
-  process(std::begin(binary.sections()), std::end(binary.sections()));
-  process(std::begin(binary.relocations()), std::end(binary.relocations()));
+  process(binary.symbols().begin(), binary.symbols().end());
+  process(binary.sections().begin(), binary.sections().end());
+  process(binary.relocations().begin(), binary.relocations().end());
 }
 
 void AbstractHash::visit(const Header& header) {

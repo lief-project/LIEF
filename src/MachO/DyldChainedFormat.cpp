@@ -17,8 +17,8 @@
 #define LIEF_MACHO_DYLD_CHAINED_FORMAT_H
 #include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "frozen.hpp"
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 const char* to_string(DYLD_CHAINED_FORMAT e) {
   #define ENTRY(X) std::pair(DYLD_CHAINED_FORMAT::X, #X)
@@ -62,5 +62,5 @@ const char* to_string(DYLD_CHAINED_PTR_FORMAT e) {
 }
 
 }
-}
+
 #endif

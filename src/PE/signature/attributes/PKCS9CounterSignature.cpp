@@ -17,8 +17,8 @@
 #include "LIEF/Visitor.hpp"
 
 #include <sstream>
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void PKCS9CounterSignature::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -32,4 +32,4 @@ std::string PKCS9CounterSignature::print() const {
 
 
 }
-}
+

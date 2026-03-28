@@ -20,8 +20,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 std::string ImportEntry::demangled_name() const {
   logging::needs_lief_extended();
@@ -60,5 +60,5 @@ std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
   return os;
 }
 
-} // namespace PE
-} // namepsace LIEF
+} // namespace LIEF::PE
+// namepsace LIEF

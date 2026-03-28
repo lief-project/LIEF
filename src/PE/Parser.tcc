@@ -25,7 +25,6 @@
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
-#include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
@@ -33,10 +32,9 @@
 #include "internal_utils.hpp"
 #include "frozen.hpp"
 #include "PE/Structures.hpp"
-#include "LIEF/PE/Parser.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 bool inline warn_missing_section(const DataDirectory& dir) {
   return dir.type() != DataDirectory::TYPES::CERTIFICATE_TABLE &&
@@ -804,4 +802,4 @@ ok_error_t Parser::process_load_config(LoadConfiguration& lconf) {
 }
 
 }
-}
+

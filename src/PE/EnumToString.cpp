@@ -18,8 +18,8 @@
 
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 const char* to_string(PE_TYPE e) {
   switch (e) {
@@ -64,5 +64,5 @@ const char* to_string(ALGORITHMS e) {
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+

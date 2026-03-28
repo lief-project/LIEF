@@ -20,8 +20,8 @@
 #include <algorithm>
 #include <map>
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 INST_FORMATS inst_format_from_opcode(OPCODES op) {
   static const std::map<OPCODES, INST_FORMATS> size_map {
@@ -273,7 +273,7 @@ INST_FORMATS inst_format_from_opcode(OPCODES op) {
   };
 
   auto   it  = size_map.find(op);
-  //if (it == std::end(size_map)) {
+  //if (it == size_map.end()) {
   //  std::cout << std::hex << "OP: " << op << '\n';
   //}
   return it == size_map.end() ? INST_FORMATS::F_00x : it->second;
@@ -409,5 +409,5 @@ size_t switch_array_size(const uint8_t* ptr, const uint8_t* end) {
 }
 
 }
-}
+
 

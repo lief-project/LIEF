@@ -48,8 +48,8 @@
 #include "logging.hpp"
 #include "Layout.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 inline Relocation::TYPE relative_from_arch(ARCH arch) {
   using TYPE = Relocation::TYPE;
@@ -348,7 +348,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     // MANDATORY !
     std::stable_sort(
-        std::begin(binary_->dynamic_symbols_) + symndx, std::end(binary_->dynamic_symbols_),
+        binary_->dynamic_symbols_.begin() + symndx, binary_->dynamic_symbols_.end(),
         [&nb_buckets] (const std::unique_ptr<Symbol>& lhs, const std::unique_ptr<Symbol>& rhs) {
           return (dl_new_hash(lhs->name().c_str()) % nb_buckets) <
                  (dl_new_hash(rhs->name().c_str()) % nb_buckets);
@@ -1435,7 +1435,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         const uint64_t array_base_address = dt_init_array->value();
         for (size_t i = 0; i < array.size(); ++i) {
           auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
-          if (it_reloc == std::end(relocations_addresses_)) {
+          if (it_reloc == relocations_addresses_.end()) {
             LIEF_ERR("Missing relocation for .init_array[{:d}]: {:#x}", i, array[i]);
             continue;
           }
@@ -1487,7 +1487,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         const uint64_t array_base_address = dt_preinit_array->value();
         for (size_t i = 0; i < array.size(); ++i) {
           auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
-          if (it_reloc == std::end(relocations_addresses_)) {
+          if (it_reloc == relocations_addresses_.end()) {
             LIEF_ERR("Missing relocation for .preinit_array[{:d}]: {:#x}", i, array[i]);
             continue;
           }
@@ -1541,7 +1541,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         const uint64_t array_base_address = dt_fini_array->value();
         for (size_t i = 0; i < array.size(); ++i) {
           auto it_reloc = relocations_addresses_.find(array_base_address + i * sizeof_p);
-          if (it_reloc == std::end(relocations_addresses_)) {
+          if (it_reloc == relocations_addresses_.end()) {
             LIEF_ERR("Missing relocation for .fini_array[{:d}]: {:#x}", i, array[i]);
             continue;
           }
@@ -1677,7 +1677,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         if (const Section* nsec = binary_->get_section(*section_res);
             nsec == nullptr)
         {
-          if (it_offset == std::end(notes_off_map_)) {
+          if (it_offset == notes_off_map_.end()) {
             LIEF_ERR("Raw data not found for note '{}'", to_string(note.type()));
             continue;
           }
@@ -1766,6 +1766,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
   std::unordered_map<uint64_t, Relocation*> relocations_addresses_;
 };
 }
-}
+
 
 #endif

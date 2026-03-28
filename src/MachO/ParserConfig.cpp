@@ -15,8 +15,8 @@
  */
 #include "LIEF/MachO/ParserConfig.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 ParserConfig ParserConfig::deep() {
   ParserConfig conf;
@@ -51,5 +51,5 @@ ParserConfig& ParserConfig::full_dyldinfo(bool flag) {
 }
 
 
-} //namespace MachO
-}
+} // namespace LIEF::MachO
+

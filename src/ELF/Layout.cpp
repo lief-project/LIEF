@@ -20,8 +20,8 @@
 
 #include <LIEF/iostream.hpp>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 bool Layout::is_strtab_shared_shstrtab() const {
   // Check if the .strtab is shared with the .shstrtab
@@ -86,7 +86,7 @@ size_t Layout::section_shstr_size() {
   raw_shstrtab.write<uint8_t>(0);
   std::vector<std::string> sec_names;
   sec_names.reserve(binary_->sections_.size());
-  std::transform(std::begin(binary_->sections_), std::end(binary_->sections_),
+  std::transform(binary_->sections_.begin(), binary_->sections_.end(),
                  std::back_inserter(sec_names),
                  [] (const std::unique_ptr<Section>& s) {
                    return s->name();
@@ -138,4 +138,4 @@ size_t Layout::section_shstr_size() {
 }
 
 }
-}
+

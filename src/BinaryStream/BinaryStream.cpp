@@ -208,7 +208,7 @@ result<std::u16string> BinaryStream::peek_u16string(size_t length) const {
         LIEF::swap_endian(&x);
       }
     }
-    return std::u16string{std::begin(raw_u16str), std::end(raw_u16str)};
+    return std::u16string{raw_u16str.begin(), raw_u16str.end()};
   }
   return make_error_code(lief_errors::read_error);
 }
@@ -286,12 +286,12 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
 
   std::string u8str;
 
-  std::replace_if(std::begin(u32str), std::end(u32str),
+  std::replace_if(u32str.begin(), u32str.end(),
       [] (const char32_t c) {
         return !utf8::internal::is_code_point_valid(c);
       }, '.');
 
-  utf8::unchecked::utf32to8(std::begin(u32str), std::end(u32str),
+  utf8::unchecked::utf32to8(u32str.begin(), u32str.end(),
                             std::back_inserter(u8str));
   return u8str;
 }

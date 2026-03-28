@@ -24,8 +24,8 @@
 FMT_FORMATTER(LIEF::ELF::X86Features::FEATURE, LIEF::ELF::to_string);
 FMT_FORMATTER(LIEF::ELF::X86Features::FLAG, LIEF::ELF::to_string);
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 std::unique_ptr<X86Features> X86Features::create_feat1(
     X86Features::FLAG flag, BinaryStream& stream
 ) {
@@ -134,4 +134,4 @@ const char* to_string(X86Features::FEATURE feat) {
 
 
 }
-}
+

@@ -20,8 +20,8 @@
 
 #include <cstdint>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 struct sizing_info_t {
   uint64_t dynsym = 0;
   uint64_t dynstr = 0;
@@ -42,5 +42,5 @@ struct sizing_info_t {
   uint64_t preinit_array = 0;
 };
 }
-}
+
 #endif

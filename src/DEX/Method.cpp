@@ -25,8 +25,8 @@
 #include <utility>
 
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 Method::Method(const Method&) = default;
 Method& Method::operator=(const Method&) = default;
@@ -132,16 +132,16 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
 
   if (!pretty_cls_name.empty()) {
     pretty_cls_name = pretty_cls_name.substr(1, pretty_cls_name.size() - 2);
-    std::replace(std::begin(pretty_cls_name), std::end(pretty_cls_name), '/', '.');
+    std::replace(pretty_cls_name.begin(), pretty_cls_name.end(), '/', '.');
   }
 
   Method::access_flags_list_t aflags = method.access_flags();
   std::string flags_str = std::accumulate(
-      std::begin(aflags), std::end(aflags),
+      aflags.begin(), aflags.end(),
       std::string{},
       [] (const std::string& l, ACCESS_FLAGS r) {
         std::string str = to_string(r);
-        std::transform(std::begin(str), std::end(str), std::begin(str), ::tolower);
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
         return l.empty() ? str : l + " " + str;
       });
 
@@ -168,4 +168,4 @@ std::ostream& operator<<(std::ostream& os, const Method& method) {
 Method::~Method() = default;
 
 }
-}
+

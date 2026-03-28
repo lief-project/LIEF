@@ -18,8 +18,8 @@
 #include "LIEF/MachO.hpp"
 #include "Object.tcc"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 Hash::~Hash() = default;
 
@@ -29,8 +29,8 @@ size_t Hash::hash(const Object& obj) {
 
 void Hash::visit(const Binary& binary) {
   process(binary.header());
-  process(std::begin(binary.commands()), std::end(binary.commands()));
-  process(std::begin(binary.symbols()), std::end(binary.symbols()));
+  process(binary.commands().begin(), binary.commands().end());
+  process(binary.symbols().begin(), binary.symbols().end());
 }
 
 
@@ -79,7 +79,7 @@ void Hash::visit(const SegmentCommand& segment) {
   process(segment.numberof_sections());
   process(segment.flags());
   process(segment.content());
-  process(std::begin(segment.sections()), std::end(segment.sections()));
+  process(segment.sections().begin(), segment.sections().end());
 }
 
 void Hash::visit(const Section& section) {
@@ -95,7 +95,7 @@ void Hash::visit(const Section& section) {
   process(section.reserved2());
   process(section.reserved3());
   process(section.raw_flags());
-  process(std::begin(section.relocations()), std::end(section.relocations()));
+  process(section.relocations().begin(), section.relocations().end());
 }
 
 void Hash::visit(const MainCommand& maincmd) {
@@ -281,7 +281,7 @@ void Hash::visit(const DataInCode& dic) {
   visit(*dic.as<LoadCommand>());
   process(dic.data_offset());
   process(dic.data_size());
-  process(std::begin(dic.entries()), std::end(dic.entries()));
+  process(dic.entries().begin(), dic.entries().end());
 }
 
 void Hash::visit(const DataCodeEntry& dce) {
@@ -336,7 +336,7 @@ void Hash::visit(const BuildVersion& e) {
   process(e.platform());
   process(e.minos());
   process(e.sdk());
-  process(std::begin(tools), std::end(tools));
+  process(tools.begin(), tools.end());
 }
 
 void Hash::visit(const BuildToolVersion& e) {
@@ -370,6 +370,6 @@ void Hash::visit(const LinkerOptHint& e) {
 
 
 
-} // namespace MachO
-} // namespace LIEF
+} // namespace LIEF::MachO
+
 

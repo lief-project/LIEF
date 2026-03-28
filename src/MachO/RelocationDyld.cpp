@@ -17,8 +17,8 @@
 #include "LIEF/MachO/RelocationDyld.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 bool RelocationDyld::is_pc_relative() const {
   return DyldInfo::REBASE_TYPE(type()) == DyldInfo::REBASE_TYPE::TEXT_PCREL32;
@@ -60,4 +60,4 @@ bool RelocationDyld::operator>(const RelocationDyld& rhs) const {
 }
 
 }
-}
+

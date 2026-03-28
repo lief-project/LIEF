@@ -18,8 +18,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 static constexpr auto sdk_version_offset = 0;
 static constexpr auto ndk_version_offset = sizeof(uint32_t);
@@ -77,5 +77,5 @@ void AndroidIdent::dump(std::ostream& os) const {
   );
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

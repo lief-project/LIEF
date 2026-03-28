@@ -19,8 +19,8 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 FunctionStarts::FunctionStarts(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -45,4 +45,4 @@ std::ostream& FunctionStarts::print(std::ostream& os) const {
 
 
 }
-}
+

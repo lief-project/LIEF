@@ -41,11 +41,11 @@ Binary::~Binary() = default;
 const Symbol* Binary::get_symbol(const std::string& name) const {
   symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
   const auto it_symbol = std::find_if(
-    std::begin(symbols), std::end(symbols),
+    symbols.begin(), symbols.end(),
     [&name] (const Symbol* s) { return s->name() == name; }
   );
 
-  if (it_symbol == std::end(symbols)) {
+  if (it_symbol == symbols.end()) {
     return nullptr;
   }
 

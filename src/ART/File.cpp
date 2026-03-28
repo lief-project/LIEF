@@ -18,8 +18,8 @@
 #include "LIEF/ART/File.hpp"
 #include "LIEF/ART/hash.hpp"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 File::File() = default;
 
@@ -46,4 +46,4 @@ std::ostream& operator<<(std::ostream& os, const File& art_file) {
 }
 
 } // Namespace ART
-} // Namespace LIEF
+// Namespace LIEF

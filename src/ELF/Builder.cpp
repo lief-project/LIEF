@@ -32,8 +32,8 @@
 #include "ExeLayout.hpp"
 #include "ObjectFileLayout.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 Builder::~Builder() = default;
 
@@ -119,8 +119,8 @@ void Builder::write(std::ostream& os) const {
 }
 
 uint32_t Builder::sort_dynamic_symbols() {
-  const auto it_begin = std::begin(binary_->dynamic_symbols_);
-  const auto it_end = std::end(binary_->dynamic_symbols_);
+  const auto it_begin = binary_->dynamic_symbols_.begin();
+  const auto it_end = binary_->dynamic_symbols_.end();
 
   const auto it_first_non_local_symbol =
       std::stable_partition(it_begin, it_end,
@@ -239,4 +239,4 @@ ok_error_t Builder::update_note_section(const Note& note,
 }
 
 }
-}
+

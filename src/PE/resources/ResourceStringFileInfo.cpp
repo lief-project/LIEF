@@ -25,8 +25,8 @@
 #include "logging.hpp"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 
 result<ResourceStringFileInfo> ResourceStringFileInfo::parse(BinaryStream& stream) {
@@ -111,4 +111,4 @@ std::ostream& operator<<(std::ostream& os, const ResourceStringFileInfo& info) {
 
 
 }
-}
+

@@ -21,8 +21,8 @@
 #include "LIEF/PE/DelayImport.hpp"
 #include "PE/Structures.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void DelayImport::swap(DelayImport& other) {
   std::swap(attribute_,   other.attribute_);
@@ -91,4 +91,4 @@ std::ostream& operator<<(std::ostream& os, const DelayImport& entry) {
   return os;
 }
 }
-}
+

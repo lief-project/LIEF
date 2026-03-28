@@ -63,8 +63,8 @@
 
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 Binary::~Binary() = default;
 Binary::Binary() :
@@ -191,14 +191,14 @@ uint64_t Binary::offset_to_rva(uint64_t offset) const {
 }
 
 uint64_t Binary::rva_to_offset(uint64_t RVA) const {
-  const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
+  const auto it_section = std::find_if(sections_.begin(), sections_.end(),
       [RVA] (const std::unique_ptr<Section>& section) {
         const auto vsize_adj = std::max<uint64_t>(section->virtual_size(), section->sizeof_raw_data());
         return section->virtual_address() <= RVA &&
                RVA < (section->virtual_address() + vsize_adj);
       });
 
-  if (it_section == std::end(sections_)) {
+  if (it_section == sections_.end()) {
     // If not found within a section,
     // we assume that rva == offset
     return RVA;
@@ -221,13 +221,13 @@ uint64_t Binary::rva_to_offset(uint64_t RVA) const {
 }
 
 const Section* Binary::section_from_offset(uint64_t offset) const {
-  const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
+  const auto it_section = std::find_if(sections_.begin(), sections_.end(),
       [offset] (const std::unique_ptr<Section>& section) {
         return section->pointerto_raw_data() <= offset &&
                offset < (section->pointerto_raw_data() + section->sizeof_raw_data());
       });
 
-  if (it_section == std::end(sections_)) {
+  if (it_section == sections_.end()) {
     return nullptr;
   }
 
@@ -235,13 +235,13 @@ const Section* Binary::section_from_offset(uint64_t offset) const {
 }
 
 const Section* Binary::section_from_rva(uint64_t virtual_address) const {
-  const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
+  const auto it_section = std::find_if(sections_.begin(), sections_.end(),
       [virtual_address] (const std::unique_ptr<Section>& section) {
         return section->virtual_address() <= virtual_address &&
                virtual_address < (section->virtual_address() + section->virtual_size());
       });
 
-  if (it_section == std::end(sections_)) {
+  if (it_section == sections_.end()) {
     return nullptr;
   }
 
@@ -300,7 +300,7 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
 LIEF::Binary::sections_t Binary::get_abstract_sections() {
   LIEF::Binary::sections_t secs;
   secs.reserve(sections_.size());
-  std::transform(std::begin(sections_), std::end(sections_),
+  std::transform(sections_.begin(), sections_.end(),
                  std::back_inserter(secs),
                  [] (const std::unique_ptr<Section>& s) {
                   return s.get();
@@ -310,12 +310,12 @@ LIEF::Binary::sections_t Binary::get_abstract_sections() {
 
 
 const Section* Binary::get_section(const std::string& name) const {
-  const auto section_it = std::find_if(std::begin(sections_), std::end(sections_),
+  const auto section_it = std::find_if(sections_.begin(), sections_.end(),
       [&name] (const std::unique_ptr<Section>& section) {
         return section->name() == name;
       });
 
-  if (section_it == std::end(sections_)) {
+  if (section_it == sections_.end()) {
     return nullptr;
   }
   return section_it->get();
@@ -372,18 +372,18 @@ void Binary::remove_section(const std::string& name, bool clear) {
 }
 
 void Binary::remove(const Section& section, bool clear) {
-  const auto it_section = std::find_if(std::begin(sections_), std::end(sections_),
+  const auto it_section = std::find_if(sections_.begin(), sections_.end(),
       [&section] (const std::unique_ptr<Section>& s) {
         return *s == section;
       });
 
-  if (it_section == std::end(sections_)) {
+  if (it_section == sections_.end()) {
     LIEF_ERR("Section '{}' not found", section.name());
     return;
   }
 
   std::unique_ptr<Section>& to_remove = *it_section;
-  const size_t section_index = std::distance(std::begin(sections_), it_section);
+  const size_t section_index = std::distance(sections_.begin(), it_section);
 
   if (section_index < (sections_.size() - 1) && section_index > 0) {
     std::unique_ptr<Section>& previous = sections_[section_index - 1];
@@ -432,7 +432,7 @@ void Binary::shift(uint64_t /*from*/, uint64_t by) {
 
 uint64_t Binary::last_section_offset() const {
   uint64_t offset = std::accumulate(
-      std::begin(sections_), std::end(sections_), static_cast<uint64_t>(sizeof_headers()),
+      sections_.begin(), sections_.end(), static_cast<uint64_t>(sizeof_headers()),
       [] (uint64_t offset, const std::unique_ptr<Section>& s) {
         return std::max<uint64_t>(s->pointerto_raw_data() + s->sizeof_raw_data(), offset);
       });
@@ -463,7 +463,7 @@ Section* Binary::add_section(const Section& section) {
   // Compute new section Virtual address
   const auto section_align = static_cast<uint64_t>(optional_header().section_alignment());
   const uint64_t new_section_va = align(std::accumulate(
-      std::begin(sections_), std::end(sections_), section_align,
+      sections_.begin(), sections_.end(), section_align,
       [] (uint64_t va, const std::unique_ptr<Section>& s) {
         return std::max<uint64_t>(s->virtual_address() + s->virtual_size(), va);
       }), section_align);
@@ -541,12 +541,12 @@ bool Binary::remove_import(const std::string& name) {
 }
 
 const Import* Binary::get_import(const std::string& import_name) const {
-  const auto it_import = std::find_if(std::begin(imports_), std::end(imports_),
+  const auto it_import = std::find_if(imports_.begin(), imports_.end(),
       [&import_name] (const std::unique_ptr<Import>& import) {
         return import->name() == import_name;
       });
 
-  if (it_import == std::end(imports_)) {
+  if (it_import == imports_.end()) {
     return nullptr;
   }
 
@@ -645,7 +645,7 @@ uint32_t Binary::compute_checksum() const {
     std::array<char, 8> name = {0};
     const std::string& sec_name = sec->fullname();
     uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(name));
-    std::copy(sec_name.c_str(), sec_name.c_str() + name_length, std::begin(name));
+    std::copy(sec_name.c_str(), sec_name.c_str() + name_length, name.begin());
     cs
       .write(name)
       .write(sec->virtual_size())
@@ -664,11 +664,11 @@ uint32_t Binary::compute_checksum() const {
   std::vector<Section*> sections;
   sections.reserve(sections_.size());
   std::transform(
-    std::begin(sections_), std::end(sections_), std::back_inserter(sections),
+    sections_.begin(), sections_.end(), std::back_inserter(sections),
     [] (const std::unique_ptr<Section>& s) { return s.get(); });
 
   // Sort by file offset
-  std::sort(std::begin(sections), std::end(sections),
+  std::sort(sections.begin(), sections.end(),
     [] (const Section* lhs, const Section* rhs) {
       return  lhs->pointerto_raw_data() < rhs->pointerto_raw_data();
     }
@@ -714,7 +714,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
     std::pair(ALGORITHMS::SHA_512, hashstream::HASH::SHA512),
   };
   auto it_hash = HMAP.find(algo);
-  if (it_hash == std::end(HMAP)) {
+  if (it_hash == HMAP.end()) {
     LIEF_WARN("Unsupported hash algorithm: {}", to_string(algo));
     return {};
   }
@@ -803,7 +803,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
     std::array<char, 8> name = {0};
     const std::string& sec_name = sec->fullname();
     uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(name));
-    std::copy(sec_name.c_str(), sec_name.c_str() + name_length, std::begin(name));
+    std::copy(sec_name.c_str(), sec_name.c_str() + name_length, name.begin());
     ios
       .write(name)
       .write(sec->virtual_size())
@@ -821,14 +821,14 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
 
   std::vector<Section*> sections;
   sections.reserve(sections_.size());
-  std::transform(std::begin(sections_), std::end(sections_),
+  std::transform(sections_.begin(), sections_.end(),
                  std::back_inserter(sections),
                  [] (const std::unique_ptr<Section>& s) {
                    return s.get();
                  });
 
   // Sort by file offset
-  std::sort(std::begin(sections), std::end(sections),
+  std::sort(sections.begin(), sections.end(),
             [] (const Section* lhs, const Section* rhs) {
               return  lhs->pointerto_raw_data() < rhs->pointerto_raw_data();
             });
@@ -894,8 +894,8 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
   // std::ofstream output_file{"/tmp/hash.blob", std::ios::out | std::ios::binary | std::ios::trunc};
   // if (output_file) {
   //   std::copy(
-  //       std::begin(out),
-  //       std::end(out),
+  //       out.begin(),
+  //       out.end(),
   //       std::ostreambuf_iterator<char>(output_file));
   // }
   // std::vector<uint8_t> hash = hashstream(hash_type).write(out).raw();
@@ -1067,7 +1067,7 @@ void Binary::patch_address(uint64_t address, const std::vector<uint8_t>& patch_v
              patch_value.size(), offset, content.size());
     return;
   }
-  std::copy(std::begin(patch_value), std::end(patch_value),
+  std::copy(patch_value.begin(), patch_value.end(),
             content.data() + offset);
 
 }
@@ -1210,16 +1210,16 @@ LIEF::Binary::functions_t Binary::functions() const {
   LIEF::Binary::functions_t exported            = get_abstract_exported_functions();
   LIEF::Binary::functions_t ctors               = ctor_functions();
 
-  std::move(std::begin(exception_functions), std::end(exception_functions),
-            std::inserter(functions_set, std::end(functions_set)));
+  std::move(exception_functions.begin(), exception_functions.end(),
+            std::inserter(functions_set, functions_set.end()));
 
-  std::move(std::begin(exported), std::end(exported),
-            std::inserter(functions_set, std::end(functions_set)));
+  std::move(exported.begin(), exported.end(),
+            std::inserter(functions_set, functions_set.end()));
 
-  std::move(std::begin(ctors), std::end(ctors),
-            std::inserter(functions_set, std::end(functions_set)));
+  std::move(ctors.begin(), ctors.end(),
+            std::inserter(functions_set, functions_set.end()));
 
-  return {std::begin(functions_set), std::end(functions_set)};
+  return {functions_set.begin(), functions_set.end()};
 }
 
 LIEF::Binary::functions_t Binary::exception_functions() const {
@@ -1239,12 +1239,12 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
 }
 
 const DelayImport* Binary::get_delay_import(const std::string& import_name) const {
-  const auto it_import = std::find_if(std::begin(delay_imports_), std::end(delay_imports_),
+  const auto it_import = std::find_if(delay_imports_.begin(), delay_imports_.end(),
       [&import_name] (const std::unique_ptr<DelayImport>& import) {
         return import->name() == import_name;
       });
 
-  if (it_import == std::end(delay_imports_)) {
+  if (it_import == delay_imports_.end()) {
     return nullptr;
   }
 
@@ -1497,4 +1497,4 @@ std::ostream& Binary::print(std::ostream& os) const {
 }
 
 } // namesapce PE
-} // namespace LIEF
+

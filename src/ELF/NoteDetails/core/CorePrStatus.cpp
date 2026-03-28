@@ -24,8 +24,8 @@
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 template<class ELF_T>
 inline CorePrStatus::pr_status_t
@@ -571,5 +571,5 @@ const char* to_string(CorePrStatus::Registers::AARCH64 e) {
   return "UNKNOWN";
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

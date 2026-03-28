@@ -19,8 +19,8 @@
 
 #include "LIEF/PE/RichEntry.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void RichEntry::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
@@ -34,4 +34,4 @@ std::ostream& operator<<(std::ostream& os, const RichEntry& entry) {
 }
 
 }
-}
+

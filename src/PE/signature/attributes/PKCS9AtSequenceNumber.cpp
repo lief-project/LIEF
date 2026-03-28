@@ -16,8 +16,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9AtSequenceNumber.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void PKCS9AtSequenceNumber::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -28,4 +28,4 @@ std::string PKCS9AtSequenceNumber::print() const {
 }
 
 }
-}
+

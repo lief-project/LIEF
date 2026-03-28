@@ -21,8 +21,8 @@
 
 #include "Object.tcc"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 std::string to_hex(const char c) {
   std::stringstream ss;
@@ -570,7 +570,7 @@ void JsonVisitor::visit(const ResourcesManager& resources_manager) {
   if (resources_manager.has_string_table()) {
     std::vector<json> string_table_json;
     for (const ResourcesManager::string_entry_t& entry : resources_manager.string_table()) {
-      string_table_json.push_back(std::make_pair(entry.string_u8(), entry.id));
+      string_table_json.emplace_back(std::make_pair(entry.string_u8(), entry.id));
     }
     node_["string_table"] = string_table_json;
   }
@@ -604,7 +604,7 @@ void JsonVisitor::visit(const ResourceVarFileInfo& info) {
   node_["key"]  = info.key_u8();
   std::vector<json> j_vars;
   for (const ResourceVar& var : info.vars()) {
-    j_vars.push_back(std::unordered_map<std::string, json> {
+    j_vars.emplace_back(std::unordered_map<std::string, json> {
       std::make_pair("key", json(var.key_u8())),
       std::make_pair("type", json(var.type())),
       std::make_pair("values", json(var.values())),
@@ -666,7 +666,7 @@ void JsonVisitor::visit(const ResourceStringTable& table) {
   node_["type"] = table.type();
 
   for (const ResourceStringTable::entry_t& entry : table.entries()) {
-    values.push_back(std::make_pair(entry.key_u8(), entry.value_u8()));
+    values.emplace_back(std::make_pair(entry.key_u8(), entry.value_u8()));
   }
 
   node_["values"] = std::move(values);
@@ -970,6 +970,6 @@ void JsonVisitor::visit(const LIEF::Section& section) {
   visit(static_cast<const LIEF::PE::Section&>(section));
 }
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+
 

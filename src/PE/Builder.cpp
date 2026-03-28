@@ -43,8 +43,8 @@
 #include "Builder.tcc"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 Builder::~Builder() = default;
 
@@ -264,13 +264,12 @@ ok_error_t Builder::build(const DataDirectory& data_directory) {
 }
 
 ok_error_t Builder::build(const Section& section) {
-  std::array<char, 8> section_name;
-  std::memset(section_name.data(), 0, section_name.size());
+  std::array<char, 8> section_name{};
 
   const std::string& sec_name = section.fullname();
   uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, section_name.size());
   std::copy(sec_name.c_str(), sec_name.c_str() + name_length,
-            std::begin(section_name));
+            section_name.begin());
   ios_
     .increase_capacity(sizeof(details::pe_section))
     .write(section_name)
@@ -1286,4 +1285,4 @@ ok_error_t Builder::build_exports() {
 }
 
 }
-}
+

@@ -22,8 +22,8 @@
 
 #include "logging.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 FatBinary::~FatBinary() = default;
 FatBinary::FatBinary() = default;
@@ -59,12 +59,12 @@ std::unique_ptr<Binary> FatBinary::pop_back() {
 }
 
 std::unique_ptr<Binary> FatBinary::take(Header::CPU_TYPE cpu) {
-  auto it = std::find_if(std::begin(binaries_), std::end(binaries_),
+  auto it = std::find_if(binaries_.begin(), binaries_.end(),
       [cpu] (const std::unique_ptr<Binary>& bin) {
         return bin->header().cpu_type() == cpu;
       });
 
-  if (it == std::end(binaries_)) {
+  if (it == binaries_.end()) {
     return nullptr;
   }
 
@@ -116,4 +116,4 @@ std::ostream& operator<<(std::ostream& os, const FatBinary& fatbinary) {
 }
 
 }
-}
+

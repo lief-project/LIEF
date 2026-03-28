@@ -20,8 +20,8 @@
 #include "Object.tcc"
 #include "MachO/Binary.tcc"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 
 template<class T>
@@ -485,13 +485,13 @@ void JsonVisitor::visit(const LinkerOptHint& e) {
 
 void JsonVisitor::visit(const TwoLevelHints& e) {
   auto it_hints = e.hints();
-  std::vector<uint32_t> hints = {std::begin(it_hints), std::end(it_hints)};
+  std::vector<uint32_t> hints = {it_hints.begin(), it_hints.end()};
   node_["offset"] = e.offset();
   node_["hints"]  = hints;
 }
 
 
 
-} // namespace MachO
-} // namespace LIEF
+} // namespace LIEF::MachO
+
 

@@ -15,13 +15,13 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void SpcRelaxedPeMarkerCheck::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
 }
-}
+
 

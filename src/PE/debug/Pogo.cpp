@@ -22,8 +22,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void Pogo::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -59,5 +59,5 @@ const char* to_string(Pogo::SIGNATURES e) {
   return "UNKNOWN";
 }
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+

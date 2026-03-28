@@ -20,8 +20,8 @@
 
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 SymbolVersionRequirement::SymbolVersionRequirement(const details::Elf64_Verneed& header) :
   version_{header.vn_version}
@@ -96,4 +96,4 @@ void SymbolVersionRequirement::accept(Visitor& visitor) const {
 }
 
 }
-}
+

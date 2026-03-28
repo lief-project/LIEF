@@ -24,8 +24,8 @@
 FMT_FORMATTER(LIEF::ELF::X86ISA::FLAG, LIEF::ELF::to_string);
 FMT_FORMATTER(LIEF::ELF::X86ISA::ISA, LIEF::ELF::to_string);
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 std::unique_ptr<X86ISA> X86ISA::create_isa_1(X86ISA::FLAG flag, BinaryStream& stream) {
   uint32_t bitmask = stream.read<uint32_t>().value_or(0);
@@ -198,4 +198,4 @@ const char* to_string(X86ISA::ISA isa) {
   return "UNKNOWN";
 }
 }
-}
+

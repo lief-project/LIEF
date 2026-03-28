@@ -23,8 +23,8 @@
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 SymbolVersionDefinition::~SymbolVersionDefinition() = default;
 
@@ -83,4 +83,4 @@ std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym) {
   return os;
 }
 }
-}
+

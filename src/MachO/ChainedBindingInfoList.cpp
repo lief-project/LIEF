@@ -17,8 +17,8 @@
 
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 std::unique_ptr<ChainedBindingInfoList>
   ChainedBindingInfoList::create(const ChainedBindingInfo& other)
@@ -43,4 +43,4 @@ void ChainedBindingInfoList::swap(ChainedBindingInfoList& other) noexcept {
 }
 
 }
-}
+

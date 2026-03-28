@@ -21,8 +21,8 @@
 #include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 BindingInfo::BindingInfo(const BindingInfo& other) :
   Object{other},
@@ -75,4 +75,4 @@ std::ostream& operator<<(std::ostream& os, const BindingInfo& info) {
 }
 
 }
-}
+

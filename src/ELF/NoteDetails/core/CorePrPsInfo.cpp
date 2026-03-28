@@ -23,8 +23,8 @@
 
 #include "spdlog/fmt/fmt.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 template<class ELF_T>
 inline result<CorePrPsInfo::info_t>
@@ -130,5 +130,5 @@ void CorePrPsInfo::dump(std::ostream& os) const {
                     info_res->state, info_res->sname);
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

@@ -27,8 +27,8 @@
 
 #include "logging.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 Relocation::Relocation(Relocation&&) = default;
 Relocation& Relocation::operator=(Relocation&& other) = default;
@@ -145,4 +145,4 @@ Relocation::relocations_t Relocation::parse(Parser& ctx, BinaryStream& stream) {
 }
 
 }
-}
+

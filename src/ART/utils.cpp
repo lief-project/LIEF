@@ -20,8 +20,8 @@
 #include "LIEF/ART/utils.hpp"
 #include "ART/Structures.hpp"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 inline bool is_art(BinaryStream& stream) {
   using magic_t = std::array<char, sizeof(details::art_magic)>;
@@ -42,12 +42,12 @@ inline art_version_t version(BinaryStream& stream) {
   stream.increment_pos(sizeof(details::art_magic));
   if (auto ver_res = stream.peek<version_t>()) {
     const auto version = *ver_res;
-    const bool are_digits = std::all_of(std::begin(version), std::end(version),
+    const bool are_digits = std::all_of(version.begin(), version.end(),
         [] (char c) { return c == 0 || ::isdigit(c); });
     if (!are_digits) {
       return 0;
     }
-    std::string version_str(std::begin(version), std::end(version));
+    std::string version_str(version.begin(), version.end());
     return static_cast<art_version_t>(std::stoul(version_str));
   }
   return 0;
@@ -99,4 +99,4 @@ LIEF::Android::ANDROID_VERSIONS android_version(art_version_t version) {
 
 
 }
-}
+

@@ -27,8 +27,8 @@
 
 #include "logging.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 static constexpr uint64_t ARM_EABIMASK       = 0xFF000000U;
 static constexpr uint64_t MIPS_ABI_MASK      = 0x0000f000U;
@@ -104,13 +104,13 @@ template Header::Header(const details::Elf32_Ehdr& header);
 template Header::Header(const details::Elf64_Ehdr& header);
 
 void Header::identity(const std::string& identity) {
-  std::copy(std::begin(identity), std::end(identity),
-            std::begin(identity_));
+  std::copy(identity.begin(), identity.end(),
+            identity_.begin());
 }
 
 void Header::identity(const Header::identity_t& identity) {
-  std::copy(std::begin(identity), std::end(identity),
-            std::begin(identity_));
+  std::copy(identity.begin(), identity.end(),
+            identity_.begin());
 }
 
 void Header::accept(LIEF::Visitor& visitor) const {
@@ -250,7 +250,7 @@ bool Header::has(PROCESSOR_FLAGS flag) const {
 std::vector<PROCESSOR_FLAGS> Header::flags_list() const {
   std::vector<PROCESSOR_FLAGS> flags;
 
-  std::copy_if(std::begin(PFLAGS_LIST), std::end(PFLAGS_LIST),
+  std::copy_if(PFLAGS_LIST.begin(), PFLAGS_LIST.end(),
                std::back_inserter(flags),
     [this] (PROCESSOR_FLAGS f) { return this->has(f); }
   );
@@ -367,4 +367,4 @@ const char* to_string(Header::OS_ABI e) {
 
 
 }
-}
+

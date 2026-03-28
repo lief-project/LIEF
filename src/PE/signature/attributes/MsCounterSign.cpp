@@ -17,8 +17,8 @@
 #include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
 #include <sstream>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void MsCounterSign::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -33,4 +33,4 @@ std::string MsCounterSign::print() const {
 }
 
 }
-}
+

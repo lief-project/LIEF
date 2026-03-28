@@ -28,8 +28,8 @@
 
 #include "Parser.tcc"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 Parser::~Parser() = default;
 Parser::Parser()  = default;
@@ -103,7 +103,7 @@ void Parser::resolve_inheritance() {
     Class* child = p.second;
 
     const auto it_inner_class = file_->classes_.find(parent_name);
-    if (it_inner_class == std::end(file_->classes_)) {
+    if (it_inner_class == file_->classes_.end()) {
       auto external_class = std::make_unique<Class>(parent_name);
       child->parent_ = external_class.get();
       file_->add_class(std::move(external_class));
@@ -121,7 +121,7 @@ void Parser::resolve_external_methods() {
     Method* method = p.second;
 
     const auto it_inner_class = file_->classes_.find(clazz);
-    if (it_inner_class == std::end(file_->classes_)) {
+    if (it_inner_class == file_->classes_.end()) {
       auto cls = std::make_unique<Class>(clazz);
       cls->methods_.push_back(method);
       method->parent_ = cls.get();
@@ -143,7 +143,7 @@ void Parser::resolve_external_fields() {
     Field* field = p.second;
 
     const auto it_inner_class = file_->classes_.find(clazz);
-    if (it_inner_class == std::end(file_->classes_)) {
+    if (it_inner_class == file_->classes_.end()) {
       auto cls = std::make_unique<Class>(clazz);
       cls->fields_.push_back(field);
       field->parent_ = cls.get();
@@ -171,5 +171,5 @@ void Parser::resolve_types() {
 
 
 
-} // namespace DEX
-} // namespace LIEF
+} // namespace LIEF::DEX
+

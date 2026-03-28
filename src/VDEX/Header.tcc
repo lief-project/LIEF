@@ -16,8 +16,8 @@
 #include <string>
 #include "LIEF/VDEX/Header.hpp"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 template<class T>
 Header::Header(const T* header) :
@@ -40,5 +40,5 @@ Header::Header(const T* header) :
 }
 
 
-} // namespace VDEX
-} // namespace LIEF
+} // namespace LIEF::VDEX
+

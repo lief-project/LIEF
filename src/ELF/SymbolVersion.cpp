@@ -19,8 +19,8 @@
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 void SymbolVersion::symbol_version_auxiliary(SymbolVersionAuxRequirement& svauxr) {
   symbol_aux_ = &svauxr;
@@ -49,4 +49,4 @@ std::ostream& operator<<(std::ostream& os, const ELF::SymbolVersion& symv) {
   return os;
 }
 }
-}
+

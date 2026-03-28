@@ -18,8 +18,8 @@
 
 #include <cstdint>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 inline const char* ole32_dll_lookup(uint32_t i) {
   switch(i) {
@@ -368,7 +368,7 @@ inline const char* ole32_dll_lookup(uint32_t i) {
 
 
 }
-}
+
 
 #endif
 

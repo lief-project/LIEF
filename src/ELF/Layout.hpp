@@ -21,8 +21,8 @@
 #include <vector>
 #include "LIEF/ELF/Builder.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 class Section;
 class Binary;
 class Layout {
@@ -83,5 +83,5 @@ class Layout {
   const Builder::config_t* config_ = nullptr;
 };
 }
-}
+
 #endif

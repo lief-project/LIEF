@@ -15,12 +15,12 @@
  */
 #include "LIEF/PE/signature/PKCS9TSTInfo.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void PKCS9TSTInfo::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
 }
-}
+

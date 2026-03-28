@@ -71,8 +71,8 @@
 
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 bool Binary::KeyCmp::operator() (const Relocation* lhs, const Relocation* rhs) const {
   return *lhs < *rhs;
@@ -85,7 +85,7 @@ Binary::Binary() :
 LIEF::Binary::sections_t Binary::get_abstract_sections() {
   LIEF::Binary::sections_t result;
   it_sections sections = this->sections();
-  std::transform(std::begin(sections), std::end(sections),
+  std::transform(sections.begin(), sections.end(),
                  std::back_inserter(result),
                  [] (Section& s) { return &s; });
 
@@ -111,7 +111,7 @@ void Binary::patch_address(uint64_t address,
              patch_value.size(), offset, content.size());
     return;
   }
-  std::move(std::begin(patch_value), std::end(patch_value), content.data() + offset);
+  std::move(patch_value.begin(), patch_value.end(), content.data() + offset);
 }
 
 void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size, LIEF::Binary::VA_TYPES) {
@@ -215,7 +215,7 @@ uint64_t Binary::entrypoint() const {
 LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
   LIEF::Binary::symbols_t syms;
   syms.reserve(symbols_.size());
-  std::transform(std::begin(symbols_), std::end(symbols_),
+  std::transform(symbols_.begin(), symbols_.end(),
                  std::back_inserter(syms),
                  [] (const std::unique_ptr<Symbol>& s) {
                    return s.get();
@@ -227,7 +227,7 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
 LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   LIEF::Binary::functions_t result;
   it_const_exported_symbols syms = exported_symbols();
-  std::transform(std::begin(syms), std::end(syms), std::back_inserter(result),
+  std::transform(syms.begin(), syms.end(), std::back_inserter(result),
     [] (const Symbol& s) {
       return Function(s.name(), s.value(), Function::FLAGS::EXPORTED);
     }
@@ -238,7 +238,7 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
 LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   LIEF::Binary::functions_t result;
   it_const_imported_symbols syms = imported_symbols();
-  std::transform(std::begin(syms), std::end(syms), std::back_inserter(result),
+  std::transform(syms.begin(), syms.end(), std::back_inserter(result),
     [] (const Symbol& s) {
       return Function(s.name(), s.value(), Function::FLAGS::IMPORTED);
     }
@@ -259,16 +259,16 @@ std::vector<std::string> Binary::get_abstract_imported_libraries() const {
 Binary::it_relocations Binary::relocations() {
   relocations_t result;
   for (SegmentCommand* segment : segments_) {
-    std::transform(std::begin(segment->relocations_), std::end(segment->relocations_),
-                   std::inserter(result, std::begin(result)),
+    std::transform(segment->relocations_.begin(), segment->relocations_.end(),
+                   std::inserter(result, result.begin()),
                    [] (const std::unique_ptr<Relocation>& r) {
                      return r.get();
                    });
   }
 
   for (Section* section : sections_) {
-    std::transform(std::begin(section->relocations_), std::end(section->relocations_),
-                   std::inserter(result, std::begin(result)),
+    std::transform(section->relocations_.begin(), section->relocations_.end(),
+                   std::inserter(result, result.begin()),
                    [] (const std::unique_ptr<Relocation>& r) {
                      return r.get();
                    });
@@ -281,16 +281,16 @@ Binary::it_relocations Binary::relocations() {
 Binary::it_const_relocations Binary::relocations() const {
   relocations_t result;
   for (const SegmentCommand* segment : segments_) {
-    std::transform(std::begin(segment->relocations_), std::end(segment->relocations_),
-                   std::inserter(result, std::begin(result)),
+    std::transform(segment->relocations_.begin(), segment->relocations_.end(),
+                   std::inserter(result, result.begin()),
                    [] (const std::unique_ptr<Relocation>& r) {
                      return r.get();
                    });
   }
 
   for (const Section* section : sections_) {
-    std::transform(std::begin(section->relocations_), std::end(section->relocations_),
-                   std::inserter(result, std::begin(result)),
+    std::transform(section->relocations_.begin(), section->relocations_.end(),
+                   std::inserter(result, result.begin()),
                    [] (const std::unique_ptr<Relocation>& r) {
                      return r.get();
                    });
@@ -328,12 +328,12 @@ bool Binary::is_imported(const Symbol& symbol) {
 
 const Symbol* Binary::get_symbol(const std::string& name) const {
   const auto it_symbol = std::find_if(
-      std::begin(symbols_), std::end(symbols_),
+      symbols_.begin(), symbols_.end(),
       [&name] (const std::unique_ptr<Symbol>& sym) {
         return sym->name() == name;
       });
 
-  if (it_symbol == std::end(symbols_)) {
+  if (it_symbol == symbols_.end()) {
     return nullptr;
   }
 
@@ -373,13 +373,13 @@ const Section* Binary::section_from_offset(uint64_t offset) const {
 
 const Section* Binary::section_from_virtual_address(uint64_t address) const {
   const auto it_section = std::find_if(
-      std::begin(sections_), std::end(sections_),
+      sections_.begin(), sections_.end(),
       [address] (const Section* section) {
         return section->virtual_address() <= address &&
                address < (section->virtual_address() + section->size());
       });
 
-  if (it_section == std::end(sections_)) {
+  if (it_section == sections_.end()) {
     return nullptr;
   }
 
@@ -388,13 +388,13 @@ const Section* Binary::section_from_virtual_address(uint64_t address) const {
 
 const SegmentCommand* Binary::segment_from_virtual_address(uint64_t virtual_address) const {
   auto it_segment = std::find_if(
-      std::begin(segments_), std::end(segments_),
+      segments_.begin(), segments_.end(),
       [virtual_address] (const SegmentCommand* segment) {
         return segment->virtual_address() <= virtual_address &&
                virtual_address < (segment->virtual_address() + segment->virtual_size());
       });
 
-  if (it_segment == std::end(segments_)) {
+  if (it_segment == segments_.end()) {
     return nullptr;
   }
 
@@ -410,13 +410,13 @@ const SegmentCommand* Binary::segment_from_offset(uint64_t offset) const {
     return nullptr;
   }
 
-  const auto it_begin = std::begin(offset_seg_);
+  const auto it_begin = offset_seg_.begin();
   if (offset < it_begin->first) {
     return nullptr;
   }
 
   auto it = offset_seg_.lower_bound(offset);
-  if (it != std::end(offset_seg_) && (it->first == offset || it == it_begin)) {
+  if (it != offset_seg_.end() && (it->first == offset || it == it_begin)) {
     SegmentCommand* seg = it->second;
     if (seg->file_offset() <= offset && offset < (seg->file_offset() + seg->file_size())) {
       return seg;
@@ -424,7 +424,7 @@ const SegmentCommand* Binary::segment_from_offset(uint64_t offset) const {
   }
 
   const auto it_end = offset_seg_.crbegin();
-  if (it == std::end(offset_seg_) && offset >= it_end->first) {
+  if (it == offset_seg_.end() && offset >= it_end->first) {
     SegmentCommand* seg = it_end->second;
     if (seg->file_offset() <= offset && offset < (seg->file_offset() + seg->file_size())) {
       return seg;
@@ -585,8 +585,8 @@ ok_error_t Binary::shift_linkedit(size_t width) {
 }
 
 void Binary::sort_segments() {
-  commands_t::iterator start = commands_.end();
-  commands_t::iterator end = commands_.end();
+  auto start = commands_.end();
+  auto end = commands_.end();
 
   for (auto it = commands_.begin(); it != commands_.end(); ++it) {
     if (start == commands_.end() && SegmentCommand::classof(it->get())) {
@@ -1007,11 +1007,11 @@ LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
   }
 
   span<const uint8_t> content_ref = load_cmd_segment->content();
-  std::vector<uint8_t> content = {std::begin(content_ref), std::end(content_ref)};
+  std::vector<uint8_t> content = {content_ref.begin(), content_ref.end()};
 
   // Copy the command data
-  std::copy(std::begin(command->data()), std::end(command->data()),
-            std::begin(content) + loadcommands_end);
+  std::copy(command->data().begin(), command->data().end(),
+            content.begin() + loadcommands_end);
 
   load_cmd_segment->content(std::move(content));
 
@@ -1076,19 +1076,19 @@ LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
     add_cached_segment(*segment);
   }
   LoadCommand* copy_ptr = copy.get();
-  commands_.insert(std::begin(commands_) + index, std::move(copy));
+  commands_.insert(commands_.begin() + index, std::move(copy));
   return copy_ptr;
 }
 
 bool Binary::remove(const LoadCommand& command) {
 
   const auto it = std::find_if(
-      std::begin(commands_), std::end(commands_),
+      commands_.begin(), commands_.end(),
       [&command] (const std::unique_ptr<LoadCommand>& cmd) {
         return *cmd == command;
       });
 
-  if (it == std::end(commands_)) {
+  if (it == commands_.end()) {
     LIEF_ERR("Unable to find command: {}", to_string(command));
     return false;
   }
@@ -1096,8 +1096,8 @@ bool Binary::remove(const LoadCommand& command) {
   LoadCommand* cmd_rm = it->get();
 
   if (auto* lib = cmd_rm->cast<DylibCommand>()) {
-    auto it_cache = std::find(std::begin(libraries_), std::end(libraries_), cmd_rm);
-    if (it_cache == std::end(libraries_)) {
+    auto it_cache = std::find(libraries_.begin(), libraries_.end(), cmd_rm);
+    if (it_cache == libraries_.end()) {
       LIEF_WARN("Library {} not found in cache; binary may be inconsistent", lib->name());
     } else {
       libraries_.erase(it_cache);
@@ -1105,12 +1105,12 @@ bool Binary::remove(const LoadCommand& command) {
   }
 
   if (const auto* seg = cmd_rm->cast<const SegmentCommand>()) {
-    auto it_cache = std::find(std::begin(segments_), std::end(segments_), cmd_rm);
-    if (it_cache == std::end(segments_)) {
+    auto it_cache = std::find(segments_.begin(), segments_.end(), cmd_rm);
+    if (it_cache == segments_.end()) {
       LIEF_WARN("Segment {} not found in cache; binary may be inconsistent", seg->name());
     } else {
       // Update the indexes to keep a consistent state
-      for (auto it = it_cache; it != std::end(segments_); ++it) {
+      for (auto it = it_cache; it != segments_.end(); ++it) {
         (*it)->index_--;
       }
       segments_.erase(it_cache);
@@ -1154,21 +1154,21 @@ bool Binary::remove_command(size_t index) {
 
 bool Binary::has(LoadCommand::TYPE type) const {
   const auto it = std::find_if(
-      std::begin(commands_), std::end(commands_),
+      commands_.begin(), commands_.end(),
       [type] (const std::unique_ptr<LoadCommand>& cmd) {
         return cmd->command() == type;
       });
-  return it != std::end(commands_);
+  return it != commands_.end();
 }
 
 const LoadCommand* Binary::get(LoadCommand::TYPE type) const {
   const auto it = std::find_if(
-      std::begin(commands_), std::end(commands_),
+      commands_.begin(), commands_.end(),
       [type] (const std::unique_ptr<LoadCommand>& cmd) {
         return cmd->command() == type;
       });
 
-  if (it == std::end(commands_)) {
+  if (it == commands_.end()) {
     return nullptr;
   }
   return it->get();
@@ -1176,12 +1176,12 @@ const LoadCommand* Binary::get(LoadCommand::TYPE type) const {
 
 bool Binary::extend(const LoadCommand& command, uint64_t size) {
   const auto it = std::find_if(
-      std::begin(commands_), std::end(commands_),
+      commands_.begin(), commands_.end(),
       [&command] (const std::unique_ptr<LoadCommand>& cmd) {
         return *cmd == command;
       });
 
-  if (it == std::end(commands_)) {
+  if (it == commands_.end()) {
     LIEF_ERR("Unable to find command: {}", to_string(command));
     return false;
   }
@@ -1215,12 +1215,12 @@ bool Binary::extend(const LoadCommand& command, uint64_t size) {
 bool Binary::extend_segment(const SegmentCommand& segment, size_t size) {
 
   const auto it_segment = std::find_if(
-      std::begin(segments_), std::end(segments_),
+      segments_.begin(), segments_.end(),
       [&segment] (const SegmentCommand* s) {
         return segment == *s;
       });
 
-  if (it_segment == std::end(segments_)) {
+  if (it_segment == segments_.end()) {
     LIEF_ERR("Unable to find segment: '{}'", segment.name());
     return false;
   }
@@ -1377,12 +1377,12 @@ void Binary::remove_section(const std::string& segname, const std::string& secna
 
   segment->numberof_sections(segment->numberof_sections() - 1);
   auto it_section = std::find_if(
-      std::begin(segment->sections_), std::end(segment->sections_),
+      segment->sections_.begin(), segment->sections_.end(),
       [sec_to_delete] (const std::unique_ptr<Section>& s) {
         return *s == *sec_to_delete;
       });
 
-  if (it_section == std::end(segment->sections_)) {
+  if (it_section == segment->sections_.end()) {
     LIEF_WARN("Section not found");
     return;
   }
@@ -1404,12 +1404,12 @@ void Binary::remove_section(const std::string& segname, const std::string& secna
 
   std::unique_ptr<Section>& section = *it_section;
   // Remove from cache
-  auto it_cache = std::find_if(std::begin(sections_), std::end(sections_),
+  auto it_cache = std::find_if(sections_.begin(), sections_.end(),
       [&section] (const Section* sec) {
         return section.get() == sec;
       });
 
-  if (it_cache == std::end(sections_)) {
+  if (it_cache == sections_.end()) {
     LIEF_WARN("Section {} not found in cache; binary may be inconsistent",
               section->name());
   } else {
@@ -1431,19 +1431,19 @@ Section* Binary::add_section(const Section& section) {
 Section* Binary::add_section(const SegmentCommand& segment, const Section& section) {
 
   const auto it_segment = std::find_if(
-      std::begin(segments_), std::end(segments_),
+      segments_.begin(), segments_.end(),
       [&segment] (const SegmentCommand* s) {
         return segment == *s;
       });
 
-  if (it_segment == std::end(segments_)) {
+  if (it_segment == segments_.end()) {
     LIEF_ERR("Unable to find segment: '{}'", segment.name());
     return nullptr;
   }
   SegmentCommand* target_segment = *it_segment;
 
   span<const uint8_t> content_ref = section.content();
-  Section::content_t content = {std::begin(content_ref), std::end(content_ref)};
+  Section::content_t content = {content_ref.begin(), content_ref.end()};
 
   auto new_section = std::make_unique<Section>(section);
 
@@ -1500,8 +1500,8 @@ Section* Binary::add_section(const SegmentCommand& segment, const Section& secti
   // Copy data to segment
   const uint64_t relative_offset = new_section->offset() - target_segment->file_offset();
 
-  std::move(std::begin(content), std::end(content),
-            std::begin(target_segment->data_) + relative_offset);
+  std::move(content.begin(), content.end(),
+            target_segment->data_.begin() + relative_offset);
 
   target_segment->sections_.push_back(std::move(new_section));
   return target_segment->sections_.back().get();
@@ -1582,7 +1582,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
   LIEF_DEBUG(" -> sizeof(LC_SEGMENT): {}", new_segment.size());
 
   // Insert the segment before __LINKEDIT
-  const auto it_linkedit = std::find_if(std::begin(commands_), std::end(commands_),
+  const auto it_linkedit = std::find_if(commands_.begin(), commands_.end(),
       [] (const std::unique_ptr<LoadCommand>& cmd) {
         if (!SegmentCommand::classof(cmd.get())) {
           return false;
@@ -1590,9 +1590,9 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
         return cmd->as<SegmentCommand>()->name() == "__LINKEDIT";
       });
 
-  const bool has_linkedit = it_linkedit != std::end(commands_);
+  const bool has_linkedit = it_linkedit != commands_.end();
 
-  size_t pos = std::distance(std::begin(commands_), it_linkedit);
+  size_t pos = std::distance(commands_.begin(), it_linkedit);
 
   LIEF_DEBUG(" -> index: {}", pos);
 
@@ -1674,10 +1674,10 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
 
 size_t Binary::add_cached_segment(SegmentCommand& segment) {
   // The new segement should be put **before** the __LINKEDIT segment
-  const auto it_linkedit = std::find_if(std::begin(segments_), std::end(segments_),
+  const auto it_linkedit = std::find_if(segments_.begin(), segments_.end(),
       [] (SegmentCommand* cmd) { return cmd->name() == "__LINKEDIT"; });
 
-  if (it_linkedit == std::end(segments_)) {
+  if (it_linkedit == segments_.end()) {
     LIEF_DEBUG("No __LINKEDIT segment found");
     segment.index_ = segments_.size();
     segments_.push_back(&segment);
@@ -1685,7 +1685,7 @@ size_t Binary::add_cached_segment(SegmentCommand& segment) {
     segment.index_ = (*it_linkedit)->index();
 
     // Update indexes
-    for (auto it = it_linkedit; it != std::end(segments_); ++it) {
+    for (auto it = it_linkedit; it != segments_.end(); ++it) {
       (*it)->index_++;
     }
     segments_.insert(it_linkedit, &segment);
@@ -1713,13 +1713,13 @@ bool Binary::unexport(const std::string& name) {
 bool Binary::unexport(const Symbol& sym) {
   if (DyldInfo* dyld = dyld_info()) {
     const auto it_export = std::find_if(
-        std::begin(dyld->export_info_), std::end(dyld->export_info_),
+        dyld->export_info_.begin(), dyld->export_info_.end(),
         [&sym] (const std::unique_ptr<ExportInfo>& info) {
           return info->has_symbol() && *info->symbol() == sym;
         });
 
     // The symbol is not exported
-    if (it_export == std::end(dyld->export_info_)) {
+    if (it_export == dyld->export_info_.end()) {
       return false;
     }
 
@@ -1730,13 +1730,13 @@ bool Binary::unexport(const Symbol& sym) {
 
   if (DyldExportsTrie* exports = dyld_exports_trie()) {
     const auto it_export = std::find_if(
-        std::begin(exports->export_info_), std::end(exports->export_info_),
+        exports->export_info_.begin(), exports->export_info_.end(),
         [&sym] (const std::unique_ptr<ExportInfo>& info) {
           return info->has_symbol() && *info->symbol() == sym;
         });
 
     // The symbol is not exported
-    if (it_export == std::end(exports->export_info_)) {
+    if (it_export == exports->export_info_.end()) {
       return false;
     }
 
@@ -1750,20 +1750,20 @@ bool Binary::unexport(const Symbol& sym) {
 
 bool Binary::remove(const Symbol& sym) {
   unexport(sym);
-  const auto it_sym = std::find_if(std::begin(symbols_), std::end(symbols_),
+  const auto it_sym = std::find_if(symbols_.begin(), symbols_.end(),
       [&sym] (const std::unique_ptr<Symbol>& s) {
         return s.get() == &sym;
       });
 
-  if (it_sym == std::end(symbols_)) {
+  if (it_sym == symbols_.end()) {
     return false;
   }
 
   if (DynamicSymbolCommand* dyst = dynamic_symbol_command()) {
     dyst->indirect_symbols_.erase(
-        std::remove_if(std::begin(dyst->indirect_symbols_), std::end(dyst->indirect_symbols_),
+        std::remove_if(dyst->indirect_symbols_.begin(), dyst->indirect_symbols_.end(),
                        [&sym] (const Symbol* s) { return s == &sym; }),
-        std::end(dyst->indirect_symbols_));
+        dyst->indirect_symbols_.end());
   }
 
   symbols_.erase(it_sym);
@@ -1813,7 +1813,7 @@ bool Binary::can_remove_symbol(const std::string& name) const {
       syms.push_back(s.get());
     }
   }
-  return std::all_of(std::begin(syms), std::end(syms),
+  return std::all_of(syms.begin(), syms.end(),
                      [this] (const Symbol* s) { return can_remove(*s); });
 }
 
@@ -1880,12 +1880,12 @@ bool Binary::disable_pie() {
 
 const Section* Binary::get_section(const std::string& name) const {
   const auto it_section = std::find_if(
-      std::begin(sections_), std::end(sections_),
+      sections_.begin(), sections_.end(),
       [&name] (const Section* sec) {
         return sec->name() == name;
       });
 
-  if (it_section == std::end(sections_)) {
+  if (it_section == sections_.end()) {
     return nullptr;
   }
 
@@ -1904,12 +1904,12 @@ const Section* Binary::get_section(const std::string& segname, const std::string
 
 const SegmentCommand* Binary::get_segment(const std::string& name) const {
   const auto it_segment = std::find_if(
-      std::begin(segments_), std::end(segments_),
+      segments_.begin(), segments_.end(),
       [&name] (const SegmentCommand* seg) {
         return seg->name() == name;
       });
 
-  if (it_segment == std::end(segments_)) {
+  if (it_segment == segments_.end()) {
     return nullptr;
   }
 
@@ -1931,7 +1931,7 @@ std::string Binary::loader() const {
 }
 
 Binary::range_t Binary::va_ranges() const {
-  uint64_t min = uint64_t(-1);
+  auto min = uint64_t(-1);
   uint64_t max = 0;
 
   for (const SegmentCommand* segment : segments_) {
@@ -1950,7 +1950,7 @@ Binary::range_t Binary::va_ranges() const {
 }
 
 Binary::range_t Binary::off_ranges() const {
-  uint64_t min = uint64_t(-1);
+  auto min = uint64_t(-1);
   uint64_t max = 0;
 
   for (const SegmentCommand* segment : segments_) {
@@ -2005,16 +2005,16 @@ LIEF::Binary::functions_t Binary::functions() const {
   LIEF::Binary::functions_t ctor_functions   = this->ctor_functions();
   LIEF::Binary::functions_t exported         = get_abstract_exported_functions();
 
-  std::move(std::begin(unwind_functions), std::end(unwind_functions),
-            std::inserter(functions_set, std::end(functions_set)));
+  std::move(unwind_functions.begin(), unwind_functions.end(),
+            std::inserter(functions_set, functions_set.end()));
 
-  std::move(std::begin(ctor_functions), std::end(ctor_functions),
-            std::inserter(functions_set, std::end(functions_set)));
+  std::move(ctor_functions.begin(), ctor_functions.end(),
+            std::inserter(functions_set, functions_set.end()));
 
-  std::move(std::begin(exported), std::end(exported),
-            std::inserter(functions_set, std::end(functions_set)));
+  std::move(exported.begin(), exported.end(),
+            std::inserter(functions_set, functions_set.end()));
 
-  return {std::begin(functions_set), std::end(functions_set)};
+  return {functions_set.begin(), functions_set.end()};
 
 }
 
@@ -2108,7 +2108,7 @@ LIEF::Binary::functions_t Binary::unwind_functions() const {
     functions.emplace(hdr->function_offset);
   }
 
-  return {std::begin(functions), std::end(functions)};
+  return {functions.begin(), functions.end()};
 }
 
 // UUID
@@ -2624,5 +2624,5 @@ std::ostream& Binary::print(std::ostream& os) const {
 }
 
 }
-}
+
 

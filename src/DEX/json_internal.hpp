@@ -19,8 +19,8 @@
 #include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 json to_json_obj(const Object& v);
 
@@ -44,6 +44,6 @@ class JsonVisitor : public LIEF::JsonVisitor {
 };
 
 }
-}
+
 
 #endif // LIEF_JSON_SUPPORT

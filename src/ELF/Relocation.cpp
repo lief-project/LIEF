@@ -24,8 +24,8 @@
 
 #include "logging.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 int32_t get_reloc_size(Relocation::TYPE type);
 
@@ -436,4 +436,4 @@ std::ostream& operator<<(std::ostream& os, const Relocation& entry) {
   return os;
 }
 }
-}
+

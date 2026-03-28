@@ -22,8 +22,8 @@
 #include "visitors/json.hpp"
 #endif
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 File::~File() = default;
 File::File() = default;
@@ -97,4 +97,4 @@ std::ostream& operator<<(std::ostream& os, const File& vdex_file) {
 }
 
 } // Namespace VDEX
-} // Namespace LIEF
+// Namespace LIEF

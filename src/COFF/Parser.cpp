@@ -127,10 +127,10 @@ ok_error_t Parser::parse_sections() {
     }
 
     // Resolve symbols associated with this section
-    auto range = std::equal_range(symsec_.begin(), symsec_.end(),
+    auto [first, last] = std::equal_range(symsec_.begin(), symsec_.end(),
         SymSec{i, nullptr}
     );
-    for (auto it = range.first; it != range.second; ++it) {
+    for (auto it = first; it != last; ++it) {
       assert(it->symbol != nullptr);
       it->symbol->section_ = sec.get();
       sec->symbols_.push_back(it->symbol);
@@ -209,11 +209,10 @@ ok_error_t Parser::parse_relocations(Section& section) {
 }
 
 String* Parser::find_coff_string(uint32_t offset) const {
-  auto it = memoize_coff_str_.find(offset);
-  if (it == memoize_coff_str_.end()) {
-    return nullptr;
+  if (auto it = memoize_coff_str_.find(offset); it != memoize_coff_str_.end()) {
+    return &bin_->strings_table_[it->second];
   }
-  return &bin_->strings_table_[it->second];
+  return nullptr;
 }
 
 ok_error_t Parser::parse_symbols() {

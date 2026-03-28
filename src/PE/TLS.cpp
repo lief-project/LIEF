@@ -23,8 +23,8 @@
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 TLS::TLS(const details::pe32_tls& header) :
   va_rawdata_{header.RawDataStartVA, header.RawDataEndVA},
@@ -72,6 +72,6 @@ std::ostream& operator<<(std::ostream& os, const TLS& entry) {
   return os;
 }
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+
 

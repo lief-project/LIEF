@@ -16,11 +16,11 @@
 #include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
 #include "spdlog/fmt/fmt.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 void StackSize::dump(std::ostream &os) const {
   os << fmt::format("Size: {:#06x}", stack_size());
 }
 }
-}
+

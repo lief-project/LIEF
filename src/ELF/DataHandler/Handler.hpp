@@ -27,8 +27,8 @@
 
 namespace LIEF {
 class BinaryStream;
-namespace ELF {
-namespace DataHandler {
+
+namespace ELF::DataHandler {
 
 class LIEF_API Handler {
   public:
@@ -80,8 +80,8 @@ class LIEF_API Handler {
   std::vector<uint8_t> data_;
   std::vector<std::unique_ptr<Node>> nodes_;
 };
-} // namespace DataHandler
-} // namespace ELF
+} // namespace ELF::DataHandler
+
 } // namespace LIEF
 
 #endif

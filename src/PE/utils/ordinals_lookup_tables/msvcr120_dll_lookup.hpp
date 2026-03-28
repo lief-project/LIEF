@@ -17,8 +17,8 @@
 #define LIEF_PE_MSVCR120_DLL_LOOKUP_H
 #include <cstdint>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 inline const char* msvcr120_dll_lookup(uint32_t i) {
   switch(i) {
@@ -1994,7 +1994,7 @@ inline const char* msvcr120_dll_lookup(uint32_t i) {
 
 
 }
-}
+
 
 #endif
 

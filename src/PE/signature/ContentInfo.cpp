@@ -24,8 +24,8 @@
 
 #include <ostream>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 
 ContentInfo::ContentInfo() :
@@ -70,4 +70,4 @@ std::ostream& operator<<(std::ostream& os, const ContentInfo& content_info) {
 }
 
 }
-}
+

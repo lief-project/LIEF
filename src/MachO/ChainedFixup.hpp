@@ -17,9 +17,9 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace LIEF {
-namespace MachO {
-namespace details {
+
+
+namespace LIEF::MachO::details {
 
 // The following structures are taken from include/mach-o/fixup-chains.h
 
@@ -304,6 +304,6 @@ union chained_fixup {
 };
 
 } // Namespace details
-} // Namespace MachO
-} // Namespace LIEF
+// Namespace MachO
+// Namespace LIEF
 #endif

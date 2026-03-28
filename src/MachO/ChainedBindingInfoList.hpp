@@ -20,8 +20,8 @@
 #include <memory>
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 class Builder;
 class DyldChainedFixupsCreator;
@@ -60,5 +60,5 @@ class ChainedBindingInfoList : public ChainedBindingInfo {
 };
 
 }
-}
+
 #endif

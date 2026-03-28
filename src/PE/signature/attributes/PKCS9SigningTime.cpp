@@ -16,8 +16,8 @@
 #include <spdlog/fmt/fmt.h>
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void PKCS9SigningTime::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -30,4 +30,4 @@ std::string PKCS9SigningTime::print() const {
 }
 
 }
-}
+

@@ -31,8 +31,8 @@
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/android_sink.h"
 
-namespace LIEF {
-namespace logging {
+
+namespace LIEF::logging {
 
 
 std::shared_ptr<spdlog::logger>
@@ -97,7 +97,7 @@ LEVEL Logger::get_level() {
 Logger& Logger::instance(const char* name) {
   static Logger::instances_t instances;
   static std::mutex mu;
-  std::lock_guard LK(mu);
+  std::scoped_lock LK(mu);
 
   if (auto it = instances.find(name); it != instances.end()) {
     return *it->second;
@@ -105,7 +105,7 @@ Logger& Logger::instance(const char* name) {
 
   if (instances.empty()) {
     std::atexit([] {
-      std::lock_guard LK(mu);
+      std::scoped_lock LK(mu);
       for (const auto& [name, instance] : instances) {
         delete instance;
       }
@@ -331,6 +331,6 @@ spdlog::logger& get_sink(const char* name) {
 }
 
 }
-}
+
 
 

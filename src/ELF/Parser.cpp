@@ -35,8 +35,8 @@
 
 #include "Parser.tcc"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 struct Target {
   Header::CLASS clazz = Header::CLASS::NONE;
@@ -495,14 +495,14 @@ result<uint64_t> Parser::get_dynamic_string_table_from_segments(BinaryStream* st
 uint64_t Parser::get_dynamic_string_table_from_sections() const {
   // Find Dynamic string section
   auto it_dynamic_string_section = std::find_if(
-      std::begin(binary_->sections_), std::end(binary_->sections_),
+      binary_->sections_.begin(), binary_->sections_.end(),
       [] (const std::unique_ptr<Section>& section) {
         return section->name() == ".dynstr" &&
                section->type() == Section::TYPE::STRTAB;
       });
 
 
-  if (it_dynamic_string_section == std::end(binary_->sections_)) {
+  if (it_dynamic_string_section == binary_->sections_.end()) {
     return 0;
   }
   return (*it_dynamic_string_section)->file_offset();
@@ -654,10 +654,10 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
 
     if (note != nullptr) {
       const auto it_note = std::find_if(
-          std::begin(binary_->notes_), std::end(binary_->notes_),
+          binary_->notes_.begin(), binary_->notes_.end(),
           [&note] (const std::unique_ptr<Note>& n) { return *n == *note; });
 
-      if (it_note == std::end(binary_->notes_)) { // Not already present
+      if (it_note == binary_->notes_.end()) { // Not already present
         binary_->notes_.push_back(std::move(note));
       }
     } else {
@@ -723,7 +723,7 @@ ok_error_t Parser::link_symbol_section(Symbol& sym) {
   }
 
   auto it_section = sections_idx_.find(sec_idx);
-  if (it_section == std::end(sections_idx_)) {
+  if (it_section == sections_idx_.end()) {
     return make_error_code(lief_errors::corrupted);
   }
 
@@ -754,4 +754,4 @@ Relocation& Parser::insert_relocation(std::unique_ptr<Relocation> R) {
 }
 
 }
-}
+

@@ -21,8 +21,8 @@
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 DosHeader::DosHeader(const details::pe_dos_header& header) :
   magic_{header.Magic},
@@ -92,4 +92,4 @@ std::ostream& operator<<(std::ostream& os, const DosHeader& entry) {
 }
 
 }
-}
+

@@ -17,8 +17,8 @@
 #include "LIEF/MachO/DyldEnvironment.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 DyldEnvironment::DyldEnvironment(const details::dylinker_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize}
@@ -35,4 +35,4 @@ std::ostream& DyldEnvironment::print(std::ostream& os) const {
 }
 
 }
-}
+

@@ -59,8 +59,8 @@
 #endif
 
 
-namespace LIEF {
-namespace logging {
+
+namespace LIEF::logging {
 
 class Logger {
   public:
@@ -237,6 +237,6 @@ class Stream : public std::stringbuf {
 };
 
 }
-}
+
 
 #endif

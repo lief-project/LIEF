@@ -21,8 +21,8 @@
 #include "LIEF/errors.hpp"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 template<class T>
 bool Binary::has_command() const {
@@ -39,12 +39,12 @@ template<class T>
 const T* Binary::command() const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
   const auto it_cmd = std::find_if(
-      std::begin(commands_), std::end(commands_),
+      commands_.begin(), commands_.end(),
       [] (const std::unique_ptr<LoadCommand>& command) {
         return T::classof(command.get());
       });
 
-  if (it_cmd == std::end(commands_)) {
+  if (it_cmd == commands_.end()) {
     return nullptr;
   }
 
@@ -57,7 +57,7 @@ size_t Binary::count_commands() const {
   static_assert(std::is_base_of<LoadCommand, T>::value, "Require inheritance of 'LoadCommand'");
 
   size_t nb_cmd = std::count_if(
-      std::begin(commands_), std::end(commands_),
+      commands_.begin(), commands_.end(),
       [] (const std::unique_ptr<LoadCommand>& command) {
         return T::classof(command.get());
       });
@@ -112,4 +112,4 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from, uint6
 
 
 }
-}
+

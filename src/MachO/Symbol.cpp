@@ -28,8 +28,8 @@
 
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 Symbol& Symbol::operator=(Symbol other) {
   swap(other);
@@ -85,7 +85,7 @@ std::string Symbol::demangled_name() const {
 #if defined(__unix__)
     int status;
     const std::string& name = this->name().c_str();
-    char* demangled_name = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
+    char* demangled_name = abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
 
     if (status == 0) {
       std::string realname = demangled_name;
@@ -179,5 +179,5 @@ const char* to_string(Symbol::TYPE e) {
   return "UNKNOWN";
 }
 
-} // namespace MachO
-} // namespace LIEF
+} // namespace LIEF::MachO
+

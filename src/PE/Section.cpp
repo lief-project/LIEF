@@ -27,8 +27,8 @@
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/COFF/String.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 static constexpr std::array CHARACTERISTICS_LIST = {
   Section::CHARACTERISTICS::TYPE_NO_PAD,
@@ -122,7 +122,7 @@ std::unique_ptr<SpanStream> Section::stream() const {
 }
 
 void Section::clear(uint8_t c) {
-  std::fill(std::begin(content_), std::end(content_), c);
+  std::fill(content_.begin(), content_.end(), c);
 }
 
 std::ostream& operator<<(std::ostream& os, const Section& section) {
@@ -208,4 +208,4 @@ const char* to_string(Section::CHARACTERISTICS e) {
 }
 
 }
-}
+

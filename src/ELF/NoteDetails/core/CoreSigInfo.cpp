@@ -20,8 +20,8 @@
 
 #include "spdlog/fmt/fmt.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 static constexpr auto signo_offset = offsetof(details::Elf_siginfo, si_signo);
 static constexpr auto sigcode_offset = offsetof(details::Elf_siginfo, si_code);
@@ -64,5 +64,5 @@ void CoreSigInfo::dump(std::ostream& os) const {
                     sigerrno().value_or(-1));
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

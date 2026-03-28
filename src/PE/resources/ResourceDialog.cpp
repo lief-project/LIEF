@@ -238,7 +238,7 @@ ok_error_t ResourceDialog::parse_creation_data(
 
 std::vector<ResourceDialog::DIALOG_STYLES> ResourceDialog::styles_list() const {
   std::vector<DIALOG_STYLES> flags;
-  std::copy_if(std::begin(DIALOG_STYLES_ARRAY), std::end(DIALOG_STYLES_ARRAY),
+  std::copy_if(DIALOG_STYLES_ARRAY.begin(), DIALOG_STYLES_ARRAY.end(),
                std::back_inserter(flags),
                [this] (DIALOG_STYLES f) { return has(f); });
   return flags;
@@ -246,7 +246,7 @@ std::vector<ResourceDialog::DIALOG_STYLES> ResourceDialog::styles_list() const {
 
 std::vector<ResourceDialog::WINDOW_STYLES> ResourceDialog::windows_styles_list() const {
   std::vector<WINDOW_STYLES> flags;
-  std::copy_if(std::begin(WINDOW_STYLES_ARRAY), std::end(WINDOW_STYLES_ARRAY),
+  std::copy_if(WINDOW_STYLES_ARRAY.begin(), WINDOW_STYLES_ARRAY.end(),
                std::back_inserter(flags),
                [this] (WINDOW_STYLES f) { return has(f); });
   return flags;
@@ -254,7 +254,7 @@ std::vector<ResourceDialog::WINDOW_STYLES> ResourceDialog::windows_styles_list()
 
 std::vector<ResourceDialog::WINDOW_EXTENDED_STYLES> ResourceDialog::windows_ext_styles_list() const {
   std::vector<WINDOW_EXTENDED_STYLES> flags;
-  std::copy_if(std::begin(WINDOW_EXTENDED_STYLES_ARRAY), std::end(WINDOW_EXTENDED_STYLES_ARRAY),
+  std::copy_if(WINDOW_EXTENDED_STYLES_ARRAY.begin(), WINDOW_EXTENDED_STYLES_ARRAY.end(),
                std::back_inserter(flags),
                [this] (WINDOW_EXTENDED_STYLES f) { return has(f); });
   return flags;
@@ -275,7 +275,7 @@ std::string ResourceDialog::ordinal_or_str_t::to_string() const {
 std::vector<ResourceDialog::WINDOW_STYLES>
   ResourceDialog::Item::window_styles() const {
   std::vector<WINDOW_STYLES> flags;
-  std::copy_if(std::begin(WINDOW_STYLES_ARRAY), std::end(WINDOW_STYLES_ARRAY),
+  std::copy_if(WINDOW_STYLES_ARRAY.begin(), WINDOW_STYLES_ARRAY.end(),
                std::back_inserter(flags),
                [this] (WINDOW_STYLES f) { return has(f); });
   return flags;
@@ -285,7 +285,7 @@ std::vector<ResourceDialog::CONTROL_STYLES>
   ResourceDialog::Item::control_styles() const
 {
   std::vector<CONTROL_STYLES> flags;
-  std::copy_if(std::begin(CONTROL_STYLES_ARRAY), std::end(CONTROL_STYLES_ARRAY),
+  std::copy_if(CONTROL_STYLES_ARRAY.begin(), CONTROL_STYLES_ARRAY.end(),
                std::back_inserter(flags),
                [this] (CONTROL_STYLES f) { return has(f); });
   return flags;

@@ -28,8 +28,8 @@
 #include "DEX/Structures.hpp"
 #include "OAT/Structures.hpp"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 template<>
 void Parser::parse_dex_files<details::OAT64_t>() {
@@ -137,5 +137,5 @@ void Parser::parse_dex_files<details::OAT64_t>() {
 
 
 } // Namespace OAT
-} // Namespace LIEF
+// Namespace LIEF
 

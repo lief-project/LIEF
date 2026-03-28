@@ -24,8 +24,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 Export::Export(const details::pe_export_directory_table& header) :
   export_flags_{header.ExportFlags},
@@ -187,4 +187,4 @@ std::ostream& operator<<(std::ostream& os, const Export& exp) {
 }
 
 }
-}
+

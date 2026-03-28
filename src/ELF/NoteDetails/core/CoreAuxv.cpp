@@ -25,8 +25,8 @@
 #include "spdlog/fmt/fmt.h"
 #include "ELF/Structures.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 template<class ELF_T> inline result<uint64_t>
 get_impl(CoreAuxv::TYPE type, const Note::description_t& desc) {
@@ -188,5 +188,5 @@ const char* to_string(CoreAuxv::TYPE type) {
   return "UNKNOWN";
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

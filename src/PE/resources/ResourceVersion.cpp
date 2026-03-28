@@ -35,8 +35,8 @@ FMT_FORMATTER(LIEF::PE::ResourceVersion::fixed_file_info_t::FILE_TYPE, LIEF::PE:
 FMT_FORMATTER(LIEF::PE::ResourceVersion::fixed_file_info_t::FILE_TYPE_DETAILS, LIEF::PE::to_string);
 FMT_FORMATTER(LIEF::PE::ResourceVersion::fixed_file_info_t::FILE_FLAGS, LIEF::PE::to_string);
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 static constexpr auto FILE_FLAGS_ARRAY = {
   ResourceVersion::fixed_file_info_t::FILE_FLAGS::DEBUG,
@@ -511,4 +511,4 @@ const char* to_string(ResourceVersion::fixed_file_info_t::FILE_TYPE_DETAILS e) {
 }
 
 }
-}
+

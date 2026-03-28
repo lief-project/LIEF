@@ -29,8 +29,8 @@
 #include "LIEF/VDEX/File.hpp"
 #include "OAT/Structures.hpp"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 template<>
 void Parser::parse_dex_files<details::OAT131_t>() {
@@ -128,4 +128,4 @@ void Parser::parse_dex_files<details::OAT131_t>() {
 
 
 } // Namespace OAT
-} // Namespace LIEF
+// Namespace LIEF

@@ -19,8 +19,8 @@
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 EncryptionInfo::EncryptionInfo(const details::encryption_info_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -42,4 +42,4 @@ std::ostream& EncryptionInfo::print(std::ostream& os) const {
 
 
 }
-}
+

@@ -18,8 +18,8 @@
 #include "LIEF/PE/ResourceDirectory.hpp"
 #include "PE/Structures.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void ResourceDirectory::swap(ResourceDirectory& other) noexcept {
   ResourceNode::swap(other);
@@ -46,4 +46,4 @@ void ResourceDirectory::accept(Visitor& visitor) const {
 }
 
 }
-}
+

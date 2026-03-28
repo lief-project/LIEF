@@ -25,8 +25,8 @@
 #include "MachO/Structures.hpp"
 #include "MachO/exports_trie.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 DyldExportsTrie::DyldExportsTrie() = default;
 DyldExportsTrie::~DyldExportsTrie() = default;
@@ -83,4 +83,4 @@ std::ostream& DyldExportsTrie::print(std::ostream& os) const {
 }
 
 }
-}
+

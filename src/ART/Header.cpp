@@ -19,8 +19,8 @@
 
 #include <iomanip>
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 Header::Header(const Header&) = default;
 Header& Header::operator=(const Header&) = default;
@@ -162,5 +162,5 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 Header::~Header() = default;
 
 } // Namespace ART
-} // Namespace LIEF
+// Namespace LIEF
 

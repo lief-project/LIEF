@@ -25,8 +25,8 @@
 #include "LIEF/DEX/Parser.hpp"
 #include "LIEF/utils.hpp"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 template<typename VDEX_T>
 void Parser::parse_file() {
@@ -326,7 +326,7 @@ void Parser::parse_quickening_info<details::VDEX10>() {
     const std::vector<uint8_t>& raw = dex_file->raw(/* deoptimize */false);
     for (DEX::Method& method : dex_file->methods()) {
       const auto it_quick = quick_info.find(method.code_offset() - sizeof(DEX::details::code_item));
-      if (it_quick == std::end(quick_info)) {
+      if (it_quick == quick_info.end()) {
         continue;
       }
 
@@ -403,4 +403,4 @@ void Parser::parse_quickening_info() {
 
 
 }
-}
+

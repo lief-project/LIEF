@@ -24,8 +24,8 @@
 #include "LIEF/MachO/Relocation.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 SegmentCommand::SegmentCommand() = default;
 SegmentCommand::~SegmentCommand() = default;
@@ -155,8 +155,8 @@ Section& SegmentCommand::add_section(const Section& section) {
                 inner_data.resize(w + s);
               }, relative_offset, content.size());
 
-  std::copy(std::begin(content), std::end(content),
-            std::begin(data_) + relative_offset);
+  std::copy(content.begin(), content.end(),
+            data_.begin() + relative_offset);
 
   file_size(data_.size());
   sections_.push_back(std::move(new_section));
@@ -165,19 +165,19 @@ Section& SegmentCommand::add_section(const Section& section) {
 }
 
 bool SegmentCommand::has(const Section& section) const {
-  auto it = std::find_if(std::begin(sections_), std::end(sections_),
+  auto it = std::find_if(sections_.begin(), sections_.end(),
       [&section] (const std::unique_ptr<Section>& sec) {
         return *sec == section;
       });
-  return it != std::end(sections_);
+  return it != sections_.end();
 }
 
 bool SegmentCommand::has_section(const std::string& section_name) const {
-  auto it = std::find_if(std::begin(sections_), std::end(sections_),
+  auto it = std::find_if(sections_.begin(), sections_.end(),
       [&section_name] (const std::unique_ptr<Section>& sec) {
         return sec->name() == section_name;
       });
-  return it != std::end(sections_);
+  return it != sections_.end();
 }
 
 
@@ -198,7 +198,7 @@ void SegmentCommand::content_insert(size_t where, size_t size) {
                   return;
                 }
                 if (w < inner_data.size()) {
-                  inner_data.insert(std::begin(inner_data) + w, s, 0);
+                  inner_data.insert(inner_data.begin() + w, s, 0);
                 } else {
                   inner_data.resize(inner_data.size() + w + s, 0);
                 }
@@ -206,12 +206,12 @@ void SegmentCommand::content_insert(size_t where, size_t size) {
 }
 
 const Section* SegmentCommand::get_section(const std::string& name) const {
-  const auto it = std::find_if(std::begin(sections_), std::end(sections_),
+  const auto it = std::find_if(sections_.begin(), sections_.end(),
       [&name] (const std::unique_ptr<Section>& sec) {
         return sec->name() == name;
       });
 
-  if (it == std::end(sections_)) {
+  if (it == sections_.end()) {
     return nullptr;
   }
 
@@ -275,4 +275,4 @@ const char* to_string(SegmentCommand::VM_PROTECTIONS protection) {
 }
 
 }
-}
+

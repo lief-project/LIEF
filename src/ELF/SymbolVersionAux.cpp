@@ -19,12 +19,12 @@
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 void SymbolVersionAux::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
 }
-}
+

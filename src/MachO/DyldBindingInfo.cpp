@@ -17,8 +17,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/DyldBindingInfo.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 DyldBindingInfo::DyldBindingInfo(CLASS cls, TYPE type, uint64_t address,
                                  int64_t addend, int32_t oridnal, bool is_weak, bool is_non_weak_definition,
@@ -76,4 +76,4 @@ const char* to_string(DyldBindingInfo::TYPE e) {
 }
 
 }
-}
+

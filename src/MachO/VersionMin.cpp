@@ -20,8 +20,8 @@
 #include "LIEF/MachO/VersionMin.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 VersionMin::VersionMin(const details::version_min_command& version_cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(version_cmd.cmd), version_cmd.cmdsize},
@@ -51,4 +51,4 @@ std::ostream& VersionMin::print(std::ostream& os) const {
 
 
 }
-}
+

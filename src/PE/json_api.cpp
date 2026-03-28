@@ -23,8 +23,8 @@
 #include "PE/json_internal.hpp"
 #endif
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 std::string to_json([[maybe_unused]] const Object& v) {
 #ifdef LIEF_JSON_SUPPORT
@@ -38,6 +38,6 @@ std::string to_json([[maybe_unused]] const Object& v) {
 }
 
 
-} // namespace PE
-} // namespace LIEF
+} // namespace LIEF::PE
+
 

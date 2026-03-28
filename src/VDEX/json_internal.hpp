@@ -19,8 +19,8 @@
 #include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 class JsonVisitor : public LIEF::JsonVisitor {
   public:
@@ -32,7 +32,7 @@ class JsonVisitor : public LIEF::JsonVisitor {
 };
 
 }
-}
+
 
 #endif // LIEF_JSON_SUPPORT
 

@@ -17,8 +17,8 @@
 #include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void PKCS9MessageDigest::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -28,4 +28,4 @@ std::string PKCS9MessageDigest::print() const {
   return hex_dump(digest());
 }
 }
-}
+

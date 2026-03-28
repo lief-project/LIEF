@@ -25,8 +25,8 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 static constexpr std::array DLL_CHARACTERISTICS_LIST = {
   OptionalHeader::DLL_CHARACTERISTICS::HIGH_ENTROPY_VA,
@@ -84,7 +84,7 @@ OptionalHeader::OptionalHeader(const details::pe64_optional_header& header):
   sizeof_uninitialized_data_(header.SizeOfUninitializedData),
   entrypoint_(header.AddressOfEntryPoint),
   baseof_code_(header.BaseOfCode),
-  baseof_data_(0),
+  
   imagebase_(header.ImageBase),
   section_align_(header.SectionAlignment),
   file_align_(header.FileAlignment),
@@ -220,4 +220,4 @@ const char* to_string(OptionalHeader::SUBSYSTEM e) {
 }
 
 }
-}
+

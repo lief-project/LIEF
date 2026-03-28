@@ -28,8 +28,8 @@
 
 #include "Header.tcc"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 template<typename DEX_T>
 void Parser::parse_file() {
@@ -428,7 +428,7 @@ void Parser::parse_classes() {
 
       // Check if already parsed the parent class
       const auto it_parent = file_->classes_.find(parent_name);
-      if (it_parent != std::end(file_->classes_)) {
+      if (it_parent != file_->classes_.end()) {
         parent_ptr = it_parent->second;
       }
     }
@@ -679,4 +679,4 @@ void Parser::parse_code_info(uint32_t offset, Method& method) {
 
 
 }
-}
+

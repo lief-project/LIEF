@@ -25,8 +25,8 @@
 #include "internal_utils.hpp"
 #include "logging.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 result<ResourceVarFileInfo> ResourceVarFileInfo::parse(BinaryStream& stream) {
   ResourceVarFileInfo info;
@@ -90,4 +90,4 @@ std::ostream& operator<<(std::ostream& os, const ResourceVarFileInfo& info) {
 
 
 }
-}
+

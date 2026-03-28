@@ -19,8 +19,8 @@
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 SymbolCommand::SymbolCommand(const details::symtab_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -45,4 +45,4 @@ std::ostream& SymbolCommand::print(std::ostream& os) const {
 
 
 }
-}
+

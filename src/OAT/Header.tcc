@@ -16,18 +16,17 @@
 #include <string>
 #include "LIEF/OAT/Header.hpp"
 #include "OAT/Structures.hpp"
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 template<class T>
 Header::Header(const T* header) :
   magic_{},
-  version_{0},
+
   checksum_{header->adler32_checksum},
   instruction_set_{static_cast<INSTRUCTION_SETS>(header->instruction_set)},
   instruction_set_features_bitmap_{header->instruction_set_features_bitmap},
   dex_file_count_{header->dex_file_count},
-  oat_dex_files_offset_{0}, // (OAT 131)
   executable_offset_{header->executable_offset},
   i2i_bridge_offset_{header->i2i_bridge_offset},
   i2c_code_bridge_offset_{header->i2c_code_bridge_offset},
@@ -60,7 +59,7 @@ Header::Header(const T* header) :
 template<>
 Header::Header(const details::OAT_131::oat_header* header) :
   magic_{},
-  version_{0},
+
   checksum_{header->adler32_checksum},
   instruction_set_{static_cast<INSTRUCTION_SETS>(header->instruction_set)},
   instruction_set_features_bitmap_{header->instruction_set_features_bitmap},
@@ -97,5 +96,5 @@ Header::Header(const details::OAT_131::oat_header* header) :
 }
 
 
-} // namespace OAT
-} // namespace LIEF
+} // namespace LIEF::OAT
+

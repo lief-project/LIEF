@@ -33,8 +33,8 @@
 #include "frozen.hpp"
 #include "internal_utils.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 Signature::Signature() = default;
 Signature::Signature(const Signature&) = default;
@@ -298,8 +298,8 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
   }
 
   std::vector<uint8_t> raw_content_info = {
-    std::begin(original_raw_signature_) + content_info_start_,
-    std::begin(original_raw_signature_) + content_info_end_
+    original_raw_signature_.begin() + content_info_start_,
+    original_raw_signature_.begin() + content_info_end_
   };
 
   const std::vector<uint8_t> content_info_hash = Signature::hash(raw_content_info, digest_algo);
@@ -326,12 +326,12 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
     }
 
     // Check that content_info_hash matches pkcs9-message-digest
-    auto it_pkcs9_digest = std::find_if(std::begin(auth_attrs), std::end(auth_attrs),
+    auto it_pkcs9_digest = std::find_if(auth_attrs.begin(), auth_attrs.end(),
         [] (const Attribute& attr) {
           return attr.type() == Attribute::TYPE::PKCS9_MESSAGE_DIGEST;
         });
 
-    if (it_pkcs9_digest == std::end(auth_attrs)) {
+    if (it_pkcs9_digest == auth_attrs.end()) {
       LIEF_WARN("Missing authenticated attribute 'pkcs9-message-digest'");
       return flags | VERIFICATION_FLAGS::MISSING_PKCS9_MESSAGE_DIGEST;
     }
@@ -387,11 +387,11 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
 
 
 const x509* Signature::find_crt(const std::vector<uint8_t>& serialno) const {
-  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
+  auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
       [&serialno] (const x509& cert) {
         return cert.serial_number() == serialno;
       });
-  if (it_cert == std::end(certificates_)) {
+  if (it_cert == certificates_.end()) {
     return nullptr;
   }
   return &(*it_cert);
@@ -399,44 +399,44 @@ const x509* Signature::find_crt(const std::vector<uint8_t>& serialno) const {
 
 
 const x509* Signature::find_crt_subject(const std::string& subject) const {
-  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
+  auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
       [&subject] (const x509& cert) {
         return cert.subject() == subject;
       });
-  if (it_cert == std::end(certificates_)) {
+  if (it_cert == certificates_.end()) {
     return nullptr;
   }
   return &(*it_cert);
 }
 
 const x509* Signature::find_crt_subject(const std::string& subject, const std::vector<uint8_t>& serialno) const {
-  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
+  auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
       [&subject, &serialno] (const x509& cert) {
         return cert.subject() == subject && cert.serial_number() == serialno;
       });
-  if (it_cert == std::end(certificates_)) {
+  if (it_cert == certificates_.end()) {
     return nullptr;
   }
   return &(*it_cert);
 }
 
 const x509* Signature::find_crt_issuer(const std::string& issuer) const {
-  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
+  auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
       [&issuer] (const x509& cert) {
         return cert.issuer() == issuer;
       });
-  if (it_cert == std::end(certificates_)) {
+  if (it_cert == certificates_.end()) {
     return nullptr;
   }
   return &(*it_cert);
 }
 
 const x509* Signature::find_crt_issuer(const std::string& issuer, const std::vector<uint8_t>& serialno) const {
-  auto it_cert = std::find_if(std::begin(certificates_), std::end(certificates_),
+  auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
       [&issuer, &serialno] (const x509& cert) {
         return cert.issuer() == issuer && cert.serial_number() == serialno;
       });
-  if (it_cert == std::end(certificates_)) {
+  if (it_cert == certificates_.end()) {
     return nullptr;
   }
   return &(*it_cert);
@@ -582,4 +582,4 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
 
 
 }
-}
+

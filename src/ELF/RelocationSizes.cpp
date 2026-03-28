@@ -17,8 +17,8 @@
 #include "LIEF/ELF/Relocation.hpp"
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 int32_t get_R_X64(Relocation::TYPE type) {
   CONST_MAP_ALT SIZES {
@@ -940,4 +940,4 @@ int32_t get_reloc_size(Relocation::TYPE type) {
 }
 
 }
-}
+

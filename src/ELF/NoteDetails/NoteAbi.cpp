@@ -22,8 +22,8 @@
 
 #include "spdlog/fmt/fmt.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 result<NoteAbi::version_t> NoteAbi::version() const {
   NoteAbi::version_t version;
@@ -91,5 +91,5 @@ const char* to_string(NoteAbi::ABI abi) {
 
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

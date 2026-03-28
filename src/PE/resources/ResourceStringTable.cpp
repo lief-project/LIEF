@@ -24,8 +24,8 @@
 
 #include "logging.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 result<ResourceStringTable::entry_t> parse_string(BinaryStream& stream) {
   // typedef struct {
@@ -160,4 +160,4 @@ std::ostream& operator<<(std::ostream& os, const ResourceStringTable& table) {
 }
 
 }
-}
+

@@ -33,8 +33,8 @@
 
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 LoadCommand::LoadCommand(const details::load_command& command) :
   command_{static_cast<LoadCommand::TYPE>(command.cmd)},
@@ -147,4 +147,4 @@ const char* to_string(LoadCommand::TYPE e) {
 }
 
 }
-}
+

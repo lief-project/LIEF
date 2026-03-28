@@ -37,11 +37,11 @@
 // Android 9.0.0  OAT 138
 // ======================
 
-namespace LIEF {
-/// Namespace related to the LIEF's OAT module
-namespace OAT {
 
-namespace details {
+/// Namespace related to the LIEF's OAT module
+
+
+namespace LIEF::OAT::details {
 using oat_version_t = uint32_t;
 
 static constexpr uint8_t oat_magic[]   = { 'o', 'a', 't', '\n' };
@@ -313,8 +313,8 @@ class OAT138_t {
   using lookup_table_entry_t    = OAT_138::lookup_table_entry_t;
 };
 
-} /* end namespace details */
-} /* end namespace OAT */
-} /* end namespace LIEF */
+} // namespace LIEF::OAT::details
+
+
 #endif
 

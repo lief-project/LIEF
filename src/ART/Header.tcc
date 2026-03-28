@@ -20,8 +20,8 @@
 #include "LIEF/ART/EnumToString.hpp"
 #include "ART/Structures.hpp"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 template<>
 Header::Header(const details::ART_17::header* header) :
@@ -108,5 +108,5 @@ Header::Header(const T* header) :
 
 }
 
-} // namespace ART
-} // namespace LIEF
+} // namespace LIEF::ART
+

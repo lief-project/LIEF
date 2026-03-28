@@ -23,8 +23,8 @@
 #include "spdlog/fmt/fmt.h"
 #include "overflow_check.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 span<uint8_t> Debug::get_payload(Section& section, uint32_t /*rva*/,
                                  uint32_t offset, uint32_t size)
@@ -123,5 +123,5 @@ const char* to_string(Debug::TYPES e) {
 }
 
 }
-}
+
 

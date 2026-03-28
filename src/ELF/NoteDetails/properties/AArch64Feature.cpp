@@ -21,8 +21,8 @@
 
 FMT_FORMATTER(LIEF::ELF::AArch64Feature::FEATURE, LIEF::ELF::to_string);
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 std::unique_ptr<AArch64Feature> AArch64Feature::create(BinaryStream& stream) {
   static constexpr auto GNU_PROPERTY_AARCH64_FEATURE_1_BTI = 1U << 0;
@@ -65,4 +65,4 @@ void AArch64Feature::dump(std::ostream &os) const {
   os << "AArch64 feature(s): " << fmt::to_string(features());
 }
 }
-}
+

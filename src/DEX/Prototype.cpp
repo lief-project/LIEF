@@ -17,8 +17,8 @@
 #include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/hash.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 Prototype::Prototype() = default;
 Prototype::Prototype(const Prototype& other) = default;
@@ -68,4 +68,4 @@ std::ostream& operator<<(std::ostream& os, const Prototype& type) {
 Prototype::~Prototype() = default;
 
 }
-}
+

@@ -18,8 +18,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 static constexpr auto stack_size_offset = 0;
 static constexpr auto stack_allocated_offset = sizeof(uint32_t);
@@ -60,5 +60,5 @@ void QNXStack::dump(std::ostream& os) const {
      << fmt::format("  Executable:      {}\n", is_executable());
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

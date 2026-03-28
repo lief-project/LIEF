@@ -29,8 +29,8 @@
 #include <spdlog/fmt/fmt.h>
 
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 Symbol& Symbol::operator=(Symbol other) {
   swap(other);
@@ -241,4 +241,4 @@ const char* to_string(Symbol::VISIBILITY e) {
 }
 
 }
-}
+

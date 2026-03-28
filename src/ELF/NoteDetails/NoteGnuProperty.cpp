@@ -34,8 +34,8 @@
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 inline std::unique_ptr<NoteGnuProperty::Property>
 parse_property(ARCH arch, SpanStream& stream) {
@@ -208,5 +208,5 @@ void NoteGnuProperty::Property::dump(std::ostream& os) const {
   os << to_string(this->type());
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

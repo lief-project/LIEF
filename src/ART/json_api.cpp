@@ -23,8 +23,8 @@
 
 #include "LIEF/ART.hpp"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 std::string to_json(const Object& v) {
 #ifdef LIEF_JSON_SUPPORT
@@ -38,4 +38,4 @@ std::string to_json(const Object& v) {
 }
 
 } // namespace VDEX
-} // namespace LIEF
+

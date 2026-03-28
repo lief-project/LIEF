@@ -16,8 +16,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcStatementType.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void MsSpcStatementType::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -27,4 +27,4 @@ std::string MsSpcStatementType::print() const {
   return oid() + " (" + oid_to_string(oid()) + ")";
 }
 }
-}
+

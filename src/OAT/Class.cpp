@@ -31,8 +31,8 @@
 #  define __builtin_popcount __popcnt
 #endif
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 Class::Class(const Class&) = default;
 Class& Class::operator=(const Class&) = default;
@@ -110,17 +110,17 @@ bool Class::is_quickened(const DEX::Method& m) const {
   }
 
   const auto& methods = cls.methods();
-  const auto it_method_index = std::find_if(std::begin(methods), std::end(methods),
+  const auto it_method_index = std::find_if(methods.begin(), methods.end(),
       [&m] (const DEX::Method& mth) {
         return &m == &mth;
       });
 
-  if (it_method_index == std::end(methods)) {
+  if (it_method_index == methods.end()) {
     LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
     return false;
   }
 
-  uint32_t relative_index = std::distance(std::begin(methods), it_method_index);
+  uint32_t relative_index = std::distance(methods.begin(), it_method_index);
   return is_quickened(relative_index);
 
 }
@@ -154,17 +154,17 @@ uint32_t Class::method_offsets_index(const DEX::Method& m) const {
   const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
-  const auto it_method_index = std::find_if(std::begin(methods), std::end(methods),
+  const auto it_method_index = std::find_if(methods.begin(), methods.end(),
       [&m] (const DEX::Method& mth) {
         return &m == &mth;
       });
 
-  if (it_method_index == std::end(methods)) {
+  if (it_method_index == methods.end()) {
     LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
     return UINT_MAX;
   }
 
-  uint32_t relative_index = std::distance(std::begin(methods), it_method_index);
+  uint32_t relative_index = std::distance(methods.begin(), it_method_index);
   return method_offsets_index(relative_index);
 }
 
@@ -203,17 +203,17 @@ uint32_t Class::relative_index(const DEX::Method& m) const {
   const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
-  const auto it_method_index = std::find_if(std::begin(methods), std::end(methods),
+  const auto it_method_index = std::find_if(methods.begin(), methods.end(),
       [&m] (const DEX::Method& mth) {
         return &m == &mth;
       });
 
-  if (it_method_index == std::end(methods)) {
+  if (it_method_index == methods.end()) {
     LIEF_ERR("Method '{}' not found in {}", m.name(), cls.fullname());
     return UINT_MAX;
   }
 
-  return std::distance(std::begin(methods), it_method_index);
+  return std::distance(methods.begin(), it_method_index);
 }
 
 uint32_t Class::relative_index(uint32_t method_absolute_index) const {
@@ -223,17 +223,17 @@ uint32_t Class::relative_index(uint32_t method_absolute_index) const {
   const DEX::Class& cls = *dex_class();
 
   const auto& methods = cls.methods();
-  const auto it_method_index = std::find_if(std::begin(methods), std::end(methods),
+  const auto it_method_index = std::find_if(methods.begin(), methods.end(),
       [method_absolute_index] (const DEX::Method& mth) {
         return mth.index() == method_absolute_index;
       });
 
-  if (it_method_index == std::end(methods)) {
+  if (it_method_index == methods.end()) {
     LIEF_ERR("Method index {:d} not found in {}", method_absolute_index, cls.fullname());
     return UINT_MAX;
   }
 
-  return std::distance(std::begin(methods), it_method_index);
+  return std::distance(methods.begin(), it_method_index);
 
 }
 
@@ -257,4 +257,4 @@ Class::~Class() = default;
 
 
 }
-}
+

@@ -16,8 +16,8 @@
 #include "LIEF/ELF/ProcessorFlags.hpp"
 #include "frozen.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 const char* to_string(PROCESSOR_FLAGS flag) {
   #define ENTRY(X) std::pair(PROCESSOR_FLAGS::X, #X)
   STRING_MAP enums2str {
@@ -99,4 +99,4 @@ const char* to_string(PROCESSOR_FLAGS flag) {
   return "UNKNOWN";
 }
 }
-}
+

@@ -26,8 +26,8 @@
 
 #include "LIEF/PE/EnumToString.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 SignerInfo::SignerInfo() = default;
 SignerInfo::~SignerInfo() = default;
@@ -91,11 +91,11 @@ const Attribute* SignerInfo::get_attribute(Attribute::TYPE type) const {
 
 const Attribute* SignerInfo::get_auth_attribute(Attribute::TYPE type) const {
   auto it_auth = std::find_if(
-      std::begin(authenticated_attributes_), std::end(authenticated_attributes_),
+      authenticated_attributes_.begin(), authenticated_attributes_.end(),
       [type] (const std::unique_ptr<Attribute>& attr) {
         return attr->type() == type;
       });
-  if (it_auth != std::end(authenticated_attributes_)) {
+  if (it_auth != authenticated_attributes_.end()) {
     return it_auth->get();
   }
   return nullptr;
@@ -103,11 +103,11 @@ const Attribute* SignerInfo::get_auth_attribute(Attribute::TYPE type) const {
 
 const Attribute* SignerInfo::get_unauth_attribute(Attribute::TYPE type) const {
   auto it_uauth = std::find_if(
-      std::begin(unauthenticated_attributes_), std::end(unauthenticated_attributes_),
+      unauthenticated_attributes_.begin(), unauthenticated_attributes_.end(),
       [type] (const std::unique_ptr<Attribute>& attr) {
         return attr->type() == type;
       });
-  if (it_uauth != std::end(unauthenticated_attributes_)) {
+  if (it_uauth != unauthenticated_attributes_.end()) {
     return it_uauth->get();
   }
   return nullptr;
@@ -130,4 +130,4 @@ std::ostream& operator<<(std::ostream& os, const SignerInfo& signer_info) {
 }
 
 }
-}
+

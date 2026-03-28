@@ -20,8 +20,8 @@
 #include "LIEF/MachO/SourceVersion.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 
 SourceVersion::SourceVersion(const details::source_version_command& ver) :
@@ -47,4 +47,4 @@ std::ostream& SourceVersion::print(std::ostream& os) const {
 
 
 }
-}
+

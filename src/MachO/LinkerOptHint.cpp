@@ -19,8 +19,8 @@
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "MachO/Structures.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 LinkerOptHint::LinkerOptHint(const details::linkedit_data_command& cmd) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(cmd.cmd), cmd.cmdsize},
@@ -41,4 +41,4 @@ std::ostream& LinkerOptHint::print(std::ostream& os) const {
 
 
 }
-}
+

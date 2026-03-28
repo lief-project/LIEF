@@ -66,18 +66,18 @@ size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
   span<const uint8_t> content = this->content();
 
   const auto* it_found = std::search(
-      std::begin(content) + pos, std::end(content),
-      std::begin(pattern), std::end(pattern));
+      content.begin() + pos, content.end(),
+      pattern.begin(), pattern.end());
 
-  if (it_found == std::end(content)) {
+  if (it_found == content.end()) {
     return npos;
   }
 
-  return std::distance(std::begin(content), it_found);
+  return std::distance(content.begin(), it_found);
 }
 
 size_t Section::search(const std::string& pattern, size_t pos) const {
-  std::vector<uint8_t> pattern_formated = {std::begin(pattern), std::end(pattern)};
+  std::vector<uint8_t> pattern_formated = {pattern.begin(), pattern.end()};
   return search(pattern_formated, pos);
 }
 

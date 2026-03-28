@@ -22,8 +22,8 @@
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/iostream.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 
 // Mainly inspired from LLVM: lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp
@@ -228,4 +228,4 @@ TrieNode& TrieNode::write(vector_iostream& buffer) {
   return *this;
 }
 }
-}
+

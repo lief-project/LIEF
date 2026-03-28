@@ -34,9 +34,9 @@ std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
   std::string name = entry.name();
   // UTF8 -> ASCII
   std::transform(
-      std::begin(name),
-      std::end(name),
-      std::begin(name), []
+      name.begin(),
+      name.end(),
+      name.begin(), []
       (unsigned char c) { return (c < 127 && c > 32) ? c : ' ';});
   if (name.size() > 20) {
     name = name.substr(0, 17) + "...";

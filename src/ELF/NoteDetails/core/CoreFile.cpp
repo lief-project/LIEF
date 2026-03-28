@@ -21,8 +21,8 @@
 #include "ELF/Structures.hpp"
 #include "LIEF/iostream.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 template<class ELF_T>
 void CoreFile::read_files() {
@@ -52,20 +52,20 @@ void CoreFile::read_files() {
 
   page_size_ = *page_size;
   files_.resize(*count);
-  for (size_t i = 0; i < files_.size(); ++i) {
+  for (entry_t& file : files_) {
     auto entry = stream->read<Elf_FileEntry>();
     if (!entry) {
       break;
     }
-    files_[i] = {entry->start, entry->end, entry->file_ofs, ""};
+    file = {entry->start, entry->end, entry->file_ofs, ""};
   }
 
-  for (size_t i = 0; i < files_.size(); ++i) {
+  for (entry_t& file : files_) {
     auto path = stream->read_string();
     if (!path) {
       break;
     }
-    files_[i].path = std::move(*path);
+    file.path = std::move(*path);
   }
 }
 
@@ -133,5 +133,5 @@ std::ostream& operator<<(std::ostream& os, const CoreFile::entry_t& entry) {
   return os;
 }
 
-} // namespace ELF
-} // namespace LIEF
+} // namespace LIEF::ELF
+

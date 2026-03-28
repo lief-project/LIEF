@@ -21,8 +21,8 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 void Attribute::accept(Visitor& visitor) const {
   visitor.visit(*this);
@@ -56,4 +56,4 @@ const char* to_string(Attribute::TYPE e) {
 }
 
 }
-}
+
