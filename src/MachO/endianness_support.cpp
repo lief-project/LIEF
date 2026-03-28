@@ -599,7 +599,7 @@ template<>
 void swap_endian<MachO::details::arm_thread_state64_t>(
     MachO::details::arm_thread_state64_t* hdr
 ) {
-  for (unsigned long& i : hdr->x) {
+  for (uint64_t& i : hdr->x) {
     swap_endian(&i);
   }
   swap_endian(&hdr->fp);
@@ -615,7 +615,7 @@ void swap_endian<MachO::details::ppc_thread_state64_t>(
 ) {
   swap_endian(&hdr->srr0);
   swap_endian(&hdr->srr1);
-  for (unsigned long& i : hdr->r) {
+  for (uint64_t& i : hdr->r) {
     swap_endian(&i);
   }
   swap_endian(&hdr->cr);
