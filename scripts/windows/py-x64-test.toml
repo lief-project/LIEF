@@ -8,7 +8,6 @@ extra-cmake-opt = [
   "-DLIEF_TESTS=on",
   "-DLIEF_C_API=on",
   "-DLIEF_RUST_API=ON",
-  "-DLIEF_PROFILING=on",
   "-DCMAKE_COLOR_DIAGNOSTICS=ON",
 ]
 
