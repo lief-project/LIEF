@@ -49,7 +49,8 @@ DylibCommand DylibCommand::create(LoadCommand::TYPE type, const std::string& nam
                                   uint32_t timestamp, uint32_t current_version,
                                   uint32_t compat_version) {
 
-  details::dylib_command raw_cmd;
+  details::dylib_command raw_cmd{};
+  raw_cmd.name = 0;
   raw_cmd.cmd = static_cast<uint32_t>(type);
   raw_cmd.cmdsize =
       align(sizeof(details::dylib_command) + name.size() + 1, sizeof(uint64_t));
