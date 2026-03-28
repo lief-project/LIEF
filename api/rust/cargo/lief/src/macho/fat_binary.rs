@@ -46,6 +46,17 @@ impl FatBinary {
         Some(FatBinary::from_ffi(ffi))
     }
 
+    /// Create a FatBinary from the given Mach-O path with the provided
+    /// parser configuration.
+    pub fn parse_with_config<P: AsRef<Path>>(path: P, config: &super::parser_config::Config) -> Option<Self> {
+        let ffi_config = config.to_ffi();
+        let ffi = ffi::MachO_FatBinary::parse_with_config(path.as_ref().to_str().unwrap(), &ffi_config);
+        if ffi.is_null() {
+            return None;
+        }
+        Some(FatBinary::from_ffi(ffi))
+    }
+
     /// Gets the [`Binary`] that matches the given architecture
     pub fn with_cpu(&self, cpu: CpuType) -> Option<Binary> {
         into_optional(self.ptr.binary_from_arch(cpu.into()))

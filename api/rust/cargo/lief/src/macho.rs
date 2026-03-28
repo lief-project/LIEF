@@ -29,6 +29,7 @@ pub mod binding_info;
 pub mod commands;
 pub mod export_info;
 pub mod fat_binary;
+pub mod parser_config;
 pub mod relocation;
 pub mod section;
 pub mod symbol;
@@ -62,9 +63,18 @@ pub use stub::Stub;
 
 use crate::common::AsFFI;
 
+#[doc(inline)]
+pub use parser_config::Config as ParserConfig;
+
 /// Parse a Mach-O file from the given file path
 pub fn parse<P: AsRef<Path>>(path: P) -> Option<FatBinary> {
     FatBinary::parse(path)
+}
+
+/// Parse a Mach-O file from the given file path with the provided parser
+/// configuration
+pub fn parse_with_config<P: AsRef<Path>>(path: P, config: &ParserConfig) -> Option<FatBinary> {
+    FatBinary::parse_with_config(path, config)
 }
 
 /// Check that the layout of the given binary is correct from the loader

@@ -615,6 +615,8 @@ include_cpp! {
     block_constructors!("MachO_EncryptionInfo")
     generate!("MachO_ExportInfo")
     block_constructors!("MachO_ExportInfo")
+    generate!("MachO_ParserConfig")
+    block_constructors!("MachO_ParserConfig")
     generate!("MachO_FatBinary")
     block_constructors!("MachO_FatBinary")
     generate!("MachO_Fileset")
