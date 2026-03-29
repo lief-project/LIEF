@@ -17,10 +17,15 @@ dex     = true
 [lief.features]
 json    = true
 frozen  = true
+runtime = false
 
 [lief.logging]
 enabled = true
 debug   = false
+
+#[lief.runtime]
+#platform = 'linux'
+#architecture = 'x86_64'
 
 #[lief.cross-compilation]
 #osx-arch = "arm64"
