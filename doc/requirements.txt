@@ -1,5 +1,5 @@
 requests==2.33.0
 sphinx==9.1.99
-Pygments==2.19.2
+Pygments==2.20.0
 breathe==4.36.0
 sphinx-tabs==3.5.0
