@@ -9,6 +9,7 @@ cxx-compiler  = "clang++"
 c-compiler    = "clang"
 extra-targets = ["all"]
 extra-cmake-opt = [
+  "-DCMAKE_DISABLE_PRECOMPILE_HEADERS=ON",
   "-DPython_VERSION={python_version}",
   "-DCMAKE_COLOR_DIAGNOSTICS=ON",
   "-DCMAKE_CXX_COMPILER=clang++",
