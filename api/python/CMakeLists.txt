@@ -87,11 +87,9 @@ endif()
 
 target_link_libraries(pyLIEF PUBLIC ${LIEF_TARGET} lief_spdlog)
 
-if (LIEF_USE_PCH)
-  target_precompile_headers(pyLIEF PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/pylief-pch.hpp
-  )
-endif()
+target_precompile_headers(pyLIEF PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/pylief-pch.hpp
+)
 
 if(APPLE)
   set_target_properties(pyLIEF PROPERTIES

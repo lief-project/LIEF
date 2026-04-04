@@ -225,13 +225,6 @@ CMake Options
 
 .. literalinclude:: ../../cmake/LIEFOptions.cmake
 
-.. note::
-
-   Precompiled headers (``LIEF_USE_PCH``) are enabled by default to speed up
-   compilation. You can disable them with ``-DLIEF_USE_PCH=OFF`` if you
-   experience issues with your toolchain or need to debug include dependencies.
-
-
 Docker
 ------
 
