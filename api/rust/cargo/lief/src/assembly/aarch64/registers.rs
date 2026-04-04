@@ -4307,6 +4307,7 @@ impl From<u64> for SysReg {
           50769 => SysReg::ICC_PPI_HMR1_EL1,
           50770 => SysReg::ICC_IDR0_EL1,
           50771 => SysReg::ICC_HPPIR_EL1,
+          50772 => SysReg::ICC_ICSR_EL1,
           50773 => SysReg::ICC_IAFFIDR_EL1,
           50774 => SysReg::ICC_PPI_ENABLER0_EL1,
           50775 => SysReg::ICC_PPI_ENABLER1_EL1,

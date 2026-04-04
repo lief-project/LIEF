@@ -15,7 +15,7 @@
 #ifndef LIEF_ASM_MIPS_OPCODE_H
 #define LIEF_ASM_MIPS_OPCODE_H
 
-/* Generated from LLVM: 22.1.0 */
+/* Generated from LLVM: 22.1.3 */
 
 namespace LIEF {
 namespace assembly {
