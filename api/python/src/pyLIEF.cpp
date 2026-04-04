@@ -337,6 +337,25 @@ void init(nb::module_& m) {
     )doc"_doc
   );
 
+  m.def("dump", [] (const nb::bytes& bytes, const std::string& title,
+                    const std::string& prefix, size_t limit)
+    {
+      return LIEF::dump(reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size(), title, prefix, limit);
+    }, "buffer"_a, "title"_a = "", "prefix"_a = "", "limit"_a = 0,
+    R"doc(
+    Hexdump the provided buffer:
+
+    .. code-block:: text
+
+      +---------------------------------------------------------------------+
+      | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
+      | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
+      | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
+      | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
+      +---------------------------------------------------------------------+
+    )doc"_doc
+  );
+
   m.def("extended_version_info", &LIEF::extended_version_info,
         "Details about the extended version"_doc);
 
