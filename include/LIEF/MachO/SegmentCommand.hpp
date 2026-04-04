@@ -79,24 +79,27 @@ class LIEF_API SegmentCommand : public LoadCommand {
       const_ref_iterator<const relocations_t&, const Relocation*>;
 
   enum class FLAGS : uint64_t {
-    HIGHVM = 0x1u, ///< The file contents for this segment are for the high part of
-                   ///< the virtual memory space; the low part is zero filled (for
-                   ///< stacks in core files).
-    FVMLIB = 0x2u, ///< this segment is the VM that is allocated by a fixed VM
-                   ///< library, for overlap checking in the link editor.
-    NORELOC =
-        0x4u, ///< This segment has nothing that was relocated in it and nothing
-              ///< relocated to it. It may be safely replaced without relocation.
+    /// The file contents for this segment are for the high part of the virtual
+    /// memory space; the low part is zero filled (for stacks in core files).
+    HIGHVM = 0x1u,
+    /// This segment is the VM that is allocated by a fixed VM library, for
+    /// overlap checking in the link editor.
+    FVMLIB = 0x2u,
+    /// This segment has nothing that was relocated in it and nothing relocated
+    /// to it. It may be safely replaced without relocation.
+    NORELOC = 0x4u,
     PROTECTED_VERSION_1 = 0x8u,
     READ_ONLY = 0x10u,
   };
 
-  /// Values for segment_command.initprot.
-  /// From <mach/vm_prot.h>
+  /// Values for segment_command.initprot. From <mach/vm_prot.h>
   enum class VM_PROTECTIONS {
-    READ = 0x1,    ///< Reading data within the segment is allowed
-    WRITE = 0x2,   ///< Writing data within the segment is allowed
-    EXECUTE = 0x4, ///< Executing data within the segment is allowed
+    /// Reading data within the segment is allowed.
+    READ = 0x1,
+    /// Writing data within the segment is allowed.
+    WRITE = 0x2,
+    /// Executing data within the segment is allowed.
+    EXECUTE = 0x4,
   };
 
   public:

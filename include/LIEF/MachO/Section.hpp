@@ -66,60 +66,77 @@ class LIEF_API Section : public LIEF::Section {
   static constexpr auto TYPE_MASK = uint32_t(0xff);
 
   enum class TYPE : uint64_t {
-    REGULAR = 0x00u,                  ///< Regular section.
-    ZEROFILL = 0x01u,                 ///< Zero fill on demand section.
-    CSTRING_LITERALS = 0x02u,         ///< Section with literal C strings.
-    IS_4BYTE_LITERALS = 0x03u,        ///< Section with 4 byte literals.
-    IS_8BYTE_LITERALS = 0x04u,        ///< Section with 8 byte literals.
-    LITERAL_POINTERS = 0x05u,         ///< Section with pointers to literals.
-    NON_LAZY_SYMBOL_POINTERS = 0x06u, ///< Section with non-lazy symbol pointers.
-    LAZY_SYMBOL_POINTERS = 0x07u,     ///< Section with lazy symbol pointers.
-    SYMBOL_STUBS = 0x08u, ///< Section with symbol stubs, byte size of stub in the
-                          ///< Reserved2 field.
-    MOD_INIT_FUNC_POINTERS =
-        0x09u, ///< Section with only function pointers for initialization.
-    MOD_TERM_FUNC_POINTERS =
-        0x0au,           ///< Section with only function pointers for termination.
-    COALESCED = 0x0bu,   ///< Section contains symbols that are to be coalesced.
-    GB_ZEROFILL = 0x0cu, ///< Zero fill on demand section (that can be larger than
-                         ///< 4 gigabytes).
-    INTERPOSING =
-        0x0du, ///< Section with only pairs of function pointers for interposing.
-    IS_16BYTE_LITERALS = 0x0eu, ///< Section with only 16 byte literals.
-    DTRACE_DOF = 0x0fu,         ///< Section contains DTrace Object Format.
-    LAZY_DYLIB_SYMBOL_POINTERS =
-        0x10u, ///< Section with lazy symbol pointers to lazy loaded dylibs.
-    THREAD_LOCAL_REGULAR = 0x11u,  ///< Thread local data section.
-    THREAD_LOCAL_ZEROFILL = 0x12u, ///< Thread local zerofill section.
-    THREAD_LOCAL_VARIABLES =
-        0x13u, ///< Section with thread local variable structure data.
-    THREAD_LOCAL_VARIABLE_POINTERS =
-        0x14u, ///< Section with pointers to thread local structures.
-    THREAD_LOCAL_INIT_FUNCTION_POINTERS =
-        0x15u, ///< Section with thread local variable initialization pointers to
-               ///< functions.
-    INIT_FUNC_OFFSETS =
-        0x16u, ///< Section with 32-bit offsets to initializer functions
+    /// Regular section.
+    REGULAR = 0x00u,
+    /// Zero fill on demand section.
+    ZEROFILL = 0x01u,
+    /// Section with literal C strings.
+    CSTRING_LITERALS = 0x02u,
+    /// Section with 4 byte literals.
+    IS_4BYTE_LITERALS = 0x03u,
+    /// Section with 8 byte literals.
+    IS_8BYTE_LITERALS = 0x04u,
+    /// Section with pointers to literals.
+    LITERAL_POINTERS = 0x05u,
+    /// Section with non-lazy symbol pointers.
+    NON_LAZY_SYMBOL_POINTERS = 0x06u,
+    /// Section with lazy symbol pointers.
+    LAZY_SYMBOL_POINTERS = 0x07u,
+    /// Section with symbol stubs, byte size of stub in the Reserved2 field.
+    SYMBOL_STUBS = 0x08u,
+    /// Section with only function pointers for initialization.
+    MOD_INIT_FUNC_POINTERS = 0x09u,
+    /// Section with only function pointers for termination.
+    MOD_TERM_FUNC_POINTERS = 0x0au,
+    /// Section contains symbols that are to be coalesced.
+    COALESCED = 0x0bu,
+    /// Zero fill on demand section (that can be larger than 4 gigabytes).
+    GB_ZEROFILL = 0x0cu,
+    /// Section with only pairs of function pointers for interposing.
+    INTERPOSING = 0x0du,
+    /// Section with only 16 byte literals.
+    IS_16BYTE_LITERALS = 0x0eu,
+    /// Section contains DTrace Object Format.
+    DTRACE_DOF = 0x0fu,
+    /// Section with lazy symbol pointers to lazy loaded dylibs.
+    LAZY_DYLIB_SYMBOL_POINTERS = 0x10u,
+    /// Thread local data section.
+    THREAD_LOCAL_REGULAR = 0x11u,
+    /// Thread local zerofill section.
+    THREAD_LOCAL_ZEROFILL = 0x12u,
+    /// Section with thread local variable structure data.
+    THREAD_LOCAL_VARIABLES = 0x13u,
+    /// Section with pointers to thread local structures.
+    THREAD_LOCAL_VARIABLE_POINTERS = 0x14u,
+    /// Section with thread local variable initialization pointers to functions.
+    THREAD_LOCAL_INIT_FUNCTION_POINTERS = 0x15u,
+    /// Section with 32-bit offsets to initializer functions.
+    INIT_FUNC_OFFSETS = 0x16u,
   };
 
   enum class FLAGS : uint64_t {
-    PURE_INSTRUCTIONS =
-        0x80000000u,      ///< Section contains only true machine instructions
-    NO_TOC = 0x40000000u, ///< Section contains coalesced symbols that are not to
-                          ///< be in a ranlib table of contents.
-    STRIP_STATIC_SYMS =
-        0x20000000u, ///< Ok to strip static symbols in this section in files with
-                     ///< the MY_DYLDLINK flag.
-    NO_DEAD_STRIP = 0x10000000u, ///< No dead stripping.
-    LIVE_SUPPORT = 0x08000000u, ///< Blocks are live if they reference live blocks.
-    SELF_MODIFYING_CODE =
-        0x04000000u,          ///< Used with i386 code stubs written on by dyld
-    DEBUG_INFO = 0x02000000u, ///< A debug section.
-
-    SOME_INSTRUCTIONS =
-        0x00000400u,         ///< Section contains some machine instructions.
-    EXT_RELOC = 0x00000200u, ///< Section has external relocation entries.
-    LOC_RELOC = 0x00000100u, ///< Section has local relocation entries.
+    /// Section contains only true machine instructions.
+    PURE_INSTRUCTIONS = 0x80000000u,
+    /// Section contains coalesced symbols that are not to be in a ranlib
+    /// table of contents.
+    NO_TOC = 0x40000000u,
+    /// Ok to strip static symbols in this section in files with the
+    /// MY_DYLDLINK flag.
+    STRIP_STATIC_SYMS = 0x20000000u,
+    /// No dead stripping.
+    NO_DEAD_STRIP = 0x10000000u,
+    /// Blocks are live if they reference live blocks.
+    LIVE_SUPPORT = 0x08000000u,
+    /// Used with i386 code stubs written on by dyld.
+    SELF_MODIFYING_CODE = 0x04000000u,
+    /// A debug section.
+    DEBUG_INFO = 0x02000000u,
+    /// Section contains some machine instructions.
+    SOME_INSTRUCTIONS = 0x00000400u,
+    /// Section has external relocation entries.
+    EXT_RELOC = 0x00000200u,
+    /// Section has local relocation entries.
+    LOC_RELOC = 0x00000100u,
   };
 
   public:

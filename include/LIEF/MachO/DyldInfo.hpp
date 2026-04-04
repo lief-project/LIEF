@@ -93,54 +93,64 @@ class LIEF_API DyldInfo : public LoadCommand {
   };
 
   enum class REBASE_OPCODES : uint8_t {
-    DONE = 0x00u,         ///< It's finished
-    SET_TYPE_IMM = 0x10u, ///< Set type to immediate (lower 4-bits). Used for
-                          ///< ordinal numbers from 0-15
-    SET_SEGMENT_AND_OFFSET_ULEB =
-        0x20u, ///< Set segment's index to immediate (lower 4-bits) and segment's
-               ///< offset to following ULEB128 encoding.
-    ADD_ADDR_ULEB =
-        0x30u, ///< Add segment's offset with the following ULEB128 encoding.
-    ADD_ADDR_IMM_SCALED = 0x40u, ///< Add segment's offset with immediate scaling
-    DO_REBASE_IMM_TIMES = 0x50u, ///< Rebase in the range of ``[segment's offset;
-                                 ///< segment's offset + immediate * sizeof(ptr)]``
-    DO_REBASE_ULEB_TIMES =
-        0x60u, ///< Same as REBASE_OPCODE_DO_REBASE_IMM_TIMES but *immediate* is
-               ///< replaced with ULEB128 value
-    DO_REBASE_ADD_ADDR_ULEB =
-        0x70u, ///< Rebase and increment segment's offset with following ULEB128
-               ///< encoding + pointer's size
-    DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 0x80u, ///< Rebase and skip several bytes
+    /// It's finished.
+    DONE = 0x00u,
+    /// Set type to immediate (lower 4-bits). Used for ordinal numbers from
+    /// 0-15.
+    SET_TYPE_IMM = 0x10u,
+    /// Set segment's index to immediate (lower 4-bits) and segment's offset to
+    /// following ULEB128 encoding.
+    SET_SEGMENT_AND_OFFSET_ULEB = 0x20u,
+    /// Add segment's offset with the following ULEB128 encoding.
+    ADD_ADDR_ULEB = 0x30u,
+    /// Add segment's offset with immediate scaling.
+    ADD_ADDR_IMM_SCALED = 0x40u,
+    /// Rebase in the range of ``[segment's offset; segment's offset +
+    /// immediate * sizeof(ptr)]``.
+    DO_REBASE_IMM_TIMES = 0x50u,
+    /// Same as REBASE_OPCODE_DO_REBASE_IMM_TIMES but *immediate* is replaced
+    /// with ULEB128 value.
+    DO_REBASE_ULEB_TIMES = 0x60u,
+    /// Rebase and increment segment's offset with following ULEB128 encoding +
+    /// pointer's size.
+    DO_REBASE_ADD_ADDR_ULEB = 0x70u,
+    /// Rebase and skip several bytes.
+    DO_REBASE_ULEB_TIMES_SKIPPING_ULEB = 0x80u,
   };
 
   /// Opcodes used by Dyld info to bind symbols
   enum class BIND_OPCODES : uint8_t {
-    DONE = 0x00u,                   ///< It's finished
-    SET_DYLIB_ORDINAL_IMM = 0x10u,  ///< Set ordinal to immediate (lower 4-bits).
-                                    ///< Used for ordinal numbers from 0-15
-    SET_DYLIB_ORDINAL_ULEB = 0x20u, ///< Set ordinal to following ULEB128 encoding.
-                                    ///< Used for ordinal numbers from 16+
-    SET_DYLIB_SPECIAL_IMM = 0x30u,  ///< Set ordinal, with 0 or negative number as
-                                    ///< immediate. the value is sign extended.
-    SET_SYMBOL_TRAILING_FLAGS_IMM =
-        0x40u, ///< Set the following symbol (NULL-terminated char*).
-    SET_TYPE_IMM =
-        0x50u, ///< Set the type to immediate (lower 4-bits). See BIND_TYPES
-    SET_ADDEND_SLEB =
-        0x60u, ///< Set the addend field to the following SLEB128 encoding.
-    SET_SEGMENT_AND_OFFSET_ULEB =
-        0x70u, ///< Set Segment to immediate value, and address to the following
-               ///< SLEB128 encoding
-    ADD_ADDR_ULEB =
-        0x80u,       ///< Set the address field to the following SLEB128 encoding.
-    DO_BIND = 0x90u, ///< Perform binding of current table row
-    DO_BIND_ADD_ADDR_ULEB =
-        0xA0u, ///< Perform binding, also add following ULEB128 as address
-    DO_BIND_ADD_ADDR_IMM_SCALED = 0xB0u, ///< Perform binding, also add immediate
-                                         ///< (lower 4-bits) using scaling
-    DO_BIND_ULEB_TIMES_SKIPPING_ULEB =
-        0xC0u, ///< Perform binding for several symbols (as following ULEB128), and
-               ///< skip several bytes.
+    /// It's finished.
+    DONE = 0x00u,
+    /// Set ordinal to immediate (lower 4-bits). Used for ordinal numbers from
+    /// 0-15.
+    SET_DYLIB_ORDINAL_IMM = 0x10u,
+    /// Set ordinal to following ULEB128 encoding. Used for ordinal numbers
+    /// from 16+.
+    SET_DYLIB_ORDINAL_ULEB = 0x20u,
+    /// Set ordinal, with 0 or negative number as immediate. The value is sign
+    /// extended.
+    SET_DYLIB_SPECIAL_IMM = 0x30u,
+    /// Set the following symbol (NULL-terminated char*).
+    SET_SYMBOL_TRAILING_FLAGS_IMM = 0x40u,
+    /// Set the type to immediate (lower 4-bits). See BIND_TYPES.
+    SET_TYPE_IMM = 0x50u,
+    /// Set the addend field to the following SLEB128 encoding.
+    SET_ADDEND_SLEB = 0x60u,
+    /// Set Segment to immediate value, and address to the following SLEB128
+    /// encoding.
+    SET_SEGMENT_AND_OFFSET_ULEB = 0x70u,
+    /// Set the address field to the following SLEB128 encoding.
+    ADD_ADDR_ULEB = 0x80u,
+    /// Perform binding of current table row.
+    DO_BIND = 0x90u,
+    /// Perform binding, also add following ULEB128 as address.
+    DO_BIND_ADD_ADDR_ULEB = 0xA0u,
+    /// Perform binding, also add immediate (lower 4-bits) using scaling.
+    DO_BIND_ADD_ADDR_IMM_SCALED = 0xB0u,
+    /// Perform binding for several symbols (as following ULEB128), and skip
+    /// several bytes.
+    DO_BIND_ULEB_TIMES_SKIPPING_ULEB = 0xC0u,
     THREADED = 0xD0u,
 
     THREADED_APPLY = 0xD0u | 0x01u,
