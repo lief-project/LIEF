@@ -301,21 +301,20 @@ ok_error_t BinaryParser::parse_load_commands() {
           imagebase = segment->virtual_address();
         }
 
-        if (MemoryStream::classof(*stream_)) {
+        if (auto* memory_stram = stream_->cast<MemoryStream>()) {
           // Link the memory stream with our
           // binary object so that is can translate virtual address to offset
-          static_cast<MemoryStream&>(*stream_).binary(*binary_);
+          memory_stram->binary(*binary_);
         }
 
         if (segment->file_size() > 0) {
-          if (MemoryStream::classof(*stream_)) {
-            auto& memstream = static_cast<MemoryStream&>(*stream_);
+          if (auto* memstream = stream_->cast<MemoryStream>()) {
             uintptr_t segment_va = segment->virtual_address();
             if (imagebase >= 0 && segment_va >= static_cast<uint64_t>(imagebase)) {
               segment_va -= static_cast<uint64_t>(imagebase);
             }
 
-            uintptr_t address = memstream.base_address() + segment_va;
+            uintptr_t address = memstream->base_address() + segment_va;
             const auto* p = reinterpret_cast<const uint8_t*>(address);
             segment->data_ = {p, p + segment->file_size()};
           } else {
