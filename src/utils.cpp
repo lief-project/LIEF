@@ -52,11 +52,11 @@ result<uint32_t> next(octet_iterator& it, octet_iterator end) {
   return cp;
 }
 
-std::string u16tou8(const std::u16string& string, bool remove_null_char) {
+std::string u16tou8(const char16_t* buffer, size_t size, bool remove_null_char) {
   std::string name;
 
   std::u16string clean_string;
-  std::copy_if(string.begin(), string.end(), std::back_inserter(clean_string),
+  std::copy_if(buffer, buffer + size, std::back_inserter(clean_string),
                utf8::internal::is_code_point_valid);
 
   utf8::unchecked::utf16to8(clean_string.begin(), clean_string.end(),
