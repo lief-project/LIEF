@@ -113,7 +113,7 @@ std::ostream& operator<<(std::ostream& os, const Header& entry) {
      << fmt::format("Size of optional header: {:#x}\n",
                     entry.sizeof_optional_header())
      << fmt::format("Characteristics:         {}\n", fmt::join(list_str, ", "))
-     << fmt::format("Timtestamp:              {} ({})\n", entry.time_date_stamp(),
+     << fmt::format("Timestamp:              {} ({})\n", entry.time_date_stamp(),
                     ts_to_str(entry.time_date_stamp()));
 
   return os;
