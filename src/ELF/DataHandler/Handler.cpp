@@ -52,40 +52,36 @@ class DataHandlerStream : public BinaryStream {
   std::vector<uint8_t>& data_;
 };
 
-result<std::unique_ptr<Handler>>
+std::unique_ptr<Handler>
     Handler::from_stream(std::unique_ptr<BinaryStream>& stream) {
   auto hdl = std::unique_ptr<Handler>(new Handler{});
-  if (VectorStream::classof(*stream)) {
-    auto& vs = static_cast<VectorStream&>(*stream);
-
-    hdl->data_ = std::move(vs.move_content());
-    const uint64_t pos = vs.pos();
-    stream = std::make_unique<DataHandlerStream>(hdl->data_);
+  if (auto* vs = stream->cast<VectorStream>()) {
+    hdl->data_ = std::move(vs->move_content());
+    const uint64_t pos = vs->pos();
+    stream.reset(new DataHandlerStream{hdl->data_});
     stream->setpos(pos);
     return hdl;
   }
 
-  if (SpanStream::classof(*stream)) {
-    auto& vs = static_cast<SpanStream&>(*stream);
-    hdl->data_ = vs.content();
+  if (auto* span_strm = stream->cast<SpanStream>()) {
+    hdl->data_ = span_strm->content();
     return hdl;
   }
 
-  if (FileStream::classof(*stream)) {
-    auto& vs = static_cast<FileStream&>(*stream);
-    hdl->data_ = vs.content();
-    const uint64_t pos = vs.pos();
-    stream = std::make_unique<DataHandlerStream>(hdl->data_);
+  if (auto* fs = stream->cast<FileStream>()) {
+    hdl->data_ = fs->content();
+    const uint64_t pos = fs->pos();
+    stream.reset(new DataHandlerStream{hdl->data_});
     stream->setpos(pos);
     return hdl;
   }
 
   if (MemoryStream::classof(*stream)) {
-    return make_error_code(lief_errors::not_implemented);
+    return nullptr;
   }
 
   LIEF_ERR("Unknown stream type for Handler");
-  return make_error_code(lief_errors::not_supported);
+  return nullptr;
 }
 
 bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {

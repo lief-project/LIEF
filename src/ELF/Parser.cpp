@@ -308,13 +308,13 @@ ok_error_t Parser::init() {
   binary_->original_size_ = stream_->size();
   binary_->pagesize_ = config_.page_size;
 
-  auto res = DataHandler::Handler::from_stream(stream_);
-  if (!res) {
+  auto strm = DataHandler::Handler::from_stream(stream_);
+  if (strm == nullptr) {
     LIEF_ERR("Unsupported stream type for the ELF DataHandler");
     return make_error_code(lief_errors::not_supported);
   }
 
-  binary_->datahandler_ = std::move(*res);
+  binary_->datahandler_ = std::move(strm);
 
   auto res_ident = stream_->peek<Header::identity_t>();
   if (!res_ident) {
