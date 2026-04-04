@@ -20,6 +20,11 @@ namespace LIEF {
 
 template<typename ElementType, std::size_t Extent = tcb::dynamic_extent>
 using span = tcb::span<ElementType, Extent>;
+
+inline span<uint8_t> as_writable(span<const uint8_t> buffer) {
+  return {const_cast<uint8_t*>(buffer.data()), buffer.size()};
+}
+
 }
 
 #endif
