@@ -1,9 +1,9 @@
 import lief
 import pytest
 
-from utils import has_private_samples, get_sample
+from utils import get_sample
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_basic_info():
     fat = lief.MachO.parse(get_sample("private/MachO/kernelcache.release.iPhone17.5"))
     assert len(fat) == 1

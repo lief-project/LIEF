@@ -14,7 +14,7 @@ from textwrap import dedent
 from subprocess import Popen
 from utils import (
     is_linux, glibc_version, get_sample,
-    has_private_samples, is_server_ci, ci_runner_arch, is_windows,
+    is_server_ci, ci_runner_arch, is_windows,
     is_x86_64, is_github_ci, check_layout
 )
 
@@ -285,7 +285,7 @@ def test_issue_1121(tmp_path: Path):
     assert new.has_symbol("main_test")
 
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 @pytest.mark.slow
 def test_smart_insert_1(tmp_path: Path):
     """
@@ -337,7 +337,7 @@ def test_smart_insert_1(tmp_path: Path):
         assert lief_test_section is not None
         assert bytes(lief_test_section.content) == b'This is a test\x00\x00'
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_smart_insert_2(tmp_path: Path):
     input_path = Path(get_sample("private/ELF/libhwui.so"))
     elf = lief.ELF.parse(input_path)

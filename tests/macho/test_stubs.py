@@ -1,6 +1,6 @@
 import lief
 import pytest
-from utils import get_sample, has_private_samples
+from utils import get_sample
 
 def test_simple():
     macho = lief.MachO.parse(get_sample("MachO/liblog_srp.dylib")).at(0)
@@ -71,7 +71,7 @@ def test_arm32():
     assert stubs[21].address == 0x2fe8
     assert stubs[22].address == 0x2ff4
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_empty_section():
     macho = lief.MachO.parse(get_sample("private/DWARF/libLIEF.dylib")).at(0)
 

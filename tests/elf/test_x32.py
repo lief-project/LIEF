@@ -3,10 +3,10 @@ import os
 import subprocess
 import pytest
 from subprocess import Popen
-from utils import get_sample, has_private_samples, is_linux, is_x86_64, check_layout
+from utils import get_sample, is_linux, is_x86_64, check_layout
 from pathlib import Path
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_parser_builder(tmp_path: Path):
     libc = lief.ELF.parse(get_sample("private/ELF/x32/libc.so.6"))
 

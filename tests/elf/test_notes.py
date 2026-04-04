@@ -5,7 +5,7 @@ from io import StringIO
 from pathlib import Path
 
 import lief
-from utils import get_sample, has_private_samples, check_layout
+from utils import get_sample, check_layout
 config = lief.ELF.Builder.config_t()
 config.notes = True
 
@@ -209,7 +209,7 @@ def test_note_properties():
         (lief.ELF.X86Features.FLAG.NONE, lief.ELF.X86Features.FEATURE.IBT),
     ]
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_qnx_note():
     qnx = lief.ELF.parse(get_sample("private/ELF/qnx_aarch64le_bsdtar"))
     stack_info: lief.ELF.QNXStack = qnx.get(lief.ELF.Note.TYPE.QNX_STACK)

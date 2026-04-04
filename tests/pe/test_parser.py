@@ -7,7 +7,7 @@ from subprocess import Popen
 from hashlib import md5
 from pathlib import Path
 from textwrap import dedent
-from utils import get_sample, is_64bits_platform, has_private_samples
+from utils import get_sample, is_64bits_platform
 
 winhello64 = lief.PE.parse(get_sample('PE/PE64_x86-64_binary_winhello64-mingw.exe'))
 atapi      = lief.PE.parse(get_sample('PE/PE64_x86-64_atapi.sys'))
@@ -853,7 +853,7 @@ def test_exceptions_x64_v2():
 
     assert v2.unwind_info.opcodes[0].offset == 0x30 # type: ignore
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_exceptions_x64_llvm():
     input_path = Path(get_sample("private/PE/lief-ld-link.pyd"))
 
@@ -866,7 +866,7 @@ def test_exceptions_x64_llvm():
     assert isinstance(func.unwind_info.opcodes[0], lief.PE.unwind_x64.SetFPReg)
     assert func.unwind_info.opcodes[0].reg == lief.PE.RuntimeFunctionX64.UNWIND_REG.RBP
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_exceptions_x64_corrupted():
     input_path = Path(get_sample("private/PE/vgc.exe"))
     pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
@@ -920,7 +920,7 @@ def test_chpe_x86():
            0x73a018 WowA64 dispatch jump function pointer
       0x10c8f0[0x4] Hybrid code address range"""
 
-@pytest.mark.skipif(condition=not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 @pytest.mark.slow
 def test_issue_iat_hang():
     target_pe = Path(get_sample("private/PE/lief_hang_poc.exe")).resolve().absolute()

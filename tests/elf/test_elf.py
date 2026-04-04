@@ -9,7 +9,7 @@ from pathlib import Path
 from subprocess import Popen
 
 import lief
-from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, has_private_samples
+from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
 is_updated_linux = is_linux() and is_x86_64() and has_recent_glibc()
 
 
@@ -287,7 +287,7 @@ def test_misc():
     assert isinstance(lief.ELF.Segment.from_raw(raw_bytes), lief.ELF.Segment)
 
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_issue_1241():
     elf = lief.ELF.parse(get_sample("private/ELF/issue_1241.bin"))
     assert len(elf.gnu_hash.bloom_filters) == 16384

@@ -1,6 +1,6 @@
 import lief
 import pytest
-from utils import get_sample, is_64bits_platform, has_private_samples
+from utils import get_sample, is_64bits_platform
 from pathlib import Path
 
 def test_symbol_count():
@@ -142,7 +142,7 @@ def test_975():
     for note in elf.notes:
         lief.logging.info(note)
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_1058():
     elf = lief.ELF.parse(get_sample("private/ELF/cn-105.elf"))
 

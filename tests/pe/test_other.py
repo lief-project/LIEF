@@ -1,10 +1,10 @@
 import lief
 import pytest
 
-from utils import has_private_samples, get_sample
+from utils import get_sample
 
 
-@pytest.mark.skipif(condition=not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_bzimage():
     lief.logging.enable_debug()
     pe = lief.PE.parse(get_sample("private/bzImage-6.6.8"))

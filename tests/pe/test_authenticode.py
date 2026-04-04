@@ -4,7 +4,7 @@ import json
 import sys
 
 import lief
-from utils import get_sample, has_private_samples
+from utils import get_sample
 
 try:
     sys.set_int_max_str_digits(0)
@@ -332,7 +332,7 @@ def test_ms_counter_signature():
     unauth_attrs = signer.unauthenticated_attributes
     assert len(unauth_attrs) == 0
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_playready_signature():
     pe = lief.PE.parse(get_sample("private/PE/Windows.Media.Protection.PlayReady.dll"))
 

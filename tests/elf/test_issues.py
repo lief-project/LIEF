@@ -6,8 +6,8 @@ import subprocess
 from subprocess import Popen
 from pathlib import Path
 from utils import (
-    get_sample, has_private_samples, check_layout,
-    is_linux, is_x86_64, check_layout
+    get_sample, check_layout,
+    is_linux, is_x86_64,
 )
 
 def test_issue_863(tmp_path: Path):
@@ -80,7 +80,7 @@ def test_issue_1089(tmp_path: Path):
     assert new.get_symbol("iptc_read_counter") is None
     assert len(new.dynamic_relocations) == original_nb_relocations - 2
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_issue_1097(tmp_path: Path):
     elf = lief.ELF.parse(get_sample("private/ELF/libhwui.so"))
     deps = [entry.name for entry in elf.dynamic_entries if isinstance(entry, lief.ELF.DynamicEntryLibrary)]
@@ -109,7 +109,7 @@ def test_issue_1309(tmp_path: Path):
     check_layout(new)
     assert list(new.dynamic_symbols)[129].name == "base64_decode_utf16le"
 
-@pytest.mark.skipif(condition=not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 @pytest.mark.slow
 def test_issue_1315(tmp_path: Path):
     # NOTE(romain): there is an exhaustive test here: 'private/ELF/issue_1315'

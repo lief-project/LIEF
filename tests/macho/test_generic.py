@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import lief
 import pytest
-from utils import get_sample, has_private_samples
+from utils import get_sample
 import hashlib
 
 def test_function_starts():
@@ -335,7 +335,7 @@ def test_va_range():
     assert va_ranges.start == 0x100000000
     assert va_ranges.end == 0x100010000
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_routine():
     macho = lief.MachO.parse(get_sample("private/MachO/CoreFoundation")).at(0)
     routine = macho.routine_command
@@ -349,7 +349,7 @@ def test_routine():
     assert routine.reserved5 == 0
     assert routine.reserved6 == 0
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_arm64e():
     sample = lief.MachO.parse(get_sample("private/MachO/libCoreKE_arm64e.dylib")).at(0)
     assert sample.support_arm64_ptr_auth

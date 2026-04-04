@@ -1,11 +1,11 @@
 import lief
 import pytest
-from utils import get_sample, has_private_samples
+from utils import get_sample
 
 if not lief.__extended__:
     pytest.skip("skipping: extended version only", allow_module_level=True)
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_simple():
     pdb = lief.pdb.load(get_sample("private/PDB/LIEF.pdb"))
     assert isinstance(pdb, lief.pdb.DebugInfo)

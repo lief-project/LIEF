@@ -2,9 +2,9 @@
 import lief
 import pytest
 
-from utils import get_sample, has_private_samples
+from utils import get_sample
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_personsemantics():
     """iPhone16,2 17.4.1 21E237 """
     target = lief.MachO.parse(get_sample("private/MachO/personsemantics-u8-v4.H16.espresso.hwx"))

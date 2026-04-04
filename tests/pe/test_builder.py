@@ -11,7 +11,7 @@ from subprocess import Popen
 
 from utils import (
     get_sample, is_windows, is_x86_64, win_exec,
-    has_private_samples, is_windows_x86_64
+    is_windows_x86_64
 )
 if is_windows():
     SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
@@ -206,7 +206,7 @@ def test_code_injection(tmp_path: Path):
             assert proc.returncode == 0
             assert "Hello World" in stdout
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_issue_1284(tmp_path: Path):
     input_path = Path(get_sample("private/PE/ig2_AddOn.exe"))
     pe = lief.PE.parse(input_path)

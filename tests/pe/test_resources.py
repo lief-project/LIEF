@@ -10,7 +10,6 @@ from textwrap import dedent
 
 from utils import (
     get_sample, is_windows, win_exec, is_x86_64,
-    has_private_samples
 )
 
 from pathlib import Path
@@ -906,7 +905,7 @@ def test_add_icon(tmp_path: Path):
     out = tmp_path / target_input.name
     pe.write(out)
 
-@pytest.mark.skipif(not has_private_samples(), reason="needs private samples")
+@pytest.mark.private
 def test_driver_rsrc():
     input_file = Path(get_sample("private/PE/vgk.sys"))
     pe = lief.PE.parse(input_file)
