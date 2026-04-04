@@ -53,6 +53,10 @@ class LIEF_API BinaryStream {
     return stype_;
   }
 
+  bool is_memory_stream() const {
+    return type() == STREAM_TYPE::MEMORY;
+  }
+
   result<uint64_t> read_uleb128(size_t* size = nullptr) const;
   result<uint64_t> read_sleb128(size_t* size = nullptr) const;
 
@@ -307,6 +311,21 @@ class LIEF_API BinaryStream {
       return ok();
     }
     return make_error_code(lief_errors::read_error);
+  }
+
+  template<class T>
+  const T* cast() const {
+    static_assert(std::is_base_of<BinaryStream, T>::value,
+                  "Require BinaryStream inheritance");
+    if (T::classof(*this)) {
+      return static_cast<const T*>(this);
+    }
+    return nullptr;
+  }
+
+  template<class T>
+  T* cast() {
+    return const_cast<T*>(static_cast<const BinaryStream*>(this)->cast<T>());
   }
 
   protected:
