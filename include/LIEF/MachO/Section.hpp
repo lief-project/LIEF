@@ -309,6 +309,21 @@ class LIEF_API Section : public LIEF::Section {
     return *this;
   }
 
+  template<class T>
+  const T* cast() const {
+    static_assert(std::is_base_of<Section, T>::value,
+                  "Require Section inheritance");
+    if (T::classof(this)) {
+      return static_cast<const T*>(this);
+    }
+    return nullptr;
+  }
+
+  template<class T>
+  T* cast() {
+    return const_cast<T*>(static_cast<const Section*>(this)->cast<T>());
+  }
+
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os,
