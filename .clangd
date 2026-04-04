@@ -1,0 +1,58 @@
+Documentation:
+  CommentFormat: Doxygen
+Diagnostics:
+  Includes:
+    IgnoreHeader:
+      - spdlog/fmt/.*
+      - nanobind/stl/.*
+  ClangTidy:
+    FastCheckFilter: Strict
+    Add: [
+      bugprone-*,
+      performance-*,
+      portability-*,
+      cppcoreguidelines-*,
+      modernize-*,
+      misc-*,
+    ]
+    Remove: [
+      bugprone-easily-swappable-parameters,
+      bugprone-narrowing-conversions,
+      bugprone-reserved-identifier,
+      bugprone-signed-char-misuse,
+      cppcoreguidelines-avoid-c-arrays,
+      cppcoreguidelines-avoid-const-or-ref-data-members,
+      cppcoreguidelines-avoid-do-while,
+      cppcoreguidelines-avoid-magic-numbers,
+      cppcoreguidelines-missing-std-forward,
+      cppcoreguidelines-narrowing-conversions,
+      cppcoreguidelines-non-private-member-variables-in-classes,
+      cppcoreguidelines-owning-memory,
+      cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+      cppcoreguidelines-pro-bounds-constant-array-index,
+      cppcoreguidelines-pro-bounds-pointer-arithmetic,
+      cppcoreguidelines-pro-type-const-cast,
+      cppcoreguidelines-pro-type-reinterpret-cast,
+      cppcoreguidelines-pro-type-static-cast-downcast,
+      cppcoreguidelines-pro-type-union-access,
+      misc-misplaced-const,
+      misc-no-recursion,
+      misc-non-private-member-variables-in-classes,
+      misc-use-anonymous-namespace,
+      misc-use-internal-linkage,
+      modernize-avoid-c-arrays,
+      modernize-concat-nested-namespaces,
+      modernize-make-unique,
+      modernize-use-nodiscard,
+      modernize-use-noexcept,
+      modernize-use-trailing-return-type,
+      performance-enum-size,
+      performance-no-int-to-ptr,
+    ]
+---
+If:
+  PathMatch:
+    - include/LIEF/.*
+CompileFlags:
+  Add: [-std=gnu++11]
+  Remove: [-std=gnu++17]
