@@ -106,8 +106,8 @@ def test_entropy():
     """
     from issue #976 by @PaulDance
     """
-    weird_section_0 = lief.MachO.Section("weird_section_0", []).entropy
-    weird_section_1 = lief.MachO.Section("weird_section_1", [1]).entropy
+    weird_section_0 = lief.MachO.Section.create("weird_section_0", []).entropy
+    weird_section_1 = lief.MachO.Section.create("weird_section_1", [1]).entropy
     assert str(weird_section_0) == "0.0"
     assert str(weird_section_1) == "0.0"
 
@@ -127,4 +127,3 @@ def test_pagesize():
     config.page_size = 0xdeadc0de
 
     assert lief.ELF.parse(get_sample('ELF/bitcoin_ppc_be'), config).page_size == config.page_size
-

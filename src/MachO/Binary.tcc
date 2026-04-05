@@ -93,7 +93,7 @@ ok_error_t Binary::patch_relocation(Relocation& relocation, uint64_t from,
     return make_error_code(offset.error());
   }
   uint64_t relative_offset = *offset - segment->file_offset();
-  span<uint8_t> segment_content = segment->writable_content();
+  span<uint8_t> segment_content = segment->content();
   const size_t segment_size = segment_content.size();
 
   if (segment_size == 0) {

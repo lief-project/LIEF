@@ -242,7 +242,7 @@ def test_get_section():
 def test_segment_add_section():
     binary = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_safaridriver.bin')).at(0)
 
-    section = lief.MachO.Section("__bar", [1, 2, 3])
+    section = lief.MachO.Section.create("__bar", [1, 2, 3])
 
     existing_segment = binary.get_segment("__TEXT")
     new_segment = lief.MachO.SegmentCommand("__FOO")
@@ -265,7 +265,7 @@ def test_issue_728():
     arm64_binary = lief.MachO.parse(get_sample('MachO/FAT_MachO_arm-arm64-binary-helloworld.bin')).take(lief.MachO.Header.CPU_TYPE.ARM64)
 
     segment = lief.MachO.SegmentCommand("__FOO")
-    segment.add_section(lief.MachO.Section("__bar", [1, 2, 3]))
+    segment.add_section(lief.MachO.Section.create("__bar", [1, 2, 3]))
 
     for parsed in (x86_64_binary, arm64_binary):
         new_segment = parsed.add(segment)

@@ -67,6 +67,7 @@
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/ThreadLocalVariables.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
 #include "LIEF/MachO/UnknownCommand.hpp"
@@ -337,7 +338,8 @@ ok_error_t BinaryParser::parse_load_commands() {
                      load_command->as<SegmentCommand>()->name(), i);
             break;
           }
-          auto section = std::make_unique<Section>(*section_header);
+
+          std::unique_ptr<Section> section = Section::create(*section_header);
 
           binary_->sections_.push_back(section.get());
           if (section->size_ > 0 && section->type() != Section::TYPE::ZEROFILL &&
@@ -1056,7 +1058,7 @@ ok_error_t BinaryParser::parse_load_commands() {
           break;
         }
         LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS payload in '{}'", lnk->name());
-        span<uint8_t> content = lnk->writable_content();
+        span<uint8_t> content = lnk->content();
 
         if (static_cast<int32_t>(chained->data_size()) < 0 ||
             static_cast<int32_t>(chained->data_offset()) < 0)
@@ -1375,7 +1377,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
   if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
     LIEF_ERR("Rebase opcodes are out of bounds of the segment {}",
@@ -1636,7 +1638,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
   if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
     LIEF_ERR("Regular bind opcodes are out of bounds of the segment {}",
@@ -1994,7 +1996,7 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
   if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
     LIEF_ERR("Weak bind opcodes are out of bounds of the segment {}",
@@ -2221,7 +2223,7 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
   if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
     LIEF_ERR("Lazy bind opcodes are out of bounds of the segment {}",
@@ -3617,7 +3619,7 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
   }
 
   /* n_list table */ {
-    span<uint8_t> content = nlist_linkedit->writable_content();
+    span<uint8_t> content = nlist_linkedit->content();
 
     const uint64_t rel_offset =
         cmd.symbol_offset() - nlist_linkedit->file_offset();
@@ -3639,7 +3641,7 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
   }
 
   /* strtable */ {
-    span<uint8_t> content = strings_linkedit->writable_content();
+    span<uint8_t> content = strings_linkedit->content();
 
     const uint64_t rel_offset =
         cmd.strings_offset() - strings_linkedit->file_offset();
@@ -3684,7 +3686,7 @@ ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||
@@ -3740,7 +3742,7 @@ ok_error_t BinaryParser::post_process(DataInCode& cmd) {
     return parse_data_in_code<MACHO_T>(cmd, *scoped);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||
@@ -3774,7 +3776,7 @@ ok_error_t BinaryParser::post_process(SegmentSplitInfo& cmd) {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||
@@ -3844,7 +3846,7 @@ ok_error_t BinaryParser::post_process(DynamicSymbolCommand& cmd) {
     return parse_indirect_symbols(cmd, symtab, *scoped);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const size_t size = cmd.nb_indirect_symbols() * sizeof(uint32_t);
 
@@ -3879,7 +3881,7 @@ ok_error_t BinaryParser::post_process(LinkerOptHint& cmd) {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||
@@ -3918,7 +3920,7 @@ ok_error_t BinaryParser::post_process(AtomInfo& cmd) {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||
@@ -3951,7 +3953,7 @@ ok_error_t BinaryParser::post_process(CodeSignature& cmd) {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||
@@ -3984,7 +3986,7 @@ ok_error_t BinaryParser::post_process(CodeSignatureDir& cmd) {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||
@@ -4019,7 +4021,7 @@ ok_error_t BinaryParser::post_process(TwoLevelHints& cmd) {
   }
 
   const size_t raw_size = cmd.original_nb_hints() * sizeof(uint32_t);
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.offset() - linkedit->file_offset();
   if (rel_offset > content.size() || (rel_offset + raw_size) > content.size()) {
@@ -4155,7 +4157,7 @@ ok_error_t BinaryParser::post_process(FunctionVariants& cmd) {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||
@@ -4196,7 +4198,7 @@ ok_error_t BinaryParser::post_process(FunctionVariantFixups& cmd) {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
   if (rel_offset > content.size() ||

@@ -1238,7 +1238,7 @@ ok_error_t Builder::update_fixups(DyldChainedFixups& command) {
         continue;
       }
       const auto& fixup = static_cast<const RelocationFixup&>(*reloc);
-      span<uint8_t> sdata = seg_info.segment.writable_content();
+      span<uint8_t> sdata = seg_info.segment.content();
       const uint64_t seg_off = seg_info.segment.file_offset();
 
       LIEF_DEBUG("{:#012x}: {:#012x} Offset: {:#x}", fixup.address(),
@@ -1518,7 +1518,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
       const uint64_t rel_offset =
           binding->offset_ - binding->segment()->file_offset();
       uint8_t* data_ptr =
-          binding->segment_->writable_content().data() + rel_offset;
+          binding->segment_->content().data() + rel_offset;
       LIEF_DEBUG(
           "Write binding (offset={:#012x}): {:#018x} {} in {} offset={:#012x}",
           binding->offset_, binding->address(), binding->symbol()->name(),

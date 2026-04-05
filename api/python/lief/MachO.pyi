@@ -1617,15 +1617,6 @@ class LinkEdit(SegmentCommand):
     pass
 
 class Section(lief.Section):
-    @overload
-    def __init__(self) -> None: ...
-
-    @overload
-    def __init__(self, section_name: str) -> None: ...
-
-    @overload
-    def __init__(self, section_name: str, content: Sequence[int]) -> None: ...
-
     class it_relocations:
         def __getitem__(self, arg: int, /) -> Relocation: ...
 
@@ -1720,6 +1711,14 @@ class Section(lief.Section):
         EXT_RELOC = 512
 
         LOC_RELOC = 256
+
+    @overload
+    @staticmethod
+    def create(name: str, content: Sequence[int], type: Section.TYPE = Section.TYPE.REGULAR) -> Optional[Section]: ...
+
+    @overload
+    @staticmethod
+    def create(name: str, type: Section.TYPE = Section.TYPE.REGULAR) -> Optional[Section]: ...
 
     alignment: int
 
@@ -2161,6 +2160,35 @@ class ThreadCommand(LoadCommand):
     architecture: Header.CPU_TYPE
 
     def __str__(self) -> str: ...
+
+class ThreadLocalVariables(Section):
+    class Thunk:
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, func: int, key: int, offset: int) -> None: ...
+
+        func: int
+
+        key: int
+
+        offset: int
+
+        def __str__(self) -> str: ...
+
+    @property
+    def thunks(self) -> Sequence[ThreadLocalVariables.Thunk]: ...
+
+    @property
+    def nb_thunks(self) -> int: ...
+
+    def get(self, idx: int) -> ThreadLocalVariables.Thunk | None: ...
+
+    def set(self, idx: int, thunk: ThreadLocalVariables.Thunk) -> None: ...
+
+    def __getitem__(self, idx: int) -> ThreadLocalVariables.Thunk | None: ...
+
+    def __setitem__(self, idx: int, thunk: ThreadLocalVariables.Thunk) -> None: ...
 
 class RPathCommand(LoadCommand):
     @staticmethod

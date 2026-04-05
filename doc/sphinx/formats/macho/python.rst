@@ -55,6 +55,18 @@ Section
 ----------
 
 
+ThreadLocalVariables
+********************
+
+.. lief-inheritance:: lief._lief.MachO.ThreadLocalVariables
+  :top-classes: lief._lief.MachO.Section
+  :parts: 2
+
+.. autoclass:: lief.MachO.ThreadLocalVariables
+
+----------
+
+
 SegmentCommand
 **************
 

@@ -15,6 +15,7 @@
 #include <spdlog/fmt/fmt.h>
 
 #include "MachO/Structures.hpp"
+#include "LIEF/range.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
@@ -41,6 +42,7 @@
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/ThreadLocalVariables.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/utils.hpp"
@@ -121,6 +123,8 @@ class LayoutChecker {
   bool check_function_variants();
 
   bool check_linkedit_end();
+
+  bool check_tls();
 
   size_t ptr_size() const {
     return binary.header().is_32bit() ? sizeof(uint32_t) : sizeof(uint64_t);
@@ -1039,6 +1043,9 @@ bool LayoutChecker::check() {
     return false;
   }
 
+  if (!check_tls()) {
+    return false;
+  }
 
   // The following checks are only relevant for non-object files
   if (binary.header().file_type() == Header::FILE_TYPE::OBJECT) {
@@ -1648,6 +1655,80 @@ bool LayoutChecker::check_function_variants() {
       );
     }
   }
+  return true;
+}
+
+
+bool LayoutChecker::check_tls() {
+  const bool is32 = ptr_size() == sizeof(uint32_t);
+  const bool is64 = ptr_size() == sizeof(uint64_t);
+  assert(is32 || is64);
+  bool all_zero_fill = true;
+  ThreadLocalVariables const* sec_vars = nullptr;
+  LIEF::range_t initial_content;
+  for (const Section& S : binary.sections()) {
+    if (const auto* sec = S.cast<ThreadLocalVariables>()) {
+      sec_vars = sec;
+    }
+    switch (S.type()) {
+      default: break;
+      case Section::TYPE::THREAD_LOCAL_REGULAR:
+      {
+        all_zero_fill = false;
+        [[fallthrough]];
+      }
+      case Section::TYPE::THREAD_LOCAL_ZEROFILL:
+      {
+        if (initial_content.low == 0) {
+          initial_content.low = S.virtual_address();
+          initial_content.high = initial_content.low + S.size();
+        } else {
+          initial_content.high = S.virtual_address() + S.size();
+        }
+        break;
+      }
+    }
+
+    // See ThreadLocalVariables.cpp
+    const size_t sizeof_ = 3 * ptr_size();
+
+    if (sec_vars != nullptr) {
+      const size_t size = sec_vars->content().size();
+      if (size % sizeof_ != 0) {
+        return error(
+            "size ({}) of thread-locals section {} is not a multiple of {}", size,
+            sec_vars->name(), sizeof_
+        );
+      }
+    }
+  }
+
+
+  if (is64 && initial_content.size() > 4_GB) {
+    return error("unsupported thread-local, larger than 4GB");
+  }
+
+  if (is32 && initial_content.size() > 4_GB) {
+    return error("unsupported thread-local, larger than 4GB");
+  }
+
+  if (sec_vars != nullptr) {
+    for (const ThreadLocalVariables::Thunk& thunk : sec_vars->thunks()) {
+      if (thunk.offset > initial_content.size()) {
+        return error("malformed thread-local, offset={:#08x} is larger than total "
+                     "size={:#08x}",
+                     thunk.offset, initial_content.size());
+      }
+      if (is64 && thunk.key > std::numeric_limits<uint32_t>::max()) {
+        return error("thread_key_t {}, larger than uint32_t", thunk.key);
+      }
+
+      if (is32 && thunk.key > std::numeric_limits<uint16_t>::max()) {
+        return error("thread_key_t {}, larger than uint16_t", thunk.key);
+      }
+    }
+  }
+
   return true;
 }
 

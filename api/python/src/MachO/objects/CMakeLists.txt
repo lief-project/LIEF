@@ -49,6 +49,7 @@ target_sources(pyLIEF PRIVATE
   pySymbol.cpp
   pySymbolCommand.cpp
   pyThreadCommand.cpp
+  pyThreadLocalVariables.cpp
   pyTwoLevelHints.cpp
   pyUUID.cpp
   pyUnknownCommand.cpp

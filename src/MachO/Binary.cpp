@@ -103,7 +103,7 @@ void Binary::patch_address(uint64_t address,
     return;
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
-  span<uint8_t> content = segment_topatch->writable_content();
+  span<uint8_t> content = segment_topatch->content();
   if (offset > content.size() || (offset + patch_value.size()) > content.size()) {
     LIEF_ERR("Patch value ({} bytes @{:#x}) out of segment bounds (limit: {:#x})",
              patch_value.size(), offset, content.size());
@@ -126,7 +126,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
     return;
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
-  span<uint8_t> content = segment_topatch->writable_content();
+  span<uint8_t> content = segment_topatch->content();
 
   if (offset > content.size() || (offset + size) > content.size()) {
     LIEF_ERR("Patch value ({} bytes @{:#x}) out of segment bounds (limit: {:#x})",
@@ -1465,7 +1465,7 @@ Section* Binary::add_section(const SegmentCommand& segment,
   span<const uint8_t> content_ref = section.content();
   Section::content_t content = {content_ref.begin(), content_ref.end()};
 
-  auto new_section = std::make_unique<Section>(section);
+  auto new_section = section.clone();
 
   if (section.offset() == 0) {
     // Section offset is not defined: we need to allocate space enough to fit its

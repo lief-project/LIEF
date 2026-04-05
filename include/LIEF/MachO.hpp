@@ -66,6 +66,7 @@
   #include "LIEF/MachO/RelocationObject.hpp"
   #include "LIEF/MachO/Routine.hpp"
   #include "LIEF/MachO/Section.hpp"
+  #include "LIEF/MachO/ThreadLocalVariables.hpp"
   #include "LIEF/MachO/SegmentCommand.hpp"
   #include "LIEF/MachO/SegmentSplitInfo.hpp"
   #include "LIEF/MachO/SourceVersion.hpp"

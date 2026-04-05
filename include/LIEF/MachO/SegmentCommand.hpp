@@ -198,6 +198,10 @@ class LIEF_API SegmentCommand : public LoadCommand {
     return data_;
   }
 
+  span<uint8_t> content() {
+    return data_;
+  }
+
   /// Return a stream over the content of this segment
   std::unique_ptr<SpanStream> stream() const;
 
@@ -265,10 +269,6 @@ class LIEF_API SegmentCommand : public LoadCommand {
   }
 
   protected:
-  span<uint8_t> writable_content() {
-    return data_;
-  }
-
   LIEF_LOCAL void content_resize(size_t size);
   LIEF_LOCAL void content_insert(size_t where, size_t size);
 

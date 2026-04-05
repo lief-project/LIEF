@@ -113,6 +113,15 @@ Section
 
 ----------
 
+ThreadLocalVariables
+********************
+
+.. doxygenclass:: LIEF::MachO::ThreadLocalVariables
+   :project: lief
+
+
+----------
+
 
 SegmentCommand
 **************

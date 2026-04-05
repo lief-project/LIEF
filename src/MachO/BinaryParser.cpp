@@ -362,7 +362,7 @@ ok_error_t BinaryParser::parse_dyld_exports() {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
   if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
     LIEF_ERR("Export trie out of bounds for segment {}", linkedit->name());
@@ -404,7 +404,7 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
     return make_error_code(lief_errors::not_found);
   }
 
-  span<uint8_t> content = linkedit->writable_content();
+  span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
   if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
     LIEF_ERR("Export trie out of bounds for segment {}", linkedit->name());

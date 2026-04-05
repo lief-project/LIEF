@@ -54,6 +54,7 @@
     from a FAT binary (:pr:`1283`)
   * Add |lief-macho-fatbinary-create| to create a FAT binary from
     a list of |lief-macho-binary| objects targeting different architectures
+  * Add support for |lief-macho-threadlocalvariables|
 
 :PE:
 

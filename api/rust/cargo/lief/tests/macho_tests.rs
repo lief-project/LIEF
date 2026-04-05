@@ -7,6 +7,7 @@ use lief::macho::Relocation;
 use lief::generic::Binary as GenericBinary;
 use lief::macho::binding_info::{self, AsGeneric};
 use lief::macho::commands::{Command, Commands};
+use lief::macho::MachOSection;
 use lief::generic::Symbol;
 use lief::Binary;
 use lief::macho::header::CpuType;
@@ -367,6 +368,43 @@ fn test_api() {
     test_with("variants_alt.dylib");
     test_with_fullpath("CoreFoundation", "private/MachO/CoreFoundation");
     test_with_fullpath("kernelcache.release.iPhone17.5", "private/MachO/kernelcache.release.iPhone17.5");
+    test_with_fullpath("lief-dwarf-plugin", "MachO/lief-dwarf-plugin-darwin-arm64.dylib");
+}
+
+#[test]
+fn test_thread_local_variables() {
+    use lief::macho::{Section, ThreadLocalVariables, MachOSection};
+    use lief::macho::section::Type;
+    use lief::generic::Section as GenericSection;
+
+    let path = utils::get_macho_sample("lief-dwarf-plugin-darwin-arm64.dylib").unwrap();
+    let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting a MachO");
+    };
+    let macho = fat.iter().next().unwrap();
+
+    let thread_vars = macho.sections()
+        .find(|s| s.section_type() == Type::THREAD_LOCAL_VARIABLES);
+    assert!(thread_vars.is_some());
+
+    let section = thread_vars.unwrap();
+    assert_eq!(section.name(), "__thread_vars");
+    assert_eq!(section.segment_name(), "__DATA");
+    assert_eq!(section.section_type(), Type::THREAD_LOCAL_VARIABLES);
+    format!("{section:?}");
+
+    let Section::ThreadLocalVariables(ref tlv) = section else {
+        panic!("Expected Section::ThreadLocalVariables variant");
+    };
+
+    assert_eq!(tlv.nb_thunks(), 2);
+
+    let thunks: Vec<_> = tlv.thunks().collect();
+    assert_eq!(thunks.len(), 2);
+    assert_eq!(thunks[0].offset(), 0);
+    assert_eq!(thunks[1].offset(), 0x18);
+    format!("{:?}", thunks[0]);
+    format!("{:?}", thunks[1]);
 }
 
 #[test]
@@ -386,4 +424,3 @@ fn test_mut_api() {
         bin.write_with_config(tmpfile.path(), Config::default());
     }
 }
-

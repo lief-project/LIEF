@@ -56,7 +56,7 @@ SegmentCommand::SegmentCommand(const SegmentCommand& other) :
   data_{other.data_} {
 
   for (const std::unique_ptr<Section>& section : other.sections_) {
-    auto new_section = std::make_unique<Section>(*section);
+    auto new_section = section->clone();
     new_section->segment_ = this;
     new_section->segment_name_ = name();
     sections_.push_back(std::move(new_section));
@@ -127,7 +127,7 @@ void SegmentCommand::remove_all_sections() {
 }
 
 Section& SegmentCommand::add_section(const Section& section) {
-  auto new_section = std::make_unique<Section>(section);
+  auto new_section = section.clone();
 
   new_section->segment_ = this;
   new_section->segment_name_ = name();

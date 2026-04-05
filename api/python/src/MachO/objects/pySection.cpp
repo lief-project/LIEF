@@ -90,15 +90,15 @@ void create<Section>(nb::module_& m) {
   ;
 
   sec
-    .def(nb::init<>())
+    .def_static("create",
+        nb::overload_cast<std::string, const Section::content_t&, Section::TYPE>(&Section::create),
+        "Create a section with the given name, content and type",
+        "name"_a, "content"_a, "type"_a = Section::TYPE::REGULAR)
 
-    .def(nb::init<const std::string&>(),
-        "Constructor from a section's name"_doc,
-        "section_name"_a)
-
-    .def(nb::init<const std::string&, const Section::content_t&>(),
-        "Constructor from a section's name and its content"_doc,
-        "section_name"_a, "content"_a)
+    .def_static("create",
+        nb::overload_cast<std::string, Section::TYPE>(&Section::create),
+        "Create a section with the given name",
+        "name"_a, "type"_a = Section::TYPE::REGULAR)
 
     .def_prop_rw("alignment",
         nb::overload_cast<>(&Section::alignment, nb::const_),

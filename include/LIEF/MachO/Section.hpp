@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_MACHO_SECTION_H
 #define LIEF_MACHO_SECTION_H
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <ostream>
@@ -140,21 +141,36 @@ class LIEF_API Section : public LIEF::Section {
   };
 
   public:
-  Section();
-  Section(const details::section_32& section_cmd);
-  Section(const details::section_64& section_cmd);
+  static std::unique_ptr<Section> create(const details::section_32& sec);
+  static std::unique_ptr<Section> create(const details::section_64& sec);
 
-  Section(std::string name);
-  Section(std::string name, content_t content);
+  static std::unique_ptr<Section> create(std::string name,
+                                         const content_t& content,
+                                         TYPE type = TYPE::REGULAR);
 
-  Section& operator=(Section copy);
-  Section(const Section& copy);
 
-  void swap(Section& other) noexcept;
+  static std::unique_ptr<Section> create(std::string name,
+                                         TYPE type = TYPE::REGULAR) {
+    return create(std::move(name), /*content=*/{}, type);
+  }
+
+  Section(const details::section_32& sec);
+  Section(const details::section_64& sec);
+
+  Section(Section&&);
+  Section& operator=(Section&&);
 
   ~Section() override;
 
+  virtual std::unique_ptr<Section> clone() const {
+    return std::unique_ptr<Section>(new Section(*this));
+  }
+
   span<const uint8_t> content() const override;
+
+  span<uint8_t> content() {
+    return as_writable(static_cast<const Section*>(this)->content());
+  }
 
   /// Update the content of the section
   void content(const content_t& data) override;
@@ -248,7 +264,10 @@ class LIEF_API Section : public LIEF::Section {
 
   /// Clear the content of this section by filling its values
   /// with the byte provided in parameter
-  void clear(uint8_t v);
+  void clear(uint8_t v) {
+    span<uint8_t> write_content = content();
+    std::fill(write_content.begin(), write_content.end(), v);
+  }
 
   /// Return an iterator over the MachO::Relocation associated with this section
   ///
@@ -329,7 +348,12 @@ class LIEF_API Section : public LIEF::Section {
   LIEF_API friend std::ostream& operator<<(std::ostream& os,
                                            const Section& section);
 
-  private:
+  protected:
+  Section();
+
+  Section& operator=(const Section& copy);
+  Section(const Section& copy);
+
   std::string segment_name_;
   uint64_t original_size_ = 0;
   uint32_t align_ = 0;

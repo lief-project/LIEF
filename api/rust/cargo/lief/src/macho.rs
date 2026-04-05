@@ -35,6 +35,7 @@ pub mod section;
 pub mod symbol;
 pub mod header;
 pub mod stub;
+pub mod thread_local_variables;
 pub mod builder;
 
 use std::path::Path;
@@ -53,9 +54,15 @@ pub use relocation::Relocation;
 #[doc(inline)]
 pub use section::Section;
 #[doc(inline)]
+pub use section::Generic;
+#[doc(inline)]
+pub use section::MachOSection;
+#[doc(inline)]
 pub use symbol::Symbol;
 #[doc(inline)]
 pub use commands::Commands;
+#[doc(inline)]
+pub use thread_local_variables::ThreadLocalVariables;
 #[doc(inline)]
 pub use header::Header;
 #[doc(inline)]

@@ -61,6 +61,7 @@ target_sources(LIB_LIEF PRIVATE
   Symbol.cpp
   SymbolCommand.cpp
   ThreadCommand.cpp
+  ThreadLocalVariables.cpp
   TrieNode.cpp
   TwoLevelHints.cpp
   UUIDCommand.cpp
@@ -77,4 +78,3 @@ target_sources(LIB_LIEF PRIVATE
 if(LIEF_ENABLE_JSON)
   target_sources(LIB_LIEF PRIVATE json.cpp)
 endif()
-

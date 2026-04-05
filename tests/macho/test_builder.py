@@ -168,7 +168,7 @@ def test_add_section_id(tmp_path):
 
     # Add 50 sections
     for i in range(50):
-        section = lief.MachO.Section(f"__lief_{i}", [0x90] * 0x100)
+        section = lief.MachO.Section.create(f"__lief_{i}", [0x90] * 0x100)
         original.add_section(section)
 
     assert original.virtual_size % original.page_size == 0
@@ -196,7 +196,7 @@ def test_extend_section_1(tmp_path: Path):
     text_segment = original.get_segment("__TEXT")
 
     for i in range(9, -1, -1):
-        section = lief.MachO.Section(f"__lief_{i}")
+        section = lief.MachO.Section.create(f"__lief_{i}")
         section.alignment = i
         section = original.add_section(text_segment, section)
         assert original.extend_section(section, 1 << section.alignment)
@@ -219,7 +219,7 @@ def test_extend_section_2(tmp_path: Path):
 
     sections = []
     for i in range(3):
-        section = lief.MachO.Section(f"__lief_{i}")
+        section = lief.MachO.Section.create(f"__lief_{i}")
         section.alignment = 2 # 2^2 == 4 bytes
         sections.append(original.add_section(text_segment, section))
 
@@ -242,7 +242,7 @@ def test_add_section_ssh(tmp_path: Path):
     # Add 3 section into __TEXT
     __text = original.get_segment("__TEXT")
     for i in range(3):
-        section = lief.MachO.Section(f"__text_{i}")
+        section = lief.MachO.Section.create(f"__text_{i}")
         section.content = [0xC3] * 0x100 # type: ignore[assignment]
         original.add_section(__text, section)
 
@@ -295,7 +295,7 @@ def test_add_segment_all(tmp_path: Path):
     # Add segment with sections
     segment = lief.MachO.SegmentCommand("__LIEF_2")
     for i in range(5):
-        section = lief.MachO.Section(f"__lief_2_{i}", [i] * 0x100)
+        section = lief.MachO.Section.create(f"__lief_2_{i}", [i] * 0x100)
         segment.add_section(section)
     original.add(segment)
 
@@ -540,11 +540,11 @@ def test_break(tmp_path: Path):
     def fake_objc(target: lief.MachO.Binary):
         segment = lief.MachO.SegmentCommand("__DATA_LIEF")
 
-        __objc_classlist = lief.MachO.Section("__objc_classlist",
+        __objc_classlist = lief.MachO.Section.create("__objc_classlist",
                                               [random.randint(0, 255) for _ in range(0x100)])
-        __objc_const     = lief.MachO.Section("__objc_const",
+        __objc_const     = lief.MachO.Section.create("__objc_const",
                                               [random.randint(0, 255) for _ in range(0x100)])
-        __objc_classrefs = lief.MachO.Section("__objc_classrefs",
+        __objc_classrefs = lief.MachO.Section.create("__objc_classrefs",
                                               [random.randint(0, 255) for _ in range(0x100)])
 
         __objc_classlist = segment.add_section(__objc_classlist)

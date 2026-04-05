@@ -52,6 +52,7 @@
 #include "LIEF/rust/MachO/Symbol.hpp"
 #include "LIEF/rust/MachO/SymbolCommand.hpp"
 #include "LIEF/rust/MachO/ThreadCommand.hpp"
+#include "LIEF/rust/MachO/ThreadLocalVariables.hpp"
 #include "LIEF/rust/MachO/TwoLevelHints.hpp"
 #include "LIEF/rust/MachO/UUIDCommand.hpp"
 #include "LIEF/rust/MachO/UnknownCommand.hpp"

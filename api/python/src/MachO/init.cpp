@@ -66,6 +66,7 @@
 #include <LIEF/MachO/Symbol.hpp>
 #include <LIEF/MachO/SymbolCommand.hpp>
 #include <LIEF/MachO/ThreadCommand.hpp>
+#include <LIEF/MachO/ThreadLocalVariables.hpp>
 #include <LIEF/MachO/TwoLevelHints.hpp>
 #include <LIEF/MachO/UUIDCommand.hpp>
 #include <LIEF/MachO/UnknownCommand.hpp>
@@ -98,6 +99,7 @@ void init_objects(nb::module_& m) {
   CREATE(DyldExportsTrie, m);
   CREATE(DylibCommand, m);
   CREATE(ThreadCommand, m);
+  CREATE(ThreadLocalVariables, m);
   CREATE(RPathCommand, m);
   CREATE(Symbol, m);
   CREATE(Relocation, m);

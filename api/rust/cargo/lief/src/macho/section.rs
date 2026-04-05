@@ -1,4 +1,5 @@
 use super::commands::segment::Segment;
+use super::thread_local_variables::ThreadLocalVariables;
 use super::Relocation;
 use lief_ffi as ffi;
 use std::fmt;
@@ -11,7 +12,19 @@ use crate::generic;
 
 use bitflags::bitflags;
 
-pub struct Section<'a> {
+/// Enum that wraps all the Mach-O section types, dispatching to the
+/// appropriate concrete type when extra semantics are available.
+#[derive(Debug)]
+pub enum Section<'a> {
+    /// A section without additional specialization.
+    Generic(Generic<'a>),
+
+    /// A section whose type is [`Type::THREAD_LOCAL_VARIABLES`], providing access
+    /// to thread-local variable descriptors.
+    ThreadLocalVariables(ThreadLocalVariables<'a>),
+}
+
+pub struct Generic<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Section>,
     _owner: PhantomData<&'a ()>,
 }
@@ -133,101 +146,140 @@ impl std::fmt::Display for Flags {
     }
 }
 
-impl Section<'_> {
+/// Trait shared by **all** Mach-O section types in the [`Section`] enum.
+pub trait MachOSection {
+    #[doc(hidden)]
+    fn as_base(&self) -> &ffi::MachO_Section;
+
+    #[doc(hidden)]
+    fn as_mut_base(&mut self) -> Pin<&mut ffi::MachO_Section>;
+
     /// Name of the segment that owns this section
-    pub fn segment_name(&self) -> String {
-        self.ptr.segment_name().to_string()
+    fn segment_name(&self) -> String {
+        self.as_base().segment_name().to_string()
     }
 
     /// Virtual base address of this section
-    pub fn address(&self) -> u64 {
-        self.ptr.address()
+    fn address(&self) -> u64 {
+        self.as_base().address()
     }
 
     /// Section alignment as a power of 2
-    pub fn alignment(&self) -> u32 {
-        self.ptr.alignment()
+    fn alignment(&self) -> u32 {
+        self.as_base().alignment()
     }
-
 
     /// Offset of the relocation table. This value should be 0
     /// for executable and libraries as the relocations are managed by
     /// [`crate::macho::Relocation::Dyld`] or [`crate::macho::Relocation::Fixup`]
     ///
     /// On the other hand, for object files (`.o`) this value should not be 0 (c.f. [`crate::macho::Relocation::Object`])
-    pub fn relocation_offset(&self) -> u32 {
-        self.ptr.relocation_offset()
+    fn relocation_offset(&self) -> u32 {
+        self.as_base().relocation_offset()
     }
 
     /// Number of relocations associated with this section
-    pub fn numberof_relocations(&self) -> u32 {
-        self.ptr.numberof_relocations()
+    fn numberof_relocations(&self) -> u32 {
+        self.as_base().numberof_relocations()
     }
 
-    pub fn raw_flags(&self) -> u32 {
-        self.ptr.raw_flags()
+    fn raw_flags(&self) -> u32 {
+        self.as_base().raw_flags()
     }
 
     /// Section's flags masked with `SECTION_FLAGS_MASK`
-    pub fn flags(&self) -> Flags {
-        Flags::from_bits_truncate(self.ptr.flags())
+    fn flags(&self) -> Flags {
+        Flags::from_bits_truncate(self.as_base().flags())
     }
 
     /// Type of the section. This value can help to determine the purpose of the section
-    pub fn section_type(&self) -> Type {
-        Type::from(self.ptr.section_type())
+    fn section_type(&self) -> Type {
+        Type::from(self.as_base().section_type())
     }
 
     /// According to the official `loader.h` file, this value is reserved
     /// for *offset* or *index*
-    pub fn reserved1(&self) -> u32 {
-        self.ptr.reserved1()
+    fn reserved1(&self) -> u32 {
+        self.as_base().reserved1()
     }
 
     /// According to the official `loader.h` file, this value is reserved
     /// for *count* or *sizeof*
-    pub fn reserved2(&self) -> u32 {
-        self.ptr.reserved2()
+    fn reserved2(&self) -> u32 {
+        self.as_base().reserved2()
     }
 
     /// This value is only present for 64 bits Mach-O files. In that case,
     /// the value is *reserved*.
-    pub fn reserved3(&self) -> u32 {
-        self.ptr.reserved3()
+    fn reserved3(&self) -> u32 {
+        self.as_base().reserved3()
     }
 
     /// Segment bound to this section
-    pub fn segment(&self) -> Option<Segment<'_>> {
-        into_optional(self.ptr.segment())
+    fn segment(&self) -> Option<Segment<'_>> {
+        into_optional(self.as_base().segment())
     }
 
     /// Iterator over the [`crate::macho::Relocation`] associated with this section
-    pub fn relocations(&self) -> Relocations<'_> {
-        Relocations::new(self.ptr.relocations())
+    fn relocations(&self) -> Relocations<'_> {
+        Relocations::new(self.as_base().relocations())
     }
 }
 
-impl fmt::Debug for Section<'_> {
+impl MachOSection for Generic<'_> {
+    fn as_base(&self) -> &ffi::MachO_Section {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_base(&mut self) -> Pin<&mut ffi::MachO_Section> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap() as *const ffi::MachO_Section
+                    as *mut ffi::MachO_Section)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
+    }
+}
+
+impl MachOSection for Section<'_> {
+    fn as_base(&self) -> &ffi::MachO_Section {
+        match self {
+            Section::Generic(s) => s.as_base(),
+            Section::ThreadLocalVariables(s) => s.as_base(),
+        }
+    }
+
+    fn as_mut_base(&mut self) -> Pin<&mut ffi::MachO_Section> {
+        match self {
+            Section::Generic(s) => s.as_mut_base(),
+            Section::ThreadLocalVariables(s) => s.as_mut_base(),
+        }
+    }
+}
+
+impl fmt::Debug for Generic<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let base = self as &dyn generic::Section;
-        f.debug_struct("Section")
+        f.debug_struct("Generic")
             .field("base", &base)
-            .field("segment_name", &self.segment_name())
-            .field("address", &self.address())
-            .field("alignment", &self.alignment())
-            .field("relocation_offset", &self.relocation_offset())
-            .field("numberof_relocations", &self.numberof_relocations())
-            .field("raw_flags", &self.raw_flags())
-            .field("flags", &self.flags())
-            .field("type", &self.section_type())
-            .field("reserved1", &self.reserved1())
-            .field("reserved2", &self.reserved2())
-            .field("reserved3", &self.reserved3())
+            .field("segment_name", &MachOSection::segment_name(self))
+            .field("address", &MachOSection::address(self))
+            .field("alignment", &MachOSection::alignment(self))
+            .field("relocation_offset", &MachOSection::relocation_offset(self))
+            .field("numberof_relocations", &MachOSection::numberof_relocations(self))
+            .field("raw_flags", &MachOSection::raw_flags(self))
+            .field("flags", &MachOSection::flags(self))
+            .field("type", &MachOSection::section_type(self))
+            .field("reserved1", &MachOSection::reserved1(self))
+            .field("reserved2", &MachOSection::reserved2(self))
+            .field("reserved3", &MachOSection::reserved3(self))
             .finish()
     }
 }
 
-impl<'a> FromFFI<ffi::MachO_Section> for Section<'a> {
+impl<'a> FromFFI<ffi::MachO_Section> for Generic<'a> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::MachO_Section>) -> Self {
         Self {
             ptr,
@@ -236,19 +288,53 @@ impl<'a> FromFFI<ffi::MachO_Section> for Section<'a> {
     }
 }
 
-impl generic::Section for Section<'_> {
+impl<'a> FromFFI<ffi::MachO_Section> for Section<'a> {
+    fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::MachO_Section>) -> Self {
+        unsafe {
+            let sec_ref = ffi_entry.as_ref().unwrap();
+            if ffi::MachO_ThreadLocalVariables::classof(sec_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Section>;
+                    type To = cxx::UniquePtr<ffi::MachO_ThreadLocalVariables>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Section::ThreadLocalVariables(ThreadLocalVariables::from_ffi(raw))
+            } else {
+                Section::Generic(Generic::from_ffi(ffi_entry))
+            }
+        }
+    }
+}
+
+impl generic::Section for Generic<'_> {
     fn as_generic(&self) -> &ffi::AbstractSection {
-        self.ptr.as_ref().unwrap().as_ref()
+        self.as_base().as_ref()
     }
 
     fn as_generic_mut(&mut self) -> Pin<&mut ffi::AbstractSection> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractSection
+                (self.as_generic() as *const ffi::AbstractSection
                     as *mut ffi::AbstractSection)
                     .as_mut()
                     .unwrap()
             })
+        }
+    }
+}
+
+impl generic::Section for Section<'_> {
+    fn as_generic(&self) -> &ffi::AbstractSection {
+        match self {
+            Section::Generic(s) => s.as_generic(),
+            Section::ThreadLocalVariables(s) => s.as_generic(),
+        }
+    }
+
+    fn as_generic_mut(&mut self) -> Pin<&mut ffi::AbstractSection> {
+        match self {
+            Section::Generic(s) => s.as_generic_mut(),
+            Section::ThreadLocalVariables(s) => s.as_generic_mut(),
         }
     }
 }

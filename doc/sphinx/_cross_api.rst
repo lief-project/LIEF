@@ -878,6 +878,18 @@
     :py:class:`lief.MachO.Stub`
     :cpp:class:`LIEF::MachO::Stub`
 
+.. |lief-macho-threadlocalvariables| lief-api:: lief.MachO.ThreadLocalVariables
+
+    :rust:struct:`lief::macho::ThreadLocalVariables`
+    :py:class:`lief.MachO.ThreadLocalVariables`
+    :cpp:class:`LIEF::MachO::ThreadLocalVariables`
+
+.. |lief-macho-threadlocalvariables-thunk| lief-api:: lief.MachO.ThreadLocalVariables.Thunk
+
+    :rust:struct:`lief::macho::thread_local_variables::Thunk`
+    :py:class:`lief.MachO.ThreadLocalVariables.Thunk`
+    :cpp:class:`LIEF::MachO::ThreadLocalVariables::Thunk`
+
 .. |lief-macho-subclient| lief-api:: lief.MachO.SubClient
 
     :rust:struct:`lief::macho::commands::SubClient`
@@ -1217,4 +1229,3 @@
     :py:func:`lief.ELF.check_layout`
     :cpp:func:`LIEF::ELF::check_layout`
     :rust:func:`lief::elf::check_layout`
-

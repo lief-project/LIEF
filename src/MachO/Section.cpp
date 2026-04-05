@@ -27,6 +27,7 @@
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/ThreadLocalVariables.hpp"
 #include "MachO/Structures.hpp"
 
 FMT_FORMATTER(LIEF::MachO::Section::FLAGS, LIEF::MachO::to_string);
@@ -43,35 +44,54 @@ static constexpr auto ARRAY_FLAGS = {
     Section::FLAGS::EXT_RELOC,         Section::FLAGS::LOC_RELOC,
 };
 
+template<class T>
+static std::unique_ptr<Section> create_from_raw(const T& raw) {
+  auto type = (Section::TYPE)(raw.flags & Section::TYPE_MASK);
+  switch (type) {
+    case Section::TYPE::THREAD_LOCAL_VARIABLES:
+      return std::make_unique<ThreadLocalVariables>(raw);
+    default: return std::make_unique<Section>(raw);
+  }
+}
+
 Section::Section() = default;
 Section::~Section() = default;
 
-Section& Section::operator=(Section other) {
-  swap(other);
+Section::Section(Section&&) = default;
+Section& Section::operator=(Section&&) = default;
+
+Section& Section::operator=(const Section& copy) {
+  if (this == &copy) {
+    return *this;
+  }
+  LIEF::Section::operator=(copy);
+
+  segment_name_ = copy.segment_name_;
+  original_size_ = copy.original_size_;
+  align_ = copy.align_;
+  relocations_offset_ = copy.relocations_offset_;
+  nbof_relocations_ = copy.nbof_relocations_;
+  flags_ = copy.flags_;
+  reserved1_ = copy.reserved1_;
+  reserved2_ = copy.reserved2_;
+  reserved3_ = copy.reserved3_;
+  content_ = copy.content_;
+
   return *this;
 }
-Section::Section(std::string name) {
-  this->name(std::move(name));
-}
 
-Section::Section(std::string name, content_t content) {
-  this->name(std::move(name));
-  this->content(content);
-}
-
-Section::Section(const Section& other) :
-  LIEF::Section{other},
-  segment_name_{other.segment_name_},
-  original_size_{other.original_size_},
-  align_{other.align_},
-  relocations_offset_{other.relocations_offset_},
-  nbof_relocations_{other.nbof_relocations_},
-  flags_{other.flags_},
-  reserved1_{other.reserved1_},
-  reserved2_{other.reserved2_},
-  reserved3_{other.reserved3_},
-  content_{other.content_} {}
-
+Section::Section(const Section& copy) :
+  LIEF::Section{copy},
+  segment_name_(copy.segment_name_),
+  original_size_(copy.original_size_),
+  align_(copy.align_),
+  relocations_offset_(copy.relocations_offset_),
+  nbof_relocations_(copy.nbof_relocations_),
+  flags_(copy.flags_),
+  reserved1_(copy.reserved1_),
+  reserved2_(copy.reserved2_),
+  reserved3_(copy.reserved3_),
+  content_(copy.content_) {}
 
 Section::Section(const details::section_32& sec) :
   segment_name_{sec.segname, sizeof(sec.sectname)},
@@ -110,25 +130,32 @@ Section::Section(const details::section_64& sec) :
   segment_name_ = segment_name_.c_str();
 }
 
+std::unique_ptr<Section> Section::create(const details::section_32& sec) {
+  return create_from_raw(sec);
+}
 
-void Section::swap(Section& other) noexcept {
-  std::swap(name_, other.name_);
-  std::swap(virtual_address_, other.virtual_address_);
-  std::swap(size_, other.size_);
-  std::swap(offset_, other.offset_);
+std::unique_ptr<Section> Section::create(const details::section_64& sec) {
+  return create_from_raw(sec);
+}
 
-  std::swap(segment_name_, other.segment_name_);
-  std::swap(original_size_, other.original_size_);
-  std::swap(align_, other.align_);
-  std::swap(relocations_offset_, other.relocations_offset_);
-  std::swap(nbof_relocations_, other.nbof_relocations_);
-  std::swap(flags_, other.flags_);
-  std::swap(reserved1_, other.reserved1_);
-  std::swap(reserved2_, other.reserved2_);
-  std::swap(reserved3_, other.reserved3_);
-  std::swap(content_, other.content_);
-  std::swap(segment_, other.segment_);
-  std::swap(relocations_, other.relocations_);
+std::unique_ptr<Section> Section::create(std::string name,
+                                         const content_t& content, TYPE type) {
+  std::unique_ptr<Section> sec;
+  switch (type) {
+    case TYPE::THREAD_LOCAL_VARIABLES:
+      sec = std::make_unique<ThreadLocalVariables>();
+      break;
+    default: sec = std::unique_ptr<Section>(new Section{});
+  }
+
+  assert(sec != nullptr);
+
+  sec->name(std::move(name));
+
+  if (!content.empty()) {
+    sec->content(content);
+  }
+  return sec;
 }
 
 span<const uint8_t> Section::content() const {
@@ -171,7 +198,7 @@ void Section::content(const content_t& data) {
 
   uint64_t relative_offset = offset_ - segment_->file_offset();
 
-  span<uint8_t> content = segment_->writable_content();
+  span<uint8_t> content = segment_->content();
 
   if (relative_offset > content.size() ||
       (relative_offset + data.size()) > content.size())
@@ -218,11 +245,6 @@ void Section::add(FLAGS flag) {
 
 void Section::remove(FLAGS flag) {
   flags(raw_flags() & (~uint32_t(flag)));
-}
-
-void Section::clear(uint8_t v) {
-  content_t clear(size(), v);
-  content(clear);
 }
 
 void Section::accept(Visitor& visitor) const {
