@@ -1,17 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 project(LIEF LANGUAGES C CXX)
 
-enable_language(C)
-enable_language(CXX)
-
-# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
-  cmake_policy(SET CMP0135 NEW)
-endif()
-
-# Enable https://cmake.org/cmake/help/latest/prop_tgt/MSVC_RUNTIME_LIBRARY.html
-cmake_policy(SET CMP0091 NEW)
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Modules
@@ -19,7 +8,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
-include(ExternalProject)
 include(CMakePackageConfigHelpers)
 
 find_package(Git)
@@ -67,8 +55,8 @@ message(STATUS "Caching: ${LIEF_USE_CCACHE}")
 if(LIEF_USE_CCACHE)
   find_program(CCACHE_FOUND ccache)
   if(CCACHE_FOUND)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_FOUND})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_FOUND})
     message(STATUS "Found ccache: ${CCACHE_FOUND}")
   else()
     find_program(SCCACHE_FOUND sccache)
@@ -125,15 +113,12 @@ if(NOT LIEF_PY_LIEF_EXT)
 endif()
 
 if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
-  set_source_files_properties(${mbedtls_src_files} PROPERTIES GENERATED TRUE)
   target_sources(LIB_LIEF PRIVATE ${mbedtls_src_files})
 
   target_include_directories(LIB_LIEF SYSTEM PRIVATE
                              ${MBEDTLS_INCLUDE_DIRS}
                             "${MBEDTLS_SOURCE_DIR}/library"
   )
-
-  add_dependencies(LIB_LIEF lief_mbed_tls)
 else()
   find_package(MbedTLS 4.0.0 REQUIRED)
   target_link_libraries(LIB_LIEF PRIVATE
@@ -158,7 +143,7 @@ if(WIN32 AND BUILD_SHARED_LIBS)
 endif()
 
 if(MSVC)
-  add_compile_options(/bigobj)
+  target_compile_options(LIB_LIEF PRIVATE /bigobj)
 endif()
 
 if(BUILD_SHARED_LIBS OR LIEF_FORCE_API_EXPORTS)
@@ -225,16 +210,9 @@ if(LIEF_ENABLE_JSON)
     find_package(nlohmann_json REQUIRED)
     target_link_libraries(LIB_LIEF PRIVATE nlohmann_json::nlohmann_json)
   else()
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann/json.hpp
-      COMMAND
-        ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann
-      COMMAND
-        ${CMAKE_COMMAND} -E copy_directory ${LIBJSON_SOURCE_DIR}/
-                                           ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann/
-      DEPENDS lief_libjson)
-
-    target_sources(LIB_LIEF PRIVATE
-                   ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann/json.hpp)
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann)
+    file(COPY ${LIBJSON_SOURCE_DIR}/
+         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/internal/nlohmann/)
 
     target_include_directories(LIB_LIEF PRIVATE
                                ${CMAKE_CURRENT_BINARY_DIR}/)
@@ -247,7 +225,6 @@ if(LIEF_FROZEN_ENABLED)
     find_package(frozen REQUIRED)
     target_link_libraries(LIB_LIEF PRIVATE frozen::frozen)
   else()
-    add_dependencies(LIB_LIEF lief_frozen)
     target_include_directories(LIB_LIEF
       PRIVATE "${FROZEN_INCLUDE_DIR}")
   endif()
@@ -262,37 +239,22 @@ if(LIEF_EXTERNAL_EXPECTED)
   find_package(tl-expected REQUIRED)
   target_link_libraries(LIB_LIEF PUBLIC tl::expected)
 else()
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/expected.hpp
-    COMMAND
-      ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
-    COMMAND
-      ${CMAKE_COMMAND} -E copy_directory ${EXPECTED_SRC_DIR}/include/tl/
-      ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
-    DEPENDS lief_expected)
-
-  target_sources(LIB_LIEF PRIVATE
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/expected.hpp)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/)
+  file(COPY ${EXPECTED_SRC_DIR}/include/tl/
+       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/)
 endif()
 
 
 # =======================================
 # utfcpp
 # =======================================
-
 if(LIEF_OPT_UTFCPP_EXTERNAL)
   find_package(utf8cpp REQUIRED)
   target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)
 else()
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/internal/utfcpp/utf8.h
-    COMMAND
-      ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/internal/
-    COMMAND
-      ${CMAKE_COMMAND} -E copy_directory ${UTFCPP_INCLUDE_DIR}/
-      ${CMAKE_CURRENT_BINARY_DIR}/internal/utfcpp
-    DEPENDS lief_utfcpp)
-
-  target_sources(LIB_LIEF PRIVATE
-    ${CMAKE_CURRENT_BINARY_DIR}/internal/utfcpp/utf8.h)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/internal/)
+  file(COPY ${UTFCPP_INCLUDE_DIR}/
+       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/internal/utfcpp)
 endif()
 
 # =======================================
@@ -306,16 +268,9 @@ if(LIEF_EXTERNAL_SPAN)
                                "$<BUILD_INTERFACE:${LIEF_EXTERNAL_SPAN_DIR}>")
   endif()
 else()
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/span.hpp
-    COMMAND
-      ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
-    COMMAND
-      ${CMAKE_COMMAND} -E copy_directory ${TCB_SPAN_SRC_DIR}/
-      ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/
-    DEPENDS lief_span)
-
-  target_sources(LIB_LIEF PRIVATE
-    ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/span.hpp)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/)
+  file(COPY ${TCB_SPAN_SRC_DIR}/
+       DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/include/LIEF/third-party/internal/)
 endif()
 
 target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)
@@ -335,8 +290,7 @@ set_target_properties(LIB_LIEF
              C_VISIBILITY_PRESET       hidden)
 
 if(UNIX AND NOT APPLE)
-  set_property(TARGET LIB_LIEF APPEND
-               PROPERTY LINK_FLAGS "-Wl,--gc-sections -Wl,--exclude-libs,ALL")
+  target_link_options(LIB_LIEF PRIVATE -Wl,--gc-sections -Wl,--exclude-libs,ALL)
 endif()
 
 target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
@@ -348,8 +302,7 @@ if(LIEF_ASAN)
   message(STATUS "Address sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=address)
 
-  set_property(TARGET LIB_LIEF
-               APPEND PROPERTY LINK_FLAGS -fsanitize=address)
+  target_link_options(LIB_LIEF PUBLIC -fsanitize=address)
   target_link_libraries(LIB_LIEF INTERFACE libclang_rt.asan.so)
 endif()
 
@@ -357,8 +310,7 @@ if(LIEF_LSAN)
   message(STATUS "Leak sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=leak)
 
-  set_property(TARGET LIB_LIEF
-               APPEND PROPERTY LINK_FLAGS -fsanitize=leak)
+  target_link_options(LIB_LIEF PUBLIC -fsanitize=leak)
 
   target_link_libraries(LIB_LIEF INTERFACE lsan)
 endif()
@@ -367,8 +319,7 @@ if(LIEF_TSAN)
   message(STATUS "Thread sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=thread)
 
-  set_property(TARGET LIB_LIEF
-               APPEND PROPERTY LINK_FLAGS -fsanitize=thread)
+  target_link_options(LIB_LIEF PUBLIC -fsanitize=thread)
 
   target_link_libraries(LIB_LIEF INTERFACE tsan)
 endif()
@@ -377,11 +328,9 @@ if(LIEF_USAN)
   message(STATUS "Undefined sanitizer enabled")
   list(APPEND SANITIZER_FLAGS -fsanitize=undefined,null,alignment)
 
-  set_property(TARGET LIB_LIEF
-               APPEND PROPERTY LINK_FLAGS -fsanitize=undefined,null,alignment)
   target_link_options(LIB_LIEF PUBLIC -fsanitize=undefined,null,alignment)
 
-  target_link_libraries(LIB_LIEF PUBLIC ubsan -fsanitize=undefined,null,alignment)
+  target_link_libraries(LIB_LIEF PUBLIC ubsan)
 endif()
 
 set(LIEF_SANITIZER OFF)
@@ -394,15 +343,12 @@ if(LIEF_SANITIZER)
   target_compile_options(LIB_LIEF PUBLIC ${SANITIZER_FLAGS})
   add_subdirectory(tests/sanitizer)
 endif()
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Fuzzing options
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if(LIEF_FUZZING)
   set(FUZZING_FLAGS -fno-omit-frame-pointer -g -O2 -fsanitize=fuzzer-no-link)
-  set(FUZZING_LINKER_FLAGS -fsanitize=fuzzer-no-link)
-  set_property(TARGET LIB_LIEF
-               APPEND PROPERTY LINK_FLAGS ${FUZZING_LINKER_FLAGS})
+  target_link_options(LIB_LIEF PUBLIC -fsanitize=fuzzer-no-link)
 
   target_compile_options(LIB_LIEF PRIVATE ${FUZZING_FLAGS})
   target_link_libraries(LIB_LIEF PUBLIC pthread)

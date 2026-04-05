@@ -1,7 +1,4 @@
-if(__add_lief_git)
-  return()
-endif()
-set(__add_lief_git ON)
+include_guard(GLOBAL)
 
 
 execute_process(
@@ -44,7 +41,7 @@ string(COMPARE NOTEQUAL "${LIEF_GIT_COMMIT_TAGGED}" "" LIEF_IS_TAGGED)
 string(REGEX MATCHALL "([0-9]+)" VERSION_STRING "${LIEF_GIT_TAG}")
 
 message(STATUS "Tagged: ${LIEF_IS_TAGGED}")
-if (${LIEF_IS_TAGGED})
+if (LIEF_IS_TAGGED)
   message(STATUS "Tag: ${LIEF_GIT_TAG}")
 else()
   if(LIEF_GIT_BRANCH MATCHES "^release[-/]")
@@ -64,7 +61,7 @@ if (VERSION_STRING)
     set(LIEF_VERSION_PATCH 0)
   endif()
 
-  if (NOT ${LIEF_IS_TAGGED})
+  if (NOT LIEF_IS_TAGGED)
     if(LIEF_GIT_BRANCH MATCHES "^release[-/]")
       message(STATUS "Release branch")
     else()

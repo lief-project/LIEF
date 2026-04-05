@@ -1,7 +1,4 @@
-if(__add_lief_options)
-  return()
-endif()
-set(__add_lief_options ON)
+include_guard(GLOBAL)
 include(CMakeDependentOption)
 
 option(LIEF_TESTS                      "Enable tests"                               OFF)

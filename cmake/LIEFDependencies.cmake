@@ -1,7 +1,6 @@
-if(__add_lief_dependencies)
-  return()
-endif()
-set(__add_lief_dependencies ON)
+include_guard(GLOBAL)
+
+include(FetchContent)
 
 # Json
 # ----
@@ -10,16 +9,12 @@ if(LIEF_ENABLE_JSON)
     set(LIBJSON_VERSION 3.12.0)
     set(LIBJSON_SHA256 SHA256=6a2249e5d61c2a8351abfac218e08e9a43426dddb493950d30f3b8acfbbc648d)
     set(LIBJSON_URL "${THIRD_PARTY_DIRECTORY}/json-${LIBJSON_VERSION}.zip" CACHE STRING "URL to the JSON lib repo")
-    ExternalProject_Add(lief_libjson
-      URL               ${LIBJSON_URL}
-      URL_HASH          ${LIBJSON_SHA256}
-      UPDATE_COMMAND    ""
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND     ""
-      INSTALL_COMMAND   "")
-
-    ExternalProject_get_property(lief_libjson SOURCE_DIR)
-    set(LIBJSON_SOURCE_DIR "${SOURCE_DIR}")
+    FetchContent_Declare(lief_libjson
+      URL      ${LIBJSON_URL}
+      URL_HASH ${LIBJSON_SHA256}
+    )
+    FetchContent_MakeAvailable(lief_libjson)
+    set(LIBJSON_SOURCE_DIR "${lief_libjson_SOURCE_DIR}")
   endif()
   message(STATUS "Enable JSON support")
   set(ENABLE_JSON_SUPPORT 1)
@@ -32,24 +27,28 @@ endif()
 # mbed TLS
 # --------
 if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
-  set(MBED_TLS_VERSION 4.0.0.r0.gec4044008d)
-  set(MBED_TLS_SHA256 SHA256=01aec4471547dec5308853ff0d797611a68a521a10496898b626035dfdc07183)
-  set(MBED_TLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBED_TLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
-  set(MBED_TLS_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbed_tls")
+  set(MBEDTLS_VERSION 4.0.0.r0.gec4044008d)
+  set(MBEDTLS_SHA256 SHA256=01aec4471547dec5308853ff0d797611a68a521a10496898b626035dfdc07183)
+  set(MBEDTLS_URL "${THIRD_PARTY_DIRECTORY}/mbedtls-${MBEDTLS_VERSION}.zip" CACHE STRING "URL to MbedTLS")
+  FetchContent_Declare(lief_mbedtls
+    URL      ${MBEDTLS_URL}
+    URL_HASH ${MBEDTLS_SHA256}
+    SOURCE_SUBDIR "__DO_NOT_BUILD__"
+  )
+  FetchContent_MakeAvailable(lief_mbedtls)
+  set(MBEDTLS_SOURCE_DIR "${lief_mbedtls_SOURCE_DIR}")
 
-  set(SOURCE_DIR mbed_src)
-  set(MBEDTLS_SOURCE_DIR "${SOURCE_DIR}")
-  set(MBEDTLS_INCLUDE_DIRS )
+  set(MBEDTLS_INCLUDE_DIRS)
 
   list(APPEND MBEDTLS_INCLUDE_DIRS
-    "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_DIR}/include"
-    "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_DIR}/library"
-    "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_DIR}/tf-psa-crypto/include"
-    "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_DIR}/tf-psa-crypto/drivers/builtin/include"
-    "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_DIR}/tf-psa-crypto/core"
-    "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_DIR}/tf-psa-crypto/drivers/builtin/src"
-    "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_DIR}/tf-psa-crypto/drivers/everest/include/tf-psa-crypto/private/everest"
-    "${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_DIR}/tf-psa-crypto/drivers/everest/include/tf-psa-crypto/private/everest/kremlib"
+    "${MBEDTLS_SOURCE_DIR}/include"
+    "${MBEDTLS_SOURCE_DIR}/library"
+    "${MBEDTLS_SOURCE_DIR}/tf-psa-crypto/include"
+    "${MBEDTLS_SOURCE_DIR}/tf-psa-crypto/drivers/builtin/include"
+    "${MBEDTLS_SOURCE_DIR}/tf-psa-crypto/core"
+    "${MBEDTLS_SOURCE_DIR}/tf-psa-crypto/drivers/builtin/src"
+    "${MBEDTLS_SOURCE_DIR}/tf-psa-crypto/drivers/everest/include/tf-psa-crypto/private/everest"
+    "${MBEDTLS_SOURCE_DIR}/tf-psa-crypto/drivers/everest/include/tf-psa-crypto/private/everest/kremlib"
   )
 
   set(mbedtls_src_files
@@ -168,17 +167,6 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
     "${MBEDTLS_SOURCE_DIR}/tf-psa-crypto/drivers/p256-m/p256-m/p256-m.c"
     "${MBEDTLS_SOURCE_DIR}/tf-psa-crypto/drivers/p256-m/p256-m_driver_entrypoints.c"
   )
-
-  ExternalProject_Add(lief_mbed_tls
-    SOURCE_DIR        ${SOURCE_DIR}
-    PREFIX            ${MBED_TLS_PREFIX}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    INSTALL_COMMAND   ""
-    URL               ${MBED_TLS_URL}
-    URL_HASH          ${MBED_TLS_SHA256}
-    UPDATE_COMMAND    "" # repetitive update are a pain
-    BUILD_BYPRODUCTS  ${mbedtls_src_files})
 endif()
 
 add_library(lief_spdlog INTERFACE)
@@ -193,17 +181,13 @@ else()
   set(SPDLOG_VERSION 1.17.0)
   set(SPDLOG_SHA256 SHA256=b11912a82d149792fef33fabd0503b13d54aeac25c1464755461d4108ea71fc2)
   set(SPDLOG_URL "${THIRD_PARTY_DIRECTORY}/spdlog-${SPDLOG_VERSION}.zip" CACHE STRING "URL to the spdlog source")
-  ExternalProject_Add(lief_spdlog_project
-    URL               ${SPDLOG_URL}
-    URL_HASH          ${SPDLOG_SHA256}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    UPDATE_COMMAND    ""
-    INSTALL_COMMAND   "")
-
-  ExternalProject_get_property(lief_spdlog_project SOURCE_DIR)
-  set(SPDLOG_SOURCE_DIR "${SOURCE_DIR}")
-  add_dependencies(lief_spdlog lief_spdlog_project)
+  FetchContent_Declare(lief_spdlog_project
+    URL      ${SPDLOG_URL}
+    URL_HASH ${SPDLOG_SHA256}
+    SOURCE_SUBDIR "__DO_NOT_BUILD__"
+  )
+  FetchContent_MakeAvailable(lief_spdlog_project)
+  set(SPDLOG_SOURCE_DIR "${lief_spdlog_project_SOURCE_DIR}")
   target_include_directories(lief_spdlog SYSTEM INTERFACE "$<BUILD_INTERFACE:${SPDLOG_SOURCE_DIR}/include>")
 endif()
 
@@ -219,16 +203,12 @@ if (LIEF_SUPPORT_CXX14 AND NOT LIEF_DISABLE_FROZEN)
     set(FROZEN_VERSION 61dce5a)
     set(FROZEN_SHA256 SHA256=c94ba33d5369749e8d8ba12fb87d60de02ddac981051383a8d321968abb6a314)
     set(FROZEN_URL "${THIRD_PARTY_DIRECTORY}/frozen-${FROZEN_VERSION}.zip" CACHE STRING "URL to Frozen")
-    ExternalProject_Add(lief_frozen
-      URL               ${FROZEN_URL}
-      URL_HASH          ${FROZEN_SHA256}
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND     ""
-      UPDATE_COMMAND    ""
-      INSTALL_COMMAND   "")
-
-    ExternalProject_get_property(lief_frozen SOURCE_DIR)
-    set(FROZEN_INCLUDE_DIR "${SOURCE_DIR}/include")
+    FetchContent_Declare(lief_frozen
+      URL      ${FROZEN_URL}
+      URL_HASH ${FROZEN_SHA256}
+    )
+    FetchContent_MakeAvailable(lief_frozen)
+    set(FROZEN_INCLUDE_DIR "${lief_frozen_SOURCE_DIR}/include")
   endif()
 endif()
 
@@ -238,16 +218,14 @@ if(NOT LIEF_EXTERNAL_EXPECTED)
   set(EXPECTED_VERSION 1.3.1)
   set(EXPECTED_SHA256 SHA256=68bbfd81a6d312c4518b5a1831f465fa03811355af9aa9c7403348545d1d2a56)
   set(EXPECTED_URL "${THIRD_PARTY_DIRECTORY}/expected-${EXPECTED_VERSION}.zip" CACHE STRING "URL to Expected")
-  ExternalProject_Add(lief_expected
-    URL               ${EXPECTED_URL}
-    URL_HASH          ${EXPECTED_SHA256}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    UPDATE_COMMAND    ""
-    INSTALL_COMMAND   "")
-
-  ExternalProject_get_property(lief_expected SOURCE_DIR)
-  set(EXPECTED_SRC_DIR "${SOURCE_DIR}")
+  set(EXPECTED_BUILD_TESTS OFF)
+  set(EXPECTED_BUILD_PACKAGE OFF)
+  FetchContent_Declare(lief_expected
+    URL      ${EXPECTED_URL}
+    URL_HASH ${EXPECTED_SHA256}
+  )
+  FetchContent_MakeAvailable(lief_expected)
+  set(EXPECTED_SRC_DIR "${lief_expected_SOURCE_DIR}")
 endif()
 
 # utfcpp
@@ -256,16 +234,12 @@ if(NOT LIEF_OPT_UTFCPP_EXTERNAL)
   set(UTFCPP_VERSION 4.0.9)
   set(UTFCPP_SHA256 SHA256=73802895d0cf7b000cdf8e6ee5d69b963a829d4ea419562afd8f190adef87d5f)
   set(UTFCPP_URL "${THIRD_PARTY_DIRECTORY}/utfcpp-${UTFCPP_VERSION}.zip" CACHE STRING "URL to UTFCPP")
-  ExternalProject_Add(lief_utfcpp
-    URL               ${UTFCPP_URL}
-    URL_HASH          ${UTFCPP_SHA256}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    UPDATE_COMMAND    ""
-    INSTALL_COMMAND   "")
-
-  ExternalProject_get_property(lief_utfcpp SOURCE_DIR)
-  set(UTFCPP_INCLUDE_DIR "${SOURCE_DIR}/source")
+  FetchContent_Declare(lief_utfcpp
+    URL      ${UTFCPP_URL}
+    URL_HASH ${UTFCPP_SHA256}
+  )
+  FetchContent_MakeAvailable(lief_utfcpp)
+  set(UTFCPP_INCLUDE_DIR "${lief_utfcpp_SOURCE_DIR}/source")
 endif()
 
 # https://github.com/tcbrindle/span
@@ -274,14 +248,10 @@ if(NOT LIEF_EXTERNAL_SPAN)
   set(TCB_SPAN_VERSION b70b0ff)
   set(TCB_SPAN_SHA256 SHA256=f3d47ed83507fce94245a9f3cf97bc433cd1116f94d11ac0dca1a6f53bbeb239)
   set(TCB_SPAN_URL "${THIRD_PARTY_DIRECTORY}/tcb-span-${TCB_SPAN_VERSION}.zip" CACHE STRING "URL to tcb/span")
-  ExternalProject_Add(lief_span
-    URL               ${TCB_SPAN_URL}
-    URL_HASH          ${TCB_SPAN_SHA256}
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND     ""
-    UPDATE_COMMAND    ""
-    INSTALL_COMMAND   "")
-
-  ExternalProject_get_property(lief_span SOURCE_DIR)
-  set(TCB_SPAN_SRC_DIR "${SOURCE_DIR}")
+  FetchContent_Declare(lief_span
+    URL      ${TCB_SPAN_URL}
+    URL_HASH ${TCB_SPAN_SHA256}
+  )
+  FetchContent_MakeAvailable(lief_span)
+  set(TCB_SPAN_SRC_DIR "${lief_span_SOURCE_DIR}")
 endif()
