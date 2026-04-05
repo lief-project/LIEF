@@ -16,7 +16,6 @@
  */
 #ifndef LIEF_ITERATORS_H
 #define LIEF_ITERATORS_H
-#include <cmath>
 #include <cstddef>
 #include <cassert>
 #include <iterator>
@@ -57,10 +56,29 @@ class ref_iterator {
   using ref_t = typename ref_iterator::reference;
   using pointer_t = typename ref_iterator::pointer;
 
-  ref_iterator(T container) :
-    container_{std::forward<T>(container)} {
-    it_ = std::begin(container_);
+  ref_iterator(ref_iterator&& other) noexcept :
+    container_{std::forward<T>(other.container_)},
+    it_{std::begin(container_)},
+    distance_{other.distance_} {
+    std::advance(it_, distance_);
   }
+
+  ref_iterator& operator=(ref_iterator&& other) noexcept {
+    if (other == &this) {
+      return *this;
+    }
+    container_ = std::forward<T>(other.container_);
+    it_ = std::begin(other.container_);
+    distance_ = other.distance_;
+    std::advance(it_, distance_);
+    return *this;
+  }
+
+  ~ref_iterator() = default;
+
+  ref_iterator(T container) :
+    container_{std::forward<T>(container)},
+    it_(std::begin(container_)) {}
 
   ref_iterator(const ref_iterator& copy) :
     container_{copy.container_},
@@ -68,7 +86,6 @@ class ref_iterator {
     distance_{copy.distance_} {
     std::advance(it_, distance_);
   }
-
 
   ref_iterator& operator=(ref_iterator other) {
     swap(other);
@@ -289,13 +306,42 @@ class filter_iterator {
   using pointer_t = typename filter_iterator::pointer;
   using filter_t = std::function<bool(const typename DT::value_type&)>;
 
+  filter_iterator(filter_iterator&& other) noexcept :
+    size_c_(other.size_c_),
+    size_cached_(other.size_cached_),
+    container_(std::forward<T>(other.container_)),
+    it_(std::begin(container_)),
+    filters_{std::move(other.filters_)},
+    distance_(other.distance_) {
+    std::advance(it_, distance_);
+  }
+
+  filter_iterator& operator=(filter_iterator&& other) noexcept {
+    if (this == &other) {
+      return *this;
+    }
+
+    size_c_ = other.size_c_;
+    size_cached_ = other.size_cached_;
+    container_ = std::forward<T>(other.container_);
+    it_ = std::begin(container_);
+    filters_ = std::move(other.filters_);
+    distance_ = other.distance_;
+
+    std::advance(it_, distance_);
+
+    return *this;
+  }
+
+  ~filter_iterator() = default;
+
   filter_iterator(T container, filter_t filter) :
     container_{std::forward<T>(container)},
+    it_(std::begin(container_)),
     filters_{} {
 
-    it_ = std::begin(container_);
 
-    filters_.push_back(filter), it_ = std::begin(container_);
+    filters_.push_back(filter);
 
     if (it_ != std::end(container_)) {
       if (!std::all_of(std::begin(filters_), std::end(filters_),
@@ -308,9 +354,9 @@ class filter_iterator {
 
   filter_iterator(T container, const std::vector<filter_t>& filters) :
     container_{std::forward<T>(container)},
+    it_(std::begin(container_)),
     filters_{filters} {
 
-    it_ = std::begin(container_);
 
     if (it_ != std::end(container_)) {
       if (!std::all_of(std::begin(filters_), std::end(filters_),
@@ -323,9 +369,8 @@ class filter_iterator {
 
   filter_iterator(T container) :
     container_{std::forward<T>(container)},
-    filters_{} {
-    it_ = std::begin(container_);
-  }
+    it_(std::begin(container_)),
+    filters_{} {}
 
   filter_iterator(const filter_iterator& copy) :
     container_{copy.container_},
@@ -346,6 +391,7 @@ class filter_iterator {
     std::swap(it_, other.it_);
     std::swap(filters_, other.filters_);
     std::swap(size_c_, other.size_c_);
+    std::swap(size_cached_, other.size_cached_);
     std::swap(distance_, other.distance_);
   }
 
@@ -353,6 +399,7 @@ class filter_iterator {
   filter_iterator& def(filter_t func) {
     filters_.push_back(func);
     size_c_ = 0;
+    size_cached_ = false;
     return *this;
   }
 
@@ -444,23 +491,32 @@ class filter_iterator {
       return container_.size();
     }
 
-    if (size_c_ > 0) {
+    if (size_cached_) {
       return size_c_;
     }
     filter_iterator it = begin();
     size_t size = 0;
 
-    auto end_iter = std::end(it);
+    auto end_iter = it.end();
     for (; it != end_iter; ++it) {
       ++size;
     }
     size_c_ = size;
+    size_cached_ = true;
     return size_c_;
   }
 
 
   bool empty() const {
-    return size() == 0;
+    if (filters_.empty()) {
+      return container_.empty();
+    }
+
+    if (size_cached_) {
+      return size_c_ == 0;
+    }
+
+    return begin() == end();
   }
 
 
@@ -490,6 +546,7 @@ class filter_iterator {
 
 
   mutable size_t size_c_ = 0;
+  mutable bool size_cached_ = false;
   T container_;
   ITERATOR_T it_;
   std::vector<filter_t> filters_;
@@ -511,9 +568,11 @@ class iterator_range {
   public:
   using IteratorTy = IteratorT;
   using IteratorDecayTy = typename std::decay<IteratorT>::type;
-  iterator_range(IteratorT&& it_begin, IteratorT&& it_end) :
-    begin_(std::forward<IteratorT>(it_begin)),
-    end_(std::forward<IteratorT>(it_end)) {}
+
+  template<class T>
+  iterator_range(T&& it_begin, T&& it_end) :
+    begin_(std::forward<T>(it_begin)),
+    end_(std::forward<T>(it_end)) {}
 
   IteratorT begin() const {
     return begin_;
@@ -668,7 +727,7 @@ class iterator_facade_base {
     ReferenceT R;
 
     template<typename RefT>
-    PointerProxy(RefT&& R) :
+    PointerProxy(RefT&& R) : // NOLINT(bugprone-forwarding-reference-overload)
       R(std::forward<RefT>(R)) {}
 
     public:
@@ -781,7 +840,7 @@ template<typename DerivedT, typename WrappedIteratorT,
              std::is_same<T, typename std::iterator_traits<WrappedIteratorT>::
                                  value_type>::value,
              typename std::iterator_traits<WrappedIteratorT>::pointer, T*
-         >,
+         >::type,
          typename ReferenceT = typename std::conditional<
              std::is_same<T, typename std::iterator_traits<WrappedIteratorT>::
                                  value_type>::value,
@@ -887,8 +946,8 @@ struct pointee_iterator
     > {
   pointee_iterator() = default;
   template<typename U>
-  pointee_iterator(U&& u) :
-    pointee_iterator::iterator_adaptor_base(std::forward<U&&>(u)) {}
+  pointee_iterator(U&& u) : // NOLINT(bugprone-forwarding-reference-overload)
+    pointee_iterator::iterator_adaptor_base(std::forward<U>(u)) {}
 
   T& operator*() const {
     return **this->I;
