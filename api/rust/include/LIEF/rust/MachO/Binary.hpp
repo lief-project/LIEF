@@ -59,6 +59,8 @@
 
 #include "LIEF/rust/ObjC/Metadata.hpp"
 
+#include "LIEF/rust/range.hpp"
+
 class MachO_Binary_write_config_t {
   public:
   bool linkedit;
@@ -496,6 +498,11 @@ class MachO_Binary : public AbstractBinary {
   auto fat_offset() const { return impl().fat_offset(); }
 
   auto overlay() const { return make_span(impl().overlay()); }
+
+  auto tlv_initial_content_range() const {
+    auto r = impl().tlv_initial_content_range();
+    return Range{r.start, r.end};
+  }
 
   bool is_valid_addr(uint64_t address) const { return impl().is_valid_addr(address); }
 

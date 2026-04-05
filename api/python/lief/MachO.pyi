@@ -1024,6 +1024,9 @@ class Binary(lief.Binary):
     @property
     def off_ranges(self) -> Binary.range_t: ...
 
+    @property
+    def tlv_initial_content_range(self) -> Binary.range_t: ...
+
     def is_valid_addr(self, address: int) -> bool: ...
 
     @overload

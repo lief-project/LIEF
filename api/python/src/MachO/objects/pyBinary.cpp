@@ -527,6 +527,10 @@ void create<Binary>(nb::module_& m) {
         &Binary::off_ranges,
         "Return the range of offsets as a tuple ``(off_start, off_end)``"_doc)
 
+    .def_prop_ro("tlv_initial_content_range",
+        &Binary::tlv_initial_content_range,
+        "Return the TLV initial content range"_doc)
+
     .def("is_valid_addr",
         &Binary::is_valid_addr,
         R"delim(

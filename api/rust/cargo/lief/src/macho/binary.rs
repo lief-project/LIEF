@@ -434,6 +434,11 @@ impl Binary {
         to_slice!(self.ptr.overlay());
     }
 
+    /// Return the TLV initial content range
+    pub fn tlv_initial_content_range(&self) -> crate::Range {
+        crate::Range::from_ffi(&self.ptr.tlv_initial_content_range())
+    }
+
     /// Check if the given address is valid for this binary
     pub fn is_valid_addr(&self, address: u64) -> bool {
         self.ptr.is_valid_addr(address)

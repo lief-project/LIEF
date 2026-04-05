@@ -596,6 +596,9 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return the range of offsets
   range_t off_ranges() const;
 
+  /// Return the TLV initial content range
+  range_t tlv_initial_content_range() const;
+
   /// Check if the given address is encompassed in the
   /// binary's virtual addresses range
   bool is_valid_addr(uint64_t address) const {

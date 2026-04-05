@@ -1665,30 +1665,11 @@ bool LayoutChecker::check_tls() {
   const bool is32 = ptr_size() == sizeof(uint32_t);
   const bool is64 = ptr_size() == sizeof(uint64_t);
   assert(is32 || is64);
-  [[maybe_unused]] bool all_zero_fill = true;
   ThreadLocalVariables const* sec_vars = nullptr;
-  LIEF::range_t initial_content;
+  const Binary::range_t initial_content = binary.tlv_initial_content_range();
   for (const Section& S : binary.sections()) {
     if (const auto* sec = S.cast<ThreadLocalVariables>()) {
       sec_vars = sec;
-    }
-    switch (S.type()) {
-      default: break;
-      case Section::TYPE::THREAD_LOCAL_REGULAR:
-      {
-        all_zero_fill = false;
-        [[fallthrough]];
-      }
-      case Section::TYPE::THREAD_LOCAL_ZEROFILL:
-      {
-        if (initial_content.low == 0) {
-          initial_content.low = S.virtual_address();
-          initial_content.high = initial_content.low + S.size();
-        } else {
-          initial_content.high = S.virtual_address() + S.size();
-        }
-        break;
-      }
     }
 
     // See ThreadLocalVariables.cpp

@@ -2000,6 +2000,28 @@ Binary::range_t Binary::off_ranges() const {
   return {min, max};
 }
 
+Binary::range_t Binary::tlv_initial_content_range() const {
+  uint64_t low = 0;
+  uint64_t high = 0;
+  for (const Section& S : sections()) {
+    switch (S.type()) {
+      default: break;
+      case Section::TYPE::THREAD_LOCAL_REGULAR:
+      case Section::TYPE::THREAD_LOCAL_ZEROFILL:
+      {
+        if (low == 0) {
+          low = S.virtual_address();
+          high = low + S.size();
+        } else {
+          high = S.virtual_address() + S.size();
+        }
+        break;
+      }
+    }
+  }
+  return {low, high};
+}
+
 
 LIEF::Binary::functions_t Binary::ctor_functions() const {
   LIEF::Binary::functions_t functions;
