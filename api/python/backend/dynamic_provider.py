@@ -6,7 +6,7 @@ from scikit_build_core.settings.skbuild_read_settings import rich_print
 def dynamic_metadata(field, config) -> str:
     if field == "version":
         version = Versioning().get_version()
-        rich_print(f"[green]LIEF Version: {version}")
+        rich_print("{green}LIEF Version: {version}", version=version)
         return version
 
     if field == "readme":
