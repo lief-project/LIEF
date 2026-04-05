@@ -50,8 +50,8 @@ Python bindings
 
 .. note::
 
-  Since LIEF 0.13.0, `setup.py` has moved from the project root directory
-  to the `api/python` directory.
+  Since LIEF 0.13.0, ``setup.py`` has moved from the project root directory
+  to the ``api/python`` directory.
 
 .. code-block:: console
 
@@ -103,7 +103,7 @@ You can change this behavior by setting it to either ``RelWithDebInfo`` or
    $ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo [...] ..
 
 Alternatively, the Python bindings can also be compiled with debug information
-by changing the ``type`` in the `[lief.build]` section of `config-default.toml`:
+by changing the ``type`` in the ``[lief.build]`` section of ``config-default.toml``:
 
 .. code-block:: toml
 
@@ -118,7 +118,7 @@ by changing the ``type`` in the `[lief.build]` section of `config-default.toml`:
 
     $ PYLIEF_CONF=~/lief-debug.toml pip install [-e] api/python
 
-  With `lief-debug.toml` set to:
+  With ``lief-debug.toml`` set to:
 
   .. code-block:: toml
 

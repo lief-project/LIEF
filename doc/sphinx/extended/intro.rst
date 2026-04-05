@@ -165,7 +165,7 @@ You can then use all the extended features in Rust:
 
 .. code-block:: console
 
-  $ cargo build my-lief-extended-projet
+  $ cargo build my-lief-extended-project
 
 .. _extended-llvm:
 

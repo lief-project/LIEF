@@ -29,7 +29,7 @@ The user can process this result as follows:
 
 .. code-block:: cpp
 
-   result<PE_TYPE> pe_type = PE::get_type("/tmp/NotPE.elf")
+   result<PE_TYPE> pe_type = PE::get_type("/tmp/NotPE.elf");
    if (pe_type) {
      PE_TYPE effective_type = pe_type.value();
    } else {

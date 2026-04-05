@@ -146,8 +146,8 @@ debug information:
         dbg->find_function(0x137a70);
 
         dbg->find_variable("_ZNSt12out_of_rangeC1EPKc");
-        dbg->find_function("std::out_of_range::out_of_range(char const*)");
-        dbg->find_function(0x2773a0);
+        dbg->find_variable("std::out_of_range::out_of_range(char const*)");
+        dbg->find_variable(0x2773a0);
 
    .. tab:: :fa:`brands fa-rust` Rust
 

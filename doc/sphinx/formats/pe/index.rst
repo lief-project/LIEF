@@ -251,7 +251,7 @@ as a buffer of bytes:
         pe->write(os);
         std::string buffer = os.str();
 
-        const auto* start = reinterpret_cast<const uint8_t>(buffer.data());
+        const auto* start = reinterpret_cast<const uint8_t*>(buffer.data());
         size_t size = buffer.size();
 
 PDB Support

@@ -8,7 +8,7 @@ Blog Posts & White Papers
    :class: strike
 
 * 2021-06-03: `QBDL: QuarkslaB Dynamic Loader <https://www.sstic.org/2021/presentation/qbdl_quarkslab_dynamic_loader/>`_
-* 2021-04-27: `An Empirical Evaluation of Automated Machine LearningTechniques for Malware Detection - IWSPA 21 <https://dl.acm.org/doi/pdf/10.1145/3445970.3451155>`_
+* 2021-04-27: `An Empirical Evaluation of Automated Machine Learning Techniques for Malware Detection - IWSPA 21 <https://dl.acm.org/doi/pdf/10.1145/3445970.3451155>`_
 * 2021-01-25: `Static PE antimalware evasion - Francisco Javier Gomez Galvez <http://openaccess.uoc.edu/webapps/o2/bitstream/10609/127010/7/fgomezgalvezTFM0121memoria.pdf>`_
 * 2020-10-23: `[Write-up] Using a PIE binary as a Shared Library — HCSC-2020 CTF Writeup <https://medium.com/bugbountywriteup/using-a-pie-binary-as-a-shared-library-hcsc-2020-ctf-writeup-390a8a437f31>`_ by `István Tóth <https://twitter.com/an0n_r0>`_
 * 2020-02-04: `x0rro — A PE/ELF/MachO Crypter for x86 and x86_64 Based on Radare2 by phra <https://iwantmore.pizza/posts/x0rro.html>`_
@@ -17,8 +17,8 @@ Blog Posts & White Papers
 * 2018-10-06: `[Write-up] Flare-on Challenge (Level 3) <https://bruce30262.github.io/flare-on-challenge-2018-write-up/>`_
 * 2018-09-30: [Write-up] DragonCTF-Teaser-Brutal Oldskull by z3r0s
 * 2018-09-07: `Using a non-system glibc <https://www.ayrx.me/using-a-non-system-libc>`_ by `Ayrx <https://www.ayrx.me/>`_
-* 2018-07-02: `PWN problem patch method commonly used in competition  <http://p4nda.top/2018/07/02/patch-in-pwn/>`_
-* 2018-05-03: `When SideChannelMarvels meet LIEF  <https://blog.quarkslab.com/when-sidechannelmarvels-meet-lief.html>`_
+* 2018-07-02: `PWN problem patch method commonly used in competition <http://p4nda.top/2018/07/02/patch-in-pwn/>`_
+* 2018-05-03: `When SideChannelMarvels meet LIEF <https://blog.quarkslab.com/when-sidechannelmarvels-meet-lief.html>`_
 * 2018-03-11: `Fuzzing Arbitrary Functions in ELF Binaries <https://blahcat.github.io/posts/2018/03/11/fuzzing-arbitrary-functions-in-elf-binaries.html/>`_
 * 2018-02-01: `Dissecting Mobile Native Code Packers Case Study <https://blog.zimperium.com/dissecting-mobile-native-code-packers-case-study/>`_
 * 2017-11-02: `Have Fun With LIEF and Executable Formats  <https://blog.quarkslab.com/have-fun-with-lief-and-executable-formats.html>`_

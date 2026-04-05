@@ -69,7 +69,7 @@ for questions related to more complex project setups.
 find_package()
 **************
 
-Using `CMake find_package() <https://cmake.org/cmake/help/v3.0/command/find_package.html>`_:
+Using `CMake find_package() <https://cmake.org/cmake/help/latest/command/find_package.html>`_:
 
 .. literalinclude:: ../../examples/cmake/find_package/CMakeLists.txt
    :language: cmake
@@ -97,15 +97,15 @@ First, configure the options you want to use as defaults for the LIEF project:
    :language: cmake
    :lines: 7-19
 
-Using `CMake add_subdirectory() <https://cmake.org/cmake/help/v3.0/command/add_subdirectory.html>`_
+Using `CMake add_subdirectory() <https://cmake.org/cmake/help/latest/command/add_subdirectory.html>`_
 to add LIEF as a submodule from a source directory:
 
 .. literalinclude:: ../../examples/cmake/add_subdirectory/CMakeLists.txt
    :language: cmake
    :lines: 21-28
 
-If you are using CMake 3.11 or later, you can use the
-`CMake FetchContent module <https://cmake.org/cmake/help/v3.11/module/FetchContent.html>`_
+You can also use the
+`CMake FetchContent module <https://cmake.org/cmake/help/latest/module/FetchContent.html>`_
 to download or specify a LIEF source directory outside the current directory:
 
 .. literalinclude:: ../../examples/cmake/add_subdirectory/CMakeLists.txt
@@ -128,8 +128,8 @@ A *full* example is available in the ``examples/cmake/add_subdirectory`` directo
 External Project
 ****************
 
-If you don't want to use LIEF as a submodule or upgrade to CMake 3.11,
-you can use `CMake External Project <https://cmake.org/cmake/help/v3.0/module/ExternalProject.html>`_
+If you don't want to use LIEF as a submodule,
+you can use `CMake External Project <https://cmake.org/cmake/help/latest/module/ExternalProject.html>`_
 to set up your project as a `*superbuild* <https://www.kitware.com/cmake-superbuilds-git-submodules>`_:
 
 .. literalinclude:: ../../examples/cmake/external_project/CMakeLists.txt
@@ -193,6 +193,6 @@ LIEF's ``include/`` and ``lib/`` directories:
 - ``include/``:  ``Build Settings > Search Paths > Header Search Paths``
 - ``lib/``:  ``Build Settings > Search Paths > Library Search Paths``
 
-Then, you can add ``libLIEF.lib`` or ``libLIEF.dylib`` to the list of libraries to link against:
+Then, you can add ``libLIEF.a`` or ``libLIEF.dylib`` to the list of libraries to link against:
 
 ``Build Phases > Link Binary With Libraries``

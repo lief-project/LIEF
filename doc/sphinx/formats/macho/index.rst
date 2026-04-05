@@ -168,7 +168,7 @@ as a buffer of bytes:
         macho->write(os);
         std::string buffer = os.str();
 
-        const auto* start = reinterpret_cast<const uint8_t>(buffer.data());
+        const auto* start = reinterpret_cast<const uint8_t*>(buffer.data());
         size_t size = buffer.size();
 
 
@@ -249,7 +249,7 @@ One can change the directory of ``libmylib.dylib`` with the following code:
 
         macho = lief.MachO.parse("hello.bin")
         lib: lief.MachO.DylibCommand = macho.find_library("libmylib.dylib")
-        lib.name = "/opt/hombrew/my_package/libmylib.dylib"
+        lib.name = "/opt/homebrew/my_package/libmylib.dylib"
 
         macho.write("hello_fixed.bin")
 
@@ -259,7 +259,7 @@ One can change the directory of ``libmylib.dylib`` with the following code:
 
         std::unique_ptr<LIEF::MachO::Binary> macho = LIEF::MachO::Parser::parse("hello.bin").take(0);
         LIEF::MachO::DylibCommand* lib = macho->find_library("libmylib.dylib");
-        lib->name("/opt/hombrew/my_package/libmylib.dylib");
+        lib->name("/opt/homebrew/my_package/libmylib.dylib");
 
         macho->write("hello_fixed.bin");
 
@@ -271,7 +271,7 @@ One can change the directory of ``libmylib.dylib`` with the following code:
         let mut binary = fat.iter().next().unwrap();
 
         let mut lib = binary.find_library("libmylib.dylib").unwrap();
-        lib.set_name("/opt/hombrew/my_package/libmylib.dylib");
+        lib.set_name("/opt/homebrew/my_package/libmylib.dylib");
 
         binary.write("hello_fixed.bin");
 
@@ -294,7 +294,7 @@ feature of Mach-O binaries:
       .. code-block:: python
 
         macho = lief.MachO.parse("hello.bin")
-        rpath = lief.MachO.RPathCommand.create("/opt/hombrew/my_package")
+        rpath = lief.MachO.RPathCommand.create("/opt/homebrew/my_package")
         macho.add(rpath)
 
   .. tab:: :fa:`regular fa-file-code` C++
@@ -302,7 +302,7 @@ feature of Mach-O binaries:
       .. code-block:: cpp
 
         std::unique_ptr<LIEF::MachO::Binary> macho = LIEF::MachO::Parser::parse("hello.bin").take(0);
-        auto rpath = LIEF::MachO::RPathCommand::create("/opt/hombrew/my_package");
+        auto rpath = LIEF::MachO::RPathCommand::create("/opt/homebrew/my_package");
         macho->add(*rpath);
 
   .. tab:: :fa:`brands fa-rust` Rust
@@ -312,7 +312,7 @@ feature of Mach-O binaries:
         let fat = lief::macho::FatBinary::parse("hello.bin").unwrap();
         let mut binary = fat.iter().next().unwrap();
 
-        let rpath = RPath::new("/opt/hombrew/my_package");
+        let rpath = RPath::new("/opt/homebrew/my_package");
         binary.add_command(rpath);
 
 2. Then, we can change the library path of ``libmylib.dylib`` to include the RPath prefix:
