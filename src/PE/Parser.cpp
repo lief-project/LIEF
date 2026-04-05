@@ -497,9 +497,9 @@ span<uint8_t> get_payload(Binary& bin, const details::pe_debug& dbg,
     return {};
   }
 
-  LIEF_DEBUG("payload.rva:    {:#08x}", dbg.AddressOfRawData);
-  LIEF_DEBUG("payload.offset: {:#08x}", dbg.PointerToRawData);
-  LIEF_DEBUG("payload.size:   {:#08x}", dbg.SizeOfData);
+  LIEF_DEBUG("Payload RVA:    {:#08x}", dbg.AddressOfRawData);
+  LIEF_DEBUG("Payload offset: {:#08x}", dbg.PointerToRawData);
+  LIEF_DEBUG("Payload size:   {:#08x}", dbg.SizeOfData);
 
   sec = bin.section_from_offset(dbg.PointerToRawData);
   if (sec == nullptr) {

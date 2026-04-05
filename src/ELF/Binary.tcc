@@ -493,7 +493,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
   const uint64_t new_phdr_offset = relocate_phdr_table_auto();
 
   if (new_phdr_offset == 0) {
-    LIEF_ERR("We can't relocate the PHDR table for this binary.");
+    LIEF_ERR("Failed to relocate the PHDR table for this binary");
     return nullptr;
   }
 

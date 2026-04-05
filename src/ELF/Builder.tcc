@@ -58,7 +58,7 @@ template<class ELF_T>
 ok_error_t Builder::build() {
   const char* type =
       ((binary_->type_ == Header::CLASS::ELF32) ? "ELF32" : "ELF64");
-  LIEF_DEBUG("== Re-building {} ==", type);
+  LIEF_DEBUG("Rebuilding {}", type);
 
   if (!config_.keep_empty_version_requirement) {
     binary_->symbol_version_requirements_.erase(
@@ -712,7 +712,7 @@ ok_error_t Builder::build_relocatable() {
 
   auto res = layout->relocate();
   if (!res) {
-    LIEF_ERR("Error(s) occurred during the layout relocation.");
+    LIEF_ERR("Error(s) occurred during the layout relocation");
     return make_error_code(lief_errors::build_error);
   }
 
@@ -788,7 +788,7 @@ ok_error_t Builder::build_sections() {
     return ok();
   }
 
-  LIEF_DEBUG("section headers table at offset: {:#06x}", section_headers_offset);
+  LIEF_DEBUG("Section headers table at offset: {:#06x}", section_headers_offset);
 
   if (header.section_name_table_idx() < binary_->sections_.size()) {
     std::unique_ptr<Section>& string_names_section =
@@ -890,7 +890,7 @@ ok_error_t Builder::build_segments() {
   using Elf_Off = typename ELF_T::Elf_Off;
 
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
-  LIEF_DEBUG("== Build segments ==");
+  LIEF_DEBUG("Building segments");
 
   vector_iostream pheaders(should_swap());
   pheaders.reserve(binary_->segments_.size() * sizeof(Elf_Phdr));
@@ -948,7 +948,7 @@ ok_error_t Builder::build_symtab_symbols() {
 
   auto* layout = static_cast<ExeLayout*>(layout_.get());
 
-  LIEF_DEBUG("== Build .symtab symbols ==");
+  LIEF_DEBUG("Building .symtab symbols");
   Section* symbol_section = binary_->symtab_symbols_section();
   if (symbol_section == nullptr) {
     LIEF_ERR("Can't find the .symtab section");
@@ -1219,7 +1219,7 @@ ok_error_t Builder::build_dynamic_section() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_symbol_hash() {
-  LIEF_DEBUG("== Build SYSV Hash ==");
+  LIEF_DEBUG("Building SYSV hash");
   DynamicEntry* dt_hash = binary_->get(DynamicEntry::TAG::HASH);
 
   if (dt_hash == nullptr) {
@@ -1291,7 +1291,7 @@ ok_error_t Builder::build_symbol_hash() {
 
 template<typename ELF_T>
 ok_error_t Builder::build_hash_table() {
-  LIEF_DEBUG("== Build hash table ==");
+  LIEF_DEBUG("Building hash table");
 
   bool has_error = false;
   if (config_.dt_hash && binary_->has(DynamicEntry::TAG::HASH)) {
@@ -2009,7 +2009,7 @@ ok_error_t Builder::build_notes() {
     return ok();
   }
 
-  LIEF_DEBUG("== Building notes ==");
+  LIEF_DEBUG("Building notes");
   Segment* note_segment = binary_->get(Segment::TYPE::NOTE);
   if (note_segment == nullptr) {
     LIEF_ERR("Can't find the PT_NOTE segment");

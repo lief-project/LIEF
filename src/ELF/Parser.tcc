@@ -930,7 +930,7 @@ ok_error_t Parser::parse_segments() {
   using Elf_Phdr = typename ELF_T::Elf_Phdr;
   using Elf_Off = typename ELF_T::Elf_Off;
 
-  LIEF_DEBUG("== Parse Segments ==");
+  LIEF_DEBUG("Parsing segments");
   const Header& hdr = binary_->header();
   const Elf_Off segment_headers_offset = hdr.program_headers_offset();
   const auto nbof_segments =
@@ -1201,7 +1201,7 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset,
   static_assert(std::is_same_v<REL_T, typename ELF_T::Elf_Rel> ||
                     std::is_same_v<REL_T, typename ELF_T::Elf_Rela>,
                 "REL_T must be Elf_Rel || Elf_Rela");
-  LIEF_DEBUG("== Parsing dynamic relocations ==");
+  LIEF_DEBUG("Parsing dynamic relocations");
 
   // Already parsed
   if (binary_->dynamic_relocations().size() > 0) {
@@ -1239,7 +1239,7 @@ ok_error_t Parser::parse_symtab_symbols(const Section& symtab_section,
                                         const Section& string_section) {
   static constexpr size_t MAX_RESERVED_SYMBOLS = 10000;
   using Elf_Sym = typename ELF_T::Elf_Sym;
-  LIEF_DEBUG("== Parsing symtab symbols ==");
+  LIEF_DEBUG("Parsing symtab symbols");
 
   LIEF::SpanStream stream(symtab_section.content());
 
@@ -1278,7 +1278,7 @@ ok_error_t Parser::parse_dynamic_symbols(uint64_t offset) {
   using Elf_Off = typename ELF_T::Elf_Off;
   static constexpr size_t MAX_RESERVED_SYMBOLS = 10000;
 
-  LIEF_DEBUG("== Parsing dynamics symbols ==");
+  LIEF_DEBUG("Parsing dynamic symbols");
 
   auto res = get_numberof_dynamic_symbols<ELF_T>(config_.count_mtd);
   if (!res) {
@@ -1761,11 +1761,11 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset,
   using Elf_Verneed = typename ELF_T::Elf_Verneed;
   using Elf_Vernaux = typename ELF_T::Elf_Vernaux;
 
-  LIEF_DEBUG("== Parser Symbol version requirement ==");
+  LIEF_DEBUG("Parsing symbol version requirements");
 
   const uint64_t svr_offset = offset;
 
-  LIEF_DEBUG("svr offset: {:#x}", svr_offset);
+  LIEF_DEBUG("svr_offset: {:#x}", svr_offset);
 
   const uint64_t string_offset = get_dynamic_string_table();
 

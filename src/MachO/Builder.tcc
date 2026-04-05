@@ -435,7 +435,7 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
   if (rpath_cmd.original_data_.size() < size_needed ||
       rpath_cmd.size() < size_needed)
   {
-    LIEF_WARN("Not enough room left to rebuild {}."
+    LIEF_WARN("Not enough room left to rebuild {} "
               "required={:#x} available={:#x}",
               rpath_cmd.path(), size_needed, rpath_cmd.original_data_.size());
   }
@@ -1517,8 +1517,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     for (ChainedBindingInfo* binding : info->elements_) {
       const uint64_t rel_offset =
           binding->offset_ - binding->segment()->file_offset();
-      uint8_t* data_ptr =
-          binding->segment_->content().data() + rel_offset;
+      uint8_t* data_ptr = binding->segment_->content().data() + rel_offset;
       LIEF_DEBUG(
           "Write binding (offset={:#012x}): {:#018x} {} in {} offset={:#012x}",
           binding->offset_, binding->address(), binding->symbol()->name(),

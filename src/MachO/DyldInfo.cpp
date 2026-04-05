@@ -1650,7 +1650,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(
     }
 
     if (!info->has_symbol()) {
-      LIEF_ERR("Missing symbol for updating v1 binding.");
+      LIEF_ERR("Missing symbol for updating v1 binding");
       return *this;
     }
     if (info->symbol()->name() != symbol_name) {

@@ -392,7 +392,7 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
 
 
 ok_error_t Parser::parse_symbol_version(uint64_t symbol_version_offset) {
-  LIEF_DEBUG("== Parsing symbol version ==");
+  LIEF_DEBUG("Parsing symbol version");
   LIEF_DEBUG("Symbol version offset: {:#x}", symbol_version_offset);
 
   const auto nb_entries = static_cast<uint32_t>(binary_->dynamic_symbols_.size());
@@ -526,7 +526,7 @@ void Parser::link_symbol_version() {
 }
 
 ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
-  LIEF_DEBUG("== Parsing SYSV hash table ==");
+  LIEF_DEBUG("Parsing SYSV hash table");
   auto sysvhash = std::make_unique<SysvHash>();
 
   stream_->setpos(offset);
@@ -633,7 +633,7 @@ std::unique_ptr<Note> Parser::get_note(uint32_t type, std::string name,
 
 ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   static constexpr auto ERROR_THRESHOLD = 6;
-  LIEF_DEBUG("== Parsing note segment ==");
+  LIEF_DEBUG("Parsing note segment");
   stream_->setpos(offset);
   uint64_t last_offset = offset + size;
   size_t error_count = 0;

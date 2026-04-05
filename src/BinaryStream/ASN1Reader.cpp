@@ -90,7 +90,7 @@ result<size_t> ASN1Reader::read_tag(int tag) {
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
-    LIEF_DEBUG("mbedtls_asn1_get_tag: {}", strerr.c_str());
+    LIEF_DEBUG("Failed in mbedtls_asn1_get_tag: {}", strerr.c_str());
     return make_error_code(lief_errors::read_error);
   }
 
@@ -191,7 +191,7 @@ result<bool> ASN1Reader::read_bool() {
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
-    LIEF_DEBUG("mbedtls_asn1_get_bool: {}", strerr.c_str());
+    LIEF_DEBUG("Failed in mbedtls_asn1_get_bool: {}", strerr.c_str());
     return make_error_code(lief_errors::read_error);
   }
 
@@ -219,7 +219,7 @@ result<std::vector<uint8_t>> ASN1Reader::read_large_int() {
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
-    LIEF_DEBUG("mbedtls_asn1_get_mpi: {}", strerr.c_str());
+    LIEF_DEBUG("Failed in mbedtls_asn1_get_mpi: {}", strerr.c_str());
     return make_error_code(lief_errors::read_error);
   }
 
@@ -232,7 +232,7 @@ result<std::vector<uint8_t>> ASN1Reader::read_large_int() {
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
-    LIEF_DEBUG("mbedtls_asn1_get_mpi: {}", strerr.c_str());
+    LIEF_DEBUG("Failed in mbedtls_asn1_get_mpi: {}", strerr.c_str());
     return make_error_code(lief_errors::read_error);
   }
 
@@ -261,7 +261,7 @@ result<int64_t> ASN1Reader::read_int64() {
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
-    LIEF_DEBUG("mbedtls_asn1_get_mpi: {}", strerr.c_str());
+    LIEF_DEBUG("Failed in mbedtls_asn1_get_mpi: {}", strerr.c_str());
     return make_error_code(lief_errors::read_error);
   }
 
@@ -279,7 +279,7 @@ result<int64_t> ASN1Reader::read_int64() {
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
-    LIEF_DEBUG("mbedtls_asn1_get_mpi: {}", strerr.c_str());
+    LIEF_DEBUG("Failed in mbedtls_asn1_get_mpi: {}", strerr.c_str());
     return make_error_code(lief_errors::read_error);
   }
 
@@ -305,7 +305,7 @@ result<int32_t> ASN1Reader::read_int() {
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
-    LIEF_DEBUG("mbedtls_asn1_get_int: {}", strerr.c_str());
+    LIEF_DEBUG("Failed in mbedtls_asn1_get_int: {}", strerr.c_str());
     return make_error_code(lief_errors::read_error);
   }
 
@@ -395,7 +395,7 @@ result<std::string> ASN1Reader::x509_read_names() {
   int ret = mbedtls_x509_get_name(&p, end, &name);
   if (ret != 0) {
     free_names(name);
-    LIEF_DEBUG("mbedtls_x509_get_name failed with {:d}", ret);
+    LIEF_DEBUG("Call to mbedtls_x509_get_name failed with {:d}", ret);
     return make_error_code(lief_errors::read_error);
   }
   std::array<char, 1024> buffer = {0};
@@ -441,7 +441,7 @@ result<std::unique_ptr<mbedtls_x509_time>> ASN1Reader::x509_read_time() {
   if (ret != 0) {
     std::string strerr(1024, 0);
     mbedtls_strerror(ret, const_cast<char*>(strerr.data()), strerr.size());
-    LIEF_INFO("mbedtls_x509_get_time: {}", strerr.c_str());
+    LIEF_INFO("Failed in mbedtls_x509_get_time: {}", strerr.c_str());
     return make_error_code(lief_errors::read_error);
   }
 

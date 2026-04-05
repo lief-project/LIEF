@@ -366,7 +366,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
 
     const auto& digest_attr =
         static_cast<const PKCS9MessageDigest&>(*it_pkcs9_digest);
-    LIEF_DEBUG("pkcs9-message-digest:\n  {}\n  {}", hex_dump(digest_attr.digest()),
+    LIEF_DEBUG("PKCS9 message digest:\n  {}\n  {}", hex_dump(digest_attr.digest()),
                hex_dump(content_info_hash));
     if (as_vector(digest_attr.digest()) != content_info_hash) {
       return flags | VERIFICATION_FLAGS::BAD_DIGEST;

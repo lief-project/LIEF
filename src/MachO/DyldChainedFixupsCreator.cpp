@@ -294,8 +294,8 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
         uint64_t address = element.addr();
         uint64_t target_offset = address - imagebase;
         LIEF_DEBUG("      address:        {:#018x}", address);
-        LIEF_DEBUG("      target  offset: {:#018x}", target_offset);
-        LIEF_DEBUG("      segment offset: {:#018x}", segment_offset);
+        LIEF_DEBUG("      target_offset:  {:#018x}", target_offset);
+        LIEF_DEBUG("      segment_offset: {:#018x}", segment_offset);
         assert(target_offset >= segment_offset);
         uint64_t offset = target_offset - segment_offset;
 
@@ -314,12 +314,12 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
 
           uint32_t next_page_idx = next_offset / page_size;
           uint32_t next_delta = next_offset % page_size;
-          LIEF_DEBUG("        [next]address:        {:#018x}", address);
-          LIEF_DEBUG("        [next]target  offset: {:#018x}", next_target_offset);
+          LIEF_DEBUG("        [next] address:        {:#018x}", address);
+          LIEF_DEBUG("        [next] target_offset:  {:#018x}", next_target_offset);
 
-          LIEF_DEBUG("        [next]page_idx: {}", next_page_idx);
-          LIEF_DEBUG("        [next]delta: {:#018x}", next_delta);
-          LIEF_DEBUG("        [next]offset: {:#018x}", next_offset);
+          LIEF_DEBUG("        [next] page_idx: {}", next_page_idx);
+          LIEF_DEBUG("        [next] delta: {:#018x}", next_delta);
+          LIEF_DEBUG("        [next] offset: {:#018x}", next_offset);
 
           if (next_page_idx == page_idx) {
             assert((next_delta - delta) % stride == 0);

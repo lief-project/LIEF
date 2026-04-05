@@ -69,7 +69,7 @@ std::unique_ptr<GnuHash> GnuHash::parse(SpanStream& strm, uint64_t dynsymcount) 
   // See: https://github.com/lattera/glibc/blob/master/elf/dl-lookup.c#L860
   // and  https://github.com/lattera/glibc/blob/master/elf/dl-lookup.c#L226
   using uint__ = typename ELF_T::uint;
-  LIEF_DEBUG("== Parsing GNU hash ==");
+  LIEF_DEBUG("Parsing GNU hash");
   const uint64_t opos = strm.pos();
 
   auto gnuhash = std::make_unique<GnuHash>();

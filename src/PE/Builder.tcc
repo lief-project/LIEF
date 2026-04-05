@@ -608,7 +608,7 @@ ok_error_t Builder::build_imports() {
           uint64_t delta = entry.iat_address() - IAT_pos;
           assert(delta % sizeof(uint__) == 0);
           count += delta / sizeof(uint__);
-          LIEF_DEBUG("padding count: {}", delta / sizeof(uint__));
+          LIEF_DEBUG("Padding count: {}", delta / sizeof(uint__));
         } else {
           LIEF_WARN("IAT location mismatch for {}:{} "
                     "(RVA={:#010x}, Expected={:#010x})",

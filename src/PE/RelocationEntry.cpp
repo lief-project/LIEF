@@ -83,7 +83,7 @@ uint64_t RelocationEntry::address() const {
 
 void RelocationEntry::address(uint64_t address) {
   if (relocation_ == nullptr) {
-    LIEF_ERR("parent relocation is not set");
+    LIEF_ERR("Parent relocation is not set");
     return;
   }
   int32_t delta = address - relocation_->virtual_address();

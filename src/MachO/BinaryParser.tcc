@@ -1012,7 +1012,7 @@ ok_error_t BinaryParser::parse_load_commands() {
         bp.visited_ = visited_;
 
         if (!bp.init_and_parse()) {
-          LIEF_WARN("Parsing the Binary fileset raised error.");
+          LIEF_WARN("Parsing the binary fileset raised an error");
         }
 
         stream_ = std::move(bp.stream_);
@@ -1886,7 +1886,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
                 if (ordinal >= ordinal_table_size ||
                     ordinal >= ordinal_table.size())
                 {
-                  LIEF_WARN("bind ordinal ({:d}) is out of range (max={:d}) for "
+                  LIEF_WARN("Bind ordinal ({:d}) is out of range (max={:d}) for "
                             "disk pointer {:#06x} in "
                             "segment '{}' (segment offset: {:#06x})",
                             ordinal, ordinal_table_size, value,
@@ -2592,7 +2592,7 @@ ok_error_t BinaryParser::parse_chained_import(
                     to_string(get_error(res)));
           break;
         }
-        LIEF_DEBUG("dyld chained import[{}]", i);
+        LIEF_DEBUG("Dyld chained import[{}]", i);
         if (auto res = symbol_pool.peek_string_at(import.name_offset)) {
           symbol_name = std::move(*res);
         } else {
@@ -2698,7 +2698,7 @@ ok_error_t BinaryParser::parse_chained_fixup(
     return make_error_code(res.error());
   }
 
-  LIEF_DEBUG("chained starts in image");
+  LIEF_DEBUG("Chained starts in image");
   LIEF_DEBUG("  seg_count = {}", starts.seg_count);
 
   uint32_t nb_segments = starts.seg_count;

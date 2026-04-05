@@ -750,8 +750,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_cv.size());
 
-      LIEF_DEBUG("codeview - original size {:#08x}", dbg->sizeof_data());
-      LIEF_DEBUG("codeview - new size      {:#08x}", ios_cv.size());
+      LIEF_DEBUG("Codeview original size: {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("Codeview new size:      {:#08x}", ios_cv.size());
 
       const int32_t delta = (int32_t)ios_cv.size() - dbg->sizeof_data();
 
@@ -780,8 +780,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_pogo.size());
 
-      LIEF_DEBUG("pogo - original size {:#08x}", dbg->sizeof_data());
-      LIEF_DEBUG("pogo - new size      {:#08x}", ios_pogo.size());
+      LIEF_DEBUG("POGO original size: {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("POGO new size:      {:#08x}", ios_pogo.size());
 
       const int32_t delta = (int32_t)ios_pogo.size() - dbg->sizeof_data();
 
@@ -810,8 +810,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_repro.size());
 
-      LIEF_DEBUG("repro - original size {:#08x}", dbg->sizeof_data());
-      LIEF_DEBUG("repro - new size      {:#08x}", ios_repro.size());
+      LIEF_DEBUG("Repro original size: {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("Repro new size:      {:#08x}", ios_repro.size());
 
       const int32_t delta = (int32_t)ios_repro.size() - dbg->sizeof_data();
 
@@ -840,8 +840,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_repro.size());
 
-      LIEF_DEBUG("pdbchecksum - original size {:#08x}", dbg->sizeof_data());
-      LIEF_DEBUG("pdbchecksum - new size      {:#08x}", ios_repro.size());
+      LIEF_DEBUG("PDB checksum original size: {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("PDB checksum new size:      {:#08x}", ios_repro.size());
 
       const int32_t delta = (int32_t)ios_repro.size() - dbg->sizeof_data();
 
@@ -870,8 +870,8 @@ ok_error_t Builder::build_debug_info() {
       }
       header_stream.write<uint32_t>(ios_vcfeat.size());
 
-      LIEF_DEBUG("vcfeature - original size {:#08x}", dbg->sizeof_data());
-      LIEF_DEBUG("vcfeature - new size      {:#08x}", ios_vcfeat.size());
+      LIEF_DEBUG("VC feature original size: {:#08x}", dbg->sizeof_data());
+      LIEF_DEBUG("VC feature new size:      {:#08x}", ios_vcfeat.size());
 
       const int32_t delta = (int32_t)ios_vcfeat.size() - dbg->sizeof_data();
 
@@ -923,8 +923,8 @@ ok_error_t Builder::build_debug_info() {
       continue;
     }
 
-    LIEF_DEBUG("original size {:#08x}", dbg->sizeof_data());
-    LIEF_DEBUG("new size      {:#08x}", payload.size());
+    LIEF_DEBUG("Original size: {:#08x}", dbg->sizeof_data());
+    LIEF_DEBUG("New size:      {:#08x}", payload.size());
     header_stream.write<uint32_t>(payload.size());
     header_stream.write<uint32_t>(dbg->addressof_rawdata())
         .write<uint32_t>(dbg->pointerto_rawdata());

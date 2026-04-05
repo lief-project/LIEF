@@ -2374,8 +2374,8 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
       const uint32_t cie_offset = vs.pos() - *cie_pointer - sizeof(uint32_t);
 
       LIEF_DEBUG("fde_length@{:#x}: {:#x}", address - bias, fde_length);
-      LIEF_DEBUG("cie_pointer {:#x}", *cie_pointer);
-      LIEF_DEBUG("cie_offset {:#x}", cie_offset);
+      LIEF_DEBUG("cie_pointer: {:#x}", *cie_pointer);
+      LIEF_DEBUG("cie_offset: {:#x}", cie_offset);
 
 
       // Go to CIE structure
