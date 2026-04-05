@@ -18,7 +18,6 @@
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/endianness_support.hpp"
 #include "internal_utils.hpp"
 
 #include "spdlog/fmt/fmt.h"

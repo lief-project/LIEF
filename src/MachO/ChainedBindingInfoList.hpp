@@ -41,10 +41,11 @@ class ChainedBindingInfoList : public ChainedBindingInfo {
     ChainedBindingInfo(fmt, is_weak) {}
 
 
-  ChainedBindingInfoList& operator=(ChainedBindingInfoList other) = delete;
+  ChainedBindingInfoList& operator=(const ChainedBindingInfoList& other) = delete;
   ChainedBindingInfoList(const ChainedBindingInfoList& other) = delete;
 
   ChainedBindingInfoList(ChainedBindingInfoList&&) noexcept = default;
+  ChainedBindingInfoList& operator=(ChainedBindingInfoList&& other) = default;
 
   void swap(ChainedBindingInfoList& other) noexcept;
 

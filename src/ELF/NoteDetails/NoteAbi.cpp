@@ -26,7 +26,7 @@
 namespace LIEF::ELF {
 
 result<NoteAbi::version_t> NoteAbi::version() const {
-  NoteAbi::version_t version;
+  version_t version;
   for (size_t i = 0; i < version.size(); ++i) {
     auto res = read_at<uint32_t>(version_offset + i * sizeof(uint32_t));
     if (!res) {

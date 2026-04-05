@@ -16,10 +16,7 @@
 #ifndef LIEF_MACHO_JSON_INTERNAL_H
 #define LIEF_MACHO_JSON_INTERNAL_H
 
-#include "LIEF/visibility.h"
 #include "visitors/json.hpp" // internal
-#include "LIEF/MachO.hpp"
-
 
 namespace LIEF::MachO {
 

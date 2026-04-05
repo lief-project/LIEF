@@ -18,7 +18,6 @@
 #include "logging.hpp"
 
 #include <algorithm>
-#include <iomanip>
 #include <numeric>
 #include <sstream>
 #include <utility>

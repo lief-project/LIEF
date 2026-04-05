@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include "logging.hpp"
 
 #include "LIEF/utils.hpp"
-#include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/resources/ResourceVar.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"

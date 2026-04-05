@@ -16,6 +16,7 @@
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/DosHeader.hpp"
+#include "LIEF/PE/enums.hpp"
 #include "PE/Structures.hpp"
 
 #include "spdlog/fmt/fmt.h"

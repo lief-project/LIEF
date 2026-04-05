@@ -31,9 +31,9 @@ Relocation::Relocation(const Relocation& other) :
   type_{other.type_},
   architecture_{other.architecture_} {}
 
-Relocation::Relocation(uint64_t address, uint8_t type) {
+Relocation::Relocation(uint64_t address, uint8_t type) :
+  type_(type) {
   address_ = address;
-  type_ = type;
 }
 
 Relocation& Relocation::operator=(const Relocation& other) {

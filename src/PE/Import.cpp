@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <iomanip>
 
 #include "LIEF/Visitor.hpp"
 

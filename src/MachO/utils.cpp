@@ -132,7 +132,7 @@ bool is_64(const std::string& file) {
 
 
 template<class MACHO_T>
-void foreach_segment_impl(BinaryStream& stream, const segment_callback_t cbk) {
+void foreach_segment_impl(BinaryStream& stream, const segment_callback_t& cbk) {
   using header_t = typename MACHO_T::header;
   using segment_command_t = typename MACHO_T::segment_command;
   auto res_hdr = stream.read<header_t>();
@@ -163,7 +163,7 @@ void foreach_segment_impl(BinaryStream& stream, const segment_callback_t cbk) {
   }
 }
 
-void foreach_segment(BinaryStream& stream, const segment_callback_t cbk) {
+void foreach_segment(BinaryStream& stream, const segment_callback_t& cbk) {
   ScopedStream scoped(stream);
   auto magic_res = magic_from_stream(*scoped, /*keep_offset=*/true);
   if (!magic_res) {

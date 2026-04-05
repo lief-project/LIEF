@@ -127,7 +127,7 @@ void ResourceIcon::save(const std::string& filename) const {
     return;
   }
   std::vector<uint8_t> raw = serialize();
-  output_file.write((const char*)raw.data(), raw.size());
+  output_file.write(reinterpret_cast<const char*>(raw.data()), raw.size());
 }
 
 void ResourceIcon::accept(Visitor& visitor) const {

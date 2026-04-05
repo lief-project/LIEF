@@ -31,14 +31,14 @@ bool Binary::has_command() const {
 
 template<class T>
 T* Binary::command() {
-  static_assert(std::is_base_of<LoadCommand, T>::value,
+  static_assert(std::is_base_of_v<LoadCommand, T>,
                 "Require inheritance of 'LoadCommand'");
   return const_cast<T*>(static_cast<const Binary*>(this)->command<T>());
 }
 
 template<class T>
 const T* Binary::command() const {
-  static_assert(std::is_base_of<LoadCommand, T>::value,
+  static_assert(std::is_base_of_v<LoadCommand, T>,
                 "Require inheritance of 'LoadCommand'");
   const auto it_cmd =
       std::find_if(commands_.begin(), commands_.end(),
@@ -55,7 +55,7 @@ const T* Binary::command() const {
 
 template<class T>
 size_t Binary::count_commands() const {
-  static_assert(std::is_base_of<LoadCommand, T>::value,
+  static_assert(std::is_base_of_v<LoadCommand, T>,
                 "Require inheritance of 'LoadCommand'");
 
   size_t nb_cmd = std::count_if(commands_.begin(), commands_.end(),
@@ -67,7 +67,7 @@ size_t Binary::count_commands() const {
 
 template<class CMD, class Func>
 Binary& Binary::for_commands(Func f) {
-  static_assert(std::is_base_of<LoadCommand, CMD>::value,
+  static_assert(std::is_base_of_v<LoadCommand, CMD>,
                 "Require inheritance of 'LoadCommand'");
   for (const std::unique_ptr<LoadCommand>& cmd : commands_) {
     if (!CMD::classof(cmd.get())) {

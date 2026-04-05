@@ -152,7 +152,7 @@ ok_error_t Parser::parse_rich_header() {
   values.reserve(dos_stub.size() / sizeof(uint32_t));
 
   uint32_t count = 0;
-  uint32_t value;
+  uint32_t value = 0;
 
   while (curent_offset > 0 && stream.pos() < stream.size()) {
 
@@ -216,7 +216,7 @@ ok_error_t Parser::parse_sections() {
 
   stream_->setpos(sections_offset);
   for (size_t i = 0; i < numberof_sections; ++i) {
-    details::pe_section raw_sec;
+    details::pe_section raw_sec{};
     if (auto res = stream_->read<details::pe_section>()) {
       raw_sec = *res;
     } else {

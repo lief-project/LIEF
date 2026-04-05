@@ -22,7 +22,6 @@
 #include "LIEF/DWARF/enums.hpp"
 
 #include "logging.hpp"
-#include "paging.hpp"
 
 #include "LIEF/utils.hpp"
 
@@ -35,9 +34,6 @@
 #include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
-#include "LIEF/ELF/DynamicEntryRpath.hpp"
-#include "LIEF/ELF/DynamicEntryRunPath.hpp"
-#include "LIEF/ELF/DynamicSharedObject.hpp"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/Section.hpp"
@@ -2080,9 +2076,8 @@ LIEF::Binary::functions_t Binary::ctor_functions() const {
   LIEF::Binary::functions_t functions;
 
   LIEF::Binary::functions_t init = tor_functions(DynamicEntry::TAG::INIT_ARRAY);
-  std::transform(std::make_move_iterator(init.begin()),
-                 std::make_move_iterator(init.end()),
-                 std::back_inserter(functions), [](Function&& f) {
+  std::transform(init.begin(), init.end(), std::back_inserter(functions),
+                 [](Function& f) {
                    f.add(Function::FLAGS::CONSTRUCTOR);
                    f.name("__dt_init_array");
                    return f;
@@ -2090,9 +2085,8 @@ LIEF::Binary::functions_t Binary::ctor_functions() const {
 
   LIEF::Binary::functions_t preinit =
       tor_functions(DynamicEntry::TAG::PREINIT_ARRAY);
-  std::transform(std::make_move_iterator(preinit.begin()),
-                 std::make_move_iterator(preinit.end()),
-                 std::back_inserter(functions), [](Function&& f) {
+  std::transform(preinit.begin(), preinit.end(), std::back_inserter(functions),
+                 [](Function& f) {
                    f.add(Function::FLAGS::CONSTRUCTOR);
                    f.name("__dt_preinit_array");
                    return f;
@@ -2112,9 +2106,8 @@ LIEF::Binary::functions_t Binary::dtor_functions() const {
   LIEF::Binary::functions_t functions;
 
   LIEF::Binary::functions_t fini = tor_functions(DynamicEntry::TAG::FINI_ARRAY);
-  std::transform(std::make_move_iterator(fini.begin()),
-                 std::make_move_iterator(fini.end()),
-                 std::back_inserter(functions), [](Function&& f) {
+  std::transform(fini.begin(), fini.end(), std::back_inserter(functions),
+                 [](Function& f) {
                    f.add(Function::FLAGS::DESTRUCTOR);
                    f.name("__dt_fini_array");
                    return f;

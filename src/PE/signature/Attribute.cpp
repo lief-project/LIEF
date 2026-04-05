@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <ostream>
-
 #include "frozen.hpp"
 
 #include "LIEF/Visitor.hpp"

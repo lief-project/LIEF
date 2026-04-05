@@ -18,7 +18,6 @@
 #include <memory>
 
 #include "logging.hpp"
-#include "internal_utils.hpp"
 
 #include "MachO/ChainedFixup.hpp"
 
@@ -67,7 +66,6 @@
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
-#include "LIEF/MachO/ThreadLocalVariables.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
 #include "LIEF/MachO/UnknownCommand.hpp"
@@ -1267,7 +1265,7 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
         break;
       }
     } else {
-      details::relocation_info reloc_info;
+      details::relocation_info reloc_info{};
       if (auto res = stream_->peek<details::relocation_info>(current_reloc_offset))
       {
         reloc_info = *res;
@@ -2585,7 +2583,7 @@ ok_error_t BinaryParser::parse_chained_import(
     {
       stream.setpos(header.imports_offset);
       for (size_t i = 0; i < header.imports_count; ++i) {
-        details::dyld_chained_import import;
+        details::dyld_chained_import import{};
         std::string symbol_name;
         if (auto res = stream.read<details::dyld_chained_import>()) {
           import = *res;
@@ -2617,7 +2615,7 @@ ok_error_t BinaryParser::parse_chained_import(
     {
       stream.setpos(header.imports_offset);
       for (size_t i = 0; i < header.imports_count; ++i) {
-        details::dyld_chained_import_addend import;
+        details::dyld_chained_import_addend import{};
         std::string symbol_name;
         if (auto res = stream.read<details::dyld_chained_import_addend>()) {
           import = *res;
@@ -2649,7 +2647,7 @@ ok_error_t BinaryParser::parse_chained_import(
     {
       stream.setpos(header.imports_offset);
       for (size_t i = 0; i < header.imports_count; ++i) {
-        details::dyld_chained_import_addend64 import;
+        details::dyld_chained_import_addend64 import{};
         std::string symbol_name;
         if (auto res = stream.read<details::dyld_chained_import_addend64>()) {
           import = *res;
@@ -2690,7 +2688,7 @@ template<class MACHO_T>
 ok_error_t BinaryParser::parse_chained_fixup(
     const details::dyld_chained_fixups_header& header, SpanStream& stream
 ) {
-  details::dyld_chained_starts_in_image starts;
+  details::dyld_chained_starts_in_image starts{};
   stream.setpos(header.starts_offset);
   if (auto res = stream.read<details::dyld_chained_starts_in_image>()) {
     starts = *res;

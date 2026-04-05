@@ -19,10 +19,7 @@
 #include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#include "PE/Structures.hpp"
-
 #include "logging.hpp"
-#include "internal_utils.hpp"
 
 namespace LIEF::PE {
 

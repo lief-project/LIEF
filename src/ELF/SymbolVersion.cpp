@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <spdlog/fmt/fmt.h>
+
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersion.hpp"
@@ -33,17 +35,14 @@ void SymbolVersion::accept(Visitor& visitor) const {
 
 std::ostream& operator<<(std::ostream& os, const ELF::SymbolVersion& symv) {
   if (symv.has_auxiliary_version()) {
-    os << symv.symbol_version_auxiliary()->name() << "(" << symv.value() << ")";
+    os << fmt::format("{}({})", symv.symbol_version_auxiliary()->name(),
+                      symv.value());
+  } else if (symv.value() == 0) {
+    os << "* Local *";
+  } else if (symv.value() == 1) {
+    os << "* Global *";
   } else {
-    std::string type;
-    if (symv.value() == 0) {
-      type = "* Local *";
-    } else if (symv.value() == 1) {
-      type = "* Global *";
-    } else {
-      type = "* ERROR (" + std::to_string(symv.value()) + ") *";
-    }
-    os << type;
+    os << fmt::format("* ERROR ({}) *", symv.value());
   }
 
   return os;

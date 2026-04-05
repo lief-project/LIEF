@@ -16,10 +16,8 @@
  */
 #ifndef LIEF_ELF_SIZING_INFO_H
 #define LIEF_ELF_SIZING_INFO_H
-#include "LIEF/visibility.h"
 
 #include <cstdint>
-
 
 namespace LIEF::ELF {
 struct sizing_info_t {

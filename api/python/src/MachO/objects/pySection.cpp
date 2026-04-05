@@ -16,6 +16,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/set.h>
 #include <nanobind/operators.h>

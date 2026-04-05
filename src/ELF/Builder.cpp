@@ -79,8 +79,7 @@ bool Builder::should_swap() const {
       return true;
 #else
     // If there is no __BYTE_ORDER__ (e.g. MSVC), assume little-endian
-    case LIEF::Header::ENDIANNESS::BIG:
-      return true;
+    case LIEF::Header::ENDIANNESS::BIG: return true;
 #endif // __BYTE_ORDER__
     default:
       // we're good (or don't know what to do), consider bytes are in the expected

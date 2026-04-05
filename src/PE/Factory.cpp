@@ -15,14 +15,10 @@
  */
 #include "LIEF/PE/Factory.hpp"
 #include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/Export.hpp"
-#include "LIEF/PE/Debug.hpp"
 #include "LIEF/PE/Relocation.hpp"
-#include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/Section.hpp"
 
 #include "PE/Structures.hpp"
@@ -72,7 +68,8 @@ std::unique_ptr<Binary> Factory::process() {
   pe_->write(oss, config);
 
   std::string buffer = oss.str();
-  return Parser::parse((const uint8_t*)buffer.data(), buffer.size());
+  return Parser::parse(reinterpret_cast<const uint8_t*>(buffer.data()),
+                       buffer.size());
 }
 
 ok_error_t Factory::assign_locations() {

@@ -17,15 +17,11 @@
 #include <algorithm>
 #include <cassert>
 #include <iterator>
-#include <numeric>
 #include <unordered_map>
 
 #include "logging.hpp"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
-
 #include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Section.hpp"
@@ -42,7 +38,6 @@
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
-#include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/Note.hpp"

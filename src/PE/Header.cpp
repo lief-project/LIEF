@@ -66,6 +66,7 @@ Header Header::create(PE_TYPE type) {
 }
 
 Header::Header(const details::pe_header& header) :
+  signature_{},
   machine_(static_cast<MACHINE_TYPES>(header.Machine)),
   nb_sections_(header.NumberOfSections),
   timedatestamp_(header.TimeDateStamp),

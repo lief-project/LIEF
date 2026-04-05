@@ -29,7 +29,7 @@ size_t vector_iostream::uleb128_size(uint64_t value) {
 size_t vector_iostream::sleb128_size(int64_t value) {
   size_t size = 0;
   int sign = value >> (8 * sizeof(value) - 1);
-  bool is_more;
+  bool is_more = false;
   do {
     size_t byte = value & 0x7F;
     value >>= 7;
@@ -60,7 +60,7 @@ vector_iostream& vector_iostream::write(const uint8_t* s, std::streamsize n) {
 }
 
 vector_iostream& vector_iostream::write_uleb128(uint64_t value) {
-  uint8_t byte;
+  uint8_t byte = 0;
   do {
     byte = value & 0x7F;
     value &= ~0x7F;
@@ -77,8 +77,8 @@ vector_iostream& vector_iostream::write_uleb128(uint64_t value) {
 vector_iostream& vector_iostream::write_sleb128(int64_t value) {
 
   bool is_neg = (value < 0);
-  uint8_t byte;
-  bool more;
+  uint8_t byte = 0;
+  bool more = false;
   do {
     byte = value & 0x7F;
     value = value >> 7;

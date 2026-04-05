@@ -961,7 +961,7 @@ ok_error_t Builder::build(DataInCode& datacode) {
   raw_cmd.dataoff = linkedit_.size();
 
   for (const DataCodeEntry& entry : datacode.entries()) {
-    details::data_in_code_entry e;
+    details::data_in_code_entry e{};
     e.offset = entry.offset();
     e.length = entry.length();
     e.kind = static_cast<decltype(e.kind)>(entry.type());
@@ -1335,7 +1335,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
 
   vector_iostream lnk_data;
 
-  details::dyld_chained_fixups_header header;
+  details::dyld_chained_fixups_header header{};
   header.fixups_version = 0;
   header.starts_offset = align(sizeof(details::dyld_chained_fixups_header), 8);
   header.imports_offset = 0;
@@ -1395,7 +1395,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
       LIEF_ERR("DYLD_CHAINED_PTR_FORMAT::PTR_32 is not supported yet");
       return make_error_code(lief_errors::not_supported);
     }
-    details::dyld_chained_starts_in_segment seg;
+    details::dyld_chained_starts_in_segment seg{};
     const size_t page_count = seg_info.page_count();
     seg.size = sizeof(details::dyld_chained_starts_in_segment) +
                page_count * start_bytes_per_page;
@@ -1485,7 +1485,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
     switch (fmt) {
       case DYLD_CHAINED_FORMAT::IMPORT:
       {
-        details::dyld_chained_import import;
+        details::dyld_chained_import import{};
         import.lib_ordinal = info->library_ordinal();
         import.weak_import = info->is_weak_import();
         import.name_offset = name_offset;
@@ -1494,7 +1494,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
       }
       case DYLD_CHAINED_FORMAT::IMPORT_ADDEND:
       {
-        details::dyld_chained_import_addend import;
+        details::dyld_chained_import_addend import{};
         import.lib_ordinal = info->library_ordinal();
         import.weak_import = info->is_weak_import();
         import.name_offset = name_offset;
@@ -1504,7 +1504,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
       }
       case DYLD_CHAINED_FORMAT::IMPORT_ADDEND64:
       {
-        details::dyld_chained_import_addend64 import;
+        details::dyld_chained_import_addend64 import{};
         import.lib_ordinal = info->library_ordinal();
         import.weak_import = info->is_weak_import();
         import.name_offset = name_offset;
@@ -1633,7 +1633,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
              lnk_data.size());
 
   // Write back the 'linkedit' structure
-  details::linkedit_data_command raw_cmd;
+  details::linkedit_data_command raw_cmd{};
 
   raw_cmd.cmd = static_cast<uint32_t>(fixups.command());
   raw_cmd.cmdsize = static_cast<uint32_t>(fixups.size());
@@ -1669,7 +1669,7 @@ ok_error_t Builder::build(DyldExportsTrie& exports) {
              raw.size());
 
   // Write back the 'linkedit' structure
-  details::linkedit_data_command raw_cmd;
+  details::linkedit_data_command raw_cmd{};
 
   raw_cmd.cmd = static_cast<uint32_t>(exports.command());
   raw_cmd.cmdsize = static_cast<uint32_t>(exports.size());

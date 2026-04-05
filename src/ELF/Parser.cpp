@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <memory>
-#include <iterator>
 #include <algorithm>
 
 #include "logging.hpp"
@@ -32,9 +31,11 @@
 #include "LIEF/ELF/SysvHash.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
 
 #include "Parser.tcc"
 
+#include "internal_utils.hpp"
 
 namespace LIEF::ELF {
 

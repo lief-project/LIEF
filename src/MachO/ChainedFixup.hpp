@@ -215,8 +215,8 @@ struct dyld_chained_import_addend64 {
 
 template<class T>
 inline void pack_target(T& rebase, uint64_t value) {
-  static_assert(std::is_same<T, dyld_chained_ptr_arm64e_rebase>::value ||
-                    std::is_same<T, dyld_chained_ptr_64_rebase>::value,
+  static_assert(std::is_same_v<T, dyld_chained_ptr_arm64e_rebase> ||
+                    std::is_same_v<T, dyld_chained_ptr_64_rebase>,
                 "Wrong type");
   rebase.high8 = value >> 56;
   rebase.target = value & 0x7FFFFFFFFFF;

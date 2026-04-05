@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
-#include <numeric>
 #include <algorithm>
 
 #include "frozen.hpp"
@@ -112,6 +110,7 @@ static constexpr auto PFLAGS_LIST = {
 
 template<class T>
 Header::Header(const T& header) :
+  identity_{},
   file_type_(FILE_TYPE(header.e_type)),
   machine_type_(ARCH(header.e_machine)),
   object_file_version_(VERSION(header.e_version)),

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <spdlog/fmt/fmt.h>
 #include <utility>
 
 #include "LIEF/utils.hpp"
@@ -21,9 +21,6 @@
 
 #include "LIEF/PE/resources/ResourceStringTable.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-
-#include "logging.hpp"
-
 
 namespace LIEF::PE {
 

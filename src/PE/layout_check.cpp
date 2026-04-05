@@ -17,7 +17,7 @@
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/PE/utils.hpp"

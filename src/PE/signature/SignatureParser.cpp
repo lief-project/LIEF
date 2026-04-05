@@ -53,7 +53,6 @@
 #include "LIEF/PE/signature/OIDToString.hpp"
 
 #include "logging.hpp"
-#include "messages.hpp"
 #include "internal_utils.hpp"
 
 

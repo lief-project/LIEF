@@ -104,9 +104,6 @@ bool chained_fixup::is_rebase(uint16_t ptr_format) const {
     }
     case DYLD_CHAINED_PTR_FORMAT::PTR_64_KERNEL_CACHE:
     case DYLD_CHAINED_PTR_FORMAT::PTR_X86_64_KERNEL_CACHE:
-    {
-      return true;
-    }
     case DYLD_CHAINED_PTR_FORMAT::PTR_32_FIRMWARE:
     {
       return true;

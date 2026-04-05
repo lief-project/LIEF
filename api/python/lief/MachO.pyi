@@ -2163,6 +2163,7 @@ class ThreadCommand(LoadCommand):
 
 class ThreadLocalVariables(Section):
     class Thunk:
+        @overload
         def __init__(self) -> None: ...
 
         @overload

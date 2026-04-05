@@ -49,6 +49,7 @@ page_sizes_t get_pagesize(const ELF::Binary& elf) {
   // page size (`defaultMaxPageSize`). In LIEF we return the Common page size
   // and users can still configure another page size with
   // LIEF::ELF::ParserConfig::page_size
+  // NOLINTBEGIN(bugprone-branch-clone)
   switch (elf.header().machine_type()) {
     default: return {4_KB, 4_KB};
 
@@ -71,6 +72,7 @@ page_sizes_t get_pagesize(const ELF::Binary& elf) {
     case ELF::ARCH::PPC:
     case ELF::ARCH::PPC64: return {4_KB, 64_KB};
   }
+  // NOLINTEND(bugprone-branch-clone)
   return {4_KB, 4_KB};
 }
 #endif

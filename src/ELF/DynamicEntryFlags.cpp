@@ -17,7 +17,6 @@
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 
 #include "frozen.hpp"
-#include "logging.hpp"
 #include "fmt_formatter.hpp"
 
 FMT_FORMATTER(LIEF::ELF::DynamicEntryFlags::FLAG, LIEF::ELF::to_string);

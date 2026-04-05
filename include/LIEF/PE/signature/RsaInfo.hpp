@@ -72,7 +72,7 @@ class LIEF_API RsaInfo {
   private:
   RsaInfo();
   RsaInfo(const rsa_ctx_handle ctx);
-  rsa_ctx_handle ctx_;
+  rsa_ctx_handle ctx_ = nullptr;
 };
 
 }

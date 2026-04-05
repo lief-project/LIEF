@@ -188,7 +188,7 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
       }
 
       SpanStream stream(icon_group_content);
-      details::pe_resource_icon_dir group_icon_header;
+      details::pe_resource_icon_dir group_icon_header{};
       if (auto res = stream.read<details::pe_resource_icon_dir>()) {
         group_icon_header = *res;
       } else {
@@ -206,7 +206,7 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
       }
 
       for (size_t i = 0; i < group_icon_header.count; ++i) {
-        details::pe_resource_icon_group entry;
+        details::pe_resource_icon_group entry{};
         if (auto res = stream.read<details::pe_resource_icon_group>()) {
           entry = *res;
         } else {

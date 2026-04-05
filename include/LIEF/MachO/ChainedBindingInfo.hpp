@@ -56,13 +56,11 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
   ChainedBindingInfo() = delete;
   explicit ChainedBindingInfo(DYLD_CHAINED_FORMAT fmt, bool is_weak);
 
-  ChainedBindingInfo& operator=(ChainedBindingInfo other);
+  ChainedBindingInfo& operator=(const ChainedBindingInfo& other);
   ChainedBindingInfo(const ChainedBindingInfo& other);
 
   ChainedBindingInfo(ChainedBindingInfo&&) noexcept;
   ChainedBindingInfo& operator=(ChainedBindingInfo&&) noexcept;
-
-  void swap(ChainedBindingInfo& other) noexcept;
 
   /// Format of the imports
   DYLD_CHAINED_FORMAT format() const {

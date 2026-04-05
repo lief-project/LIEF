@@ -15,8 +15,6 @@
 #ifndef LIEF_ELF_NOTE_GNU_PROPERTIES_COMMON_H
 #define LIEF_ELF_NOTE_GNU_PROPERTIES_COMMON_H
 
-#include <cstdint>
-
 namespace LIEF::ELF {
 
 static constexpr auto GNU_PROPERTY_LOPROC = 0xc0000000;

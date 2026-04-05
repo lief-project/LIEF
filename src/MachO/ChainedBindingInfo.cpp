@@ -61,7 +61,8 @@ ChainedBindingInfo::ChainedBindingInfo(const ChainedBindingInfo& other) :
 }
 
 ChainedBindingInfo::ChainedBindingInfo(DYLD_CHAINED_FORMAT fmt, bool is_weak) :
-  format_{fmt} {
+  format_{fmt},
+  ptr_format_{DYLD_CHAINED_PTR_FORMAT::NONE} {
   is_weak_import_ = is_weak;
 }
 
@@ -69,17 +70,18 @@ ChainedBindingInfo::~ChainedBindingInfo() {
   clear();
 }
 
-ChainedBindingInfo& ChainedBindingInfo::operator=(ChainedBindingInfo other) {
-  swap(other);
-  return *this;
-}
+ChainedBindingInfo&
+    ChainedBindingInfo::operator=(const ChainedBindingInfo& other) {
+  if (this == &other) {
+    return *this;
+  }
 
-void ChainedBindingInfo::swap(ChainedBindingInfo& other) noexcept {
-  BindingInfo::swap(other);
-  std::swap(format_, other.format_);
-  std::swap(ptr_format_, other.ptr_format_);
-  std::swap(offset_, other.offset_);
-  std::swap(btypes_, other.btypes_);
+  BindingInfo::operator=(other);
+  format_ = other.format_;
+  ptr_format_ = other.ptr_format_;
+  offset_ = other.offset_;
+  btypes_ = other.btypes_;
+  return *this;
 }
 
 void ChainedBindingInfo::accept(Visitor& visitor) const {

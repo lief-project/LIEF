@@ -623,6 +623,8 @@ bool LayoutChecker::check_linkedit() {
     chunk_t(chunk_t&&) = default;
     chunk_t& operator=(chunk_t&&) = default;
 
+    ~chunk_t() = default;
+
     KIND kind = KIND::UNKNOWN;
     uint32_t alignment = 0;
     uint32_t file_offset = 0;
@@ -1663,7 +1665,7 @@ bool LayoutChecker::check_tls() {
   const bool is32 = ptr_size() == sizeof(uint32_t);
   const bool is64 = ptr_size() == sizeof(uint64_t);
   assert(is32 || is64);
-  bool all_zero_fill = true;
+  [[maybe_unused]] bool all_zero_fill = true;
   ThreadLocalVariables const* sec_vars = nullptr;
   LIEF::range_t initial_content;
   for (const Section& S : binary.sections()) {

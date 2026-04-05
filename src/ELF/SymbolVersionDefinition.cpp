@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 #include <ostream>
-#include <iomanip>
 #include <algorithm>
+
+#include <spdlog/fmt/fmt.h>
 
 #include "LIEF/ELF/hash.hpp"
 
@@ -78,12 +79,8 @@ void SymbolVersionDefinition::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym) {
-  os << std::hex << std::left;
-  os << std::setw(10) << sym.version();
-  os << std::setw(10) << sym.flags();
-  os << std::setw(10) << sym.ndx();
-  os << std::setw(10) << sym.hash();
-
+  os << fmt::format("{:<#10x}{:<#10x}{:<#10x}{:<#10x}",
+                    sym.version(), sym.flags(), sym.ndx(), sym.hash());
   return os;
 }
 }

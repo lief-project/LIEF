@@ -14,19 +14,7 @@
  */
 #ifndef LIEF_PE_STRUCTURES_H
 #define LIEF_PE_STRUCTURES_H
-#include <type_traits>
-#include <map>
-
-#include "LIEF/types.hpp"
-
-#include "LIEF/PE/enums.hpp"
-
-
-/// Namespace related to the LIEF's PE module
-///
 /// Some parts come from llvm/Support/COFF.h
-
-
 namespace LIEF::PE::details {
 
 /// Sizes in bytes of various things in the COFF format.

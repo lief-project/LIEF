@@ -15,12 +15,6 @@
 #ifndef LIEF_ELF_STRUCTURES_H
 #define LIEF_ELF_STRUCTURES_H
 
-#include <cstring>
-
-#include "LIEF/types.hpp"
-#include "LIEF/ELF/enums.hpp"
-
-
 namespace LIEF::ELF::details {
 
 #include "structures.inc"

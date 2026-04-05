@@ -17,8 +17,9 @@
 #include <ostream>
 #include <algorithm>
 #include <cmath>
-#include <iomanip>
 #include <utility>
+
+#include <spdlog/fmt/fmt.h>
 
 #include "LIEF/Visitor.hpp"
 
@@ -135,11 +136,9 @@ void Section::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const Section& entry) {
-  os << std::hex;
-  os << std::left << std::setw(30) << entry.name() << std::setw(10)
-     << entry.virtual_address() << std::setw(10) << entry.size() << std::setw(10)
-     << entry.offset() << std::setw(10) << entry.entropy();
-
+  os << fmt::format("{:<30}{:<#10x}{:<10}{:<#10x}{:<10.5f}",
+                    entry.name(), entry.virtual_address(), entry.size(),
+                    entry.offset(), entry.entropy());
   return os;
 }
 

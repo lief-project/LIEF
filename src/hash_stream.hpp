@@ -64,14 +64,14 @@ class hashstream {
 
   template<class Integer>
   hashstream& write(Integer integer) {
-    static_assert(std::is_integral<Integer>::value, "Require an integer");
+    static_assert(std::is_integral_v<Integer>, "Require an integer");
     const auto* int_p = reinterpret_cast<const uint8_t*>(&integer);
     return write(int_p, sizeof(Integer));
   }
 
   template<typename T, size_t size>
   hashstream& write(const std::array<T, size>& t) {
-    static_assert(std::is_integral<T>::value, "Require an integer");
+    static_assert(std::is_integral_v<T>, "Require an integer");
     for (T val : t) {
       write<T>(val);
     }

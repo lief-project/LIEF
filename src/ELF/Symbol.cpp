@@ -86,14 +86,14 @@ std::string Symbol::demangled_name() const {
     return LIEF::demangle(name()).value_or("");
   } else {
 #if defined(__unix__)
-    int status;
+    int status = 0;
     const std::string& name = this->name().c_str();
     char* demangled_name =
         abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
 
     if (status == 0) {
       std::string realname = demangled_name;
-      free(demangled_name);
+      free(demangled_name); // NOLINT(cppcoreguidelines-no-malloc)
       return realname;
     }
 

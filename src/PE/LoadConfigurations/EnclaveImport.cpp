@@ -19,7 +19,6 @@
 #include "LIEF/PE/LoadConfigurations/EnclaveImport.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#include "logging.hpp"
 #include "internal_utils.hpp"
 
 namespace LIEF::PE {

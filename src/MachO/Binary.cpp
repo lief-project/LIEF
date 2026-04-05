@@ -19,7 +19,6 @@
 
 #include "Object.tcc"
 #include "Binary.tcc"
-#include "paging.hpp"
 
 #include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"

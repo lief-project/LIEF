@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-#include <numeric>
-#include <sstream>
-#include <utility>
+#include <spdlog/fmt/fmt.h>
 
 #include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
@@ -202,61 +199,15 @@ result<uint32_t> GnuHash::nb_symbols(SpanStream& strm) {
 }
 
 std::ostream& operator<<(std::ostream& os, const GnuHash& gnuhash) {
-  os << std::hex << std::left;
-
-  const std::vector<uint64_t>& bloom_filters = gnuhash.bloom_filters();
-  const std::vector<uint32_t>& buckets = gnuhash.buckets();
-  const std::vector<uint32_t>& hash_values = gnuhash.hash_values();
-
-  std::string bloom_filters_str =
-      std::accumulate(bloom_filters.begin(), bloom_filters.end(), std::string{},
-                      [](const std::string& a, uint64_t bf) {
-                        std::ostringstream hex_bf;
-                        hex_bf << std::hex;
-                        hex_bf << "0x" << bf;
-
-                        return a.empty() ? "[" + hex_bf.str() :
-                                           a + ", " + hex_bf.str();
-                      });
-  bloom_filters_str += "]";
-
-  std::string buckets_str =
-      std::accumulate(buckets.begin(), buckets.end(), std::string{},
-                      [](const std::string& a, uint32_t b) {
-                        std::ostringstream hex_bucket;
-                        hex_bucket << std::dec;
-                        hex_bucket << b;
-
-                        return a.empty() ? "[" + hex_bucket.str() :
-                                           a + ", " + hex_bucket.str();
-                      });
-  buckets_str += "]";
-
-
-  std::string hash_values_str =
-      std::accumulate(hash_values.begin(), hash_values.end(), std::string{},
-                      [](const std::string& a, uint64_t hv) {
-                        std::ostringstream hex_hv;
-                        hex_hv << std::hex;
-                        hex_hv << "0x" << hv;
-
-                        return a.empty() ? "[" + hex_hv.str() :
-                                           a + ", " + hex_hv.str();
-                      });
-  hash_values_str += "]";
-
-  os << std::setw(33) << std::setfill(' ')
-     << "Number of buckets:" << gnuhash.nb_buckets() << '\n';
-  os << std::setw(33) << std::setfill(' ')
-     << "First symbol index:" << gnuhash.symbol_index() << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Shift Count:" << gnuhash.shift2()
-     << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Bloom filters:" << bloom_filters_str
-     << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Buckets:" << buckets_str << '\n';
-  os << std::setw(33) << std::setfill(' ') << "Hash values:" << hash_values_str
-     << '\n';
-
+  os << fmt::format("Number of buckets:           {}\n", gnuhash.nb_buckets())
+     << fmt::format("First symbol index:          {}\n", gnuhash.symbol_index())
+     << fmt::format("Shift Count:                 {}\n", gnuhash.shift2())
+     << fmt::format("Bloom filters:               [{:#x}]\n",
+                    fmt::join(gnuhash.bloom_filters(), ", "))
+     << fmt::format("Buckets:                     [{}]\n",
+                    fmt::join(gnuhash.buckets(), ", "))
+     << fmt::format("Hash values:                 [{:#x}]\n",
+                    fmt::join(gnuhash.hash_values(), ", "));
   return os;
 }
 

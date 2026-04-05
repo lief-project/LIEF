@@ -156,16 +156,14 @@ ok_error_t DyldChainedFixupsCreator::process_relocations(
       case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E:
       case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24:
       {
-        details::dyld_chained_ptr_arm64e_rebase raw;
-        std::memset(&raw, 0, sizeof(raw));
+        details::dyld_chained_ptr_arm64e_rebase raw{};
         details::pack_target(raw, info.target - imagebase);
         fixup->set(raw);
         break;
       }
       case DYLD_CHAINED_PTR_FORMAT::PTR_64:
       {
-        details::dyld_chained_ptr_64_rebase raw;
-        std::memset(&raw, 0, sizeof(raw));
+        details::dyld_chained_ptr_64_rebase raw{};
         details::pack_target(raw, info.target - imagebase);
         fixup->set(raw);
         break;
@@ -341,8 +339,7 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
           switch (import_ptr_fmt) {
             case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24:
             {
-              details::dyld_chained_ptr_arm64e_bind24 raw;
-              std::memset(&raw, 0, sizeof(raw));
+              details::dyld_chained_ptr_arm64e_bind24 raw{};
               raw.bind = 1;
               raw.next = next;
               raw.ordinal = ordinal;
@@ -352,8 +349,7 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
 
             case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E:
             {
-              details::dyld_chained_ptr_arm64e_bind raw;
-              std::memset(&raw, 0, sizeof(raw));
+              details::dyld_chained_ptr_arm64e_bind raw{};
               raw.bind = 1;
               raw.next = next;
               raw.ordinal = ordinal;
@@ -363,8 +359,7 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
 
             case DYLD_CHAINED_PTR_FORMAT::PTR_64:
             {
-              details::dyld_chained_ptr_64_bind raw;
-              std::memset(&raw, 0, sizeof(raw));
+              details::dyld_chained_ptr_64_bind raw{};
               raw.bind = 1;
               raw.next = next;
               raw.ordinal = ordinal;

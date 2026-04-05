@@ -59,7 +59,7 @@ using segment_callback_t =
     std::function<void(const std::string& name, uint64_t offset, uint64_t size,
                        uint64_t addr, uint64_t vsize)>;
 
-LIEF_API void foreach_segment(BinaryStream& stream, const segment_callback_t cbk);
+LIEF_API void foreach_segment(BinaryStream& stream, const segment_callback_t& cbk);
 
 }
 }

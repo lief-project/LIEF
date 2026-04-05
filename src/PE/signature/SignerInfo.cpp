@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <memory>
-#include <sstream>
 
 #include <spdlog/fmt/fmt.h>
 

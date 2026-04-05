@@ -16,10 +16,7 @@
 #ifndef LIEF_ELF_JSON_INTERNAL_H
 #define LIEF_ELF_JSON_INTERNAL_H
 
-#include "LIEF/visibility.h"
 #include "visitors/json.hpp"
-#include "LIEF/ELF.hpp"
-
 
 namespace LIEF::ELF {
 

@@ -20,7 +20,6 @@
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 
 #include "ELF/Structures.hpp"
 #include "ELF/DataHandler/Node.hpp"

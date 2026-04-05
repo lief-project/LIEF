@@ -28,9 +28,7 @@
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "internal_utils.hpp"
 #include "PE/Structures.hpp"
-
 
 namespace LIEF::PE {
 
@@ -90,7 +88,7 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
 
   size_t directory_array_offset =
       current_offset + sizeof(details::pe_resource_directory_table);
-  details::pe_resource_directory_entries entries_array;
+  details::pe_resource_directory_entries entries_array{};
 
   if (auto res_entries_array =
           stream_.peek<details::pe_resource_directory_entries>(
@@ -144,7 +142,7 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
 
     if ((0x80000000 & data_rva) == 0) { // We are on a leaf
       uint32_t offset = base_offset + data_rva;
-      details::pe_resource_data_entry data_entry;
+      details::pe_resource_data_entry data_entry{};
 
       if (!visited_.insert(offset).second) {
         if (visited_.size() == 1) {

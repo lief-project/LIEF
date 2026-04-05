@@ -53,9 +53,10 @@ bool is_elf(const std::vector<uint8_t>& raw) {
 
 /// SYSV hash function
 unsigned long hash32(const char* name) {
-  unsigned long h = 0, g;
+  unsigned long h = 0, g = 0;
   while (*name != 0) {
     h = (h << 4) + *name++;
+    // NOLINTNEXTLINE(bugprone-assignment-in-if-condition)
     if ((g = h & 0xf0000000) != 0u) {
       h ^= g >> 24;
     }
@@ -67,9 +68,10 @@ unsigned long hash32(const char* name) {
 /// SYSV hash function
 /// https://blogs.oracle.com/ali/entry/gnu_hash_elf_sections
 unsigned long hash64(const char* name) {
-  unsigned long h = 0, g;
+  unsigned long h = 0, g = 0;
   while (*name != 0) {
     h = (h << 4) + *name++;
+    // NOLINTNEXTLINE(bugprone-assignment-in-if-condition)
     if ((g = h & 0xf0000000) != 0u) {
       h ^= g >> 24;
     }

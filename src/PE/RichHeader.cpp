@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
-
 #include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/iostream.hpp"

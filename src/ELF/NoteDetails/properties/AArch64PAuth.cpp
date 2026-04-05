@@ -13,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <spdlog/fmt/fmt.h>
 #include "LIEF/ELF/NoteDetails/properties/AArch64PAuth.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-
-#include "frozen.hpp"
-#include "fmt_formatter.hpp"
-
 
 namespace LIEF::ELF {
 

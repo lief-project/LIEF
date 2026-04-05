@@ -41,6 +41,8 @@ using KIND = FunctionVariants::RuntimeTable::KIND;
 
 static const char* pretty_name(FLAGS f) {
   switch (f) {
+
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define FUNCTION_VARIANT_FLAG(name, _, pretty)                                    \
   case FLAGS::name: return pretty;
 #include "LIEF/MachO/FunctionVariants/Arm64.def"

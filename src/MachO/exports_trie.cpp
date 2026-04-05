@@ -17,6 +17,8 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 
+#include <spdlog/fmt/fmt.h>
+
 #include "logging.hpp"
 
 #include "MachO/exports_trie.hpp"
@@ -48,10 +50,9 @@ void show_trie(std::ostream& output, std::string output_prefix,
   uint64_t children_offset = stream.pos() + terminal_size;
 
   if (terminal_size != 0) {
-    ExportInfo::FLAGS flags;
-    if (auto res = stream.read_uleb128()) {
-      flags = ExportInfo::FLAGS(*res);
-    } else {
+    auto flags =
+        stream.read_uleb128().map([](uint64_t v) { return (ExportInfo::FLAGS)v; });
+    if (!flags) {
       LIEF_ERR("Failed to read flags");
       return;
     }
@@ -63,7 +64,7 @@ void show_trie(std::ostream& output, std::string output_prefix,
 
     // REEXPORT
     // ========
-    if (is_true(flags & ExportInfo::FLAGS::REEXPORT)) {
+    if (is_true(*flags & ExportInfo::FLAGS::REEXPORT)) {
       if (auto res = stream.read_uleb128()) {
         ordinal = *res;
       } else {
@@ -88,7 +89,7 @@ void show_trie(std::ostream& output, std::string output_prefix,
 
     // STUB_AND_RESOLVER
     // =================
-    if (is_true(flags & ExportInfo::FLAGS::STUB_AND_RESOLVER)) {
+    if (is_true(*flags & ExportInfo::FLAGS::STUB_AND_RESOLVER)) {
       if (auto res = stream.read_uleb128()) {
         other = *res;
       } else {
@@ -96,67 +97,41 @@ void show_trie(std::ostream& output, std::string output_prefix,
       }
     }
 
-    output << output_prefix;
-    output << symbol_name;
-    output << "{";
-    output << "addr: " << std::showbase << std::hex << address << ", ";
-    output << "flags: " << std::showbase << std::hex
-           << static_cast<uint64_t>(flags);
-    if (is_true(flags & ExportInfo::FLAGS::REEXPORT)) {
-      output << ", ";
-      output << "re-exported from #" << std::dec << ordinal << " - "
-             << imported_name;
+    output << fmt::format("{}{}{{addr: {:#x}, flags: {:#x}", output_prefix,
+                          symbol_name, address, (uint64_t)*flags);
+    if (is_true(*flags & ExportInfo::FLAGS::REEXPORT)) {
+      output << fmt::format(", re-exported from #{} - {}", ordinal, imported_name);
     }
 
-    if (is_true(flags & ExportInfo::FLAGS::STUB_AND_RESOLVER) && other > 0) {
-      output << ", ";
-      output << "other:" << std::showbase << std::hex << other;
+    if (is_true(*flags & ExportInfo::FLAGS::STUB_AND_RESOLVER) && other > 0) {
+      output << fmt::format(", other:{:#x}", other);
     }
 
-    // if (!binary_->has_symbol(symbol_name)) {
-    //   output << " [NOT REGISTRED]";
-    // }
-
-    output << "}";
-    output << '\n';
+    output << "}\n";
   }
   stream.setpos(children_offset);
-  uint32_t nb_children = 0;
-  if (auto res = stream.read_uleb128()) {
-    nb_children = *res;
-  } else {
+  auto nb_children = stream.read_uleb128();
+  if (!nb_children) {
     return;
   }
 
   output_prefix += "    ";
-  for (size_t i = 0; i < nb_children; ++i) {
-    std::string suffix;
-    if (auto res = stream.read_string()) {
-      suffix = std::move(*res);
-    } else {
+  for (size_t i = 0; i < *nb_children; ++i) {
+    auto suffix = stream.read_string();
+    if (!suffix) {
       break;
     }
 
-    std::string name = prefix + suffix;
-    uint32_t child_node_offet = 0;
-
-    if (auto res = stream.read_uleb128()) {
-      child_node_offet = *res;
-    } else {
+    std::string name = prefix + *suffix;
+    auto child_node_offet = stream.read_uleb128();
+    if (!child_node_offet || *child_node_offet == 0) {
       break;
     }
 
-    if (child_node_offet == 0) {
-      break;
-    }
+    output << fmt::format("{}{}@off.{:#x}\n", output_prefix, name, stream.pos());
 
-    output << output_prefix << name << "@off." << std::hex << std::showbase
-           << stream.pos() << '\n';
-
-    size_t current_pos = stream.pos();
-    stream.setpos(start + child_node_offet);
-    show_trie(output, output_prefix, stream, start, end, name);
-    stream.setpos(current_pos);
+    ScopedStream scope(stream, start + *child_node_offet);
+    show_trie(output, output_prefix, *scope, start, end, name);
   }
 }
 
@@ -166,21 +141,22 @@ std::vector<uint8_t> create_trie(const exports_list_t& exports,
   std::unique_ptr<TrieNode> start = TrieNode::create("");
   std::vector<std::unique_ptr<TrieNode>> nodes;
 
-  // Build the tree adding every symbole to the root.
+  // Build the tree adding every symbols to the root.
   TrieNode* start_ptr = start.get();
 
   for (const std::unique_ptr<ExportInfo>& info : exports) {
     start_ptr->add_symbol(*info, nodes);
   }
 
-  // Perform a poor topological sort to have parents before childs in ordered_nodes
+  // Perform a poor topological sort to have parents before children in
+  // ordered_nodes
   std::vector<TrieNode*> ordered_nodes;
   ordered_nodes.reserve(exports.size() * 2);
   for (const std::unique_ptr<ExportInfo>& info : exports) {
     start_ptr->add_ordered_nodes(*info, ordered_nodes);
   }
 
-  bool more;
+  bool more = false;
   do {
     uint32_t offset = 0;
     more = false;

@@ -26,8 +26,6 @@
 #include "frozen.hpp"
 #include "internal_utils.hpp"
 
-#include "LIEF/PE/exceptions_info/internal_x64.hpp"
-
 namespace LIEF::PE {
 
 inline bool should_have_handler(const RuntimeFunctionX64::unwind_info_t& info) {

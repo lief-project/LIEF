@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 #include <sstream>
+
+#include <spdlog/fmt/fmt.h>
+
 #include "logging.hpp"
 #include "frozen.hpp"
 #include "LIEF/iostream.hpp"
@@ -174,11 +177,9 @@ std::string DyldInfo::show_rebases_opcodes() const {
         segment_index = imm;
 
         output << "[" << to_string(opcode) << "] ";
-        output << "Segment Index := " << std::dec << segment_index << " ("
-               << segments[segment_index].name() << ") ";
-        output << "Segment Offset := " << std::hex << std::showbase
-               << segment_offset;
-        output << '\n';
+        output << fmt::format("Segment Index := {} ({}) ", segment_index,
+                              segments[segment_index].name());
+        output << fmt::format("Segment Offset := {:#x}\n", segment_offset);
 
         break;
       }
@@ -196,9 +197,8 @@ std::string DyldInfo::show_rebases_opcodes() const {
         segment_offset += val;
 
         output << "[" << to_string(opcode) << "] ";
-        output << "Segment Offset += " << std::hex << std::showbase << val << " ("
-               << segment_offset << ")";
-        output << '\n';
+        output << fmt::format("Segment Offset += {:#x} ({:#x})\n", val,
+                              segment_offset);
         break;
       }
 
@@ -207,33 +207,27 @@ std::string DyldInfo::show_rebases_opcodes() const {
         segment_offset += (imm * pint_v);
 
         output << "[" << to_string(opcode) << "]";
-        output << "Segment Offset += " << std::hex << std::showbase
-               << (imm * pint_v) << " (" << segment_offset << ")";
-        output << '\n';
+        output << fmt::format("Segment Offset += {:#x} ({:#x})\n", imm * pint_v,
+                              segment_offset);
         break;
       }
 
       case REBASE_OPCODES::DO_REBASE_IMM_TIMES:
       {
         output << "[" << to_string(opcode) << "]" << '\n';
-        output << tab << "for i in range(" << std::dec
-               << static_cast<uint32_t>(imm) << "):" << '\n';
+        output << fmt::format("{}for i in range({}):\n", tab,
+                              static_cast<uint32_t>(imm));
         for (size_t i = 0; i < imm; ++i) {
           output << tab << tab;
-          output << "rebase(";
-          output << to_string(REBASE_TYPE(type));
-          output << ", ";
-          output << segments[segment_index].name();
-          output << ", ";
-          output << std::hex << std::showbase << segment_offset;
-          output << ")" << '\n';
+          output << fmt::format("rebase({}, {}, {:#x})\n",
+                                to_string(REBASE_TYPE(type)),
+                                segments[segment_index].name(), segment_offset);
 
           segment_offset += pint_v;
 
           output << tab << tab;
-          output << "Segment Offset += " << std::hex << std::showbase << pint_v
-                 << " (" << segment_offset << ")";
-          output << '\n' << '\n';
+          output << fmt::format("Segment Offset += {:#x} ({:#x})\n\n", pint_v,
+                                segment_offset);
         }
         output << '\n';
         break;
@@ -250,24 +244,19 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
         output << "[" << to_string(opcode) << "]" << '\n';
 
-        output << tab << "for i in range(" << std::dec
-               << static_cast<uint32_t>(count) << "):" << '\n';
+        output << fmt::format("{}for i in range({}):\n", tab,
+                              static_cast<uint32_t>(count));
         for (size_t i = 0; i < count; ++i) {
           output << tab << tab;
-          output << "rebase(";
-          output << to_string(REBASE_TYPE(type));
-          output << ", ";
-          output << segments[segment_index].name();
-          output << ", ";
-          output << std::hex << std::showbase << segment_offset;
-          output << ")" << '\n';
+          output << fmt::format("rebase({}, {}, {:#x})\n",
+                                to_string(REBASE_TYPE(type)),
+                                segments[segment_index].name(), segment_offset);
 
           segment_offset += pint_v;
 
           output << tab << tab;
-          output << "Segment Offset += " << std::hex << std::showbase << pint_v
-                 << " (" << segment_offset << ")";
-          output << '\n' << '\n';
+          output << fmt::format("Segment Offset += {:#x} ({:#x})\n\n", pint_v,
+                                segment_offset);
         }
 
         output << '\n';
@@ -280,13 +269,9 @@ std::string DyldInfo::show_rebases_opcodes() const {
         output << "[" << to_string(opcode) << "]" << '\n';
 
         output << tab;
-        output << "rebase(";
-        output << to_string(REBASE_TYPE(type));
-        output << ", ";
-        output << segments[segment_index].name();
-        output << ", ";
-        output << std::hex << std::showbase << segment_offset;
-        output << ")" << '\n';
+        output << fmt::format("rebase({}, {}, {:#x})\n",
+                              to_string(REBASE_TYPE(type)),
+                              segments[segment_index].name(), segment_offset);
 
         uint64_t val = 0;
         if (auto res = rebase_stream.read_uleb128()) {
@@ -299,9 +284,8 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
 
         output << tab;
-        output << "Segment Offset += " << std::hex << std::showbase
-               << (val + pint_v) << " (" << segment_offset << ")";
-        output << '\n';
+        output << fmt::format("Segment Offset += {:#x} ({:#x})\n", val + pint_v,
+                              segment_offset);
 
         break;
       }
@@ -330,24 +314,19 @@ std::string DyldInfo::show_rebases_opcodes() const {
           break;
         }
 
-        output << tab << "for i in range(" << std::dec
-               << static_cast<uint32_t>(count) << "):" << '\n';
+        output << fmt::format("{}for i in range({}):\n", tab,
+                              static_cast<uint32_t>(count));
         for (size_t i = 0; i < count; ++i) {
           output << tab << tab;
-          output << "rebase(";
-          output << to_string(REBASE_TYPE(type));
-          output << ", ";
-          output << segments[segment_index].name();
-          output << ", ";
-          output << std::hex << std::showbase << segment_offset;
-          output << ")" << '\n';
+          output << fmt::format("rebase({}, {}, {:#x})\n",
+                                to_string(REBASE_TYPE(type)),
+                                segments[segment_index].name(), segment_offset);
 
           segment_offset += skip + pint_v;
 
           output << tab << tab;
-          output << "Segment Offset += " << std::hex << std::showbase << skip
-                 << " + " << pint_v << " (" << segment_offset << ")";
-          output << '\n' << '\n';
+          output << fmt::format("Segment Offset += {:#x} + {:#x} ({:#x})\n\n",
+                                skip, pint_v, segment_offset);
         }
 
         break;
@@ -355,8 +334,8 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
       default:
       {
-        output << "[UNSUPPORTED OPCODE - " << std::showbase << std::hex
-               << static_cast<uint32_t>(opcode) << "]" << '\n';
+        output << fmt::format("[UNSUPPORTED OPCODE - {:#x}]\n",
+                              static_cast<uint32_t>(opcode));
         break;
       }
     }
@@ -443,8 +422,9 @@ void DyldInfo::show_bindings(std::ostream& output,
 
         library_ordinal = imm;
 
-        output << tab << "Library Ordinal := " << std::dec
-               << static_cast<uint32_t>(imm) << '\n';
+        output << tab
+               << fmt::format("Library Ordinal := {}\n",
+                              static_cast<uint32_t>(imm));
         break;
       }
 
@@ -460,8 +440,7 @@ void DyldInfo::show_bindings(std::ostream& output,
           break;
         }
 
-        output << tab << "Library Ordinal := " << std::dec << library_ordinal
-               << '\n';
+        output << tab << fmt::format("Library Ordinal := {}\n", library_ordinal);
 
         break;
       }
@@ -478,8 +457,7 @@ void DyldInfo::show_bindings(std::ostream& output,
           library_ordinal = sign_extended;
         }
 
-        output << tab << "Library Ordinal := " << std::dec << library_ordinal
-               << '\n';
+        output << tab << fmt::format("Library Ordinal := {}\n", library_ordinal);
         break;
       }
 
@@ -500,7 +478,7 @@ void DyldInfo::show_bindings(std::ostream& output,
         is_weak_import = (imm & BIND_SYMBOL_FLAGS::WEAK_IMPORT) != 0;
 
         output << tab << "Symbol name := " << symbol_name << '\n';
-        output << tab << "Is Weak ? " << std::boolalpha << is_weak_import << '\n';
+        output << tab << fmt::format("Is Weak ? {}\n", is_weak_import);
         break;
       }
 
@@ -527,7 +505,7 @@ void DyldInfo::show_bindings(std::ostream& output,
           break;
         }
 
-        output << tab << "Addend := " << std::dec << addend << '\n';
+        output << tab << fmt::format("Addend := {}\n", addend);
         break;
       }
 
@@ -546,8 +524,7 @@ void DyldInfo::show_bindings(std::ostream& output,
         }
 
         output << tab << "Segment := " << segments[segment_idx].name() << '\n';
-        output << tab << "Segment Offset := " << std::hex << std::showbase
-               << segment_offset << '\n';
+        output << tab << fmt::format("Segment Offset := {:#x}\n", segment_offset);
 
         break;
       }
@@ -566,8 +543,9 @@ void DyldInfo::show_bindings(std::ostream& output,
         }
         segment_offset += val;
 
-        output << tab << "Segment Offset += " << std::hex << std::showbase << val
-               << " (" << segment_offset << ")" << '\n';
+        output << tab
+               << fmt::format("Segment Offset += {:#x} ({:#x})\n", val,
+                              segment_offset);
         break;
       }
 
@@ -576,28 +554,22 @@ void DyldInfo::show_bindings(std::ostream& output,
         if (!use_threaded_rebase_bind) {
           output << "[" << to_string(opcode) << "]" << '\n';
 
-          output << tab;
-          output << "bind(";
-          output << to_string(DyldBindingInfo::TYPE(type));
-          output << ", ";
-          output << segments[segment_idx].name();
-          output << ", ";
-          output << std::hex << std::showbase << segment_offset;
-          output << ", ";
-          output << symbol_name;
-          output << ", library_ordinal=";
-          output << (library_ordinal > 0 ? libraries[library_ordinal - 1].name() :
-                                           std::to_string(library_ordinal));
-          output << ", addend=";
-          output << std::dec << addend;
-          output << ", is_weak_import=";
-          output << std::boolalpha << is_weak_import;
-          output << ")" << '\n';
+          output << tab
+                 << fmt::format("bind({}, {}, {:#x}, {}, library_ordinal={}, "
+                                "addend={}, is_weak_import={})\n",
+                                to_string(DyldBindingInfo::TYPE(type)),
+                                segments[segment_idx].name(), segment_offset,
+                                symbol_name,
+                                library_ordinal > 0 ?
+                                    libraries[library_ordinal - 1].name() :
+                                    std::to_string(library_ordinal),
+                                addend, is_weak_import);
 
           segment_offset += pint_v;
 
-          output << tab << "Segment Offset += " << std::hex << std::showbase
-                 << pint_v << " (" << segment_offset << ")" << '\n';
+          output << tab
+                 << fmt::format("Segment Offset += {:#x} ({:#x})\n", pint_v,
+                                segment_offset);
         } else {
           ordinal_table.push_back(ThreadedBindData{symbol_name, addend,
                                                    library_ordinal, symbol_flags,
@@ -611,23 +583,16 @@ void DyldInfo::show_bindings(std::ostream& output,
 
         output << "[" << to_string(opcode) << "]" << '\n';
 
-        output << tab;
-        output << "bind(";
-        output << to_string(DyldBindingInfo::TYPE(type));
-        output << ", ";
-        output << segments[segment_idx].name();
-        output << ", ";
-        output << std::hex << std::showbase << segment_offset;
-        output << ", ";
-        output << symbol_name;
-        output << ", library_ordinal=";
-        output << (library_ordinal > 0 ? libraries[library_ordinal - 1].name() :
-                                         std::to_string(library_ordinal));
-        output << ", addend=";
-        output << std::dec << addend;
-        output << ", is_weak_import=";
-        output << std::boolalpha << is_weak_import;
-        output << ")" << '\n';
+        output << tab
+               << fmt::format("bind({}, {}, {:#x}, {}, library_ordinal={}, "
+                              "addend={}, is_weak_import={})\n",
+                              to_string(DyldBindingInfo::TYPE(type)),
+                              segments[segment_idx].name(), segment_offset,
+                              symbol_name,
+                              library_ordinal > 0 ?
+                                  libraries[library_ordinal - 1].name() :
+                                  std::to_string(library_ordinal),
+                              addend, is_weak_import);
 
         uint64_t v = 0;
         if (auto res = bind_stream.read_uleb128()) {
@@ -638,8 +603,9 @@ void DyldInfo::show_bindings(std::ostream& output,
         }
         segment_offset += v + pint_v;
 
-        output << tab << "Segment Offset += " << std::hex << std::showbase
-               << v + pint_v << " (" << segment_offset << ")" << '\n';
+        output << tab
+               << fmt::format("Segment Offset += {:#x} ({:#x})\n", v + pint_v,
+                              segment_offset);
         break;
       }
 
@@ -648,28 +614,22 @@ void DyldInfo::show_bindings(std::ostream& output,
 
         output << "[" << to_string(opcode) << "]" << '\n';
 
-        output << tab;
-        output << "bind(";
-        output << to_string(DyldBindingInfo::TYPE(type));
-        output << ", ";
-        output << segments[segment_idx].name();
-        output << ", ";
-        output << std::hex << std::showbase << segment_offset;
-        output << ", ";
-        output << symbol_name;
-        output << ", library_ordinal=";
-        output << (library_ordinal > 0 ? libraries[library_ordinal - 1].name() :
-                                         std::to_string(library_ordinal));
-        output << ", addend=";
-        output << std::dec << addend;
-        output << ", is_weak_import=";
-        output << std::boolalpha << is_weak_import;
-        output << ")" << '\n';
+        output << tab
+               << fmt::format("bind({}, {}, {:#x}, {}, library_ordinal={}, "
+                              "addend={}, is_weak_import={})\n",
+                              to_string(DyldBindingInfo::TYPE(type)),
+                              segments[segment_idx].name(), segment_offset,
+                              symbol_name,
+                              library_ordinal > 0 ?
+                                  libraries[library_ordinal - 1].name() :
+                                  std::to_string(library_ordinal),
+                              addend, is_weak_import);
 
         segment_offset += imm * pint_v + pint_v;
 
-        output << tab << "Segment Offset += " << std::hex << std::showbase
-               << (imm * pint_v + pint_v) << " (" << segment_offset << ")" << '\n';
+        output << tab
+               << fmt::format("Segment Offset += {:#x} ({:#x})\n",
+                              imm * pint_v + pint_v, segment_offset);
 
         break;
       }
@@ -698,45 +658,37 @@ void DyldInfo::show_bindings(std::ostream& output,
           break;
         }
 
-        output << tab << "for i in range(" << std::dec
-               << static_cast<uint32_t>(count) << "):" << '\n';
+        output << tab
+               << fmt::format("for i in range({}):\n",
+                              static_cast<uint32_t>(count));
         for (size_t i = 0; i < count; ++i) {
-          output << tab << tab;
-          output << "bind(";
-          output << to_string(DyldBindingInfo::TYPE(type));
-          output << ", ";
-          output << segments[segment_idx].name();
-          output << ", ";
-          output << std::hex << std::showbase << segment_offset;
-          output << ", ";
-          output << symbol_name;
-          output << ", library_ordinal=";
-          output << (library_ordinal > 0 ? libraries[library_ordinal - 1].name() :
-                                           std::to_string(library_ordinal));
-          output << ", addend=";
-          output << std::dec << addend;
-          output << ", is_weak_import=";
-          output << std::boolalpha << is_weak_import;
-          output << ")" << '\n';
+          output << tab << tab
+                 << fmt::format("bind({}, {}, {:#x}, {}, library_ordinal={}, "
+                                "addend={}, is_weak_import={})\n",
+                                to_string(DyldBindingInfo::TYPE(type)),
+                                segments[segment_idx].name(), segment_offset,
+                                symbol_name,
+                                library_ordinal > 0 ?
+                                    libraries[library_ordinal - 1].name() :
+                                    std::to_string(library_ordinal),
+                                addend, is_weak_import);
 
 
           segment_offset += skip + pint_v;
 
-          output << "Segment Offset += " << std::hex << std::showbase << skip
-                 << " + " << pint_v << " (" << segment_offset << ")";
-
-          output << '\n' << '\n';
+          output << fmt::format("Segment Offset += {:#x} + {:#x} ({:#x})\n\n",
+                                skip, pint_v, segment_offset);
         }
         break;
       }
       case BIND_OPCODES::THREADED:
       {
         const auto subopcode = static_cast<BIND_SUBOPCODE_THREADED>(imm);
-        output << std::string("[") + to_string(BIND_OPCODES::THREADED) + "]\n";
+        output << fmt::format("[{}]\n", to_string(BIND_OPCODES::THREADED));
         switch (subopcode) {
           case BIND_SUBOPCODE_THREADED::APPLY:
           {
-            output << tab << std::string("[") + to_string(subopcode) + "]\n";
+            output << tab << fmt::format("[{}]\n", to_string(subopcode));
             uint64_t delta = 0;
             const SegmentCommand& current_segment = segments[segment_idx];
             do {
@@ -808,7 +760,7 @@ void DyldInfo::show_bindings(std::ostream& output,
           case BIND_SUBOPCODE_THREADED::SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
           {
             static constexpr size_t MAX_COUNT = 65535;
-            output << tab << std::string("[") + to_string(subopcode) + "]\n";
+            output << tab << fmt::format("[{}]\n", to_string(subopcode));
             auto val = bind_stream.read_uleb128();
             if (!val) {
               LIEF_ERR(

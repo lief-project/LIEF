@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
+#include <spdlog/fmt/fmt.h>
 #include "LIEF/PE/debug/FPO.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "logging.hpp"
 #include "PE/Structures.hpp"
 
 namespace LIEF::PE {

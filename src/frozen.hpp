@@ -16,7 +16,6 @@
 #ifndef LIEF_FROZEN_H
 #define LIEF_FROZEN_H
 #include "LIEF/config.h"
-#include "compiler_support.h"
 
 #ifdef LIEF_FROZEN_ENABLED
   #include <frozen/map.h>

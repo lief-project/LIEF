@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <utility>
 
 #include "LIEF/ELF/hash.hpp"
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
-
 
 namespace LIEF::ELF {
 

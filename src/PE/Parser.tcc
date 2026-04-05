@@ -29,10 +29,7 @@
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
 
-#include "internal_utils.hpp"
-#include "frozen.hpp"
 #include "PE/Structures.hpp"
-
 
 namespace LIEF::PE {
 

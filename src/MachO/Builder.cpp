@@ -20,8 +20,6 @@
 
 #include "logging.hpp"
 
-#include "LIEF/BinaryStream/BinaryStream.hpp"
-
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
@@ -31,7 +29,6 @@
 
 #include "MachO/Builder.tcc"
 #include "MachO/Binary.tcc"
-
 
 namespace LIEF::MachO {
 

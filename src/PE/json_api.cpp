@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 
 #include "LIEF/config.h"
 
@@ -21,8 +20,13 @@
 
 #ifdef LIEF_JSON_SUPPORT
   #include "PE/json_internal.hpp"
+#else
+  #include "logging.hpp"
 #endif
 
+namespace LIEF {
+class Object;
+}
 
 namespace LIEF::PE {
 

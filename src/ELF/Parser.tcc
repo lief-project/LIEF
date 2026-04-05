@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <cctype>
 #include <memory>
 #include <unordered_set>
 #include "logging.hpp"
 
-#include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
@@ -43,14 +41,12 @@
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/Binary.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 
 #include "ELF/Structures.hpp"
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/SizingInfo.hpp"
 
 #include "Object.tcc"
-#include "internal_utils.hpp"
 
 
 namespace LIEF::ELF {
@@ -373,7 +369,7 @@ ok_error_t Parser::process_dynamic_table() {
       const uint64_t virtual_address = dt_jmprel->value();
       const uint64_t size = dt_pltrelsz->value();
       DynamicEntry* dt_pltrel = binary_->get(DynamicEntry::TAG::PLTREL);
-      DynamicEntry::TAG type;
+      auto type = DynamicEntry::TAG::UNKNOWN;
       if (dt_pltrel != nullptr) {
         type = DynamicEntry::from_value(dt_pltrel->value(),
                                         binary_->header().machine_type());
@@ -680,7 +676,7 @@ result<uint32_t> Parser::nb_dynsym_relocations() const {
     const uint64_t virtual_address = dt_jmprel->value();
     const uint64_t size = dt_pltrelsz->value();
     DynamicEntry* dt_pltrel = binary_->get(DynamicEntry::TAG::PLTREL);
-    DynamicEntry::TAG type;
+    auto type = DynamicEntry::TAG::UNKNOWN;
     if (dt_pltrel != nullptr) {
       type = DynamicEntry::from_value(dt_pltrel->value(),
                                       binary_->header().machine_type());
@@ -709,8 +705,8 @@ result<uint32_t> Parser::nb_dynsym_relocations() const {
 template<typename ELF_T, typename REL_T>
 uint32_t Parser::max_relocation_index(uint64_t relocations_offset,
                                       uint64_t size) const {
-  static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value ||
-                    std::is_same<REL_T, typename ELF_T::Elf_Rela>::value,
+  static_assert(std::is_same_v<REL_T, typename ELF_T::Elf_Rel> ||
+                    std::is_same_v<REL_T, typename ELF_T::Elf_Rela>,
                 "REL_T must be Elf_Rel || Elf_Rela");
 
   const uint8_t shift = ELF_T::r_info_shift;
@@ -1604,8 +1600,8 @@ ok_error_t Parser::parse_dynamic_entries(BinaryStream& stream) {
 
 template<typename ELF_T, typename REL_T>
 ok_error_t Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
-  static_assert(std::is_same<REL_T, typename ELF_T::Elf_Rel>::value ||
-                    std::is_same<REL_T, typename ELF_T::Elf_Rela>::value,
+  static_assert(std::is_same_v<REL_T, typename ELF_T::Elf_Rel> ||
+                    std::is_same_v<REL_T, typename ELF_T::Elf_Rela>,
                 "REL_T must be Elf_Rel or Elf_Rela");
   using Elf_Off = typename ELF_T::Elf_Off;
 
@@ -1678,8 +1674,7 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
   using Elf_Rel = typename ELF_T::Elf_Rel;
   using Elf_Rela = typename ELF_T::Elf_Rela;
 
-  static_assert(std::is_same<REL_T, Elf_Rel>::value ||
-                    std::is_same<REL_T, Elf_Rela>::value,
+  static_assert(std::is_same_v<REL_T, Elf_Rel> || std::is_same_v<REL_T, Elf_Rela>,
                 "REL_T must be Elf_Rel || Elf_Rela");
 
   // A relocation section can reference two other sections: a symbol table,

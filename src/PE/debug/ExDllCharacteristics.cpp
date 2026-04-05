@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <sstream>
 #include <algorithm>
 #include "LIEF/PE/debug/ExDllCharacteristics.hpp"
 
-#include "logging.hpp"
 #include "fmt_formatter.hpp"
 
 FMT_FORMATTER(LIEF::PE::ExDllCharacteristics::CHARACTERISTICS,

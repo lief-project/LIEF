@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 #include "LIEF/config.h"
-#include "logging.hpp"
-#include "LIEF/MachO.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
   #include "MachO/json_internal.hpp"
+#else
+  #include "logging.hpp"
 #endif
 
+namespace LIEF {
+class Object;
+}
 
 namespace LIEF::MachO {
 
-std::string to_json(const Object& v) {
+std::string to_json([[maybe_unused]] const Object& v) {
 #ifdef LIEF_JSON_SUPPORT
   JsonVisitor visitor;
   visitor(v);

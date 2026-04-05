@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "PE/Structures.hpp"
 
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/fmt/ranges.h"
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/fmt/ranges.h>
 
 
 namespace LIEF::PE {
