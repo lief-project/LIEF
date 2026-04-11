@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// NOLINTBEGIN
+
 #include "LIEF/asm/Instruction.hpp"
 #include "LIEF/asm/Engine.hpp"
 
@@ -646,4 +648,7 @@ int64_t aarch64::operands::Immediate::value() const {
 }
 
 }
+
+// NOLINTEND
+
 }

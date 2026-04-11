@@ -25,6 +25,8 @@
 #include "messages.hpp"
 #include "internal_utils.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF::dsc {
 namespace details {
 class DyldSharedCache {};
@@ -386,5 +388,7 @@ std::unique_ptr<const DyldSharedCache> SubCache::cache() const {
 std::ostream& operator<<(std::ostream& os, const SubCache&) {
   return os;
 }
+
+// NOLINTEND
 
 }

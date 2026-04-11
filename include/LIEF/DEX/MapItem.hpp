@@ -84,10 +84,10 @@ class LIEF_API MapItem : public Object {
   ~MapItem() override;
 
   private:
-  TYPES type_;
-  uint16_t reserved_;
-  uint32_t size_;
-  uint32_t offset_;
+  TYPES type_ = TYPES::HEADER;
+  uint16_t reserved_ = 0;
+  uint32_t size_ = 0;
+  uint32_t offset_ = 0;
 };
 
 } // Namespace DEX

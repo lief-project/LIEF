@@ -2495,22 +2495,22 @@ Binary::it_bindings Binary::bindings() const {
   if (const DyldInfo* dyld = dyld_info()) {
     auto begin = BindingInfoIterator(*dyld, 0);
     auto end = BindingInfoIterator(*dyld, dyld->binding_info_.size());
-    return make_range(std::move(begin),
-                      std::move(end)); // NOLINT(performance-move-const-arg)
+    // NOLINTNEXTLINE(performance-move-const-arg)
+    return make_range(std::move(begin), std::move(end));
   }
 
   if (const DyldChainedFixups* fixup = dyld_chained_fixups()) {
     auto begin = BindingInfoIterator(*fixup, 0);
     auto end = BindingInfoIterator(*fixup, fixup->all_bindings_.size());
-    return make_range(std::move(begin),
-                      std::move(end)); // NOLINT(performance-move-const-arg)
+    // NOLINTNEXTLINE(performance-move-const-arg)
+    return make_range(std::move(begin), std::move(end));
   }
 
   auto begin = BindingInfoIterator(*this, 0);
   auto end = BindingInfoIterator(*this, indirect_bindings_.size());
 
-  return make_range(std::move(begin),
-                    std::move(end)); // NOLINT(performance-move-const-arg)
+  // NOLINTNEXTLINE(performance-move-const-arg)
+  return make_range(std::move(begin), std::move(end));
 }
 
 result<uint64_t> Binary::get_function_address(const std::string& name) const {
@@ -2633,7 +2633,7 @@ Binary::stub_iterator Binary::symbol_stubs() const {
   }
   Stub::Iterator begin({header_.cpu_type(), header_.cpu_subtype()},
                        std::move(stub_sections), 0);
-  Stub::Iterator end({}, {}, total);
+  Stub::Iterator end({Header::CPU_TYPE::ANY, 0}, {}, total);
 
   return make_range(std::move(begin), std::move(end));
 }
@@ -2646,7 +2646,7 @@ bool Binary::can_cache_segment(const SegmentCommand& segment) {
   if (segment.name() == "__TEXT") {
     // In some cases (c.f. <samples>/MachO/issue_1130.macho)
     // the __TEXT segment can have a file_size set to 0 while it is logically
-    // revelant to cache it
+    // relevant to cache it
     return true;
   }
 

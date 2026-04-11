@@ -24,6 +24,8 @@
 #include "Segment.hpp"
 #include "LoadCommand.hpp"
 
+// NOLINTBEGIN
+
 
 using namespace LIEF::MachO;
 
@@ -54,3 +56,4 @@ void macho_binaries_destroy(Macho_Binary_t** binaries) {
   }
   free(binaries);
 }
+// NOLINTEND

@@ -15,6 +15,8 @@
  */
 #include "DataDirectory.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace PE {
 void init_c_data_directories(Pe_Binary_t* c_binary, Binary* binary) {
@@ -47,3 +49,4 @@ void destroy_data_directories(Pe_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

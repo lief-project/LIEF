@@ -15,6 +15,8 @@
  */
 #include "Section.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace ELF {
 void init_c_sections(Elf_Binary_t* c_binary, Binary* binary) {
@@ -62,3 +64,4 @@ void destroy_sections(Elf_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

@@ -288,7 +288,7 @@ template<>
 void swap_endian<MachO::details::dylib_reference>(
     MachO::details::dylib_reference* hdr
 ) {
-  swap_endian((uint32_t*)hdr);
+  swap_endian(reinterpret_cast<uint32_t*>(hdr));
 }
 
 template<>
@@ -305,7 +305,7 @@ template<>
 void swap_endian<MachO::details::twolevel_hint>(
     MachO::details::twolevel_hint* hdr
 ) {
-  swap_endian((uint32_t*)hdr);
+  swap_endian(reinterpret_cast<uint32_t*>(hdr));
 }
 
 

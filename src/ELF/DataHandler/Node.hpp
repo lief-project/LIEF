@@ -24,9 +24,9 @@ namespace LIEF::ELF::DataHandler {
 class LIEF_LOCAL Node {
   public:
   enum Type : uint8_t {
-    SECTION = 0,
-    SEGMENT = 1,
-    UNKNOWN = 2,
+    UNKNOWN = 0,
+    SECTION,
+    SEGMENT,
   };
   Node() = default;
   Node(uint64_t offset, uint64_t size, Type type) :

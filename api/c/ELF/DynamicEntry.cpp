@@ -24,6 +24,8 @@
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace ELF {
 
@@ -275,3 +277,4 @@ void destroy_dynamic_entries(Elf_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

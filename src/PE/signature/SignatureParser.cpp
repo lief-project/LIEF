@@ -1418,6 +1418,7 @@ result<std::string> SignatureParser::parse_spc_string(BinaryStream& stream) {
     return u16tou8(*progname);
   }
 
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition)
   if ((choice = asn1r.read_tag(MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1))) {
     LIEF_DEBUG("SpcString: ASCII choice");
     const size_t length = choice.value();
@@ -1456,11 +1457,13 @@ result<std::string> SignatureParser::parse_spc_link(BinaryStream& stream) {
     return url;
   }
 
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition)
   if ((choice = asn1r.read_tag(/* moniker */ MBEDTLS_ASN1_CONTEXT_SPECIFIC | 1))) {
     LIEF_INFO("Parsing spc-link.moniker is not supported");
     return make_error_code(lief_errors::not_supported);
   }
 
+  // NOLINTNEXTLINE(bugprone-assignment-in-if-condition)
   if ((choice = asn1r.read_tag(/* file */ MBEDTLS_ASN1_CONTEXT_SPECIFIC | 2))) {
     LIEF_INFO("Parsing spc-link.file is not supported");
     return make_error_code(lief_errors::not_supported);

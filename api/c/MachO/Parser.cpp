@@ -21,6 +21,8 @@
 
 #include "Binary.hpp"
 
+// NOLINTBEGIN
+
 using namespace LIEF::MachO;
 
 Macho_Binary_t** macho_parse(const char* file) {
@@ -51,3 +53,4 @@ Macho_Binary_t** macho_parse(const char* file) {
 
   return c_macho_binaries;
 }
+// NOLINTEND

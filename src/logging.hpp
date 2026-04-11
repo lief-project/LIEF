@@ -191,6 +191,7 @@ class Stream : public std::stringbuf {
   Stream(LEVEL lvl) :
     lvl_(lvl) {}
 
+  protected:
   int sync() override {
     switch (lvl_) {
       case LEVEL::OFF: break;

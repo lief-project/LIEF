@@ -30,6 +30,8 @@
 #include "Header.hpp"
 #include "Binary.hpp"
 
+// NOLINTBEGIN
+
 using namespace LIEF::ELF;
 
 namespace LIEF {
@@ -115,3 +117,4 @@ void elf_binary_destroy(Elf_Binary_t* binary) {
   free(binary);
 }
 //}
+// NOLINTEND

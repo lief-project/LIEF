@@ -44,7 +44,7 @@ inline bool is_printable(const std::string& str) {
 }
 
 template<class T>
-inline std::vector<T> as_vector(span<T> s) {
+inline std::vector<std::remove_const_t<T>> as_vector(span<T> s) {
   return std::vector<T>(s.begin(), s.end());
 }
 

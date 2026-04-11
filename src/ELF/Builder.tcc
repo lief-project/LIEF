@@ -1490,6 +1490,7 @@ ok_error_t Builder::build_section_relocations() {
     }
   }
 
+  // NOLINTNEXTLINE(bugprone-nondeterministic-pointer-iteration-order)
   for (const auto& [sec, ios] : section_content) {
     LIEF_DEBUG("Fill section {} with {:#x} bytes", sec->name(), ios.raw().size());
     sec->content(ios.raw());

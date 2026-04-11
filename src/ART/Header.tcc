@@ -26,7 +26,6 @@ namespace LIEF::ART {
 template<>
 Header::Header(const details::ART_17::header* header) :
   magic_{{'a', 'r', 't', '\n'}},
-  version_{0},
   image_begin_{header->image_begin},
   image_size_{header->image_size},
   oat_checksum_{header->oat_checksum},
@@ -39,15 +38,7 @@ Header::Header(const details::ART_17::header* header) :
   pointer_size_{header->pointer_size},
   compile_pic_{static_cast<bool>(header->compile_pic)},
   nb_sections_{sizeof(header->sections) / sizeof(header->sections[0])},
-  nb_methods_{sizeof(header->image_methods) / sizeof(header->image_methods[0])},
-
-  is_pic_{false},
-  boot_image_begin_{0},
-  boot_image_size_{0},
-  boot_oat_begin_{0},
-  boot_oat_size_{0},
-  storage_mode_{STORAGE_MODES::STORAGE_UNCOMPRESSED},
-  data_size_{0} {
+  nb_methods_{sizeof(header->image_methods) / sizeof(header->image_methods[0])} {
   std::copy(std::begin(header->magic), std::end(header->magic),
             std::begin(magic_));
   if (std::all_of(header->version, header->version + sizeof(header->version) - 1,
@@ -62,7 +53,6 @@ Header::Header(const details::ART_17::header* header) :
 template<class T>
 Header::Header(const T* header) :
   magic_{{'a', 'r', 't', '\n'}},
-  version_{0},
   image_begin_{header->image_begin},
   image_size_{header->image_size},
   oat_checksum_{header->oat_checksum},

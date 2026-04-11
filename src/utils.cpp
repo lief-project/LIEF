@@ -29,7 +29,6 @@
 #include "LIEF/config.h"
 
 #include "logging.hpp"
-#include "messages.hpp"
 #include "internal_utils.hpp"
 
 namespace LIEF {
@@ -37,17 +36,16 @@ namespace LIEF {
 template<typename octet_iterator>
 result<uint32_t> next(octet_iterator& it, octet_iterator end) {
   using namespace utf8;
+  using namespace utf8::internal;
   utfchar32_t cp = 0;
-  internal::utf_error err_code = internal::validate_next(it, end, cp);
+  internal::utf_error err_code = validate_next(it, end, cp);
   switch (err_code) {
-    case internal::UTF8_OK: break;
-    case internal::NOT_ENOUGH_ROOM:
-      return make_error_code(lief_errors::data_too_large);
-    case internal::INVALID_LEAD:
-    case internal::INCOMPLETE_SEQUENCE:
-    case internal::OVERLONG_SEQUENCE:
-    case internal::INVALID_CODE_POINT:
-      return make_error_code(lief_errors::read_error);
+    case UTF8_OK: break;
+    case NOT_ENOUGH_ROOM: return make_error_code(lief_errors::data_too_large);
+    case INVALID_LEAD:
+    case INCOMPLETE_SEQUENCE:
+    case OVERLONG_SEQUENCE:
+    case INVALID_CODE_POINT: return make_error_code(lief_errors::read_error);
   }
   return cp;
 }
@@ -69,6 +67,7 @@ std::string u16tou8(const char16_t* buffer, size_t size, bool remove_null_char) 
 }
 
 result<std::u16string> u8tou16(const std::string& string) {
+  using namespace utf8::internal;
   std::u16string name;
   auto start = string.begin();
   auto end = string.end();
@@ -80,9 +79,8 @@ result<std::u16string> u8tou16(const std::string& string) {
     }
     uint32_t cp_val = *cp;
     if (cp_val > 0xffff) {
-      *res++ = static_cast<uint16_t>((cp_val >> 10) + utf8::internal::LEAD_OFFSET);
-      *res++ = static_cast<uint16_t>((cp_val & 0x3ff) +
-                                     utf8::internal::TRAIL_SURROGATE_MIN);
+      *res++ = static_cast<uint16_t>((cp_val >> 10) + LEAD_OFFSET);
+      *res++ = static_cast<uint16_t>((cp_val & 0x3ff) + TRAIL_SURROGATE_MIN);
     } else {
       *res++ = static_cast<uint16_t>(cp_val);
     }
@@ -107,8 +105,11 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
   std::string banner;
 
   if (!title.empty()) {
-    banner = prefix + "+" + std::string(static_cast<size_t>(22 * 3), '-') +
-             "---+" + "\n" + prefix + "| ";
+    banner = prefix + "+" +
+             std::string(static_cast<size_t>(22 * 3), '-')
+                 .append("---+\n")
+                 .append(prefix)
+                 .append("| ");
     banner += title;
     if (title.size() < 68) {
       banner += std::string(68 - title.size(), ' ');
@@ -124,8 +125,11 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
 
   for (size_t i = 0; i < size; ++i) {
     if (i == 0) {
-      out = prefix + "+" + std::string(static_cast<size_t>(22 * 3), '-') + "---+" +
-            "\n" + prefix + "| ";
+      out = prefix + "+" +
+            std::string(static_cast<size_t>(22 * 3), '-')
+                .append("---+\n")
+                .append(prefix)
+                .append("| ");
     }
 
     if (i > 0 && i % 16 == 0) {

@@ -15,6 +15,8 @@
  */
 #include "Segment.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace MachO {
 void init_c_segments(Macho_Binary_t* c_binary, Binary* binary) {
@@ -63,3 +65,4 @@ void destroy_segments(Macho_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

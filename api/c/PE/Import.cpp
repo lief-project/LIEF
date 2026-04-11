@@ -16,6 +16,8 @@
 #include "Import.hpp"
 #include "ImportEntry.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace PE {
 
@@ -63,3 +65,4 @@ void destroy_imports(Pe_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

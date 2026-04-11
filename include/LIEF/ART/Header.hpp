@@ -85,43 +85,43 @@ class LIEF_API Header : public Object {
   ~Header() override;
 
   private:
-  magic_t magic_;
-  art_version_t version_;
+  magic_t magic_{};
+  art_version_t version_ = 0;
 
-  uint32_t image_begin_;
-  uint32_t image_size_;
+  uint32_t image_begin_ = 0;
+  uint32_t image_size_ = 0;
 
-  uint32_t oat_checksum_;
+  uint32_t oat_checksum_ = 0;
 
-  uint32_t oat_file_begin_;
-  uint32_t oat_file_end_;
+  uint32_t oat_file_begin_ = 0;
+  uint32_t oat_file_end_ = 0;
 
-  uint32_t oat_data_begin_;
-  uint32_t oat_data_end_;
+  uint32_t oat_data_begin_ = 0;
+  uint32_t oat_data_end_ = 0;
 
-  int32_t patch_delta_;
-  uint32_t image_roots_;
+  int32_t patch_delta_ = 0;
+  uint32_t image_roots_ = 0;
 
-  uint32_t pointer_size_;
+  uint32_t pointer_size_ = 0;
 
-  bool compile_pic_;
+  bool compile_pic_ = false;
 
-  uint32_t nb_sections_;
-  uint32_t nb_methods_;
+  uint32_t nb_sections_ = 0;
+  uint32_t nb_methods_ = 0;
 
-  bool is_pic_;
+  bool is_pic_ = false;
 
   // From ART 29
   // ===========
-  uint32_t boot_image_begin_;
-  uint32_t boot_image_size_;
+  uint32_t boot_image_begin_ = 0;
+  uint32_t boot_image_size_ = 0;
 
-  uint32_t boot_oat_begin_;
-  uint32_t boot_oat_size_;
+  uint32_t boot_oat_begin_ = 0;
+  uint32_t boot_oat_size_ = 0;
 
-  STORAGE_MODES storage_mode_;
+  STORAGE_MODES storage_mode_ = STORAGE_MODES::STORAGE_UNCOMPRESSED;
 
-  uint32_t data_size_;
+  uint32_t data_size_ = 0;
 };
 
 } // Namespace ART

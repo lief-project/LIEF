@@ -15,6 +15,8 @@
  */
 #include "Segment.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace ELF {
 
@@ -56,3 +58,4 @@ void destroy_segments(Elf_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

@@ -586,13 +586,13 @@ ok_error_t Builder::build_imports() {
                            iat_offset + (uint32_t)iat_stream.tellp();
     headers_ilt.seekp(headers_offset)
         .record_fixup(FX_IMPORT_TABLE)
-        .template write<uint32_t>(/*ImportLookupTableRVA=*/ilt_offsets)
-        .template write<uint32_t>(/*TimeDateStamp=*/imp.timedatestamp())
-        .template write<uint32_t>(/*ForwarderChain=*/imp.forwarder_chain())
+        .template write<uint32_t>(ilt_offsets)
+        .template write<uint32_t>(imp.timedatestamp())
+        .template write<uint32_t>(imp.forwarder_chain())
         .record_fixup(FX_IMPORT_TABLE)
-        .template write<uint32_t>(/*NameRVA=*/strings_offset + it->second)
+        .template write<uint32_t>(strings_offset + it->second) // Name RVA
         .record_fixup(FX_IMPORT_TABLE, !has_existing_iat)
-        .template write<uint32_t>(/*ImportAddressTableRVA=*/iat_rva);
+        .template write<uint32_t>(iat_rva);
     headers_offset = headers_ilt.tellp();
     headers_ilt.seekp(ilt_offsets);
 

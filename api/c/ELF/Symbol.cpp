@@ -15,6 +15,8 @@
  */
 #include "Symbol.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace ELF {
 
@@ -89,3 +91,4 @@ void destroy_symtab_symbols(Elf_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

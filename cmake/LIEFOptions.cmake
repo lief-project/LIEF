@@ -80,6 +80,11 @@ option(LIEF_FUZZING "Fuzz LIEF" OFF)
 # Profiling
 option(LIEF_PROFILING "Enable performance profiling" OFF)
 
+# QA / Linters
+option(LIEF_CLANG_TIDY "Enable clang-tidy checks" OFF)
+cmake_dependent_option(LIEF_CLANG_TIDY_WARN_ERR
+  "Enable WarningsAsErrors when running clang-tidy" OFF "LIEF_CLANG_TIDY" OFF)
+
 # Install options
 cmake_dependent_option(LIEF_INSTALL_COMPILED_EXAMPLES "Install LIEF Compiled examples" OFF
                        "LIEF_EXAMPLES" OFF)

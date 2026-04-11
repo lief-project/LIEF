@@ -39,7 +39,7 @@ int mbedtls_x509_get_serial(unsigned char** p, const unsigned char* end,
 namespace LIEF {
 
 inline void free_names(mbedtls_x509_name& names) {
-  mbedtls_x509_name* name_cur;
+  mbedtls_x509_name* name_cur = nullptr;
   name_cur = names.next;
   while (name_cur != nullptr) {
     mbedtls_x509_name* name_prv = name_cur;
@@ -176,7 +176,7 @@ result<std::string> ASN1Reader::read_oid() {
 
 
 result<bool> ASN1Reader::read_bool() {
-  int value;
+  int value = 0;
 
   const uint8_t* cur_p = stream_.p();
   uint8_t* p = stream_.p();

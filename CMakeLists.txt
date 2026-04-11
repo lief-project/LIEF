@@ -289,6 +289,21 @@ set_target_properties(LIB_LIEF
              CXX_VISIBILITY_PRESET     hidden
              C_VISIBILITY_PRESET       hidden)
 
+if (LIEF_CLANG_TIDY)
+  find_program(CLANG_TIDY_EXE NAMES "clang-tidy" REQUIRED)
+  set(CLANG_TIDY_COMMAND
+    "${CLANG_TIDY_EXE}"
+    "--use-color"
+    "--config-file=${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy-core.yaml"
+  )
+  if (LIEF_CLANG_TIDY_WARN_ERR)
+    list(APPEND CLANG_TIDY_COMMAND "--warnings-as-errors=*")
+  endif()
+
+  set_target_properties(LIB_LIEF PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+endif()
+
+
 if(UNIX AND NOT APPLE)
   target_link_options(LIB_LIEF PRIVATE -Wl,--gc-sections -Wl,--exclude-libs,ALL)
 endif()

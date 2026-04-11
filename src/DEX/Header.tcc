@@ -20,9 +20,7 @@ namespace LIEF::DEX {
 
 template<class T>
 Header::Header(const T& header) :
-  magic_{},
   checksum_{header.checksum},
-  signature_{},
   file_size_{header.file_size},
   header_size_{header.header_size},
   endian_tag_{header.endian_tag},

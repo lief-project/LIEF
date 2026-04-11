@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+// NOLINTBEGIN
 #include "LIEF/PDB/DebugInfo.hpp"
 #include "LIEF/PDB/CompilationUnit.hpp"
 #include "LIEF/PDB/PublicSymbol.hpp"
@@ -612,5 +614,7 @@ const char* to_string(BuildMetadata::CPU) {
 const char* to_string(BuildMetadata::LANG) {
   return "";
 }
+
+// NOLINTEND
 
 }

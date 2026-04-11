@@ -28,6 +28,8 @@
 #include "DataDirectory.hpp"
 #include "Import.hpp"
 
+// NOLINTBEGIN
+
 using namespace LIEF::PE;
 
 namespace LIEF {
@@ -68,3 +70,4 @@ void pe_binary_destroy(Pe_Binary_t* binary) {
   delete reinterpret_cast<Binary*>(binary->handler);
   free(binary);
 }
+// NOLINTEND

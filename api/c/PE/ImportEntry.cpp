@@ -15,6 +15,8 @@
  */
 #include "ImportEntry.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace PE {
 
@@ -57,3 +59,4 @@ void destroy_import_entries(Pe_Import_t* c_import) {
 
 }
 }
+// NOLINTEND

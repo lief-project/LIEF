@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+// NOLINTBEGIN
 #include "LIEF/DWARF/DebugInfo.hpp"
 #include "LIEF/DWARF/CompilationUnit.hpp"
 #include "LIEF/DWARF/Function.hpp"
@@ -1252,4 +1254,6 @@ StructType::Member::Member(std::unique_ptr<details::StructMember> impl) :
 StructType::Member::~Member() = default;
 
 }
+
+// NOLINTEND
 }

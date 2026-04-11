@@ -43,8 +43,8 @@
 namespace {
 // Copy this function from mbedtls since it is not exported
 inline int x509_get_current_time(mbedtls_x509_time* now) {
-  struct tm *lt, tm_buf;
-  mbedtls_time_t tt;
+  struct tm *lt = nullptr, tm_buf{};
+  mbedtls_time_t tt{};
   int ret = 0;
 
   tt = mbedtls_time(nullptr);
@@ -360,7 +360,7 @@ std::vector<uint8_t> x509::serial_number() const {
 }
 
 oid_t x509::signature_algorithm() const {
-  std::array<char, 256> oid_str;
+  std::array<char, 256> oid_str{};
   mbedtls_oid_get_numeric_string(oid_str.data(), oid_str.size(),
                                  &x509_cert_->sig_oid);
   return oid_t{oid_str.data()};
@@ -376,13 +376,13 @@ x509::date_t x509::valid_to() const {
 
 
 std::string x509::issuer() const {
-  std::array<char, 1024> buffer;
+  std::array<char, 1024> buffer{};
   lief_mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &x509_cert_->issuer);
   return buffer.data();
 }
 
 std::string x509::subject() const {
-  std::array<char, 1024> buffer;
+  std::array<char, 1024> buffer{};
   lief_mbedtls_x509_dn_gets(buffer.data(), buffer.size(), &x509_cert_->subject);
   return buffer.data();
 }
@@ -573,9 +573,10 @@ x509::VERIFICATION_FLAGS x509::is_trusted_by(const std::vector<x509>& ca) const 
     LIEF_WARN("Certificate chain is empty");
     return VERIFICATION_FLAGS::BADCERT_MISSING;
   }
-  std::vector<x509> ca_list =
-      ca; // NOLINT(performance-unnecessary-copy-initialization)
-          // Explicit copy since we will modify mbedtls_x509_crt->next
+  // Explicit copy since we will modify mbedtls_x509_crt->next
+  // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
+  std::vector<x509> ca_list = ca;
+
   for (size_t i = 0; i < ca_list.size() - 1; ++i) {
     ca_list[i].x509_cert_->next = ca_list[i + 1].x509_cert_;
   }

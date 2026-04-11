@@ -15,6 +15,8 @@
  */
 #include "Section.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace MachO {
 void init_c_sections(Macho_Binary_t* c_binary, Binary* binary) {
@@ -66,3 +68,4 @@ void destroy_sections(Macho_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

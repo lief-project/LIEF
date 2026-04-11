@@ -15,6 +15,8 @@
  */
 #include "Symbol.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace MachO {
 void init_c_symbols(Macho_Binary_t* c_binary, Binary* binary) {
@@ -51,3 +53,4 @@ void destroy_symbols(Macho_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND

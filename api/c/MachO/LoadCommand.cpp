@@ -15,6 +15,8 @@
  */
 #include "LoadCommand.hpp"
 
+// NOLINTBEGIN
+
 namespace LIEF {
 namespace MachO {
 void init_c_commands(Macho_Binary_t* c_binary, Binary* binary) {
@@ -56,3 +58,4 @@ void destroy_commands(Macho_Binary_t* c_binary) {
 
 }
 }
+// NOLINTEND
