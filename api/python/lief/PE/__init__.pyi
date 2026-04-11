@@ -265,7 +265,11 @@ class Header(lief.Object):
     @staticmethod
     def create(type: PE_TYPE) -> Header: ...
 
-    signature: list[int]
+    @property
+    def signature(self) -> list[int]: ...
+
+    @signature.setter
+    def signature(self, arg: Sequence[int], /) -> None: ...
 
     machine: Header.MACHINE_TYPES
 
@@ -797,7 +801,11 @@ class Export(lief.Object):
 
         def __next__(self) -> ExportEntry: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     export_flags: int
 
@@ -871,7 +879,11 @@ class ExportEntry(lief.Symbol):
 
         def __str__(self) -> str: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     ordinal: int
 
@@ -898,7 +910,11 @@ class ExportEntry(lief.Symbol):
 class TLS(lief.Object):
     def __init__(self) -> None: ...
 
-    callbacks: list[int]
+    @property
+    def callbacks(self) -> list[int]: ...
+
+    @callbacks.setter
+    def callbacks(self, arg: Sequence[int], /) -> None: ...
 
     addressof_index: int
 
@@ -910,7 +926,11 @@ class TLS(lief.Object):
 
     addressof_raw_data: tuple[int, int]
 
-    data_template: memoryview
+    @property
+    def data_template(self) -> memoryview: ...
+
+    @data_template.setter
+    def data_template(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def has_section(self) -> bool: ...
@@ -955,7 +975,11 @@ class Import(lief.Object):
     @property
     def entries(self) -> Import.it_entries: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     @property
     def directory(self) -> DataDirectory | None: ...
@@ -998,7 +1022,11 @@ class ImportEntry(lief.Symbol):
     @overload
     def __init__(self, data: int, type: PE_TYPE) -> None: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     data: int
 
@@ -1040,7 +1068,11 @@ class DelayImport(lief.Object):
     @property
     def entries(self) -> DelayImport.it_entries: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     attribute: int
 
@@ -1066,7 +1098,11 @@ class DelayImportEntry(lief.Symbol):
     @property
     def demangled_name(self) -> str: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     data: int
 
@@ -1211,7 +1247,11 @@ class RuntimeFunctionX64(ExceptionInfo):
 
         frame_reg_offset: int
 
-        raw_opcodes: list[int]
+        @property
+        def raw_opcodes(self) -> list[int]: ...
+
+        @raw_opcodes.setter
+        def raw_opcodes(self, arg: Sequence[int], /) -> None: ...
 
         handler: int | None
 
@@ -1378,16 +1418,28 @@ class CodeViewPDB(CodeView):
     @property
     def guid(self) -> str: ...
 
-    signature: list[int]
+    @property
+    def signature(self) -> list[int]: ...
+
+    @signature.setter
+    def signature(self, arg: Sequence[int], /) -> None: ...
 
     age: int
 
-    filename: Union[str, bytes]
+    @property
+    def filename(self) -> Union[str, bytes]: ...
+
+    @filename.setter
+    def filename(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
 
 class Repro(Debug):
-    hash: memoryview
+    @property
+    def hash(self) -> memoryview: ...
+
+    @hash.setter
+    def hash(self, arg: bytes, /) -> None: ...
 
     def __str__(self) -> str: ...
 
@@ -1432,7 +1484,11 @@ class Pogo(Debug):
 class PogoEntry(lief.Object):
     def __init__(self) -> None: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     start_rva: int
 
@@ -1450,7 +1506,11 @@ class PDBChecksum(Debug):
 
         SHA256 = 1
 
-    hash: memoryview
+    @property
+    def hash(self) -> memoryview: ...
+
+    @hash.setter
+    def hash(self, arg: Sequence[int], /) -> None: ...
 
     algorithm: PDBChecksum.HASH_ALGO
 
@@ -1648,7 +1708,11 @@ class ResourcesManager(lief.Object):
     @property
     def has_manifest(self) -> bool: ...
 
-    manifest: Union[str, bytes]
+    @property
+    def manifest(self) -> Union[str, bytes]: ...
+
+    @manifest.setter
+    def manifest(self, arg: str, /) -> None: ...
 
     @property
     def has_version(self) -> bool: ...
@@ -1758,7 +1822,11 @@ class ResourceData(ResourceNode):
 
     code_page: int
 
-    content: memoryview
+    @property
+    def content(self) -> memoryview: ...
+
+    @content.setter
+    def content(self, arg: bytes, /) -> None: ...
 
     reserved: int
 
@@ -2036,7 +2104,11 @@ class ResourceIcon(lief.Object):
 
     bit_count: int
 
-    pixels: memoryview
+    @property
+    def pixels(self) -> memoryview: ...
+
+    @pixels.setter
+    def pixels(self, arg: Sequence[int], /) -> None: ...
 
     def save(self, filepath: str) -> None: ...
 
@@ -3702,9 +3774,17 @@ class CHPEMetadataX86(CHPEMetadata):
 
     wowa64_dispatch_jump_function_pointer: int
 
-    compiler_iat_pointer: int | None
+    @property
+    def compiler_iat_pointer(self) -> int | None: ...
 
-    wowa64_rdtsc_function_pointer: int | None
+    @compiler_iat_pointer.setter
+    def compiler_iat_pointer(self, arg: int, /) -> CHPEMetadataX86: ...
+
+    @property
+    def wowa64_rdtsc_function_pointer(self) -> int | None: ...
+
+    @wowa64_rdtsc_function_pointer.setter
+    def wowa64_rdtsc_function_pointer(self, arg: int, /) -> CHPEMetadataX86: ...
 
 class DynamicRelocation:
     class IMAGE_DYNAMIC_RELOCATION(enum.Enum):
@@ -3803,7 +3883,11 @@ class DynamicFixupARM64X(DynamicFixup):
 
         size: int
 
-        raw_bytes: list[int]
+        @property
+        def raw_bytes(self) -> list[int]: ...
+
+        @raw_bytes.setter
+        def raw_bytes(self, arg: Sequence[int], /) -> None: ...
 
         value: int
 
@@ -3938,9 +4022,17 @@ class FunctionOverride(DynamicFixup):
 
         original_offset: int
 
-        relocations: list[FunctionOverride.image_bdd_dynamic_relocation_t]
+        @property
+        def relocations(self) -> list[FunctionOverride.image_bdd_dynamic_relocation_t]: ...
 
-        payload: list[int]
+        @relocations.setter
+        def relocations(self, arg: Sequence[FunctionOverride.image_bdd_dynamic_relocation_t], /) -> None: ...
+
+        @property
+        def payload(self) -> list[int]: ...
+
+        @payload.setter
+        def payload(self, arg: Sequence[int], /) -> None: ...
 
     class it_func_overriding_info:
         def __getitem__(self, arg: int, /) -> FunctionOverrideInfo: ...
@@ -3988,11 +4080,23 @@ class EnclaveImport:
 
     min_security_version: int
 
-    id: list[int]
+    @property
+    def id(self) -> list[int]: ...
 
-    family_id: list[int]
+    @id.setter
+    def id(self, arg: Sequence[int], /) -> EnclaveImport: ...
 
-    image_id: list[int]
+    @property
+    def family_id(self) -> list[int]: ...
+
+    @family_id.setter
+    def family_id(self, arg: Sequence[int], /) -> EnclaveImport: ...
+
+    @property
+    def image_id(self) -> list[int]: ...
+
+    @image_id.setter
+    def image_id(self, arg: Sequence[int], /) -> EnclaveImport: ...
 
     import_name_rva: int
 
@@ -4031,9 +4135,17 @@ class EnclaveConfiguration:
     @property
     def imports(self) -> EnclaveConfiguration.it_imports: ...
 
-    family_id: list[int]
+    @property
+    def family_id(self) -> list[int]: ...
 
-    image_id: list[int]
+    @family_id.setter
+    def family_id(self, arg: Sequence[int], /) -> EnclaveConfiguration: ...
+
+    @property
+    def image_id(self) -> list[int]: ...
+
+    @image_id.setter
+    def image_id(self, arg: Sequence[int], /) -> EnclaveConfiguration: ...
 
     image_version: int
 
@@ -4199,50 +4311,106 @@ class LoadConfiguration(lief.Object):
 
     security_cookie: int
 
-    se_handler_table: int | None
+    @property
+    def se_handler_table(self) -> int | None: ...
+
+    @se_handler_table.setter
+    def se_handler_table(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def seh_functions(self) -> list[int]: ...
 
-    se_handler_count: int | None
+    @property
+    def se_handler_count(self) -> int | None: ...
 
-    guard_cf_check_function_pointer: int | None
+    @se_handler_count.setter
+    def se_handler_count(self, arg: int, /) -> LoadConfiguration: ...
 
-    guard_cf_dispatch_function_pointer: int | None
+    @property
+    def guard_cf_check_function_pointer(self) -> int | None: ...
 
-    guard_cf_function_table: int | None
+    @guard_cf_check_function_pointer.setter
+    def guard_cf_check_function_pointer(self, arg: int, /) -> LoadConfiguration: ...
 
-    guard_cf_function_count: int | None
+    @property
+    def guard_cf_dispatch_function_pointer(self) -> int | None: ...
+
+    @guard_cf_dispatch_function_pointer.setter
+    def guard_cf_dispatch_function_pointer(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def guard_cf_function_table(self) -> int | None: ...
+
+    @guard_cf_function_table.setter
+    def guard_cf_function_table(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def guard_cf_function_count(self) -> int | None: ...
+
+    @guard_cf_function_count.setter
+    def guard_cf_function_count(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def guard_cf_functions(self) -> LoadConfiguration.it_guard_functions: ...
 
-    guard_flags: int | None
+    @property
+    def guard_flags(self) -> int | None: ...
+
+    @guard_flags.setter
+    def guard_flags(self, arg: int, /) -> LoadConfiguration: ...
 
     def has(self, arg: LoadConfiguration.IMAGE_GUARD, /) -> bool: ...
 
     @property
     def guard_cf_flags_list(self) -> list[LoadConfiguration.IMAGE_GUARD]: ...
 
-    code_integrity: CodeIntegrity | None
+    @property
+    def code_integrity(self) -> CodeIntegrity | None: ...
 
-    guard_address_taken_iat_entry_table: int | None
+    @code_integrity.setter
+    def code_integrity(self, arg: CodeIntegrity, /) -> LoadConfiguration: ...
 
-    guard_address_taken_iat_entry_count: int | None
+    @property
+    def guard_address_taken_iat_entry_table(self) -> int | None: ...
+
+    @guard_address_taken_iat_entry_table.setter
+    def guard_address_taken_iat_entry_table(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def guard_address_taken_iat_entry_count(self) -> int | None: ...
+
+    @guard_address_taken_iat_entry_count.setter
+    def guard_address_taken_iat_entry_count(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def guard_address_taken_iat_entries(self) -> LoadConfiguration.it_guard_functions: ...
 
-    guard_long_jump_target_table: int | None
+    @property
+    def guard_long_jump_target_table(self) -> int | None: ...
 
-    guard_long_jump_target_count: int | None
+    @guard_long_jump_target_table.setter
+    def guard_long_jump_target_table(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def guard_long_jump_target_count(self) -> int | None: ...
+
+    @guard_long_jump_target_count.setter
+    def guard_long_jump_target_count(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def guard_long_jump_targets(self) -> LoadConfiguration.it_guard_functions: ...
 
-    dynamic_value_reloc_table: int | None
+    @property
+    def dynamic_value_reloc_table(self) -> int | None: ...
 
-    hybrid_metadata_pointer: int | None
+    @dynamic_value_reloc_table.setter
+    def dynamic_value_reloc_table(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def hybrid_metadata_pointer(self) -> int | None: ...
+
+    @hybrid_metadata_pointer.setter
+    def hybrid_metadata_pointer(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def chpe_metadata_pointer(self) -> int | None: ...
@@ -4250,53 +4418,125 @@ class LoadConfiguration(lief.Object):
     @property
     def chpe_metadata(self) -> CHPEMetadata | None: ...
 
-    guard_rf_failure_routine: int | None
+    @property
+    def guard_rf_failure_routine(self) -> int | None: ...
 
-    guard_rf_failure_routine_function_pointer: int | None
+    @guard_rf_failure_routine.setter
+    def guard_rf_failure_routine(self, arg: int, /) -> LoadConfiguration: ...
 
-    dynamic_value_reloctable_offset: int | None
+    @property
+    def guard_rf_failure_routine_function_pointer(self) -> int | None: ...
 
-    dynamic_value_reloctable_section: int | None
+    @guard_rf_failure_routine_function_pointer.setter
+    def guard_rf_failure_routine_function_pointer(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def dynamic_value_reloctable_offset(self) -> int | None: ...
+
+    @dynamic_value_reloctable_offset.setter
+    def dynamic_value_reloctable_offset(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def dynamic_value_reloctable_section(self) -> int | None: ...
+
+    @dynamic_value_reloctable_section.setter
+    def dynamic_value_reloctable_section(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def dynamic_relocations(self) -> LoadConfiguration.it_dynamic_relocations_t: ...
 
-    reserved2: int | None
+    @property
+    def reserved2(self) -> int | None: ...
 
-    guard_rf_verify_stackpointer_function_pointer: int | None
+    @reserved2.setter
+    def reserved2(self, arg: int, /) -> LoadConfiguration: ...
 
-    hotpatch_table_offset: int | None
+    @property
+    def guard_rf_verify_stackpointer_function_pointer(self) -> int | None: ...
 
-    reserved3: int | None
+    @guard_rf_verify_stackpointer_function_pointer.setter
+    def guard_rf_verify_stackpointer_function_pointer(self, arg: int, /) -> LoadConfiguration: ...
 
-    enclave_configuration_ptr: int | None
+    @property
+    def hotpatch_table_offset(self) -> int | None: ...
+
+    @hotpatch_table_offset.setter
+    def hotpatch_table_offset(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def reserved3(self) -> int | None: ...
+
+    @reserved3.setter
+    def reserved3(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def enclave_configuration_ptr(self) -> int | None: ...
+
+    @enclave_configuration_ptr.setter
+    def enclave_configuration_ptr(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def enclave_config(self) -> EnclaveConfiguration | None: ...
 
-    volatile_metadata_pointer: int | None
+    @property
+    def volatile_metadata_pointer(self) -> int | None: ...
+
+    @volatile_metadata_pointer.setter
+    def volatile_metadata_pointer(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def volatile_metadata(self) -> VolatileMetadata | None: ...
 
-    guard_eh_continuation_table: int | None
+    @property
+    def guard_eh_continuation_table(self) -> int | None: ...
 
-    guard_eh_continuation_count: int | None
+    @guard_eh_continuation_table.setter
+    def guard_eh_continuation_table(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def guard_eh_continuation_count(self) -> int | None: ...
+
+    @guard_eh_continuation_count.setter
+    def guard_eh_continuation_count(self, arg: int, /) -> LoadConfiguration: ...
 
     @property
     def guard_eh_continuation_functions(self) -> LoadConfiguration.it_guard_functions: ...
 
-    guard_xfg_check_function_pointer: int | None
+    @property
+    def guard_xfg_check_function_pointer(self) -> int | None: ...
 
-    guard_xfg_dispatch_function_pointer: int | None
+    @guard_xfg_check_function_pointer.setter
+    def guard_xfg_check_function_pointer(self, arg: int, /) -> LoadConfiguration: ...
 
-    guard_xfg_table_dispatch_function_pointer: int | None
+    @property
+    def guard_xfg_dispatch_function_pointer(self) -> int | None: ...
 
-    cast_guard_os_determined_failure_mode: int | None
+    @guard_xfg_dispatch_function_pointer.setter
+    def guard_xfg_dispatch_function_pointer(self, arg: int, /) -> LoadConfiguration: ...
 
-    guard_memcpy_function_pointer: int | None
+    @property
+    def guard_xfg_table_dispatch_function_pointer(self) -> int | None: ...
 
-    uma_function_pointers: int | None
+    @guard_xfg_table_dispatch_function_pointer.setter
+    def guard_xfg_table_dispatch_function_pointer(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def cast_guard_os_determined_failure_mode(self) -> int | None: ...
+
+    @cast_guard_os_determined_failure_mode.setter
+    def cast_guard_os_determined_failure_mode(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def guard_memcpy_function_pointer(self) -> int | None: ...
+
+    @guard_memcpy_function_pointer.setter
+    def guard_memcpy_function_pointer(self, arg: int, /) -> LoadConfiguration: ...
+
+    @property
+    def uma_function_pointers(self) -> int | None: ...
+
+    @uma_function_pointers.setter
+    def uma_function_pointers(self, arg: int, /) -> LoadConfiguration: ...
 
     def copy(self) -> LoadConfiguration: ...
 
@@ -4423,11 +4663,19 @@ class Binary(lief.Binary):
 
     def section_from_rva(self, rva: int) -> Section | None: ...
 
-    tls: TLS | None
+    @property
+    def tls(self) -> TLS | None: ...
+
+    @tls.setter
+    def tls(self, arg: TLS, /) -> TLS: ...
 
     def remove_tls(self) -> None: ...
 
-    rich_header: RichHeader | None
+    @property
+    def rich_header(self) -> RichHeader | None: ...
+
+    @rich_header.setter
+    def rich_header(self, arg: RichHeader, /) -> None: ...
 
     @property
     def has_rich_header(self) -> bool: ...
@@ -4560,7 +4808,11 @@ class Binary(lief.Binary):
     @property
     def overlay_offset(self) -> int: ...
 
-    dos_stub: memoryview
+    @property
+    def dos_stub(self) -> memoryview: ...
+
+    @dos_stub.setter
+    def dos_stub(self, arg: Sequence[int], /) -> None: ...
 
     def add_import(self, import_name: str, pos: int = -1) -> Import: ...
 

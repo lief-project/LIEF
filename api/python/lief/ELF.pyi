@@ -439,7 +439,11 @@ class SymbolVersion(lief.Object):
     @property
     def has_auxiliary_version(self) -> bool: ...
 
-    symbol_version_auxiliary: SymbolVersionAux | None
+    @property
+    def symbol_version_auxiliary(self) -> SymbolVersionAux | None: ...
+
+    @symbol_version_auxiliary.setter
+    def symbol_version_auxiliary(self, arg: SymbolVersionAuxRequirement, /) -> None: ...
 
     def drop_version(self, value: int) -> None: ...
 
@@ -862,7 +866,11 @@ class Binary(lief.Binary):
     @overload
     def get_section_idx(self, arg: str, /) -> Union[int, lief.lief_errors]: ...
 
-    overlay: memoryview
+    @property
+    def overlay(self) -> memoryview: ...
+
+    @overlay.setter
+    def overlay(self, arg: bytes, /) -> None: ...
 
     def relocate_phdr_table(self, type: Binary.PHDR_RELOC = Binary.PHDR_RELOC.AUTO) -> int: ...
 
@@ -1201,7 +1209,11 @@ class Header(lief.Object):
 
     identity_abi_version: int
 
-    identity: list[int]
+    @property
+    def identity(self) -> list[int]: ...
+
+    @identity.setter
+    def identity(self, arg: object, /) -> None: ...
 
     file_type: Header.FILE_TYPE
 
@@ -1665,7 +1677,11 @@ class Segment(lief.Object):
 
     alignment: int
 
-    content: memoryview
+    @property
+    def content(self) -> memoryview: ...
+
+    @content.setter
+    def content(self, arg: Sequence[int], /) -> None: ...
 
     def add(self, flag: Segment.FLAGS) -> None: ...
 
@@ -4139,7 +4155,11 @@ class Relocation(lief.Relocation):
     @property
     def has_symbol(self) -> bool: ...
 
-    symbol: Symbol | None
+    @property
+    def symbol(self) -> Symbol | None: ...
+
+    @symbol.setter
+    def symbol(self, arg: Symbol, /) -> None: ...
 
     @property
     def has_section(self) -> bool: ...
@@ -4172,7 +4192,11 @@ class Relocation(lief.Relocation):
     def __str__(self) -> str: ...
 
 class SymbolVersionAux(lief.Object):
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
 
@@ -4581,35 +4605,55 @@ class DynamicEntry(lief.Object):
 class DynamicEntryLibrary(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
 
 class DynamicSharedObject(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
 
 class DynamicEntryAuxiliary(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
 
 class DynamicEntryFilter(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
 
 class DynamicEntryArray(DynamicEntry):
     def __init__(self, tag: DynamicEntry.TAG, array: Sequence[int]) -> None: ...
 
-    array: list[int]
+    @property
+    def array(self) -> list[int]: ...
+
+    @array.setter
+    def array(self, arg: Sequence[int], /) -> None: ...
 
     def insert(self, pos: int, function: int) -> DynamicEntryArray: ...
 
@@ -4634,9 +4678,17 @@ class DynamicEntryRpath(DynamicEntry):
     @overload
     def __init__(self, paths: Sequence[str]) -> None: ...
 
-    rpath: Union[str, bytes]
+    @property
+    def rpath(self) -> Union[str, bytes]: ...
 
-    paths: list[str]
+    @rpath.setter
+    def rpath(self, arg: str, /) -> None: ...
+
+    @property
+    def paths(self) -> list[str]: ...
+
+    @paths.setter
+    def paths(self, arg: Sequence[str], /) -> None: ...
 
     def insert(self, position: int, path: str) -> DynamicEntryRpath: ...
 
@@ -4657,9 +4709,17 @@ class DynamicEntryRunPath(DynamicEntry):
     @overload
     def __init__(self, paths: Sequence[str]) -> None: ...
 
-    runpath: Union[str, bytes]
+    @property
+    def runpath(self) -> Union[str, bytes]: ...
 
-    paths: list[str]
+    @runpath.setter
+    def runpath(self, arg: str, /) -> None: ...
+
+    @property
+    def paths(self) -> list[str]: ...
+
+    @paths.setter
+    def paths(self, arg: Sequence[str], /) -> None: ...
 
     def insert(self, position: int, path: str) -> DynamicEntryRunPath: ...
 
@@ -5000,7 +5060,11 @@ class Note(lief.Object):
     @property
     def type(self) -> Note.TYPE: ...
 
-    description: memoryview
+    @property
+    def description(self) -> memoryview: ...
+
+    @description.setter
+    def description(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def size(self) -> int: ...
@@ -5483,16 +5547,32 @@ class CorePrPsInfo(Note):
         @property
         def args_stripped(self) -> str: ...
 
-    info: Optional[CorePrPsInfo.info_t]
+    @property
+    def info(self) -> Optional[CorePrPsInfo.info_t]: ...
+
+    @info.setter
+    def info(self, arg: CorePrPsInfo.info_t, /) -> None: ...
 
     def __str__(self) -> str: ...
 
 class CoreSigInfo(Note):
-    signo: Optional[int]
+    @property
+    def signo(self) -> Optional[int]: ...
 
-    sigcode: Optional[int]
+    @signo.setter
+    def signo(self, arg: int, /) -> None: ...
 
-    sigerrno: Optional[int]
+    @property
+    def sigcode(self) -> Optional[int]: ...
+
+    @sigcode.setter
+    def sigcode(self, arg: int, /) -> None: ...
+
+    @property
+    def sigerrno(self) -> Optional[int]: ...
+
+    @sigerrno.setter
+    def sigerrno(self, arg: int, /) -> None: ...
 
     def __str__(self) -> str: ...
 

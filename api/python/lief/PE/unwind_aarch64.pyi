@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from typing import Iterator, Optional, Union
 
 import lief.PE
@@ -38,7 +39,11 @@ class UnpackedFunction(lief.PE.RuntimeFunctionAArch64):
 
     exception_handler: int
 
-    unwind_code: memoryview
+    @property
+    def unwind_code(self) -> memoryview: ...
+
+    @unwind_code.setter
+    def unwind_code(self, arg: Sequence[int], /) -> UnpackedFunction: ...
 
     @property
     def epilog_scopes(self) -> UnpackedFunction.it_epilog_scopes: ...

@@ -683,7 +683,11 @@ class Binary(Object):
     def __str__(self) -> str: ...
 
 class Section(Object):
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     @property
     def fullname(self) -> bytes: ...
@@ -694,7 +698,11 @@ class Section(Object):
 
     virtual_address: int
 
-    content: memoryview
+    @property
+    def content(self) -> memoryview: ...
+
+    @content.setter
+    def content(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def entropy(self) -> float: ...
@@ -717,7 +725,11 @@ class Section(Object):
     def __str__(self) -> str: ...
 
 class Symbol(Object):
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ... # type: ignore
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ... # type: ignore
 
     value: int
 

@@ -1489,14 +1489,22 @@ class LoadCommand(lief.Object):
 
     size: int
 
-    data: memoryview
+    @property
+    def data(self) -> memoryview: ...
+
+    @data.setter
+    def data(self, arg: Sequence[int], /) -> None: ...
 
     command_offset: int
 
     def __str__(self) -> str: ...
 
 class UUIDCommand(LoadCommand):
-    uuid: list[int]
+    @property
+    def uuid(self) -> list[int]: ...
+
+    @uuid.setter
+    def uuid(self, arg: Sequence[int], /) -> None: ...
 
     def __str__(self) -> str: ...
 
@@ -1577,7 +1585,11 @@ class SegmentCommand(LoadCommand):
 
         READ_ONLY = 16
 
-    name: Union[str, bytes]
+    @property
+    def name(self) -> Union[str, bytes]: ...
+
+    @name.setter
+    def name(self, arg: str, /) -> None: ...
 
     virtual_address: int
 
@@ -1602,7 +1614,11 @@ class SegmentCommand(LoadCommand):
     @property
     def index(self) -> int: ...
 
-    content: memoryview
+    @property
+    def content(self) -> memoryview: ...
+
+    @content.setter
+    def content(self, arg: Sequence[int], /) -> None: ...
 
     flags: int
 
@@ -1740,7 +1756,11 @@ class Section(lief.Section):
 
     reserved3: int
 
-    flags: Section.FLAGS
+    @property
+    def flags(self) -> Section.FLAGS: ...
+
+    @flags.setter
+    def flags(self, arg: int, /) -> None: ...
 
     @property
     def flags_list(self) -> list[Section.FLAGS]: ...
@@ -1784,7 +1804,11 @@ class NoteCommand(LoadCommand):
     @property
     def owner_str(self) -> str: ...
 
-    owner: memoryview
+    @property
+    def owner(self) -> memoryview: ...
+
+    @owner.setter
+    def owner(self, arg: bytes, /) -> None: ...
 
     def __str__(self) -> str: ...
 
@@ -1953,28 +1977,44 @@ class DyldInfo(LoadCommand):
 
     rebase: tuple[int, int]
 
-    rebase_opcodes: memoryview
+    @property
+    def rebase_opcodes(self) -> memoryview: ...
+
+    @rebase_opcodes.setter
+    def rebase_opcodes(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def show_rebases_opcodes(self) -> str: ...
 
     bind: tuple[int, int]
 
-    bind_opcodes: memoryview
+    @property
+    def bind_opcodes(self) -> memoryview: ...
+
+    @bind_opcodes.setter
+    def bind_opcodes(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def show_bind_opcodes(self) -> str: ...
 
     weak_bind: tuple[int, int]
 
-    weak_bind_opcodes: memoryview
+    @property
+    def weak_bind_opcodes(self) -> memoryview: ...
+
+    @weak_bind_opcodes.setter
+    def weak_bind_opcodes(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def show_weak_bind_opcodes(self) -> str: ...
 
     lazy_bind: tuple[int, int]
 
-    lazy_bind_opcodes: memoryview
+    @property
+    def lazy_bind_opcodes(self) -> memoryview: ...
+
+    @lazy_bind_opcodes.setter
+    def lazy_bind_opcodes(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def show_lazy_bind_opcodes(self) -> str: ...
@@ -1984,7 +2024,11 @@ class DyldInfo(LoadCommand):
 
     export_info: tuple[int, int]
 
-    export_trie: memoryview
+    @property
+    def export_trie(self) -> memoryview: ...
+
+    @export_trie.setter
+    def export_trie(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def exports(self) -> DyldExportsTrie.it_export_info: ...
@@ -2124,9 +2168,17 @@ class DylibCommand(LoadCommand):
 
     timestamp: int
 
-    current_version: list[int]
+    @property
+    def current_version(self) -> list[int]: ...
 
-    compatibility_version: list[int]
+    @current_version.setter
+    def current_version(self, arg: Sequence[int], /) -> None: ...
+
+    @property
+    def compatibility_version(self) -> list[int]: ...
+
+    @compatibility_version.setter
+    def compatibility_version(self, arg: Sequence[int], /) -> None: ...
 
     @staticmethod
     def weak_lib(name: str, timestamp: int = 0, current_version: int = 0, compat_version: int = 0) -> DylibCommand: ...
@@ -2153,7 +2205,11 @@ class ThreadCommand(LoadCommand):
 
     flavor: int
 
-    state: memoryview
+    @property
+    def state(self) -> memoryview: ...
+
+    @state.setter
+    def state(self, arg: Sequence[int], /) -> None: ...
 
     count: int
 
@@ -2334,7 +2390,11 @@ class Relocation(lief.Relocation):
 
     pc_relative: bool
 
-    type: Union[lief.MachO.X86_RELOCATION, lief.MachO.X86_64_RELOCATION, lief.MachO.PPC_RELOCATION, lief.MachO.ARM_RELOCATION, lief.MachO.ARM64_RELOCATION, lief.MachO.DyldInfo.REBASE_TYPE, ]
+    @property
+    def type(self) -> Union[lief.MachO.X86_RELOCATION, lief.MachO.X86_64_RELOCATION, lief.MachO.PPC_RELOCATION, lief.MachO.ARM_RELOCATION, lief.MachO.ARM64_RELOCATION, lief.MachO.DyldInfo.REBASE_TYPE, ]: ...
+
+    @type.setter
+    def type(self, arg: int, /) -> None: ...
 
     @property
     def architecture(self) -> Header.CPU_TYPE: ...
@@ -2530,7 +2590,11 @@ class FunctionStarts(LoadCommand):
 
     data_size: int
 
-    functions: list[int]
+    @property
+    def functions(self) -> list[int]: ...
+
+    @functions.setter
+    def functions(self, arg: Sequence[int], /) -> None: ...
 
     def add_function(self, address: int) -> None: ...
 
@@ -2847,7 +2911,11 @@ class DataCodeEntry(lief.Object):
     def __str__(self) -> str: ...
 
 class SourceVersion(LoadCommand):
-    version: list[int]
+    @property
+    def version(self) -> list[int]: ...
+
+    @version.setter
+    def version(self, arg: Sequence[int], /) -> None: ...
 
     def __str__(self) -> str: ...
 
@@ -2871,9 +2939,17 @@ class Routine(LoadCommand):
     def __str__(self) -> str: ...
 
 class VersionMin(LoadCommand):
-    version: list[int]
+    @property
+    def version(self) -> list[int]: ...
 
-    sdk: list[int]
+    @version.setter
+    def version(self, arg: Sequence[int], /) -> None: ...
+
+    @property
+    def sdk(self) -> list[int]: ...
+
+    @sdk.setter
+    def sdk(self, arg: Sequence[int], /) -> None: ...
 
     def __str__(self) -> str: ...
 
@@ -2976,9 +3052,17 @@ class BuildVersion(LoadCommand):
 
     platform: BuildVersion.PLATFORMS
 
-    minos: list[int]
+    @property
+    def minos(self) -> list[int]: ...
 
-    sdk: list[int]
+    @minos.setter
+    def minos(self, arg: Sequence[int], /) -> None: ...
+
+    @property
+    def sdk(self) -> list[int]: ...
+
+    @sdk.setter
+    def sdk(self, arg: Sequence[int], /) -> None: ...
 
     @property
     def tools(self) -> list[BuildToolVersion]: ...
