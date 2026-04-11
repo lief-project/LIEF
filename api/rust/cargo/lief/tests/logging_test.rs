@@ -16,4 +16,33 @@ fn test_api() {
     lief::log_info!("info: {:?}", dir);
     lief::log_warn!("warn: {:?}", dir);
     lief::log_err!("err: {dir:?}");
+
+    logging::set_level(logging::Level::WARN);
+    assert_eq!(logging::get_level(), logging::Level::WARN);
+
+    logging::set_level(logging::Level::DEBUG);
+    assert_eq!(logging::get_level(), logging::Level::DEBUG);
+
+    // Test Scoped
+    logging::set_level(logging::Level::INFO);
+    assert_eq!(logging::get_level(), logging::Level::INFO);
+
+    {
+        let mut scoped = logging::Scoped::new(logging::Level::DEBUG);
+        assert_eq!(logging::get_level(), logging::Level::DEBUG);
+
+        scoped.set_level(logging::Level::TRACE);
+        assert_eq!(logging::get_level(), logging::Level::TRACE);
+
+        scoped.reset();
+        assert_eq!(logging::get_level(), logging::Level::INFO);
+
+        // Set again so the drop restores INFO
+        scoped.set_level(logging::Level::ERR);
+    }
+
+    // After drop, original level (INFO) is restored
+    assert_eq!(logging::get_level(), logging::Level::INFO);
+
+    logging::reset();
 }

@@ -14,7 +14,9 @@
  */
 #pragma once
 #include "LIEF/logging.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include <cstdint>
+#include <memory>
 
 class LIEF_Logging {
   public:
@@ -37,4 +39,35 @@ class LIEF_Logging {
   static void log(uint32_t lvl, std::string msg) { // NOLINT
     LIEF::logging::log(LIEF::logging::LEVEL(lvl), msg);
   }
+
+  static auto get_level() {
+    return to_int(LIEF::logging::get_level());
+  }
+};
+
+class LIEF_Logging_Scoped {
+  public:
+  LIEF_Logging_Scoped() = delete;
+  LIEF_Logging_Scoped(const LIEF_Logging_Scoped&) = delete;
+  LIEF_Logging_Scoped& operator=(const LIEF_Logging_Scoped&) = delete;
+
+  static auto create(uint32_t lvl) {
+    return std::unique_ptr<LIEF_Logging_Scoped>(new LIEF_Logging_Scoped(lvl));
+  }
+
+  void set_level(uint32_t lvl) const {
+    scoped_.set_level(LIEF::logging::LEVEL(lvl));
+  }
+
+  void reset() {
+    scoped_.reset();
+  }
+
+  ~LIEF_Logging_Scoped() = default;
+
+  private:
+  explicit LIEF_Logging_Scoped(uint32_t lvl) :
+    scoped_(LIEF::logging::LEVEL(lvl)) {}
+
+  LIEF::logging::Scoped scoped_{LIEF::logging::LEVEL::INFO};
 };

@@ -98,6 +98,50 @@ pub fn log(level: Level, message: &str) {
     ffi::LIEF_Logging::log(level.into(), message)
 }
 
+/// Return the current logging level
+pub fn get_level() -> Level {
+    Level::from(ffi::LIEF_Logging::get_level())
+}
+
+/// RAII-like scoped log level.
+///
+///
+/// ```
+/// use lief::logging;
+///
+/// logging::set_level(logging::Level::INFO);
+///
+/// {
+///     let _scoped = logging::Scoped::new(logging::Level::DEBUG);
+///     // Log level is now DEBUG
+/// }
+/// // Log level is restored to INFO
+/// ```
+pub struct Scoped {
+    inner: cxx::UniquePtr<ffi::LIEF_Logging_Scoped>,
+}
+
+impl Scoped {
+    /// Create a new scoped log level. The current log level is saved and
+    /// replaced with the provided `level`. When this value is dropped, the
+    /// original level is restored.
+    pub fn new(level: Level) -> Self {
+        Self {
+            inner: ffi::LIEF_Logging_Scoped::create(level.into()),
+        }
+    }
+
+    /// Change the log level within this scope
+    pub fn set_level(&self, level: Level) {
+        self.inner.set_level(level.into())
+    }
+
+    /// Reset the log level to the value it had before this scope was created
+    pub fn reset(&mut self) {
+        self.inner.pin_mut().reset()
+    }
+}
+
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __lief_log {

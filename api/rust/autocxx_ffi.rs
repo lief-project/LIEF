@@ -37,6 +37,8 @@ include_cpp! {
     // -------------------------------------------------------------------------
     generate!("LIEF_Logging")
     block_constructors!("LIEF_Logging")
+    generate!("LIEF_Logging_Scoped")
+    block_constructors!("LIEF_Logging_Scoped")
 
     // -------------------------------------------------------------------------
     // Abstract
