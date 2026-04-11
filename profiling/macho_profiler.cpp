@@ -19,7 +19,7 @@ void process_dir(const std::filesystem::path& target) {
   }
 }
 
-int main(int argc, const char** argv) {
+int main(int /*argc*/, const char** argv) {
   const std::filesystem::path target{argv[1]};
   if (std::filesystem::is_directory(target)) {
     process_dir(target);

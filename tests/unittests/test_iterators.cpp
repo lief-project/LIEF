@@ -38,7 +38,7 @@ using it_filter_const_ref_local = const_filter_iterator<std::vector<std::string>
 using it_filter_const_ref_ptr = const_filter_iterator<std::vector<std::string*>>;
 
 struct Dummy {
-  Dummy(void) :
+  Dummy() :
     s_{"dummy"} {}
   Dummy(const Dummy&) = delete;
   Dummy& operator=(const Dummy&) = delete;
@@ -48,7 +48,7 @@ struct Dummy {
 using it_ref_dummies_t = ref_iterator<std::vector<Dummy>&>;
 
 struct Foo {
-  Foo(void) :
+  Foo() :
     dummies_(10) {
     bar.push_back("1");
     bar.push_back("2");
@@ -68,74 +68,74 @@ struct Foo {
     bar_ptr.push_back(new std::string{"6"});
   }
 
-  ~Foo(void) {
+  ~Foo() {
     for (std::string* ptr : this->bar_ptr) {
       delete ptr;
     }
   }
 
-  it_const_ref_t get_bar(void) const {
+  it_const_ref_t get_bar() const {
     return {this->bar};
   }
 
 
-  it_ref_t get_bar(void) {
+  it_ref_t get_bar() {
     return {this->bar};
   }
 
-  it_filter_ref filter_always_true(void) {
-    return {this->bar, [](const std::string& v) { return true; }};
+  it_filter_ref filter_always_true() {
+    return {this->bar, [](const std::string&) { return true; }};
   }
 
-  it_filter_ref get_bar_filter(void) {
+  it_filter_ref get_bar_filter() {
     return {this->bar, [](const std::string& v) {
               return v == "6" || v == "1" || v == "foo";
             }};
   }
 
 
-  it_filter_ref get_bar_filter_empty(void) {
+  it_filter_ref get_bar_filter_empty() {
     return {this->bar, [](const std::string& v) { return v == "foo"; }};
   }
 
 
-  it_filter_const_ref get_bar_filter(void) const {
+  it_filter_const_ref get_bar_filter() const {
     return {this->bar, [](const std::string& v) {
               return v == "6" || v == "1" || v == "foo";
             }};
   }
 
 
-  it_filter_ref_ptr get_bar_ptr_filter(void) {
+  it_filter_ref_ptr get_bar_ptr_filter() {
     return {this->bar_ptr, [](const std::string* v) { return *v == "6"; }};
   }
 
-  it_filter_const_ref_ptr get_bar_ptr_filter(void) const {
+  it_filter_const_ref_ptr get_bar_ptr_filter() const {
     return {this->bar_ptr, [](const std::string* v) { return *v == "6"; }};
   }
 
 
-  it_ref_local_t get_bar_local(void) {
+  it_ref_local_t get_bar_local() {
     std::vector<std::string> local = {"a", "b", "c"};
     return {local};
   }
 
 
-  it_filter_const_ref_local get_bar_const_filter_local(void) const {
+  it_filter_const_ref_local get_bar_const_filter_local() const {
     std::vector<std::string> local = {"a", "b", "c", "a", "a"};
     return {local, [](const std::string& v) { return v == "a"; }};
   }
 
 
-  it_ref_dummies_t get_dummies(void) {
+  it_ref_dummies_t get_dummies() {
     return {this->dummies_};
   }
 
-  it_const_ref_ptr_t get_bar_ptr(void) const {
+  it_const_ref_ptr_t get_bar_ptr() const {
     return {bar_ptr};
   }
 
-  it_ref_ptr_t get_bar_ptr(void) {
+  it_ref_ptr_t get_bar_ptr() {
     return {bar_ptr};
   }
 
