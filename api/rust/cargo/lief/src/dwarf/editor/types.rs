@@ -1,10 +1,10 @@
 use lief_ffi as ffi;
 
-pub mod pointer;
 pub mod array;
 pub mod base;
 pub mod enum_ty;
 pub mod function;
+pub mod pointer;
 pub mod struct_ty;
 pub mod typedef;
 
@@ -135,9 +135,7 @@ pub struct Generic {
 
 impl FromFFI<ffi::DWARF_editor_Type> for Generic {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_editor_Type>) -> Self {
-        Self {
-            ptr: cmd,
-        }
+        Self { ptr: cmd }
     }
 }
 
@@ -150,31 +148,14 @@ impl EditorType for Generic {
 impl EditorType for Type {
     fn get_base(&self) -> &ffi::DWARF_editor_Type {
         match &self {
-            Type::Pointer(s) => {
-                s.get_base()
-            }
-            Type::Array(s) => {
-                s.get_base()
-            }
-            Type::Base(s) => {
-                s.get_base()
-            }
-            Type::Enum(s) => {
-                s.get_base()
-            }
-            Type::Function(s) => {
-                s.get_base()
-            }
-            Type::Struct(s) => {
-                s.get_base()
-            }
-            Type::Typedef(s) => {
-                s.get_base()
-            }
-            Type::Generic(s) => {
-                s.get_base()
-            }
+            Type::Pointer(s) => s.get_base(),
+            Type::Array(s) => s.get_base(),
+            Type::Base(s) => s.get_base(),
+            Type::Enum(s) => s.get_base(),
+            Type::Function(s) => s.get_base(),
+            Type::Struct(s) => s.get_base(),
+            Type::Typedef(s) => s.get_base(),
+            Type::Generic(s) => s.get_base(),
         }
     }
 }
-

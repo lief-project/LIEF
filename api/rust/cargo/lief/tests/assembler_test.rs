@@ -18,26 +18,33 @@ fn get_binary(name: &str) -> lief::Binary {
 fn should_skip(inst: &lief::assembly::Instructions) -> bool {
     if let lief::assembly::Instructions::X86(x86) = inst {
         if let opcode = x86.opcode() {
-            return opcode == lief::assembly::x86::Opcode::JCC_1 ||
-                   opcode == lief::assembly::x86::Opcode::JCC_2 ||
-                   opcode == lief::assembly::x86::Opcode::JCC_4 ||
-                   opcode == lief::assembly::x86::Opcode::JMP_1 ||
-                   opcode == lief::assembly::x86::Opcode::JMP_2 ||
-                   opcode == lief::assembly::x86::Opcode::JMP_4 ||
-                   opcode == lief::assembly::x86::Opcode::CALL64pcrel32 ||
-                   opcode == lief::assembly::x86::Opcode::CALLpcrel32;
+            return opcode == lief::assembly::x86::Opcode::JCC_1
+                || opcode == lief::assembly::x86::Opcode::JCC_2
+                || opcode == lief::assembly::x86::Opcode::JCC_4
+                || opcode == lief::assembly::x86::Opcode::JMP_1
+                || opcode == lief::assembly::x86::Opcode::JMP_2
+                || opcode == lief::assembly::x86::Opcode::JMP_4
+                || opcode == lief::assembly::x86::Opcode::CALL64pcrel32
+                || opcode == lief::assembly::x86::Opcode::CALLpcrel32;
         }
     }
     return false;
 }
 
-fn assemble_inst(name: &str, bin: &mut dyn lief::generic::Binary, inst: &lief::assembly::Instructions) {
+fn assemble_inst(
+    name: &str,
+    bin: &mut dyn lief::generic::Binary,
+    inst: &lief::assembly::Instructions,
+) {
     println!("{}: {:02X?}", inst.to_string(), inst.raw());
     if should_skip(inst) {
         return;
     }
     let raw = bin.assemble(inst.address(), &inst.to_string_no_address());
-    let new_inst = bin.disassemble_slice(raw.as_slice(), inst.address()).next().unwrap();
+    let new_inst = bin
+        .disassemble_slice(raw.as_slice(), inst.address())
+        .next()
+        .unwrap();
     assert_eq!(new_inst.to_string_no_address(), inst.to_string_no_address());
 }
 
@@ -45,28 +52,31 @@ fn reassemble_from(name: &str, address: u64, count: usize) {
     let mut bin = get_binary(name);
     match bin {
         lief::Binary::ELF(mut elf) => {
-            let insts = elf.disassemble_address(address)
+            let insts = elf
+                .disassemble_address(address)
                 .take(count)
                 .collect::<Vec<lief::assembly::Instructions>>();
 
             for inst in insts {
                 assemble_inst(name, &mut elf, &inst);
             }
-        },
+        }
 
         lief::Binary::PE(mut pe) => {
-            let insts = pe.disassemble_address(address)
+            let insts = pe
+                .disassemble_address(address)
                 .take(count)
                 .collect::<Vec<lief::assembly::Instructions>>();
 
             for inst in insts {
                 assemble_inst(name, &mut pe, &inst);
             }
-        },
+        }
 
         lief::Binary::MachO(fat) => {
             for mut macho in fat.iter() {
-                let insts = macho.disassemble_address(address)
+                let insts = macho
+                    .disassemble_address(address)
                     .take(count)
                     .collect::<Vec<lief::assembly::Instructions>>();
 
@@ -74,12 +84,11 @@ fn reassemble_from(name: &str, address: u64, count: usize) {
                     assemble_inst(name, &mut macho, &inst);
                 }
             }
-        },
+        }
         lief::Binary::COFF(_) => {
             todo!();
         }
     }
-
 }
 #[test]
 fn test_api() {
@@ -88,7 +97,7 @@ fn test_api() {
     }
 
     reassemble_from("MachO/ios17/DebugHierarchyKit", 0x16650, 100); // ARM64E
-    //reassemble_from("MachO/macho-issue-1110.bin", 0x00000b10, 10); // PPC
+                                                                    //reassemble_from("MachO/macho-issue-1110.bin", 0x00000b10, 10); // PPC
     reassemble_from("PE/ntoskrnl.exe", 0x140200000, 300);
     reassemble_from("ELF/ELF32_x86_library_libshellx.so", 0x000010c0, 300);
     //reassemble_from("ELF/libmonochrome-armv7.so", 0x0468b701, 300); // Thumb
@@ -108,8 +117,12 @@ fn test_api() {
         });
 
         config.symbol_resolver = Some(resolver);
-        pe.assemble_with_config(pe.entrypoint() - imagebase, r#"
+        pe.assemble_with_config(
+            pe.entrypoint() - imagebase,
+            r#"
         call entrypoint
-        "#, &config);
+        "#,
+            &config,
+        );
     }
 }

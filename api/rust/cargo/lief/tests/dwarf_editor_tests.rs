@@ -35,11 +35,18 @@ fn test_with_str(_: &str, path_str: &str) {
                     struct_ty.set_size(42);
                     struct_ty.add_member("field_0", &mut unit.create_void_type().pointer_to());
                     struct_ty.add_member_at_offset(
-                        "field_0", &mut unit.create_void_type().pointer_to(), 64);
+                        "field_0",
+                        &mut unit.create_void_type().pointer_to(),
+                        64,
+                    );
                     func_1.add_parameter("D", &struct_ty);
                 }
                 {
-                    let element_ty = unit.create_base_type("int", 4, lief::dwarf::editor::types::base::Encoding::SIGNED);
+                    let element_ty = unit.create_base_type(
+                        "int",
+                        4,
+                        lief::dwarf::editor::types::base::Encoding::SIGNED,
+                    );
                     func_1.set_return_type(&unit.create_array_type("array_t", &element_ty, 8));
                 }
                 let mut var = func_1.create_stack_variable("my_local_var");

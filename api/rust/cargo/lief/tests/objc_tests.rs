@@ -41,7 +41,10 @@ fn explore_ivar(ivar: &lief::objc::IVar) {
 
 fn explore_class(class: &lief::objc::Class) {
     println!("{}", class.to_decl());
-    println!("{}", class.to_decl_with_opt(&lief::objc::DeclOpt::default()));
+    println!(
+        "{}",
+        class.to_decl_with_opt(&lief::objc::DeclOpt::default())
+    );
     println!(
         "{}{}{:?}",
         class.name(),
@@ -79,11 +82,16 @@ fn explore_metadata(name: &str, metadata: &lief::objc::Metadata) {
     }
 
     println!("{}", metadata.to_decl());
-    println!("{}", metadata.to_decl_with_opt(&lief::objc::DeclOpt::default()));
+    println!(
+        "{}",
+        metadata.to_decl_with_opt(&lief::objc::DeclOpt::default())
+    );
 
     if name == "Module_Framework" {
         assert!(metadata.class_by_name("GADGestureRecognizer").is_some());
-        assert!(metadata.class_by_name("GADGestureRecognizer_xxxx").is_none());
+        assert!(metadata
+            .class_by_name("GADGestureRecognizer_xxxx")
+            .is_none());
 
         assert!(metadata.protocol_by_name("PINCaching").is_some());
         assert!(metadata.protocol_by_name("PINCaching_xxx").is_none());

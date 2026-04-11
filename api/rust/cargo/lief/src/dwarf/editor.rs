@@ -1,14 +1,14 @@
 use lief_ffi as ffi;
 
-use std::path::Path;
-use std::option::Option;
+use crate::{common::into_optional, common::FromFFI, generic};
 use std::marker::PhantomData;
-use crate::{common::FromFFI, generic, common::into_optional};
+use std::option::Option;
+use std::path::Path;
 
 pub mod compilation_unit;
 pub mod function;
-pub mod variable;
 pub mod types;
+pub mod variable;
 
 #[doc(inline)]
 pub use compilation_unit::CompilationUnit;
@@ -53,7 +53,6 @@ impl From<u32> for Format {
             0x00000001 => Format::MACHO,
             0x00000002 => Format::PE,
             _ => Format::UNKNOWN(value),
-
         }
     }
 }
@@ -64,7 +63,6 @@ impl From<Format> for u32 {
             Format::MACHO => 0x00000001,
             Format::PE => 0x00000002,
             Format::UNKNOWN(_) => 0,
-
         }
     }
 }
@@ -87,7 +85,6 @@ impl From<u32> for Arch {
             0x00000003 => Arch::AARCH64,
             0x00000004 => Arch::ARM,
             _ => Arch::UNKNOWN(value),
-
         }
     }
 }
@@ -99,7 +96,6 @@ impl From<Arch> for u32 {
             Arch::AARCH64 => 0x00000003,
             Arch::ARM => 0x00000004,
             Arch::UNKNOWN(_) => 0,
-
         }
     }
 }
@@ -125,4 +121,3 @@ impl<'a> Editor<'a> {
         self.ptr.pin_mut().write(output.as_ref().to_str().unwrap())
     }
 }
-

@@ -1,7 +1,7 @@
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_ranges};
-use crate::{Range, declare_fwd_iterator, to_opt};
+use crate::common::{into_ranges, FromFFI};
+use crate::{declare_fwd_iterator, to_opt, Range};
 use std::marker::PhantomData;
 
 /// This structure represents a DWARF lexical block (`DW_TAG_lexical_block`)
@@ -37,28 +37,18 @@ impl LexicalBlock<'_> {
 
     /// Return the start address of this block
     pub fn addr(&self) -> Option<u64> {
-        to_opt!(
-            &lief_ffi::DWARF_LexicalBlock::addr,
-            &self
-        );
+        to_opt!(&lief_ffi::DWARF_LexicalBlock::addr, &self);
     }
 
     /// Return the lowest virtual address owned by this block.
     pub fn low_pc(&self) -> Option<u64> {
-        to_opt!(
-            &lief_ffi::DWARF_LexicalBlock::low_pc,
-            &self
-        );
+        to_opt!(&lief_ffi::DWARF_LexicalBlock::low_pc, &self);
     }
 
     /// Return the highest virtual address owned by this block.
     pub fn high_pc(&self) -> Option<u64> {
-        to_opt!(
-            &lief_ffi::DWARF_LexicalBlock::high_pc,
-            &self
-        );
+        to_opt!(&lief_ffi::DWARF_LexicalBlock::high_pc, &self);
     }
-
 
     /// Return the size of this block as the difference of the highest address and the lowest
     /// address.

@@ -1,7 +1,7 @@
 use lief_ffi as ffi;
 
-use crate::pe::Relocation;
 use crate::common::{into_optional, FromFFI};
+use crate::pe::Relocation;
 use crate::{declare_fwd_iterator, declare_iterator, to_slice};
 use std::marker::PhantomData;
 
@@ -31,7 +31,7 @@ pub enum DynamicFixup<'a> {
 
     /// Entry when [`crate::pe::dynamic_relocation::AsDynamicRelocation::symbol`] is set
     /// to a special value that is not supported by LIEF.
-    Unknown(Unknown<'a>)
+    Unknown(Unknown<'a>),
 }
 
 impl<'a> FromFFI<ffi::PE_DynamicFixup> for DynamicFixup<'a> {
@@ -146,8 +146,7 @@ impl AsDynamicFixup for Generic<'_> {
 
 impl std::fmt::Debug for Generic<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Generic")
-        .finish()
+        f.debug_struct("Generic").finish()
     }
 }
 
@@ -186,11 +185,9 @@ impl AsDynamicFixup for Arm64X<'_> {
     }
 }
 
-
 impl std::fmt::Debug for Arm64X<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Arm64X")
-        .finish()
+        f.debug_struct("Arm64X").finish()
     }
 }
 
@@ -222,7 +219,6 @@ impl<'a> FromFFI<ffi::PE_DynamicFixupARM64X_entry> for Arm64XRelocEntry<'a> {
     }
 }
 
-
 pub const ARM64X_RELOC_ZERO_FILL: u32 = 0;
 
 pub const ARM64X_RELOC_VALUE: u32 = 1;
@@ -246,7 +242,6 @@ impl Arm64XRelocEntry<'_> {
         }
         Some(self.ptr.value())
     }
-
 
     /// If the fixup is [`ARM64X_RELOC_VALUE`], return the associated bytes.
     pub fn bytes(&self) -> Option<&[u8]> {
@@ -272,7 +267,6 @@ impl Arm64XRelocEntry<'_> {
     }
 }
 
-
 /// This structure represents the
 /// [`crate::pe::dynamic_relocation::IMAGE_DYNAMIC_RELOCATION_FUNCTION_OVERRIDE`] special value
 pub struct FunctionOverride<'a> {
@@ -295,11 +289,9 @@ impl AsDynamicFixup for FunctionOverride<'_> {
     }
 }
 
-
 impl std::fmt::Debug for FunctionOverride<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("FunctionOverride")
-        .finish()
+        f.debug_struct("FunctionOverride").finish()
     }
 }
 
@@ -308,8 +300,6 @@ impl std::fmt::Display for FunctionOverride<'_> {
         write!(f, "{}", self.as_generic().to_string())
     }
 }
-
-
 
 impl FunctionOverride<'_> {
     /// Iterator over the overriding info
@@ -339,8 +329,12 @@ pub struct ImageBddDynamicRelocation<'a> {
     _owner: PhantomData<&'a ffi::PE_FunctionOverride>,
 }
 
-impl<'a> FromFFI<ffi::PE_FunctionOverride_image_bdd_dynamic_relocation_t> for ImageBddDynamicRelocation<'a> {
-    fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_FunctionOverride_image_bdd_dynamic_relocation_t>) -> Self {
+impl<'a> FromFFI<ffi::PE_FunctionOverride_image_bdd_dynamic_relocation_t>
+    for ImageBddDynamicRelocation<'a>
+{
+    fn from_ffi(
+        ptr: cxx::UniquePtr<ffi::PE_FunctionOverride_image_bdd_dynamic_relocation_t>,
+    ) -> Self {
         Self {
             ptr,
             _owner: PhantomData,
@@ -469,8 +463,7 @@ impl AsDynamicFixup for ARM64Kernel<'_> {
 
 impl std::fmt::Debug for ARM64Kernel<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("ARM64Kernel")
-        .finish()
+        f.debug_struct("ARM64Kernel").finish()
     }
 }
 
@@ -550,8 +543,7 @@ impl AsDynamicFixup for ControlTransfer<'_> {
 
 impl std::fmt::Debug for ControlTransfer<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("ControlTransfer")
-        .finish()
+        f.debug_struct("ControlTransfer").finish()
     }
 }
 
@@ -601,7 +593,6 @@ impl ControlTransferEntry<'_> {
     }
 }
 
-
 /// This class represents an special dynamic relocation where the format of the
 /// fixups is not supported by LIEF.
 pub struct Unknown<'a> {
@@ -624,11 +615,9 @@ impl AsDynamicFixup for Unknown<'_> {
     }
 }
 
-
 impl std::fmt::Debug for Unknown<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Unknown")
-        .finish()
+        f.debug_struct("Unknown").finish()
     }
 }
 
@@ -707,6 +696,3 @@ declare_iterator!(
     ffi::PE_FunctionOverride,
     ffi::PE_FunctionOverride_it_bdd_info
 );
-
-
-

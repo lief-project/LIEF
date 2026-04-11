@@ -2,10 +2,10 @@ use std::marker::PhantomData;
 
 use super::attributes::Attribute;
 use super::X509;
+use crate::common::{into_optional, FromFFI};
+use crate::declare_iterator;
 use crate::pe::Algorithms;
 use crate::to_slice;
-use crate::common::{FromFFI, into_optional};
-use crate::declare_iterator;
 use lief_ffi as ffi;
 
 /// Concrete type of a signature attribute

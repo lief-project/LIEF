@@ -55,7 +55,8 @@ impl Config {
         ptr.pin_mut().set_parse_rsrc(self.parse_rsrc);
         ptr.pin_mut().set_parse_reloc(self.parse_reloc);
         ptr.pin_mut().set_parse_exceptions(self.parse_exceptions);
-        ptr.pin_mut().set_parse_arm64x_binary(self.parse_arm64x_binary);
+        ptr.pin_mut()
+            .set_parse_arm64x_binary(self.parse_arm64x_binary);
         ptr
     }
 

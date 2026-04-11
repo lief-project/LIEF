@@ -1,14 +1,14 @@
+use crate::common::{into_optional, FromFFI};
+use crate::declare_iterator;
 use lief_ffi as ffi;
 use std::fmt;
-use crate::declare_iterator;
 use std::marker::PhantomData;
-use crate::common::{FromFFI, into_optional};
 
 /// Structure which represents an entry defined in the `DT_VERSYM`
 /// dynamic entry
 pub struct SymbolVersion<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_SymbolVersion>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl SymbolVersion<'_> {
@@ -60,16 +60,15 @@ impl FromFFI<ffi::ELF_SymbolVersion> for SymbolVersion<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_SymbolVersion>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
 
 pub struct SymbolVersionAux<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_SymbolVersionAux>,
-    _owner: PhantomData<&'a ()>
+    _owner: PhantomData<&'a ()>,
 }
-
 
 impl SymbolVersionAux<'_> {
     pub fn name(&self) -> String {
@@ -89,14 +88,14 @@ impl FromFFI<ffi::ELF_SymbolVersionAux> for SymbolVersionAux<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_SymbolVersionAux>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
 
 pub struct SymbolVersionAuxRequirement<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_SymbolVersionAuxRequirement>,
-    _owner: PhantomData<&'a ()>
+    _owner: PhantomData<&'a ()>,
 }
 
 impl SymbolVersionAuxRequirement<'_> {
@@ -117,12 +116,10 @@ impl SymbolVersionAuxRequirement<'_> {
         self.ptr.other()
     }
 
-
     /// Symbol's aux name (e.g. `GLIBC_2.2.5`)
     pub fn name(&self) -> String {
         self.ptr.name().to_string()
     }
-
 }
 
 impl fmt::Debug for SymbolVersionAuxRequirement<'_> {
@@ -139,7 +136,7 @@ impl FromFFI<ffi::ELF_SymbolVersionAuxRequirement> for SymbolVersionAuxRequireme
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_SymbolVersionAuxRequirement>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -147,9 +144,8 @@ impl FromFFI<ffi::ELF_SymbolVersionAuxRequirement> for SymbolVersionAuxRequireme
 /// Structure which represents an entry defined in `DT_VERDEF` or `.gnu.version_d`
 pub struct SymbolVersionDefinition<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_SymbolVersionDefinition>,
-    _owner: PhantomData<&'a ()>
+    _owner: PhantomData<&'a ()>,
 }
-
 
 impl SymbolVersionDefinition<'_> {
     /// Version revision
@@ -197,16 +193,15 @@ impl FromFFI<ffi::ELF_SymbolVersionDefinition> for SymbolVersionDefinition<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_SymbolVersionDefinition>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
 
-
 /// Structure which represents an entry in the `DT_VERNEED` or `.gnu.version_r` table
 pub struct SymbolVersionRequirement<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_SymbolVersionRequirement>,
-    _owner: PhantomData<&'a ()>
+    _owner: PhantomData<&'a ()>,
 }
 
 impl SymbolVersionRequirement<'_> {
@@ -246,7 +241,6 @@ impl SymbolVersionRequirement<'_> {
         into_optional(self.ptr.find_aux(name.to_string()))
     }
 
-
     /// Try to remove the auxiliary requirement symbol with the given name.
     /// The function returns true if the operation succeed, false otherwise.
     ///
@@ -257,7 +251,9 @@ impl SymbolVersionRequirement<'_> {
     /// to ensure that the auxiliary requirement is no longer used in the
     /// ELF binary (e.g. in [`SymbolVersion`])
     pub fn remove_aux_requirement_by_name(&mut self, name: &str) -> bool {
-        self.ptr.pin_mut().remove_aux_requirement_by_name(name.to_string())
+        self.ptr
+            .pin_mut()
+            .remove_aux_requirement_by_name(name.to_string())
     }
 }
 
@@ -294,4 +290,3 @@ declare_iterator!(
     ffi::ELF_SymbolVersionDefinition,
     ffi::ELF_SymbolVersionDefinition_it_auxiliary_symbols
 );
-

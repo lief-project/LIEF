@@ -1,10 +1,11 @@
+use num_traits::{cast, Num};
 use std::mem::size_of;
-use std::pin::Pin;
 use std::path::Path;
-use num_traits::{Num, cast};
+use std::pin::Pin;
 
-use crate::Error;
+use super::binding_info::BindingInfo;
 use super::builder::Config;
+use super::commands::atom_info::AtomInfo;
 use super::commands::build_version::{BuildVersion, Platform};
 use super::commands::code_signature::CodeSignature;
 use super::commands::code_signature_dir::CodeSignatureDir;
@@ -17,39 +18,38 @@ use super::commands::dylib::Libraries;
 use super::commands::dylinker::Dylinker;
 use super::commands::dynamic_symbol_command::DynamicSymbolCommand;
 use super::commands::encryption_info::EncryptionInfo;
+use super::commands::function_variant_fixups::FunctionVariantFixups;
+use super::commands::function_variants::FunctionVariants;
 use super::commands::functionstarts::FunctionStarts;
 use super::commands::linker_opt_hint::LinkerOptHint;
-use super::commands::atom_info::AtomInfo;
-use super::commands::function_variants::FunctionVariants;
-use super::commands::function_variant_fixups::FunctionVariantFixups;
 use super::commands::main_cmd::Main;
 use super::commands::note::Note;
-use super::commands::rpath::RPaths;
-use super::commands::rpath::RPath;
 use super::commands::routine::Routine;
-use super::commands::segment::{Segments, Segment};
+use super::commands::rpath::RPath;
+use super::commands::rpath::RPaths;
+use super::commands::segment::{Segment, Segments};
 use super::commands::segment_split_info::SegmentSplitInfo;
 use super::commands::source_version::SourceVersion;
-use super::commands::sub_framework::SubFramework;
 use super::commands::sub_client::SubClients;
+use super::commands::sub_framework::SubFramework;
 use super::commands::symbol_command::SymbolCommand;
 use super::commands::thread_command::ThreadCommand;
 use super::commands::two_level_hints::TwoLevelHints;
 use super::commands::uuid::UUID;
 use super::commands::version_min::VersionMin;
 use super::commands::{Command, Commands, CommandsIter, Dylib, LoadCommandTypes};
+use super::export_info::ExportInfo;
 use super::header::Header;
 use super::relocation::Relocations;
-use super::section::{Sections, Section};
-use super::symbol::{Symbols, Symbol};
-use super::binding_info::BindingInfo;
-use super::export_info::ExportInfo;
+use super::section::{Section, Sections};
 use super::stub::Stub;
+use super::symbol::{Symbol, Symbols};
+use crate::Error;
 use lief_ffi as ffi;
 
-use crate::common::{into_optional, FromFFI, AsFFI};
-use crate::{generic, declare_fwd_iterator, declare_iterator, to_conv_result, to_result, to_slice};
+use crate::common::{into_optional, AsFFI, FromFFI};
 use crate::objc::Metadata;
+use crate::{declare_fwd_iterator, declare_iterator, generic, to_conv_result, to_result, to_slice};
 
 /// This is the main interface to read and write Mach-O binary attributes.
 ///
@@ -302,41 +302,57 @@ impl Binary {
         into_optional(self.ptr.find_library(name.to_string()))
     }
 
-
     /// Get the integer value at the given virtual address
     pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
-        where T: Num + cast::FromPrimitive + cast::ToPrimitive
+    where
+        T: Num + cast::FromPrimitive + cast::ToPrimitive,
     {
         // Can't be in the generic trait because of:
         //   > for a trait to be "object safe" it needs to allow building a vtable to allow the call
         //   > to be resolvable dynamically; for more information visit
         //   > https://doc.rust-lang.org/reference/items/traits.html#object-safety
         if size_of::<T>() == size_of::<u8>() {
-            to_conv_result!(ffi::AbstractBinary::get_u8,
+            to_conv_result!(
+                ffi::AbstractBinary::get_u8,
                 self.ptr.as_ref().unwrap().as_ref(),
-                |value| { T::from_u8(value).unwrap_or_else(|| panic!("Can't cast value: {value}")) },
-                addr);
+                |value| {
+                    T::from_u8(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
+                },
+                addr
+            );
         }
 
         if size_of::<T>() == size_of::<u16>() {
-            to_conv_result!(ffi::AbstractBinary::get_u16,
+            to_conv_result!(
+                ffi::AbstractBinary::get_u16,
                 self.ptr.as_ref().unwrap().as_ref(),
-                |value| { T::from_u16(value).unwrap_or_else(|| panic!("Can't cast value: {value}")) },
-                addr);
+                |value| {
+                    T::from_u16(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
+                },
+                addr
+            );
         }
 
         if size_of::<T>() == size_of::<u32>() {
-            to_conv_result!(ffi::AbstractBinary::get_u32,
+            to_conv_result!(
+                ffi::AbstractBinary::get_u32,
                 self.ptr.as_ref().unwrap().as_ref(),
-                |value| { T::from_u32(value).unwrap_or_else(|| panic!("Can't cast value: {value}")) },
-                addr);
+                |value| {
+                    T::from_u32(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
+                },
+                addr
+            );
         }
 
         if size_of::<T>() == size_of::<u64>() {
-            to_conv_result!(ffi::AbstractBinary::get_u64,
+            to_conv_result!(
+                ffi::AbstractBinary::get_u64,
                 self.ptr.as_ref().unwrap().as_ref(),
-                |value| { T::from_u64(value).unwrap_or_else(|| panic!("Can't cast value: {value}")) },
-                addr);
+                |value| {
+                    T::from_u64(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
+                },
+                addr
+            );
         }
 
         Err(Error::NotSupported)
@@ -344,13 +360,19 @@ impl Binary {
 
     /// Write back the current MachO binary into the file specified in parameter
     pub fn write<P: AsRef<Path>>(&mut self, output: P) {
-        self.ptr.as_mut().unwrap().write(output.as_ref().to_str().unwrap());
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .write(output.as_ref().to_str().unwrap());
     }
 
     /// Write back the current MachO binary into the file specified in parameter with the
     /// configuration provided in the second parameter.
     pub fn write_with_config<P: AsRef<Path>>(&mut self, output: P, config: Config) {
-        self.ptr.as_mut().unwrap().write_with_config(output.as_ref().to_str().unwrap(), config.to_ffi());
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .write_with_config(output.as_ref().to_str().unwrap(), config.to_ffi());
     }
 
     /// Insert a new command
@@ -365,7 +387,10 @@ impl Binary {
 
     /// Remove all commands that have the given type
     pub fn remove_commands_by_type(&mut self, ty: LoadCommandTypes) -> bool {
-        self.ptr.as_mut().unwrap().remove_commands_by_type(ty.into())
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .remove_commands_by_type(ty.into())
     }
 
     pub fn functions(&self) -> generic::Functions<'_> {
@@ -388,12 +413,10 @@ impl Binary {
         self.ptr.fileset_addr()
     }
 
-
     /// Return an iterator over the [`Binary`] associated with the `LC_FILESET_ENTRY` commands
     pub fn filesets(&self) -> FilesetBinaries<'_> {
         FilesetBinaries::new(self.ptr.filesets())
     }
-
 
     /// Convert the given virtual address into an offset
     pub fn virtual_address_to_offset(&self, address: u64) -> Result<u64, Error> {
@@ -486,13 +509,18 @@ impl Binary {
 
     /// Remove a section by name
     pub fn remove_section(&mut self, name: &str, clear: bool) {
-        self.ptr.as_mut().unwrap().remove_section(name.to_string(), clear);
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .remove_section(name.to_string(), clear);
     }
 
     /// Remove a section by segment name and section name
     pub fn remove_section_from_segment(&mut self, segname: &str, secname: &str, clear: bool) {
         self.ptr.as_mut().unwrap().remove_section_seg(
-            segname.to_string(), secname.to_string(), clear
+            segname.to_string(),
+            secname.to_string(),
+            clear,
         );
     }
 
@@ -528,12 +556,22 @@ impl Binary {
 
     /// Add a new exported function
     pub fn add_exported_function(&mut self, address: u64, name: &str) -> Option<ExportInfo<'_>> {
-        into_optional(self.ptr.as_mut().unwrap().add_exported_function(address, name.to_string()))
+        into_optional(
+            self.ptr
+                .as_mut()
+                .unwrap()
+                .add_exported_function(address, name.to_string()),
+        )
     }
 
     /// Add a new local symbol
     pub fn add_local_symbol(&mut self, address: u64, name: &str) -> Option<Symbol<'_>> {
-        into_optional(self.ptr.as_mut().unwrap().add_local_symbol(address, name.to_string()))
+        into_optional(
+            self.ptr
+                .as_mut()
+                .unwrap()
+                .add_local_symbol(address, name.to_string()),
+        )
     }
 
     /// Shift the content of the binary
@@ -543,7 +581,12 @@ impl Binary {
 
     /// Shift the __LINKEDIT segment
     pub fn shift_linkedit(&mut self, width: u64) -> Result<(), Error> {
-        to_conv_result!(ffi::MachO_Binary::shift_linkedit, self.ptr.pin_mut(), |_| (), width);
+        to_conv_result!(
+            ffi::MachO_Binary::shift_linkedit,
+            self.ptr.pin_mut(),
+            |_| (),
+            width
+        );
     }
 }
 
@@ -565,9 +608,10 @@ impl generic::Binary for Binary {
     fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractBinary> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::AbstractBinary
-                    as *mut ffi::AbstractBinary).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractBinary
+                    as *mut ffi::AbstractBinary)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }

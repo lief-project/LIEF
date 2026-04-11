@@ -139,7 +139,6 @@ impl<'a> FromFFI<ffi::PE_EnclaveConfiguration> for EnclaveConfiguration<'a> {
     }
 }
 
-
 /// This structure represents an entry in the array of images that an enclave can import.
 pub struct EnclaveImport<'a> {
     ptr: cxx::UniquePtr<ffi::PE_EnclaveImport>,
@@ -242,7 +241,7 @@ pub enum Type {
     /// of all zeros, the imported image must be part of the Windows installation.
     AUTHOR_ID,
 
- 	  /// The value of the enclave family identifier of the image must match the
+    /// The value of the enclave family identifier of the image must match the
     /// value in the import record. Otherwise, loading of the image fails.
     FAMILY_ID,
 
@@ -272,5 +271,3 @@ declare_iterator!(
     ffi::PE_EnclaveConfiguration,
     ffi::PE_EnclaveConfiguration_it_imports
 );
-
-

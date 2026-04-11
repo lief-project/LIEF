@@ -1,10 +1,10 @@
 use lief_ffi as ffi;
 
-use crate::common::FromFFI;
 use super::Type;
+use crate::common::FromFFI;
 
-use std::marker::PhantomData;
 use crate::common::into_optional;
+use std::marker::PhantomData;
 
 pub trait Parameter {
     #[doc(hidden)]
@@ -66,19 +66,12 @@ impl FromFFI<ffi::DWARF_Parameter> for Parameters<'_> {
     }
 }
 
-
 impl Parameter for Parameters<'_> {
     fn get_base(&self) -> &ffi::DWARF_Parameter {
         match &self {
-            Parameters::Formal(p) => {
-                p.get_base()
-            }
-            Parameters::TemplateValue(p) => {
-                p.get_base()
-            }
-            Parameters::TemplateType(p) => {
-                p.get_base()
-            }
+            Parameters::Formal(p) => p.get_base(),
+            Parameters::TemplateValue(p) => p.get_base(),
+            Parameters::TemplateType(p) => p.get_base(),
         }
     }
 }
@@ -146,7 +139,7 @@ impl Parameter for TemplateType<'_> {
 /// Enum that represents the different type of locations for a parameters
 pub enum Location<'a> {
     /// Register location (e.g. `r8, x13`)
-    Register(RegisterLocation<'a>)
+    Register(RegisterLocation<'a>),
 }
 
 impl FromFFI<ffi::DWARF_Parameter_Location> for Location<'_> {

@@ -21,9 +21,7 @@ pub struct Memory {
 
 impl FromFFI<ffi::asm_aarch64_operands_Memory> for Memory {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_aarch64_operands_Memory>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 
@@ -57,13 +55,13 @@ pub enum Shift {
 impl From<i32> for Shift {
     fn from(value: i32) -> Self {
         match value {
-          0 => Shift::Unknown,
-          1 => Shift::Lsl,
-          2 => Shift::Uxtx,
-          3 => Shift::Uxtw,
-          4 => Shift::Sxtx,
-          5 => Shift::Sxtw,
-          _ => Shift::Unknown,
+            0 => Shift::Unknown,
+            1 => Shift::Lsl,
+            2 => Shift::Uxtx,
+            3 => Shift::Uxtw,
+            4 => Shift::Sxtx,
+            5 => Shift::Sxtw,
+            _ => Shift::Unknown,
         }
     }
 }
@@ -79,7 +77,7 @@ impl ShiftInfo {
     pub fn new(shift: Shift, value: i8) -> Self {
         Self {
             shift_type: shift,
-            value
+            value,
         }
     }
 }
@@ -100,15 +98,9 @@ impl Memory {
     pub fn offset(&self) -> Option<Offset> {
         let ffi_offset = self.ptr.offset();
         match ffi_offset.enum_type {
-            1 => {
-                Some(Offset::Reg(Reg::from(ffi_offset.value)))
-            }
-            2 => {
-                Some(Offset::Displacement(ffi_offset.value as i64))
-            }
-            _ => {
-                None
-            }
+            1 => Some(Offset::Reg(Reg::from(ffi_offset.value))),
+            2 => Some(Offset::Displacement(ffi_offset.value as i64)),
+            _ => None,
         }
     }
 
@@ -121,6 +113,9 @@ impl Memory {
         if ffi_shift.value == 0 {
             return None;
         }
-        Some(ShiftInfo::new(Shift::from(ffi_shift.enum_type), ffi_shift.value))
+        Some(ShiftInfo::new(
+            Shift::from(ffi_shift.enum_type),
+            ffi_shift.value,
+        ))
     }
 }

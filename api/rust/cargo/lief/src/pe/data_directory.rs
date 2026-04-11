@@ -37,7 +37,6 @@ pub enum Type {
     UNKNOWN(u32),
 }
 
-
 /// Data directory's types
 impl From<u32> for Type {
     fn from(value: u32) -> Self {
@@ -59,7 +58,6 @@ impl From<u32> for Type {
             0x0000000e => Type::CLR_RUNTIME_HEADER,
             0x0000000f => Type::RESERVED,
             _ => Type::UNKNOWN(value),
-
         }
     }
 }
@@ -83,7 +81,6 @@ impl From<Type> for u32 {
             Type::CLR_RUNTIME_HEADER => 0x0000000e,
             Type::RESERVED => 0x0000000f,
             Type::UNKNOWN(_) => 0x0000000f, // RESERVED
-
         }
     }
 }

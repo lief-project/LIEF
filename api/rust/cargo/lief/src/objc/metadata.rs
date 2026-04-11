@@ -1,11 +1,10 @@
 use lief_ffi as ffi;
 
-use std::marker::PhantomData;
-use crate::common::{FromFFI, into_optional};
+use crate::common::{into_optional, FromFFI};
 use crate::declare_fwd_iterator;
+use std::marker::PhantomData;
 
-use super::{Class, Protocol, DeclOpt};
-
+use super::{Class, DeclOpt, Protocol};
 
 /// This structure is the main interface to inspect Objective-C metadata
 ///
@@ -19,7 +18,7 @@ impl FromFFI<ffi::ObjC_Metadata> for Metadata<'_> {
     fn from_ffi(info: cxx::UniquePtr<ffi::ObjC_Metadata>) -> Self {
         Self {
             ptr: info,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

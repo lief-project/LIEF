@@ -3,9 +3,9 @@ use lief_ffi as ffi;
 use crate::common::FromFFI;
 use std::marker::PhantomData;
 
-use crate::pdb::Type;
 use crate::common::into_optional;
 use crate::declare_fwd_iterator;
+use crate::pdb::Type;
 
 /// This class represents an attribute (`LF_MEMBER`) in an aggregate (class,
 /// struct, union, ...)
@@ -47,5 +47,3 @@ declare_fwd_iterator!(
     ffi::PDB_types_ClassLike,
     ffi::PDB_types_ClassLike_it_attributes
 );
-
-

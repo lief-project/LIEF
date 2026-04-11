@@ -26,18 +26,18 @@
 //! - [`mips::Instruction`]
 //! - [`ebpf::Instruction`]
 
-pub mod instruction;
 pub mod aarch64;
-pub mod x86;
 pub mod arm;
+pub mod config;
+pub mod ebpf;
+pub mod instruction;
+pub mod mips;
 pub mod powerpc;
 pub mod riscv;
-pub mod mips;
-pub mod ebpf;
-pub mod config;
+pub mod x86;
 
 #[doc(inline)]
-pub use instruction::{Instructions, Instruction};
+pub use instruction::{Instruction, Instructions};
 
 #[doc(inline)]
 pub use config::AssemblerConfig;

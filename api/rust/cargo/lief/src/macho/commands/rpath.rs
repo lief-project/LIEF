@@ -1,7 +1,7 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
 use crate::declare_iterator;
+use lief_ffi as ffi;
 use std::marker::PhantomData;
 
 /// Structure that represents the `LC_RPATH` command.
@@ -10,7 +10,7 @@ use std::marker::PhantomData;
 /// associated with the `@rpath` prefix.
 pub struct RPath<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_RPathCommand>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl RPath<'_> {
@@ -49,7 +49,7 @@ impl FromFFI<ffi::MachO_RPathCommand> for RPath<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_RPathCommand>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

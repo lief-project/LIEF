@@ -2,12 +2,12 @@
 
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional, AsFFI};
+use crate::common::{into_optional, AsFFI, FromFFI};
 use crate::to_slice;
 use std::marker::PhantomData;
 
-use crate::pe::Section;
 use crate::pe::DataDirectory;
+use crate::pe::Section;
 
 pub struct TLS<'a> {
     ptr: cxx::UniquePtr<ffi::PE_TLS>,
@@ -107,7 +107,9 @@ impl TLS<'_> {
 
     pub fn set_callbacks(&mut self, callbacks: &[u64]) -> &mut Self {
         unsafe {
-            self.ptr.pin_mut().set_callbacks(callbacks.as_ptr(), callbacks.len());
+            self.ptr
+                .pin_mut()
+                .set_callbacks(callbacks.as_ptr(), callbacks.len());
         }
         self
     }
@@ -134,12 +136,13 @@ impl TLS<'_> {
 
     pub fn set_data_template(&mut self, data: &[u8]) -> &mut Self {
         unsafe {
-            self.ptr.pin_mut().set_data_template(data.as_ptr(), data.len());
+            self.ptr
+                .pin_mut()
+                .set_data_template(data.as_ptr(), data.len());
         }
         self
     }
 }
-
 
 impl<'a> FromFFI<ffi::PE_TLS> for TLS<'a> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_TLS>) -> Self {

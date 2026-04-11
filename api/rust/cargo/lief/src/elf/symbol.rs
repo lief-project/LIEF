@@ -1,18 +1,18 @@
 use lief_ffi as ffi;
 use std::fmt;
-use std::pin::Pin;
 use std::marker::PhantomData;
+use std::pin::Pin;
 
-use crate::common::{FromFFI, into_optional};
-use crate::declare_iterator;
-use crate::generic;
-use crate::elf::Section;
 use super::SymbolVersion;
+use crate::common::{into_optional, FromFFI};
+use crate::declare_iterator;
+use crate::elf::Section;
+use crate::generic;
 
 /// Structure which reprents an ELF symbol
 pub struct Symbol<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Symbol>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 #[allow(non_camel_case_types)]
@@ -37,11 +37,9 @@ impl Binding {
             0x00000002 => Binding::WEAK,
             0x0000000a => Binding::GNU_UNIQUE,
             _ => Binding::UNKNOWN(value),
-
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -79,11 +77,9 @@ impl Type {
             0x00000006 => Type::TLS,
             0x0000000a => Type::GNU_IFUNC,
             _ => Type::UNKNOWN(value),
-
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -109,7 +105,6 @@ impl Visibility {
             0x00000002 => Visibility::HIDDEN,
             0x00000003 => Visibility::PROTECTED,
             _ => Visibility::UNKNOWN(value),
-
         }
     }
 }
@@ -163,7 +158,7 @@ impl Symbol<'_> {
 
 impl fmt::Debug for Symbol<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-       let base = self as &dyn generic::Symbol;
+        let base = self as &dyn generic::Symbol;
         f.debug_struct("Symbol")
             .field("base", &base)
             .field("type", &self.get_type())
@@ -182,7 +177,7 @@ impl FromFFI<ffi::ELF_Symbol> for Symbol<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_Symbol>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -220,7 +215,31 @@ impl fmt::Display for Symbol<'_> {
     }
 }
 
-declare_iterator!(DynamicSymbols, Symbol<'a>, ffi::ELF_Symbol, ffi::ELF_Binary, ffi::ELF_Binary_it_dynamic_symbols);
-declare_iterator!(ExportedSymbols, Symbol<'a>, ffi::ELF_Symbol, ffi::ELF_Binary, ffi::ELF_Binary_it_exported_symbols);
-declare_iterator!(ImportedSymbols, Symbol<'a>, ffi::ELF_Symbol, ffi::ELF_Binary, ffi::ELF_Binary_it_imported_symbols);
-declare_iterator!(SymtabSymbols, Symbol<'a>, ffi::ELF_Symbol, ffi::ELF_Binary, ffi::ELF_Binary_it_symtab_symbols);
+declare_iterator!(
+    DynamicSymbols,
+    Symbol<'a>,
+    ffi::ELF_Symbol,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_dynamic_symbols
+);
+declare_iterator!(
+    ExportedSymbols,
+    Symbol<'a>,
+    ffi::ELF_Symbol,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_exported_symbols
+);
+declare_iterator!(
+    ImportedSymbols,
+    Symbol<'a>,
+    ffi::ELF_Symbol,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_imported_symbols
+);
+declare_iterator!(
+    SymtabSymbols,
+    Symbol<'a>,
+    ffi::ELF_Symbol,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_symtab_symbols
+);

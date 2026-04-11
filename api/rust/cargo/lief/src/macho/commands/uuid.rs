@@ -1,15 +1,14 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
 /// Structure that represents the `LC_UUID` command
 pub struct UUID<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_UUIDCommand>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
-
 
 impl UUID<'_> {
     /// The UUID as a 16-bytes array
@@ -32,7 +31,7 @@ impl FromFFI<ffi::MachO_UUIDCommand> for UUID<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_UUIDCommand>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

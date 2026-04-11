@@ -1,9 +1,9 @@
 use lief_ffi as ffi;
 
-use std::marker::PhantomData;
-use crate::common::{FromFFI, into_optional};
+use super::{DeclOpt, IVar, Method, Property, Protocol};
+use crate::common::{into_optional, FromFFI};
 use crate::declare_fwd_iterator;
-use super::{Method, Protocol, IVar, Property, DeclOpt};
+use std::marker::PhantomData;
 
 /// This class represents an Objective-C class (`@interface`)
 pub struct Class<'a> {
@@ -15,7 +15,7 @@ impl FromFFI<ffi::ObjC_Class> for Class<'_> {
     fn from_ffi(info: cxx::UniquePtr<ffi::ObjC_Class>) -> Self {
         Self {
             ptr: info,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

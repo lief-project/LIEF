@@ -3,11 +3,11 @@ use std::marker::PhantomData;
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
-use crate::to_slice;
-use crate::pe::Algorithms;
-use crate::pe::signature::ContentInfo;
 use crate::declare_iterator;
+use crate::pe::signature::ContentInfo;
 use crate::pe::signature::X509;
+use crate::pe::Algorithms;
+use crate::to_slice;
 
 use super::{Signature, SignerInfo};
 
@@ -520,8 +520,7 @@ pub struct SpcRelaxedPeMarkerCheck<'a> {
 
 impl std::fmt::Debug for SpcRelaxedPeMarkerCheck<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("SpcRelaxedPeMarkerCheck")
-            .finish()
+        f.debug_struct("SpcRelaxedPeMarkerCheck").finish()
     }
 }
 
@@ -534,10 +533,7 @@ impl<'a> FromFFI<ffi::PE_SpcRelaxedPeMarkerCheck> for SpcRelaxedPeMarkerCheck<'a
     }
 }
 
-impl SpcRelaxedPeMarkerCheck<'_> {
-
-}
-
+impl SpcRelaxedPeMarkerCheck<'_> {}
 
 /// ```text
 /// SigningCertificateV2 ::= SEQUENCE {
@@ -569,8 +565,7 @@ pub struct SigningCertificateV2<'a> {
 
 impl std::fmt::Debug for SigningCertificateV2<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("SigningCertificateV2")
-            .finish()
+        f.debug_struct("SigningCertificateV2").finish()
     }
 }
 
@@ -595,8 +590,7 @@ pub struct MsCounterSign<'a> {
 
 impl std::fmt::Debug for MsCounterSign<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("MsCounterSign")
-            .finish()
+        f.debug_struct("MsCounterSign").finish()
     }
 }
 

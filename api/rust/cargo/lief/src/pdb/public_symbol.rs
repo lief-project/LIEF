@@ -14,7 +14,6 @@ pub struct PublicSymbol<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-
 impl FromFFI<ffi::PDB_PublicSymbol> for PublicSymbol<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PDB_PublicSymbol>) -> Self {
         Self {

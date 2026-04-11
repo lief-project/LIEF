@@ -1,7 +1,7 @@
 //! RISC-V architecture-related namespace
 
-pub mod opcodes;
 pub mod instruction;
+pub mod opcodes;
 pub mod registers;
 
 #[doc(inline)]

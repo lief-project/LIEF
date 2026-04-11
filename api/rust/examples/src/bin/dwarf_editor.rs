@@ -1,7 +1,6 @@
-/// This example shows how to create a DWARF file by using LIEF's API
-
-use std::process::ExitCode;
 use lief::dwarf::editor::types::EditorType;
+/// This example shows how to create a DWARF file by using LIEF's API
+use std::process::ExitCode;
 
 fn main() -> ExitCode {
     if !lief::is_extended() {
@@ -23,9 +22,7 @@ fn main() -> ExitCode {
 
     let mut func = unit.create_function("hello").unwrap();
     func.set_address(0x123);
-    func.set_return_type(
-        &unit.create_structure("my_struct_t").pointer_to()
-    );
+    func.set_return_type(&unit.create_structure("my_struct_t").pointer_to());
 
     let mut var = func.create_stack_variable("local_var");
     var.set_stack_offset(8);

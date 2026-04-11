@@ -9,16 +9,15 @@ use crate::declare_fwd_iterator;
 use crate::Range;
 
 use super::{Function, Variable};
-use crate::dwarf::variable::CompilationUnitVariables;
 use crate::dwarf::function::Functions;
 use crate::dwarf::types::Types;
+use crate::dwarf::variable::CompilationUnitVariables;
 
 /// A DWARF compilation unit
 pub struct CompilationUnit<'a> {
     ptr: cxx::UniquePtr<ffi::DWARF_CompilationUnit>,
     _owner: PhantomData<&'a ()>,
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -50,7 +49,6 @@ impl From<u32> for Langs {
             0x00000009 => Langs::JAVA,
             0x0000000A => Langs::COBOL,
             _ => Langs::UNKNOWN(value),
-
         }
     }
 }

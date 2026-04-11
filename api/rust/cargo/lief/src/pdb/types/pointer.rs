@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
-use std::marker::PhantomData;
 use crate::pdb::types::{PdbType, Type};
+use std::marker::PhantomData;
 
 use crate::common::into_optional;
 

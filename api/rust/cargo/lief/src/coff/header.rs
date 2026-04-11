@@ -1,4 +1,3 @@
-
 //! COFF section module
 
 use std::marker::PhantomData;
@@ -8,7 +7,6 @@ use lief_ffi as ffi;
 use crate::common::FromFFI;
 use crate::pe;
 use crate::to_slice;
-
 
 /// This enum represents the different types of COFF header.
 pub enum Header<'a> {
@@ -84,7 +82,6 @@ impl GenericHeader for Header<'_> {
     }
 }
 
-
 impl std::fmt::Debug for &dyn GenericHeader {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("GenericHeader")
@@ -102,7 +99,6 @@ impl std::fmt::Display for &dyn GenericHeader {
         write!(f, "{}", self.as_generic().to_string())
     }
 }
-
 
 /// Regular (default) header
 pub struct RegularHeader<'a> {
@@ -215,7 +211,6 @@ impl std::fmt::Debug for BigObjHeader<'_> {
             .finish()
     }
 }
-
 
 impl GenericHeader for BigObjHeader<'_> {
     fn as_generic(&self) -> &ffi::COFF_Header {

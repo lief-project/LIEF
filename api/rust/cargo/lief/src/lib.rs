@@ -104,7 +104,7 @@ mod decl_opt;
 pub use binary::Binary;
 
 #[doc(inline)]
-pub use generic::{Relocation, Function};
+pub use generic::{Function, Relocation};
 
 #[doc(inline)]
 pub use error::Error;
@@ -130,7 +130,11 @@ pub struct Version {
 
 impl std::fmt::Display for Version {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}.{}.{}.{}", self.major, self.minor, self.patch, self.id)
+        write!(
+            f,
+            "{}.{}.{}.{}",
+            self.major, self.minor, self.patch, self.id
+        )
     }
 }
 
@@ -148,8 +152,10 @@ pub fn extended_version_info() -> String {
 pub fn extended_version() -> Version {
     let ffi_version = lief_ffi::extended_version();
     Version {
-        major: ffi_version.major, minor: ffi_version.minor,
-        patch: ffi_version.patch, id: ffi_version.id
+        major: ffi_version.major,
+        minor: ffi_version.minor,
+        patch: ffi_version.patch,
+        id: ffi_version.id,
     }
 }
 
@@ -157,8 +163,10 @@ pub fn extended_version() -> Version {
 pub fn version() -> Version {
     let ffi_version = lief_ffi::version();
     Version {
-        major: ffi_version.major, minor: ffi_version.minor,
-        patch: ffi_version.patch, id: ffi_version.id
+        major: ffi_version.major,
+        minor: ffi_version.minor,
+        patch: ffi_version.patch,
+        id: ffi_version.id,
     }
 }
 
@@ -166,11 +174,9 @@ pub fn version() -> Version {
 ///
 /// This function requires the extended version of LIEF
 pub fn demangle(mangled: &str) -> Result<String, Error> {
-    to_conv_result!(
-        lief_ffi::demangle,
-        mangled,
-        |e: cxx::UniquePtr<cxx::String>| { e.to_string() }
-    );
+    to_conv_result!(lief_ffi::demangle, mangled, |e: cxx::UniquePtr<
+        cxx::String,
+    >| { e.to_string() });
 }
 
 /// Hexdump the provided buffer.
@@ -186,14 +192,10 @@ pub fn demangle(mangled: &str) -> Result<String, Error> {
 /// +---------------------------------------------------------------------+
 /// ```
 pub fn dump(buffer: &[u8]) -> String {
-    unsafe {
-        lief_ffi::dump(buffer.as_ptr(), buffer.len()).to_string()
-    }
+    unsafe { lief_ffi::dump(buffer.as_ptr(), buffer.len()).to_string() }
 }
 
 /// Same as [`dump`] but with a limit on the number of bytes to dump
 pub fn dump_with_limit(buffer: &[u8], limit: u64) -> String {
-    unsafe {
-        lief_ffi::dump_with_limit(buffer.as_ptr(), buffer.len(), limit).to_string()
-    }
+    unsafe { lief_ffi::dump_with_limit(buffer.as_ptr(), buffer.len(), limit).to_string() }
 }

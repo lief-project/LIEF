@@ -1,13 +1,13 @@
 use lief_ffi as ffi;
 
+use super::Type;
 use crate::common::{into_optional, FromFFI};
 use crate::declare_fwd_iterator;
 use crate::dwarf::types::DwarfType;
-use crate::to_result;
-use std::marker::PhantomData;
-use crate::Error;
-use super::Type;
 use crate::dwarf::Function;
+use crate::to_result;
+use crate::Error;
+use std::marker::PhantomData;
 
 /// Trait shared by [`Structure`], [`Class`], [`Union`] or [`Packed`]
 pub trait ClassLike {
@@ -201,7 +201,6 @@ declare_fwd_iterator!(
     ffi::DWARF_types_ClassLike,
     ffi::DWARF_types_ClassLike_it_members
 );
-
 
 declare_fwd_iterator!(
     Functions,

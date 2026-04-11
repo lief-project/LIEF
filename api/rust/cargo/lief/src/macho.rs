@@ -26,47 +26,47 @@
 //!
 pub mod binary;
 pub mod binding_info;
+pub mod builder;
 pub mod commands;
 pub mod export_info;
 pub mod fat_binary;
+pub mod header;
 pub mod parser_config;
 pub mod relocation;
 pub mod section;
-pub mod symbol;
-pub mod header;
 pub mod stub;
+pub mod symbol;
 pub mod thread_local_variables;
-pub mod builder;
 
-use std::path::Path;
 use lief_ffi as ffi;
+use std::path::Path;
 
 #[doc(inline)]
 pub use binary::Binary;
 #[doc(inline)]
 pub use binding_info::BindingInfo;
 #[doc(inline)]
+pub use commands::Commands;
+#[doc(inline)]
 pub use export_info::ExportInfo;
 #[doc(inline)]
 pub use fat_binary::FatBinary;
 #[doc(inline)]
-pub use relocation::Relocation;
+pub use header::Header;
 #[doc(inline)]
-pub use section::Section;
+pub use relocation::Relocation;
 #[doc(inline)]
 pub use section::Generic;
 #[doc(inline)]
 pub use section::MachOSection;
 #[doc(inline)]
-pub use symbol::Symbol;
-#[doc(inline)]
-pub use commands::Commands;
-#[doc(inline)]
-pub use thread_local_variables::ThreadLocalVariables;
-#[doc(inline)]
-pub use header::Header;
+pub use section::Section;
 #[doc(inline)]
 pub use stub::Stub;
+#[doc(inline)]
+pub use symbol::Symbol;
+#[doc(inline)]
+pub use thread_local_variables::ThreadLocalVariables;
 
 use crate::common::AsFFI;
 

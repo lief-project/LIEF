@@ -1,7 +1,7 @@
 use lief_ffi as ffi;
 
-use std::marker::PhantomData;
 use crate::common::FromFFI;
+use std::marker::PhantomData;
 
 /// This class represents a `@property` in Objective-C
 pub struct Property<'a> {
@@ -13,7 +13,7 @@ impl FromFFI<ffi::ObjC_Property> for Property<'_> {
     fn from_ffi(info: cxx::UniquePtr<ffi::ObjC_Property>) -> Self {
         Self {
             ptr: info,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -29,4 +29,3 @@ impl Property<'_> {
         self.ptr.attribute().to_string()
     }
 }
-

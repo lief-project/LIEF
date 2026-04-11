@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
-use crate::common::FromFFI;
-use crate::assembly;
 use super::Opcode;
+use crate::assembly;
+use crate::common::FromFFI;
 
 /// This structure represents a Mips instruction (including mips64, mips32)
 pub struct Instruction {
@@ -11,9 +11,7 @@ pub struct Instruction {
 
 impl FromFFI<ffi::asm_mips_Instruction> for Instruction {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_mips_Instruction>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 

@@ -1,6 +1,6 @@
 use super::Command;
-use crate::to_slice;
 use crate::common::FromFFI;
+use crate::to_slice;
 use lief_ffi as ffi;
 use std::marker::PhantomData;
 

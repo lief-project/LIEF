@@ -1,12 +1,12 @@
+use crate::common::FromFFI;
 use lief_ffi as ffi;
 use std::fmt;
-use crate::common::FromFFI;
 use std::marker::PhantomData;
 
 /// This structure wraps the sysv-hash info
 pub struct Sysv<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_SysvHash>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl Sysv<'_> {
@@ -46,7 +46,7 @@ impl FromFFI<ffi::ELF_SysvHash> for Sysv<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_SysvHash>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -54,9 +54,8 @@ impl FromFFI<ffi::ELF_SysvHash> for Sysv<'_> {
 /// Structure that wraps the GNU-hash implementation
 pub struct Gnu<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_GnuHash>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
-
 
 impl Gnu<'_> {
     /// Number of buckets used in this hash table
@@ -113,7 +112,7 @@ impl FromFFI<ffi::ELF_GnuHash> for Gnu<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_GnuHash>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

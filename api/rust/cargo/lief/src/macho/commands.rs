@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
 use lief_ffi as ffi;
+pub mod atom_info;
 pub mod build_version;
 pub mod code_signature;
 pub mod code_signature_dir;
@@ -14,27 +15,28 @@ pub mod dylinker;
 pub mod dynamic_symbol_command;
 pub mod encryption_info;
 pub mod fileset;
-pub mod functionstarts;
-pub mod function_variants;
 pub mod function_variant_fixups;
-pub mod atom_info;
+pub mod function_variants;
+pub mod functionstarts;
 pub mod linker_opt_hint;
 pub mod main_cmd;
-pub mod rpath;
+pub mod note;
 pub mod routine;
+pub mod rpath;
 pub mod segment;
 pub mod segment_split_info;
 pub mod source_version;
-pub mod sub_framework;
 pub mod sub_client;
+pub mod sub_framework;
 pub mod symbol_command;
 pub mod thread_command;
 pub mod two_level_hints;
+pub mod unknown;
 pub mod uuid;
 pub mod version_min;
-pub mod note;
-pub mod unknown;
 
+#[doc(inline)]
+pub use atom_info::AtomInfo;
 #[doc(inline)]
 pub use build_version::BuildVersion;
 #[doc(inline)]
@@ -60,21 +62,23 @@ pub use dynamic_symbol_command::DynamicSymbolCommand;
 #[doc(inline)]
 pub use encryption_info::EncryptionInfo;
 #[doc(inline)]
-pub use functionstarts::FunctionStarts;
-#[doc(inline)]
-pub use function_variants::FunctionVariants;
+pub use fileset::Fileset;
 #[doc(inline)]
 pub use function_variant_fixups::FunctionVariantFixups;
 #[doc(inline)]
-pub use atom_info::AtomInfo;
+pub use function_variants::FunctionVariants;
+#[doc(inline)]
+pub use functionstarts::FunctionStarts;
 #[doc(inline)]
 pub use linker_opt_hint::LinkerOptHint;
 #[doc(inline)]
 pub use main_cmd::Main;
 #[doc(inline)]
-pub use rpath::RPath;
+pub use note::Note;
 #[doc(inline)]
 pub use routine::Routine;
+#[doc(inline)]
+pub use rpath::RPath;
 #[doc(inline)]
 pub use segment::Segment;
 #[doc(inline)]
@@ -82,9 +86,9 @@ pub use segment_split_info::SegmentSplitInfo;
 #[doc(inline)]
 pub use source_version::SourceVersion;
 #[doc(inline)]
-pub use sub_framework::SubFramework;
-#[doc(inline)]
 pub use sub_client::SubClient;
+#[doc(inline)]
+pub use sub_framework::SubFramework;
 #[doc(inline)]
 pub use symbol_command::SymbolCommand;
 #[doc(inline)]
@@ -92,15 +96,11 @@ pub use thread_command::ThreadCommand;
 #[doc(inline)]
 pub use two_level_hints::TwoLevelHints;
 #[doc(inline)]
+pub use unknown::Unknown;
+#[doc(inline)]
 pub use uuid::UUID;
 #[doc(inline)]
 pub use version_min::VersionMin;
-#[doc(inline)]
-pub use note::Note;
-#[doc(inline)]
-pub use fileset::Fileset;
-#[doc(inline)]
-pub use unknown::Unknown;
 
 use crate::common::FromFFI;
 use crate::{declare_iterator, to_slice};
@@ -293,7 +293,9 @@ impl From<u64> for LoadCommandTypes {
             LoadCommandTypes::LC_VERSION_MIN_WATCHOS => LoadCommandTypes::VersionMinWatchOS,
             LoadCommandTypes::LC_ATOM_INFO => LoadCommandTypes::AtomInfo,
             LoadCommandTypes::LC_FUNCTION_VARIANTS => LoadCommandTypes::FunctionVariants,
-            LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS => LoadCommandTypes::FunctionVariantsFixups,
+            LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS => {
+                LoadCommandTypes::FunctionVariantsFixups
+            }
             LoadCommandTypes::LC_TARGET_TRIPLE => LoadCommandTypes::TargetTriple,
             LoadCommandTypes::LIEF_UNKNOWN => LoadCommandTypes::LiefUnknown,
             _ => LoadCommandTypes::Unknown(value),
@@ -326,7 +328,7 @@ impl From<LoadCommandTypes> for u64 {
             LoadCommandTypes::LazyLoadDylib => LoadCommandTypes::LC_LAZY_LOAD_DYLIB,
             LoadCommandTypes::LinkerOptimizationHint => {
                 LoadCommandTypes::LC_LINKER_OPTIMIZATION_HINT
-            },
+            }
             LoadCommandTypes::LinkerOption => LoadCommandTypes::LC_LINKER_OPTION,
             LoadCommandTypes::LoadFvmLib => LoadCommandTypes::LC_LOADFVMLIB,
             LoadCommandTypes::LoadDylib => LoadCommandTypes::LC_LOAD_DYLIB,
@@ -362,7 +364,9 @@ impl From<LoadCommandTypes> for u64 {
             LoadCommandTypes::VersionMinWatchOS => LoadCommandTypes::LC_VERSION_MIN_WATCHOS,
             LoadCommandTypes::AtomInfo => LoadCommandTypes::LC_ATOM_INFO,
             LoadCommandTypes::FunctionVariants => LoadCommandTypes::LC_FUNCTION_VARIANTS,
-            LoadCommandTypes::FunctionVariantsFixups => LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS,
+            LoadCommandTypes::FunctionVariantsFixups => {
+                LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS
+            }
             LoadCommandTypes::TargetTriple => LoadCommandTypes::LC_TARGET_TRIPLE,
             LoadCommandTypes::LiefUnknown => LoadCommandTypes::LIEF_UNKNOWN,
             LoadCommandTypes::Unknown(value) => value,
@@ -702,108 +706,40 @@ pub trait Command {
 impl Command for Commands<'_> {
     fn get_base(&self) -> &ffi::MachO_Command {
         match &self {
-            Commands::Generic(cmd) => {
-                cmd.get_base()
-            }
-            Commands::BuildVersion(cmd) => {
-                cmd.get_base()
-            }
-            Commands::CodeSignature(cmd) => {
-                cmd.get_base()
-            }
-            Commands::CodeSignatureDir(cmd) => {
-                cmd.get_base()
-            }
-            Commands::DataInCode(cmd) => {
-                cmd.get_base()
-            }
-            Commands::DyldChainedFixups(cmd) => {
-                cmd.get_base()
-            }
-            Commands::DyldEnvironment(cmd) => {
-                cmd.get_base()
-            }
-            Commands::DyldExportsTrie(cmd) => {
-                cmd.get_base()
-            }
-            Commands::DyldInfo(cmd) => {
-                cmd.get_base()
-            }
-            Commands::Dylib(cmd) => {
-                cmd.get_base()
-            }
-            Commands::Dylinker(cmd) => {
-                cmd.get_base()
-            }
-            Commands::DynamicSymbolCommand(cmd) => {
-                cmd.get_base()
-            }
-            Commands::EncryptionInfo(cmd) => {
-                cmd.get_base()
-            }
-            Commands::FunctionStarts(cmd) => {
-                cmd.get_base()
-            }
-            Commands::LinkerOptHint(cmd) => {
-                cmd.get_base()
-            }
-            Commands::Main(cmd) => {
-                cmd.get_base()
-            }
-            Commands::Routine(cmd) => {
-                cmd.get_base()
-            }
-            Commands::RPath(cmd) => {
-                cmd.get_base()
-            }
-            Commands::Segment(cmd) => {
-                cmd.get_base()
-            }
-            Commands::SegmentSplitInfo(cmd) => {
-                cmd.get_base()
-            }
-            Commands::SourceVersion(cmd) => {
-                cmd.get_base()
-            }
-            Commands::SubFramework(cmd) => {
-                cmd.get_base()
-            }
-            Commands::SubClient(cmd) => {
-                cmd.get_base()
-            }
-            Commands::SymbolCommand(cmd) => {
-                cmd.get_base()
-            }
-            Commands::ThreadCommand(cmd) => {
-                cmd.get_base()
-            }
-            Commands::TwoLevelHints(cmd) => {
-                cmd.get_base()
-            }
-            Commands::UUID(cmd) => {
-                cmd.get_base()
-            }
-            Commands::VersionMin(cmd) => {
-                cmd.get_base()
-            }
-            Commands::AtomInfo(cmd) => {
-                cmd.get_base()
-            }
-            Commands::Note(cmd) => {
-                cmd.get_base()
-            }
-            Commands::FunctionVariants(cmd) => {
-                cmd.get_base()
-            }
-            Commands::FunctionVariantFixups(cmd) => {
-                cmd.get_base()
-            }
-            Commands::Fileset(cmd) => {
-                cmd.get_base()
-            }
-            Commands::Unknown(cmd) => {
-                cmd.get_base()
-            }
+            Commands::Generic(cmd) => cmd.get_base(),
+            Commands::BuildVersion(cmd) => cmd.get_base(),
+            Commands::CodeSignature(cmd) => cmd.get_base(),
+            Commands::CodeSignatureDir(cmd) => cmd.get_base(),
+            Commands::DataInCode(cmd) => cmd.get_base(),
+            Commands::DyldChainedFixups(cmd) => cmd.get_base(),
+            Commands::DyldEnvironment(cmd) => cmd.get_base(),
+            Commands::DyldExportsTrie(cmd) => cmd.get_base(),
+            Commands::DyldInfo(cmd) => cmd.get_base(),
+            Commands::Dylib(cmd) => cmd.get_base(),
+            Commands::Dylinker(cmd) => cmd.get_base(),
+            Commands::DynamicSymbolCommand(cmd) => cmd.get_base(),
+            Commands::EncryptionInfo(cmd) => cmd.get_base(),
+            Commands::FunctionStarts(cmd) => cmd.get_base(),
+            Commands::LinkerOptHint(cmd) => cmd.get_base(),
+            Commands::Main(cmd) => cmd.get_base(),
+            Commands::Routine(cmd) => cmd.get_base(),
+            Commands::RPath(cmd) => cmd.get_base(),
+            Commands::Segment(cmd) => cmd.get_base(),
+            Commands::SegmentSplitInfo(cmd) => cmd.get_base(),
+            Commands::SourceVersion(cmd) => cmd.get_base(),
+            Commands::SubFramework(cmd) => cmd.get_base(),
+            Commands::SubClient(cmd) => cmd.get_base(),
+            Commands::SymbolCommand(cmd) => cmd.get_base(),
+            Commands::ThreadCommand(cmd) => cmd.get_base(),
+            Commands::TwoLevelHints(cmd) => cmd.get_base(),
+            Commands::UUID(cmd) => cmd.get_base(),
+            Commands::VersionMin(cmd) => cmd.get_base(),
+            Commands::AtomInfo(cmd) => cmd.get_base(),
+            Commands::Note(cmd) => cmd.get_base(),
+            Commands::FunctionVariants(cmd) => cmd.get_base(),
+            Commands::FunctionVariantFixups(cmd) => cmd.get_base(),
+            Commands::Fileset(cmd) => cmd.get_base(),
+            Commands::Unknown(cmd) => cmd.get_base(),
         }
     }
 }

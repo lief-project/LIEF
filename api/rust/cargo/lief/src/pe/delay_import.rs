@@ -1,8 +1,8 @@
 //! PE Delayed import module
-use std::marker::PhantomData;
-use std::pin::Pin;
 use crate::{common::FromFFI, declare_iterator, generic};
 use lief_ffi as ffi;
+use std::marker::PhantomData;
+use std::pin::Pin;
 
 pub struct DelayImport<'a> {
     ptr: cxx::UniquePtr<ffi::PE_DelayImport>,
@@ -42,7 +42,6 @@ impl DelayImport<'_> {
     pub fn biat(&self) -> u32 {
         self.ptr.biat()
     }
-
 
     /// RVA of the **unload** delay-load import address table or 0
     /// if the table does not exist.

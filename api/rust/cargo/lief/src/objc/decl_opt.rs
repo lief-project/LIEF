@@ -19,7 +19,7 @@ impl DeclOpt {
     #[doc(hidden)]
     pub fn to_ffi(&self) -> ffi::ObjC_DeclOpt {
         ffi::ObjC_DeclOpt {
-            show_annotations: self.show_annotations
+            show_annotations: self.show_annotations,
         }
     }
 }

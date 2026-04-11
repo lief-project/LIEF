@@ -1,13 +1,13 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
 /// Structure that wraps the `LC_VERSION_MIN_MACOSX, LC_VERSION_MIN_IPHONEOS, ...` commands.
 pub struct VersionMin<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_VersionMin>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl VersionMin<'_> {
@@ -45,7 +45,7 @@ impl FromFFI<ffi::MachO_VersionMin> for VersionMin<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_VersionMin>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

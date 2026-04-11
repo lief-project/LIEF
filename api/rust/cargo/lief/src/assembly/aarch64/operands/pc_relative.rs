@@ -12,9 +12,7 @@ pub struct PCRelative {
 
 impl FromFFI<ffi::asm_aarch64_operands_PCRelative> for PCRelative {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_aarch64_operands_PCRelative>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 

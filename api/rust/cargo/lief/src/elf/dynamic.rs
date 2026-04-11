@@ -1,12 +1,11 @@
 use std::marker::PhantomData;
 
-use std::pin::Pin;
-use lief_ffi as ffi;
 use bitflags::bitflags;
+use lief_ffi as ffi;
+use std::pin::Pin;
 
 use crate::common::FromFFI;
 use crate::declare_iterator;
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -332,7 +331,6 @@ impl From<u64> for Tag {
             0x860000040 => Tag::IA_64_VMS_PLTGOT_SEG,
             0x860000042 => Tag::IA_64_VMS_FPMODE,
             _ => Tag::UNKNOWN(value),
-
         }
     }
 }
@@ -563,7 +561,6 @@ pub trait DynamicEntry {
     }
 }
 
-
 impl std::fmt::Display for &dyn DynamicEntry {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.as_base().to_string())
@@ -573,87 +570,48 @@ impl std::fmt::Display for &dyn DynamicEntry {
 impl DynamicEntry for Entries<'_> {
     fn as_base(&self) -> &ffi::ELF_DynamicEntry {
         match &self {
-            Entries::Library(entry) => {
-                entry.as_base()
-            }
+            Entries::Library(entry) => entry.as_base(),
 
-            Entries::Array(entry) => {
-                entry.as_base()
-            }
+            Entries::Array(entry) => entry.as_base(),
 
-            Entries::Rpath(entry) => {
-                entry.as_base()
-            }
+            Entries::Rpath(entry) => entry.as_base(),
 
-            Entries::RunPath(entry) => {
-                entry.as_base()
-            }
+            Entries::RunPath(entry) => entry.as_base(),
 
-            Entries::SharedObject(entry) => {
-                entry.as_base()
-            }
+            Entries::SharedObject(entry) => entry.as_base(),
 
-            Entries::Auxiliary(entry) => {
-                entry.as_base()
-            }
+            Entries::Auxiliary(entry) => entry.as_base(),
 
-            Entries::Filter(entry) => {
-                entry.as_base()
-            }
+            Entries::Filter(entry) => entry.as_base(),
 
-            Entries::Flags(entry) => {
-                entry.as_base()
-            }
+            Entries::Flags(entry) => entry.as_base(),
 
-            Entries::Generic(entry) => {
-                entry.as_base()
-            }
+            Entries::Generic(entry) => entry.as_base(),
         }
     }
 
     fn as_mut_base(&mut self) -> Pin<&mut ffi::ELF_DynamicEntry> {
         match self {
-            Entries::Library(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::Library(entry) => entry.as_mut_base(),
 
-            Entries::Array(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::Array(entry) => entry.as_mut_base(),
 
-            Entries::Rpath(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::Rpath(entry) => entry.as_mut_base(),
 
-            Entries::RunPath(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::RunPath(entry) => entry.as_mut_base(),
 
-            Entries::SharedObject(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::SharedObject(entry) => entry.as_mut_base(),
 
-            Entries::Auxiliary(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::Auxiliary(entry) => entry.as_mut_base(),
 
-            Entries::Filter(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::Filter(entry) => entry.as_mut_base(),
 
-            Entries::Flags(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::Flags(entry) => entry.as_mut_base(),
 
-            Entries::Generic(entry) => {
-                entry.as_mut_base()
-            }
+            Entries::Generic(entry) => entry.as_mut_base(),
         }
     }
-
-
 }
-
 
 impl FromFFI<ffi::ELF_DynamicEntry> for Entries<'_> {
     fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::ELF_DynamicEntry>) -> Self {
@@ -663,90 +621,80 @@ impl FromFFI<ffi::ELF_DynamicEntry> for Entries<'_> {
             if ffi::ELF_DynamicEntryLibrary::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
-                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryLibrary>;
+                    type To = cxx::UniquePtr<ffi::ELF_DynamicEntryLibrary>;
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::Library(Library::from_ffi(raw))
-            }
-            else if ffi::ELF_DynamicEntryArray::classof(cmd_ref) {
+            } else if ffi::ELF_DynamicEntryArray::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
-                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryArray>;
+                    type To = cxx::UniquePtr<ffi::ELF_DynamicEntryArray>;
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::Array(Array::from_ffi(raw))
-            }
-            else if ffi::ELF_DynamicEntryRpath::classof(cmd_ref) {
+            } else if ffi::ELF_DynamicEntryRpath::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
-                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryRpath>;
+                    type To = cxx::UniquePtr<ffi::ELF_DynamicEntryRpath>;
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::Rpath(Rpath::from_ffi(raw))
-            }
-            else if ffi::ELF_DynamicEntryRunPath::classof(cmd_ref) {
+            } else if ffi::ELF_DynamicEntryRunPath::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
-                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryRunPath>;
+                    type To = cxx::UniquePtr<ffi::ELF_DynamicEntryRunPath>;
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::RunPath(RunPath::from_ffi(raw))
-            }
-            else if ffi::ELF_DynamicSharedObject::classof(cmd_ref) {
+            } else if ffi::ELF_DynamicSharedObject::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
-                    type To   = cxx::UniquePtr<ffi::ELF_DynamicSharedObject>;
+                    type To = cxx::UniquePtr<ffi::ELF_DynamicSharedObject>;
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::SharedObject(SharedObject::from_ffi(raw))
-            }
-            else if ffi::ELF_DynamicEntryAuxiliary::classof(cmd_ref) {
+            } else if ffi::ELF_DynamicEntryAuxiliary::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
-                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryAuxiliary>;
+                    type To = cxx::UniquePtr<ffi::ELF_DynamicEntryAuxiliary>;
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::Auxiliary(Auxiliary::from_ffi(raw))
-            }
-            else if ffi::ELF_DynamicEntryFilter::classof(cmd_ref) {
+            } else if ffi::ELF_DynamicEntryFilter::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
-                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryFilter>;
+                    type To = cxx::UniquePtr<ffi::ELF_DynamicEntryFilter>;
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::Filter(Filter::from_ffi(raw))
-            }
-            else if ffi::ELF_DynamicEntryFlags::classof(cmd_ref) {
+            } else if ffi::ELF_DynamicEntryFlags::classof(cmd_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::ELF_DynamicEntry>;
-                    type To   = cxx::UniquePtr<ffi::ELF_DynamicEntryFlags>;
+                    type To = cxx::UniquePtr<ffi::ELF_DynamicEntryFlags>;
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Entries::Flags(Flags::from_ffi(raw))
-            }
-            else {
+            } else {
                 Entries::Generic(Generic::from_ffi(ffi_entry))
             }
         }
     }
 }
 
-
 /// Generic structure for the dynamic entries whose [`DynamicEntry::value`] can be interpreted
 /// as is.
 pub struct Generic<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntry>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl FromFFI<ffi::ELF_DynamicEntry> for Generic<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntry>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
-
 }
 
 impl DynamicEntry for Generic<'_> {
@@ -766,7 +714,6 @@ impl DynamicEntry for Generic<'_> {
     }
 }
 
-
 impl std::fmt::Debug for Generic<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Generic").finish()
@@ -776,7 +723,7 @@ impl std::fmt::Debug for Generic<'_> {
 /// Structure that represents a dynamic entry associated with a library name (e.g. `DT_NEEDED`)
 pub struct Library<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryLibrary>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl Library<'_> {
@@ -795,11 +742,10 @@ impl FromFFI<ffi::ELF_DynamicEntryLibrary> for Library<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryLibrary>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
-
 
 impl DynamicEntry for Library<'_> {
     fn as_base(&self) -> &ffi::ELF_DynamicEntry {
@@ -827,7 +773,7 @@ impl std::fmt::Debug for Library<'_> {
 /// Structure that represents a dynamic entry associated with an array (e.g. `DT_INIT_ARRAY`)
 pub struct Array<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryArray>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl Array<'_> {
@@ -840,7 +786,7 @@ impl FromFFI<ffi::ELF_DynamicEntryArray> for Array<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryArray>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -871,7 +817,7 @@ impl std::fmt::Debug for Array<'_> {
 /// Structure that represents a dynamic entry associated with the rpath info
 pub struct Rpath<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryRpath>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl Rpath<'_> {
@@ -941,11 +887,10 @@ impl FromFFI<ffi::ELF_DynamicEntryRpath> for Rpath<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryRpath>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
-
 
 impl DynamicEntry for Rpath<'_> {
     fn as_base(&self) -> &ffi::ELF_DynamicEntry {
@@ -973,7 +918,7 @@ impl std::fmt::Debug for Rpath<'_> {
 /// Structure that represents a dynamic entry associated with the runpath info
 pub struct RunPath<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryRunPath>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl RunPath<'_> {
@@ -1042,11 +987,10 @@ impl FromFFI<ffi::ELF_DynamicEntryRunPath> for RunPath<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryRunPath>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
-
 
 impl DynamicEntry for RunPath<'_> {
     fn as_base(&self) -> &ffi::ELF_DynamicEntry {
@@ -1074,7 +1018,7 @@ impl std::fmt::Debug for RunPath<'_> {
 /// Structure that represents a dynamic entry associated with the name of a library (`DT_SONAME`)
 pub struct SharedObject<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicSharedObject>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl SharedObject<'_> {
@@ -1095,7 +1039,7 @@ impl FromFFI<ffi::ELF_DynamicSharedObject> for SharedObject<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicSharedObject>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -1126,12 +1070,14 @@ impl std::fmt::Debug for SharedObject<'_> {
 /// Structure that represents a dynamic entry associated with the name of a library (`DT_AUXILIARY`)
 pub struct Auxiliary<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryAuxiliary>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl Auxiliary<'_> {
     pub fn new(name: &str) -> Auxiliary<'static> {
-        Auxiliary::from_ffi(lief_ffi::ELF_DynamicEntryAuxiliary::create(name.to_string()))
+        Auxiliary::from_ffi(lief_ffi::ELF_DynamicEntryAuxiliary::create(
+            name.to_string(),
+        ))
     }
 
     pub fn name(&self) -> String {
@@ -1147,7 +1093,7 @@ impl FromFFI<ffi::ELF_DynamicEntryAuxiliary> for Auxiliary<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryAuxiliary>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -1178,7 +1124,7 @@ impl std::fmt::Debug for Auxiliary<'_> {
 /// Structure that represents a dynamic entry associated with the name of a library (`DT_FILTER`)
 pub struct Filter<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryFilter>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl Filter<'_> {
@@ -1199,7 +1145,7 @@ impl FromFFI<ffi::ELF_DynamicEntryFilter> for Filter<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryFilter>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -1230,7 +1176,7 @@ impl std::fmt::Debug for Filter<'_> {
 /// Structure that represents a dynamic flag entry: `DT_FLAGS` or `DT_FLAGS_1`
 pub struct Flags<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryFlags>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl Flags<'_> {
@@ -1259,7 +1205,7 @@ impl FromFFI<ffi::ELF_DynamicEntryFlags> for Flags<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_DynamicEntryFlags>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -1286,7 +1232,6 @@ impl std::fmt::Debug for Flags<'_> {
         f.debug_struct("Flags").finish()
     }
 }
-
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -1329,7 +1274,6 @@ bitflags! {
     }
 }
 
-
 impl From<u64> for DtFlags {
     fn from(value: u64) -> Self {
         DtFlags::from_bits_truncate(value)
@@ -1346,4 +1290,10 @@ impl std::fmt::Display for DtFlags {
     }
 }
 
-declare_iterator!(DynamicEntries, Entries<'a>, ffi::ELF_DynamicEntry, ffi::ELF_Binary, ffi::ELF_Binary_it_dynamic_entries);
+declare_iterator!(
+    DynamicEntries,
+    Entries<'a>,
+    ffi::ELF_DynamicEntry,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_dynamic_entries
+);

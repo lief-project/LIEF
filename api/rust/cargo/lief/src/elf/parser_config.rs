@@ -51,8 +51,10 @@ impl Config {
         let mut ptr = ffi::ELF_ParserConfig::create();
         ptr.pin_mut().set_parse_relocations(self.parse_relocations);
         ptr.pin_mut().set_parse_dyn_symbols(self.parse_dyn_symbols);
-        ptr.pin_mut().set_parse_symtab_symbols(self.parse_symtab_symbols);
-        ptr.pin_mut().set_parse_symbol_versions(self.parse_symbol_versions);
+        ptr.pin_mut()
+            .set_parse_symtab_symbols(self.parse_symtab_symbols);
+        ptr.pin_mut()
+            .set_parse_symbol_versions(self.parse_symbol_versions);
         ptr.pin_mut().set_parse_notes(self.parse_notes);
         ptr.pin_mut().set_parse_overlay(self.parse_overlay);
         ptr.pin_mut().set_count_mtd(self.count_mtd.into());
@@ -60,7 +62,6 @@ impl Config {
         ptr
     }
 }
-
 
 /// Enum that describes the different methods that can be used by the parser to identity
 /// the number of dynamic symbols

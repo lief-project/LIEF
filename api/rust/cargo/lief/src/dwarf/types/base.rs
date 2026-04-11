@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
-use std::marker::PhantomData;
 use crate::dwarf::types::DwarfType;
+use std::marker::PhantomData;
 
 /// This class wraps the `DW_TAG_base_type` type which can be used -- for
 /// instance -- to represent integers or primitive types.
@@ -10,7 +10,6 @@ pub struct Base<'a> {
     ptr: cxx::UniquePtr<ffi::DWARF_types_Base>,
     _owner: PhantomData<&'a ()>,
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -53,7 +52,6 @@ impl From<u32> for Encoding {
             0x00000006 => Encoding::BOOLEAN,
             0x00000007 => Encoding::ADDRESS,
             _ => Encoding::UNKNOWN(value),
-
         }
     }
 }
@@ -69,7 +67,6 @@ impl From<Encoding> for u32 {
             Encoding::BOOLEAN => 0x00000006,
             Encoding::ADDRESS => 0x00000007,
             Encoding::UNKNOWN(_) => 0,
-
         }
     }
 }

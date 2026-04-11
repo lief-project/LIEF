@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
-use std::marker::PhantomData;
 use crate::pdb::types::PdbType;
+use std::marker::PhantomData;
 
 /// This structure wraps a `LF_BITFIELD` PDB type
 pub struct BitField<'a> {
@@ -19,8 +19,7 @@ impl FromFFI<ffi::PDB_types_BitField> for BitField<'_> {
     }
 }
 
-impl BitField<'_> {
-}
+impl BitField<'_> {}
 
 impl PdbType for BitField<'_> {
     fn get_base(&self) -> &ffi::PDB_Type {

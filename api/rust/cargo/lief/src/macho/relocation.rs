@@ -123,21 +123,13 @@ impl From<u32> for Origin {
 impl RelocationBase for Relocation<'_> {
     fn get_base(&self) -> &ffi::MachO_Relocation {
         match &self {
-            Relocation::Dyld(reloc) => {
-                reloc.get_base()
-            }
+            Relocation::Dyld(reloc) => reloc.get_base(),
 
-            Relocation::Fixup(reloc) => {
-                reloc.get_base()
-            }
+            Relocation::Fixup(reloc) => reloc.get_base(),
 
-            Relocation::Object(reloc) => {
-                reloc.get_base()
-            }
+            Relocation::Object(reloc) => reloc.get_base(),
 
-            Relocation::Generic(reloc) => {
-                reloc.get_base()
-            }
+            Relocation::Generic(reloc) => reloc.get_base(),
         }
     }
 }
@@ -145,25 +137,16 @@ impl RelocationBase for Relocation<'_> {
 impl generic::Relocation for Relocation<'_> {
     fn as_generic(&self) -> &ffi::AbstractRelocation {
         match &self {
-            Relocation::Dyld(reloc) => {
-                reloc.as_generic()
-            }
+            Relocation::Dyld(reloc) => reloc.as_generic(),
 
-            Relocation::Fixup(reloc) => {
-                reloc.as_generic()
-            }
+            Relocation::Fixup(reloc) => reloc.as_generic(),
 
-            Relocation::Object(reloc) => {
-                reloc.as_generic()
-            }
+            Relocation::Object(reloc) => reloc.as_generic(),
 
-            Relocation::Generic(reloc) => {
-                reloc.as_generic()
-            }
+            Relocation::Generic(reloc) => reloc.as_generic(),
         }
     }
 }
-
 
 impl std::fmt::Debug for &dyn RelocationBase {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -229,7 +212,6 @@ impl RelocationBase for Dyld<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-
 
 impl generic::Relocation for Dyld<'_> {
     fn as_generic(&self) -> &ffi::AbstractRelocation {

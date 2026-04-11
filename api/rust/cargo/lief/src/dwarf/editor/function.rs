@@ -1,7 +1,6 @@
 use lief_ffi as ffi;
 
-
-use crate::common::{FromFFI, into_optional};
+use crate::common::{into_optional, FromFFI};
 
 use crate::dwarf::editor::types::EditorType;
 use crate::dwarf::editor::Variable;
@@ -13,9 +12,7 @@ pub struct Function {
 
 impl FromFFI<ffi::DWARF_editor_Function> for Function {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::DWARF_editor_Function>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 
@@ -24,7 +21,6 @@ pub struct Range {
     start: u64,
     end: u64,
 }
-
 
 /// This structure represents a parameter of the current function (`DW_TAG_formal_parameter`)
 pub struct Parameter {
@@ -47,9 +43,7 @@ impl Parameter {
 
 impl FromFFI<ffi::DWARF_editor_Function_Parameter> for Parameter {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::DWARF_editor_Function_Parameter>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 
@@ -60,9 +54,7 @@ pub struct LexicalBlock {
 
 impl FromFFI<ffi::DWARF_editor_Function_LexicalBlock> for LexicalBlock {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::DWARF_editor_Function_LexicalBlock>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 
@@ -107,9 +99,7 @@ pub struct Label {
 
 impl FromFFI<ffi::DWARF_editor_Function_Label> for Label {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::DWARF_editor_Function_Label>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 

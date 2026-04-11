@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
-use std::marker::PhantomData;
 use crate::pdb::types::PdbType;
+use std::marker::PhantomData;
 
 /// This class represents a primitive types (int, float, ...) which are
 /// also named *simple* types in the PDB format.

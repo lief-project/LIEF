@@ -1,11 +1,11 @@
 use lief_ffi as ffi;
 
-use crate::common::FromFFI;
-use crate::assembly;
 use super::Opcode;
+use crate::assembly;
+use crate::common::FromFFI;
 
-use crate::declare_fwd_iterator;
 use crate::assembly::x86;
+use crate::declare_fwd_iterator;
 
 /// This structure represents a x86/x86-64 instruction
 pub struct Instruction {
@@ -14,9 +14,7 @@ pub struct Instruction {
 
 impl FromFFI<ffi::asm_x86_Instruction> for Instruction {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_x86_Instruction>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 

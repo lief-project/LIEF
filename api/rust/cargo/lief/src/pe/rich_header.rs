@@ -5,7 +5,6 @@ use lief_ffi as ffi;
 
 use crate::{common::FromFFI, declare_iterator};
 
-
 /// Structure which represents the not-so-documented rich header
 ///
 /// This structure is usually located at the end of the [`crate::pe::Binary::dos_stub`]
@@ -62,7 +61,6 @@ pub struct RichEntry<'a> {
 }
 
 impl RichEntry<'_> {
-
     /// Entry type
     pub fn id(&self) -> u16 {
         self.ptr.id()

@@ -23,7 +23,7 @@ use super::{Segment, Symbol};
 use crate::elf::dynamic::DynamicEntry;
 use crate::Error;
 
-use crate::common::{into_optional, FromFFI, AsFFI};
+use crate::common::{into_optional, AsFFI, FromFFI};
 use crate::generic;
 use crate::{declare_iterator, to_conv_result, to_result, to_slice};
 
@@ -46,7 +46,6 @@ impl ElfClass {
         }
     }
 }
-
 
 /// Strategy used for relocating the PHDR table
 #[allow(non_camel_case_types)]
@@ -325,7 +324,11 @@ impl Binary {
 
     /// Try to find the section that encompasses the given virtual address. `skip_nobits` can be used
     /// to include (or not) the `SHT_NOTBIT` sections
-    pub fn section_from_virtual_address(&self, address: u64, skip_nobits: bool) -> Option<Section<'_>> {
+    pub fn section_from_virtual_address(
+        &self,
+        address: u64,
+        skip_nobits: bool,
+    ) -> Option<Section<'_>> {
         into_optional(self.ptr.section_from_virtual_address(address, skip_nobits))
     }
 
@@ -422,7 +425,10 @@ impl Binary {
 
     /// Write back the current ELF binary into the file specified in parameter
     pub fn write<P: AsRef<Path>>(&mut self, output: P) {
-        self.ptr.as_mut().unwrap().write(output.as_ref().to_str().unwrap());
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .write(output.as_ref().to_str().unwrap());
     }
 
     /// Write back the current ELF binary into the file specified in parameter with the
@@ -467,9 +473,10 @@ impl Binary {
     where
         P: Fn(&dynamic::Entries) -> bool,
     {
-        let entries = self.dynamic_entries()
+        let entries = self
+            .dynamic_entries()
             .filter(predicate)
-            .map(|e| e.as_base().raw_ptr() )
+            .map(|e| e.as_base().raw_ptr())
             .collect::<Vec<_>>();
 
         let cnt = entries.len();
@@ -499,7 +506,9 @@ impl Binary {
 
     /// Change the path to the interpreter
     pub fn set_interpreter<P: AsRef<Path>>(&mut self, interpreter: P) {
-        self.ptr.pin_mut().set_interpreter(interpreter.as_ref().to_str().unwrap());
+        self.ptr
+            .pin_mut()
+            .set_interpreter(interpreter.as_ref().to_str().unwrap());
     }
 
     /// Try to find the SymbolVersionRequirement associated with the given library
@@ -545,7 +554,8 @@ impl Binary {
 
     /// Return all printable strings from the binary with a minimum length
     pub fn strings(&self, min_size: u64) -> Vec<String> {
-        self.ptr.strings(min_size)
+        self.ptr
+            .strings(min_size)
             .iter()
             .map(|s| s.to_string())
             .collect()
@@ -584,7 +594,9 @@ impl Binary {
     /// Set the overlay data
     pub fn set_overlay(&mut self, data: &[u8]) {
         unsafe {
-            self.ptr.pin_mut().set_overlay(data.as_ptr(), data.len() as u64);
+            self.ptr
+                .pin_mut()
+                .set_overlay(data.as_ptr(), data.len() as u64);
         }
     }
 
@@ -668,13 +680,20 @@ impl Binary {
 
     /// Patch the GOT/PLT entry for the given symbol name
     pub fn patch_pltgot(&mut self, symbol_name: &str, address: u64) {
-        self.ptr.pin_mut().patch_pltgot_by_name(symbol_name.to_string(), address);
+        self.ptr
+            .pin_mut()
+            .patch_pltgot_by_name(symbol_name.to_string(), address);
     }
 
     /// Add a section to the binary. If `loaded` is true, the section will be
     /// added in a way that it is loaded in memory. `pos` controls where the
     /// section is inserted.
-    pub fn add_section(&mut self, section: &Section, loaded: bool, pos: SecInsertPos) -> Option<Section<'_>> {
+    pub fn add_section(
+        &mut self,
+        section: &Section,
+        loaded: bool,
+        pos: SecInsertPos,
+    ) -> Option<Section<'_>> {
         into_optional(
             self.ptr
                 .pin_mut()
@@ -684,68 +703,64 @@ impl Binary {
 
     /// Add a note to the binary
     pub fn add_note(&mut self, note: &super::note::Notes) -> super::note::Notes<'_> {
-        super::note::Notes::from_ffi(
-            self.ptr.pin_mut().add_note(note.as_ffi()),
-        )
+        super::note::Notes::from_ffi(self.ptr.pin_mut().add_note(note.as_ffi()))
     }
 
     /// Add a dynamic relocation
     pub fn add_dynamic_relocation(&mut self, reloc: &Relocation) -> Relocation<'_> {
-        Relocation::from_ffi(
-            self.ptr.pin_mut().add_dynamic_relocation(reloc.as_ffi()),
-        )
+        Relocation::from_ffi(self.ptr.pin_mut().add_dynamic_relocation(reloc.as_ffi()))
     }
 
     /// Add a `.plt.got` relocation
     pub fn add_pltgot_relocation(&mut self, reloc: &Relocation) -> Relocation<'_> {
-        Relocation::from_ffi(
-            self.ptr.pin_mut().add_pltgot_relocation(reloc.as_ffi()),
-        )
+        Relocation::from_ffi(self.ptr.pin_mut().add_pltgot_relocation(reloc.as_ffi()))
     }
 
     /// Add a symbol to the `.symtab` table
     pub fn add_symtab_symbol(&mut self, symbol: &Symbol) -> Symbol<'_> {
-        Symbol::from_ffi(
-            self.ptr.pin_mut().add_symtab_symbol(symbol.as_ffi()),
-        )
+        Symbol::from_ffi(self.ptr.pin_mut().add_symtab_symbol(symbol.as_ffi()))
     }
 
     /// Add a symbol to the dynamic symbol table (`.dynsym`)
     pub fn add_dynamic_symbol(&mut self, symbol: &Symbol) -> Symbol<'_> {
-        Symbol::from_ffi(
-            self.ptr.pin_mut().add_dynamic_symbol(symbol.as_ffi()),
-        )
+        Symbol::from_ffi(self.ptr.pin_mut().add_dynamic_symbol(symbol.as_ffi()))
     }
 
     /// Add an exported function with the given address and name
     pub fn add_exported_function(&mut self, address: u64, name: &str) -> Symbol<'_> {
         Symbol::from_ffi(
-            self.ptr.pin_mut().add_exported_function(address, name.to_string()),
+            self.ptr
+                .pin_mut()
+                .add_exported_function(address, name.to_string()),
         )
     }
 
     /// Export the symbol with the given name, optionally setting its value (can be 0)
     pub fn export_symbol_by_name(&mut self, symbol_name: &str, value: u64) -> Symbol<'_> {
         Symbol::from_ffi(
-            self.ptr.pin_mut().export_symbol_by_name(symbol_name.to_string(), value),
+            self.ptr
+                .pin_mut()
+                .export_symbol_by_name(symbol_name.to_string(), value),
         )
     }
 
     /// Export an existing symbol
     pub fn export_symbol(&mut self, symbol: &Symbol) -> Symbol<'_> {
-        Symbol::from_ffi(
-            self.ptr.pin_mut().export_symbol_obj(symbol.as_ffi()),
-        )
+        Symbol::from_ffi(self.ptr.pin_mut().export_symbol_obj(symbol.as_ffi()))
     }
 
     /// Remove the symtab symbol with the given name
     pub fn remove_symtab_symbol(&mut self, name: &str) {
-        self.ptr.pin_mut().remove_symtab_symbol_by_name(name.to_string());
+        self.ptr
+            .pin_mut()
+            .remove_symtab_symbol_by_name(name.to_string());
     }
 
     /// Remove the dynamic symbol with the given name
     pub fn remove_dynamic_symbol(&mut self, name: &str) {
-        self.ptr.pin_mut().remove_dynamic_symbol_by_name(name.to_string());
+        self.ptr
+            .pin_mut()
+            .remove_dynamic_symbol_by_name(name.to_string());
     }
 
     /// Remove the given section. If `clear` is set, the section content will be
@@ -770,11 +785,7 @@ impl Binary {
 
     /// Extend the given section by `size` bytes
     pub fn extend_section(&mut self, section: &Section, size: u64) -> Option<Section<'_>> {
-        into_optional(
-            self.ptr
-                .pin_mut()
-                .extend_section(section.as_ffi(), size),
-        )
+        into_optional(self.ptr.pin_mut().extend_section(section.as_ffi(), size))
     }
 
     /// Strip all debug symbols from the binary
@@ -785,13 +796,21 @@ impl Binary {
     /// Get the index of a section by its name. Returns `None` if not found.
     pub fn section_idx_by_name(&self, name: &str) -> Option<usize> {
         let idx = self.ptr.get_section_idx_by_name(name.to_string());
-        if idx < 0 { None } else { Some(idx as usize) }
+        if idx < 0 {
+            None
+        } else {
+            Some(idx as usize)
+        }
     }
 
     /// Get the index of the given section. Returns `None` if not found.
     pub fn section_idx(&self, section: &Section) -> Option<usize> {
         let idx = self.ptr.get_section_idx_by_section(section.as_ffi());
-        if idx < 0 { None } else { Some(idx as usize) }
+        if idx < 0 {
+            None
+        } else {
+            Some(idx as usize)
+        }
     }
 
     /// Relocate the PHDR table using the given strategy.

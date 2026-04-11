@@ -1,14 +1,14 @@
 use lief_ffi as ffi;
 
-use std::option::Option;
+use crate::{common::into_optional, common::FromFFI};
 use std::marker::PhantomData;
-use crate::{common::FromFFI, common::into_optional};
+use std::option::Option;
 
 use super::function::Function;
-use super::types::{Array, Base, EditorType, Enum, Pointer, Struct, Typedef};
-use super::types::Function as FunctionType;
-use super::types::struct_ty;
 use super::types::base;
+use super::types::struct_ty;
+use super::types::Function as FunctionType;
+use super::types::{Array, Base, EditorType, Enum, Pointer, Struct, Typedef};
 use super::variable::Variable;
 use super::Type;
 
@@ -64,22 +64,38 @@ impl CompilationUnit<'_> {
 
     /// Create a structure type (`DW_TAG_structure_type`)
     pub fn create_structure(&mut self, name: &str) -> Struct {
-        Struct::from_ffi(self.ptr.pin_mut().create_structure(name, struct_ty::Kind::STRUCT.into()))
+        Struct::from_ffi(
+            self.ptr
+                .pin_mut()
+                .create_structure(name, struct_ty::Kind::STRUCT.into()),
+        )
     }
 
     /// Create a structure type (`DW_TAG_class_type`)
     pub fn create_class(&mut self, name: &str) -> Struct {
-        Struct::from_ffi(self.ptr.pin_mut().create_structure(name, struct_ty::Kind::CLASS.into()))
+        Struct::from_ffi(
+            self.ptr
+                .pin_mut()
+                .create_structure(name, struct_ty::Kind::CLASS.into()),
+        )
     }
 
     /// Create a union type (`DW_TAG_union_type`)
     pub fn create_union(&mut self, name: &str) -> Struct {
-        Struct::from_ffi(self.ptr.pin_mut().create_structure(name, struct_ty::Kind::UNION.into()))
+        Struct::from_ffi(
+            self.ptr
+                .pin_mut()
+                .create_structure(name, struct_ty::Kind::UNION.into()),
+        )
     }
 
     /// Create a primitive type with the given name and size.
     pub fn create_base_type(&mut self, name: &str, size: u64, encoding: base::Encoding) -> Base {
-        Base::from_ffi(self.ptr.pin_mut().create_base_type(name, size, encoding.into()))
+        Base::from_ffi(
+            self.ptr
+                .pin_mut()
+                .create_base_type(name, size, encoding.into()),
+        )
     }
 
     /// Create a function type with the given name.
@@ -98,7 +114,11 @@ impl CompilationUnit<'_> {
     }
 
     /// Create an array type with the given name, type and size.
-    pub fn create_array_type(&mut self, name: &str, ty:&dyn EditorType, count: u64) -> Array {
-        Array::from_ffi(self.ptr.pin_mut().create_array_type(name, ty.get_base(), count))
+    pub fn create_array_type(&mut self, name: &str, ty: &dyn EditorType, count: u64) -> Array {
+        Array::from_ffi(
+            self.ptr
+                .pin_mut()
+                .create_array_type(name, ty.get_base(), count),
+        )
     }
 }

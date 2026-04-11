@@ -1,14 +1,14 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
 use crate::to_slice;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
 /// Structure which represents the `LC_TWOLEVEL_HINTS` command
 pub struct TwoLevelHints<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_TwoLevelHints>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl TwoLevelHints<'_> {
@@ -40,7 +40,7 @@ impl FromFFI<ffi::MachO_TwoLevelHints> for TwoLevelHints<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_TwoLevelHints>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -50,4 +50,3 @@ impl Command for TwoLevelHints<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

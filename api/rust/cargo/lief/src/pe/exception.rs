@@ -1,8 +1,8 @@
 //! Module for the PE exception support
 
-use lief_ffi as ffi;
-use super::exception_x64;
 use super::exception_aarch64;
+use super::exception_x64;
+use lief_ffi as ffi;
 
 use crate::common::FromFFI;
 

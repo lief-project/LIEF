@@ -1,14 +1,14 @@
 //! COFF section module
 
-use std::marker::PhantomData;
-use crate::common::into_optional;
-use crate::common::FromFFI;
-use crate::coff;
-use crate::generic;
-use crate::pe;
 use super::Relocation;
 use super::Symbol;
+use crate::coff;
+use crate::common::into_optional;
+use crate::common::FromFFI;
 use crate::declare_iterator;
+use crate::generic;
+use crate::pe;
+use std::marker::PhantomData;
 use std::pin::Pin;
 
 use lief_ffi as ffi;
@@ -192,7 +192,6 @@ impl std::fmt::Debug for ComdatInfo<'_> {
     }
 }
 
-
 declare_iterator!(
     Relocations,
     Relocation<'a>,
@@ -200,7 +199,6 @@ declare_iterator!(
     ffi::COFF_Section,
     ffi::COFF_Section_it_relocations
 );
-
 
 declare_iterator!(
     Symbols,

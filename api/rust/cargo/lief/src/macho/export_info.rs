@@ -43,7 +43,6 @@ bitflags! {
     }
 }
 
-
 impl From<u64> for Flags {
     fn from(value: u64) -> Self {
         Flags::from_bits_truncate(value)

@@ -1,11 +1,10 @@
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
-use std::marker::PhantomData;
-use crate::pdb::types::PdbType;
 use crate::pdb::types::attribute::Attributes;
 use crate::pdb::types::method::Methods;
-
+use crate::pdb::types::PdbType;
+use std::marker::PhantomData;
 
 /// Trait shared by [`Structure`], [`Class`], [`Union`] and [`Interface`]
 pub trait ClassLike {

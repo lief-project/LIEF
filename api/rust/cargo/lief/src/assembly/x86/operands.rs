@@ -55,31 +55,28 @@ impl FromFFI<ffi::asm_x86_Operand> for Operands {
             if ffi::asm_x86_operands_Memory::classof(op_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::asm_x86_Operand>;
-                    type To   = cxx::UniquePtr<ffi::asm_x86_operands_Memory>;
+                    type To = cxx::UniquePtr<ffi::asm_x86_operands_Memory>;
                     std::mem::transmute::<From, To>(ptr)
                 };
                 return Operands::Mem(Memory::from_ffi(raw));
-            }
-            else if ffi::asm_x86_operands_Register::classof(op_ref) {
+            } else if ffi::asm_x86_operands_Register::classof(op_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::asm_x86_Operand>;
-                    type To   = cxx::UniquePtr<ffi::asm_x86_operands_Register>;
+                    type To = cxx::UniquePtr<ffi::asm_x86_operands_Register>;
                     std::mem::transmute::<From, To>(ptr)
                 };
                 return Operands::Reg(Register::from_ffi(raw));
-            }
-            else if ffi::asm_x86_operands_Immediate::classof(op_ref) {
+            } else if ffi::asm_x86_operands_Immediate::classof(op_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::asm_x86_Operand>;
-                    type To   = cxx::UniquePtr<ffi::asm_x86_operands_Immediate>;
+                    type To = cxx::UniquePtr<ffi::asm_x86_operands_Immediate>;
                     std::mem::transmute::<From, To>(ptr)
                 };
                 return Operands::Imm(Immediate::from_ffi(raw));
-            }
-            else if ffi::asm_x86_operands_PCRelative::classof(op_ref) {
+            } else if ffi::asm_x86_operands_PCRelative::classof(op_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::asm_x86_Operand>;
-                    type To   = cxx::UniquePtr<ffi::asm_x86_operands_PCRelative>;
+                    type To = cxx::UniquePtr<ffi::asm_x86_operands_PCRelative>;
                     std::mem::transmute::<From, To>(ptr)
                 };
                 return Operands::PCRelative(PCRelative::from_ffi(raw));
@@ -93,25 +90,15 @@ impl Operand for Operands {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::asm_x86_Operand {
         match &self {
-            Operands::Reg(op) => {
-                op.as_generic()
-            }
+            Operands::Reg(op) => op.as_generic(),
 
-            Operands::Imm(op) => {
-                op.as_generic()
-            }
+            Operands::Imm(op) => op.as_generic(),
 
-            Operands::Mem(op) => {
-                op.as_generic()
-            }
+            Operands::Mem(op) => op.as_generic(),
 
-            Operands::PCRelative(op) => {
-                op.as_generic()
-            }
+            Operands::PCRelative(op) => op.as_generic(),
 
-            Operands::Unknown(op) => {
-                op.as_generic()
-            }
+            Operands::Unknown(op) => op.as_generic(),
         }
     }
 }
@@ -122,9 +109,7 @@ pub struct Unknown {
 
 impl FromFFI<ffi::asm_x86_Operand> for Unknown {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_x86_Operand>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 
@@ -134,6 +119,3 @@ impl Operand for Unknown {
         self.ptr.as_ref().unwrap()
     }
 }
-
-
-

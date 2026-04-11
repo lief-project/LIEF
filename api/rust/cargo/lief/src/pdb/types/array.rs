@@ -1,8 +1,11 @@
 use lief_ffi as ffi;
 
-use crate::{common::{FromFFI, into_optional}, pdb::Type};
-use std::marker::PhantomData;
 use crate::pdb::types::PdbType;
+use crate::{
+    common::{into_optional, FromFFI},
+    pdb::Type,
+};
+use std::marker::PhantomData;
 
 /// This structure wraps a `LF_ARRAY` PDB type
 pub struct Array<'a> {

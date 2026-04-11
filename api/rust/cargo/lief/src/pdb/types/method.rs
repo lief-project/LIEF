@@ -124,7 +124,6 @@ impl Method<'_> {
     pub fn access(&self) -> MethodAccess {
         MethodAccess::from(self.ptr.access())
     }
-
 }
 
 declare_fwd_iterator!(
@@ -134,5 +133,3 @@ declare_fwd_iterator!(
     ffi::PDB_types_ClassLike,
     ffi::PDB_types_ClassLike_it_methods
 );
-
-

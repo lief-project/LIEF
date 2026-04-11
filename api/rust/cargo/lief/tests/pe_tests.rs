@@ -1,20 +1,20 @@
 mod utils;
-use std::fmt::format;
-use std::io::Cursor;
-use std::env;
+use lief::generic::Binary as GenericBinary;
+use lief::generic::Section as GenericSection;
+use lief::generic::Symbol;
 use lief::logging;
-use lief::pe::ParserConfig;
 use lief::pe::debug::Entries as DebugEntries;
 use lief::pe::load_configuration::LoadConfiguration;
 use lief::pe::resources::{Node, NodeBase};
-use lief::pe::signature::content_info::Content;
-use lief::pe::{data_directory, signature, Algorithms};
 use lief::pe::signature::attributes::Attribute;
+use lief::pe::signature::content_info::Content;
 use lief::pe::signature::Signature;
-use lief::generic::Symbol;
-use lief::generic::Binary as GenericBinary;
-use lief::generic::Section as GenericSection;
+use lief::pe::ParserConfig;
+use lief::pe::{data_directory, signature, Algorithms};
 use lief::Binary;
+use std::env;
+use std::fmt::format;
+use std::io::Cursor;
 
 fn get_leaf<'a>(node: &'a Node) -> Option<&'a Node<'a>> {
     match node {
@@ -118,10 +118,10 @@ fn explore_sig_attribute(attr: &Attribute) {
                     Content::SpcIndirectData(data) => {
                         format!("{:?}", data);
                         format!("{}", data.digest().len());
-                    },
+                    }
                     Content::PKCS9TSTInfo(data) => {
                         println!("PKCS9TSTInfo");
-                    },
+                    }
                     Content::Generic(generic) => {
                         println!("{}", generic.oid());
                         format!("{}", generic.raw().len());
@@ -181,10 +181,10 @@ fn explore_signature(signature: &Signature) {
             Content::SpcIndirectData(data) => {
                 format!("{:?}", data);
                 format!("{}", data.digest().len());
-            },
+            }
             Content::PKCS9TSTInfo(data) => {
                 println!("PKCS9TSTInfo");
-            },
+            }
             Content::Generic(generic) => {
                 println!("{}", generic.oid());
                 format!("{}", generic.raw().len());
@@ -201,7 +201,11 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
 
     let optional_header = pe.optional_header();
     format!("{optional_header:?}");
-    format!("checksum: {}, computed: {}", optional_header.checksum(), pe.compute_checksum());
+    format!(
+        "checksum: {}, computed: {}",
+        optional_header.checksum(),
+        pe.compute_checksum()
+    );
 
     let header = pe.header();
     format!("{header:?}");
@@ -359,7 +363,11 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         explore_pe(bin_name, &nested);
     }
 
-    format!("overlay: {}, len: {}", pe.overlay_offset(), pe.overlay().len());
+    format!(
+        "overlay: {}, len: {}",
+        pe.overlay_offset(),
+        pe.overlay().len()
+    );
 
     assert!(pe.entrypoint() > 0);
 
@@ -375,42 +383,53 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
         assert!(pe.section_from_rva(0xA85000).is_some());
         assert!(pe.section_from_rva(0x100A85000).is_none());
 
-        assert!(!pe.content_from_virtual_address(0x140000000 + 0xA85000, 0x10).is_empty());
+        assert!(!pe
+            .content_from_virtual_address(0x140000000 + 0xA85000, 0x10)
+            .is_empty());
         assert!(!pe.content_from_virtual_address(0xA85000, 0x10).is_empty());
-        assert!(pe.content_from_virtual_address(0xaaaaaaaaaaaa, 0x10).is_empty());
+        assert!(pe
+            .content_from_virtual_address(0xaaaaaaaaaaaa, 0x10)
+            .is_empty());
 
         assert!(pe.section_by_name(".data").is_some());
         assert!(pe.section_by_name(".xdata").is_none());
 
-        assert!(pe.data_directory_by_type(data_directory::Type::IMPORT_TABLE).is_some());
+        assert!(pe
+            .data_directory_by_type(data_directory::Type::IMPORT_TABLE)
+            .is_some());
 
         assert!(pe.import_by_name("BOOTVID.dll").is_some());
         assert!(pe.import_by_name("foo.dll").is_none());
     }
 
     if bin_name == "PE32_x86-64_binary_avast-free-antivirus-setup-online.exe" {
-        assert_eq!(pe.verify_signature(signature::VerificationChecks::DEFAULT),  signature::VerificationFlags::OK);
+        assert_eq!(
+            pe.verify_signature(signature::VerificationChecks::DEFAULT),
+            signature::VerificationFlags::OK
+        );
         let signature = pe.signatures().last().expect("Error");
         let raw_sig = signature.raw_der();
         let mut cursor = Cursor::new(raw_sig);
 
         let detached = Signature::from(&mut cursor).expect("Error");
-        assert_eq!(pe.verify_with_signature(&detached, signature::VerificationChecks::DEFAULT),
-                   signature::VerificationFlags::OK);
+        assert_eq!(
+            pe.verify_with_signature(&detached, signature::VerificationChecks::DEFAULT),
+            signature::VerificationFlags::OK
+        );
     }
-
 
     if bin_name == "PE64_x86-64_binary_cmd.exe" {
         assert!(pe.delay_import_by_name("foo.dll").is_none());
         assert!(pe.delay_import_by_name("SHELL32.dll").is_some());
     }
-
 }
 
 fn test_with(bin_name: &str) {
     let path = utils::get_pe_sample(bin_name).unwrap();
     let path_str = path.to_str();
-    if let Some(pe) = lief::pe::Binary::parse_with_config(path_str.unwrap(), &ParserConfig::with_all_options()) {
+    if let Some(pe) =
+        lief::pe::Binary::parse_with_config(path_str.unwrap(), &ParserConfig::with_all_options())
+    {
         explore_pe(bin_name, &pe);
     }
 

@@ -22,9 +22,7 @@ pub struct Register {
 
 impl FromFFI<ffi::asm_x86_operands_Register> for Register {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_x86_operands_Register>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 

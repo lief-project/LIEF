@@ -29,7 +29,7 @@ pub struct AssemblerConfig {
     ///
     /// config.symbol_resolver = Some(resolver);
     /// ```
-    pub symbol_resolver: Option<Arc<dyn Fn(&str) -> Option<u64> + Send + Sync + 'static>>
+    pub symbol_resolver: Option<Arc<dyn Fn(&str) -> Option<u64> + Send + Sync + 'static>>,
 }
 
 impl Default for AssemblerConfig {
@@ -74,7 +74,6 @@ impl From<u32> for Dialect {
             0x00000001 => Dialect::X86_INTEL,
             0x00000002 => Dialect::X86_ATT,
             _ => Dialect::UNKNOWN(value),
-
         }
     }
 }
@@ -86,7 +85,6 @@ impl From<Dialect> for u32 {
             Dialect::X86_INTEL => 0x00000001,
             Dialect::X86_ATT => 0x00000002,
             Dialect::UNKNOWN(value) => value,
-
         }
     }
 }

@@ -1,9 +1,9 @@
 use lief_ffi as ffi;
 
 use crate::common::FromFFI;
-use std::marker::PhantomData;
-use crate::pdb::types::PdbType;
 use crate::pdb::types::classlike::ClassLike;
+use crate::pdb::types::PdbType;
+use std::marker::PhantomData;
 
 /// This structure wraps a `LF_UNION` PDB type
 pub struct Union<'a> {
@@ -20,8 +20,7 @@ impl FromFFI<ffi::PDB_types_Union> for Union<'_> {
     }
 }
 
-impl Union<'_> {
-}
+impl Union<'_> {}
 
 impl PdbType for Union<'_> {
     fn get_base(&self) -> &ffi::PDB_Type {

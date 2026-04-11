@@ -10,9 +10,9 @@
 //! }
 //! ```
 
-use std::path::Path;
-use lief_ffi as ffi;
 use crate::common::AsFFI;
+use lief_ffi as ffi;
+use std::path::Path;
 
 pub mod binary;
 pub mod builder;
@@ -20,12 +20,12 @@ pub mod dynamic;
 pub mod hash;
 pub mod header;
 pub mod note;
+pub mod parser_config;
 pub mod relocation;
 pub mod section;
 pub mod segment;
 pub mod symbol;
 pub mod symbol_versioning;
-pub mod parser_config;
 
 #[doc(inline)]
 pub use binary::Binary;

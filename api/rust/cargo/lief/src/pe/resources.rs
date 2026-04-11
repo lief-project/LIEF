@@ -9,9 +9,9 @@ use lief_ffi as ffi;
 use std::pin::Pin;
 use std::{fmt, marker::PhantomData};
 
+use crate::common::into_optional;
 use crate::to_slice;
 use crate::{common::FromFFI, declare_iterator};
-use crate::common::into_optional;
 
 /// This enum represents a node in the resource tree which can be either: a **directory** node
 /// or a data (leaf) node.
@@ -30,7 +30,7 @@ impl Node<'_> {
         unsafe {
             let ptr = ffi::PE_ResourceNode::from_slice(content.as_ptr(), content.len(), rva);
             if ptr.is_null() {
-                return None
+                return None;
             }
             Some(Node::from_ffi(ptr))
         }
@@ -86,7 +86,6 @@ impl std::fmt::Debug for &dyn NodeBase {
     }
 }
 
-
 impl std::fmt::Display for &dyn NodeBase {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.get_base().print())
@@ -131,7 +130,10 @@ impl Data<'_> {
     /// Create a new Data node with the provided payload
     pub fn with_buffer(buffer: &[u8]) -> Data<'static> {
         unsafe {
-            Data::from_ffi(ffi::PE_ResourceData::create_from_data(buffer.as_ptr(), buffer.len()))
+            Data::from_ffi(ffi::PE_ResourceData::create_from_data(
+                buffer.as_ptr(),
+                buffer.len(),
+            ))
         }
     }
 
@@ -166,7 +168,9 @@ impl Data<'_> {
     /// Change or set the raw data associated with this node
     pub fn set_content(&mut self, content: &[u8]) -> &mut Self {
         unsafe {
-            self.ptr.pin_mut().set_content(content.as_ptr(), content.len());
+            self.ptr
+                .pin_mut()
+                .set_content(content.as_ptr(), content.len());
         }
         self
     }
@@ -192,9 +196,10 @@ impl NodeBase for Data<'_> {
     fn base_as_pin_mut(&mut self) -> Pin<&mut ffi::PE_ResourceNode> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_ResourceNode
-                    as *mut ffi::PE_ResourceNode).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_ResourceNode
+                    as *mut ffi::PE_ResourceNode)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -266,7 +271,6 @@ impl Directory<'_> {
         self.ptr.numberof_name_entries()
     }
 
-
     /// The number of directory entries immediately
     /// following the Name entries that use numeric IDs for
     /// Type, Name, or Language entries.
@@ -283,38 +287,29 @@ impl NodeBase for Directory<'_> {
     fn base_as_pin_mut(&mut self) -> Pin<&mut ffi::PE_ResourceNode> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_ResourceNode
-                    as *mut ffi::PE_ResourceNode).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_ResourceNode
+                    as *mut ffi::PE_ResourceNode)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
-
 }
 
 impl NodeBase for Node<'_> {
     fn get_base(&self) -> &ffi::PE_ResourceNode {
         match &self {
-            Node::Data(n) => {
-                n.get_base()
-            }
-            Node::Directory(n) => {
-                n.get_base()
-            }
+            Node::Data(n) => n.get_base(),
+            Node::Directory(n) => n.get_base(),
         }
     }
 
     fn base_as_pin_mut(&mut self) -> Pin<&mut ffi::PE_ResourceNode> {
         match self {
-            Node::Data(n) => {
-                n.base_as_pin_mut()
-            }
-            Node::Directory(n) => {
-                n.base_as_pin_mut()
-            }
+            Node::Data(n) => n.base_as_pin_mut(),
+            Node::Directory(n) => n.base_as_pin_mut(),
         }
     }
-
 }
 
 impl fmt::Debug for Directory<'_> {
@@ -409,7 +404,6 @@ impl From<u32> for Types {
             0x00000017 => Types::HTML,
             0x00000018 => Types::MANIFEST,
             _ => Types::UNKNOWN(value),
-
         }
     }
 }
@@ -438,7 +432,6 @@ impl From<Types> for u32 {
             Types::HTML => 0x00000017,
             Types::MANIFEST => 0x00000018,
             Types::UNKNOWN(value) => value,
-
         }
     }
 }
@@ -466,7 +459,11 @@ impl Manager<'_> {
 
     /// Return the list of [`Types`] exposed by the resource tree.
     pub fn types(&self) -> Vec<Types> {
-        self.ptr.get_types().iter().map(|v| Types::from(*v)).collect()
+        self.ptr
+            .get_types()
+            .iter()
+            .map(|v| Types::from(*v))
+            .collect()
     }
 
     /// Return the HTML resources as a list of strings
@@ -602,7 +599,6 @@ impl<'a> FromFFI<ffi::PE_ResourceIcon> for Icon<'a> {
         }
     }
 }
-
 
 /// Represents fixed file information from a version resource
 #[derive(Debug, Clone)]
@@ -894,9 +890,7 @@ impl Version<'_> {
 
 impl fmt::Debug for Version<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Version")
-            .field("key", &self.key())
-            .finish()
+        f.debug_struct("Version").field("key", &self.key()).finish()
     }
 }
 

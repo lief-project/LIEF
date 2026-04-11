@@ -1,11 +1,11 @@
 use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI};
-use std::marker::PhantomData;
-use crate::dwarf::types::DwarfType;
-use crate::dwarf::Type;
 use crate::declare_fwd_iterator;
+use crate::dwarf::types::DwarfType;
 use crate::dwarf::Parameters;
+use crate::dwarf::Type;
+use std::marker::PhantomData;
 
 /// This structure represents a `DW_TAG_template_alias`
 pub struct TemplateAlias<'a> {

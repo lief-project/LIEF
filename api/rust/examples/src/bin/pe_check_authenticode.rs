@@ -1,7 +1,7 @@
 //! A simple example of validating PE authenticode signature in Rust
 
-use std::process::ExitCode;
 use lief::pe;
+use std::process::ExitCode;
 
 fn main() -> ExitCode {
     let mut args = std::env::args();

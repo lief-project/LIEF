@@ -49,7 +49,6 @@ impl<'a> FromFFI<ffi::PE_Relocation> for Relocation<'a> {
     }
 }
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum BaseType {

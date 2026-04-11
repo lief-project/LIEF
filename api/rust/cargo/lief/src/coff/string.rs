@@ -1,5 +1,5 @@
-use std::marker::PhantomData;
 use crate::common::FromFFI;
+use std::marker::PhantomData;
 
 use lief_ffi as ffi;
 

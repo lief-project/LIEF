@@ -1,11 +1,11 @@
 use lief_ffi as ffi;
 
-use crate::common::FromFFI;
-use crate::assembly;
 use super::Opcode;
+use crate::assembly;
+use crate::common::FromFFI;
 
-use crate::declare_fwd_iterator;
 use crate::assembly::aarch64;
+use crate::declare_fwd_iterator;
 
 /// This structure represents an AArch64 instruction
 pub struct Instruction {
@@ -14,9 +14,7 @@ pub struct Instruction {
 
 impl FromFFI<ffi::asm_aarch64_Instruction> for Instruction {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_aarch64_Instruction>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 
@@ -38,7 +36,6 @@ impl Instruction {
         Operands::new(self.ptr.operands())
     }
 }
-
 
 declare_fwd_iterator!(
     Operands,

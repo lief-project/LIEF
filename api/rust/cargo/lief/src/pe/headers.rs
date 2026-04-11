@@ -155,7 +155,6 @@ impl FromFFI<ffi::PE_Header> for Header<'_> {
     }
 }
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum MachineType {
@@ -259,7 +258,6 @@ impl From<u32> for MachineType {
             0x0000a64e => MachineType::ARM64X,
             0x00003a64 => MachineType::CHPE_X86,
             _ => MachineType::UNKNOWN(value),
-
         }
     }
 }
@@ -299,11 +297,9 @@ impl From<MachineType> for u32 {
             MachineType::ARM64X => 0x0000a64e,
             MachineType::CHPE_X86 => 0x00003a64,
             MachineType::UNKNOWN(_) => 0,
-
         }
     }
 }
-
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -365,7 +361,6 @@ impl std::fmt::Display for Characteristics {
     }
 }
 
-
 impl From<u32> for Characteristics {
     fn from(value: u32) -> Self {
         Characteristics::from_bits_truncate(value)
@@ -380,7 +375,10 @@ impl From<Characteristics> for u32 {
 impl Header<'_> {
     /// PE signature (should be `PE\0\0`)
     pub fn signature(&self) -> Vec<u8> {
-        Vec::from(self.ptr.signature().as_slice()).iter().map(|&v: &u64| v as u8).collect()
+        Vec::from(self.ptr.signature().as_slice())
+            .iter()
+            .map(|&v: &u64| v as u8)
+            .collect()
     }
 
     /// The targeted machine architecture like ARM, x86, AMD64, ...
@@ -405,7 +403,6 @@ impl Header<'_> {
     pub fn pointerto_symbol_table(&self) -> u32 {
         self.ptr.pointerto_symbol_table()
     }
-
 
     /// The number of entries in the symbol table. This data can be used to locate the string table
     /// which immediately follows the symbol table.
@@ -458,15 +455,21 @@ impl Header<'_> {
     }
 
     pub fn set_characteristics(&mut self, characteristics: Characteristics) {
-        self.ptr.pin_mut().set_characteristics(characteristics.bits());
+        self.ptr
+            .pin_mut()
+            .set_characteristics(characteristics.bits());
     }
 
     pub fn add_characteristic(&mut self, characteristics: Characteristics) {
-        self.ptr.pin_mut().add_characteristic(characteristics.bits());
+        self.ptr
+            .pin_mut()
+            .add_characteristic(characteristics.bits());
     }
 
     pub fn remove_characteristic(&mut self, characteristics: Characteristics) {
-        self.ptr.pin_mut().remove_characteristic(characteristics.bits());
+        self.ptr
+            .pin_mut()
+            .remove_characteristic(characteristics.bits());
     }
 }
 
@@ -483,7 +486,6 @@ impl std::fmt::Debug for Header<'_> {
             .finish()
     }
 }
-
 
 /// Structure which represents the PE OptionalHeader (after [`Header`]).
 ///
@@ -542,7 +544,6 @@ bitflags! {
     }
 }
 
-
 impl From<u32> for DllCharacteristics {
     fn from(value: u32) -> Self {
         DllCharacteristics::from_bits_truncate(value)
@@ -558,7 +559,6 @@ impl std::fmt::Display for DllCharacteristics {
         bitflags::parser::to_writer(self, f)
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -627,7 +627,6 @@ impl From<u64> for Subsystem {
             0x00000010 => Subsystem::WINDOWS_BOOT_APPLICATION,
             0x00000011 => Subsystem::XBOX_CODE_CATALOG,
             _ => Subsystem::UNKNOWN(value),
-
         }
     }
 }
@@ -649,7 +648,6 @@ impl From<Subsystem> for u64 {
             Subsystem::WINDOWS_BOOT_APPLICATION => 0x00000010,
             Subsystem::XBOX_CODE_CATALOG => 0x00000011,
             Subsystem::UNKNOWN(_) => 0,
-
         }
     }
 }
@@ -795,7 +793,6 @@ impl OptionalHeader<'_> {
     pub fn dll_characteristics(&self) -> DllCharacteristics {
         DllCharacteristics::from(self.ptr.dll_characteristics())
     }
-
 
     /// Size of the stack to reserve when loading the PE binary
     ///

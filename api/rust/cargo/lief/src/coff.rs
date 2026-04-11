@@ -12,12 +12,12 @@
 
 use std::path::Path;
 
-pub mod string;
-pub mod symbol;
 pub mod binary;
 pub mod header;
-pub mod section;
 pub mod relocation;
+pub mod section;
+pub mod string;
+pub mod symbol;
 
 #[doc(inline)]
 pub use symbol::Symbol;
@@ -35,7 +35,7 @@ pub use section::Section;
 pub use relocation::Relocation;
 
 #[doc(inline)]
-pub use header::{Header, RegularHeader, BigObjHeader};
+pub use header::{BigObjHeader, Header, RegularHeader};
 
 /// Parse a COFF file from the given file path
 pub fn parse<P: AsRef<Path>>(path: P) -> Option<Binary> {

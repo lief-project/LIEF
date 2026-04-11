@@ -16,14 +16,14 @@ pub use rsa_info::RsaInfo;
 #[doc(inline)]
 pub use signer_info::{AttributeType, SignerInfo, Signers};
 #[doc(inline)]
-pub use x509::{VerificationFlags as CertVerificationFlags, Certificates, KeyUsage, X509};
+pub use x509::{Certificates, KeyUsage, VerificationFlags as CertVerificationFlags, X509};
 
 use std::io::{Read, Seek};
 
-use crate::pe::Algorithms;
 use crate::common::into_optional;
 use crate::common::FromFFI;
 use crate::declare_iterator;
+use crate::pe::Algorithms;
 use crate::to_slice;
 
 use std::marker::PhantomData;
@@ -107,7 +107,6 @@ impl From<VerificationChecks> for u32 {
     }
 }
 
-
 pub struct Signature<'a> {
     ptr: cxx::UniquePtr<ffi::PE_Signature>,
     _owner: PhantomData<&'a ()>,
@@ -150,8 +149,7 @@ impl<'a> Signature<'a> {
         if reader.read_to_end(&mut buffer).is_err() {
             return None;
         }
-        let ffi_stream =
-            unsafe { ffi::PE_Signature::from_raw(buffer.as_mut_ptr(), buffer.len()) };
+        let ffi_stream = unsafe { ffi::PE_Signature::from_raw(buffer.as_mut_ptr(), buffer.len()) };
         Some(Signature::from_ffi(ffi_stream))
     }
 
@@ -189,9 +187,7 @@ impl<'a> Signature<'a> {
 
     /// Find x509 certificate according to its serial number
     pub fn crt_by_serial(&self, serial: &[u8]) -> Option<X509<'_>> {
-        unsafe {
-            into_optional(self.ptr.find_crt_by_serial(serial.as_ptr(), serial.len()))
-        }
+        unsafe { into_optional(self.ptr.find_crt_by_serial(serial.as_ptr(), serial.len())) }
     }
 
     /// Find [`X509`] certificate according to its subject
@@ -202,7 +198,11 @@ impl<'a> Signature<'a> {
     /// Find [`X509`] certificate according to its subject **AND** serial number
     pub fn crt_by_subject_and_serial(&self, subject: &str, serial: &[u8]) -> Option<X509<'_>> {
         unsafe {
-            into_optional(self.ptr.find_crt_by_subject_and_serial(subject, serial.as_ptr(), serial.len()))
+            into_optional(self.ptr.find_crt_by_subject_and_serial(
+                subject,
+                serial.as_ptr(),
+                serial.len(),
+            ))
         }
     }
 
@@ -214,7 +214,11 @@ impl<'a> Signature<'a> {
     /// Find [`X509`] certificate according to its issuer **AND** serial number
     pub fn find_crt_by_issuer_and_serial(&self, issuer: &str, serial: &[u8]) -> Option<X509<'_>> {
         unsafe {
-            into_optional(self.ptr.find_crt_by_issuer_and_serial(issuer, serial.as_ptr(), serial.len()))
+            into_optional(self.ptr.find_crt_by_issuer_and_serial(
+                issuer,
+                serial.as_ptr(),
+                serial.len(),
+            ))
         }
     }
 

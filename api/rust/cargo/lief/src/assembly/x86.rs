@@ -1,9 +1,9 @@
 //! x86/x86-64 architecture-related namespace
 
-pub mod opcodes;
 pub mod instruction;
-pub mod registers;
+pub mod opcodes;
 pub mod operands;
+pub mod registers;
 
 #[doc(inline)]
 pub use opcodes::Opcode;

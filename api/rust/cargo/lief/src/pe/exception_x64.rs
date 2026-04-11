@@ -4,9 +4,9 @@ use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
-use crate::{declare_fwd_iterator, to_opt, to_slice};
-use crate::common::{into_optional, FromFFI};
 use super::exception::ExceptionInfo;
+use crate::common::{into_optional, FromFFI};
+use crate::{declare_fwd_iterator, to_opt, to_slice};
 use bitflags::bitflags;
 
 /// This structure represents an entry in the exception table (`.pdata` section)
@@ -15,14 +15,14 @@ use bitflags::bitflags;
 /// Reference: <https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64>
 pub struct RuntimeFunction<'a> {
     ptr: cxx::UniquePtr<ffi::PE_RuntimeFunctionX64>,
-    _owner: PhantomData<&'a ffi::PE_Binary>
+    _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
 impl FromFFI<ffi::PE_RuntimeFunctionX64> for RuntimeFunction<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_RuntimeFunctionX64>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -156,7 +156,6 @@ impl From<u32> for UnwindOpcodes {
             0x00000009 => UnwindOpcodes::SAVE_XMM128_FAR,
             0x0000000a => UnwindOpcodes::PUSH_MACHFRAME,
             _ => UnwindOpcodes::UNKNOWN(value),
-
         }
     }
 }
@@ -175,16 +174,29 @@ impl From<UnwindOpcodes> for u32 {
             UnwindOpcodes::SAVE_XMM128_FAR => 0x00000009,
             UnwindOpcodes::PUSH_MACHFRAME => 0x0000000a,
             UnwindOpcodes::UNKNOWN(value) => value,
-
         }
     }
 }
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum UnwindReg {
-    RAX, RCX, RDX, RBX, RSP, RBP, RSI, RDI, R8, R9, R10, R11, R12, R13, R14, R15,
+    RAX,
+    RCX,
+    RDX,
+    RBX,
+    RSP,
+    RBP,
+    RSI,
+    RDI,
+    R8,
+    R9,
+    R10,
+    R11,
+    R12,
+    R13,
+    R14,
+    R15,
     UNKNOWN(u32),
 }
 
@@ -208,7 +220,6 @@ impl From<u32> for UnwindReg {
             0x0000000e => UnwindReg::R14,
             0x0000000f => UnwindReg::R15,
             _ => UnwindReg::UNKNOWN(value),
-
         }
     }
 }
@@ -232,7 +243,6 @@ impl From<UnwindReg> for u32 {
             UnwindReg::R14 => 0x0000000e,
             UnwindReg::R15 => 0x0000000f,
             UnwindReg::UNKNOWN(value) => value,
-
         }
     }
 }
@@ -252,7 +262,6 @@ bitflags! {
         const CHAIN_INFO = 0x4;
     }
 }
-
 
 impl From<u8> for UnwindFlags {
     fn from(value: u8) -> Self {
@@ -277,14 +286,14 @@ impl std::fmt::Display for UnwindFlags {
 /// are saved on the stack.
 pub struct UnwindInfo<'a> {
     ptr: cxx::UniquePtr<ffi::PE_RuntimeFunctionX64_unwind_info_t>,
-    _owner: PhantomData<&'a ffi::PE_Binary>
+    _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
 impl FromFFI<ffi::PE_RuntimeFunctionX64_unwind_info_t> for UnwindInfo<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_RuntimeFunctionX64_unwind_info_t>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -366,13 +375,11 @@ impl std::fmt::Debug for UnwindInfo<'_> {
     }
 }
 
-
 impl std::fmt::Display for UnwindInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.ptr.to_string())
     }
 }
-
 
 /// Trait shared by all [`Opcodes`]
 pub trait Opcode {
@@ -389,7 +396,6 @@ pub trait Opcode {
         UnwindOpcodes::from(self.as_generic().opcode())
     }
 }
-
 
 impl std::fmt::Display for &dyn Opcode {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -414,7 +420,7 @@ pub enum Opcodes<'a> {
     /// Save a nonvolatile integer register
     SaveNonVolatile(SaveNonVolatile<'a>),
 
-    SaveXMM128 (SaveXMM128 <'a>),
+    SaveXMM128(SaveXMM128<'a>),
 
     /// Describes the function's epilog
     Epilog(Epilog<'a>),
@@ -488,19 +494,18 @@ impl<'a> FromFFI<ffi::PE_unwind_x64_Code> for Opcodes<'a> {
     }
 }
 
-
 /// This structure represents a stack-allocation operation
 /// ([`UnwindOpcodes::ALLOC_SMALL`] or [`UnwindOpcodes::ALLOC_LARGE`]).
 pub struct Alloc<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_x64_Alloc>,
-    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>
+    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>,
 }
 
 impl FromFFI<ffi::PE_unwind_x64_Alloc> for Alloc<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_unwind_x64_Alloc>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -521,14 +526,14 @@ impl Alloc<'_> {
 /// Push a nonvolatile integer register, decrementing RSP by 8
 pub struct PushNonVol<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_x64_PushNonVol>,
-    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>
+    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>,
 }
 
 impl FromFFI<ffi::PE_unwind_x64_PushNonVol> for PushNonVol<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_unwind_x64_PushNonVol>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -549,14 +554,14 @@ impl PushNonVol<'_> {
 /// Push a machine frame
 pub struct PushMachFrame<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_x64_PushMachFrame>,
-    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>
+    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>,
 }
 
 impl FromFFI<ffi::PE_unwind_x64_PushMachFrame> for PushMachFrame<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_unwind_x64_PushMachFrame>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -578,14 +583,14 @@ impl PushMachFrame<'_> {
 /// of the current RSP
 pub struct SetFPReg<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_x64_SetFPReg>,
-    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>
+    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>,
 }
 
 impl FromFFI<ffi::PE_unwind_x64_SetFPReg> for SetFPReg<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_unwind_x64_SetFPReg>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -607,14 +612,14 @@ impl SetFPReg<'_> {
 /// `PUSH`.
 pub struct SaveNonVolatile<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_x64_SaveNonVolatile>,
-    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>
+    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>,
 }
 
 impl FromFFI<ffi::PE_unwind_x64_SaveNonVolatile> for SaveNonVolatile<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_unwind_x64_SaveNonVolatile>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -637,14 +642,14 @@ impl SaveNonVolatile<'_> {
 
 pub struct SaveXMM128<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_x64_SaveXMM128>,
-    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>
+    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>,
 }
 
 impl FromFFI<ffi::PE_unwind_x64_SaveXMM128> for SaveXMM128<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_unwind_x64_SaveXMM128>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -668,14 +673,14 @@ impl SaveXMM128<'_> {
 /// Describes the function's epilog
 pub struct Epilog<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_x64_Epilog>,
-    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>
+    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>,
 }
 
 impl FromFFI<ffi::PE_unwind_x64_Epilog> for Epilog<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_unwind_x64_Epilog>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -698,14 +703,14 @@ impl Epilog<'_> {
 
 pub struct Spare<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_x64_Spare>,
-    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>
+    _owner: PhantomData<&'a ffi::PE_RuntimeFunctionX64_unwind_info_t>,
 }
 
 impl FromFFI<ffi::PE_unwind_x64_Spare> for Spare<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PE_unwind_x64_Spare>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -723,4 +728,3 @@ declare_fwd_iterator!(
     ffi::PE_RuntimeFunctionX64_unwind_info_t,
     ffi::PE_RuntimeFunctionX64_unwind_info_t_it_opcodes
 );
-

@@ -2,37 +2,37 @@ use lief_ffi as ffi;
 
 use crate::{common::FromFFI, Error};
 
-use crate::to_conv_result;
-use std::marker::PhantomData;
-use crate::debug_location::DebugLocation;
-use crate::dwarf::Scope;
 use crate::common::into_optional;
+use crate::debug_location::DebugLocation;
 use crate::declare_fwd_iterator;
+use crate::dwarf::Scope;
+use crate::to_conv_result;
 use crate::DeclOpt;
+use std::marker::PhantomData;
 
-pub mod classlike;
-pub mod pointer;
-pub mod const_ty;
-pub mod base;
 pub mod array;
-pub mod typedef;
 pub mod atomic;
+pub mod base;
+pub mod classlike;
 pub mod coarray;
+pub mod const_ty;
 pub mod dynamic;
 pub mod enum_type;
 pub mod file;
 pub mod immutable;
 pub mod interface;
+pub mod pointer;
 pub mod pointer_to_member;
-pub mod rvalue_ref;
 pub mod reference;
 pub mod restrict;
+pub mod rvalue_ref;
 pub mod set_type;
 pub mod shared;
 pub mod string;
 pub mod subroutine;
 pub mod template_alias;
 pub mod thrown;
+pub mod typedef;
 pub mod volatile;
 
 #[doc(inline)]
@@ -469,11 +469,7 @@ pub trait DwarfType {
     ///
     /// This size should match the equivalent of `sizeof(Type)`.
     fn size(&self) -> Result<u64, Error> {
-        to_conv_result!(
-            ffi::DWARF_Type::size,
-            self.get_base(),
-            |e| e
-        );
+        to_conv_result!(ffi::DWARF_Type::size, self.get_base(), |e| e);
     }
 
     /// Return the debug location where this type is defined.
@@ -511,90 +507,34 @@ impl DwarfType for Generic<'_> {
 impl DwarfType for Type<'_> {
     fn get_base(&self) -> &ffi::DWARF_Type {
         match &self {
-            Type::Structure(s) => {
-                s.get_base()
-            }
-            Type::Class(s) => {
-                s.get_base()
-            }
-            Type::Union(s) => {
-                s.get_base()
-            }
-            Type::Packed(s) => {
-                s.get_base()
-            }
-            Type::Pointer(s) => {
-                s.get_base()
-            }
-            Type::Const(s) => {
-                s.get_base()
-            }
-            Type::Base(s) => {
-                s.get_base()
-            }
-            Type::Array(s) => {
-                s.get_base()
-            }
-            Type::Typedef(s) => {
-                s.get_base()
-            }
-            Type::Atomic(s) => {
-                s.get_base()
-            }
-            Type::Coarray(s) => {
-                s.get_base()
-            }
-            Type::Dynamic(s) => {
-                s.get_base()
-            }
-            Type::Enum(s) => {
-                s.get_base()
-            }
-            Type::File(s) => {
-                s.get_base()
-            }
-            Type::Immutable(s) => {
-                s.get_base()
-            }
-            Type::Interface(s) => {
-                s.get_base()
-            }
-            Type::PointerToMember(s) => {
-                s.get_base()
-            }
-            Type::RValueReference(s) => {
-                s.get_base()
-            }
-            Type::Reference(s) => {
-                s.get_base()
-            }
-            Type::Restrict(s) => {
-                s.get_base()
-            }
-            Type::SetTy(s) => {
-                s.get_base()
-            }
-            Type::Shared(s) => {
-                s.get_base()
-            }
-            Type::StringTy(s) => {
-                s.get_base()
-            }
-            Type::Subroutine(s) => {
-                s.get_base()
-            }
-            Type::TemplateAlias(s) => {
-                s.get_base()
-            }
-            Type::Thrown(s) => {
-                s.get_base()
-            }
-            Type::Volatile(s) => {
-                s.get_base()
-            }
-            Type::Generic(s) => {
-                s.get_base()
-            }
+            Type::Structure(s) => s.get_base(),
+            Type::Class(s) => s.get_base(),
+            Type::Union(s) => s.get_base(),
+            Type::Packed(s) => s.get_base(),
+            Type::Pointer(s) => s.get_base(),
+            Type::Const(s) => s.get_base(),
+            Type::Base(s) => s.get_base(),
+            Type::Array(s) => s.get_base(),
+            Type::Typedef(s) => s.get_base(),
+            Type::Atomic(s) => s.get_base(),
+            Type::Coarray(s) => s.get_base(),
+            Type::Dynamic(s) => s.get_base(),
+            Type::Enum(s) => s.get_base(),
+            Type::File(s) => s.get_base(),
+            Type::Immutable(s) => s.get_base(),
+            Type::Interface(s) => s.get_base(),
+            Type::PointerToMember(s) => s.get_base(),
+            Type::RValueReference(s) => s.get_base(),
+            Type::Reference(s) => s.get_base(),
+            Type::Restrict(s) => s.get_base(),
+            Type::SetTy(s) => s.get_base(),
+            Type::Shared(s) => s.get_base(),
+            Type::StringTy(s) => s.get_base(),
+            Type::Subroutine(s) => s.get_base(),
+            Type::TemplateAlias(s) => s.get_base(),
+            Type::Thrown(s) => s.get_base(),
+            Type::Volatile(s) => s.get_base(),
+            Type::Generic(s) => s.get_base(),
         }
     }
 }
@@ -606,4 +546,3 @@ declare_fwd_iterator!(
     ffi::DWARF_CompilationUnit,
     ffi::DWARF_CompilationUnit_it_types
 );
-

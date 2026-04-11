@@ -1,7 +1,7 @@
-use lief_ffi as ffi;
 use super::Command;
 use crate::common::FromFFI;
 use crate::to_slice;
+use lief_ffi as ffi;
 
 use crate::macho::header::CpuType;
 use std::marker::PhantomData;
@@ -13,11 +13,10 @@ use std::marker::PhantomData;
 /// of the main thread which includes the registers' values
 pub struct ThreadCommand<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_ThreadCommand>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl ThreadCommand<'_> {
-
     /// Integer that defines a special *flavor* for the thread.
     ///
     /// The meaning of this value depends on the architecture. The list of
@@ -72,7 +71,7 @@ impl FromFFI<ffi::MachO_ThreadCommand> for ThreadCommand<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_ThreadCommand>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

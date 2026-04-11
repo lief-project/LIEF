@@ -26,9 +26,7 @@ pub struct Memory {
 
 impl FromFFI<ffi::asm_x86_operands_Memory> for Memory {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_x86_operands_Memory>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 

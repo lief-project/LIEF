@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI};
-use std::marker::PhantomData;
 use crate::dwarf::types::DwarfType;
+use std::marker::PhantomData;
 
 use crate::dwarf::Type;
 

@@ -2,11 +2,11 @@
 
 use lief_ffi as ffi;
 
-use std::pin::Pin;
 use crate::common::into_optional;
-use crate::common::{FromFFI, AsFFI};
+use crate::common::{AsFFI, FromFFI};
 use crate::declare_iterator;
 use crate::generic;
+use std::pin::Pin;
 
 use std::marker::PhantomData;
 
@@ -155,7 +155,6 @@ impl Export<'_> {
     pub fn remove_entry_by_name(&mut self, name: &str) -> bool {
         self.ptr.pin_mut().remove_entry_by_name(name)
     }
-
 }
 
 impl std::fmt::Debug for Export<'_> {
@@ -238,7 +237,10 @@ impl Entry<'_> {
         if !self.ptr.is_forwarded() {
             return None;
         }
-        Some(ForwardInfo::with_values(self.ptr.fwd_library().to_string(), self.ptr.fwd_function().to_string()))
+        Some(ForwardInfo::with_values(
+            self.ptr.fwd_library().to_string(),
+            self.ptr.fwd_function().to_string(),
+        ))
     }
 
     pub fn set_ordinal(&mut self, ordinal: u16) -> &mut Self {
@@ -296,9 +298,7 @@ pub struct ForwardInfo {
 
 impl ForwardInfo {
     pub fn with_values(library: String, function: String) -> Self {
-        Self {
-            library, function
-        }
+        Self { library, function }
     }
 }
 

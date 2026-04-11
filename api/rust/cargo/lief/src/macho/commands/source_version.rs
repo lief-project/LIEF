@@ -1,6 +1,6 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
@@ -9,7 +9,7 @@ use std::marker::PhantomData;
 /// build the binary.
 pub struct SourceVersion<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SourceVersion>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl SourceVersion<'_> {
@@ -36,7 +36,7 @@ impl<'a> FromFFI<ffi::MachO_SourceVersion> for SourceVersion<'a> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_SourceVersion>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

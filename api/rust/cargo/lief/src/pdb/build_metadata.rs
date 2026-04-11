@@ -140,7 +140,6 @@ impl From<u16> for Cpu {
             0x000000f9 => Cpu::ARM64X,
             0x00000100 => Cpu::D3D11_SHADER,
             _ => Cpu::UNKNOWN(value),
-
         }
     }
 }
@@ -212,11 +211,9 @@ impl From<Cpu> for u16 {
             Cpu::ARM64X => 0x000000f9,
             Cpu::D3D11_SHADER => 0x00000100,
             Cpu::UNKNOWN(value) => value,
-
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -274,7 +271,6 @@ impl From<u8> for Lang {
             0x00000015 => Lang::RUST,
             0x00000016 => Lang::GO,
             _ => Lang::UNKNOWN(value),
-
         }
     }
 }
@@ -305,11 +301,9 @@ impl From<Lang> for u8 {
             Lang::RUST => 0x00000015,
             Lang::GO => 0x00000016,
             Lang::UNKNOWN(value) => value,
-
         }
     }
 }
-
 
 /// This class wraps build metadata represented by the codeview symbols:
 /// `S_COMPILE3, S_COMPILE2, S_BUILDINFO`
@@ -356,7 +350,11 @@ impl BuildMetadata<'_> {
 
     /// Environment information represented by the `S_ENVBLOCK` symbol
     pub fn env(&self) -> Vec<String> {
-        self.ptr.env().iter().map(|e| e.to_string()).collect::<Vec<String>>()
+        self.ptr
+            .env()
+            .iter()
+            .map(|e| e.to_string())
+            .collect::<Vec<String>>()
     }
 
     /// Build information represented by the `S_BUILDINFO` symbol
@@ -371,7 +369,6 @@ impl std::fmt::Display for BuildMetadata<'_> {
     }
 }
 
-
 impl std::fmt::Debug for BuildMetadata<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("BuildMetadata")
@@ -385,7 +382,6 @@ impl std::fmt::Debug for BuildMetadata<'_> {
             .finish()
     }
 }
-
 
 /// This structure represents a version for the backend or the frontend.
 #[derive(Debug)]

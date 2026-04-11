@@ -332,7 +332,6 @@ impl std::fmt::Debug for CodeRangeEntrypoint<'_> {
     }
 }
 
-
 declare_iterator!(
     CodeRanges,
     RangeEntry<'a>,

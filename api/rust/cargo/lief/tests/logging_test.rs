@@ -1,5 +1,5 @@
-use std::env;
 use lief::logging;
+use std::env;
 
 #[test]
 fn test_api() {

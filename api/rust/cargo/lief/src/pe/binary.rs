@@ -2,31 +2,31 @@ use lief_ffi as ffi;
 
 use num_traits::{cast, Num};
 use std::mem::size_of;
-use std::pin::Pin;
 use std::path::Path;
+use std::pin::Pin;
 
 use super::builder::Config;
-use super::parser_config::Config as ParserConfig;
 use super::data_directory::{DataDirectories, DataDirectory};
-use super::debug::{self, Entries, DebugEntry};
+use super::debug::CodeViewPDB;
+use super::debug::{self, DebugEntry, Entries};
 use super::delay_import::{DelayImport, DelayImports};
+use super::exception::RuntimeExceptionFunction;
 use super::export::Export;
 use super::import::{Import, Imports};
 use super::load_configuration::LoadConfiguration;
+use super::parser_config::Config as ParserConfig;
 use super::relocation::Relocations;
-use super::resources::{Manager as ResourcesManager, NodeBase};
 use super::resources::Node as ResourceNode;
+use super::resources::{Manager as ResourcesManager, NodeBase};
 use super::rich_header::RichHeader;
 use super::section::{Section, Sections};
 use super::signature::Signatures;
 use super::tls::TLS;
 use super::{data_directory, signature};
-use super::debug::CodeViewPDB;
-use super::exception::RuntimeExceptionFunction;
 use crate::coff;
 use crate::coff::Symbol;
 
-use crate::common::{into_optional, FromFFI, AsFFI};
+use crate::common::{into_optional, AsFFI, FromFFI};
 use crate::declare_iterator;
 use crate::generic;
 use crate::to_conv_result;
@@ -231,7 +231,10 @@ impl Binary {
     }
 
     /// Find the data directory with the given type
-    pub fn data_directory_by_type(&self, dir_type: data_directory::Type) -> Option<DataDirectory<'_>> {
+    pub fn data_directory_by_type(
+        &self,
+        dir_type: data_directory::Type,
+    ) -> Option<DataDirectory<'_>> {
         into_optional(self.ptr.data_directory_by_type(dir_type.into()))
     }
 
@@ -454,15 +457,20 @@ impl Binary {
 
     /// Write back the current PE binary into the file specified in parameter
     pub fn write<P: AsRef<Path>>(&mut self, output: P) {
-        self.ptr.as_mut().unwrap().write(output.as_ref().to_str().unwrap());
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .write(output.as_ref().to_str().unwrap());
     }
 
     /// Write back the current PE binary into the file specified in parameter with the
     /// configuration provided in the second parameter.
     pub fn write_with_config<P: AsRef<Path>>(&mut self, output: P, config: Config) {
         let ffi_config = config.to_ffi();
-        self.ptr.as_mut().unwrap().write_with_config(output.as_ref().to_str().unwrap(),
-            ffi_config.as_ref().unwrap());
+        self.ptr.as_mut().unwrap().write_with_config(
+            output.as_ref().to_str().unwrap(),
+            ffi_config.as_ref().unwrap(),
+        );
     }
 
     /// Iterator over the strings located in the COFF string table
@@ -580,7 +588,6 @@ impl AsFFI<ffi::PE_Binary> for Binary {
     }
 }
 
-
 impl std::fmt::Debug for Binary {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Binary").finish()
@@ -595,9 +602,10 @@ impl generic::Binary for Binary {
     fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractBinary> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::AbstractBinary
-                    as *mut ffi::AbstractBinary).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractBinary
+                    as *mut ffi::AbstractBinary)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -610,7 +618,6 @@ declare_iterator!(
     ffi::PE_Binary,
     ffi::PE_Binary_it_debug
 );
-
 
 declare_iterator!(
     COFFStrings,

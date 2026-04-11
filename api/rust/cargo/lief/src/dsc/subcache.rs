@@ -1,9 +1,9 @@
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional};
-use std::marker::PhantomData;
-use crate::dsc::UUID;
 use super::DyldSharedCache;
+use crate::common::{into_optional, FromFFI};
+use crate::dsc::UUID;
+use std::marker::PhantomData;
 
 /// This class represents a subcache in the case of large/split dyld shared
 /// cache.
@@ -58,6 +58,5 @@ impl std::fmt::Debug for SubCache<'_> {
             .field("vm_offset", &self.vm_offset())
             .field("suffix", &self.suffix())
             .finish()
-
     }
 }

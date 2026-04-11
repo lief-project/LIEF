@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional};
-use std::marker::PhantomData;
+use crate::common::{into_optional, FromFFI};
 use crate::dwarf::types::{DwarfType, Type};
+use std::marker::PhantomData;
 
 use crate::{declare_fwd_iterator, to_opt};
 
@@ -44,7 +44,6 @@ impl DwarfType for Enum<'_> {
     }
 }
 
-
 /// This struct represents an enum entry which is essentially composed of a name and its value
 /// (integer).
 pub struct Entry<'a> {
@@ -63,7 +62,6 @@ impl Entry<'_> {
         to_opt!(&lief_ffi::DWARF_types_Enum_Entry::value, self);
     }
 }
-
 
 impl FromFFI<ffi::DWARF_types_Enum_Entry> for Entry<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_types_Enum_Entry>) -> Self {

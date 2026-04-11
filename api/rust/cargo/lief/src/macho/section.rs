@@ -3,8 +3,8 @@ use super::thread_local_variables::ThreadLocalVariables;
 use super::Relocation;
 use lief_ffi as ffi;
 use std::fmt;
-use std::pin::Pin;
 use std::marker::PhantomData;
+use std::pin::Pin;
 
 use crate::common::{into_optional, FromFFI};
 use crate::declare_iterator;
@@ -112,7 +112,6 @@ impl From<u64> for Type {
     }
 }
 
-
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct Flags: u64 {
@@ -128,7 +127,6 @@ bitflags! {
         const LOC_RELOC = 0x100;
     }
 }
-
 
 impl From<u64> for Flags {
     fn from(value: u64) -> Self {
@@ -234,8 +232,7 @@ impl MachOSection for Generic<'_> {
     fn as_mut_base(&mut self) -> Pin<&mut ffi::MachO_Section> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap() as *const ffi::MachO_Section
-                    as *mut ffi::MachO_Section)
+                (self.ptr.as_ref().unwrap() as *const ffi::MachO_Section as *mut ffi::MachO_Section)
                     .as_mut()
                     .unwrap()
             })
@@ -268,7 +265,10 @@ impl fmt::Debug for Generic<'_> {
             .field("address", &MachOSection::address(self))
             .field("alignment", &MachOSection::alignment(self))
             .field("relocation_offset", &MachOSection::relocation_offset(self))
-            .field("numberof_relocations", &MachOSection::numberof_relocations(self))
+            .field(
+                "numberof_relocations",
+                &MachOSection::numberof_relocations(self),
+            )
             .field("raw_flags", &MachOSection::raw_flags(self))
             .field("flags", &MachOSection::flags(self))
             .field("type", &MachOSection::section_type(self))
@@ -314,8 +314,7 @@ impl generic::Section for Generic<'_> {
     fn as_generic_mut(&mut self) -> Pin<&mut ffi::AbstractSection> {
         unsafe {
             Pin::new_unchecked({
-                (self.as_generic() as *const ffi::AbstractSection
-                    as *mut ffi::AbstractSection)
+                (self.as_generic() as *const ffi::AbstractSection as *mut ffi::AbstractSection)
                     .as_mut()
                     .unwrap()
             })

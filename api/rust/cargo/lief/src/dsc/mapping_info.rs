@@ -63,6 +63,5 @@ impl std::fmt::Debug for MappingInfo<'_> {
             .field("max_prot", &self.max_prot())
             .field("init_prot", &self.init_prot())
             .finish()
-
     }
 }

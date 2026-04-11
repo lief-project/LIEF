@@ -1,9 +1,9 @@
 //! COFF relocation module
 
-use std::marker::PhantomData;
+use super::{Section, Symbol};
 use crate::common::{into_optional, FromFFI};
 use crate::generic;
-use super::{Section, Symbol};
+use std::marker::PhantomData;
 
 use lief_ffi as ffi;
 
@@ -233,7 +233,6 @@ impl From<u32> for Type {
             0x00200022 => Type::MIPS_REFWORDNB,
             0x00200025 => Type::MIPS_PAIR,
             _ => Type::UNKNOWN(value),
-
         }
     }
 }
@@ -320,8 +319,6 @@ impl From<Type> for u32 {
             Type::MIPS_REFWORDNB => 0x00200022,
             Type::MIPS_PAIR => 0x00200025,
             Type::UNKNOWN(value) => value,
-
         }
     }
 }
-

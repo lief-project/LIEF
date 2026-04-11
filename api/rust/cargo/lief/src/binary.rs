@@ -1,12 +1,12 @@
 use lief_ffi as ffi;
 
+use super::coff;
 use super::elf;
 use super::macho;
 use super::pe;
-use super::coff;
 use crate::common::FromFFI;
-use std::path::Path;
 use std::io::{Read, Seek};
+use std::path::Path;
 
 #[derive(Debug)]
 /// Enum that wraps all the executable formats supported by LIEF
@@ -21,7 +21,7 @@ pub enum Binary {
     MachO(macho::FatBinary),
 
     /// A COFF binary object
-    COFF(coff::Binary)
+    COFF(coff::Binary),
 }
 
 impl Binary {

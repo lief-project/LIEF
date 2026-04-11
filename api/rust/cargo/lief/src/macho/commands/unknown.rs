@@ -1,15 +1,14 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
 /// Generic structure when the command is not recognized by LIEF (e.g private `LC_xxx` command)
 pub struct Unknown<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_UnknownCommand>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
-
 
 impl Unknown<'_> {
     /// The original `LC_` int that is not supported by LIEF
@@ -32,7 +31,7 @@ impl FromFFI<ffi::MachO_UnknownCommand> for Unknown<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_UnknownCommand>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

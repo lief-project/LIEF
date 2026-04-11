@@ -62,18 +62,10 @@ impl AsGeneric for BindingInfo<'_> {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::MachO_BindingInfo {
         match &self {
-            BindingInfo::Dyld(info) => {
-                info.as_generic()
-            }
-            BindingInfo::Chained(info) => {
-                info.as_generic()
-            }
-            BindingInfo::Indirect(info) => {
-                info.as_generic()
-            }
-            BindingInfo::Generic(info) => {
-                info.as_generic()
-            }
+            BindingInfo::Dyld(info) => info.as_generic(),
+            BindingInfo::Chained(info) => info.as_generic(),
+            BindingInfo::Indirect(info) => info.as_generic(),
+            BindingInfo::Generic(info) => info.as_generic(),
         }
     }
 }
@@ -329,9 +321,7 @@ pub struct Indirect<'a> {
 impl fmt::Debug for Indirect<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let base = self as &dyn AsGeneric;
-        f.debug_struct("Indirect")
-            .field("base", &base)
-            .finish()
+        f.debug_struct("Indirect").field("base", &base).finish()
     }
 }
 
@@ -349,5 +339,3 @@ impl AsGeneric for Indirect<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-
-

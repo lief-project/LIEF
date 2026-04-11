@@ -1,17 +1,15 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
 use crate::to_slice;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
-
 
 /// Structure that represents the `LC_SYMTAB` command
 pub struct SymbolCommand<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SymbolCommand>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
-
 
 impl SymbolCommand<'_> {
     /// Offset from the start of the file to the n_list associated with the command
@@ -68,7 +66,7 @@ impl FromFFI<ffi::MachO_SymbolCommand> for SymbolCommand<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_SymbolCommand>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -78,4 +76,3 @@ impl Command for SymbolCommand<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

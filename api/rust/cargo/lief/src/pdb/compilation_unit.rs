@@ -4,18 +4,17 @@ use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
-use crate::common::{FromFFI, into_optional};
+use crate::common::{into_optional, FromFFI};
 use crate::declare_fwd_iterator;
 
-use super::function::Functions;
 use super::build_metadata::BuildMetadata;
+use super::function::Functions;
 
 /// This structure represents a CompilationUnit (or Module) in a PDB file
 pub struct CompilationUnit<'a> {
     ptr: cxx::UniquePtr<ffi::PDB_CompilationUnit>,
     _owner: PhantomData<&'a ()>,
 }
-
 
 impl FromFFI<ffi::PDB_CompilationUnit> for CompilationUnit<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::PDB_CompilationUnit>) -> Self {
@@ -73,7 +72,6 @@ declare_fwd_iterator!(
     ffi::PDB_DebugInfo,
     ffi::PDB_DebugInfo_it_compilation_units
 );
-
 
 pub struct Sources<'a> {
     #[doc(hidden)]

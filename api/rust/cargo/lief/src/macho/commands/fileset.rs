@@ -3,7 +3,6 @@ use crate::common::FromFFI;
 use lief_ffi as ffi;
 use std::marker::PhantomData;
 
-
 pub struct Fileset<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Fileset>,
     _owner: PhantomData<&'a ffi::MachO_Binary>,

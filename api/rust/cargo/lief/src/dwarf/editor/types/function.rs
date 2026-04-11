@@ -10,9 +10,7 @@ pub struct Function {
 
 impl FromFFI<ffi::DWARF_editor_FunctionType> for Function {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_editor_FunctionType>) -> Self {
-        Self {
-            ptr: cmd,
-        }
+        Self { ptr: cmd }
     }
 }
 
@@ -43,10 +41,6 @@ pub struct Parameter {
 
 impl FromFFI<ffi::DWARF_editor_FunctionType_Parameter> for Parameter {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_editor_FunctionType_Parameter>) -> Self {
-        Self {
-            ptr: cmd,
-        }
+        Self { ptr: cmd }
     }
 }
-
-

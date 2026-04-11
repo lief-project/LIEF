@@ -31,7 +31,6 @@ pub struct DeclOpt {
     /// If true, `typedef`s and type aliases are replaced by their underlying
     /// canonical types (e.g., `uint32_t` might become `unsigned int`).
     pub desugar: bool,
-
 }
 
 impl Default for DeclOpt {

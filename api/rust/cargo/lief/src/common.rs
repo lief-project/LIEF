@@ -1,5 +1,5 @@
-use lief_ffi as ffi;
 use cxx::memory::UniquePtrTarget;
+use lief_ffi as ffi;
 use std::marker::PhantomData;
 
 use crate::Range;
@@ -171,7 +171,6 @@ macro_rules! declare_lazy_iterator {
     };
 }
 
-
 #[doc(hidden)]
 #[macro_export]
 macro_rules! to_slice {
@@ -185,7 +184,6 @@ macro_rules! to_slice {
         }
     };
 }
-
 
 #[doc(hidden)]
 #[macro_export]
@@ -216,7 +214,6 @@ macro_rules! to_conv_result {
         $crate::__to_result!($func, $self, $conv $(, $args)*)
     };
 }
-
 
 #[doc(hidden)]
 #[macro_export]

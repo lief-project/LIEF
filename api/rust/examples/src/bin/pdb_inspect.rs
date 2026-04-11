@@ -1,7 +1,6 @@
-/// This example shows how to inspect a PDB file using LIEF's API
-
-use std::process::{self, ExitCode};
 use lief::pdb::types::PdbType;
+/// This example shows how to inspect a PDB file using LIEF's API
+use std::process::{self, ExitCode};
 
 fn main() -> ExitCode {
     if !lief::is_extended() {
@@ -20,9 +19,12 @@ fn main() -> ExitCode {
     println!("age={}, guid={}", pdb.age(), pdb.guid());
 
     for symbol in pdb.public_symbols() {
-        println!("name={}, section={}, RVA={}",
-            symbol.name(), symbol.section_name().unwrap_or("".to_string()),
-            symbol.rva());
+        println!(
+            "name={}, section={}, RVA={}",
+            symbol.name(),
+            symbol.section_name().unwrap_or("".to_string()),
+            symbol.rva()
+        );
     }
 
     for ty in pdb.types() {
@@ -38,12 +40,15 @@ fn main() -> ExitCode {
         }
 
         for func in cu.functions() {
-            println!("name={}, section={}, RVA={}, code_size={}",
-                func.name(), func.section_name(), func.rva(), func.code_size()
+            println!(
+                "name={}, section={}, RVA={}, code_size={}",
+                func.name(),
+                func.section_name(),
+                func.rva(),
+                func.code_size()
             );
         }
     }
-
 
     println!("Can't process {}", path);
     ExitCode::FAILURE

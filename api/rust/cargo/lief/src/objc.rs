@@ -14,13 +14,13 @@
 //! }
 //! ```
 
-pub mod metadata;
 pub mod class;
-pub mod protocol;
+pub mod decl_opt;
+pub mod ivar;
+pub mod metadata;
 pub mod method;
 pub mod property;
-pub mod ivar;
-pub mod decl_opt;
+pub mod protocol;
 
 #[doc(inline)]
 pub use metadata::Metadata;

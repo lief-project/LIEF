@@ -2,7 +2,7 @@ use super::binary::Binary;
 use lief_ffi as ffi;
 
 use crate::{
-    common::{into_optional, FromFFI, AsFFI},
+    common::{into_optional, AsFFI, FromFFI},
     macho::header::CpuType,
 };
 use std::path::Path;
@@ -48,9 +48,13 @@ impl FatBinary {
 
     /// Create a FatBinary from the given Mach-O path with the provided
     /// parser configuration.
-    pub fn parse_with_config<P: AsRef<Path>>(path: P, config: &super::parser_config::Config) -> Option<Self> {
+    pub fn parse_with_config<P: AsRef<Path>>(
+        path: P,
+        config: &super::parser_config::Config,
+    ) -> Option<Self> {
         let ffi_config = config.to_ffi();
-        let ffi = ffi::MachO_FatBinary::parse_with_config(path.as_ref().to_str().unwrap(), &ffi_config);
+        let ffi =
+            ffi::MachO_FatBinary::parse_with_config(path.as_ref().to_str().unwrap(), &ffi_config);
         if ffi.is_null() {
             return None;
         }
@@ -72,7 +76,10 @@ impl FatBinary {
 
     /// Reconstruct the FAT binary object and write it to the given path
     pub fn write<P: AsRef<Path>>(&mut self, output: P) {
-        self.ptr.as_mut().unwrap().write(output.as_ref().to_str().unwrap());
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .write(output.as_ref().to_str().unwrap());
     }
 }
 

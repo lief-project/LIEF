@@ -1,5 +1,5 @@
-use lief::Binary;
 use lief::generic;
+use lief::Binary;
 
 use lief::elf;
 
@@ -20,16 +20,14 @@ fn explore_elf(elf: &elf::Binary) {
     }
 }
 
-
 fn main() {
     let path = std::env::args().last().unwrap();
     let mut file = std::fs::File::open(path).expect("Can't open the file");
     match Binary::from(&mut file) {
         Some(Binary::ELF(elf)) => {
             explore_elf(&elf);
-        },
-        Some(Binary::PE(pe)) => {
-        },
+        }
+        Some(Binary::PE(pe)) => {}
         _ => {}
     }
     return;

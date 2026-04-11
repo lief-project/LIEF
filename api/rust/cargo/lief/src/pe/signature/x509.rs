@@ -272,17 +272,29 @@ impl X509<'_> {
 
     /// Return the key usage extensions of this certificate
     pub fn key_usage(&self) -> Vec<KeyUsage> {
-        self.ptr.key_usage().into_iter().map(|e| KeyUsage::from(*e)).collect()
+        self.ptr
+            .key_usage()
+            .into_iter()
+            .map(|e| KeyUsage::from(*e))
+            .collect()
     }
 
     /// Return the extended key usage OIDs of this certificate
     pub fn ext_key_usage(&self) -> Vec<String> {
-        self.ptr.ext_key_usage().into_iter().map(|e| e.to_string()).collect()
+        self.ptr
+            .ext_key_usage()
+            .into_iter()
+            .map(|e| e.to_string())
+            .collect()
     }
 
     /// Return the certificate policies OIDs of this certificate
     pub fn certificate_policies(&self) -> Vec<String> {
-        self.ptr.certificate_policies().into_iter().map(|e| e.to_string()).collect()
+        self.ptr
+            .certificate_policies()
+            .into_iter()
+            .map(|e| e.to_string())
+            .collect()
     }
 }
 

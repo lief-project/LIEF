@@ -21,9 +21,7 @@ pub struct Register {
 
 impl FromFFI<ffi::asm_aarch64_operands_Register> for Register {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_aarch64_operands_Register>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 
@@ -45,15 +43,9 @@ impl Register {
     pub fn value(&self) -> Option<Value> {
         let ffi_value = self.ptr.value();
         match ffi_value.enum_type {
-            1 => {
-                Some(Value::SysReg(SysReg::from(ffi_value.reg)))
-            }
-            2 => {
-                Some(Value::Reg(Reg::from(ffi_value.reg)))
-            }
-            _ => {
-                None
-            }
+            1 => Some(Value::SysReg(SysReg::from(ffi_value.reg))),
+            2 => Some(Value::Reg(Reg::from(ffi_value.reg))),
+            _ => None,
         }
     }
 }

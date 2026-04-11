@@ -1,6 +1,6 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
@@ -17,9 +17,8 @@ use std::marker::PhantomData;
 /// > following structure.
 pub struct SubFramework<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SubFramework>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
-
 
 impl SubFramework<'_> {
     /// Name of the umbrella framework
@@ -42,7 +41,7 @@ impl FromFFI<ffi::MachO_SubFramework> for SubFramework<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_SubFramework>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -52,4 +51,3 @@ impl Command for SubFramework<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

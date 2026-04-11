@@ -1,8 +1,8 @@
-use lief_ffi as ffi;
-use bitflags::bitflags;
-use crate::{to_slice, declare_fwd_iterator, to_opt_trait, declare_lazy_iterator};
+use crate::assembly::{AssemblerConfig, Instructions};
 use crate::common::{into_optional, FromFFI};
-use crate::assembly::{Instructions, AssemblerConfig};
+use crate::{declare_fwd_iterator, declare_lazy_iterator, to_opt_trait, to_slice};
+use bitflags::bitflags;
+use lief_ffi as ffi;
 
 use std::pin::Pin;
 
@@ -92,10 +92,7 @@ pub trait Section {
     /// Change section content
     fn set_content(&mut self, data: &[u8]) {
         unsafe {
-            self.as_generic_mut().set_content(
-                data.as_ptr(),
-                data.len(),
-            );
+            self.as_generic_mut().set_content(data.as_ptr(), data.len());
         }
     }
 
@@ -250,8 +247,10 @@ pub trait Binary {
     fn disassemble_slice(&self, slice: &[u8], address: u64) -> InstructionsIt<'_> {
         unsafe {
             InstructionsIt::new(self.as_generic().disassemble_buffer(
-                    slice.as_ptr(), slice.len().try_into().unwrap(),
-                    address))
+                slice.as_ptr(),
+                slice.len().try_into().unwrap(),
+                address,
+            ))
         }
     }
 
@@ -273,9 +272,18 @@ pub trait Binary {
 
     /// Same as [`Binary::assemble`] but this function takes an extra [`AssemblerConfig`] that
     /// is used to configure the assembly engine: dialect, symbols definitions.
-    fn assemble_with_config(&mut self, address: u64, asm: &str, config: &AssemblerConfig) -> Vec<u8> {
+    fn assemble_with_config(
+        &mut self,
+        address: u64,
+        asm: &str,
+        config: &AssemblerConfig,
+    ) -> Vec<u8> {
         let ffi_config = config.into_ffi();
-        Vec::from(self.as_pin_mut_generic().assemble_with_config(address, asm, ffi_config.as_ref()).as_slice())
+        Vec::from(
+            self.as_pin_mut_generic()
+                .assemble_with_config(address, asm, ffi_config.as_ref())
+                .as_slice(),
+        )
     }
 
     /// Default memory page size according to the architecture and the format of the
@@ -290,7 +298,9 @@ pub trait Binary {
     /// instead of the binary's imagebase.
     fn offset_to_virtual_address(&self, offset: u64, slide: u64) -> Result<u64, crate::Error> {
         let mut err: u32 = 0;
-        let va = self.as_generic().offset_to_virtual_address(offset, slide, Pin::new(&mut err));
+        let va = self
+            .as_generic()
+            .offset_to_virtual_address(offset, slide, Pin::new(&mut err));
         if err > 0 {
             return Err(crate::Error::from(err));
         }
@@ -314,7 +324,10 @@ pub trait Binary {
     /// identifier (e.g., build ID, GUID).
     /// </div>
     fn load_debug_info(&mut self, path: &std::path::Path) -> Option<crate::DebugInfo<'_>> {
-        into_optional(self.as_pin_mut_generic().load_debug_info(path.to_str().unwrap()))
+        into_optional(
+            self.as_pin_mut_generic()
+                .load_debug_info(path.to_str().unwrap()),
+        )
     }
 }
 
@@ -369,7 +382,6 @@ bitflags! {
     }
 }
 
-
 impl From<u32> for FunctionFlags {
     fn from(value: u32) -> Self {
         FunctionFlags::from_bits_truncate(value)
@@ -395,9 +407,7 @@ pub struct Function {
 
 impl FromFFI<ffi::AbstractFunction> for Function {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::AbstractFunction>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 

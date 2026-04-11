@@ -1,9 +1,9 @@
 use lief_ffi as ffi;
 
 use crate::common::{into_optional, FromFFI};
-use std::marker::PhantomData;
 use crate::dwarf::types::DwarfType;
 use crate::dwarf::Type;
+use std::marker::PhantomData;
 
 /// This structure represents a `DW_TAG_shared_type`
 pub struct Shared<'a> {
@@ -32,5 +32,3 @@ impl Shared<'_> {
         into_optional(self.ptr.underlying_type())
     }
 }
-
-

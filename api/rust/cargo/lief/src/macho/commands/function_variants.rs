@@ -128,7 +128,6 @@ impl std::fmt::Display for RuntimeTable<'_> {
     }
 }
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 /// Enumeration describing the namespace or category of a function variant.
@@ -164,7 +163,6 @@ impl From<u32> for Kind {
             0x00000003 => Kind::ARM64,
             0x00000004 => Kind::X86_64,
             _ => Kind::UNKNOWN(value),
-
         }
     }
 }
@@ -176,11 +174,9 @@ impl From<Kind> for u32 {
             Kind::ARM64 => 0x00000003,
             Kind::X86_64 => 0x00000004,
             Kind::UNKNOWN(value) => value,
-
         }
     }
 }
-
 
 /// This class exposes information about a given implementation.
 pub struct RuntimeTableEntry<'a> {
@@ -237,7 +233,6 @@ impl std::fmt::Display for RuntimeTableEntry<'_> {
         write!(f, "{}", self.ptr.to_string())
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -394,7 +389,6 @@ impl From<u32> for Flag {
             0x00100001 => Flag::PER_PROCESS_TRANSLATED,
             0x00100003 => Flag::PER_PROCESS_NO_OVERREAD,
             _ => Flag::UNKNOWN(value),
-
         }
     }
 }
@@ -472,7 +466,6 @@ impl From<Flag> for u32 {
             Flag::PER_PROCESS_TRANSLATED => 0x00100001,
             Flag::PER_PROCESS_NO_OVERREAD => 0x00100003,
             Flag::UNKNOWN(value) => value,
-
         }
     }
 }

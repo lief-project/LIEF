@@ -1,16 +1,15 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
 use crate::to_slice;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
 /// Structure that represents the `LC_SEGMENT_SPLIT_INFO` command
 pub struct SegmentSplitInfo<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SegmentSplitInfo>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
-
 
 impl SegmentSplitInfo<'_> {
     pub fn data_offset(&self) -> u32 {
@@ -39,7 +38,7 @@ impl<'a> FromFFI<ffi::MachO_SegmentSplitInfo> for SegmentSplitInfo<'a> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_SegmentSplitInfo>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -49,4 +48,3 @@ impl Command for SegmentSplitInfo<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

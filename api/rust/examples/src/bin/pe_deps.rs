@@ -17,16 +17,24 @@ fn main() -> ExitCode {
         for imp in pe.imports() {
             let by_ordinal = imp.entries().any(|e| e.is_ordinal());
             let nb_entries = imp.entries().len();
-            println!("  - {} [#imports: {}, by ordinal: {}]",
-                     imp.name(), nb_entries, by_ordinal);
+            println!(
+                "  - {} [#imports: {}, by ordinal: {}]",
+                imp.name(),
+                nb_entries,
+                by_ordinal
+            );
         }
 
         println!("Delay Imports:");
         for imp in pe.delay_imports() {
             let by_ordinal = imp.entries().any(|e| e.is_ordinal());
             let nb_entries = imp.entries().len();
-            println!("  - {} [#imports: {}, by ordinal: {}]",
-                     imp.name(), nb_entries, by_ordinal);
+            println!(
+                "  - {} [#imports: {}, by ordinal: {}]",
+                imp.name(),
+                nb_entries,
+                by_ordinal
+            );
         }
 
         return ExitCode::SUCCESS;

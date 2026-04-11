@@ -125,5 +125,3 @@ declare_iterator!(
     ffi::PE_VolatileMetadata,
     ffi::PE_VolatileMetadata_it_ranges
 );
-
-

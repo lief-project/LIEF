@@ -32,8 +32,14 @@ fn should_generate(autocxx_ffi: &Path) -> miette::Result<bool> {
     let autocxx_file = std::fs::read(autocxx_ffi)
         .map_err(|e| miette::miette!("Failed to read {}: {}", autocxx_ffi.display(), e))?;
 
-    let hash_path = autocxx_ffi.parent()
-        .ok_or_else(|| miette::miette!("Failed to get parent directory of {}", autocxx_ffi.display()))?
+    let hash_path = autocxx_ffi
+        .parent()
+        .ok_or_else(|| {
+            miette::miette!(
+                "Failed to get parent directory of {}",
+                autocxx_ffi.display()
+            )
+        })?
         .join("autocxx_ffi.hash");
 
     let current_hash = std::fs::read_to_string(&hash_path).unwrap_or_default();
@@ -73,9 +79,7 @@ fn main() -> miette::Result<()> {
         return Ok(());
     }
 
-    let autocxx_builder = autocxx_build::Builder::new(
-        &lief_ffi_file, [&lief_inc_dir]
-    );
+    let autocxx_builder = autocxx_build::Builder::new(&lief_ffi_file, [&lief_inc_dir]);
 
     let mut cxx_builder = autocxx_builder
         .custom_gendir(autocxx_gen_dir)

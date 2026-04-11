@@ -8,7 +8,6 @@ pub struct Base {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_BaseType>,
 }
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Encoding {
@@ -35,11 +34,9 @@ impl From<u32> for Encoding {
             0x00000006 => Encoding::BOOLEAN,
             0x00000007 => Encoding::FLOAT,
             _ => Encoding::UNKNOWN(value),
-
         }
     }
 }
-
 
 impl From<Encoding> for u32 {
     fn from(value: Encoding) -> Self {
@@ -53,23 +50,18 @@ impl From<Encoding> for u32 {
             Encoding::BOOLEAN => 6,
             Encoding::FLOAT => 7,
             Encoding::UNKNOWN(value) => value,
-
         }
     }
 }
 
 impl FromFFI<ffi::DWARF_editor_BaseType> for Base {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_editor_BaseType>) -> Self {
-        Self {
-            ptr: cmd,
-        }
+        Self { ptr: cmd }
     }
 }
-
 
 impl EditorType for Base {
     fn get_base(&self) -> &ffi::DWARF_editor_Type {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

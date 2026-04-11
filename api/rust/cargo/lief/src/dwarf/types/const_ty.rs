@@ -1,9 +1,9 @@
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional};
-use std::marker::PhantomData;
+use crate::common::{into_optional, FromFFI};
 use crate::dwarf::types::DwarfType;
 use crate::dwarf::Type;
+use std::marker::PhantomData;
 
 /// This class represents a `DW_TAG_const_type`
 pub struct Const<'a> {

@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 use std::pin::Pin;
 
-use crate::common::{into_optional, FromFFI, AsFFI};
+use crate::common::{into_optional, AsFFI, FromFFI};
 use crate::declare_iterator;
 use crate::generic;
 use lief_ffi as ffi;

@@ -3,9 +3,9 @@ use lief_ffi as ffi;
 use std::marker::PhantomData;
 use std::pin::Pin;
 
-use crate::to_slice;
 use crate::common::{into_optional, FromFFI};
-use crate::{generic, declare_iterator};
+use crate::to_slice;
+use crate::{declare_iterator, generic};
 
 use super::Section;
 
@@ -75,7 +75,6 @@ impl From<u32> for StorageClass {
             0x00000069 => StorageClass::WEAK_EXTERNAL,
             0x0000006b => StorageClass::CLR_TOKEN,
             _ => StorageClass::UNKNOWN(value),
-
         }
     }
 }
@@ -114,7 +113,6 @@ impl From<StorageClass> for u32 {
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -158,7 +156,6 @@ impl From<u32> for BaseType {
             0x0000000e => BaseType::TY_UINT,
             0x0000000f => BaseType::TY_DWORD,
             _ => BaseType::UNKNOWN(value),
-
         }
     }
 }
@@ -182,12 +179,9 @@ impl From<BaseType> for u32 {
             BaseType::TY_UINT => 0x0000000e,
             BaseType::TY_DWORD => 0x0000000f,
             BaseType::UNKNOWN(value) => value,
-
         }
     }
 }
-
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -207,7 +201,6 @@ impl From<u32> for ComplexType {
             0x00000002 => ComplexType::TY_FUNCTION,
             0x00000003 => ComplexType::TY_ARRAY,
             _ => ComplexType::UNKNOWN(value),
-
         }
     }
 }
@@ -219,7 +212,6 @@ impl From<ComplexType> for u32 {
             ComplexType::TY_FUNCTION => 0x00000002,
             ComplexType::TY_ARRAY => 0x00000003,
             ComplexType::UNKNOWN(value) => value,
-
         }
     }
 }
@@ -232,14 +224,14 @@ impl From<ComplexType> for u32 {
 /// Reference: <https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#coff-symbol-table>
 pub struct Symbol<'a> {
     pub(crate) ptr: cxx::UniquePtr<ffi::COFF_Symbol>,
-    _owner: PhantomData<&'a ()>
+    _owner: PhantomData<&'a ()>,
 }
 
 impl FromFFI<ffi::COFF_Symbol> for Symbol<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::COFF_Symbol>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -256,7 +248,6 @@ impl std::fmt::Debug for Symbol<'_> {
             .finish()
     }
 }
-
 
 impl std::fmt::Display for Symbol<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -378,7 +369,6 @@ pub enum AuxiliarySymbols<'a> {
     Unknown(AuxiliarySymbol<'a>),
 }
 
-
 impl FromFFI<ffi::COFF_AuxiliarySymbol> for AuxiliarySymbols<'_> {
     fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::COFF_AuxiliarySymbol>) -> Self {
         unsafe {
@@ -475,8 +465,7 @@ pub struct AuxiliaryBfAndEf<'a> {
 
 impl std::fmt::Debug for AuxiliaryBfAndEf<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("AuxiliaryBfAndEf")
-            .finish()
+        f.debug_struct("AuxiliaryBfAndEf").finish()
     }
 }
 
@@ -521,7 +510,6 @@ impl AuxiliaryCLRToken<'_> {
         to_slice!(self.ptr.rgb_reserved());
     }
 }
-
 
 impl std::fmt::Debug for AuxiliaryCLRToken<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -602,7 +590,6 @@ impl AuxiliaryFunctionDefinition<'_> {
     pub fn padding(&self) -> u16 {
         self.ptr.padding()
     }
-
 }
 
 /// This auxiliary symbol exposes information about the associated section.
@@ -675,7 +662,6 @@ impl AuxiliarySectionDefinition<'_> {
     }
 }
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum ComdatSelection {
@@ -700,7 +686,6 @@ impl From<u8> for ComdatSelection {
             0x00000005 => ComdatSelection::ASSOCIATIVE,
             0x00000006 => ComdatSelection::LARGEST,
             _ => ComdatSelection::UNKNOWN(value),
-
         }
     }
 }
@@ -715,11 +700,9 @@ impl From<ComdatSelection> for u8 {
             ComdatSelection::ASSOCIATIVE => 0x00000005,
             ComdatSelection::LARGEST => 0x00000006,
             ComdatSelection::UNKNOWN(value) => value,
-
         }
     }
 }
-
 
 /// "Weak externals" are a mechanism for object files that allows flexibility at
 /// link time. A module can contain an unresolved external symbol (`sym1`), but
@@ -739,7 +722,6 @@ pub struct AuxiliaryWeakExternal<'a> {
     _owner: PhantomData<&'a ffi::COFF_Symbol>,
 }
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 pub enum Characteristics {
@@ -758,7 +740,6 @@ impl From<u32> for Characteristics {
             0x00000003 => Characteristics::SEARCH_ALIAS,
             0x00000004 => Characteristics::ANTI_DEPENDENCY,
             _ => Characteristics::UNKNOWN(value),
-
         }
     }
 }
@@ -770,7 +751,6 @@ impl From<Characteristics> for u32 {
             Characteristics::SEARCH_ALIAS => 0x00000003,
             Characteristics::ANTI_DEPENDENCY => 0x00000004,
             Characteristics::UNKNOWN(value) => value,
-
         }
     }
 }
@@ -800,7 +780,7 @@ impl AuxiliaryWeakExternal<'_> {
         self.ptr.sym_idx()
     }
 
-    pub fn characteristics(&self) -> Characteristics{
+    pub fn characteristics(&self) -> Characteristics {
         Characteristics::from(self.ptr.characteristics())
     }
 
@@ -808,7 +788,6 @@ impl AuxiliaryWeakExternal<'_> {
         to_slice!(self.ptr.padding());
     }
 }
-
 
 pub struct AuxiliarySymbol<'a> {
     ptr: cxx::UniquePtr<ffi::COFF_AuxiliarySymbol>,
@@ -826,8 +805,7 @@ impl FromFFI<ffi::COFF_AuxiliarySymbol> for AuxiliarySymbol<'_> {
 
 impl std::fmt::Debug for AuxiliarySymbol<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("AuxiliarySymbol")
-            .finish()
+        f.debug_struct("AuxiliarySymbol").finish()
     }
 }
 

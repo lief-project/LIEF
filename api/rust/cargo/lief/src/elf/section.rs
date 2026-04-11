@@ -1,18 +1,18 @@
+use bitflags::bitflags;
 use lief_ffi as ffi;
 use std::fmt;
-use std::pin::Pin;
 use std::marker::PhantomData;
-use bitflags::bitflags;
+use std::pin::Pin;
 
-use crate::to_slice;
-use crate::generic;
 use crate::common::FromFFI;
 use crate::declare_iterator;
+use crate::generic;
+use crate::to_slice;
 
 /// Structure wich represents an ELF Section
 pub struct Section<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Section>,
-    _owner: PhantomData<&'a ()>
+    _owner: PhantomData<&'a ()>,
 }
 
 impl Section<'_> {
@@ -148,7 +148,6 @@ pub enum Type {
     UNKNOWN(u64),
 }
 
-
 impl From<u64> for Type {
     fn from(value: u64) -> Self {
         match value {
@@ -191,7 +190,6 @@ impl From<u64> for Type {
             0x37000002a => Type::MIPS_ABIFLAGS,
             0x470000003 => Type::RISCV_ATTRIBUTES,
             _ => Type::UNKNOWN(value),
-
         }
     }
 }
@@ -282,7 +280,7 @@ impl Flags {
 
 impl fmt::Debug for Section<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-       let base = self as &dyn generic::Section;
+        let base = self as &dyn generic::Section;
         f.debug_struct("Section")
             .field("base", &base)
             .field("type", &self.get_type())
@@ -294,7 +292,6 @@ impl fmt::Debug for Section<'_> {
             .field("file_offset", &self.file_offset())
             .field("original_size", &self.original_size())
             .finish()
-
     }
 }
 
@@ -308,7 +305,7 @@ impl FromFFI<ffi::ELF_Section> for Section<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_Section>) -> Self {
         Self {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -340,4 +337,10 @@ impl generic::Section for Section<'_> {
     }
 }
 
-declare_iterator!(Sections, Section<'a>, ffi::ELF_Section, ffi::ELF_Binary, ffi::ELF_Binary_it_sections);
+declare_iterator!(
+    Sections,
+    Section<'a>,
+    ffi::ELF_Section,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_sections
+);

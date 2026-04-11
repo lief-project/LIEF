@@ -21,12 +21,12 @@ use lief_ffi as ffi;
 
 use crate::common::into_optional;
 
-pub mod debug_info;
-pub mod compilation_unit;
-pub mod public_symbol;
-pub mod function;
-pub mod types;
 pub mod build_metadata;
+pub mod compilation_unit;
+pub mod debug_info;
+pub mod function;
+pub mod public_symbol;
+pub mod types;
 
 #[doc(inline)]
 pub use debug_info::DebugInfo;
@@ -48,7 +48,9 @@ pub use build_metadata::BuildMetadata;
 
 /// Load a PDB from its filepath
 pub fn load<P: AsRef<Path>>(path: P) -> Option<DebugInfo<'static>> {
-    into_optional(ffi::PDB_DebugInfo::from_file(path.as_ref().to_str().unwrap()))
+    into_optional(ffi::PDB_DebugInfo::from_file(
+        path.as_ref().to_str().unwrap(),
+    ))
 }
 
 /// Check if the given file is a `PDB`

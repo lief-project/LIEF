@@ -10,36 +10,36 @@
 //! }
 //! ```
 
-use std::path::Path;
 use lief_ffi as ffi;
+use std::path::Path;
 
 pub mod binary;
+pub mod builder;
+pub mod chpe_metadata_arm64;
+pub mod chpe_metadata_x86;
+pub mod code_integrity;
 pub mod data_directory;
 pub mod debug;
 pub mod delay_import;
+pub mod dynamic_fixups;
+pub mod dynamic_relocation;
+pub mod enclave_configuration;
+pub mod exception;
+pub mod exception_aarch64;
+pub mod exception_x64;
 pub mod export;
+pub mod factory;
 pub mod headers;
 pub mod import;
 pub mod load_configuration;
+pub mod parser_config;
 pub mod relocation;
 pub mod resources;
 pub mod rich_header;
 pub mod section;
 pub mod signature;
 pub mod tls;
-pub mod code_integrity;
-pub mod builder;
-pub mod factory;
-pub mod exception;
-pub mod exception_x64;
-pub mod exception_aarch64;
-pub mod chpe_metadata_arm64;
-pub mod chpe_metadata_x86;
-pub mod dynamic_relocation;
-pub mod dynamic_fixups;
-pub mod enclave_configuration;
 pub mod volatile_metadata;
-pub mod parser_config;
 
 #[doc(inline)]
 pub use binary::Binary;
@@ -48,49 +48,49 @@ pub use data_directory::DataDirectory;
 #[doc(inline)]
 pub use delay_import::DelayImport;
 #[doc(inline)]
+pub use dynamic_fixups::DynamicFixup;
+#[doc(inline)]
+pub use dynamic_relocation::DynamicRelocation;
+#[doc(inline)]
+pub use enclave_configuration::{EnclaveConfiguration, EnclaveImport};
+#[doc(inline)]
+pub use exception::{ExceptionInfo, RuntimeExceptionFunction};
+#[doc(inline)]
 pub use export::Export;
+#[doc(inline)]
+pub use factory::Factory;
 #[doc(inline)]
 pub use headers::{DosHeader, Header, OptionalHeader};
 #[doc(inline)]
+pub use import::Import;
+#[doc(inline)]
+pub use load_configuration::{CHPEMetadata, LoadConfiguration};
+#[doc(inline)]
+pub use parser_config::Config as ParserConfig;
+#[doc(inline)]
 pub use relocation::Relocation;
+#[doc(inline)]
+pub use resources::Accelerator as ResourceAccelerator;
+#[doc(inline)]
+pub use resources::Icon as ResourceIcon;
 #[doc(inline)]
 pub use resources::Manager as ResourcesManager;
 #[doc(inline)]
 pub use resources::Node as ResourceNode;
 #[doc(inline)]
-pub use resources::Icon as ResourceIcon;
+pub use resources::StringEntry as ResourceStringEntry;
 #[doc(inline)]
 pub use resources::Version as ResourceVersion;
-#[doc(inline)]
-pub use resources::Accelerator as ResourceAccelerator;
-#[doc(inline)]
-pub use resources::StringEntry as ResourceStringEntry;
 #[doc(inline)]
 pub use rich_header::{RichEntry, RichHeader};
 #[doc(inline)]
 pub use section::Section;
 #[doc(inline)]
-pub use tls::TLS;
-#[doc(inline)]
-pub use import::Import;
-#[doc(inline)]
 pub use signature::Signature;
 #[doc(inline)]
-pub use exception::{RuntimeExceptionFunction, ExceptionInfo};
-#[doc(inline)]
-pub use load_configuration::{LoadConfiguration, CHPEMetadata};
-#[doc(inline)]
-pub use dynamic_relocation::DynamicRelocation;
-#[doc(inline)]
-pub use dynamic_fixups::DynamicFixup;
-#[doc(inline)]
-pub use enclave_configuration::{EnclaveConfiguration, EnclaveImport};
+pub use tls::TLS;
 #[doc(inline)]
 pub use volatile_metadata::VolatileMetadata;
-#[doc(inline)]
-pub use parser_config::Config as ParserConfig;
-#[doc(inline)]
-pub use factory::Factory;
 
 use crate::common::AsFFI;
 
@@ -150,7 +150,6 @@ pub enum Algorithms {
     UNKNOWN(u32),
 }
 
-
 impl From<u32> for Algorithms {
     fn from(value: u32) -> Self {
         match value {
@@ -174,7 +173,6 @@ impl From<u32> for Algorithms {
             0x00000012 => Algorithms::SHA_384_ECDSA,
             0x00000013 => Algorithms::SHA_512_ECDSA,
             _ => Algorithms::UNKNOWN(value),
-
         }
     }
 }
@@ -202,7 +200,6 @@ impl From<Algorithms> for u32 {
             Algorithms::SHA_384_ECDSA => 0x00000012,
             Algorithms::SHA_512_ECDSA => 0x00000013,
             Algorithms::UNKNOWN(_) => 0,
-
         }
     }
 }
@@ -249,8 +246,16 @@ pub fn oid_to_string(oid: &str) -> String {
 }
 
 /// Try to resolve import ordinals using the well-known ordinal lookup table
-pub fn resolve_ordinals<'a>(imp: &'a Import<'a>, strict: bool, use_std: bool) -> Option<Import<'a>> {
-    crate::common::into_optional(ffi::PE_Utils::resolve_ordinals(imp.as_ffi(), strict, use_std))
+pub fn resolve_ordinals<'a>(
+    imp: &'a Import<'a>,
+    strict: bool,
+    use_std: bool,
+) -> Option<Import<'a>> {
+    crate::common::into_optional(ffi::PE_Utils::resolve_ordinals(
+        imp.as_ffi(),
+        strict,
+        use_std,
+    ))
 }
 
 /// Mode used for computing the import hash

@@ -2,9 +2,9 @@ use std::marker::PhantomData;
 
 use lief_ffi as ffi;
 
-use crate::Error;
-use crate::generic;
 use crate::elf::Section;
+use crate::generic;
+use crate::Error;
 
 use crate::common::into_optional;
 use crate::common::FromFFI;
@@ -15,9 +15,8 @@ use super::Symbol;
 /// Structure which reprents an ELF relocation
 pub struct Relocation<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Relocation>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -2290,7 +2289,6 @@ impl From<u32> for Type {
             0x700000fe => Type::SH_64,
             0x700000ff => Type::SH_64_PCREL,
             _ => Type::UNKNOWN(value),
-
         }
     }
 }
@@ -3455,11 +3453,9 @@ impl Purpose {
             0x00000002 => Purpose::DYNAMIC,
             0x00000003 => Purpose::OBJECT,
             _ => Purpose::UNKNOWN(value),
-
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -3483,7 +3479,6 @@ impl Encoding {
             0x00000003 => Encoding::RELR,
             0x00000004 => Encoding::ANDROID_SLEB,
             _ => Encoding::UNKNOWN(value),
-
         }
     }
 }
@@ -3586,7 +3581,7 @@ impl FromFFI<ffi::ELF_Relocation> for Relocation<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_Relocation>) -> Self {
         Relocation {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -3607,7 +3602,31 @@ impl generic::Relocation for Relocation<'_> {
     }
 }
 
-declare_iterator!(Relocations, Relocation<'a>, ffi::ELF_Relocation, ffi::ELF_Binary, ffi::ELF_Binary_it_relocations);
-declare_iterator!(PltGotRelocations, Relocation<'a>, ffi::ELF_Relocation, ffi::ELF_Binary, ffi::ELF_Binary_it_pltgot_relocations);
-declare_iterator!(DynamicRelocations, Relocation<'a>, ffi::ELF_Relocation, ffi::ELF_Binary, ffi::ELF_Binary_it_dynamic_relocations);
-declare_iterator!(ObjectRelocations, Relocation<'a>, ffi::ELF_Relocation, ffi::ELF_Binary, ffi::ELF_Binary_it_object_relocations);
+declare_iterator!(
+    Relocations,
+    Relocation<'a>,
+    ffi::ELF_Relocation,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_relocations
+);
+declare_iterator!(
+    PltGotRelocations,
+    Relocation<'a>,
+    ffi::ELF_Relocation,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_pltgot_relocations
+);
+declare_iterator!(
+    DynamicRelocations,
+    Relocation<'a>,
+    ffi::ELF_Relocation,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_dynamic_relocations
+);
+declare_iterator!(
+    ObjectRelocations,
+    Relocation<'a>,
+    ffi::ELF_Relocation,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_object_relocations
+);

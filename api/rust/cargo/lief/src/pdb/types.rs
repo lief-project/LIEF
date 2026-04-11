@@ -2,20 +2,20 @@ use lief_ffi as ffi;
 
 use crate::{common::FromFFI, to_opt_trait, to_opt_trait_conv};
 
-use std::marker::PhantomData;
 use crate::{declare_fwd_iterator, DeclOpt};
+use std::marker::PhantomData;
 
-pub mod simple;
 pub mod array;
+pub mod attribute;
 pub mod bitfield;
 pub mod classlike;
 pub mod enum_ty;
 pub mod function;
+pub mod method;
 pub mod modifier;
 pub mod pointer;
+pub mod simple;
 pub mod union;
-pub mod attribute;
-pub mod method;
 
 #[doc(inline)]
 pub use simple::Simple;
@@ -27,7 +27,7 @@ pub use array::Array;
 pub use bitfield::BitField;
 
 #[doc(inline)]
-pub use classlike::{Class, Structure, Interface};
+pub use classlike::{Class, Interface, Structure};
 
 #[doc(inline)]
 pub use enum_ty::Enum;
@@ -197,10 +197,7 @@ pub trait PdbType {
     /// Size of the type. This size should match the value of `sizeof(...)`
     /// applied to this type.
     fn size(&self) -> Option<u64> {
-        to_opt_trait!(
-            &lief_ffi::PDB_Type::size,
-            self.get_base()
-        );
+        to_opt_trait!(&lief_ffi::PDB_Type::size, self.get_base());
     }
 
     /// Type's name (if present)
@@ -226,42 +223,18 @@ pub trait PdbType {
 impl PdbType for Type<'_> {
     fn get_base(&self) -> &ffi::PDB_Type {
         match &self {
-            Type::Simple(ty) => {
-                ty.get_base()
-            }
-            Type::Array(ty) => {
-                ty.get_base()
-            }
-            Type::BitField(ty) => {
-                ty.get_base()
-            }
-            Type::Class(ty) => {
-                ty.get_base()
-            }
-            Type::Structure(ty) => {
-                ty.get_base()
-            }
-            Type::Interface(ty) => {
-                ty.get_base()
-            }
-            Type::Enum(ty) => {
-                ty.get_base()
-            }
-            Type::Function(ty) => {
-                ty.get_base()
-            }
-            Type::Modifier(ty) => {
-                ty.get_base()
-            }
-            Type::Pointer(ty) => {
-                ty.get_base()
-            }
-            Type::Union(ty) => {
-                ty.get_base()
-            }
-            Type::Generic(ty) => {
-                ty.get_base()
-            }
+            Type::Simple(ty) => ty.get_base(),
+            Type::Array(ty) => ty.get_base(),
+            Type::BitField(ty) => ty.get_base(),
+            Type::Class(ty) => ty.get_base(),
+            Type::Structure(ty) => ty.get_base(),
+            Type::Interface(ty) => ty.get_base(),
+            Type::Enum(ty) => ty.get_base(),
+            Type::Function(ty) => ty.get_base(),
+            Type::Modifier(ty) => ty.get_base(),
+            Type::Pointer(ty) => ty.get_base(),
+            Type::Union(ty) => ty.get_base(),
+            Type::Generic(ty) => ty.get_base(),
         }
     }
 }
@@ -279,4 +252,3 @@ declare_fwd_iterator!(
     ffi::PDB_DebugInfo,
     ffi::PDB_DebugInfo_it_types
 );
-

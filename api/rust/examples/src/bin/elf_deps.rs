@@ -1,8 +1,7 @@
+use lief::elf::dynamic;
 /// This example lists all the dependencies of an ELF file as well as the required symbol
 /// versions. This can be used to assess if an ELF executable can run on a given Linux distribution
-
 use std::process::ExitCode;
-use lief::elf::dynamic;
 
 fn main() -> ExitCode {
     let mut args = std::env::args();

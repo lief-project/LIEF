@@ -1,11 +1,15 @@
 mod utils;
-use lief::{self, pdb::types::PdbType};
 use lief::pdb::types::classlike::ClassLike;
+use lief::{self, pdb::types::PdbType};
 
 use std::path::Path;
 
 fn explore_trait_type(ty: &dyn PdbType) {
-    println!("{} {}", ty.name().unwrap_or("".to_string()), ty.size().unwrap_or(0));
+    println!(
+        "{} {}",
+        ty.name().unwrap_or("".to_string()),
+        ty.size().unwrap_or(0)
+    );
 }
 
 fn explore_trait_classlike(ty: &dyn ClassLike) {

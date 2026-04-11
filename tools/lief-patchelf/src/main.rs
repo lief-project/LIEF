@@ -450,13 +450,11 @@ impl PatchContext {
         }
 
         if let Some(remove_deps) = self.options.get_many::<String>("remove-needed") {
-
             for deps in remove_deps {
                 self.modified = true;
                 self.elf.remove_library(deps);
                 self.elf.remove_version_requirement(deps);
             }
-
         }
 
         if let Some(remove_deps) = self.options.get_many::<String>("replace-needed") {
@@ -498,7 +496,10 @@ impl PatchContext {
                         symver.as_global();
                     }
                 } else {
-                    lief::logging::log(lief::logging::Level::INFO, &format!("Symbol {symname} not found"));
+                    lief::logging::log(
+                        lief::logging::Level::INFO,
+                        &format!("Symbol {symname} not found"),
+                    );
                 }
             }
         }
@@ -525,16 +526,18 @@ impl PatchContext {
                     if req.remove_aux_requirement_by_name(version) {
                         self.modified = true;
                     } else {
-                        lief::logging::log(lief::logging::Level::ERR,
-                            &format!("Can't remove {version} in {libname}"));
+                        lief::logging::log(
+                            lief::logging::Level::ERR,
+                            &format!("Can't remove {version} in {libname}"),
+                        );
                     }
                 } else {
-                    lief::logging::log(lief::logging::Level::ERR,
-                        &format!("Can't find library {libname}"));
+                    lief::logging::log(
+                        lief::logging::Level::ERR,
+                        &format!("Can't find library {libname}"),
+                    );
                 }
-
             }
-
         }
         Ok(())
     }

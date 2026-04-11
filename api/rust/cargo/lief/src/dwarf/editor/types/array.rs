@@ -10,9 +10,7 @@ pub struct Array {
 
 impl FromFFI<ffi::DWARF_editor_ArrayType> for Array {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_editor_ArrayType>) -> Self {
-        Self {
-            ptr: cmd,
-        }
+        Self { ptr: cmd }
     }
 }
 
@@ -21,4 +19,3 @@ impl EditorType for Array {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

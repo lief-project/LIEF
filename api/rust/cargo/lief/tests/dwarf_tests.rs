@@ -1,8 +1,8 @@
 mod utils;
 use lief;
+use lief::assembly::Instruction;
 use lief::dwarf::types::{Base, ClassLike, DwarfType};
 use lief::dwarf::{Parameter, Scope, Type};
-use lief::assembly::Instruction;
 use lief::generic::Binary;
 
 use std::path::{Path, PathBuf};

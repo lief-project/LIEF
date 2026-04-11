@@ -2,9 +2,9 @@
 
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional};
-use std::marker::PhantomData;
 use super::dynamic_fixups::DynamicFixup;
+use crate::common::{into_optional, FromFFI};
+use std::marker::PhantomData;
 
 pub const IMAGE_DYNAMIC_RELOCATION_GUARD_RF_PROLOGUE: u32 = 1u32;
 
@@ -21,7 +21,6 @@ pub const IMAGE_DYNAMIC_RELOCATION_ARM64X: u32 = 6u32;
 pub const IMAGE_DYNAMIC_RELOCATION_FUNCTION_OVERRIDE: u32 = 7u32;
 
 pub const IMAGE_DYNAMIC_RELOCATION_ARM64_KERNEL_IMPORT_CALL_TRANSFER: u32 = 8u32;
-
 
 /// This enum wraps the different versions of dynamic relocations:
 ///
@@ -125,7 +124,7 @@ impl std::fmt::Debug for DynamicRelocationV1<'_> {
         f.debug_struct("DynamicRelocationV1")
             .field("version", &self.version())
             .field("symbol", &self.symbol())
-        .finish()
+            .finish()
     }
 }
 
@@ -157,13 +156,12 @@ impl AsDynamicRelocation for DynamicRelocationV2<'_> {
     }
 }
 
-
 impl std::fmt::Debug for DynamicRelocationV2<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("DynamicRelocationV1")
             .field("version", &self.version())
             .field("symbol", &self.symbol())
-        .finish()
+            .finish()
     }
 }
 
@@ -176,13 +174,9 @@ impl std::fmt::Display for DynamicRelocationV2<'_> {
 impl AsDynamicRelocation for DynamicRelocation<'_> {
     fn as_generic(&self) -> &ffi::PE_DynamicRelocation {
         match &self {
-            DynamicRelocation::V1(entry) => {
-                entry.as_generic()
-            }
+            DynamicRelocation::V1(entry) => entry.as_generic(),
 
-            DynamicRelocation::V2(entry) => {
-                entry.as_generic()
-            }
+            DynamicRelocation::V2(entry) => entry.as_generic(),
         }
     }
 }

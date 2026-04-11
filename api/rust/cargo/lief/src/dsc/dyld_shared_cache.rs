@@ -1,10 +1,10 @@
 use lief_ffi as ffi;
 
-use std::path::Path;
+use super::{Dylib, MappingInfo, SubCache};
+use crate::common::{into_optional, FromFFI};
 use crate::Error;
-use crate::common::{FromFFI, into_optional};
 use crate::{declare_iterator, declare_lazy_iterator, to_result};
-use super::{SubCache, Dylib, MappingInfo};
+use std::path::Path;
 
 use crate::assembly;
 
@@ -54,30 +54,27 @@ impl From<u32> for Version {
             0x0000000A => Version::DYLD_1284_13,
             0x0000000B => Version::UNRELEASED,
             _ => Version::UNKNOWN(value),
-
         }
     }
 }
 impl From<Version> for u32 {
     fn from(value: Version) -> u32 {
         match value {
-            Version::DYLD_95_3    => 0x00000001,
-            Version::DYLD_195_5   => 0x00000002,
-            Version::DYLD_239_3   => 0x00000003,
-            Version::DYLD_360_14  => 0x00000004,
-            Version::DYLD_421_1   => 0x00000005,
+            Version::DYLD_95_3 => 0x00000001,
+            Version::DYLD_195_5 => 0x00000002,
+            Version::DYLD_239_3 => 0x00000003,
+            Version::DYLD_360_14 => 0x00000004,
+            Version::DYLD_421_1 => 0x00000005,
             Version::DYLD_832_7_1 => 0x00000006,
-            Version::DYLD_940     => 0x00000007,
-            Version::DYLD_1042_1  => 0x00000008,
-            Version::DYLD_1231_3  => 0x00000009,
+            Version::DYLD_940 => 0x00000007,
+            Version::DYLD_1042_1 => 0x00000008,
+            Version::DYLD_1231_3 => 0x00000009,
             Version::DYLD_1284_13 => 0x0000000A,
-            Version::UNRELEASED   => 0x0000000B,
+            Version::UNRELEASED => 0x0000000B,
             Version::UNKNOWN(_) => 0,
-
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -120,7 +117,6 @@ impl From<u32> for Platform {
             0x0000000e => Platform::SEPOS,
             0xffffffff => Platform::ANY,
             _ => Platform::UNKNOWN(value),
-
         }
     }
 }
@@ -143,7 +139,6 @@ impl From<Platform> for u32 {
             Platform::SEPOS => 0x0000000e,
             Platform::ANY => 0xffffffff,
             Platform::UNKNOWN(_) => 0,
-
         }
     }
 }
@@ -175,7 +170,6 @@ impl From<u32> for Arch {
             0x00000007 => Arch::ARM64,
             0x00000008 => Arch::ARM64E,
             _ => Arch::UNKNOWN(value),
-
         }
     }
 }
@@ -191,7 +185,6 @@ impl From<Arch> for u32 {
             Arch::ARM64 => 0x00000007,
             Arch::ARM64E => 0x00000008,
             Arch::UNKNOWN(_) => 0,
-
         }
     }
 }
@@ -203,9 +196,7 @@ pub struct DyldSharedCache {
 
 impl FromFFI<ffi::dsc_DyldSharedCache> for DyldSharedCache {
     fn from_ffi(info: cxx::UniquePtr<ffi::dsc_DyldSharedCache>) -> Self {
-        Self {
-            ptr: info,
-        }
+        Self { ptr: info }
     }
 }
 
@@ -348,7 +339,8 @@ impl DyldSharedCache {
     /// function: [`crate::dsc::enable_cache`] or by setting the environment variable
     /// `DYLDSC_ENABLE_CACHE` to 1.
     pub fn enable_caching<P: AsRef<Path>>(&self, target_cache_dir: P) {
-        self.ptr.enable_caching(target_cache_dir.as_ref().to_str().unwrap())
+        self.ptr
+            .enable_caching(target_cache_dir.as_ref().to_str().unwrap())
     }
 
     /// Flush internal information into the on-disk cache (see: enable_caching)

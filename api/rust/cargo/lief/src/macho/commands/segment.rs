@@ -1,12 +1,12 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::{into_optional, FromFFI};
 use crate::declare_iterator;
-use std::marker::PhantomData;
 use crate::to_slice;
+use lief_ffi as ffi;
+use std::marker::PhantomData;
 
-use crate::macho::section::Section;
 use crate::macho::relocation::Relocation;
+use crate::macho::section::Section;
 
 use bitflags::bitflags;
 
@@ -67,7 +67,7 @@ impl std::fmt::Display for VmProtections {
 /// Class which represents a `LC_SEGMENT/LC_SEGMENT_64` command
 pub struct Segment<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SegmentCommand>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl Segment<'_> {
@@ -138,7 +138,11 @@ impl Segment<'_> {
     /// The original index of this segment or -1 if not defined
     pub fn index(&self) -> Option<u8> {
         let idx = self.ptr.index();
-        if idx < 0 { None } else { Some(idx as u8) }
+        if idx < 0 {
+            None
+        } else {
+            Some(idx as u8)
+        }
     }
 
     /// Return the [`Section`] with the given name (if any)
@@ -169,7 +173,7 @@ impl FromFFI<ffi::MachO_SegmentCommand> for Segment<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_SegmentCommand>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -180,6 +184,24 @@ impl Command for Segment<'_> {
     }
 }
 
-declare_iterator!(Segments, Segment<'a>, ffi::MachO_SegmentCommand, ffi::MachO_Binary, ffi::MachO_Binary_it_segments);
-declare_iterator!(Sections, Section<'a>, ffi::MachO_Section, ffi::MachO_SegmentCommand, ffi::MachO_SegmentCommand_it_sections);
-declare_iterator!(Relocations, Relocation<'a>, ffi::MachO_Relocation, ffi::MachO_SegmentCommand, ffi::MachO_SegmentCommand_it_relocations);
+declare_iterator!(
+    Segments,
+    Segment<'a>,
+    ffi::MachO_SegmentCommand,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_segments
+);
+declare_iterator!(
+    Sections,
+    Section<'a>,
+    ffi::MachO_Section,
+    ffi::MachO_SegmentCommand,
+    ffi::MachO_SegmentCommand_it_sections
+);
+declare_iterator!(
+    Relocations,
+    Relocation<'a>,
+    ffi::MachO_Relocation,
+    ffi::MachO_SegmentCommand,
+    ffi::MachO_SegmentCommand_it_relocations
+);

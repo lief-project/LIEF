@@ -1,7 +1,6 @@
-/// This example shows how to inspect a DWARF debug info using LIEF's API
-
-use std::process::{self, ExitCode};
 use lief::dwarf::types::DwarfType;
+/// This example shows how to inspect a DWARF debug info using LIEF's API
+use std::process::{self, ExitCode};
 
 fn main() -> ExitCode {
     if !lief::is_extended() {
@@ -22,18 +21,28 @@ fn main() -> ExitCode {
     for cu in dbg.compilation_units() {
         println!("Producer: {}", cu.producer());
         for func in cu.functions() {
-            println!("name={}, linkage={}, address={}",
-                func.name(), func.linkage_name(),
+            println!(
+                "name={}, linkage={}, address={}",
+                func.name(),
+                func.linkage_name(),
                 func.address().unwrap_or(0)
             );
         }
 
         for var in cu.variables() {
-            println!("name={}, address={}", var.name(), var.address().unwrap_or(0));
+            println!(
+                "name={}, address={}",
+                var.name(),
+                var.address().unwrap_or(0)
+            );
         }
 
         for ty in cu.types() {
-            println!("name={}, size={}", ty.name().unwrap_or("".to_string()), ty.size().unwrap_or(0));
+            println!(
+                "name={}, size={}",
+                ty.name().unwrap_or("".to_string()),
+                ty.size().unwrap_or(0)
+            );
         }
     }
 

@@ -9,9 +9,7 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Config {
-        Config {
-            linkedit: true,
-        }
+        Config { linkedit: true }
     }
 }
 

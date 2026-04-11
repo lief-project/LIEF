@@ -5,7 +5,6 @@ use crate::common::FromFFI;
 use crate::to_slice;
 use std::marker::PhantomData;
 
-
 /// Structure that represents the `LC_CODE_SIGNATURE` command
 pub struct CodeSignature<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_CodeSignature>,

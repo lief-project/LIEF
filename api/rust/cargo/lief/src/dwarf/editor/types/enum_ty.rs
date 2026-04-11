@@ -10,9 +10,7 @@ pub struct Enum {
 
 impl FromFFI<ffi::DWARF_editor_EnumType> for Enum {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_editor_EnumType>) -> Self {
-        Self {
-            ptr: cmd,
-        }
+        Self { ptr: cmd }
     }
 }
 
@@ -35,13 +33,11 @@ impl Enum {
     }
 }
 
-
 impl EditorType for Enum {
     fn get_base(&self) -> &ffi::DWARF_editor_Type {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-
 
 /// This structure represents an enum value.
 #[allow(dead_code)]
@@ -51,8 +47,6 @@ pub struct Value {
 
 impl FromFFI<ffi::DWARF_editor_EnumType_Value> for Value {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_editor_EnumType_Value>) -> Self {
-        Self {
-            ptr: cmd,
-        }
+        Self { ptr: cmd }
     }
 }

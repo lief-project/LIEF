@@ -1,11 +1,11 @@
 use lief_ffi as ffi;
 
-use std::marker::PhantomData;
 use crate::common::{into_optional, FromFFI};
-use crate::generic;
 use crate::dwarf::function::Function;
-use crate::dwarf::variable::Variable;
 use crate::dwarf::types::Type;
+use crate::dwarf::variable::Variable;
+use crate::generic;
+use std::marker::PhantomData;
 
 use super::compilation_unit::CompilationUnits;
 
@@ -23,7 +23,7 @@ impl FromFFI<ffi::DWARF_DebugInfo> for DebugInfo<'_> {
     fn from_ffi(info: cxx::UniquePtr<ffi::DWARF_DebugInfo>) -> Self {
         Self {
             ptr: info,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

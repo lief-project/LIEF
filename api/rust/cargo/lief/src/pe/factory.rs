@@ -78,7 +78,6 @@ impl Factory {
 
 impl std::fmt::Debug for Factory {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Factory")
-            .finish()
+        f.debug_struct("Factory").finish()
     }
 }

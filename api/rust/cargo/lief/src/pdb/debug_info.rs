@@ -1,13 +1,13 @@
 use lief_ffi as ffi;
 
-use std::path::Path;
-use std::marker::PhantomData;
-use crate::common::{FromFFI, into_optional};
+use crate::common::{into_optional, FromFFI};
 use crate::generic;
+use std::marker::PhantomData;
+use std::path::Path;
 
 use super::compilation_unit::CompilationUnits;
 use super::public_symbol::PublicSymbols;
-use super::types::{Types, Type};
+use super::types::{Type, Types};
 use super::PublicSymbol;
 
 /// Main interface over a PDB.
@@ -23,7 +23,7 @@ impl FromFFI<ffi::PDB_DebugInfo> for DebugInfo<'_> {
     fn from_ffi(info: cxx::UniquePtr<ffi::PDB_DebugInfo>) -> Self {
         Self {
             ptr: info,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -31,7 +31,9 @@ impl FromFFI<ffi::PDB_DebugInfo> for DebugInfo<'_> {
 impl DebugInfo<'_> {
     /// Create a DebugInfo from a PDB file path
     pub fn from<P: AsRef<Path>>(path: P) -> Option<DebugInfo<'static>> {
-        into_optional(ffi::PDB_DebugInfo::from_file(path.as_ref().to_str().unwrap()))
+        into_optional(ffi::PDB_DebugInfo::from_file(
+            path.as_ref().to_str().unwrap(),
+        ))
     }
 
     /// The number of times the PDB file has been written.
@@ -88,7 +90,6 @@ impl generic::DebugInfo for DebugInfo<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-
 
 impl std::fmt::Display for DebugInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {

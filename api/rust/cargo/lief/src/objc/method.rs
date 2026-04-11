@@ -1,7 +1,7 @@
 use lief_ffi as ffi;
 
-use std::marker::PhantomData;
 use crate::common::FromFFI;
+use std::marker::PhantomData;
 
 /// This structure represents an Objective-C Method
 pub struct Method<'a> {
@@ -13,7 +13,7 @@ impl FromFFI<ffi::ObjC_Method> for Method<'_> {
     fn from_ffi(info: cxx::UniquePtr<ffi::ObjC_Method>) -> Self {
         Self {
             ptr: info,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -34,9 +34,8 @@ impl Method<'_> {
         self.ptr.address()
     }
 
-  /// Whether it's an instance method
+    /// Whether it's an instance method
     pub fn is_instance(&self) -> bool {
         self.ptr.is_instance()
     }
 }
-

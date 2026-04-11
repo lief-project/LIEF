@@ -2,14 +2,14 @@
 
 use std::marker::PhantomData;
 
+use crate::coff;
+use crate::common::{into_optional, AsFFI, FromFFI};
+use crate::declare_iterator;
+use crate::generic;
+use crate::to_slice;
+use bitflags::bitflags;
 use lief_ffi as ffi;
 use std::pin::Pin;
-use crate::declare_iterator;
-use crate::to_slice;
-use crate::generic;
-use crate::coff;
-use bitflags::bitflags;
-use crate::common::{into_optional, FromFFI, AsFFI};
 
 /// This structure defines a regular PE section.
 ///
@@ -60,7 +60,6 @@ bitflags! {
         const MEM_WRITE = 0x80000000;
     }
 }
-
 
 impl From<u32> for Characteristics {
     fn from(value: u32) -> Self {
@@ -202,7 +201,6 @@ impl<'a> FromFFI<ffi::PE_Section> for Section<'a> {
         }
     }
 }
-
 
 impl<'a> AsFFI<ffi::PE_Section> for Section<'a> {
     fn as_ffi(&self) -> &ffi::PE_Section {

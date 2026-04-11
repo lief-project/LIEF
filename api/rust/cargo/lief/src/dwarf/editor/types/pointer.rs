@@ -10,16 +10,12 @@ pub struct Pointer {
 
 impl FromFFI<ffi::DWARF_editor_PointerType> for Pointer {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_editor_PointerType>) -> Self {
-        Self {
-            ptr: cmd,
-        }
+        Self { ptr: cmd }
     }
 }
-
 
 impl EditorType for Pointer {
     fn get_base(&self) -> &ffi::DWARF_editor_Type {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

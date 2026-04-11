@@ -19,15 +19,15 @@
 //! </div>
 //!
 //! See: [`crate::dsc::enable_cache`] and [`crate::dsc::enable_cache_from_dir`]
-use lief_ffi as ffi;
-use std::ffi::{CString, c_char};
-use std::path::Path;
 use crate::common::into_optional;
+use lief_ffi as ffi;
+use std::ffi::{c_char, CString};
+use std::path::Path;
 
 pub mod dyld_shared_cache;
+pub mod dylib;
 pub mod mapping_info;
 pub mod subcache;
-pub mod dylib;
 pub mod uuid;
 
 mod caching;
@@ -53,7 +53,6 @@ pub use caching::enable_cache;
 #[doc(inline)]
 pub use caching::enable_cache_from_dir;
 
-
 /// Load a shared cache from a single file or from a directory specified
 /// by the `path` parameter.
 ///
@@ -74,7 +73,10 @@ pub use caching::enable_cache_from_dir;
 /// let cache = LIEF::dsc::load("macos-12.6/", /*arch=*/"x86_64h");
 /// ```
 pub fn load_from_path<P: AsRef<Path>>(path: P, arch: &str) -> Option<DyldSharedCache> {
-    into_optional(ffi::dsc_DyldSharedCache::from_path(path.as_ref().to_str().unwrap(), arch))
+    into_optional(ffi::dsc_DyldSharedCache::from_path(
+        path.as_ref().to_str().unwrap(),
+        arch,
+    ))
 }
 
 pub fn load_from_files<P: AsRef<Path>>(files: &[P]) -> Option<DyldSharedCache> {
@@ -88,7 +90,10 @@ pub fn load_from_files<P: AsRef<Path>>(files: &[P]) -> Option<DyldSharedCache> {
     }
     let files_ptr: *const *const c_char = c_ptrs.as_ptr();
     unsafe {
-        into_optional(ffi::dsc_DyldSharedCache::from_files(files_ptr as *const c_char, c_ptrs.len()))
+        into_optional(ffi::dsc_DyldSharedCache::from_files(
+            files_ptr as *const c_char,
+            c_ptrs.len(),
+        ))
     }
 }
 

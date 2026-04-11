@@ -124,9 +124,7 @@ impl Config {
             coredump_notes: self.coredump_notes,
             force_relocate: self.force_relocate,
             keep_empty_version_requirement: self.keep_empty_version_requirement,
-            skip_dynamic: self.skip_dynamic
+            skip_dynamic: self.skip_dynamic,
         }
     }
 }
-
-

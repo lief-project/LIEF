@@ -1,16 +1,16 @@
 mod utils;
-use std::path::Path;
-use std::env;
-use lief::logging;
-use lief::macho::builder::Config;
-use lief::macho::Relocation;
 use lief::generic::Binary as GenericBinary;
-use lief::macho::binding_info::{self, AsGeneric};
-use lief::macho::commands::{Command, Commands};
-use lief::macho::MachOSection;
 use lief::generic::Symbol;
-use lief::Binary;
+use lief::logging;
+use lief::macho::binding_info::{self, AsGeneric};
+use lief::macho::builder::Config;
+use lief::macho::commands::{Command, Commands};
 use lief::macho::header::CpuType;
+use lief::macho::MachOSection;
+use lief::macho::Relocation;
+use lief::Binary;
+use std::env;
+use std::path::Path;
 
 fn print_binding(binding: &binding_info::BindingInfo) {
     format!("{:?}", binding);
@@ -43,7 +43,12 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
     format!("{}", macho.entrypoint());
     format!("{:?}", macho.header());
     format!("{}{}", macho.header().is_32bit(), macho.header().is_64bit());
-    println!("{:?}:{}:{}", macho.platform(), macho.is_ios(), macho.is_macos());
+    println!(
+        "{:?}:{}:{}",
+        macho.platform(),
+        macho.is_ios(),
+        macho.is_macos()
+    );
 
     for func in macho.functions() {
         format!("{func:?}");
@@ -193,15 +198,12 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
         format!("{reloc:?}");
 
         match reloc {
-            Relocation::Dyld(_) => {
-            }
+            Relocation::Dyld(_) => {}
             Relocation::Fixup(fixup) => {
                 format!("{}", fixup.next());
             }
-            Relocation::Object(_) => {
-            }
-            Relocation::Generic(_) => {
-            }
+            Relocation::Object(_) => {}
+            Relocation::Generic(_) => {}
         }
     }
 
@@ -367,15 +369,21 @@ fn test_api() {
     test_with("binary.metallib");
     test_with("variants_alt.dylib");
     test_with_fullpath("CoreFoundation", "private/MachO/CoreFoundation");
-    test_with_fullpath("kernelcache.release.iPhone17.5", "private/MachO/kernelcache.release.iPhone17.5");
-    test_with_fullpath("lief-dwarf-plugin", "MachO/lief-dwarf-plugin-darwin-arm64.dylib");
+    test_with_fullpath(
+        "kernelcache.release.iPhone17.5",
+        "private/MachO/kernelcache.release.iPhone17.5",
+    );
+    test_with_fullpath(
+        "lief-dwarf-plugin",
+        "MachO/lief-dwarf-plugin-darwin-arm64.dylib",
+    );
 }
 
 #[test]
 fn test_thread_local_variables() {
-    use lief::macho::{Section, ThreadLocalVariables, MachOSection};
-    use lief::macho::section::Type;
     use lief::generic::Section as GenericSection;
+    use lief::macho::section::Type;
+    use lief::macho::{MachOSection, Section, ThreadLocalVariables};
 
     let path = utils::get_macho_sample("lief-dwarf-plugin-darwin-arm64.dylib").unwrap();
     let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else {
@@ -383,7 +391,8 @@ fn test_thread_local_variables() {
     };
     let macho = fat.iter().next().unwrap();
 
-    let thread_vars = macho.sections()
+    let thread_vars = macho
+        .sections()
         .find(|s| s.section_type() == Type::THREAD_LOCAL_VARIABLES);
     assert!(thread_vars.is_some());
 
@@ -410,7 +419,9 @@ fn test_thread_local_variables() {
 #[test]
 fn test_mut_api() {
     let path = utils::get_macho_sample("FAT_MachO_x86_x86-64_library_libc++abi.dylib").unwrap();
-    let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
     for mut bin in fat.iter() {
         bin.add_library("this_is_a_dylib.dylib");
         let tmpfile = tempfile::NamedTempFile::new().unwrap();
@@ -418,7 +429,9 @@ fn test_mut_api() {
     }
 
     let path = utils::get_macho_sample("json_api.cpp_1.o").unwrap();
-    let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
     for mut bin in fat.iter() {
         let tmpfile = tempfile::NamedTempFile::new().unwrap();
         bin.write_with_config(tmpfile.path(), Config::default());

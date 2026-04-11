@@ -1,8 +1,8 @@
 use super::chpe_metadata_arm64;
 use super::chpe_metadata_x86;
-use super::volatile_metadata::VolatileMetadata;
 use super::dynamic_relocation::DynamicRelocation;
 use super::enclave_configuration::EnclaveConfiguration;
+use super::volatile_metadata::VolatileMetadata;
 use crate::common::{into_optional, FromFFI};
 use crate::pe::code_integrity::CodeIntegrity;
 use crate::{declare_iterator, to_conv_opt, to_opt};
@@ -456,7 +456,9 @@ impl LoadConfiguration<'_> {
 
     /// Set the critical section default timeout
     pub fn set_critical_section_default_timeout(&mut self, value: u32) {
-        self.ptr.pin_mut().set_critical_section_default_timeout(value);
+        self.ptr
+            .pin_mut()
+            .set_critical_section_default_timeout(value);
     }
 
     /// Set the decommit free block threshold
@@ -531,12 +533,16 @@ impl LoadConfiguration<'_> {
 
     /// Set the guard CF check function pointer VA
     pub fn set_guard_cf_check_function_pointer(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_cf_check_function_pointer(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_cf_check_function_pointer(value);
     }
 
     /// Set the guard CF dispatch function pointer VA
     pub fn set_guard_cf_dispatch_function_pointer(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_cf_dispatch_function_pointer(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_cf_dispatch_function_pointer(value);
     }
 
     /// Set the guard CF function table VA
@@ -556,12 +562,16 @@ impl LoadConfiguration<'_> {
 
     /// Set the guard address taken IAT entry table VA
     pub fn set_guard_address_taken_iat_entry_table(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_address_taken_iat_entry_table(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_address_taken_iat_entry_table(value);
     }
 
     /// Set the guard address taken IAT entry count
     pub fn set_guard_address_taken_iat_entry_count(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_address_taken_iat_entry_count(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_address_taken_iat_entry_count(value);
     }
 
     /// Set the guard long jump target table VA
@@ -591,17 +601,23 @@ impl LoadConfiguration<'_> {
 
     /// Set the guard RF failure routine function pointer VA
     pub fn set_guard_rf_failure_routine_function_pointer(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_rf_failure_routine_function_pointer(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_rf_failure_routine_function_pointer(value);
     }
 
     /// Set the dynamic value relocation table offset
     pub fn set_dynamic_value_reloctable_offset(&mut self, value: u32) {
-        self.ptr.pin_mut().set_dynamic_value_reloctable_offset(value);
+        self.ptr
+            .pin_mut()
+            .set_dynamic_value_reloctable_offset(value);
     }
 
     /// Set the dynamic value relocation table section
     pub fn set_dynamic_value_reloctable_section(&mut self, value: u16) {
-        self.ptr.pin_mut().set_dynamic_value_reloctable_section(value);
+        self.ptr
+            .pin_mut()
+            .set_dynamic_value_reloctable_section(value);
     }
 
     /// Set reserved2
@@ -611,7 +627,9 @@ impl LoadConfiguration<'_> {
 
     /// Set the guard RF verify stack pointer function pointer VA
     pub fn set_guard_rf_verify_stackpointer_function_pointer(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_rf_verify_stackpointer_function_pointer(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_rf_verify_stackpointer_function_pointer(value);
     }
 
     /// Set the hotpatch table offset
@@ -646,22 +664,30 @@ impl LoadConfiguration<'_> {
 
     /// Set the guard XFG check function pointer VA
     pub fn set_guard_xfg_check_function_pointer(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_xfg_check_function_pointer(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_xfg_check_function_pointer(value);
     }
 
     /// Set the guard XFG dispatch function pointer VA
     pub fn set_guard_xfg_dispatch_function_pointer(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_xfg_dispatch_function_pointer(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_xfg_dispatch_function_pointer(value);
     }
 
     /// Set the guard XFG table dispatch function pointer VA
     pub fn set_guard_xfg_table_dispatch_function_pointer(&mut self, value: u64) {
-        self.ptr.pin_mut().set_guard_xfg_table_dispatch_function_pointer(value);
+        self.ptr
+            .pin_mut()
+            .set_guard_xfg_table_dispatch_function_pointer(value);
     }
 
     /// Set the CastGuard OS determined failure mode VA
     pub fn set_cast_guard_os_determined_failure_mode(&mut self, value: u64) {
-        self.ptr.pin_mut().set_cast_guard_os_determined_failure_mode(value);
+        self.ptr
+            .pin_mut()
+            .set_cast_guard_os_determined_failure_mode(value);
     }
 
     /// Set the guard memcpy function pointer VA
@@ -770,7 +796,10 @@ impl std::fmt::Debug for LoadConfiguration<'_> {
             )
             .field("hotpatch_table_offset", &self.hotpatch_table_offset())
             .field("reserved3", &self.reserved3())
-            .field("enclave_configuration_ptr", &self.enclave_configuration_ptr())
+            .field(
+                "enclave_configuration_ptr",
+                &self.enclave_configuration_ptr(),
+            )
             .field(
                 "volatile_metadata_pointer",
                 &self.volatile_metadata_pointer(),
@@ -803,10 +832,7 @@ impl std::fmt::Debug for LoadConfiguration<'_> {
                 "guard_memcpy_function_pointer",
                 &self.guard_memcpy_function_pointer(),
             )
-            .field(
-                "uma_function_pointers",
-                &self.uma_function_pointers(),
-            )
+            .field("uma_function_pointers", &self.uma_function_pointers())
             .finish()
     }
 }
@@ -974,13 +1000,9 @@ impl std::fmt::Display for &dyn AsCHPEMetadata {
 impl AsCHPEMetadata for CHPEMetadata<'_> {
     fn as_generic(&self) -> &ffi::PE_CHPEMetadata {
         match &self {
-            CHPEMetadata::ARM64(entry) => {
-                entry.as_generic()
-            }
+            CHPEMetadata::ARM64(entry) => entry.as_generic(),
 
-            CHPEMetadata::X86(entry) => {
-                entry.as_generic()
-            }
+            CHPEMetadata::X86(entry) => entry.as_generic(),
         }
     }
 }

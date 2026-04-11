@@ -1,7 +1,5 @@
 mod utils;
-use std::env;
 use lief::elf::builder::Config;
-use lief::logging;
 use lief::elf::dynamic;
 use lief::elf::dynamic::DynamicEntry;
 use lief::elf::note::NoteBase;
@@ -11,12 +9,19 @@ use lief::elf::Notes;
 use lief::generic::Binary as GenericBinary;
 use lief::generic::Section;
 use lief::generic::Symbol;
+use lief::logging;
 use lief::Binary;
+use std::env;
 
 fn explore_elf(name: &str, elf: &lief::elf::Binary) {
     format!("{elf:?}");
     format!("{} {} {}", elf.entrypoint(), elf.imagebase(), elf.is_pie());
-    format!("{} {} {}", elf.has_nx(), elf.original_size(), elf.virtual_size());
+    format!(
+        "{} {} {}",
+        elf.has_nx(),
+        elf.original_size(),
+        elf.virtual_size()
+    );
     format!("{}", elf.interpreter());
 
     for func in elf.functions() {
@@ -30,7 +35,6 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
     if let Some(text) = elf.section_by_name(".text") {
         format!("{text:?}");
     }
-
 
     if let Some(gnu) = elf.gnu_hash() {
         format!("{gnu:?}");
@@ -190,18 +194,41 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
         assert!(elf.segment_from_offset(0).is_some());
         assert!(elf.segment_from_offset(0x100000000).is_none());
 
-        assert!(elf.section_from_offset(0x318, /*skip_nobits*/ true).is_some());
-        assert!(elf.section_from_offset(0x100000000, /*skip_nobits*/ true).is_none());
+        assert!(elf
+            .section_from_offset(0x318, /*skip_nobits*/ true)
+            .is_some());
+        assert!(elf
+            .section_from_offset(0x100000000, /*skip_nobits*/ true)
+            .is_none());
 
-        assert!(elf.section_from_virtual_address(0x400318, /*skip_nobits*/ true).is_some());
-        assert!(elf.section_from_virtual_address(0x100000000, /*skip_nobits*/ true).is_none());
+        assert!(elf
+            .section_from_virtual_address(0x400318, /*skip_nobits*/ true)
+            .is_some());
+        assert!(elf
+            .section_from_virtual_address(0x100000000, /*skip_nobits*/ true)
+            .is_none());
         assert!(!elf.content_from_virtual_address(0x400318, 0x10).is_empty());
 
-
-        assert!(elf.get_int_from_virtual_address::<i8>(0x401126).expect("Read error") != 0);
-        assert!(elf.get_int_from_virtual_address::<i16>(0x401126).expect("Read error") != 0);
-        assert!(elf.get_int_from_virtual_address::<u32>(0x401126).expect("Read error") != 0);
-        assert!(elf.get_int_from_virtual_address::<i64>(0x401126).expect("Read error") != 0);
+        assert!(
+            elf.get_int_from_virtual_address::<i8>(0x401126)
+                .expect("Read error")
+                != 0
+        );
+        assert!(
+            elf.get_int_from_virtual_address::<i16>(0x401126)
+                .expect("Read error")
+                != 0
+        );
+        assert!(
+            elf.get_int_from_virtual_address::<u32>(0x401126)
+                .expect("Read error")
+                != 0
+        );
+        assert!(
+            elf.get_int_from_virtual_address::<i64>(0x401126)
+                .expect("Read error")
+                != 0
+        );
     }
 }
 
@@ -239,14 +266,17 @@ fn test_api() {
 #[test]
 fn test_mut_api() {
     let path = utils::get_elf_sample("elf_reader.mips.elf").unwrap();
-    let Binary::ELF(mut bin) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    let Binary::ELF(mut bin) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
     bin.add_library("this_is_a_test.so");
     let tmpfile = tempfile::NamedTempFile::new().unwrap();
     bin.write(tmpfile.path());
 
     let path = utils::get_elf_sample("ELF_Core_issue_808.core").unwrap();
-    let Binary::ELF(mut bin) = Binary::parse(path.to_str().unwrap()).unwrap() else { panic!("Expecting an ELF"); };
+    let Binary::ELF(mut bin) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
     let tmpfile = tempfile::NamedTempFile::new().unwrap();
     bin.write_with_config(tmpfile.path(), Config::default());
 }
-

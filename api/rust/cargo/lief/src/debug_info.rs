@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
-use crate::pdb;
-use crate::dwarf;
 use crate::common::FromFFI;
+use crate::dwarf;
+use crate::pdb;
 
 /// This enum wraps either a PDB or a DWARF debug info
 pub enum DebugInfo<'a> {

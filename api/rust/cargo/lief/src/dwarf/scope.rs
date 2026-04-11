@@ -33,7 +33,6 @@ impl From<u32> for Type {
             0x00000005 => Type::FUNCTION,
             0x00000006 => Type::COMPILATION_UNIT,
             _ => Type::UNKNOWN(value),
-
         }
     }
 }
@@ -47,7 +46,6 @@ impl From<Type> for u32 {
             Type::FUNCTION => 0x00000005,
             Type::COMPILATION_UNIT => 0x00000006,
             Type::UNKNOWN(_) => 0,
-
         }
     }
 }
@@ -83,4 +81,3 @@ impl Scope<'_> {
         self.ptr.chained(sep).to_string()
     }
 }
-

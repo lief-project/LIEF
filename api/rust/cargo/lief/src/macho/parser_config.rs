@@ -44,12 +44,16 @@ impl Config {
     #[doc(hidden)]
     pub fn to_ffi(&self) -> cxx::UniquePtr<ffi::MachO_ParserConfig> {
         let mut ptr = ffi::MachO_ParserConfig::create();
-        ptr.pin_mut().set_parse_dyld_exports(self.parse_dyld_exports);
-        ptr.pin_mut().set_parse_dyld_bindings(self.parse_dyld_bindings);
-        ptr.pin_mut().set_parse_dyld_rebases(self.parse_dyld_rebases);
+        ptr.pin_mut()
+            .set_parse_dyld_exports(self.parse_dyld_exports);
+        ptr.pin_mut()
+            .set_parse_dyld_bindings(self.parse_dyld_bindings);
+        ptr.pin_mut()
+            .set_parse_dyld_rebases(self.parse_dyld_rebases);
         ptr.pin_mut().set_parse_overlay(self.parse_overlay);
         ptr.pin_mut().set_fix_from_memory(self.fix_from_memory);
-        ptr.pin_mut().set_from_dyld_shared_cache(self.from_dyld_shared_cache);
+        ptr.pin_mut()
+            .set_from_dyld_shared_cache(self.from_dyld_shared_cache);
         ptr
     }
 

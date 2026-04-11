@@ -24,35 +24,70 @@ impl Dylib<'_> {
     /// Create a new ID_DYLIB command
     pub fn id_dylib(name: &str, timestamp: u32, current_version: u32, compat_version: u32) -> Self {
         Self::from_ffi(ffi::MachO_Dylib::id_dylib(
-            name.to_string(), timestamp, current_version, compat_version,
+            name.to_string(),
+            timestamp,
+            current_version,
+            compat_version,
         ))
     }
 
     /// Create a new LOAD_DYLIB command
-    pub fn load_dylib(name: &str, timestamp: u32, current_version: u32, compat_version: u32) -> Self {
+    pub fn load_dylib(
+        name: &str,
+        timestamp: u32,
+        current_version: u32,
+        compat_version: u32,
+    ) -> Self {
         Self::from_ffi(ffi::MachO_Dylib::load_dylib(
-            name.to_string(), timestamp, current_version, compat_version,
+            name.to_string(),
+            timestamp,
+            current_version,
+            compat_version,
         ))
     }
 
     /// Create a new REEXPORT_DYLIB command
-    pub fn reexport_dylib(name: &str, timestamp: u32, current_version: u32, compat_version: u32) -> Self {
+    pub fn reexport_dylib(
+        name: &str,
+        timestamp: u32,
+        current_version: u32,
+        compat_version: u32,
+    ) -> Self {
         Self::from_ffi(ffi::MachO_Dylib::reexport_dylib(
-            name.to_string(), timestamp, current_version, compat_version,
+            name.to_string(),
+            timestamp,
+            current_version,
+            compat_version,
         ))
     }
 
     /// Create a new WEAK_DYLIB command
-    pub fn weak_dylib(name: &str, timestamp: u32, current_version: u32, compat_version: u32) -> Self {
+    pub fn weak_dylib(
+        name: &str,
+        timestamp: u32,
+        current_version: u32,
+        compat_version: u32,
+    ) -> Self {
         Self::from_ffi(ffi::MachO_Dylib::weak_dylib(
-            name.to_string(), timestamp, current_version, compat_version,
+            name.to_string(),
+            timestamp,
+            current_version,
+            compat_version,
         ))
     }
 
     /// Create a new LAZY_LOAD_DYLIB command
-    pub fn lazy_load_dylib(name: &str, timestamp: u32, current_version: u32, compat_version: u32) -> Self {
+    pub fn lazy_load_dylib(
+        name: &str,
+        timestamp: u32,
+        current_version: u32,
+        compat_version: u32,
+    ) -> Self {
         Self::from_ffi(ffi::MachO_Dylib::lazy_load_dylib(
-            name.to_string(), timestamp, current_version, compat_version,
+            name.to_string(),
+            timestamp,
+            current_version,
+            compat_version,
         ))
     }
 

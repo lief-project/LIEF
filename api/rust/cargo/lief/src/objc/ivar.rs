@@ -1,7 +1,7 @@
 use lief_ffi as ffi;
 
-use std::marker::PhantomData;
 use crate::common::FromFFI;
+use std::marker::PhantomData;
 
 /// This structure represents an instance variable (ivar)
 pub struct IVar<'a> {
@@ -13,7 +13,7 @@ impl FromFFI<ffi::ObjC_IVar> for IVar<'_> {
     fn from_ffi(info: cxx::UniquePtr<ffi::ObjC_IVar>) -> Self {
         Self {
             ptr: info,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

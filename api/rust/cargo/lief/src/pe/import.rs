@@ -1,7 +1,7 @@
 //! This module represents PE's Imports
 
-use std::pin::Pin;
 use std::marker::PhantomData;
+use std::pin::Pin;
 
 use crate::common::into_optional;
 use crate::declare_iterator;

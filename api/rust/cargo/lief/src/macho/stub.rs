@@ -1,7 +1,7 @@
 use lief_ffi as ffi;
 
-use crate::{to_slice, to_result, Error};
 use crate::common::FromFFI;
+use crate::{to_result, to_slice, Error};
 
 use std::fmt;
 use std::marker::PhantomData;
@@ -22,7 +22,7 @@ use std::marker::PhantomData;
 /// ```
 pub struct Stub<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Stub>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl Stub<'_> {
@@ -61,12 +61,11 @@ impl fmt::Debug for Stub<'_> {
     }
 }
 
-
 impl FromFFI<ffi::MachO_Stub> for Stub<'_> {
     fn from_ffi(stub: cxx::UniquePtr<ffi::MachO_Stub>) -> Self {
         Self {
             ptr: stub,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

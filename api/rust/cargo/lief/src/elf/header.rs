@@ -4,7 +4,6 @@ use std::{fmt, marker::PhantomData};
 
 use crate::common::FromFFI;
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 /// The type of the underlying ELF file. This enum matches
@@ -27,7 +26,6 @@ pub enum FileType {
     UNKNOWN(u32),
 }
 
-
 impl From<u32> for FileType {
     fn from(value: u32) -> Self {
         match value {
@@ -37,11 +35,9 @@ impl From<u32> for FileType {
             0x00000003 => FileType::DYN,
             0x00000004 => FileType::CORE,
             _ => FileType::UNKNOWN(value),
-
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -61,11 +57,9 @@ impl From<u32> for Version {
             0x00000000 => Version::NONE,
             0x00000001 => Version::CURRENT,
             _ => Version::UNKNOWN(value),
-
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -89,11 +83,9 @@ impl From<u32> for Class {
             0x00000001 => Class::ELF32,
             0x00000002 => Class::ELF64,
             _ => Class::UNKNOWN(value),
-
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -148,7 +140,6 @@ pub enum OsAbi {
     UNKNOWN(u32),
 }
 
-
 impl From<u32> for OsAbi {
     fn from(value: u32) -> Self {
         match value {
@@ -175,7 +166,6 @@ impl From<u32> for OsAbi {
             0x00000061 => OsAbi::ARM,
             0x000000ff => OsAbi::STANDALONE,
             _ => OsAbi::UNKNOWN(value),
-
         }
     }
 }
@@ -211,7 +201,6 @@ impl From<OsAbi> for u32 {
     }
 }
 
-
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 /// Match the result `Elfxx_Ehdr.e_ident[EI_DATA]`
@@ -232,7 +221,6 @@ impl From<u32> for ElfData {
             0x00000001 => ElfData::LSB,
             0x00000002 => ElfData::MSB,
             _ => ElfData::UNKNOWN(value),
-
         }
     }
 }
@@ -241,14 +229,14 @@ impl From<u32> for ElfData {
 /// ELF `Elfxx_Ehdr` structure
 pub struct Header<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Header>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl FromFFI<ffi::ELF_Header> for Header<'_> {
     fn from_ffi(hdr: cxx::UniquePtr<ffi::ELF_Header>) -> Self {
         Self {
             ptr: hdr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -746,7 +734,6 @@ impl From<u32> for Arch {
             0x00000102 => Arch::LOONGARCH,
             0x00009026 => Arch::ALPHA_ALT,
             _ => Arch::UNKNOWN(value),
-
         }
     }
 }
@@ -934,7 +921,6 @@ impl From<Arch> for u32 {
             Arch::LOONGARCH => 0x00000102,
             Arch::ALPHA_ALT => 0x00009026,
             Arch::UNKNOWN(value) => value,
-
         }
     }
 }

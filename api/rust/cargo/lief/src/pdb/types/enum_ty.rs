@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional};
-use std::marker::PhantomData;
+use crate::common::{into_optional, FromFFI};
 use crate::pdb::types::{PdbType, Type};
+use std::marker::PhantomData;
 
 use crate::declare_fwd_iterator;
 
@@ -62,7 +62,6 @@ impl Entry<'_> {
         self.ptr.value()
     }
 }
-
 
 impl FromFFI<ffi::PDB_types_Enum_Entry> for Entry<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::PDB_types_Enum_Entry>) -> Self {

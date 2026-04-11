@@ -12,8 +12,8 @@
 
 use lief_ffi as ffi;
 
-use std::path::Path;
 use std::convert::{From, Into};
+use std::path::Path;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -136,4 +136,3 @@ macro_rules! log_err {
         $crate::__lief_log!(lief::logging::Level::ERR, $($args)*)
     };
 }
-

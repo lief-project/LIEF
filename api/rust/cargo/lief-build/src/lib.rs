@@ -1,14 +1,14 @@
-use std::env;
-use semver::Version;
-use std::path::{PathBuf, Path};
-use miette::IntoDiagnostic;
 use git_version::git_version;
+use miette::IntoDiagnostic;
+use semver::Version;
+use std::env;
+use std::path::{Path, PathBuf};
 
 const GIT_VERSION: &str = git_version!(
     args = ["--tags", "--long", "--dirty"],
     prefix = "git:",
     cargo_prefix = "cargo:",
-    fallback="latest"
+    fallback = "latest"
 );
 
 const GH_URL: &str = "https://github.com/lief-project/LIEF/releases/download";
@@ -30,7 +30,7 @@ const SUPPORTED_TARGETS: &[&str; 13] = &[
     "x86_64-linux-android",
 ];
 
-fn get_s3_url() ->  String {
+fn get_s3_url() -> String {
     env::var("LIEF_RUST_S3_PREFIX").unwrap_or(DEFAULT_S3_URL.to_string())
 }
 
@@ -69,7 +69,8 @@ fn get_urls_from_git(target: &String, version: &str) -> Vec<String> {
     let parts: Vec<&str> = version.split('-').collect();
     let cargo_version = env::var("CARGO_PKG_VERSION").unwrap();
 
-    if parts.is_empty() { // Fallback on cargo version
+    if parts.is_empty() {
+        // Fallback on cargo version
         eprintln!("Invalid Git-based version. Falling back to Cargo-based version");
         return get_urls_from_cargo(target, cargo_version.as_str());
     }
@@ -81,7 +82,8 @@ fn get_urls_from_git(target: &String, version: &str) -> Vec<String> {
         return get_urls_from_cargo(target, cargo_version.as_str());
     }
 
-    if parts.len() == 1 { // Tagged version
+    if parts.len() == 1 {
+        // Tagged version
         println!("Using tagged version: {git_ver}");
         let s3_prefix = get_s3_url();
         let github_url = format!("{GH_URL}/{git_ver}/{}", get_filename(target));
@@ -103,18 +105,20 @@ fn get_nightly_url(target: &String) -> Vec<String> {
     urls
 }
 
-
 fn get_cache_urls() -> Vec<String> {
     let version = String::from(GIT_VERSION);
     let target = get_target();
     if version.starts_with("cargo:") {
-        let tag = version.strip_prefix("cargo:").expect("Can't strip 'cargo:' prefix");
+        let tag = version
+            .strip_prefix("cargo:")
+            .expect("Can't strip 'cargo:' prefix");
         return get_urls_from_cargo(&target, tag);
     }
     if version.starts_with("git:") {
-        let git_ver = version.strip_prefix("git:")
-                                .expect("Can't strip 'git:' prefix")
-                                .to_string();
+        let git_ver = version
+            .strip_prefix("git:")
+            .expect("Can't strip 'git:' prefix")
+            .to_string();
         return get_urls_from_git(&target, &git_ver);
     }
     get_nightly_url(&target)
@@ -138,13 +142,14 @@ fn emit_cargo_directives(root: &Path) -> miette::Result<()> {
 fn download(dst_archive: &PathBuf) -> bool {
     let urls = get_cache_urls();
     if urls.is_empty() {
-        panic!("Can't determine precompiled URL for this build.\n
-                Please consider opening a GitHub issue.");
+        panic!(
+            "Can't determine precompiled URL for this build.\n
+                Please consider opening a GitHub issue."
+        );
     }
     for url in urls.iter() {
         println!("Trying to download from {}", url);
-        let mut resp =
-            reqwest::blocking::get(url).expect("failed to download LIEF cache");
+        let mut resp = reqwest::blocking::get(url).expect("failed to download LIEF cache");
         if resp.status().is_client_error() || resp.status().is_server_error() {
             eprintln!("Can't download precompiled LIEF ffi bindings from: {}", url);
             continue;

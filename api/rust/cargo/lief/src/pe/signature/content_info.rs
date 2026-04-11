@@ -2,9 +2,9 @@ use std::marker::PhantomData;
 
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional};
-use crate::to_slice;
+use crate::common::{into_optional, FromFFI};
 use crate::pe::Algorithms;
+use crate::to_slice;
 
 pub struct ContentInfo<'a> {
     ptr: cxx::UniquePtr<ffi::PE_ContentInfo>,
@@ -70,8 +70,7 @@ impl<'a> FromFFI<ffi::PE_ContentInfo_Content> for Content<'a> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Content::SpcIndirectData(SpcIndirectData::from_ffi(raw))
-            }
-            else if ffi::PE_PKCS9TSTInfo::classof(content_ref) {
+            } else if ffi::PE_PKCS9TSTInfo::classof(content_ref) {
                 let raw = {
                     type From = cxx::UniquePtr<ffi::PE_ContentInfo_Content>;
                     type To = cxx::UniquePtr<ffi::PE_PKCS9TSTInfo>;
@@ -164,8 +163,7 @@ impl PKCS9TSTInfo<'_> {
 
 impl std::fmt::Debug for PKCS9TSTInfo<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("PKCS9TSTInfo")
-            .finish()
+        f.debug_struct("PKCS9TSTInfo").finish()
     }
 }
 
@@ -184,7 +182,6 @@ impl ContentTrait for PKCS9TSTInfo<'_> {
     }
 }
 
-
 pub struct Generic<'a> {
     ptr: cxx::UniquePtr<ffi::PE_GenericContent>,
     _owner: PhantomData<&'a ffi::PE_ContentInfo>,
@@ -198,7 +195,6 @@ impl Generic<'_> {
     pub fn oid(&self) -> String {
         self.ptr.oid().to_string()
     }
-
 }
 
 impl std::fmt::Debug for Generic<'_> {
@@ -221,4 +217,3 @@ impl ContentTrait for Generic<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

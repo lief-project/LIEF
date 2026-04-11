@@ -1,10 +1,10 @@
+use super::{Header, Relocation, Section, String, Symbol};
+use crate::assembly::Instructions;
+use crate::common::into_optional;
+use crate::common::FromFFI;
+use crate::{declare_iterator, declare_lazy_iterator};
 use lief_ffi as ffi;
 use std::path::Path;
-use crate::common::FromFFI;
-use crate::{declare_lazy_iterator, declare_iterator};
-use crate::common::into_optional;
-use crate::assembly::Instructions;
-use super::{Relocation, Symbol, Section, Header, String};
 
 pub struct Binary {
     ptr: cxx::UniquePtr<ffi::COFF_Binary>,
@@ -82,8 +82,10 @@ impl Binary {
     pub fn disassemble_slice(&self, slice: &[u8], address: u64) -> InstructionsIt<'_> {
         unsafe {
             InstructionsIt::new(self.ptr.disassemble_buffer(
-                    slice.as_ptr(), slice.len().try_into().unwrap(),
-                    address))
+                slice.as_ptr(),
+                slice.len().try_into().unwrap(),
+                address,
+            ))
         }
     }
 
@@ -100,7 +102,6 @@ impl Binary {
     pub fn disassemble_function(&self, name: &str) -> InstructionsIt<'_> {
         InstructionsIt::new(self.ptr.disassemble_function(name.to_string()))
     }
-
 
     /// Disassemble code for the given symbol
     ///
@@ -126,12 +127,9 @@ impl std::fmt::Display for Binary {
 
 impl std::fmt::Debug for Binary {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("COFF Binary")
-            .finish()
+        f.debug_struct("COFF Binary").finish()
     }
 }
-
-
 
 declare_iterator!(
     Relocations,
@@ -172,7 +170,6 @@ declare_iterator!(
     ffi::COFF_Binary,
     ffi::COFF_Binary_it_functions
 );
-
 
 declare_lazy_iterator!(
     InstructionsIt,

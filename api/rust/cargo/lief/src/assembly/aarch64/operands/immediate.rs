@@ -19,9 +19,7 @@ pub struct Immediate {
 
 impl FromFFI<ffi::asm_aarch64_operands_Immediate> for Immediate {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::asm_aarch64_operands_Immediate>) -> Self {
-        Self {
-            ptr,
-        }
+        Self { ptr }
     }
 }
 

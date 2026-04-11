@@ -5,8 +5,8 @@ use crate::declare_iterator;
 use crate::generic;
 use crate::macho::section::MachOSection;
 use std::fmt;
-use std::pin::Pin;
 use std::marker::PhantomData;
+use std::pin::Pin;
 
 /// This class represents a MachO section whose type is
 /// [`crate::macho::section::Type::THREAD_LOCAL_VARIABLES`].
@@ -36,7 +36,9 @@ impl ThreadLocalVariables<'_> {
 
     /// Change the [`Thunk`] at the given index.
     pub fn set(&mut self, idx: u64, thunk: &Thunk<'_>) {
-        self.ptr.pin_mut().set_thunk(idx, thunk.func(), thunk.key(), thunk.offset());
+        self.ptr
+            .pin_mut()
+            .set_thunk(idx, thunk.func(), thunk.key(), thunk.offset());
     }
 }
 
@@ -65,15 +67,13 @@ impl generic::Section for ThreadLocalVariables<'_> {
     fn as_generic_mut(&mut self) -> Pin<&mut ffi::AbstractSection> {
         unsafe {
             Pin::new_unchecked({
-                (self.as_generic() as *const ffi::AbstractSection
-                    as *mut ffi::AbstractSection)
+                (self.as_generic() as *const ffi::AbstractSection as *mut ffi::AbstractSection)
                     .as_mut()
                     .unwrap()
             })
         }
     }
 }
-
 
 impl MachOSection for ThreadLocalVariables<'_> {
     fn as_base(&self) -> &ffi::MachO_Section {
@@ -83,15 +83,13 @@ impl MachOSection for ThreadLocalVariables<'_> {
     fn as_mut_base(&mut self) -> Pin<&mut ffi::MachO_Section> {
         unsafe {
             Pin::new_unchecked({
-                (self.as_base() as *const ffi::MachO_Section
-                    as *mut ffi::MachO_Section)
+                (self.as_base() as *const ffi::MachO_Section as *mut ffi::MachO_Section)
                     .as_mut()
                     .unwrap()
             })
         }
     }
 }
-
 
 /// Descriptor for a single thread-local variable.
 ///

@@ -13,8 +13,10 @@ fn main() -> ExitCode {
         for macho in fat.iter() {
             for cmd in macho.commands() {
                 if let lief::macho::Commands::EncryptionInfo(info) = cmd {
-                    println!("Encrypted area: 0x{:08x} - 0x{:08x} (id: {})",
-                        info.crypt_offset(), info.crypt_offset() + info.crypt_size(),
+                    println!(
+                        "Encrypted area: 0x{:08x} - 0x{:08x} (id: {})",
+                        info.crypt_offset(),
+                        info.crypt_offset() + info.crypt_size(),
                         info.crypt_id()
                     )
                 }

@@ -1,5 +1,4 @@
 /// Print the different entries of the PE's rich header
-
 use std::process::{self, ExitCode};
 
 fn main() -> ExitCode {
@@ -19,8 +18,12 @@ fn main() -> ExitCode {
 
         println!("Rich header key: 0x{:x}", rich_header.key());
         for entry in rich_header.entries() {
-            println!("id: 0x{:04x} build_id: 0x{:04x} count: #{}",
-                     entry.id(), entry.build_id(), entry.count());
+            println!(
+                "id: 0x{:04x} build_id: 0x{:04x} count: #{}",
+                entry.id(),
+                entry.build_id(),
+                entry.count()
+            );
         }
 
         return ExitCode::SUCCESS;

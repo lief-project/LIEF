@@ -1,6 +1,6 @@
 use super::Command;
-use lief_ffi as ffi;
 use crate::common::FromFFI;
+use lief_ffi as ffi;
 use std::marker::PhantomData;
 
 /// Class that represents the `LC_ROUTINE/LC_ROUTINE64` commands.
@@ -14,7 +14,7 @@ use std::marker::PhantomData;
 /// > routines (used for C++ static constructors) in the library.
 pub struct Routine<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Routine>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl Routine<'_> {
@@ -74,7 +74,7 @@ impl FromFFI<ffi::MachO_Routine> for Routine<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_Routine>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -84,4 +84,3 @@ impl Command for Routine<'_> {
         self.ptr.as_ref().unwrap().as_ref()
     }
 }
-

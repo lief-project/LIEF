@@ -2,8 +2,8 @@ use lief_ffi as ffi;
 
 use bitflags::bitflags;
 
-use std::{fmt, marker::PhantomData};
 use crate::common::FromFFI;
+use std::{fmt, marker::PhantomData};
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -43,7 +43,6 @@ impl From<u32> for FileType {
             0x0000000d => FileType::GPU_EXECUTE,
             0x0000000e => FileType::GPU_DYLIB,
             _ => FileType::UNKNOWN(value),
-
         }
     }
 }
@@ -68,7 +67,6 @@ impl From<FileType> for u32 {
         }
     }
 }
-
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
@@ -116,7 +114,6 @@ impl From<i32> for CpuType {
             0x01000015 => CpuType::INTEL_GPU,
             0x01000017 => CpuType::AIR64,
             _ => CpuType::UNKNOWN(value),
-
         }
     }
 }
@@ -145,7 +142,6 @@ impl From<CpuType> for i32 {
         }
     }
 }
-
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -183,7 +179,6 @@ bitflags! {
     }
 }
 
-
 impl From<u32> for Flags {
     fn from(value: u32) -> Self {
         Flags::from_bits_truncate(value)
@@ -198,14 +193,14 @@ impl From<Flags> for u32 {
 /// Structure that represents the main Mach-O header (at the beginning of the file)
 pub struct Header<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_Header>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
 impl FromFFI<ffi::MachO_Header> for Header<'_> {
     fn from_ffi(hdr: cxx::UniquePtr<ffi::MachO_Header>) -> Self {
         Self {
             ptr: hdr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

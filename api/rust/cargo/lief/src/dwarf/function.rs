@@ -1,15 +1,15 @@
 use lief_ffi as ffi;
 
-use super::variable::Variables;
 use super::lexical_block::LexicalBlock;
-use super::{Scope, Type, Parameters};
+use super::variable::Variables;
+use super::{Parameters, Scope, Type};
+use crate::assembly;
 use crate::common::{into_optional, into_ranges, FromFFI};
-use crate::{declare_fwd_iterator, declare_lazy_iterator};
 use crate::to_result;
-use crate::{DebugLocation, DeclOpt};
 use crate::Error;
 use crate::Range;
-use crate::assembly;
+use crate::{declare_fwd_iterator, declare_lazy_iterator};
+use crate::{DebugLocation, DeclOpt};
 use std::marker::PhantomData;
 
 /// This structure represents a DWARF function which can be associated with either:
@@ -162,7 +162,6 @@ declare_fwd_iterator!(
     ffi::DWARF_Function_it_thrown_types
 );
 
-
 declare_lazy_iterator!(
     Instructions,
     assembly::Instructions,
@@ -170,7 +169,6 @@ declare_lazy_iterator!(
     ffi::DWARF_Function,
     ffi::DWARF_Function_it_instructions
 );
-
 
 declare_fwd_iterator!(
     LexicalBlocks,

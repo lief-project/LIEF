@@ -144,81 +144,45 @@ pub trait DebugEntry {
 impl DebugEntry for Entries<'_> {
     fn get_base(&self) -> &ffi::PE_Debug {
         match &self {
-            Entries::CodeView(entry) => {
-                entry.get_base()
-            }
+            Entries::CodeView(entry) => entry.get_base(),
 
-            Entries::CodeViewPDB(entry) => {
-                entry.get_base()
-            }
+            Entries::CodeViewPDB(entry) => entry.get_base(),
 
-            Entries::Repro(entry) => {
-                entry.get_base()
-            }
+            Entries::Repro(entry) => entry.get_base(),
 
-            Entries::Pogo(entry) => {
-                entry.get_base()
-            }
+            Entries::Pogo(entry) => entry.get_base(),
 
-            Entries::PDBChecksum(entry) => {
-                entry.get_base()
-            }
+            Entries::PDBChecksum(entry) => entry.get_base(),
 
-            Entries::VCFeature(entry) => {
-                entry.get_base()
-            }
+            Entries::VCFeature(entry) => entry.get_base(),
 
-            Entries::ExDllCharacteristics(entry) => {
-                entry.get_base()
-            }
+            Entries::ExDllCharacteristics(entry) => entry.get_base(),
 
-            Entries::FPO(entry) => {
-                entry.get_base()
-            }
+            Entries::FPO(entry) => entry.get_base(),
 
-            Entries::Generic(entry) => {
-                entry.get_base()
-            }
+            Entries::Generic(entry) => entry.get_base(),
         }
     }
 
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         match self {
-            Entries::CodeView(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::CodeView(entry) => entry.get_base_mut(),
 
-            Entries::CodeViewPDB(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::CodeViewPDB(entry) => entry.get_base_mut(),
 
-            Entries::Repro(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::Repro(entry) => entry.get_base_mut(),
 
-            Entries::Pogo(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::Pogo(entry) => entry.get_base_mut(),
 
-            Entries::PDBChecksum(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::PDBChecksum(entry) => entry.get_base_mut(),
 
-            Entries::VCFeature(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::VCFeature(entry) => entry.get_base_mut(),
 
-            Entries::ExDllCharacteristics(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::ExDllCharacteristics(entry) => entry.get_base_mut(),
 
-            Entries::FPO(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::FPO(entry) => entry.get_base_mut(),
 
-            Entries::Generic(entry) => {
-                entry.get_base_mut()
-            }
+            Entries::Generic(entry) => entry.get_base_mut(),
         }
     }
 }
@@ -327,9 +291,9 @@ impl DebugEntry for Generic<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap() as *const ffi::PE_Debug as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -410,9 +374,9 @@ impl DebugEntry for Pogo<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_Debug as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -531,9 +495,9 @@ impl DebugEntry for CodeView<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_Debug as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -611,7 +575,9 @@ impl CodeViewPDB<'_> {
 
     pub fn set_signature(&mut self, signature: &[u8; 16]) -> &mut Self {
         unsafe {
-            self.ptr.pin_mut().set_signature(signature.as_ptr(), signature.len());
+            self.ptr
+                .pin_mut()
+                .set_signature(signature.as_ptr(), signature.len());
         }
         self
     }
@@ -625,9 +591,10 @@ impl DebugEntry for CodeViewPDB<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref().as_ref()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref().as_ref() as *const ffi::PE_Debug
+                    as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -678,9 +645,9 @@ impl DebugEntry for Repro<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_Debug as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -729,7 +696,6 @@ impl From<u32> for ChecksumAlgorithm {
         match value {
             0x00000001 => ChecksumAlgorithm::SHA256,
             _ => ChecksumAlgorithm::UNKNOWN(value),
-
         }
     }
 }
@@ -738,7 +704,6 @@ impl From<ChecksumAlgorithm> for u32 {
         match value {
             ChecksumAlgorithm::SHA256 => 0x00000001,
             ChecksumAlgorithm::UNKNOWN(value) => value,
-
         }
     }
 }
@@ -770,15 +735,13 @@ impl DebugEntry for PDBChecksum<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_Debug as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
 }
-
-
 
 /// This structure represents the `IMAGE_DEBUG_TYPE_VC_FEATURE` debug entry
 pub struct VCFeature<'a> {
@@ -834,9 +797,9 @@ impl DebugEntry for VCFeature<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_Debug as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -863,7 +826,6 @@ impl<'a> FromFFI<ffi::PE_ExDllCharacteristics> for ExDllCharacteristics<'a> {
         }
     }
 }
-
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -911,9 +873,9 @@ impl DebugEntry for ExDllCharacteristics<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_Debug as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }
@@ -922,7 +884,9 @@ impl DebugEntry for ExDllCharacteristics<'_> {
 impl std::fmt::Debug for ExDllCharacteristics<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let base = self as &dyn DebugEntry;
-        f.debug_struct("ExDllCharacteristics").field("base", &base).finish()
+        f.debug_struct("ExDllCharacteristics")
+            .field("base", &base)
+            .finish()
     }
 }
 
@@ -955,9 +919,9 @@ impl DebugEntry for FPO<'_> {
     fn get_base_mut(&mut self) -> Pin<&mut ffi::PE_Debug> {
         unsafe {
             Pin::new_unchecked({
-                (self.ptr.as_ref().unwrap().as_ref()
-                    as *const ffi::PE_Debug
-                    as *mut ffi::PE_Debug).as_mut().unwrap()
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::PE_Debug as *mut ffi::PE_Debug)
+                    .as_mut()
+                    .unwrap()
             })
         }
     }

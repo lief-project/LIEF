@@ -1,7 +1,7 @@
 use super::Command;
-use lief_ffi as ffi;
-use crate::declare_iterator;
 use crate::common::FromFFI;
+use crate::declare_iterator;
+use lief_ffi as ffi;
 
 use std::marker::PhantomData;
 
@@ -17,9 +17,8 @@ use std::marker::PhantomData;
 /// > where the bundle is built with "-client_name client_name".
 pub struct SubClient<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_SubClient>,
-    _owner: PhantomData<&'a ffi::MachO_Binary>
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
-
 
 impl SubClient<'_> {
     /// Name of the subclient
@@ -42,7 +41,7 @@ impl FromFFI<ffi::MachO_SubClient> for SubClient<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_SubClient>) -> Self {
         Self {
             ptr: cmd,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

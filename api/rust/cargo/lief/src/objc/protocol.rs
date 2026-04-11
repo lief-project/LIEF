@@ -1,10 +1,10 @@
 use lief_ffi as ffi;
 
-use std::marker::PhantomData;
 use crate::common::FromFFI;
 use crate::declare_fwd_iterator;
+use std::marker::PhantomData;
 
-use super::{Property, Method, DeclOpt};
+use super::{DeclOpt, Method, Property};
 
 /// This class represents an Objective-C `@protocol`
 pub struct Protocol<'a> {
@@ -16,7 +16,7 @@ impl FromFFI<ffi::ObjC_Protocol> for Protocol<'_> {
     fn from_ffi(info: cxx::UniquePtr<ffi::ObjC_Protocol>) -> Self {
         Self {
             ptr: info,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }

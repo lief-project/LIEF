@@ -9,7 +9,9 @@ fn has_dyld_shared_cache_samples() -> bool {
         return true;
     }
     if let Some(dir) = env::var_os("LIEF_DSC_SAMPLES_DIR") {
-        return PathBuf::from_str(&dir.into_string().unwrap_or("".to_string())).unwrap().is_dir();
+        return PathBuf::from_str(&dir.into_string().unwrap_or("".to_string()))
+            .unwrap()
+            .is_dir();
     }
     return false;
 }
@@ -50,8 +52,12 @@ fn run_ios_181(cache: &lief::dsc::DyldSharedCache) {
     assert!(cache.find_lib_from_va(0x20d0a4010).is_some());
     assert!(cache.find_lib_from_va(0).is_none());
 
-    assert!(cache.find_lib_from_path("/usr/lib/libobjc.A.dylib").is_some());
-    assert!(cache.find_lib_from_path("/usr/lib/libobjc.X.dylib").is_none());
+    assert!(cache
+        .find_lib_from_path("/usr/lib/libobjc.A.dylib")
+        .is_some());
+    assert!(cache
+        .find_lib_from_path("/usr/lib/libobjc.X.dylib")
+        .is_none());
 
     assert!(cache.find_lib_from_name("liblockdown.dylib").is_some());
     assert!(cache.find_lib_from_path("liblockdown.A.dylib").is_none());
@@ -68,7 +74,6 @@ fn run_ios_181(cache: &lief::dsc::DyldSharedCache) {
             explore_mapping_info(cache, &info);
         }
     }
-
 }
 
 #[test]
@@ -76,8 +81,10 @@ fn test_api() {
     if !lief::is_extended() || !has_dyld_shared_cache_samples() {
         return;
     }
-    let cache = lief::dsc::load_from_path(get_dsc_sample("ios-18.1/").to_str().unwrap(), /*arch*/"");
+    let cache = lief::dsc::load_from_path(
+        get_dsc_sample("ios-18.1/").to_str().unwrap(),
+        /*arch*/ "",
+    );
     assert!(cache.is_some());
     run_ios_181(&cache.unwrap());
 }
-

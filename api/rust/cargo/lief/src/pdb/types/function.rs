@@ -1,10 +1,10 @@
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional};
-use std::marker::PhantomData;
-use crate::pdb::types::PdbType;
 use super::Type;
+use crate::common::{into_optional, FromFFI};
 use crate::declare_fwd_iterator;
+use crate::pdb::types::PdbType;
+use std::marker::PhantomData;
 
 /// This structure wraps a `LF_PROCEDURE` PDB type
 pub struct Function<'a> {

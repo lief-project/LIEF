@@ -1,17 +1,17 @@
 mod utils;
-use std::fmt::format;
-use std::env;
+use lief::generic::{Section, Symbol};
 use lief::logging;
-use lief::generic::{Symbol, Section};
+use std::env;
+use std::fmt::format;
 
 fn explore_coff(bin_name: &str, coff: &lief::coff::Binary) {
     match coff.header() {
         lief::coff::Header::BigObj(big) => {
             format!("{:?}{}", big, big);
-        },
+        }
         lief::coff::Header::Regular(regular) => {
             format!("{:?}{}", regular, regular);
-        },
+        }
     }
 
     for section in coff.sections() {
@@ -60,7 +60,6 @@ fn test_with(bin_name: &str) {
         explore_coff(bin_name, &coff);
     }
 }
-
 
 #[test]
 fn test_api() {

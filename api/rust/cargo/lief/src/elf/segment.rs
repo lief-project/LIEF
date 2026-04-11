@@ -1,5 +1,5 @@
-use lief_ffi as ffi;
 use bitflags::bitflags;
+use lief_ffi as ffi;
 use std::fmt;
 use std::marker::PhantomData;
 
@@ -111,7 +111,6 @@ impl From<u64> for Type {
             0x20000060000014 => Type::HP_STACK,
             0x20000060000015 => Type::HP_CORE_UTSNAME,
             _ => Type::UNKNOWN(value),
-
         }
     }
 }
@@ -173,7 +172,6 @@ bitflags! {
     }
 }
 
-
 impl Flags {
     pub fn from_value(value: u32) -> Self {
         Flags::from_bits_truncate(value)
@@ -187,7 +185,7 @@ impl Flags {
 /// Structure which reprents an ELF segment
 pub struct Segment<'a> {
     pub(super) ptr: cxx::UniquePtr<ffi::ELF_Segment>,
-    _owner: PhantomData<&'a ffi::ELF_Binary>
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
 impl fmt::Debug for Segment<'_> {
@@ -209,7 +207,7 @@ impl FromFFI<ffi::ELF_Segment> for Segment<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_Segment>) -> Self {
         Segment {
             ptr,
-            _owner: PhantomData
+            _owner: PhantomData,
         }
     }
 }
@@ -300,10 +298,9 @@ impl Segment<'_> {
 
     pub fn set_content(&mut self, content: &[u8]) {
         unsafe {
-            self.ptr.pin_mut().set_content(
-                content.as_ptr(),
-                content.len().try_into().unwrap()
-            );
+            self.ptr
+                .pin_mut()
+                .set_content(content.as_ptr(), content.len().try_into().unwrap());
         }
     }
 
@@ -324,4 +321,10 @@ impl fmt::Display for Segment<'_> {
     }
 }
 
-declare_iterator!(Segments, Segment<'a>, ffi::ELF_Segment, ffi::ELF_Binary, ffi::ELF_Binary_it_segments);
+declare_iterator!(
+    Segments,
+    Segment<'a>,
+    ffi::ELF_Segment,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_segments
+);

@@ -1,8 +1,8 @@
 use lief_ffi as ffi;
 
-use crate::common::{FromFFI, into_optional};
-use std::marker::PhantomData;
+use crate::common::{into_optional, FromFFI};
 use crate::macho::Binary;
+use std::marker::PhantomData;
 
 /// This structure represents a library embedded in a dyld shared cache.
 /// It mirrors the original `dyld_cache_image_info` structure.
@@ -146,7 +146,7 @@ impl ExtractOpt {
             fix_relocations: self.fix_relocations,
             fix_objc: self.fix_objc,
             create_dyld_chained_fixup_cmd: self.create_dyld_chained_fixup_cmd.unwrap_or(false),
-            create_dyld_chained_fixup_cmd_set: self.create_dyld_chained_fixup_cmd.is_some()
+            create_dyld_chained_fixup_cmd_set: self.create_dyld_chained_fixup_cmd.is_some(),
         }
     }
 }
@@ -160,6 +160,5 @@ impl std::fmt::Debug for Dylib<'_> {
             .field("inode", &self.inode())
             .field("padding", &self.padding())
             .finish()
-
     }
 }
