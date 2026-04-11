@@ -5,6 +5,7 @@ Diagnostics:
     IgnoreHeader:
       - spdlog/fmt/.*
       - nanobind/stl/.*
+      - third-party/.*
   ClangTidy:
     FastCheckFilter: Strict
     Add: [
