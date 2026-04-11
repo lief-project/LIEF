@@ -48,7 +48,7 @@ class MachO_BuildVersion : public MachO_Command {
   }
   auto platform() const {
     return to_int(impl().platform());
-  };
+  }
   auto tools() const {
     return std::make_unique<it_tools>(impl());
   }

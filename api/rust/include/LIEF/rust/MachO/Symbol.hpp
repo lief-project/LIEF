@@ -35,19 +35,19 @@ class MachO_Symbol : public AbstractSymbol {
   }
   uint8_t numberof_sections() const {
     return impl().numberof_sections();
-  };
+  }
   uint16_t description() const {
     return impl().description();
-  };
+  }
   auto origin() const {
     return to_int(impl().origin());
-  };
+  }
   auto category() const {
     return to_int(impl().category());
-  };
+  }
   bool is_external() const {
     return impl().is_external();
-  };
+  }
 
   auto demangled_name() const {
     return impl().demangled_name();
@@ -60,7 +60,9 @@ class MachO_Symbol : public AbstractSymbol {
     return details::try_unique<MachO_Dylib>(impl().library());
   }
 
-  int32_t library_ordinal() const { return impl().library_ordinal(); }
+  int32_t library_ordinal() const {
+    return impl().library_ordinal();
+  }
 
   private:
   const lief_t& impl() const {

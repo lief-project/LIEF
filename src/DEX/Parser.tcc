@@ -161,10 +161,7 @@ void Parser::parse_types() {
 
     if (type->type() == Type::TYPES::CLASS) {
       class_type_map_.emplace(*descriptor_str, type.get());
-    }
-
-    else if (type->type() == Type::TYPES::ARRAY)
-    {
+    } else if (type->type() == Type::TYPES::ARRAY) {
       const Type& array_type = type->underlying_array_type();
       if (array_type.type() == Type::TYPES::CLASS) {
         std::string mangled_name = *descriptor_str;

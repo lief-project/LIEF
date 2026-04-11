@@ -42,7 +42,9 @@ class PE_Pogo : public PE_Debug {
     return std::make_unique<it_entries>(impl());
   }
 
-  uint32_t pogo_signature() const { return to_int(impl().signature()); }
+  uint32_t pogo_signature() const {
+    return to_int(impl().signature());
+  }
 
   static bool classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());

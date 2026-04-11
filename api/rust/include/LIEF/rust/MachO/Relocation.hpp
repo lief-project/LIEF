@@ -30,13 +30,13 @@ class MachO_Relocation : public AbstractRelocation {
 
   bool is_pc_relative() const {
     return impl().is_pc_relative();
-  };
+  }
   auto architecture() const {
     return to_int(impl().architecture());
-  };
+  }
   auto origin() const {
     return to_int(impl().origin());
-  };
+  }
 
   auto symbol() const {
     return details::try_unique<MachO_Symbol>(impl().symbol());

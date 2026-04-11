@@ -27,13 +27,13 @@ class MachO_Fileset : public MachO_Command {
 
   std::string name() const {
     return impl().name();
-  };
+  }
   uint64_t virtual_address() const {
     return impl().virtual_address();
-  };
+  }
   uint64_t file_offset() const {
     return impl().file_offset();
-  };
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());

@@ -24,10 +24,20 @@ class PE_ResourceAccelerator : private Mirror<LIEF::PE::ResourceAccelerator> {
   using lief_t = LIEF::PE::ResourceAccelerator;
   using Mirror::Mirror;
 
-  auto flags() const { return get().flags(); }
-  auto ansi() const { return get().ansi(); }
-  auto id() const { return get().id(); }
-  auto padding() const { return get().padding(); }
+  auto flags() const {
+    return get().flags();
+  }
+  auto ansi() const {
+    return get().ansi();
+  }
+  auto id() const {
+    return get().id();
+  }
+  auto padding() const {
+    return get().padding();
+  }
 
-  std::string ansi_str() const { return get().ansi_str(); }
+  std::string ansi_str() const {
+    return get().ansi_str();
+  }
 };

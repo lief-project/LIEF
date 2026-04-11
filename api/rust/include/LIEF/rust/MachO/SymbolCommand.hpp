@@ -25,22 +25,22 @@ class MachO_SymbolCommand : public MachO_Command {
     MachO_Command(base) {}
   uint32_t symbol_offset() const {
     return impl().symbol_offset();
-  };
+  }
   uint32_t numberof_symbols() const {
     return impl().numberof_symbols();
-  };
+  }
   uint32_t strings_offset() const {
     return impl().strings_offset();
-  };
+  }
   uint32_t strings_size() const {
     return impl().strings_size();
-  };
+  }
   uint32_t original_str_size() const {
     return impl().original_str_size();
-  };
+  }
   uint32_t original_nb_symbols() const {
     return impl().original_nb_symbols();
-  };
+  }
 
   auto symbol_table() const {
     return make_span(impl().symbol_table());

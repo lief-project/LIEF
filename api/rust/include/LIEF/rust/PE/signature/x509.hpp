@@ -85,6 +85,10 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
     }
     return result;
   }
-  auto ext_key_usage() const { return get().ext_key_usage(); }
-  auto certificate_policies() const { return get().certificate_policies(); }
+  auto ext_key_usage() const {
+    return get().ext_key_usage();
+  }
+  auto certificate_policies() const {
+    return get().certificate_policies();
+  }
 };

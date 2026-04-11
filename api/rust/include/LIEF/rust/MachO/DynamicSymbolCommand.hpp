@@ -41,58 +41,58 @@ class MachO_DynamicSymbolCommand : public MachO_Command {
 
   uint32_t idx_local_symbol() const {
     return impl().idx_local_symbol();
-  };
+  }
   uint32_t nb_local_symbols() const {
     return impl().nb_local_symbols();
-  };
+  }
   uint32_t idx_external_define_symbol() const {
     return impl().idx_external_define_symbol();
-  };
+  }
   uint32_t nb_external_define_symbols() const {
     return impl().nb_external_define_symbols();
-  };
+  }
   uint32_t idx_undefined_symbol() const {
     return impl().idx_undefined_symbol();
-  };
+  }
   uint32_t nb_undefined_symbols() const {
     return impl().nb_undefined_symbols();
-  };
+  }
   uint32_t toc_offset() const {
     return impl().toc_offset();
-  };
+  }
   uint32_t nb_toc() const {
     return impl().nb_toc();
-  };
+  }
   uint32_t module_table_offset() const {
     return impl().module_table_offset();
-  };
+  }
   uint32_t nb_module_table() const {
     return impl().nb_module_table();
-  };
+  }
   uint32_t external_reference_symbol_offset() const {
     return impl().external_reference_symbol_offset();
-  };
+  }
   uint32_t nb_external_reference_symbols() const {
     return impl().nb_external_reference_symbols();
-  };
+  }
   uint32_t indirect_symbol_offset() const {
     return impl().indirect_symbol_offset();
-  };
+  }
   uint32_t nb_indirect_symbols() const {
     return impl().nb_indirect_symbols();
-  };
+  }
   uint32_t external_relocation_offset() const {
     return impl().external_relocation_offset();
-  };
+  }
   uint32_t nb_external_relocations() const {
     return impl().nb_external_relocations();
-  };
+  }
   uint32_t local_relocation_offset() const {
     return impl().local_relocation_offset();
-  };
+  }
   uint32_t nb_local_relocations() const {
     return impl().nb_local_relocations();
-  };
+  }
 
   auto indirect_symbols() const {
     return std::make_unique<it_indirect_symbols>(impl());

@@ -40,10 +40,10 @@ class MachO_DataInCode : public MachO_Command {
     MachO_Command(base) {}
   uint32_t data_offset() const {
     return impl().data_offset();
-  };
+  }
   uint32_t data_size() const {
     return impl().data_size();
-  };
+  }
   auto content() const {
     return make_span(impl().content());
   }

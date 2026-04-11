@@ -623,13 +623,21 @@ class PE_Binary : public AbstractBinary {
     impl().set_export(exp.get());
   }
 
-  auto is_reproducible_build() const { return impl().is_reproducible_build(); }
+  auto is_reproducible_build() const {
+    return impl().is_reproducible_build();
+  }
 
-  auto has_import(std::string name) const { return impl().has_import(name); }
-  auto has_delay_import(std::string name) const { return impl().has_delay_import(name); }
+  auto has_import(std::string name) const {
+    return impl().has_import(name);
+  }
+  auto has_delay_import(std::string name) const {
+    return impl().has_delay_import(name);
+  }
 
   auto exception_functions() const {
-    return std::make_unique<AbstractBinary::it_functions>(impl().exception_functions());
+    return std::make_unique<AbstractBinary::it_functions>(
+        impl().exception_functions()
+    );
   }
 
   void remove_section(std::string name, bool clear) {

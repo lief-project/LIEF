@@ -315,7 +315,8 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
           uint32_t next_page_idx = next_offset / page_size;
           uint32_t next_delta = next_offset % page_size;
           LIEF_DEBUG("        [next] address:        {:#018x}", address);
-          LIEF_DEBUG("        [next] target_offset:  {:#018x}", next_target_offset);
+          LIEF_DEBUG("        [next] target_offset:  {:#018x}",
+                     next_target_offset);
 
           LIEF_DEBUG("        [next] page_idx: {}", next_page_idx);
           LIEF_DEBUG("        [next] delta: {:#018x}", next_delta);

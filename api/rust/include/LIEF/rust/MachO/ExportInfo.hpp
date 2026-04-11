@@ -28,19 +28,19 @@ class MachO_ExportInfo : private Mirror<LIEF::MachO::ExportInfo> {
 
   uint64_t node_offset() const {
     return get().node_offset();
-  };
+  }
   uint64_t flags() const {
     return get().flags();
-  };
+  }
   uint64_t address() const {
     return get().address();
-  };
+  }
   uint64_t other() const {
     return get().other();
-  };
+  }
   auto kind() const {
     return to_int(get().kind());
-  };
+  }
 
   auto symbol() const {
     return details::try_unique<MachO_Symbol>(get().symbol());

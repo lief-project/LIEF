@@ -136,9 +136,9 @@ void Section::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const Section& entry) {
-  os << fmt::format("{:<30}{:<#10x}{:<10}{:<#10x}{:<10.5f}",
-                    entry.name(), entry.virtual_address(), entry.size(),
-                    entry.offset(), entry.entropy());
+  os << fmt::format("{:<30}{:<#10x}{:<10}{:<#10x}{:<10.5f}", entry.name(),
+                    entry.virtual_address(), entry.size(), entry.offset(),
+                    entry.entropy());
   return os;
 }
 

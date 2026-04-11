@@ -45,12 +45,21 @@ class PE_Factory {
     return details::try_unique<PE_Binary>(factory_->get());
   }
 
-  auto is_32bit() const { return factory_->is_32bit(); }
-  auto is_64bit() const { return factory_->is_64bit(); }
-  auto section_align() const { return factory_->section_align(); }
-  auto file_align() const { return factory_->file_align(); }
+  auto is_32bit() const {
+    return factory_->is_32bit();
+  }
+  auto is_64bit() const {
+    return factory_->is_64bit();
+  }
+  auto section_align() const {
+    return factory_->section_align();
+  }
+  auto file_align() const {
+    return factory_->file_align();
+  }
 
-  PE_Factory(std::unique_ptr<LIEF::PE::Factory> f) : factory_(std::move(f)) {}
+  PE_Factory(std::unique_ptr<LIEF::PE::Factory> f) :
+    factory_(std::move(f)) {}
 
   private:
   std::unique_ptr<LIEF::PE::Factory> factory_;

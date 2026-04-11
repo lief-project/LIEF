@@ -25,8 +25,8 @@ class MachO_BuildToolVersion : Mirror<LIEF::MachO::BuildToolVersion> {
 
   auto tool() const {
     return to_int(get().tool());
-  };
+  }
   auto version() const {
     return details::make_vector(get().version());
-  };
+  }
 };

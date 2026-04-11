@@ -102,3 +102,7 @@ BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel: true
   AfterControlStatement: MultiLine
+
+RemoveEmptyLinesInUnwrappedLines: true
+RemoveSemicolon: true
+QualifierAlignment: Left

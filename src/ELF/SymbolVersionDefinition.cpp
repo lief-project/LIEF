@@ -79,8 +79,8 @@ void SymbolVersionDefinition::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const SymbolVersionDefinition& sym) {
-  os << fmt::format("{:<#10x}{:<#10x}{:<#10x}{:<#10x}",
-                    sym.version(), sym.flags(), sym.ndx(), sym.hash());
+  os << fmt::format("{:<#10x}{:<#10x}{:<#10x}{:<#10x}", sym.version(), sym.flags(),
+                    sym.ndx(), sym.hash());
   return os;
 }
 }

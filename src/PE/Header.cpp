@@ -73,9 +73,7 @@ Header::Header(const details::pe_header& header) :
   pointerto_symtab_(header.PointerToSymbolTable),
   nb_symbols_(header.NumberOfSymbols),
   sizeof_opt_header_(header.SizeOfOptionalHeader),
-  characteristics_(header.Characteristics)
-
-{
+  characteristics_(header.Characteristics) {
   std::copy(std::begin(header.signature), std::end(header.signature),
             std::begin(signature_));
 }

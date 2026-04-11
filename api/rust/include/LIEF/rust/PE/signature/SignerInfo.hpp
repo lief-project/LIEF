@@ -93,14 +93,20 @@ class PE_SignerInfo : private Mirror<LIEF::PE::SignerInfo> {
   }
 
   auto get_attribute(uint32_t type) const {
-    return details::try_unique<PE_Attribute>(get().get_attribute(LIEF::PE::Attribute::TYPE(type)));
+    return details::try_unique<PE_Attribute>(
+        get().get_attribute(LIEF::PE::Attribute::TYPE(type))
+    );
   }
 
   auto get_auth_attribute(uint32_t type) const {
-    return details::try_unique<PE_Attribute>(get().get_auth_attribute(LIEF::PE::Attribute::TYPE(type)));
+    return details::try_unique<PE_Attribute>(
+        get().get_auth_attribute(LIEF::PE::Attribute::TYPE(type))
+    );
   }
 
   auto get_unauth_attribute(uint32_t type) const {
-    return details::try_unique<PE_Attribute>(get().get_unauth_attribute(LIEF::PE::Attribute::TYPE(type)));
+    return details::try_unique<PE_Attribute>(
+        get().get_unauth_attribute(LIEF::PE::Attribute::TYPE(type))
+    );
   }
 };

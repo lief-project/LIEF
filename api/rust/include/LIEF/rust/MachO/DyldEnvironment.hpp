@@ -25,7 +25,7 @@ class MachO_DyldEnvironment : public MachO_Command {
 
   std::string value() const {
     return impl().value();
-  };
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());

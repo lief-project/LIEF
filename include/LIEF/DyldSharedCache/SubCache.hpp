@@ -40,11 +40,9 @@ class LIEF_API SubCache {
   public:
   /// SubCache Iterator
   class LIEF_API Iterator
-    : public iterator_facade_base<
-          Iterator, std::random_access_iterator_tag, std::unique_ptr<SubCache>,
-          std::ptrdiff_t, SubCache*, std::unique_ptr<SubCache>
-
-      > {
+    : public iterator_facade_base<Iterator, std::random_access_iterator_tag,
+                                  std::unique_ptr<SubCache>, std::ptrdiff_t,
+                                  SubCache*, std::unique_ptr<SubCache>> {
     public:
     using implementation = details::SubCacheIt;
 

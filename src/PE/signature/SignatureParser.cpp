@@ -881,10 +881,7 @@ result<SignatureParser::attributes_t>
         } else {
           attributes.push_back(std::move(res.value()));
         }
-      }
-
-      else if (oid_str == /* SpcSpOpusInfo */ "1.3.6.1.4.1.311.2.1.12")
-      {
+      } else if (oid_str == /* SpcSpOpusInfo */ "1.3.6.1.4.1.311.2.1.12") {
         auto res = parse_spc_sp_opus_info(value_stream);
         if (!res) {
           LIEF_INFO("Failed to parse spc-sp-opus-info attribute");
@@ -894,19 +891,13 @@ result<SignatureParser::attributes_t>
               std::move(info.program_name), std::move(info.more_info)
           ));
         }
-      }
-
-      else if (oid_str == /* Ms-CounterSign */ "1.3.6.1.4.1.311.3.3.1")
-      {
+      } else if (oid_str == /* Ms-CounterSign */ "1.3.6.1.4.1.311.3.3.1") {
         if (auto res = parse_ms_counter_sign(value_stream)) {
           attributes.push_back(std::move(*res));
         } else {
           LIEF_INFO("Failed to parse ms-counter-sign attribute");
         }
-      }
-
-      else if (oid_str == /* pkcs9-CounterSignature */ "1.2.840.113549.1.9.6")
-      {
+      } else if (oid_str == /* pkcs9-CounterSignature */ "1.2.840.113549.1.9.6") {
         auto res = parse_pkcs9_counter_sign(value_stream);
         if (!res) {
           LIEF_INFO("Failed to parse pkcs9-counter-sign attribute");
@@ -924,10 +915,7 @@ result<SignatureParser::attributes_t>
             );
           }
         }
-      }
-
-      else if (oid_str == /* Ms-SpcNestedSignature */ "1.3.6.1.4.1.311.2.4.1")
-      {
+      } else if (oid_str == /* Ms-SpcNestedSignature */ "1.3.6.1.4.1.311.2.4.1") {
         auto res = parse_ms_spc_nested_signature(value_stream);
         if (!res) {
           LIEF_INFO("Failed to parse ms-spc-nested-signature attribute");
@@ -936,10 +924,7 @@ result<SignatureParser::attributes_t>
               std::make_unique<MsSpcNestedSignature>(std::move(res.value()))
           );
         }
-      }
-
-      else if (oid_str == /* pkcs9-MessageDigest */ "1.2.840.113549.1.9.4")
-      {
+      } else if (oid_str == /* pkcs9-MessageDigest */ "1.2.840.113549.1.9.4") {
         auto res = parse_pkcs9_message_digest(value_stream);
         if (!res) {
           LIEF_INFO("Failed to parse pkcs9-message-digest attribute");
@@ -948,10 +933,7 @@ result<SignatureParser::attributes_t>
               std::make_unique<PKCS9MessageDigest>(std::move(res.value()))
           );
         }
-      }
-
-      else if (oid_str == /* Ms-SpcStatementType */ "1.3.6.1.4.1.311.2.1.11")
-      {
+      } else if (oid_str == /* Ms-SpcStatementType */ "1.3.6.1.4.1.311.2.1.11") {
         auto res = parse_ms_spc_statement_type(value_stream);
         if (!res) {
           LIEF_INFO("Failed to parse ms-spc-statement-type attribute");
@@ -960,9 +942,8 @@ result<SignatureParser::attributes_t>
               std::make_unique<MsSpcStatementType>(std::move(res.value()))
           );
         }
-      }
-
-      else if (oid_str == /* pkcs9-at-SequenceNumber */ "1.2.840.113549.1.9.25.4")
+      } else if (oid_str ==
+                 /* pkcs9-at-SequenceNumber */ "1.2.840.113549.1.9.25.4")
       {
         auto res = parse_pkcs9_at_sequence_number(value_stream);
         if (!res) {
@@ -970,49 +951,38 @@ result<SignatureParser::attributes_t>
         } else {
           attributes.push_back(std::make_unique<PKCS9AtSequenceNumber>(*res));
         }
-      }
-
-      else if (oid_str == /* pkcs9-signing-time */ "1.2.840.113549.1.9.5")
-      {
+      } else if (oid_str == /* pkcs9-signing-time */ "1.2.840.113549.1.9.5") {
         auto res = parse_pkcs9_signing_time(value_stream);
         if (!res) {
           LIEF_INFO("Failed to parse pkcs9-signing-time attribute");
         } else {
           attributes.push_back(std::make_unique<PKCS9SigningTime>(*res));
         }
-      }
-
-      else if (oid_str ==
-               /* szOID_PLATFORM_MANIFEST_BINARY_ID */ "1.3.6.1.4.1.311.10.3.28")
+      } else if (oid_str ==
+                 /* szOID_PLATFORM_MANIFEST_BINARY_ID */ "1.3.6.1.4.1.311.10.3.28")
       {
         if (auto res = parse_ms_platform_manifest_binary_id(value_stream)) {
           attributes.push_back(std::move(*res));
         } else {
           LIEF_INFO("Failed to parse ms-szoid-platform-manifest-binary-id");
         }
-      }
-
-      else if (oid_str ==
-               /* SPC_RELAXED_PE_MARKER_CHECK_OBJID */ "1.3.6.1.4.1.311.2.6.1")
+      } else if (oid_str ==
+                 /* SPC_RELAXED_PE_MARKER_CHECK_OBJID */ "1.3.6.1.4.1.311.2.6.1")
       {
         if (auto res = parse_spc_relaxed_pe_marker_check(value_stream)) {
           attributes.push_back(std::move(*res));
         } else {
           LIEF_INFO("Failed to parse spc-relaxed-pe-marker-check");
         }
-      }
-
-      else if (oid_str ==
-               /* SIGNING_CERTIFICATE_V2 */ "1.2.840.113549.1.9.16.2.47")
+      } else if (oid_str ==
+                 /* SIGNING_CERTIFICATE_V2 */ "1.2.840.113549.1.9.16.2.47")
       {
         if (auto res = parse_signing_certificate_v2(value_stream)) {
           attributes.push_back(std::move(*res));
         } else {
           LIEF_INFO("Failed to parse signing-certificate-v2");
         }
-      }
-
-      else {
+      } else {
         LIEF_INFO("Unknown OID: {}", oid_str);
         attributes.push_back(
             std::make_unique<GenericType>(oid_str, value_stream.content())

@@ -1071,10 +1071,7 @@ bool LayoutChecker::check() {
         )delim",
                      offset, dyld_info->rebase().first);
       }
-    }
-
-    else if (dyld_info->bind().first != 0)
-    {
+    } else if (dyld_info->bind().first != 0) {
       if (dyld_info->bind().first != offset) {
         return error(R"delim(
         __LINKEDIT does not start with LC_DYLD_INFO.bind:
@@ -1082,10 +1079,7 @@ bool LayoutChecker::check() {
         )delim",
                      offset, dyld_info->bind().first);
       }
-    }
-
-    else if (dyld_info->export_info().first != 0)
-    {
+    } else if (dyld_info->export_info().first != 0) {
       if (dyld_info->export_info().first != offset &&
           dyld_info->weak_bind().first != 0 && dyld_info->lazy_bind().first != 0)
       {
@@ -1100,25 +1094,13 @@ bool LayoutChecker::check() {
     // Update Offset to end of dyld_info->contents
     if (dyld_info->export_info().second != 0) {
       offset = dyld_info->export_info().first + dyld_info->export_info().second;
-    }
-
-    else if (dyld_info->lazy_bind().second != 0)
-    {
+    } else if (dyld_info->lazy_bind().second != 0) {
       offset = dyld_info->lazy_bind().first + dyld_info->lazy_bind().second;
-    }
-
-    else if (dyld_info->weak_bind().second != 0)
-    {
+    } else if (dyld_info->weak_bind().second != 0) {
       offset = dyld_info->weak_bind().first + dyld_info->weak_bind().second;
-    }
-
-    else if (dyld_info->bind().second != 0)
-    {
+    } else if (dyld_info->bind().second != 0) {
       offset = dyld_info->bind().first + dyld_info->bind().second;
-    }
-
-    else if (dyld_info->rebase().second != 0)
-    {
+    } else if (dyld_info->rebase().second != 0) {
       offset = dyld_info->rebase().first + dyld_info->rebase().second;
     }
   }
@@ -1665,7 +1647,7 @@ bool LayoutChecker::check_tls() {
   const bool is32 = ptr_size() == sizeof(uint32_t);
   const bool is64 = ptr_size() == sizeof(uint64_t);
   assert(is32 || is64);
-  ThreadLocalVariables const* sec_vars = nullptr;
+  const ThreadLocalVariables* sec_vars = nullptr;
   const Binary::range_t initial_content = binary.tlv_initial_content_range();
   for (const Section& S : binary.sections()) {
     if (const auto* sec = S.cast<ThreadLocalVariables>()) {

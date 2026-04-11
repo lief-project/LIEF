@@ -15,6 +15,7 @@
 #ifndef LIEF_COMPILER_ATTR_H
 #define LIEF_COMPILER_ATTR_H
 
+
 #if !defined(_MSC_VER)
   #if __cplusplus >= 201103L
     #define LIEF_CPP11
@@ -56,7 +57,7 @@
 #elif defined(__GNUC__) || defined(__clang__)
   #define LIEF_MAYBE_UNUSED __attribute__((unused))
 #elif defined(_MSC_VER)
-  #define LIEF_MAYBE_UNUSED __pragma(warning(suppress: 4100 4101))
+  #define LIEF_MAYBE_UNUSED __pragma(warning(suppress : 4100 4101))
 #else
   #define LIEF_MAYBE_UNUSED
 #endif

@@ -34,7 +34,7 @@ class MachO_RPathCommand : public MachO_Command {
 
   std::string path() const {
     return impl().path();
-  };
+  }
   auto path_offset() const {
     return impl().path_offset();
   }

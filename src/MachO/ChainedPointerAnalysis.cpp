@@ -181,116 +181,91 @@ ChainedPointerAnalysis::union_pointer_t create_impl(const T& value) {
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_REBASE;
     out.arm64e_rebase = value;
-  }
-
-  else if constexpr (std::is_same_v<
-                         T, ChainedPointerAnalysis::dyld_chained_ptr_arm64e_bind_t
-                     >)
+  } else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
+                                             dyld_chained_ptr_arm64e_bind_t>)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_BIND;
     out.arm64e_bind = value;
-  }
-
-  else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
-                                           dyld_chained_ptr_arm64e_auth_rebase_t>)
+  } else if constexpr (std::is_same_v<T,
+                                      ChainedPointerAnalysis::
+                                          dyld_chained_ptr_arm64e_auth_rebase_t>)
   {
     out.type =
         ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_AUTH_REBASE;
     out.arm64e_auth_rebase = value;
-  }
-
-  else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
-                                           dyld_chained_ptr_arm64e_auth_bind_t>)
+  } else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
+                                             dyld_chained_ptr_arm64e_auth_bind_t>)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_AUTH_BIND;
     out.arm64e_auth_bind = value;
-  }
-
-  else if constexpr (std::is_same_v<
-                         T, ChainedPointerAnalysis::dyld_chained_ptr_64_rebase_t
-                     >)
+  } else if constexpr (std::is_same_v<
+                           T, ChainedPointerAnalysis::dyld_chained_ptr_64_rebase_t
+                       >)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_64_REBASE;
     out.ptr_64_rebase = value;
-  }
-
-  else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
-                                           dyld_chained_ptr_arm64e_bind24_t>)
+  } else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
+                                             dyld_chained_ptr_arm64e_bind24_t>)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_BIND24;
     out.arm64e_bind24 = value;
-  }
-
-  else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
-                                           dyld_chained_ptr_arm64e_auth_bind24_t>)
+  } else if constexpr (std::is_same_v<T,
+                                      ChainedPointerAnalysis::
+                                          dyld_chained_ptr_arm64e_auth_bind24_t>)
   {
     out.type =
         ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_AUTH_BIND24;
     out.arm64e_auth_bind24 = value;
-  }
-
-  else if constexpr (std::is_same_v<
-                         T, ChainedPointerAnalysis::dyld_chained_ptr_64_bind_t
-                     >)
+  } else if constexpr (std::is_same_v<
+                           T, ChainedPointerAnalysis::dyld_chained_ptr_64_bind_t
+                       >)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_64_BIND;
     out.ptr_64_bind = value;
-  }
-
-  else if constexpr (std::is_same_v<T,
-                                    ChainedPointerAnalysis::
-                                        dyld_chained_ptr_64_kernel_cache_rebase_t>)
+  } else if constexpr (std::is_same_v<
+                           T, ChainedPointerAnalysis::
+                                  dyld_chained_ptr_64_kernel_cache_rebase_t
+                       >)
   {
     out.type =
         ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_64_KERNEL_CACHE_REBASE;
     out.ptr_64_kernel_cache_rebase = value;
-  }
-
-  else if constexpr (std::is_same_v<
-                         T, ChainedPointerAnalysis::dyld_chained_ptr_32_rebase_t
-                     >)
+  } else if constexpr (std::is_same_v<
+                           T, ChainedPointerAnalysis::dyld_chained_ptr_32_rebase_t
+                       >)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_REBASE;
     out.ptr_32_rebase = value;
-  }
-
-  else if constexpr (std::is_same_v<
-                         T, ChainedPointerAnalysis::dyld_chained_ptr_32_bind_t
-                     >)
+  } else if constexpr (std::is_same_v<
+                           T, ChainedPointerAnalysis::dyld_chained_ptr_32_bind_t
+                       >)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_BIND;
     out.ptr_32_bind = value;
-  }
-
-  else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
-                                           dyld_chained_ptr_32_cache_rebase_t>)
+  } else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
+                                             dyld_chained_ptr_32_cache_rebase_t>)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_CACHE_REBASE;
     out.ptr_32_cache_rebase = value;
-  }
-
-  else if constexpr (std::is_same_v<T, ChainedPointerAnalysis::
-                                           dyld_chained_ptr_32_firmware_rebase_t>)
+  } else if constexpr (std::is_same_v<T,
+                                      ChainedPointerAnalysis::
+                                          dyld_chained_ptr_32_firmware_rebase_t>)
   {
     out.type =
         ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_FIRMWARE_REBASE;
     out.ptr_32_firmware_rebase = value;
-  }
-
-  else if constexpr (std::is_same_v<
-                         T, ChainedPointerAnalysis::
-                                dyld_chained_ptr_arm64e_segmented_rebase_t
-                     >)
+  } else if constexpr (std::is_same_v<
+                           T, ChainedPointerAnalysis::
+                                  dyld_chained_ptr_arm64e_segmented_rebase_t
+                       >)
   {
     out.type =
         ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_SEGMENTED_REBASE;
     out.ptr_arm64e_segmented_rebase = value;
-  }
-
-  else if constexpr (std::is_same_v<
-                         T, ChainedPointerAnalysis::
-                                dyld_chained_ptr_arm64e_auth_segmented_rebase_t
-                     >)
+  } else if constexpr (std::is_same_v<
+                           T, ChainedPointerAnalysis::
+                                  dyld_chained_ptr_arm64e_auth_segmented_rebase_t
+                       >)
   {
     out.type = ChainedPointerAnalysis::PTR_TYPE::
         DYLD_CHAINED_PTR_ARM64E_AUTH_SEGMENTED_REBASE;

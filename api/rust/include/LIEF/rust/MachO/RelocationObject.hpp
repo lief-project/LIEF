@@ -25,7 +25,7 @@ class MachO_RelocationObject : public MachO_Relocation {
 
   bool is_scattered() const {
     return impl().is_scattered();
-  };
+  }
 
   static bool classof(const MachO_Relocation& reloc) {
     return lief_t::classof(

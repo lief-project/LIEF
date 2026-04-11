@@ -27,13 +27,13 @@ class MachO_BindingInfo : public Mirror<LIEF::MachO::BindingInfo> {
 
   uint64_t address() const {
     return get().address();
-  };
+  }
   int64_t addend() const {
     return get().addend();
-  };
+  }
   int32_t library_ordinal() const {
     return get().library_ordinal();
-  };
+  }
 
   auto library() const {
     return details::try_unique<MachO_Dylib>(get().library());

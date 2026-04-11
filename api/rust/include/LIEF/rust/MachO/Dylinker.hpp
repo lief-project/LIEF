@@ -25,7 +25,7 @@ class MachO_Dylinker : public MachO_Command {
 
   std::string name() const {
     return impl().name();
-  };
+  }
 
   static bool classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());

@@ -123,29 +123,29 @@ static T loadu(const void* Ptr) {
 }
 
 template<class T>
-static void storeu(void* Ptr, T const V) {
+static void storeu(void* Ptr, const T V) {
   static_assert(std::is_integral<T>::value, "T must be an integer!");
   memcpy(Ptr, &V, sizeof(V));
 }
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 template<class T>
-static T bswap_le(T const v) {
+static T bswap_le(const T v) {
   return v;
 }
 
 template<class T>
-static T bswap_be(T const v) {
+static T bswap_be(const T v) {
   return bswap(v);
 }
 #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 template<class T>
-static T bswap_le(T const v) {
+static T bswap_le(const T v) {
   return bswap(v);
 }
 
 template<class T>
-static T bswap_be(T const v) {
+static T bswap_be(const T v) {
   return v;
 }
 #else
@@ -191,12 +191,12 @@ static INTMEM_CE T loadu_be(const uint8_t* Ptr) {
 }
 
 template<class T>
-static INTMEM_CE void storeu_le(void* Ptr, T const V) {
+static INTMEM_CE void storeu_le(void* Ptr, const T V) {
   storeu(Ptr, bswap_le(V));
 }
 
 template<class T>
-static INTMEM_CE void storeu_be(void* Ptr, T const V) {
+static INTMEM_CE void storeu_be(void* Ptr, const T V) {
   storeu(Ptr, bswap_be(V));
 }
 
@@ -211,12 +211,12 @@ static INTMEM_CE T load_be(const T* Ptr) {
 }
 
 template<class T>
-static INTMEM_CE void store_le(T* Ptr, T const V) {
+static INTMEM_CE void store_le(T* Ptr, const T V) {
   *Ptr = bswap_le(V);
 }
 
 template<class T>
-static INTMEM_CE void store_be(T* Ptr, T const V) {
+static INTMEM_CE void store_be(T* Ptr, const T V) {
   *Ptr = bswap_be(V);
 }
 

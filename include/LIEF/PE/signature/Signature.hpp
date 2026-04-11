@@ -94,14 +94,16 @@ class LIEF_API Signature : public Object {
     DEFAULT = 1 << 0, /**< Default behavior that tries to follow the Microsoft
                          verification process as close as possible */
     HASH_ONLY =
-        1 << 1,                /**< Only check that Binary::authentihash matches
-                                  ContentInfo::digest regardless of the signature's validity */
-    LIFETIME_SIGNING = 1 << 2, /**< Same semantic as
-                                  [WTD_LIFETIME_SIGNING_FLAG](https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG)
-                                */
-    SKIP_CERT_TIME = 1 << 3,   /**< Skip the verification of the certificates time
-                                  validities so that even though a certificate
-                                  expired, it returns VERIFICATION_FLAGS::OK */
+        1 << 1, /**< Only check that Binary::authentihash matches
+                   ContentInfo::digest regardless of the signature's validity */
+    LIFETIME_SIGNING =
+        1
+        << 2,                /**< Same semantic as
+                                [WTD_LIFETIME_SIGNING_FLAG](https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG)
+                              */
+    SKIP_CERT_TIME = 1 << 3, /**< Skip the verification of the certificates time
+                                validities so that even though a certificate
+                                expired, it returns VERIFICATION_FLAGS::OK */
   };
 
   Signature();
@@ -196,7 +198,7 @@ class LIEF_API Signature : public Object {
   ///
   /// See: LIEF::PE::Signature::VERIFICATION_CHECKS to tweak the behavior
   VERIFICATION_FLAGS
-      check(VERIFICATION_CHECKS checks = VERIFICATION_CHECKS::DEFAULT) const;
+  check(VERIFICATION_CHECKS checks = VERIFICATION_CHECKS::DEFAULT) const;
 
   void accept(Visitor& visitor) const override;
 
