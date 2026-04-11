@@ -12,6 +12,7 @@ if(LIEF_ENABLE_JSON)
     FetchContent_Declare(lief_libjson
       URL      ${LIBJSON_URL}
       URL_HASH ${LIBJSON_SHA256}
+      SOURCE_SUBDIR "__DO_NOT_BUILD__"
     )
     FetchContent_MakeAvailable(lief_libjson)
     set(LIBJSON_SOURCE_DIR "${lief_libjson_SOURCE_DIR}")
@@ -206,6 +207,7 @@ if (LIEF_SUPPORT_CXX14 AND NOT LIEF_DISABLE_FROZEN)
     FetchContent_Declare(lief_frozen
       URL      ${FROZEN_URL}
       URL_HASH ${FROZEN_SHA256}
+      SOURCE_SUBDIR "__DO_NOT_BUILD__"
     )
     FetchContent_MakeAvailable(lief_frozen)
     set(FROZEN_INCLUDE_DIR "${lief_frozen_SOURCE_DIR}/include")
@@ -223,6 +225,7 @@ if(NOT LIEF_EXTERNAL_EXPECTED)
   FetchContent_Declare(lief_expected
     URL      ${EXPECTED_URL}
     URL_HASH ${EXPECTED_SHA256}
+    SOURCE_SUBDIR "__DO_NOT_BUILD__"
   )
   FetchContent_MakeAvailable(lief_expected)
   set(EXPECTED_SRC_DIR "${lief_expected_SOURCE_DIR}")
@@ -237,6 +240,7 @@ if(NOT LIEF_OPT_UTFCPP_EXTERNAL)
   FetchContent_Declare(lief_utfcpp
     URL      ${UTFCPP_URL}
     URL_HASH ${UTFCPP_SHA256}
+    SOURCE_SUBDIR "__DO_NOT_BUILD__"
   )
   FetchContent_MakeAvailable(lief_utfcpp)
   set(UTFCPP_INCLUDE_DIR "${lief_utfcpp_SOURCE_DIR}/source")
@@ -251,6 +255,7 @@ if(NOT LIEF_EXTERNAL_SPAN)
   FetchContent_Declare(lief_span
     URL      ${TCB_SPAN_URL}
     URL_HASH ${TCB_SPAN_SHA256}
+    SOURCE_SUBDIR "__DO_NOT_BUILD__"
   )
   FetchContent_MakeAvailable(lief_span)
   set(TCB_SPAN_SRC_DIR "${lief_span_SOURCE_DIR}")
