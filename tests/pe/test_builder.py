@@ -1,68 +1,80 @@
 #!python
+import ctypes
+import subprocess
+import sys
+from multiprocessing import Process
+from pathlib import Path
+from subprocess import Popen
+from typing import Any, cast
+
 import lief
 import pytest
-import ctypes
-import sys
-import subprocess
-
-from pathlib import Path
-from multiprocessing import Process
-from subprocess import Popen
-
 from utils import (
-    get_sample, is_windows, is_x86_64, win_exec,
-    is_windows_x86_64
+    get_sample,
+    is_windows,
+    is_windows_x86_64,
+    is_x86_64,
+    parse_pe,
+    win_exec,
 )
+
 if is_windows():
     SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
-    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX) # type: ignore
+    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)  # type: ignore
 
 
 def _load_library(path: Path):
-    lib = ctypes.windll.LoadLibrary(path.as_posix()) # type: ignore
+    lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
-@pytest.mark.parametrize("sample", [
-    "PE/ucrtbase.dll",
-    "PE/LIEF-win64.dll",
-    "PE/pe_reader.exe",
-])
+
+@pytest.mark.parametrize(
+    "sample",
+    [
+        "PE/ucrtbase.dll",
+        "PE/LIEF-win64.dll",
+        "PE/pe_reader.exe",
+    ],
+)
 def test_add_sections(tmp_path: Path, sample: str):
     input_path = Path(get_sample(sample))
     pe = lief.PE.parse(input_path)
+    assert pe is not None
 
     for i in range(20):
         section = lief.PE.Section(f".lief_{i}")
         if i % 3 == 0:
             section.characteristics = (
-                lief.PE.Section.CHARACTERISTICS.CNT_CODE |
-                lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE |
-                lief.PE.Section.CHARACTERISTICS.MEM_READ
+                lief.PE.Section.CHARACTERISTICS.CNT_CODE
+                | lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE
+                | lief.PE.Section.CHARACTERISTICS.MEM_READ
             ).value
-            section.content = [0x90 for i in range(123)]
+            section.content = [0x90] * 123
         if i % 3 == 1:
             section.characteristics = (
-                lief.PE.Section.CHARACTERISTICS.CNT_INITIALIZED_DATA |
-                lief.PE.Section.CHARACTERISTICS.MEM_WRITE |
-                lief.PE.Section.CHARACTERISTICS.MEM_READ
+                lief.PE.Section.CHARACTERISTICS.CNT_INITIALIZED_DATA
+                | lief.PE.Section.CHARACTERISTICS.MEM_WRITE
+                | lief.PE.Section.CHARACTERISTICS.MEM_READ
             ).value
-            section.content = [0x41 for i in range(456)]
+            section.content = [0x41] * 456
         if i % 3 == 2:
             section.characteristics = (
-                lief.PE.Section.CHARACTERISTICS.CNT_UNINITIALIZED_DATA |
-                lief.PE.Section.CHARACTERISTICS.MEM_WRITE |
-                lief.PE.Section.CHARACTERISTICS.MEM_READ
+                lief.PE.Section.CHARACTERISTICS.CNT_UNINITIALIZED_DATA
+                | lief.PE.Section.CHARACTERISTICS.MEM_WRITE
+                | lief.PE.Section.CHARACTERISTICS.MEM_READ
             ).value
-            section.content = [0x42 for i in range(789)]
+            section.content = [0x42] * 789
         else:
-            section.content = [0x90 for i in range(0x200)]
+            section.content = [0x90] * 0x200
         pe.add_section(section)
 
     output = tmp_path / input_path.name
     pe.write(output)
 
-    new = lief.PE.parse(output)
-    assert len([s for s in new.sections if s.name.startswith(".lief_")]) == 20
+    new = parse_pe(output)
+    assert (
+        len([s for s in new.sections if cast(str, s.name).startswith(".lief_")]) == 20
+    )
     checked, msg = lief.PE.check_layout(new)
     assert checked, msg
 
@@ -74,15 +86,22 @@ def test_add_sections(tmp_path: Path, sample: str):
             assert p.exitcode == 0
 
         if input_path.name == "pe_reader.exe":
-            ret = win_exec(output, gui=False, args=[output.as_posix(), ])
+            ret = win_exec(
+                output,
+                gui=False,
+                args=[
+                    output.as_posix(),
+                ],
+            )
             assert ret is not None
 
             retcode, stdout = ret
             assert retcode == 0
             assert len(stdout) > 0
 
+
 def test_issue_952(tmp_path: Path):
-    pe = lief.PE.parse(get_sample("PE/PE32_x86_binary_HelloWorld.exe"))
+    pe = parse_pe("PE/PE32_x86_binary_HelloWorld.exe")
     stub = bytes(pe.dos_stub)
     assert not all(x == 0 for x in stub)
 
@@ -90,6 +109,7 @@ def test_issue_952(tmp_path: Path):
     pe.write(out)
 
     new = lief.PE.parse(out)
+    assert new is not None
     assert bytes(new.dos_stub) == stub
 
     checked, msg = lief.PE.check_layout(new)
@@ -97,7 +117,7 @@ def test_issue_952(tmp_path: Path):
 
 
 def test_issue_1261(tmp_path: Path):
-    pe = lief.PE.parse(get_sample("PE/ANCUtility.dll"))
+    pe = parse_pe("PE/ANCUtility.dll")
 
     rtype = lief.PE.RelocationEntry.BASE_TYPES.HIGHLOW
 
@@ -118,19 +138,23 @@ def test_issue_1261(tmp_path: Path):
     pe.write(str(output), config)
 
     new = lief.PE.parse(output)
+    assert new is not None
 
     checked, msg = lief.PE.check_layout(new)
     assert checked, msg
 
+
 def test_code_injection(tmp_path: Path):
-    def resolved_import(pe: lief.PE.Binary, imp: lief.PE.Import,
-                        entry: lief.PE.ImportEntry, rva: int):
+    def resolved_import(
+        pe: lief.PE.Binary, _: lief.PE.Import, entry: lief.PE.ImportEntry, rva: int
+    ):
         fixup_location = pe.get_section(".lief")
+        assert fixup_location is not None
 
         LEA_SZ = 7
         JMP_SZ = 6
-        FIXUP_POS = 7 + 2 # The jmp offset is encoded after the 2 first byes
-        FIXUP_SIZE = 4 # Size of the jump is 4 bytes
+        FIXUP_POS = 7 + 2  # The jmp offset is encoded after the 2 first byes
+        FIXUP_SIZE = 4  # Size of the jump is 4 bytes
 
         # rip is 'ahead' of the jmp
         rip_at_jmp = fixup_location.virtual_address + LEA_SZ + JMP_SZ
@@ -140,9 +164,9 @@ def test_code_injection(tmp_path: Path):
 
         content = list(fixup_location.content)
         content = (
-            content[:FIXUP_POS] +
-            list(delta.to_bytes(length=FIXUP_SIZE, byteorder='little')) +
-            content[FIXUP_POS + FIXUP_SIZE:]
+            content[:FIXUP_POS]
+            + list(delta.to_bytes(length=FIXUP_SIZE, byteorder="little"))
+            + content[FIXUP_POS + FIXUP_SIZE :]
         )
         fixup_location.content = content
 
@@ -150,6 +174,7 @@ def test_code_injection(tmp_path: Path):
 
     input_path = Path(get_sample("PE/LIEF-win64.dll"))
     pe = lief.PE.parse(input_path)
+    assert pe is not None
 
     # import 'puts' from 'api-ms-win-crt-stdio-l1-1-0.dll'
     stdio = pe.add_import("api-ms-win-crt-stdio-l1-1-0.dll")
@@ -157,21 +182,33 @@ def test_code_injection(tmp_path: Path):
 
     code = [
         # lea rcx, [rip + size next inst] -> Hello World
-        0x48, 0x8d ,0x0d, 0x06, 0x00, 0x00, 0x00,
+        0x48,
+        0x8D,
+        0x0D,
+        0x06,
+        0x00,
+        0x00,
+        0x00,
         # jmp qword ptr [rip + <fixup>]
-        0xff, 0x25, 0x00, 0x00, 0x00, 0x00,
+        0xFF,
+        0x25,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
     ] + list(b"Hello World")
 
     section = lief.PE.Section(".lief")
     section.content = code
     section.characteristics = (
-        lief.PE.Section.CHARACTERISTICS.MEM_READ |
-        lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE |
-        lief.PE.Section.CHARACTERISTICS.CNT_CODE |
-        lief.PE.Section.CHARACTERISTICS.CNT_INITIALIZED_DATA
+        lief.PE.Section.CHARACTERISTICS.MEM_READ
+        | lief.PE.Section.CHARACTERISTICS.MEM_EXECUTE
+        | lief.PE.Section.CHARACTERISTICS.CNT_CODE
+        | lief.PE.Section.CHARACTERISTICS.CNT_INITIALIZED_DATA
     ).value
 
     new_section = pe.add_section(section)
+    assert new_section is not None
     pe.tls.callbacks += [new_section.virtual_address + pe.imagebase]
 
     config = lief.PE.Builder.config_t()
@@ -183,34 +220,37 @@ def test_code_injection(tmp_path: Path):
     pe.write(output, config)
 
     new = lief.PE.parse(output)
+    assert new is not None
     err, msg = lief.PE.check_layout(new)
     assert err, msg
 
     if is_windows_x86_64():
-        popen_args = {
+        popen_args: dict[str, Any] = {
             "universal_newlines": True,
             "shell": True,
             "stdout": subprocess.PIPE,
             "stderr": subprocess.STDOUT,
-            "creationflags": 0x8000000  # win32con.CREATE_NO_WINDOW
+            "creationflags": 0x8000000,  # win32con.CREATE_NO_WINDOW
         }
 
         args = [
             sys.executable,
-            '-c',
-            f'import ctypes; ctypes.windll.LoadLibrary("{output.as_posix()}")'
+            "-c",
+            f'import ctypes; ctypes.windll.LoadLibrary("{output.as_posix()}")',
         ]
-        with Popen(args, **popen_args) as proc: # type: ignore[call-overload]
-            stdout, _ = proc.communicate(10)
+        with Popen(args, **popen_args) as proc:
+            stdout, _ = proc.communicate(timeout=10)
             lief.logging.info(stdout)
             assert proc.returncode == 0
             assert "Hello World" in stdout
+
 
 @pytest.mark.private
 def test_issue_1284(tmp_path: Path):
     input_path = Path(get_sample("private/PE/ig2_AddOn.exe"))
     pe = lief.PE.parse(input_path)
-    pe.relocations[0].virtual_address = 0xdeadc0de
+    assert pe is not None
+    pe.relocations[0].virtual_address = 0xDEADC0DE
 
     config = lief.PE.Builder.config_t()
     config.resources = False
@@ -226,5 +266,5 @@ def test_issue_1284(tmp_path: Path):
     pe.write(out_path, config)
 
     new_pe = lief.PE.parse(out_path)
-    assert new_pe.relocations[0].virtual_address == 0xdeadc0de
-
+    assert new_pe is not None
+    assert new_pe.relocations[0].virtual_address == 0xDEADC0DE

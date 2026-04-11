@@ -1,8 +1,10 @@
 import lief
 from utils import get_sample
 
+
 def test_header():
     emode = lief.OAT.parse(get_sample("OAT/OAT_124_AArch64_EngineeringMode.oat"))
+    assert emode is not None
     header = emode.header
 
     assert header.magic == [111, 97, 116, 10]
@@ -27,8 +29,10 @@ def test_header():
     assert header.image_file_location_oat_checksum == 1759409278
     assert header.image_file_location_oat_data_begin == 1893093376
 
+
 def test_oat_dex_files():
     CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_124_x86-64_CallDeviceId.oat"))
+    assert CallDeviceId is not None
     assert len(CallDeviceId.oat_dex_files) == 1
 
     # OAT Dex File 0
@@ -39,11 +43,13 @@ def test_oat_dex_files():
     assert oat_dex_file.dex_offset == 28
     assert not oat_dex_file.has_dex_file
 
+
 def test_oat_classes():
-    oat_file  = get_sample("OAT/OAT_124_x86-64_CallDeviceId.oat")
+    oat_file = get_sample("OAT/OAT_124_x86-64_CallDeviceId.oat")
     vdex_file = get_sample("VDEX/VDEX_06_x86-64_CallDeviceId.vdex")
 
     CallDeviceId = lief.OAT.parse(oat_file, vdex_file)
+    assert CallDeviceId is not None
     assert len(CallDeviceId.classes) == 1
 
     # OAT Class 0
@@ -57,10 +63,11 @@ def test_oat_classes():
 
 
 def test_oat_methods():
-    oat_file  = get_sample("OAT/OAT_124_x86-64_CallDeviceId.oat")
+    oat_file = get_sample("OAT/OAT_124_x86-64_CallDeviceId.oat")
     vdex_file = get_sample("VDEX/VDEX_06_x86-64_CallDeviceId.vdex")
 
     CallDeviceId = lief.OAT.parse(oat_file, vdex_file)
+    assert CallDeviceId is not None
     assert len(CallDeviceId.methods) == 1
 
     assert all(m.is_dex2dex_optimized for m in CallDeviceId.methods)

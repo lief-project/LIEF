@@ -1,19 +1,22 @@
-#!/usr/bin/env python
 import lief
 import pytest
+from utils import parse_macho
 
-from utils import get_sample
 
 @pytest.mark.private
 def test_personsemantics():
-    """iPhone16,2 17.4.1 21E237 """
-    target = lief.MachO.parse(get_sample("private/MachO/personsemantics-u8-v4.H16.espresso.hwx"))
+    """iPhone16,2 17.4.1 21E237"""
+    target = parse_macho("private/MachO/personsemantics-u8-v4.H16.espresso.hwx")
     assert target is not None
     assert len(target) == 1
     macho = target.at(0)
+    assert macho is not None
 
     assert macho.commands[11].command == lief.MachO.LoadCommand.TYPE.LIEF_UNKNOWN
-    assert bytes(macho.commands[11].data) == b'@\x00\x00\x00@\x00\x00\x00\x18\x00\x00\x00\x00\x00\x00\x00\x00\x00\xb41\x00\x00\x00\x0028231623ec2b5d8f2f330980979387e0\x00\x00\x00\x00\x00\x00\x00\x00'
+    assert (
+        bytes(macho.commands[11].data)
+        == b"@\x00\x00\x00@\x00\x00\x00\x18\x00\x00\x00\x00\x00\x00\x00\x00\x00\xb41\x00\x00\x00\x0028231623ec2b5d8f2f330980979387e0\x00\x00\x00\x00\x00\x00\x00\x00"
+    )
     assert macho.commands[18].command == lief.MachO.LoadCommand.TYPE.LIEF_UNKNOWN
-    assert macho.commands[18].original_command == 64
+    assert macho.commands[18].original_command == 64  # type: ignore
     assert macho.header.magic == lief.MachO.MACHO_TYPES.NEURAL_MODEL

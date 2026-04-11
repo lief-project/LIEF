@@ -1,17 +1,21 @@
-'''
+"""
 Some DroidGuard info from Objective-C metadata in iOS
-'''
-import lief
-import pytest
-from utils import get_sample, check_objc_dump
+"""
+
 from pathlib import Path
 from textwrap import dedent
+
+import lief
+import pytest
+from utils import check_objc_dump, get_sample, parse_macho
 
 if not lief.__extended__:
     pytest.skip("skipping: extended version only", allow_module_level=True)
 
+
 def test_droidguard():
-    macho = lief.MachO.parse(get_sample("private/MachO/Module_Framework")).at(0)
+    macho = parse_macho("private/MachO/Module_Framework").at(0)
+    assert macho is not None
     metadata = macho.objc_metadata
     assert metadata is not None
 
@@ -25,27 +29,34 @@ def test_droidguard():
     assert YTILogAttestationRequest is not None
     methods = list(YTILogAttestationRequest.methods)
     assert len(methods) == 1
-    assert methods[0].name == "descriptor"
-    assert methods[0].mangled_type == "@16@0:8"
-    assert methods[0].address == 0x1f125c8
-    assert not methods[0].is_instance
+    _m0 = methods[0]
+    assert _m0 is not None
+    assert _m0.name == "descriptor"
+    assert _m0.mangled_type == "@16@0:8"
+    assert _m0.address == 0x1F125C8
+    assert not _m0.is_instance
 
     protocols = list(YTILogAttestationRequest.protocols)
     assert len(protocols) == 0
 
     properties = list(YTILogAttestationRequest.properties)
     assert len(properties) == 15
-    assert properties[6].name == "droidguardResponse"
-    assert properties[6].attribute == 'T@"NSString",C,D,N'
+    _p6 = properties[6]
+    assert _p6 is not None
+    assert _p6.name == "droidguardResponse"
+    assert _p6.attribute == 'T@"NSString",C,D,N'
 
     ivars = list(YTILogAttestationRequest.ivars)
     assert len(ivars) == 0
 
     GADGestureRecognizer = metadata.get_class("GADGestureRecognizer")
+    assert GADGestureRecognizer is not None
     ivars = list(GADGestureRecognizer.ivars)
 
-    assert ivars[0].name == "_gestureInfo"
-    assert ivars[0].mangled_type == "[29i]"
+    _iv0 = ivars[0]
+    assert _iv0 is not None
+    assert _iv0.name == "_gestureInfo"
+    assert _iv0.mangled_type == "[29i]"
 
     PINCaching = metadata.get_protocol("PINCaching")
     assert PINCaching is not None
@@ -57,17 +68,22 @@ def test_droidguard():
     req_methods = list(PINCaching.required_methods)
     assert len(req_methods) == 21
 
-    assert req_methods[0].name == "containsObjectForKeyAsync:completion:"
-    assert req_methods[0].address == 0
+    _rm0 = req_methods[0]
+    assert _rm0 is not None
+    assert _rm0.name == "containsObjectForKeyAsync:completion:"
+    assert _rm0.address == 0
 
     properties = list(PINCaching.properties)
     assert len(properties) == 1
-    assert properties[0].name == "name"
-    assert properties[0].attribute == 'T@"NSString",R'
+    _prop0 = properties[0]
+    assert _prop0 is not None
+    assert _prop0.name == "name"
+    assert _prop0.attribute == 'T@"NSString",R'
 
-    check_objc_dump(metadata, Path(get_sample("private/MachO/Module_Framework.objdump")))
-    assert YTILogAttestationRequest.to_decl() == \
-        dedent('''\
+    check_objc_dump(
+        metadata, Path(get_sample("private/MachO/Module_Framework.objdump"))
+    )
+    assert YTILogAttestationRequest.to_decl() == dedent("""\
         @interface YTILogAttestationRequest
         // Address: 0x0001f125c8
         + (NSObject *)descriptor:(YTILogAttestationRequest *)self :(SEL)id;
@@ -87,4 +103,4 @@ def test_droidguard():
         @property void idsArray;
         @property void idsArray_Count;
         @end
-        ''')
+        """)

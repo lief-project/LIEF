@@ -434,6 +434,8 @@ class SymbolVersion(lief.Object):
 
     local: ClassVar[Final[SymbolVersion]] = ...
 
+    global_: ClassVar[Final[SymbolVersion]] = ...
+
     value: int
 
     @property
@@ -1338,6 +1340,8 @@ class Section(lief.Section):
 
         def __int__(self) -> int: ...
 
+        SHT_NULL_ = 0
+
         PROGBITS = 1
 
         SYMTAB = 2
@@ -1561,6 +1565,8 @@ class Segment(lief.Object):
         def __ne__(self, arg, /) -> bool: ...
 
         def __int__(self) -> int: ...
+
+        PT_NULL_ = 0
 
         LOAD = 1
 

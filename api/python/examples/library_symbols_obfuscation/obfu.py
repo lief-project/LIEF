@@ -24,7 +24,5 @@ for entry in binadd.dynamic_entries:
         entry.name = "libabc.so"
 
 
-libadd.write("libabc.so");
+libadd.write("libabc.so")
 binadd.write("binadd_obf.bin")
-
-

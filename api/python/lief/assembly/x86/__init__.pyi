@@ -44739,6 +44739,8 @@ class REG(enum.Enum):
 
     SSP = 69
 
+    _EFLAGS = 70
+
     CR0 = 71
 
     CR1 = 72

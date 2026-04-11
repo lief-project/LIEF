@@ -1,29 +1,31 @@
-#!/usr/bin/env python
+import ctypes
 import os
 import stat
-import ctypes
+from typing import cast
+
 import lief
 import pytest
-
-from utils import (
-    get_sample, has_recent_glibc, is_linux, is_x86_64, check_layout
-)
+from utils import check_layout, get_sample, has_recent_glibc, is_linux, is_x86_64
 
 SYMBOLS = {
     "myinstance": 0x1159,
-    "myinit":     0x1175,
-    "mycalc":     0x1199,
-    "mydelete":   0x1214,
+    "myinit": 0x1175,
+    "mycalc": 0x1199,
+    "mydelete": 0x1214,
 }
+
 
 @pytest.mark.skipif(not is_linux() or not is_x86_64(), reason="requires Linux x86-64")
 @pytest.mark.skipif(not has_recent_glibc(), reason="needs a recent GLIBC version")
 def test_gnu_hash(tmpdir):
-    target_path = get_sample('ELF/ELF64_x86-64_binary_empty-gnu-hash.bin')
-    output      = os.path.join(tmpdir, "libnoempty.so")
+    target_path = get_sample("ELF/ELF64_x86-64_binary_empty-gnu-hash.bin")
+    output = os.path.join(tmpdir, "libnoempty.so")
 
     binary = lief.ELF.parse(target_path)
-    entry_flag: lief.ELF.DynamicEntryFlags = binary[lief.ELF.DynamicEntry.TAG.FLAGS_1]
+    assert binary is not None
+    entry_flag = cast(
+        lief.ELF.DynamicEntryFlags, binary[lief.ELF.DynamicEntry.TAG.FLAGS_1]
+    )
     entry_flag.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
     for name, addr in SYMBOLS.items():

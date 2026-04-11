@@ -1,13 +1,12 @@
 import lief
 import pytest
-
-from utils import get_sample
+from utils import parse_pe
 
 
 @pytest.mark.private
 def test_bzimage():
     lief.logging.enable_debug()
-    pe = lief.PE.parse(get_sample("private/bzImage-6.6.8"))
+    pe = parse_pe("private/bzImage-6.6.8")
     assert pe is not None
 
     assert len(pe.sections) == 4

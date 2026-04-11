@@ -5,11 +5,11 @@ import os
 import stat
 import sys
 
+
 def change_interpreter(target, interpreter, output=None):
     if not os.path.isfile(target) or not lief.is_elf(target):
         print("Wrong target! ({})".format(target))
         return 1
-
 
     if not os.path.isfile(interpreter) or not lief.is_elf(interpreter):
         print("Wrong interpreter! ({})".format(interpreter))
@@ -39,22 +39,23 @@ def change_interpreter(target, interpreter, output=None):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Change the ELF interpreter of the given binary')
+    parser = argparse.ArgumentParser(
+        description="Change the ELF interpreter of the given binary"
+    )
 
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="Path to the binary rewritten",
+        action="store",
+        default=None,
+    )
 
-    parser.add_argument("-o", "--output",
-            help   = 'Path to the binary rewritten',
-            action = 'store',
-            default = None)
+    parser.add_argument("target", metavar="<elf>", help="Target ELF file")
 
-    parser.add_argument("target",
-            metavar="<elf>",
-            help='Target ELF file')
-
-    parser.add_argument("interpreter",
-            metavar="<interpreter>",
-            help='Path to the new interpreter')
-
+    parser.add_argument(
+        "interpreter", metavar="<interpreter>", help="Path to the new interpreter"
+    )
 
     args = parser.parse_args()
 
@@ -64,5 +65,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

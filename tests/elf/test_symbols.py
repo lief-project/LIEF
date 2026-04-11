@@ -1,15 +1,16 @@
-#!/usr/bin/env python
 import os
 import stat
 import subprocess
-import pytest
 from pathlib import Path
 from subprocess import Popen
 
 import lief
-from utils import get_sample, is_linux, is_x86_64
+import pytest
+from utils import is_linux, is_x86_64, parse_elf
+
+
 def test_remove_symbol(tmp_path: Path):
-    target = lief.ELF.parse(get_sample("ELF/test_dyn_syms.elf"))
+    target = parse_elf("ELF/test_dyn_syms.elf")
 
     target.remove_dynamic_symbol("puts")
 
@@ -17,6 +18,7 @@ def test_remove_symbol(tmp_path: Path):
     target.write(output)
 
     new = lief.ELF.parse(output)
+    assert new is not None
 
     assert "puts" not in {s.name for s in new.dynamic_symbols}
 
@@ -24,7 +26,10 @@ def test_remove_symbol(tmp_path: Path):
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-        with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+        with Popen(
+            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as P:
+            assert P.stdout is not None
             stdout = P.stdout.read().decode("utf8")
             lief.logging.info(stdout)
             assert len(stdout) > 0
@@ -33,15 +38,25 @@ def test_remove_symbol(tmp_path: Path):
         # Test with bind now
         env = dict(os.environ)
         env["LD_BIND_NOW"] = "1"
-        with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env) as P:
+        with Popen(
+            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env
+        ) as P:
+            assert P.stdout is not None
             stdout = P.stdout.read().decode("utf8")
             lief.logging.info(stdout)
             assert len(stdout) > 0
             assert "Hello world" in stdout
 
+
 @pytest.mark.skipif(not lief.__extended__, reason="needs LIEF extended")
 def test_demangling():
-    elf = lief.ELF.parse(get_sample("ELF/ELF64_x86-64_library_libtriton.so"))
+    elf = parse_elf("ELF/ELF64_x86-64_library_libtriton.so")
 
-    assert elf.symbols[80].demangled_name == "vtable for std::basic_streambuf<char, std::char_traits<char>>"
-    assert elf.symbols[4902].demangled_name == "typeinfo name for triton::smt2lib::smtAstIteNode"
+    assert (
+        elf.symbols[80].demangled_name
+        == "vtable for std::basic_streambuf<char, std::char_traits<char>>"
+    )
+    assert (
+        elf.symbols[4902].demangled_name
+        == "typeinfo name for triton::smt2lib::smtAstIteNode"
+    )

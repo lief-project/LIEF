@@ -1573,7 +1573,7 @@ class FPO(Debug):
 
         def __int__(self) -> int: ...
 
-        FPO = 0
+        FPO_ = 0
 
         TRAP = 1
 
@@ -4937,7 +4937,7 @@ class Builder:
 
     def write(self, output: str) -> None: ...
 
-    def bytes(self) -> bytes: ...
+    def raw_bytes(self) -> bytes: ...
 
 class Factory:
     @staticmethod

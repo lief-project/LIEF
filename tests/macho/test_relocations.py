@@ -1,9 +1,9 @@
-#!/usr/bin/env python
-import lief
-from utils import get_sample
+from utils import parse_macho
+
 
 def test_object_relocations():
-    json_api = lief.parse(get_sample('MachO/json_api.cpp_1.o'))
+    json_api = parse_macho("MachO/json_api.cpp_1.o").at(0)
+    assert json_api is not None
     assert len(json_api.sections) == 8
 
     assert json_api.sections[0].segment_name == "__TEXT"

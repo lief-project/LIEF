@@ -1,14 +1,14 @@
+import ctypes
+import subprocess
+from pathlib import Path
+from shutil import which
+from subprocess import Popen
+
 import lief
 import pytest
-from shutil import which
-from pathlib import Path
-import subprocess
-from subprocess import Popen
-import ctypes
-
 
 pytest.skip("not supported yet", allow_module_level=True)
-#if not is_osx():
+# if not is_osx():
 #    pytest.skip("requires OSX", allow_module_level=True)
 
 LIB_TEST = r"""\
@@ -31,36 +31,46 @@ API_EXPORT int do_add(int x) {
 }
 """
 
+
 def get_address(func):
     return ctypes.cast(func, ctypes.c_void_p).value
 
-def compile(src: Path, dst: Path, extra_flags = None):
+
+def compile(src: Path, dst: Path, extra_flags=None):
     COMPILER = which("clang++")
     assert COMPILER is not None
 
-    CC_FLAGS = ['-fPIC', '-shared']
+    CC_FLAGS = ["-fPIC", "-shared"]
     if extra_flags is not None:
         if isinstance(extra_flags, str):
             CC_FLAGS += [extra_flags]
         elif isinstance(extra_flags, list):
             CC_FLAGS += extra_flags
 
-    cmd = [COMPILER] + CC_FLAGS + ['-o', dst.as_posix(), src.as_posix()]
+    cmd = [COMPILER] + CC_FLAGS + ["-o", dst.as_posix(), src.as_posix()]
 
-    with Popen(cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
+    with Popen(
+        cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ) as proc:
+        assert proc.stdout is not None
         output = proc.stdout.read()
         lief.logging.info(output)
         return output
 
     return None
 
+
 def close(handler):
     ctypes.cdll.LoadLibrary("libc.dylib").dlclose(handler._handle)
 
-@pytest.mark.parametrize("version", [
-    '-mmacosx-version-min=10.9', # To test without the chained fixups
-    ''
-])
+
+@pytest.mark.parametrize(
+    "version",
+    [
+        "-mmacosx-version-min=10.9",  # To test without the chained fixups
+        "",
+    ],
+)
 def test_parse_in_memory(tmp_path: Path, version):
     libadd_src = tmp_path / "libadd.cpp"
     libadd_src.write_text(LIB_TEST)
@@ -69,17 +79,21 @@ def test_parse_in_memory(tmp_path: Path, version):
     compile(libadd_src, libadd_so, version)
 
     libadd = lief.parse(libadd_so)
+    assert isinstance(libadd, lief.MachO.Binary)
     lib = ctypes.cdll.LoadLibrary(libadd_so.as_posix())
-    base_address = get_address(lib.do_add) - libadd.get_symbol("_do_add").value
+    sym = libadd.get_symbol("_do_add")
+    assert sym is not None
+    base_address = get_address(lib.do_add) - sym.value
     assert base_address > 0
 
     config = lief.MachO.ParserConfig()
-    config.parse_dyld_exports  = True
+    config.parse_dyld_exports = True
     config.parse_dyld_bindings = True
-    config.parse_dyld_rebases  = True
-    config.fix_from_memory     = True
+    config.parse_dyld_rebases = True
+    config.fix_from_memory = True
 
     libadd_mem = lief.MachO.parse_from_memory(base_address, config)
+    assert libadd_mem is not None
 
     # Write the library loaded in memory
     libadd_mem_so = tmp_path / "libadd_mem.so"

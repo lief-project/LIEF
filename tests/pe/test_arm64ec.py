@@ -1,29 +1,35 @@
 """
 Tests related to ARM64EC
 """
-import lief
 
 from pathlib import Path
 from textwrap import dedent
+from typing import cast
+
+import lief
 from utils import get_sample
+
 
 def test_chpe_simple():
     input_path = Path(get_sample("PE/arm64ec_hello_world_2025.exe"))
     pe = lief.PE.parse(input_path)
+    assert pe is not None
 
     config = pe.load_configuration
-    assert config.hybrid_metadata_pointer == 0x1400111f8
-    assert config.guard_memcpy_function_pointer == 0x1400110a0
+    assert config is not None
+    assert config.hybrid_metadata_pointer == 0x1400111F8
+    assert config.guard_memcpy_function_pointer == 0x1400110A0
 
-    metadata: lief.PE.CHPEMetadataARM64 = config.chpe_metadata
-    assert metadata is not None
+    chpe_metadata = config.chpe_metadata
+    assert chpe_metadata is not None
+    metadata = cast(lief.PE.CHPEMetadataARM64, chpe_metadata)
     assert isinstance(metadata, lief.PE.CHPEMetadataARM64)
 
     assert metadata.version == 2
     assert metadata.code_map_count == 2
-    assert metadata.code_map == 0x11e00
+    assert metadata.code_map == 0x11E00
 
-    assert metadata.code_ranges_to_entrypoints == 0x11cb4
+    assert metadata.code_ranges_to_entrypoints == 0x11CB4
     assert metadata.redirection_metadata == 0x19000
     assert metadata.os_arm64x_dispatch_call_no_redirect == 0x11000
     assert metadata.os_arm64x_dispatch_ret == 0x11008
@@ -37,9 +43,9 @@ def test_chpe_simple():
     assert metadata.get_x64_information_function_pointer == 0x11028
     assert metadata.set_x64_information_function_pointer == 0x11030
     assert metadata.extra_rfe_table == 0x17000
-    assert metadata.extra_rfe_table_size == 0xd38
+    assert metadata.extra_rfe_table_size == 0xD38
     assert metadata.os_arm64x_dispatch_fptr == 0x11038
-    assert metadata.auxiliary_iat_copy == 0x13e48
+    assert metadata.auxiliary_iat_copy == 0x13E48
     assert metadata.auxiliary_delay_import == 0
     assert metadata.auxiliary_delay_import_copy == 0
     assert metadata.bitfield_info == 0
@@ -47,22 +53,22 @@ def test_chpe_simple():
     code_range = metadata.code_ranges
     assert len(code_range) == 2
     assert code_range[0].start == 0x00001000
-    assert code_range[0].end == 0x0000d4c8
+    assert code_range[0].end == 0x0000D4C8
     assert code_range[0].type == lief.PE.CHPEMetadataARM64.range_entry_t.TYPE.ARM64EC
 
-    assert code_range[1].start == 0x0000e000
-    assert code_range[1].end == 0x0000f010
+    assert code_range[1].start == 0x0000E000
+    assert code_range[1].end == 0x0000F010
     assert code_range[1].type == lief.PE.CHPEMetadataARM64.range_entry_t.TYPE.AMD64
 
     redirections = metadata.redirections
-    assert redirections[0].src == 0x0000f000
-    assert redirections[0].dst == 0x00006ac8
+    assert redirections[0].src == 0x0000F000
+    assert redirections[0].dst == 0x00006AC8
 
     code_range_entry_point = metadata.code_range_entry_point
     assert len(code_range_entry_point) == 1
-    assert code_range_entry_point[0].start_rva == 0x0000f000
-    assert code_range_entry_point[0].end_rva == 0x0000f010
-    assert code_range_entry_point[0].entrypoint == 0x0000f000
+    assert code_range_entry_point[0].start_rva == 0x0000F000
+    assert code_range_entry_point[0].end_rva == 0x0000F010
+    assert code_range_entry_point[0].entrypoint == 0x0000F000
 
     assert str(metadata) == dedent("""\
                       2 Version
@@ -96,6 +102,7 @@ def test_chpe_simple():
 def test_exceptions_simple():
     input_path = Path(get_sample("PE/arm64ec_hello_world_2025.exe"))
     pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+    assert pe is not None
     assert pe.is_arm64ec
     assert not pe.is_arm64x
 
@@ -103,20 +110,26 @@ def test_exceptions_simple():
     exceptions = pe.exceptions
     assert len(exceptions) == 425
 
-    assert len([
-        e for e in pe.exceptions if e.arch == lief.PE.ExceptionInfo.ARCH.X86_64
-    ]) == 2
-    assert len([
-        e for e in pe.exceptions if e.arch == lief.PE.ExceptionInfo.ARCH.ARM64
-    ]) == 423
+    assert (
+        len([e for e in pe.exceptions if e.arch == lief.PE.ExceptionInfo.ARCH.X86_64])
+        == 2
+    )
+    assert (
+        len([e for e in pe.exceptions if e.arch == lief.PE.ExceptionInfo.ARCH.ARM64])
+        == 423
+    )
 
-    x64_0: lief.PE.RuntimeFunctionX64 = exceptions[0]
+    x64_0 = cast(lief.PE.RuntimeFunctionX64, exceptions[0])
     assert isinstance(x64_0, lief.PE.RuntimeFunctionX64)
-    assert x64_0.rva_start == 0x00e2c0
-    assert x64_0.unwind_info.count_opcodes == 0
+    assert x64_0.rva_start == 0x00E2C0
+    _unwind_info = x64_0.unwind_info
+    assert _unwind_info is not None
+    assert _unwind_info.count_opcodes == 0
 
     # Simple/basic entry
-    e_basic: lief.PE.unwind_aarch64.UnpackedFunction = pe.find_exception_at(0x00001000)
+    _e_basic = pe.find_exception_at(0x00001000)
+    assert _e_basic is not None
+    e_basic = cast(lief.PE.unwind_aarch64.UnpackedFunction, _e_basic)
     assert isinstance(e_basic, lief.PE.unwind_aarch64.UnpackedFunction)
     assert e_basic.rva_start == 0x00001000
     assert e_basic.rva_end == 0x00001018
@@ -147,11 +160,13 @@ def test_exceptions_simple():
     }""")
 
     # Entry with exception data (X=1)
-    entry: lief.PE.unwind_aarch64.UnpackedFunction = pe.find_exception_at(0x00004a90)
-    assert isinstance(e_basic, lief.PE.unwind_aarch64.UnpackedFunction)
-    assert entry.rva_start == 0x00004a90
+    _entry = pe.find_exception_at(0x00004A90)
+    assert _entry is not None
+    entry = cast(lief.PE.unwind_aarch64.UnpackedFunction, _entry)
+    assert isinstance(entry, lief.PE.unwind_aarch64.UnpackedFunction)
+    assert entry.rva_start == 0x00004A90
     assert entry.X == 1
-    assert entry.exception_handler == 0x00004a40
+    assert entry.exception_handler == 0x00004A40
 
     assert str(entry) == dedent("""\
     Runtime Unpacked AArch64 Function {
@@ -165,9 +180,11 @@ def test_exceptions_simple():
     }""")
 
     # Entry with multiple epilog scopes
-    entry: lief.PE.unwind_aarch64.UnpackedFunction = pe.find_exception_at(0x000076a0)
-    assert isinstance(e_basic, lief.PE.unwind_aarch64.UnpackedFunction)
-    assert entry.rva_start == 0x000076a0
+    _entry = pe.find_exception_at(0x000076A0)
+    assert _entry is not None
+    entry = cast(lief.PE.unwind_aarch64.UnpackedFunction, _entry)
+    assert isinstance(entry, lief.PE.unwind_aarch64.UnpackedFunction)
+    assert entry.rva_start == 0x000076A0
     assert entry.X == 0
     assert entry.epilog_count == 2
 
@@ -202,12 +219,14 @@ def test_exceptions_simple():
     }""")
 
     # Entry with large epilog (using offset)
-    entry: lief.PE.unwind_aarch64.UnpackedFunction = pe.find_exception_at(0x00005658)
-    assert isinstance(e_basic, lief.PE.unwind_aarch64.UnpackedFunction)
+    _entry = pe.find_exception_at(0x00005658)
+    assert _entry is not None
+    entry = cast(lief.PE.unwind_aarch64.UnpackedFunction, _entry)
+    assert isinstance(entry, lief.PE.unwind_aarch64.UnpackedFunction)
     assert entry.rva_start == 0x00005658
     assert entry.X == 1
     assert entry.epilog_count == 0
-    assert entry.epilog_offset == 0x00000a
+    assert entry.epilog_offset == 0x00000A
 
     assert str(entry) == dedent("""\
     Runtime Unpacked AArch64 Function {
@@ -235,7 +254,9 @@ def test_exceptions_simple():
     }""")
 
     # Entry that uses the (undocumented) save any reg opcode
-    entry: lief.PE.unwind_aarch64.UnpackedFunction = pe.find_exception_at(0x0000bb48)
+    _entry = pe.find_exception_at(0x0000BB48)
+    assert _entry is not None
+    entry = cast(lief.PE.unwind_aarch64.UnpackedFunction, _entry)
     assert str(entry) == dedent("""\
     Runtime Unpacked AArch64 Function {
       Range(RVA): 0x0000bb48 - 0x0000bb98
@@ -266,12 +287,14 @@ def test_exceptions_simple():
     }""")
 
     # Packed entry
-    entry: lief.PE.unwind_aarch64.PackedFunction = pe.find_exception_at(0x0000bea8)
+    _entry = pe.find_exception_at(0x0000BEA8)
+    assert _entry is not None
+    entry = cast(lief.PE.unwind_aarch64.PackedFunction, _entry)
     assert entry.flag == lief.PE.RuntimeFunctionAArch64.PACKED_FLAGS.PACKED
     assert isinstance(entry, lief.PE.unwind_aarch64.PackedFunction)
 
-    assert entry.rva_start == 0x0000bea8
-    assert entry.rva_end == 0x0000bed4
+    assert entry.rva_start == 0x0000BEA8
+    assert entry.rva_end == 0x0000BED4
     assert entry.length == 44
     assert entry.frame_size == 0x10
     assert entry.reg_F == 0
@@ -279,20 +302,24 @@ def test_exceptions_simple():
     assert entry.H == 0
     assert entry.CR == 2
 
+
 def test_unaligned():
     """
     .pdata content is not 8-byte aligned
     """
     input_path = Path(get_sample("PE/win11_arm64ec_Windows_AI_MachineLearning_x64.dll"))
     pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+    assert pe is not None
     assert pe.is_arm64ec
     assert not pe.is_arm64x
 
     assert len(pe.exceptions) == 4457
 
-    assert len([
-        e for e in pe.exceptions if e.arch == lief.PE.ExceptionInfo.ARCH.X86_64
-    ]) == 7
-    assert len([
-        e for e in pe.exceptions if e.arch == lief.PE.ExceptionInfo.ARCH.ARM64
-    ]) == 4450
+    assert (
+        len([e for e in pe.exceptions if e.arch == lief.PE.ExceptionInfo.ARCH.X86_64])
+        == 7
+    )
+    assert (
+        len([e for e in pe.exceptions if e.arch == lief.PE.ExceptionInfo.ARCH.ARM64])
+        == 4450
+    )

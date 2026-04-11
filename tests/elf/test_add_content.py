@@ -1,29 +1,20 @@
-#!/usr/bin/env python
 import os
-import stat
 import re
+import stat
 import subprocess
-import pytest
+from functools import lru_cache
 from pathlib import Path
 from subprocess import Popen
+from typing import Any
 
 import lief
-
-from utils import get_compiler, is_aarch64, is_x86_64, is_linux, check_layout
+import pytest
+from utils import check_layout, get_compiler, is_aarch64, is_linux, is_x86_64
 
 if not is_linux():
     pytest.skip("requires Linux", allow_module_level=True)
 
-CURRENT_DIRECTORY = Path(__file__).parent
-STUB_FILE = None
-if is_x86_64():
-    STUB_FILE = "hello_lief.bin"
-elif is_aarch64():
-    STUB_FILE = "hello_lief_aarch64.bin"
-
-assert STUB_FILE is not None
-
-STUB = lief.ELF.parse(CURRENT_DIRECTORY / STUB_FILE)
+CWD = Path(__file__).parent
 
 COMPILER = get_compiler()
 
@@ -58,26 +49,47 @@ int main(int argc, char **argv) {
 """
 
 
-def compile_libadd(tmp_path: Path):
-    outfile = "libadd.so"
-    CC_FLAGS = ['-fPIC', '-shared']
-    cmd = [COMPILER, '-o', outfile] + CC_FLAGS + ["libadd.c"]
+@lru_cache(maxsize=1)
+def _get_stub() -> lief.ELF.Binary:
+    if is_x86_64():
+        stub_path = CWD / "hello_lief.bin"
+    elif is_aarch64():
+        stub_path = CWD / "hello_lief_aarch64.bin"
+    else:
+        raise RuntimeError("Unsupported platform")
+
+    assert stub_path.is_file()
+    stub = lief.ELF.parse(stub_path)
+    assert stub is not None
+    return stub
+
+
+def compile_libadd(tmp_path: Path) -> Path:
+    outfile = tmp_path / "libadd.so"
+    CC_FLAGS = ["-fPIC", "-shared"]
+    cmd = [COMPILER, "-o", str(outfile)] + CC_FLAGS + ["libadd.c"]
     lief.logging.info("Compile 'libadd' with: {}".format(" ".join(cmd)))
-    with Popen(cmd, cwd=tmp_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+    with Popen(
+        cmd, cwd=tmp_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ) as P:
+        assert P.stdout is not None
         stdout = P.stdout.read()
         lief.logging.info(stdout)
-        return tmp_path / outfile
+        return outfile
 
 
 def compile_binadd(tmp_path: Path):
-    outfile = "binadd.bin"
-    CC_FLAGS = ['-L', tmp_path.as_posix()]
-    cmd = [COMPILER, '-o', outfile] + CC_FLAGS + ["binadd.c", '-ladd']
+    outfile = tmp_path / "binadd.bin"
+    CC_FLAGS = ["-L", tmp_path.as_posix()]
+    cmd = [COMPILER, "-o", str(outfile)] + CC_FLAGS + ["binadd.c", "-ladd"]
     lief.logging.info("Compile 'binadd' with: {}".format(" ".join(cmd)))
-    with Popen(cmd, cwd=tmp_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+    with Popen(
+        cmd, cwd=tmp_path, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ) as P:
+        assert P.stdout is not None
         stdout = P.stdout.read()
         lief.logging.info(stdout)
-        return tmp_path / outfile
+        return outfile
 
 
 def test_simple(tmp_path: Path):
@@ -87,18 +99,20 @@ def test_simple(tmp_path: Path):
     (tmp_path / "libadd.c").write_text(LIBADD_C)
     (tmp_path / "binadd.c").write_text(BINADD_C)
 
-    libadd_so  = tmp_path / "libadd.so"
-    binadd_bin = tmp_path / "binadd.bin"
-
-    libadd_so  = compile_libadd(tmp_path)
+    libadd_so = compile_libadd(tmp_path)
     binadd_bin = compile_binadd(tmp_path)
 
     libadd = lief.ELF.parse(libadd_so)
+    assert libadd is not None
+    stub = _get_stub()
     for _ in range(10):
-        segment = libadd.add(STUB.segments[0])
+        segment = libadd.add(stub.segments[0])
+        assert segment is not None
         segment.alignment = 0x1000
 
-        new_ep = (STUB.header.entrypoint - STUB.segments[0].virtual_address) + segment.virtual_address
+        new_ep = (
+            stub.header.entrypoint - stub.segments[0].virtual_address
+        ) + segment.virtual_address
 
         if libadd.has(lief.ELF.DynamicEntry.TAG.INIT_ARRAY):
             init_array = libadd.get(lief.ELF.DynamicEntry.TAG.INIT_ARRAY)
@@ -109,6 +123,7 @@ def test_simple(tmp_path: Path):
 
         if libadd.has(lief.ELF.DynamicEntry.TAG.INIT):
             init = libadd.get(lief.ELF.DynamicEntry.TAG.INIT)
+            assert init is not None
             init.value = new_ep
 
     libadd.write(libadd_so)
@@ -117,13 +132,15 @@ def test_simple(tmp_path: Path):
 
     st = os.stat(libadd_so)
     os.chmod(libadd_so, st.st_mode | stat.S_IEXEC)
-    popen_args = {
+    popen_args: dict[str, Any] = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
-        "env":    {"LD_LIBRARY_PATH": tmp_path.as_posix()},
+        "universal_newlines": True,
+        "env": {"LD_LIBRARY_PATH": tmp_path.as_posix()},
     }
 
-    with Popen([binadd_bin, '1', '2'], **popen_args) as P: # type: ignore
-        stdout = P.stdout.read().decode("utf8")
+    with Popen([binadd_bin, "1", "2"], **popen_args) as P:
+        assert P.stdout is not None
+        stdout = P.stdout.read()
         lief.logging.info(stdout)
-        assert re.search(r'LIEF is Working', stdout) is not None
+        assert re.search(r"LIEF is Working", stdout) is not None

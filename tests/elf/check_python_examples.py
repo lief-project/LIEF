@@ -1,17 +1,21 @@
-import pytest
 import sys
 from pathlib import Path
 
-from utils import lief_samples_dir, import_from_file
+import pytest
+from utils import import_from_file, lief_samples_dir
 
 samples_dir = Path(lief_samples_dir())
 
 LIEF_PY_DIR = Path(__file__).parent / ".." / ".." / "api" / "python" / "examples"
 
-@pytest.mark.parametrize("elf", [
-    "ELF/ELF32_x86_binary_ls.bin",
-    "ELF/ELF32_ARM_binary_ls.bin",
-])
+
+@pytest.mark.parametrize(
+    "elf",
+    [
+        "ELF/ELF32_x86_binary_ls.bin",
+        "ELF/ELF32_ARM_binary_ls.bin",
+    ],
+)
 def test_elf_reader(monkeypatch, elf):
     sample = samples_dir / Path(elf)
     target = LIEF_PY_DIR / "elf_reader.py"
@@ -20,9 +24,13 @@ def test_elf_reader(monkeypatch, elf):
         m.setattr(sys, "argv", [target.name, "--all", sample.as_posix()])
         elf_reader.main()
 
-@pytest.mark.parametrize("elf", [
-    "ELF/ELF32_x86_binary_ls.bin",
-])
+
+@pytest.mark.parametrize(
+    "elf",
+    [
+        "ELF/ELF32_x86_binary_ls.bin",
+    ],
+)
 def test_elf_remove_section_table(monkeypatch, tmp_path: Path, elf):
     out = tmp_path / "out.bin"
     sample = samples_dir / Path(elf)
@@ -33,9 +41,13 @@ def test_elf_remove_section_table(monkeypatch, tmp_path: Path, elf):
         m.setattr(sys, "argv", [target.name, sample.as_posix(), out.as_posix()])
         module.main()
 
-@pytest.mark.parametrize("elf", [
-    "ELF/ELF32_x86_binary_ls.bin",
-])
+
+@pytest.mark.parametrize(
+    "elf",
+    [
+        "ELF/ELF32_x86_binary_ls.bin",
+    ],
+)
 def test_elf_symbol_obfuscation(monkeypatch, tmp_path: Path, elf):
     out = tmp_path / "out.bin"
     sample = samples_dir / Path(elf)
@@ -45,9 +57,13 @@ def test_elf_symbol_obfuscation(monkeypatch, tmp_path: Path, elf):
         m.setattr(sys, "argv", [target.name, sample.as_posix(), out.as_posix()])
         module.main()
 
-@pytest.mark.parametrize("elf", [
-    "ELF/ELF64_x86-64_binary_ls.bin",
-])
+
+@pytest.mark.parametrize(
+    "elf",
+    [
+        "ELF/ELF64_x86-64_binary_ls.bin",
+    ],
+)
 def test_elf_unstrip(monkeypatch, tmp_path: Path, elf):
     out = tmp_path / "out.bin"
     sample = samples_dir / Path(elf)
@@ -58,9 +74,13 @@ def test_elf_unstrip(monkeypatch, tmp_path: Path, elf):
         m.setattr(sys, "argv", [target.name, sample.as_posix(), out.as_posix()])
         module.main()
 
-@pytest.mark.parametrize("elf", [
-    "ELF/ELF64_x86-64_binary_ls.bin",
-])
+
+@pytest.mark.parametrize(
+    "elf",
+    [
+        "ELF/ELF64_x86-64_binary_ls.bin",
+    ],
+)
 def test_elf_json(monkeypatch, elf):
     sample = samples_dir / Path(elf)
     target = LIEF_PY_DIR / "elf_json.py"

@@ -1,14 +1,14 @@
 #!/bin/python3
-import os
-import sys
-import logging
-import shutil
 import argparse
+import logging
+import os
+import shutil
 import subprocess
-from tempfile import gettempdir
-from subprocess import Popen
-from pathlib import Path
+import sys
 from functools import lru_cache
+from pathlib import Path
+from subprocess import Popen
+from tempfile import gettempdir
 
 logger = logging.getLogger(__name__)
 

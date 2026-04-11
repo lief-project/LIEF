@@ -1,14 +1,19 @@
-import lief
 import json
+
+import lief
 from utils import get_sample
+
 
 def test_multidex():
     hangout = lief.OAT.parse(get_sample("OAT/OAT_079_AArch64_Hangouts.oat"))
+    assert hangout is not None
 
     assert len(hangout.dex_files) == 2
 
+
 def test_header():
     pm = lief.OAT.parse(get_sample("OAT/OAT_079_AArch64_pm.oat"))
+    assert pm is not None
     header = pm.header
 
     assert header.magic == [111, 97, 116, 10]
@@ -33,17 +38,23 @@ def test_header():
     assert header.image_file_location_oat_checksum == 3334846204
     assert header.image_file_location_oat_data_begin == 1893416960
 
+
 def test_decompile():
-    calldeviceid = lief.OAT.parse(get_sample('OAT/OAT_079_x86-64_CallDeviceId.oat'))
+    calldeviceid = lief.OAT.parse(get_sample("OAT/OAT_079_x86-64_CallDeviceId.oat"))
+    assert calldeviceid is not None
 
     assert len(calldeviceid.dex_files) == 1
 
     dex2dex_json_info_lhs = json.loads(calldeviceid.dex2dex_json_info)
-    dex2dex_json_info_rhs = {'classes.dex': {'Lre/android/art/CallDeviceId;': {'3': {'0': 0}}}}
+    dex2dex_json_info_rhs = {
+        "classes.dex": {"Lre/android/art/CallDeviceId;": {"3": {"0": 0}}}
+    }
     assert dex2dex_json_info_lhs == dex2dex_json_info_rhs
+
 
 def test_dex_files():
     CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_079_x86-64_CallDeviceId.oat"))
+    assert CallDeviceId is not None
     dex_files = CallDeviceId.dex_files
 
     assert len(dex_files) == CallDeviceId.header.nb_dex_files
@@ -55,9 +66,9 @@ def test_dex_files():
     assert len(dex.raw(deoptimize=False)) == dex.header.file_size
 
 
-
 def test_oat_dex_files():
     CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_079_x86-64_CallDeviceId.oat"))
+    assert CallDeviceId is not None
     assert len(CallDeviceId.oat_dex_files) == 1
 
     # OAT Dex File 0
@@ -68,8 +79,10 @@ def test_oat_dex_files():
     assert oat_dex_file.dex_offset == 1320
     assert oat_dex_file.has_dex_file
 
+
 def test_oat_classes():
     CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_079_x86-64_CallDeviceId.oat"))
+    assert CallDeviceId is not None
     assert len(CallDeviceId.classes) == 1
 
     # OAT Class 0
@@ -84,6 +97,7 @@ def test_oat_classes():
 
 def test_oat_methods():
     CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_079_x86-64_CallDeviceId.oat"))
+    assert CallDeviceId is not None
     assert len(CallDeviceId.methods) == 1
 
     assert all(m.is_dex2dex_optimized for m in CallDeviceId.methods)

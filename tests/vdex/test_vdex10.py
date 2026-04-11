@@ -1,12 +1,15 @@
-import lief
 import json
-from utils import get_sample
 from pathlib import Path
+
+import lief
+from utils import get_sample
 
 CWD = Path(__file__).parent
 
+
 def test_vdex10():
-    telecom = lief.VDEX.parse(get_sample('VDEX/VDEX_10_AArch64_Telecom.vdex'))
+    telecom = lief.VDEX.parse(get_sample("VDEX/VDEX_10_AArch64_Telecom.vdex"))
+    assert telecom is not None
 
     # 1 Dex File registred
     assert len(telecom.dex_files) == 1
@@ -18,12 +21,14 @@ def test_vdex10():
 
     dex2dex_json_info_rhs = None
 
-    with open(json_test_path, 'r') as f:
+    with open(json_test_path, "r") as f:
         dex2dex_json_info_rhs = json.load(f)
     assert dex2dex_json_info_lhs == dex2dex_json_info_rhs
 
+
 def test_header():
-    telecom = lief.VDEX.parse(get_sample('VDEX/VDEX_10_AArch64_Telecom.vdex'))
+    telecom = lief.VDEX.parse(get_sample("VDEX/VDEX_10_AArch64_Telecom.vdex"))
+    assert telecom is not None
     header = telecom.header
 
     assert header.magic == [118, 100, 101, 120]
@@ -35,11 +40,12 @@ def test_header():
 
 
 def test_dex_files():
-    telecom = lief.VDEX.parse(get_sample('VDEX/VDEX_10_AArch64_Telecom.vdex'))
-    _h           = hash(telecom.dex_files[0])
-    _h_file      = lief.hash(telecom.dex_files[0].raw(False))
+    telecom = lief.VDEX.parse(get_sample("VDEX/VDEX_10_AArch64_Telecom.vdex"))
+    assert telecom is not None
+    _h = hash(telecom.dex_files[0])
+    _h_file = lief.hash(telecom.dex_files[0].raw(False))
     _h_file_dopt = lief.hash(telecom.dex_files[0].raw(True))
 
-    #assert h == 4434625889427456908
-    #assert h_file == 18446744071715884987
-    #assert h_file_dopt == 18446744072171126186
+    # assert h == 4434625889427456908
+    # assert h_file == 18446744071715884987
+    # assert h_file_dopt == 18446744072171126186

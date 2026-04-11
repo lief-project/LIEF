@@ -1,23 +1,21 @@
-#!/usr/bin/env python
 import os
 import stat
 import subprocess
-import pytest
 from pathlib import Path
 from subprocess import Popen
 
 import lief
-from utils import (
-    get_sample, is_linux, is_x86_64, is_64bits_platform, check_layout,
-)
+import pytest
+from utils import check_layout, is_64bits_platform, is_linux, is_x86_64, parse_elf
+
 
 def test_issue_671(tmp_path: Path):
     """
-    Test on the support of bss-like segments where virtual_address - imagebase != offset
-    cf. https://github.com/lief-project/LIEF/issues/671
+    Test the support of bss-like segments where `virtual_address - imagebase != offset`
+    see: https://github.com/lief-project/LIEF/issues/671
     """
     binary_name = "nopie_bss_671.elf"
-    target = lief.ELF.parse(get_sample(f"ELF/{binary_name}"))
+    target = parse_elf(f"ELF/{binary_name}")
 
     for s in filter(lambda e: e.exported, target.symtab_symbols):
         target.add_dynamic_symbol(s)
@@ -27,16 +25,22 @@ def test_issue_671(tmp_path: Path):
 
     # Make sure that the PHDR has been relocated at the end:
     built = lief.ELF.parse(output)
+    assert built is not None
     check_layout(built)
-    assert built[lief.ELF.Segment.TYPE.PHDR].file_offset == 0x3000
-    assert built[lief.ELF.Segment.TYPE.PHDR].physical_size == 0x1f8
-    assert built[lief.ELF.Segment.TYPE.PHDR].virtual_address == 0x403000
+    phdr_seg = built.get(lief.ELF.Segment.TYPE.PHDR)
+    assert phdr_seg is not None
+    assert phdr_seg.file_offset == 0x3000
+    assert phdr_seg.physical_size == 0x1F8
+    assert phdr_seg.virtual_address == 0x403000
 
     if is_linux() and is_x86_64():
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-        with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+        with Popen(
+            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as P:
+            assert P.stdout is not None
             stdout = P.stdout.read().decode("utf8")
             lief.logging.info(stdout)
             assert len(stdout) > 0
@@ -48,12 +52,13 @@ def test_all(tmp_path: Path):
         pytest.skip("requires a 64-bits platform")
 
     binary_name = "544ca2035a9c15e7756ed8d8067d860bd3157e4eeaa39b4ee932458eebe2434b.elf"
-    target: lief.ELF.Binary = lief.ELF.parse(get_sample(f"ELF/{binary_name}"))
+    target = parse_elf(f"ELF/{binary_name}")
     bss = target.get_section(".bss")
+    assert bss is not None
 
-    assert bss.virtual_address == 0x65a3e0
-    assert bss.size == 0x1ccb6330
-    assert bss.file_offset == 0x05a3e0
+    assert bss.virtual_address == 0x65A3E0
+    assert bss.size == 0x1CCB6330
+    assert bss.file_offset == 0x05A3E0
     assert len(bss.content) == 0
 
     target.add_library("libcap.so.2")
@@ -73,10 +78,13 @@ def test_all(tmp_path: Path):
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 
         with Popen(output, stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+            assert P.stdout is not None
             stdout = P.stdout.read().decode("utf8")
             lief.logging.info(stdout)
             assert len(stdout) > 0
 
     # Check that the written binary contains our modifications
-    new: lief.ELF.Binary = lief.ELF.parse(output)
-    assert new.get_library("libcap.so.2").name == "libcap.so.2"
+    new = parse_elf(output)
+    lib = new.get_library("libcap.so.2")
+    assert lib is not None
+    assert lib.name == "libcap.so.2"

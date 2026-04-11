@@ -1,10 +1,11 @@
-#!/usr/bin/env python
 import lief
 from utils import get_sample
+
 
 def test_offset_to_rva():
     path = get_sample("PE/PE64_x86-64_binary_cmd.exe")
     pe = lief.PE.parse(path)
+    assert pe is not None
 
     section_text = pe.get_section(".text")
     assert section_text is not None
@@ -19,9 +20,11 @@ def test_offset_to_rva():
     va = rva + pe.optional_header.imagebase
     assert pe.va_to_offset(va) == offset
 
+
 def test_offset_to_va():
     path = get_sample("PE/PE64_x86-64_binary_cmd.exe")
     pe = lief.PE.parse(path)
+    assert pe is not None
 
     section_text = pe.get_section(".text")
     assert section_text is not None

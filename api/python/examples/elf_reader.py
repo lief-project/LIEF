@@ -16,18 +16,19 @@ import argparse
 
 terminal_rows, terminal_columns = 100, 110
 try:
-    terminal_rows, terminal_columns = os.popen('stty size', 'r').read().split()
+    terminal_rows, terminal_columns = os.popen("stty size", "r").read().split()
 except ValueError:
     pass
 
 terminal_columns = int(terminal_columns) - 10
-terminal_rows    = int(terminal_rows)
+terminal_rows = int(terminal_rows)
+
 
 class exceptions_handler(object):
     func = None
 
     def __init__(self, exceptions, on_except_callback=None):
-        self.exceptions         = exceptions
+        self.exceptions = exceptions
         self.on_except_callback = on_except_callback
 
     def __call__(self, *args, **kwargs):
@@ -52,7 +53,6 @@ def print_header(binary):
     header = binary.header
     identity = header.identity
 
-
     print("== Header ==\n")
     format_str = "{:<30} {:<30}"
     format_hex = "{:<30} 0x{:<13x}"
@@ -63,36 +63,52 @@ def print_header(binary):
     if header.machine_type == lief.ELF.ARCH.ARM:
         eflags_str = " - ".join([str(s).split(".")[-1] for s in header.arm_flags_list])
 
-    if header.machine_type in [lief.ELF.ARCH.MIPS, lief.ELF.ARCH.MIPS_RS3_LE, lief.ELF.ARCH.MIPS_X]:
+    if header.machine_type in [
+        lief.ELF.ARCH.MIPS,
+        lief.ELF.ARCH.MIPS_RS3_LE,
+        lief.ELF.ARCH.MIPS_X,
+    ]:
         eflags_str = " - ".join([str(s).split(".")[-1] for s in header.mips_flags_list])
 
     if header.machine_type == lief.ELF.ARCH.PPC64:
-        eflags_str = " - ".join([str(s).split(".")[-1] for s in header.ppc64_flags_list])
+        eflags_str = " - ".join(
+            [str(s).split(".")[-1] for s in header.ppc64_flags_list]
+        )
 
     if header.machine_type == lief.ELF.ARCH.HEXAGON:
-        eflags_str = " - ".join([str(s).split(".")[-1] for s in header.hexagon_flags_list])
+        eflags_str = " - ".join(
+            [str(s).split(".")[-1] for s in header.hexagon_flags_list]
+        )
 
     if header.machine_type == lief.ELF.ARCH.LOONGARCH:
-        eflags_str = " - ".join([str(s).split(".")[-1] for s in header.loongarch_flags_list])
+        eflags_str = " - ".join(
+            [str(s).split(".")[-1] for s in header.loongarch_flags_list]
+        )
     print(identity)
-    print(format_ide.format("Magic:",                 identity[0], identity[1], identity[2], identity[3]))
-    print(format_str.format("Class:",                 str(header.identity_class).split(".")[-1]))
-    print(format_str.format("Endianness:",            str(header.identity_data).split(".")[-1]))
-    print(format_str.format("Version:",               str(header.identity_version).split(".")[-1]))
-    print(format_str.format("OS/ABI:",                str(header.identity_os_abi).split(".")[-1]))
-    print(format_dec.format("ABI Version:",           header.identity_abi_version))
-    print(format_str.format("File Type:",             str(header.file_type).split(".")[-1]))
-    print(format_str.format("Machine Type:",          str(header.machine_type).split(".")[-1]))
-    print(format_str.format("Object File Version:",   str(header.object_file_version).split(".")[-1]))
-    print(format_hex.format("Entry Point:",           header.entrypoint))
+    print(
+        format_ide.format("Magic:", identity[0], identity[1], identity[2], identity[3])
+    )
+    print(format_str.format("Class:", str(header.identity_class).split(".")[-1]))
+    print(format_str.format("Endianness:", str(header.identity_data).split(".")[-1]))
+    print(format_str.format("Version:", str(header.identity_version).split(".")[-1]))
+    print(format_str.format("OS/ABI:", str(header.identity_os_abi).split(".")[-1]))
+    print(format_dec.format("ABI Version:", header.identity_abi_version))
+    print(format_str.format("File Type:", str(header.file_type).split(".")[-1]))
+    print(format_str.format("Machine Type:", str(header.machine_type).split(".")[-1]))
+    print(
+        format_str.format(
+            "Object File Version:", str(header.object_file_version).split(".")[-1]
+        )
+    )
+    print(format_hex.format("Entry Point:", header.entrypoint))
     print(format_hex.format("Program Header Offset:", header.program_header_offset))
     print(format_hex.format("Section Header Offset:", header.section_header_offset))
-    print(format_hex.format("Processor flags:",       header.processor_flag) + eflags_str)
-    print(format_dec.format("Header Size:",           header.header_size))
-    print(format_dec.format("Program Header Size:",   header.program_header_size))
-    print(format_dec.format("Section Header Size:",   header.section_header_size))
-    print(format_dec.format("Number of segments:",    header.numberof_segments))
-    print(format_dec.format("Number of sections:",    header.numberof_sections))
+    print(format_hex.format("Processor flags:", header.processor_flag) + eflags_str)
+    print(format_dec.format("Header Size:", header.header_size))
+    print(format_dec.format("Program Header Size:", header.program_header_size))
+    print(format_dec.format("Section Header Size:", header.section_header_size))
+    print(format_dec.format("Number of segments:", header.numberof_segments))
+    print(format_dec.format("Number of sections:", header.numberof_sections))
     print("")
 
 
@@ -103,21 +119,37 @@ def print_sections(binary):
         print("== Sections ==\n")
         f_title = "|{:<30} | {:<12}| {:<17}| {:<12}| {:<10}| {:<8}| {:<8}|"
         f_value = "|{:<30} | {:<12}| 0x{:<14x} | 0x{:<10x}| 0x{:<8x}| {:<8.2f}| {:<10}"
-        print(f_title.format("Name", "Type", "Virtual address", "File offset", "Size", "Entropy", "Segment(s)"))
+        print(
+            f_title.format(
+                "Name",
+                "Type",
+                "Virtual address",
+                "File offset",
+                "Size",
+                "Entropy",
+                "Segment(s)",
+            )
+        )
 
         for section in sections:
-            segments_str = " - ".join([str(s.type).split(".")[-1] for s in section.segments])
-            print(f_value.format(
-                section.name,
-                str(section.type).split(".")[-1],
-                section.virtual_address,
-                section.file_offset,
-                section.size,
-                abs(section.entropy),
-                segments_str))
+            segments_str = " - ".join(
+                [str(s.type).split(".")[-1] for s in section.segments]
+            )
+            print(
+                f_value.format(
+                    section.name,
+                    str(section.type).split(".")[-1],
+                    section.virtual_address,
+                    section.file_offset,
+                    section.size,
+                    abs(section.entropy),
+                    segments_str,
+                )
+            )
         print("")
     else:
         print("No sections")
+
 
 @exceptions_handler(Exception)
 def print_segments(binary):
@@ -127,8 +159,17 @@ def print_segments(binary):
         print("== Segments ==\n")
         f_title = "|{:<30} | {:<10}| {:<18}| {:<17}| {:<17}| {:<17}| {:<19}|"
         f_value = "|{:<30} | {:<10}| 0x{:<16x}| 0x{:<15x}| 0x{:<15x}| 0x{:<15x}| {}"
-        print(f_title.format("Type",
-            "Flags", "File offset", "Virtual Address", "Virtual Size", "Size", "Sections"))
+        print(
+            f_title.format(
+                "Type",
+                "Flags",
+                "File offset",
+                "Virtual Address",
+                "Virtual Size",
+                "Size",
+                "Sections",
+            )
+        )
 
         for segment in segments:
             sections = segment.sections
@@ -144,16 +185,21 @@ def print_segments(binary):
                 flags_str[2] = "x"
             flags_str = "".join(flags_str)
 
-            print(f_value.format(
-                str(segment.type).split(".")[-1],
-                flags_str,
-                segment.file_offset,
-                segment.virtual_address,
-                segment.virtual_size,
-                segment.physical_size, s))
+            print(
+                f_value.format(
+                    str(segment.type).split(".")[-1],
+                    flags_str,
+                    segment.file_offset,
+                    segment.virtual_address,
+                    segment.virtual_size,
+                    segment.physical_size,
+                    s,
+                )
+            )
         print("")
     else:
         print("No segments")
+
 
 @exceptions_handler(Exception)
 def print_dynamic_entries(binary):
@@ -170,15 +216,34 @@ def print_dynamic_entries(binary):
         if entry.tag == ELF.DynamicEntry.TAG.NULL:
             continue
 
-        if entry.tag in [ELF.DynamicEntry.TAG.SONAME, ELF.DynamicEntry.TAG.NEEDED, ELF.DynamicEntry.TAG.RUNPATH, ELF.DynamicEntry.TAG.RPATH]:
-            print(f_value.format(str(entry.tag).split(".")[-1], entry.value, entry.name))
-        elif type(entry) is ELF.DynamicEntryArray: # [ELF.DynamicEntry.TAG.INIT_ARRAY,ELF.DynamicEntry.TAG.FINI_ARRAY]:
-            print(f_value.format(str(entry.tag).split(".")[-1], entry.value, ", ".join(map(hex, entry.array))))
+        if entry.tag in [
+            ELF.DynamicEntry.TAG.SONAME,
+            ELF.DynamicEntry.TAG.NEEDED,
+            ELF.DynamicEntry.TAG.RUNPATH,
+            ELF.DynamicEntry.TAG.RPATH,
+        ]:
+            print(
+                f_value.format(str(entry.tag).split(".")[-1], entry.value, entry.name)
+            )
+        elif (
+            type(entry) is ELF.DynamicEntryArray
+        ):  # [ELF.DynamicEntry.TAG.INIT_ARRAY,ELF.DynamicEntry.TAG.FINI_ARRAY]:
+            print(
+                f_value.format(
+                    str(entry.tag).split(".")[-1],
+                    entry.value,
+                    ", ".join(map(hex, entry.array)),
+                )
+            )
         elif entry.tag == ELF.DynamicEntry.TAG.FLAGS:
-            flags_str = " - ".join([str(ELF.DynamicEntryFlags.FLAG(s)).split(".")[-1] for s in entry.flags])
+            flags_str = " - ".join(
+                [str(ELF.DynamicEntryFlags.FLAG(s)).split(".")[-1] for s in entry.flags]
+            )
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, flags_str))
         elif entry.tag == ELF.DynamicEntry.TAG.FLAGS_1:
-            flags_str = " - ".join([str(ELF.DynamicEntryFlags.FLAG(s)).split(".")[-1] for s in entry.flags])
+            flags_str = " - ".join(
+                [str(ELF.DynamicEntryFlags.FLAG(s)).split(".")[-1] for s in entry.flags]
+            )
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, flags_str))
         else:
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, ""))
@@ -195,12 +260,20 @@ def print_symbols(symbols, no_trunc):
         maxsize = max([len(symbol.name) for symbol in symbols])
 
     SIZE = 70
-    maxsize = min(maxsize, terminal_columns - SIZE) if terminal_columns > SIZE else terminal_columns
+    maxsize = (
+        min(maxsize, terminal_columns - SIZE)
+        if terminal_columns > SIZE
+        else terminal_columns
+    )
 
     f_title = "|{:<" + str(maxsize) + "} | {:<7}| {:<8}| {:<10}| {:<8}| {:<4}| {:<14}|"
     f_value = "|{:<" + str(maxsize) + "} | {:<7}| {:<8x}| {:<10}| {:<8}| {:<4}| {:<14}|"
 
-    print(f_title.format("Name", "Type", "Value", "Visibility", "Binding", "I/E", "Version"))
+    print(
+        f_title.format(
+            "Name", "Type", "Value", "Visibility", "Binding", "I/E", "Version"
+        )
+    )
 
     for symbol in symbols:
         symbol_version = symbol.symbol_version if symbol.has_version else ""
@@ -223,15 +296,18 @@ def print_symbols(symbols, no_trunc):
         else:
             symbol_name = wrapped[0][:-3] + "..."
 
-        print(f_value.format(
-            symbol_name,
-            str(symbol.type).split(".")[-1],
-            symbol.value,
-            str(symbol.visibility).split(".")[-1],
-            str(symbol.binding).split(".")[-1],
-            import_export,
-            str(symbol_version)
-            ))
+        print(
+            f_value.format(
+                symbol_name,
+                str(symbol.type).split(".")[-1],
+                symbol.value,
+                str(symbol.visibility).split(".")[-1],
+                str(symbol.binding).split(".")[-1],
+                import_export,
+                str(symbol_version),
+            )
+        )
+
 
 @exceptions_handler(Exception)
 def print_dynamic_symbols(binary, args):
@@ -244,12 +320,15 @@ def print_symtab_symbols(binary, args):
     print("== Symtab symbols ==\n")
     print_symbols(binary.symtab_symbols, args.no_trunc)
 
+
 @exceptions_handler(Exception)
 def print_relocations(binary, relocations):
     f_title = "|{:<10} | {:<10}| {:<8}| {:<8}| {:<8}| {:<15}| {:<30} |"
     f_value = "|0x{:<8x} | {:<10}| {:<8d}| {:<8d}| {:<8x}| {:<15}| {:<30} |"
 
-    print(f_title.format("Address", "Type", "Info", "Size", "Addend", "Purpose", "Symbol"))
+    print(
+        f_title.format("Address", "Type", "Info", "Size", "Addend", "Purpose", "Symbol")
+    )
 
     for relocation in relocations:
         type = str(relocation.type)
@@ -275,15 +354,17 @@ def print_relocations(binary, relocations):
                 else:
                     symbol_name = "<section #{}>".format(shndx)
 
-
-        print(f_value.format(
-            relocation.address,
-            type.split(".")[-1],
-            relocation.info,
-            relocation.size,
-            relocation.addend,
-            str(relocation.purpose).split(".")[-1],
-            symbol_name))
+        print(
+            f_value.format(
+                relocation.address,
+                type.split(".")[-1],
+                relocation.info,
+                relocation.size,
+                relocation.addend,
+                str(relocation.purpose).split(".")[-1],
+                symbol_name,
+            )
+        )
 
 
 @exceptions_handler(Exception)
@@ -296,7 +377,6 @@ def print_all_relocations(binary):
         print("== Dynamic Relocations ==\n")
         print_relocations(binary, dynamicrelocations)
 
-
     if len(pltgot_relocations) > 0:
         print("== PLT/GOT Relocations ==\n")
         print_relocations(binary, pltgot_relocations)
@@ -304,6 +384,7 @@ def print_all_relocations(binary):
     if len(object_relocations) > 0:
         print("== Object Relocations ==\n")
         print_relocations(binary, object_relocations)
+
 
 @exceptions_handler(Exception)
 def print_exported_symbols(binary, args):
@@ -315,6 +396,7 @@ def print_exported_symbols(binary, args):
         return
     print_symbols(symbols, args.no_trunc)
 
+
 @exceptions_handler(Exception)
 def print_imported_symbols(binary, args):
     symbols = binary.imported_symbols
@@ -325,6 +407,7 @@ def print_imported_symbols(binary, args):
         return
     print_symbols(symbols, args.no_trunc)
 
+
 @exceptions_handler(Exception)
 def print_information(binary):
     print("== Information ==\n")
@@ -333,8 +416,9 @@ def print_information(binary):
     format_dec = "{:<30} {:<30d}"
     print(format_hex.format("Address base:", binary.imagebase))
     print(format_hex.format("Virtual size:", binary.virtual_size))
-    print(format_str.format("PIE:",          str(binary.is_pie)))
-    print(format_str.format("NX:",           str(binary.has_nx)))
+    print(format_str.format("PIE:", str(binary.is_pie)))
+    print(format_str.format("NX:", str(binary.has_nx)))
+
 
 @exceptions_handler(Exception)
 def print_gnu_hash(binary):
@@ -349,12 +433,12 @@ def print_gnu_hash(binary):
     format_hex = "{:<30} 0x{:<28x}"
     format_dec = "{:<30} {:<30d}"
 
-    print(format_dec.format("Number of buckets:",  gnu_hash.nb_buckets))
+    print(format_dec.format("Number of buckets:", gnu_hash.nb_buckets))
     print(format_dec.format("First symbol index:", gnu_hash.symbol_index))
-    print(format_hex.format("Shift Count:",        gnu_hash.shift2))
-    print(format_str.format("Bloom filters:",      gnu_hash.bloom_filters))
-    print(format_str.format("Buckets:",            gnu_hash.buckets))
-    print(format_str.format("Hash values:",        gnu_hash.hash_values))
+    print(format_hex.format("Shift Count:", gnu_hash.shift2))
+    print(format_str.format("Bloom filters:", gnu_hash.bloom_filters))
+    print(format_str.format("Buckets:", gnu_hash.buckets))
+    print(format_str.format("Hash values:", gnu_hash.hash_values))
 
 
 @exceptions_handler(Exception)
@@ -371,9 +455,9 @@ def print_sysv_hash(binary):
     format_dec = "{:<30} {:<30d}"
 
     print(format_dec.format("Number of buckets:", sysv_hash.nbucket))
-    print(format_dec.format("Number of chains:",  sysv_hash.nchain))
-    print(format_str.format("Buckets:",           sysv_hash.buckets))
-    print(format_str.format("Chains:",            sysv_hash.chains))
+    print(format_dec.format("Number of chains:", sysv_hash.nchain))
+    print(format_str.format("Buckets:", sysv_hash.buckets))
+    print(format_str.format("Chains:", sysv_hash.chains))
 
 
 @exceptions_handler(Exception)
@@ -387,7 +471,7 @@ def print_notes(binary):
     notes = binary.notes
     for idx, note in enumerate(notes):
         description = note.description
-        description_str = " ".join(map(lambda e : "{:02x}".format(e), description[:16]))
+        description_str = " ".join(map(lambda e: "{:02x}".format(e), description[:16]))
         if len(description) > 16:
             description_str += " ..."
 
@@ -396,22 +480,22 @@ def print_notes(binary):
         type_str = note.type_core if note.is_core else note.type
         type_str = str(type_str).split(".")[-1]
 
-        print(format_str.format("Name:",        note.name))
-        print(format_str.format("Type:",        type_str))
+        print(format_str.format("Name:", note.name))
+        print(format_str.format("Type:", type_str))
         print(format_str.format("Description:", description_str))
 
         note_details = note.details
 
         if isinstance(note_details, lief.ELF.AndroidIdent):
-            print(format_dec.format("SDK Version:",      note_details.sdk_version))
-            print(format_str.format("NDK Version:",      note_details.ndk_version))
+            print(format_dec.format("SDK Version:", note_details.sdk_version))
+            print(format_str.format("NDK Version:", note_details.ndk_version))
             print(format_str.format("NDK build number:", note_details.ndk_build_number))
 
         if isinstance(note_details, lief.ELF.NoteAbi):
-            version     = note_details.version
+            version = note_details.version
             version_str = "{:d}.{:d}.{:d}".format(version[0], version[1], version[2])
 
-            print(format_str.format("ABI:",     note_details.abi))
+            print(format_str.format("ABI:", note_details.abi))
             print(format_str.format("Version:", version_str))
 
         if note.type == ELF.Note.TYPE.GNU_GOLD_VERSION:
@@ -419,7 +503,6 @@ def print_notes(binary):
 
         if note.is_core:
             print(note_details)
-
 
         print("\n")
 
@@ -432,10 +515,10 @@ def print_ctor(binary):
     for idx, f in enumerate(binary.ctor_functions):
         print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
 
+
 @exceptions_handler(Exception)
 def print_strings(binary):
     print("== Strings ==\n")
-
 
     strings = binary.strings
     print("Strings: ({:d})".format(len(binary.strings)))
@@ -457,124 +540,203 @@ def main():
     parser = argparse.ArgumentParser(add_help=False, prog=sys.argv[0])
     parser.add_argument("elf_file")
 
-    parser.add_argument('-a', '--all',
-            action='store_true', dest='show_all',
-            help='Equivalent to: -h -l -S -s -r -d -V')
+    parser.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        dest="show_all",
+        help="Equivalent to: -h -l -S -s -r -d -V",
+    )
 
-    parser.add_argument('-d', '--dynamic',
-            action='store_true', dest='show_dynamic_tags',
-            help='Display the dynamic section')
+    parser.add_argument(
+        "-d",
+        "--dynamic",
+        action="store_true",
+        dest="show_dynamic_tags",
+        help="Display the dynamic section",
+    )
 
-    parser.add_argument('-H', '--help',
-            action='help', dest='help',
-            help='Display this information')
+    parser.add_argument(
+        "-H", "--help", action="help", dest="help", help="Display this information"
+    )
 
-    parser.add_argument('-h', '--file-header',
-            action='store_true', dest='show_file_header',
-            help='Display the ELF file header')
+    parser.add_argument(
+        "-h",
+        "--file-header",
+        action="store_true",
+        dest="show_file_header",
+        help="Display the ELF file header",
+    )
 
-    parser.add_argument('-i', '--imported',
-            action='store_true', dest='show_imported_symbols',
-            help='Display imported symbols')
+    parser.add_argument(
+        "-i",
+        "--imported",
+        action="store_true",
+        dest="show_imported_symbols",
+        help="Display imported symbols",
+    )
 
-    parser.add_argument('-l', '--program-headers', '--segments',
-            action='store_true', dest='show_program_header',
-            help='Display the program headers')
+    parser.add_argument(
+        "-l",
+        "--program-headers",
+        "--segments",
+        action="store_true",
+        dest="show_program_header",
+        help="Display the program headers",
+    )
 
-    parser.add_argument('-S', '--section-headers', '--sections',
-            action='store_true', dest='show_section_header',
-            help="Display the sections' headers")
+    parser.add_argument(
+        "-S",
+        "--section-headers",
+        "--sections",
+        action="store_true",
+        dest="show_section_header",
+        help="Display the sections' headers",
+    )
 
-    parser.add_argument('-e', '--headers',
-            action='store_true', dest='show_all_headers',
-            help='Equivalent to: -h -l -S')
+    parser.add_argument(
+        "-e",
+        "--headers",
+        action="store_true",
+        dest="show_all_headers",
+        help="Equivalent to: -h -l -S",
+    )
 
-    parser.add_argument('-s', '--symbols', '--syms',
-            action='store_true', dest='show_symbols',
-            help='Display the symbol table')
+    parser.add_argument(
+        "-s",
+        "--symbols",
+        "--syms",
+        action="store_true",
+        dest="show_symbols",
+        help="Display the symbol table",
+    )
 
-    parser.add_argument('--dynamic-symbols', '--dsyms',
-            action='store_true', dest='show_dynamic_symbols',
-            help='Display the dynamic symbols')
+    parser.add_argument(
+        "--dynamic-symbols",
+        "--dsyms",
+        action="store_true",
+        dest="show_dynamic_symbols",
+        help="Display the dynamic symbols",
+    )
 
-    parser.add_argument('--symtab-symbols', '--ssyms',
-            action='store_true', dest='show_symtab_symbols',
-            help='Display the symtab symbols')
+    parser.add_argument(
+        "--symtab-symbols",
+        "--ssyms",
+        action="store_true",
+        dest="show_symtab_symbols",
+        help="Display the symtab symbols",
+    )
 
-    parser.add_argument('-r', '--relocs',
-            action='store_true', dest='show_relocs',
-            help='Display the relocations (if present)')
+    parser.add_argument(
+        "-r",
+        "--relocs",
+        action="store_true",
+        dest="show_relocs",
+        help="Display the relocations (if present)",
+    )
 
-    parser.add_argument('-V', '--version-info',
-            action='store_true', dest='show_version_info',
-            help='Display the version sections (if present)')
+    parser.add_argument(
+        "-V",
+        "--version-info",
+        action="store_true",
+        dest="show_version_info",
+        help="Display the version sections (if present)",
+    )
 
-    parser.add_argument('-x', '--exported',
-            action='store_true', dest='show_exported_symbols',
-            help='Display exported symbols')
+    parser.add_argument(
+        "-x",
+        "--exported",
+        action="store_true",
+        dest="show_exported_symbols",
+        help="Display exported symbols",
+    )
 
-    parser.add_argument('--gnu-hash',
-            action='store_true', dest='show_gnu_hash',
-            help='Display GNU Hash')
+    parser.add_argument(
+        "--gnu-hash", action="store_true", dest="show_gnu_hash", help="Display GNU Hash"
+    )
 
-    parser.add_argument('--sysv-hash',
-            action='store_true', dest='show_sysv_hash',
-            help='Display SYSV Hash')
+    parser.add_argument(
+        "--sysv-hash",
+        action="store_true",
+        dest="show_sysv_hash",
+        help="Display SYSV Hash",
+    )
 
-    parser.add_argument('-n', '--notes',
-            action='store_true', dest='show_notes',
-            help='Display Notes')
+    parser.add_argument(
+        "-n", "--notes", action="store_true", dest="show_notes", help="Display Notes"
+    )
 
-    parser.add_argument('--no-trunc',
-            action='store_true', dest='no_trunc',
-            default=False,
-            help='Do not trunc symbol names ...')
+    parser.add_argument(
+        "--no-trunc",
+        action="store_true",
+        dest="no_trunc",
+        default=False,
+        help="Do not trunc symbol names ...",
+    )
 
-    parser.add_argument('--ctor',
-            action='store_true', dest='show_ctor',
-            help='Constructor functions')
+    parser.add_argument(
+        "--ctor", action="store_true", dest="show_ctor", help="Constructor functions"
+    )
 
-    parser.add_argument('--strings',
-            action='store_true', dest='show_strings',
-            help='Strings present in the current ELF')
+    parser.add_argument(
+        "--strings",
+        action="store_true",
+        dest="show_strings",
+        help="Strings present in the current ELF",
+    )
 
-    parser.add_argument('--functions',
-            action='store_true', dest='show_functions',
-            help='List all function addresses found')
+    parser.add_argument(
+        "--functions",
+        action="store_true",
+        dest="show_functions",
+        help="List all function addresses found",
+    )
 
     # Logging setup
-    logger_group = parser.add_argument_group('Logger')
+    logger_group = parser.add_argument_group("Logger")
     verbosity = logger_group.add_mutually_exclusive_group()
 
-    verbosity.add_argument('--debug',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.DEBUG)
+    verbosity.add_argument(
+        "--debug",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.DEBUG,
+    )
 
-    verbosity.add_argument('--trace',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.TRACE)
+    verbosity.add_argument(
+        "--trace",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.TRACE,
+    )
 
-    verbosity.add_argument('--info',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.INFO)
+    verbosity.add_argument(
+        "--info",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.INFO,
+    )
 
-    verbosity.add_argument('--warn',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.WARN)
+    verbosity.add_argument(
+        "--warn",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.WARN,
+    )
 
-    verbosity.add_argument('--err',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.ERROR)
+    verbosity.add_argument(
+        "--err",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.ERROR,
+    )
 
-    verbosity.add_argument('--critical',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.CRITICAL)
+    verbosity.add_argument(
+        "--critical",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.CRITICAL,
+    )
 
     parser.set_defaults(main_verbosity=lief.logging.LEVEL.WARN)
 
@@ -589,7 +751,7 @@ def main():
     if args.show_all_headers:
         do_file_header = do_section_header = do_program_header = True
     else:
-        do_file_header    = args.show_file_header
+        do_file_header = args.show_file_header
         do_section_header = args.show_section_header
         do_program_header = args.show_program_header
 
@@ -605,10 +767,14 @@ def main():
     if args.show_dynamic_tags or args.show_all:
         print_dynamic_entries(binary)
 
-    if (args.show_symbols or args.show_all or args.show_dynamic_symbols) and len(binary.dynamic_symbols) > 0:
+    if (args.show_symbols or args.show_all or args.show_dynamic_symbols) and len(
+        binary.dynamic_symbols
+    ) > 0:
         print_dynamic_symbols(binary, args)
 
-    if (args.show_symbols or args.show_all or args.show_symtab_symbols) and len(binary.symtab_symbols) > 0:
+    if (args.show_symbols or args.show_all or args.show_symtab_symbols) and len(
+        binary.symtab_symbols
+    ) > 0:
         print_symtab_symbols(binary, args)
 
     if args.show_relocs or args.show_all:
@@ -637,8 +803,6 @@ def main():
 
     if args.show_functions:
         print_functions(binary)
-
-
 
 
 if __name__ == "__main__":

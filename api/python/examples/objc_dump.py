@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-'''
+"""
 This script dumps the Objective-C metadata from the provided binary and
 generate a header-like of different structure identified.
 
 Note: this script is only working with the extended version of LIEF
-'''
+"""
 
 import sys
 import lief
@@ -12,8 +12,10 @@ import argparse
 from pathlib import Path
 from typing import Optional
 
-def process(filepath: str, skip_protocols: bool = False,
-            output_path: Optional[str] = None) -> int:
+
+def process(
+    filepath: str, skip_protocols: bool = False, output_path: Optional[str] = None
+) -> int:
     target = Path(filepath)
     if not target.is_file():
         print(f"'{target}' is not a valid file", file=sys.stderr)
@@ -50,17 +52,16 @@ def process(filepath: str, skip_protocols: bool = False,
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument('-o', '--output',
-                        help='Output file',
-                        default=None)
-    parser.add_argument('--skip-protocols',
-                        help='Skip ObjC protocols definition',
-                        action='store_true')
-    parser.add_argument("file", help='Mach-O file')
+    parser.add_argument("-o", "--output", help="Output file", default=None)
+    parser.add_argument(
+        "--skip-protocols", help="Skip ObjC protocols definition", action="store_true"
+    )
+    parser.add_argument("file", help="Mach-O file")
     args = parser.parse_args()
 
     lief.logging.set_level(lief.logging.LEVEL.WARN)
     return process(args.file, args.skip_protocols, args.output)
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

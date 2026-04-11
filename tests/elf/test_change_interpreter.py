@@ -1,21 +1,28 @@
-#!/usr/bin/env python
 import os
 import signal
 import stat
 import subprocess
-import pytest
 from pathlib import Path
 from subprocess import Popen
 
 import lief
-from utils import is_linux, check_layout
+import pytest
+from utils import check_layout, is_linux
+
+
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
-@pytest.mark.parametrize("target", [
-    '/bin/ls',      '/usr/bin/ls',
-    '/usr/bin/ssh', '/usr/bin/nm',
-    '/usr/bin/cp',  '/usr/bin/find',
-    '/usr/bin/file',
-])
+@pytest.mark.parametrize(
+    "target",
+    [
+        "/bin/ls",
+        "/usr/bin/ls",
+        "/usr/bin/ssh",
+        "/usr/bin/nm",
+        "/usr/bin/cp",
+        "/usr/bin/find",
+        "/usr/bin/file",
+    ],
+)
 def test_change_interpreter(tmp_path: Path, target):
     target = Path(target)
     if not target.is_file():
@@ -23,6 +30,7 @@ def test_change_interpreter(tmp_path: Path, target):
 
     name = target.name
     target = lief.ELF.parse(target)
+    assert target is not None
     new_interpreter = tmp_path / Path(target.interpreter).name
     if not new_interpreter.is_symlink():
         os.symlink(target.interpreter, new_interpreter)
@@ -36,7 +44,10 @@ def test_change_interpreter(tmp_path: Path, target):
         st = os.stat(output)
         os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-        with Popen(output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+        with Popen(
+            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as P:
+            assert P.stdout is not None
             stdout = P.stdout.read().decode("utf8")
             lief.logging.info(stdout)
             P.communicate()

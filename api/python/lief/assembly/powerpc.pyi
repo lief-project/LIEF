@@ -845,6 +845,8 @@ class OPCODE(enum.Enum):
 
     ADD8TLS = 419
 
+    ADD8TLS_ = 420
+
     ADD8_rec = 421
 
     ADDC = 422
@@ -1318,6 +1320,8 @@ class OPCODE(enum.Enum):
     BL8_RM = 656
 
     BL8_TLS = 657
+
+    BL8_TLS_ = 658
 
     BLA = 659
 
@@ -2701,6 +2705,8 @@ class OPCODE(enum.Enum):
 
     LBZXTLS = 1349
 
+    LBZXTLS_ = 1350
+
     LBZXTLS_32 = 1351
 
     LD = 1352
@@ -2724,6 +2730,8 @@ class OPCODE(enum.Enum):
     LDX = 1361
 
     LDXTLS = 1362
+
+    LDXTLS_ = 1363
 
     LDgotTprelL = 1364
 
@@ -2751,6 +2759,8 @@ class OPCODE(enum.Enum):
 
     LFDXTLS = 1376
 
+    LFDXTLS_ = 1377
+
     LFIWAX = 1378
 
     LFIWZX = 1379
@@ -2764,6 +2774,8 @@ class OPCODE(enum.Enum):
     LFSX = 1383
 
     LFSXTLS = 1384
+
+    LFSXTLS_ = 1385
 
     LHA = 1386
 
@@ -2786,6 +2798,8 @@ class OPCODE(enum.Enum):
     LHAX8 = 1395
 
     LHAXTLS = 1396
+
+    LHAXTLS_ = 1397
 
     LHAXTLS_32 = 1398
 
@@ -2814,6 +2828,8 @@ class OPCODE(enum.Enum):
     LHZX8 = 1410
 
     LHZXTLS = 1411
+
+    LHZXTLS_ = 1412
 
     LHZXTLS_32 = 1413
 
@@ -2867,6 +2883,8 @@ class OPCODE(enum.Enum):
 
     LWAXTLS = 1438
 
+    LWAXTLS_ = 1439
+
     LWAXTLS_32 = 1440
 
     LWAX_32 = 1441
@@ -2898,6 +2916,8 @@ class OPCODE(enum.Enum):
     LWZX8 = 1454
 
     LWZXTLS = 1455
+
+    LWZXTLS_ = 1456
 
     LWZXTLS_32 = 1457
 
@@ -3985,6 +4005,8 @@ class OPCODE(enum.Enum):
 
     STBXTLS = 1999
 
+    STBXTLS_ = 2000
+
     STBXTLS_32 = 2001
 
     STD = 2002
@@ -4005,6 +4027,8 @@ class OPCODE(enum.Enum):
 
     STDXTLS = 2010
 
+    STDXTLS_ = 2011
+
     STFD = 2012
 
     STFDEPX = 2013
@@ -4017,6 +4041,8 @@ class OPCODE(enum.Enum):
 
     STFDXTLS = 2017
 
+    STFDXTLS_ = 2018
+
     STFIWX = 2019
 
     STFS = 2020
@@ -4028,6 +4054,8 @@ class OPCODE(enum.Enum):
     STFSX = 2023
 
     STFSXTLS = 2024
+
+    STFSXTLS_ = 2025
 
     STH = 2026
 
@@ -4054,6 +4082,8 @@ class OPCODE(enum.Enum):
     STHX8 = 2037
 
     STHXTLS = 2038
+
+    STHXTLS_ = 2039
 
     STHXTLS_32 = 2040
 
@@ -4106,6 +4136,8 @@ class OPCODE(enum.Enum):
     STWX8 = 2064
 
     STWXTLS = 2065
+
+    STWXTLS_ = 2066
 
     STWXTLS_32 = 2067
 

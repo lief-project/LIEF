@@ -29,13 +29,14 @@
 #     33: 06006f8 0 OBJECT  LOCAL  DEFAULT 18 rksefyibghsyhbbnfikknpvzc
 
 
-
 import lief
 import sys
 import random, string
 
+
 def randomword(length):
-   return ''.join(random.choice(string.ascii_lowercase) for i in range(length))
+    return "".join(random.choice(string.ascii_lowercase) for i in range(length))
+
 
 def randomize(binary, output):
 
@@ -48,6 +49,7 @@ def randomize(binary, output):
 
     binary.write(output)
 
+
 def main():
     if len(sys.argv) != 3:
         print("Usage:", sys.argv[0], "<elf binary> <output binary>")
@@ -56,7 +58,6 @@ def main():
     binary = lief.parse(sys.argv[1])
     randomize(binary, sys.argv[2])
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
-
-

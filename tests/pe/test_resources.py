@@ -1,23 +1,19 @@
-#!/usr/bin/env python
-
 import ctypes
-import lief
 import random
 import sys
 import zipfile
-import pytest
+from hashlib import md5
+from pathlib import Path
 from textwrap import dedent
 
-from utils import (
-    get_sample, is_windows, win_exec, is_x86_64,
-)
-
-from pathlib import Path
-from hashlib import md5
+import lief
+import pytest
+from utils import get_sample, is_windows, is_x86_64, parse_pe, win_exec
 
 if is_windows():
     SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
-    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX) # type: ignore
+    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)  # type: ignore
+
 
 def _dump_icon(icon: lief.PE.ResourceIcon):
     raw = icon.serialize()
@@ -37,17 +33,21 @@ def _dump_icon(icon: lief.PE.ResourceIcon):
     for line in lines:
         lief.logging.info(":".join(line))
 
+
 def quick_hash(content: memoryview) -> str:
     return md5(content).hexdigest()
 
+
 def test_change_icons():
-    mfc_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
+    mfc_path = Path(get_sample("PE/PE64_x86-64_binary_mfc-application.exe"))
     mfc = lief.PE.parse(mfc_path)
+    assert mfc is not None
     mfc_resources_manger = mfc.resources_manager
     assert isinstance(mfc_resources_manger, lief.PE.ResourcesManager)
 
-    cmd_path = get_sample('PE/PE64_x86-64_binary_cmd.exe')
+    cmd_path = get_sample("PE/PE64_x86-64_binary_cmd.exe")
     cmd = lief.PE.parse(cmd_path)
+    assert cmd is not None
     cmd_resources_manger = cmd.resources_manager
     assert isinstance(cmd_resources_manger, lief.PE.ResourcesManager)
 
@@ -70,6 +70,7 @@ def test_change_icons():
 
     new_raw_pe = mfc.write_to_bytes()
     new_pe = lief.PE.parse(list(new_raw_pe))
+    assert new_pe is not None
     new_manager = new_pe.resources_manager
     assert isinstance(new_manager, lief.PE.ResourcesManager)
 
@@ -83,9 +84,11 @@ def test_change_icons():
     assert cmd.resources != new_pe.resources
     assert mfc.resources == new_pe.resources
 
+
 def test_resource_string_table():
-    sample_path = get_sample('PE/PE64_x86-64_binary_WinApp.exe')
+    sample_path = get_sample("PE/PE64_x86-64_binary_WinApp.exe")
     mfc = lief.PE.parse(sample_path)
+    assert mfc is not None
     resources_manager = mfc.resources_manager
     assert isinstance(resources_manager, lief.PE.ResourcesManager)
 
@@ -98,33 +101,49 @@ def test_resource_string_table():
     assert string_table[1].string == "WINAPP"
     assert string_table[1].id == 109
 
+
 def test_resource_accelerator():
-    sample_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
+    sample_path = get_sample("PE/PE64_x86-64_binary_mfc-application.exe")
     mfc = lief.PE.parse(sample_path)
+    assert mfc is not None
     resources_manager = mfc.resources_manager
     assert isinstance(resources_manager, lief.PE.ResourcesManager)
 
     assert resources_manager.has_accelerator
 
     accelerator = resources_manager.accelerator
-    assert accelerator[0].flags == lief.PE.ResourceAccelerator.FLAGS.VIRTKEY | lief.PE.ResourceAccelerator.FLAGS.CONTROL
+    assert (
+        accelerator[0].flags
+        == lief.PE.ResourceAccelerator.FLAGS.VIRTKEY
+        | lief.PE.ResourceAccelerator.FLAGS.CONTROL
+    )
     assert accelerator[0].ansi == lief.PE.ACCELERATOR_CODES.N.value
-    assert accelerator[0].id == 0xe100
+    assert accelerator[0].id == 0xE100
     assert accelerator[0].padding == 0
 
-    assert accelerator[1].flags == lief.PE.ResourceAccelerator.FLAGS.VIRTKEY | lief.PE.ResourceAccelerator.FLAGS.CONTROL
+    assert (
+        accelerator[1].flags
+        == lief.PE.ResourceAccelerator.FLAGS.VIRTKEY
+        | lief.PE.ResourceAccelerator.FLAGS.CONTROL
+    )
     assert accelerator[1].ansi == lief.PE.ACCELERATOR_CODES.O.value
-    assert accelerator[1].id == 0xe101
+    assert accelerator[1].id == 0xE101
     assert accelerator[1].padding == 0
 
-    assert accelerator[2].flags == lief.PE.ResourceAccelerator.FLAGS.VIRTKEY | lief.PE.ResourceAccelerator.FLAGS.CONTROL
+    assert (
+        accelerator[2].flags
+        == lief.PE.ResourceAccelerator.FLAGS.VIRTKEY
+        | lief.PE.ResourceAccelerator.FLAGS.CONTROL
+    )
     assert accelerator[2].ansi == lief.PE.ACCELERATOR_CODES.S.value
-    assert accelerator[2].id == 0xe103
+    assert accelerator[2].id == 0xE103
     assert accelerator[2].padding == 0
 
+
 def test_resource_version():
-    input_path = Path(get_sample('PE/steam.exe'))
+    input_path = Path(get_sample("PE/steam.exe"))
     pe = lief.PE.parse(input_path)
+    assert pe is not None
     manager = pe.resources_manager
 
     assert isinstance(manager, lief.PE.ResourcesManager)
@@ -135,7 +154,7 @@ def test_resource_version():
     v1 = versions[0]
     assert v1.key == "VS_VERSION_INFO"
     assert v1.type == 0
-    assert v1.file_info.signature == 0xfeef04bd
+    assert v1.file_info.signature == 0xFEEF04BD
     assert v1.file_info.struct_version == 0x10000
     assert v1.file_info.file_version_ms == 458833
     assert v1.file_info.file_version_ls == 65600
@@ -149,52 +168,59 @@ def test_resource_version():
     assert v1.file_info.file_date_ms == 0
     assert v1.file_info.file_date_ls == 0
 
-    assert v1.string_file_info.key == 'StringFileInfo'
-    assert v1.string_file_info.type == 1
-    assert len(v1.string_file_info.children) == 1
-    assert v1.string_file_info.children[0].key == "040904b0"
-    assert v1.string_file_info.children[0].type == 0
-    assert len(v1.string_file_info.children[0].entries) == 9
+    v1_sfi = v1.string_file_info
+    assert v1_sfi is not None
+    assert v1_sfi.key == "StringFileInfo"
+    assert v1_sfi.type == 1
+    assert len(v1_sfi.children) == 1
+    assert v1_sfi.children[0].key == "040904b0"
+    assert v1_sfi.children[0].type == 0
+    assert len(v1_sfi.children[0].entries) == 9
 
-    assert v1.string_file_info.children[0].entries[0].key == "LegalCopyright"
-    assert v1.string_file_info.children[0].entries[0].value == "Copyright (C) 2021 Valve Corporation"
+    assert v1_sfi.children[0].entries[0].key == "LegalCopyright"
+    assert v1_sfi.children[0].entries[0].value == "Copyright (C) 2021 Valve Corporation"
 
-    assert v1.string_file_info.children[0].entries[1].key == "InternalName"
-    assert v1.string_file_info.children[0].entries[1].value == "steam (buildbot_steam-relclient-win32-builder_steam_rel_client_win32@steam-relclient-win32-builder)"
+    assert v1_sfi.children[0].entries[1].key == "InternalName"
+    assert (
+        v1_sfi.children[0].entries[1].value
+        == "steam (buildbot_steam-relclient-win32-builder_steam_rel_client_win32@steam-relclient-win32-builder)"
+    )
 
-    assert v1.string_file_info.children[0].entries[2].key == "FileVersion"
-    assert v1.string_file_info.children[0].entries[2].value == "07.81.01.64"
+    assert v1_sfi.children[0].entries[2].key == "FileVersion"
+    assert v1_sfi.children[0].entries[2].value == "07.81.01.64"
 
-    assert v1.string_file_info.children[0].entries[3].key == "CompanyName"
-    assert v1.string_file_info.children[0].entries[3].value == "Valve Corporation"
+    assert v1_sfi.children[0].entries[3].key == "CompanyName"
+    assert v1_sfi.children[0].entries[3].value == "Valve Corporation"
 
-    assert v1.string_file_info.children[0].entries[4].key == "ProductVersion"
-    assert v1.string_file_info.children[0].entries[4].value == "01.00.00.02"
+    assert v1_sfi.children[0].entries[4].key == "ProductVersion"
+    assert v1_sfi.children[0].entries[4].value == "01.00.00.02"
 
-    assert v1.string_file_info.children[0].entries[5].key == "FileDescription"
-    assert v1.string_file_info.children[0].entries[5].value == "Steam"
+    assert v1_sfi.children[0].entries[5].key == "FileDescription"
+    assert v1_sfi.children[0].entries[5].value == "Steam"
 
-    assert v1.string_file_info.children[0].entries[6].key == "Source Control ID"
-    assert v1.string_file_info.children[0].entries[6].value == "7810164"
+    assert v1_sfi.children[0].entries[6].key == "Source Control ID"
+    assert v1_sfi.children[0].entries[6].value == "7810164"
 
-    assert v1.string_file_info.children[0].entries[7].key == "OriginalFilename"
-    assert v1.string_file_info.children[0].entries[7].value == "steam.exe"
+    assert v1_sfi.children[0].entries[7].key == "OriginalFilename"
+    assert v1_sfi.children[0].entries[7].value == "steam.exe"
 
-    assert v1.string_file_info.children[0].entries[8].key == "ProductName"
-    assert v1.string_file_info.children[0].entries[8].value == "Steam"
+    assert v1_sfi.children[0].entries[8].key == "ProductName"
+    assert v1_sfi.children[0].entries[8].value == "Steam"
 
-    assert v1.var_file_info.key == "VarFileInfo"
-    assert v1.var_file_info.type == 1
-    assert len(v1.var_file_info.vars) == 1
-    assert v1.var_file_info.vars[0].key == 'Translation'
-    assert v1.var_file_info.vars[0].type == 0
-    assert len(v1.var_file_info.vars[0].values) == 1
-    assert v1.var_file_info.vars[0].values[0] == 78644233
+    v1_vfi = v1.var_file_info
+    assert v1_vfi is not None
+    assert v1_vfi.key == "VarFileInfo"
+    assert v1_vfi.type == 1
+    assert len(v1_vfi.vars) == 1
+    assert v1_vfi.vars[0].key == "Translation"
+    assert v1_vfi.vars[0].type == 0
+    assert len(v1_vfi.vars[0].values) == 1
+    assert v1_vfi.vars[0].values[0] == 78644233
 
     v2 = versions[1]
     assert v2.key == "VS_VERSION_INFO"
     assert v2.type == 0
-    assert v2.file_info.signature == 0xfeef04bd
+    assert v2.file_info.signature == 0xFEEF04BD
     assert v2.file_info.struct_version == 0x10000
     assert v2.file_info.file_version_ms == 0x10000
     assert v2.file_info.file_version_ls == 2
@@ -208,47 +234,51 @@ def test_resource_version():
     assert v2.file_info.file_date_ms == 0
     assert v2.file_info.file_date_ls == 0
 
-    assert v2.string_file_info.key == 'StringFileInfo'
-    assert v2.string_file_info.type == 1
-    assert len(v2.string_file_info.children) == 1
-    assert v2.string_file_info.children[0].key == "040904b0"
-    assert v2.string_file_info.children[0].type == 0
-    assert len(v2.string_file_info.children[0].entries) == 8
+    v2_sfi = v2.string_file_info
+    assert v2_sfi is not None
+    assert v2_sfi.key == "StringFileInfo"
+    assert v2_sfi.type == 1
+    assert len(v2_sfi.children) == 1
+    assert v2_sfi.children[0].key == "040904b0"
+    assert v2_sfi.children[0].type == 0
+    assert len(v2_sfi.children[0].entries) == 8
 
-    assert v2.string_file_info.children[0].entries[0].key == "CompanyName"
-    assert v2.string_file_info.children[0].entries[0].value == "Valve Corporation"
+    assert v2_sfi.children[0].entries[0].key == "CompanyName"
+    assert v2_sfi.children[0].entries[0].value == "Valve Corporation"
 
-    assert v2.string_file_info.children[0].entries[1].key == "FileDescription"
-    assert v2.string_file_info.children[0].entries[1].value == "Steam"
+    assert v2_sfi.children[0].entries[1].key == "FileDescription"
+    assert v2_sfi.children[0].entries[1].value == "Steam"
 
-    assert v2.string_file_info.children[0].entries[2].key == "FileVersion"
-    assert v2.string_file_info.children[0].entries[2].value == "1, 0, 0, 2"
+    assert v2_sfi.children[0].entries[2].key == "FileVersion"
+    assert v2_sfi.children[0].entries[2].value == "1, 0, 0, 2"
 
-    assert v2.string_file_info.children[0].entries[3].key == "InternalName"
-    assert v2.string_file_info.children[0].entries[3].value == "steam"
+    assert v2_sfi.children[0].entries[3].key == "InternalName"
+    assert v2_sfi.children[0].entries[3].value == "steam"
 
-    assert v2.string_file_info.children[0].entries[4].key == "LegalCopyright"
-    assert v2.string_file_info.children[0].entries[4].value == "Copyright (C) 2021 Valve Corporation"
+    assert v2_sfi.children[0].entries[4].key == "LegalCopyright"
+    assert v2_sfi.children[0].entries[4].value == "Copyright (C) 2021 Valve Corporation"
 
-    assert v2.string_file_info.children[0].entries[5].key == "OriginalFilename"
-    assert v2.string_file_info.children[0].entries[5].value == "steam.exe"
+    assert v2_sfi.children[0].entries[5].key == "OriginalFilename"
+    assert v2_sfi.children[0].entries[5].value == "steam.exe"
 
-    assert v2.string_file_info.children[0].entries[6].key == "ProductName"
-    assert v2.string_file_info.children[0].entries[6].value == "Steam"
+    assert v2_sfi.children[0].entries[6].key == "ProductName"
+    assert v2_sfi.children[0].entries[6].value == "Steam"
 
-    assert v2.string_file_info.children[0].entries[7].key == "ProductVersion"
-    assert v2.string_file_info.children[0].entries[7].value == "1, 0, 0, 2"
+    assert v2_sfi.children[0].entries[7].key == "ProductVersion"
+    assert v2_sfi.children[0].entries[7].value == "1, 0, 0, 2"
 
-    assert v2.var_file_info.key == "VarFileInfo"
-    assert v2.var_file_info.type == 1
-    assert len(v2.var_file_info.vars) == 1
-    assert v2.var_file_info.vars[0].key == 'Translation'
-    assert v2.var_file_info.vars[0].type == 0
-    assert len(v2.var_file_info.vars[0].values) == 1
-    assert v2.var_file_info.vars[0].values[0] == 0x04B00409
+    v2_vfi = v2.var_file_info
+    assert v2_vfi is not None
+    assert v2_vfi.key == "VarFileInfo"
+    assert v2_vfi.type == 1
+    assert len(v2_vfi.vars) == 1
+    assert v2_vfi.vars[0].key == "Translation"
+    assert v2_vfi.vars[0].type == 0
+    assert len(v2_vfi.vars[0].values) == 1
+    assert v2_vfi.vars[0].values[0] == 0x04B00409
 
     # To be enabled?
-    #if is_64bits_platform():
+    # if is_64bits_platform():
     #    assert lief.hash(v1) == 18317000971015120503
     #    assert lief.hash(v2) == 6262581342140742046
 
@@ -299,10 +329,12 @@ def test_resource_version():
     }
     """)
 
+
 def test_resource_dialogs_regular():
     input_path = Path(get_sample("PE/chnginbx.exe"))
 
     pe = lief.PE.parse(input_path)
+    assert pe is not None
 
     manager = pe.resources_manager
     assert isinstance(manager, lief.PE.ResourcesManager)
@@ -314,22 +346,22 @@ def test_resource_dialogs_regular():
     assert isinstance(dialog, lief.PE.ResourceDialogRegular)
 
     assert dialog.type == lief.PE.ResourceDialog.TYPE.REGULAR
-    assert dialog.style == 0x80ca00c0
+    assert dialog.style == 0x80CA00C0
     assert dialog.extended_style == 0
     assert dialog.x == 0
     assert dialog.y == 0
     assert dialog.cx == 250
     assert dialog.cy == 200
     assert dialog.title == "License"
-    assert dialog.font.name == 'MS Shell Dlg'
+    assert dialog.font.name == "MS Shell Dlg"
     assert dialog.font.point_size == 8
     assert dialog.has(lief.PE.ResourceDialog.DIALOG_STYLES.SETFONT)
     assert dialog.has(lief.PE.ResourceDialog.WINDOW_STYLES.POPUP)
     assert not dialog.has(lief.PE.ResourceDialog.WINDOW_STYLES.DISABLED)
     assert dialog.styles_list == [
-       lief.PE.ResourceDialog.DIALOG_STYLES.SETFONT,
-       lief.PE.ResourceDialog.DIALOG_STYLES.MODALFRAME,
-       lief.PE.ResourceDialog.DIALOG_STYLES.SHELLFONT,
+        lief.PE.ResourceDialog.DIALOG_STYLES.SETFONT,
+        lief.PE.ResourceDialog.DIALOG_STYLES.MODALFRAME,
+        lief.PE.ResourceDialog.DIALOG_STYLES.SHELLFONT,
     ]
 
     assert dialog.windows_styles_list == [
@@ -357,7 +389,10 @@ def test_resource_dialogs_regular():
     assert items[0].y == 4
     assert items[0].cx == 234
     assert items[0].cy == 24
-    assert items[0].title == "Please read the following license agreement. Press the PAGE DOWN key to see the rest of the agreement."
+    assert (
+        items[0].title
+        == "Please read the following license agreement. Press the PAGE DOWN key to see the rest of the agreement."
+    )
     assert items[0].clazz == 130
     assert len(items[0].creation_data) == 0
     assert items[0].window_styles == [
@@ -369,7 +404,7 @@ def test_resource_dialogs_regular():
     assert items[0].has(lief.PE.ResourceDialog.WINDOW_STYLES.CHILD)
     assert str(items[0]) is not None
 
-    #if is_64bits_platform():
+    # if is_64bits_platform():
     #    assert lief.hash(dialog) == 17387566843487199836
 
     assert str(dialog) == dedent("""\
@@ -455,10 +490,12 @@ def test_resource_dialogs_regular():
     }
     """)
 
+
 def test_resource_dialogs_extended():
     input_path = Path(get_sample("PE/PE64_x86-64_binary_mfc-application.exe"))
 
     pe = lief.PE.parse(input_path)
+    assert pe is not None
 
     manager = pe.resources_manager
     assert isinstance(manager, lief.PE.ResourcesManager)
@@ -474,23 +511,23 @@ def test_resource_dialogs_extended():
 
     assert dialog.type == lief.PE.ResourceDialog.TYPE.EXTENDED
     assert dialog.help_id == 0
-    assert dialog.style == 0x80c800c8
+    assert dialog.style == 0x80C800C8
     assert dialog.extended_style == 0
     assert dialog.x == 0
     assert dialog.y == 0
     assert dialog.cx == 170
     assert dialog.cy == 62
     assert dialog.title == "À propos de Hello"
-    assert dialog.font.typeface == 'MS Shell Dlg'
+    assert dialog.font.typeface == "MS Shell Dlg"
     assert dialog.font.point_size == 8
     assert dialog.has(lief.PE.ResourceDialog.DIALOG_STYLES.SETFONT)
     assert dialog.has(lief.PE.ResourceDialog.WINDOW_STYLES.POPUP)
     assert not dialog.has(lief.PE.ResourceDialog.WINDOW_STYLES.DISABLED)
     assert dialog.styles_list == [
-       lief.PE.ResourceDialog.DIALOG_STYLES.SETFONT,
-       lief.PE.ResourceDialog.DIALOG_STYLES.MODALFRAME,
-       lief.PE.ResourceDialog.DIALOG_STYLES.FIXEDSYS,
-       lief.PE.ResourceDialog.DIALOG_STYLES.SHELLFONT,
+        lief.PE.ResourceDialog.DIALOG_STYLES.SETFONT,
+        lief.PE.ResourceDialog.DIALOG_STYLES.MODALFRAME,
+        lief.PE.ResourceDialog.DIALOG_STYLES.FIXEDSYS,
+        lief.PE.ResourceDialog.DIALOG_STYLES.SHELLFONT,
     ]
 
     assert dialog.windows_styles_list == [
@@ -533,7 +570,7 @@ def test_resource_dialogs_extended():
     assert items[0].has(lief.PE.ResourceDialog.WINDOW_STYLES.CHILD)
     assert str(items[0]) is not None
 
-    #if is_64bits_platform():
+    # if is_64bits_platform():
     #    assert lief.hash(dialog) == 13416642428894329102
 
     assert str(dialogs[0]) == dedent("""\
@@ -549,54 +586,78 @@ def test_resource_dialogs_extended():
     }
     """)
 
+
 def test_mfc_resource_builder():
-    sample_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
+    sample_path = get_sample("PE/PE64_x86-64_binary_mfc-application.exe")
 
     mfc = lief.PE.parse(sample_path)
+    assert mfc is not None
     new = lief.PE.parse(list(mfc.write_to_bytes()))
+    assert new is not None
     assert mfc.resources == new.resources
 
-def test_notepadpp_resource_builder(tmp_path):
-    sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
-    sample_dir  = tmp_path / "Notepad++"
+
+def test_notepadpp_resource_builder(tmp_path: Path):
+    sample_file = get_sample("PE/PE32_x86_binary_Notepad++.zip")
+    sample_dir = tmp_path / "Notepad++"
 
     sample = sample_dir / "notepad++.exe"
 
-    with zipfile.ZipFile(sample_file, 'r') as zip_ref:
+    with zipfile.ZipFile(sample_file, "r") as zip_ref:
         zip_ref.extractall(tmp_path)
 
     notepadpp = lief.PE.parse(sample)
+    assert notepadpp is not None
 
     new = lief.PE.parse(list(notepadpp.write_to_bytes()))
+    assert new is not None
 
     assert new.resources == notepadpp.resources
 
-def test_filezilla_resource_builder(tmp_path):
-    sample_file = get_sample('PE/PE64_x86-64_binary_FileZilla.zip')
-    sample_dir  = tmp_path / "FileZilla"
+
+def test_filezilla_resource_builder(tmp_path: Path):
+    sample_file = get_sample("PE/PE64_x86-64_binary_FileZilla.zip")
+    sample_dir = tmp_path / "FileZilla"
 
     sample = sample_dir / "filezilla.exe"
 
-    with zipfile.ZipFile(sample_file, 'r') as zip_ref:
+    with zipfile.ZipFile(sample_file, "r") as zip_ref:
         zip_ref.extractall(tmp_path)
 
     filezilla = lief.PE.parse(sample)
+    assert filezilla is not None
     new = lief.PE.parse(list(filezilla.write_to_bytes()))
+    assert new is not None
 
     assert filezilla.resources == new.resources
 
-def test_resource_directory_add_directory_node(tmp_path):
-    sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
-    sample_dir  = tmp_path / "Notepad++"
+
+def test_resource_directory_add_directory_node(tmp_path: Path):
+    sample_file = get_sample("PE/PE32_x86_binary_Notepad++.zip")
+    sample_dir = tmp_path / "Notepad++"
 
     sample = sample_dir / "notepad++.exe"
 
-    with zipfile.ZipFile(sample_file, 'r') as zip_ref:
+    with zipfile.ZipFile(sample_file, "r") as zip_ref:
         zip_ref.extractall(tmp_path)
 
     for seed in (5, 20, 99):
         app = lief.PE.parse(sample)
-        assert [child.id for child in app.resources.childs] == [1, 2, 3, 4, 5, 6, 12, 14, 16, 24]
+        assert app is not None
+        app_res = app.resources
+        assert app_res is not None
+        assert [child.id for child in app_res.childs] == [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            12,
+            14,
+            16,
+            24,
+        ]
         nodes = []
 
         node = lief.PE.ResourceDirectory()
@@ -615,19 +676,38 @@ def test_resource_directory_add_directory_node(tmp_path):
         random.Random(seed).shuffle(nodes)
 
         for node in nodes:
-            new_node = app.resources.add_child(node)
+            new_node = app_res.add_child(node)
             assert isinstance(new_node, lief.PE.ResourceNode)
 
         # Should be in sorted order by ID
-        assert [child.id for child in app.resources.childs] == [1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 23, 24]
+        assert [child.id for child in app_res.childs] == [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            8,
+            10,
+            12,
+            14,
+            16,
+            23,
+            24,
+        ]
 
     for seed in (7, 23, 91):
         app = lief.PE.parse(sample)
-        assert lief.PE.ResourcesManager.TYPE.RCDATA.value not in [child.id for child in app.resources.childs]
+        assert app is not None
+        app_res = app.resources
+        assert app_res is not None
+        assert lief.PE.ResourcesManager.TYPE.RCDATA.value not in [
+            child.id for child in app_res.childs
+        ]
 
         node = lief.PE.ResourceDirectory()
         node.id = lief.PE.ResourcesManager.TYPE.RCDATA.value
-        rcdata_node = app.resources.add_child(node)
+        rcdata_node = app_res.add_child(node)
         assert isinstance(rcdata_node, lief.PE.ResourceNode)
 
         assert len(rcdata_node.childs) == 0
@@ -668,24 +748,37 @@ def test_resource_directory_add_directory_node(tmp_path):
             assert isinstance(new_node, lief.PE.ResourceNode)
 
         # Should be in sorted order with names first, then IDs
-        assert [child.name or child.id for child in rcdata_node.childs] == ["FOO", "bar", "foo", 5, 10, 99]
+        assert [child.name or child.id for child in rcdata_node.childs] == [
+            "FOO",
+            "bar",
+            "foo",
+            5,
+            10,
+            99,
+        ]
 
-def test_resource_directory_add_data_node(tmp_path):
-    sample_file = get_sample('PE/PE32_x86_binary_Notepad++.zip')
-    sample_dir  = tmp_path / "Notepad++"
+
+def test_resource_directory_add_data_node(tmp_path: Path):
+    sample_file = get_sample("PE/PE32_x86_binary_Notepad++.zip")
+    sample_dir = tmp_path / "Notepad++"
 
     sample = sample_dir / "notepad++.exe"
 
-    with zipfile.ZipFile(sample_file, 'r') as zip_ref:
+    with zipfile.ZipFile(sample_file, "r") as zip_ref:
         zip_ref.extractall(tmp_path)
 
     for seed in (7, 23, 91):
         app = lief.PE.parse(sample)
-        assert lief.PE.ResourcesManager.TYPE.RCDATA.value not in [child.id for child in app.resources.childs]
+        assert app is not None
+        app_res = app.resources
+        assert app_res is not None
+        assert lief.PE.ResourcesManager.TYPE.RCDATA.value not in [
+            child.id for child in app_res.childs
+        ]
 
         node = lief.PE.ResourceDirectory()
         node.id = lief.PE.ResourcesManager.TYPE.RCDATA.value
-        rcdata_node = app.resources.add_child(node)
+        rcdata_node = app_res.add_child(node)
         assert isinstance(rcdata_node, lief.PE.ResourceNode)
 
         node = lief.PE.ResourceDirectory()
@@ -708,12 +801,19 @@ def test_resource_directory_add_data_node(tmp_path):
             assert isinstance(new_node, lief.PE.ResourceNode)
 
         # Should be in sorted order
-        assert [child.name or child.id for child in lang_node.childs] == [0, 44, 500, 1033]
+        assert [child.name or child.id for child in lang_node.childs] == [
+            0,
+            44,
+            500,
+            1033,
+        ]
 
-def test_nodes(tmp_path):
-    sample_path = get_sample('PE/PE64_x86-64_binary_mfc-application.exe')
+
+def test_nodes():
+    sample_path = get_sample("PE/PE64_x86-64_binary_mfc-application.exe")
 
     mfc = lief.PE.parse(sample_path)
+    assert mfc is not None
     assert mfc.resources is not None
     node = mfc.resources
 
@@ -754,11 +854,14 @@ def test_nodes(tmp_path):
     assert data_node.copy() == data_node
     assert hash(data_node.copy()) == hash(data_node)
 
+
 def test_add_node(tmp_path: Path):
     target_input = Path(get_sample("PE/pe_reader.exe"))
     pe = lief.PE.parse(target_input)
+    assert pe is not None
 
     root = pe.resources
+    assert root is not None
     assert len(root.childs) == 1
 
     dir_node = lief.PE.ResourceDirectory()
@@ -773,17 +876,28 @@ def test_add_node(tmp_path: Path):
     pe.write(output)
 
     new = lief.PE.parse(output)
+    assert new is not None
     checked, err = lief.PE.check_layout(new)
     assert checked, err
 
-    children = new.resources.childs
+    new_res = new.resources
+    assert new_res is not None
+    children = new_res.childs
     assert len(children) == 2
 
     assert children[0].id == lief.PE.ResourcesManager.TYPE.HTML.value
-    assert bytes(children[0].childs[0].content) == b"Hello World"
+    html_data = children[0].childs[0]
+    assert isinstance(html_data, lief.PE.ResourceData)
+    assert bytes(html_data.content) == b"Hello World"
 
     if is_windows() and is_x86_64():
-        ret = win_exec(output, gui=False, args=[output, ])
+        ret = win_exec(
+            output,
+            gui=False,
+            args=[
+                str(output),
+            ],
+        )
         assert ret is not None
 
         retcode, stdout = ret
@@ -793,39 +907,54 @@ def test_add_node(tmp_path: Path):
 
 def test_transfer_resources(tmp_path: Path):
     target_input = Path(get_sample("PE/pe_reader.exe"))
-    avast = lief.PE.parse(get_sample("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe"))
+    avast = parse_pe("PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe")
 
     rsrc_dir = avast.data_directory(lief.PE.DataDirectory.TYPES.RESOURCE_TABLE)
+    assert rsrc_dir is not None
     rsrc_raw = bytes(rsrc_dir.content)
 
     new_tree = lief.PE.ResourceNode.parse(rsrc_raw, rsrc_dir.rva)
     assert new_tree is not None
 
     pe_reader = lief.PE.parse(target_input)
-    assert len(pe_reader.resources.childs) == 1
+    assert pe_reader is not None
+    pe_reader_res = pe_reader.resources
+    assert pe_reader_res is not None
+    assert len(pe_reader_res.childs) == 1
 
     pe_reader.set_resources(new_tree)
-    assert len(pe_reader.resources.childs) == 7
+    pe_reader_res = pe_reader.resources
+    assert pe_reader_res is not None
+    assert len(pe_reader_res.childs) == 7
 
     output = tmp_path / target_input.name
     pe_reader.write(output)
 
     new_pe_reader = lief.PE.parse(output)
+    assert new_pe_reader is not None
 
     manager = new_pe_reader.resources_manager
+    assert isinstance(manager, lief.PE.ResourcesManager)
     assert len(manager.icons) == 3
     assert len(manager.manifest) > 0
 
     if is_windows() and is_x86_64():
-        ret = win_exec(output, gui=False, universal_newlines=False,
-                       args=[output, ])
+        ret = win_exec(
+            output,
+            gui=False,
+            universal_newlines=False,
+            args=[
+                str(output),
+            ],
+        )
         assert ret is not None
 
         retcode, stdout = ret
         assert retcode == 0
         assert len(stdout) > 0
 
-def test_add_manifest(tmp_path: Path):
+
+def test_add_manifest():
     root = lief.PE.ResourceDirectory()
     manager = lief.PE.ResourcesManager(root)
     manager.manifest = """
@@ -843,7 +972,10 @@ def test_add_manifest(tmp_path: Path):
     assert len(root.childs) == 1
     assert len(root.childs[0].childs) == 1
     assert len(root.childs[0].childs[0].childs) == 1
-    assert len(root.childs[0].childs[0].childs[0].content) == 416
+    manifest_data = root.childs[0].childs[0].childs[0]
+    assert isinstance(manifest_data, lief.PE.ResourceData)
+    assert len(manifest_data.content) == 416
+
 
 def test_add_icon(tmp_path: Path):
     # Icon from VirtualBox-7.1.0-164728-Win.exe (16x16)
@@ -896,25 +1028,30 @@ def test_add_icon(tmp_path: Path):
     """
     target_input = Path(get_sample("PE/pe_reader.exe"))
     pe = lief.PE.parse(target_input)
+    assert pe is not None
     manager = pe.resources_manager
-    raw_icon = bytes.fromhex(RAW_ICON.replace('\n', '').replace(':', '').strip())
+    assert isinstance(manager, lief.PE.ResourcesManager)
+    raw_icon = bytes.fromhex(RAW_ICON.replace("\n", "").replace(":", "").strip())
     new_icon = lief.PE.ResourceIcon.from_serialization(raw_icon)
+    assert isinstance(new_icon, lief.PE.ResourceIcon)
     lief.logging.enable_debug()
     manager.add_icon(new_icon)
     lief.logging.info(pe.resources)
     out = tmp_path / target_input.name
     pe.write(out)
 
+
 @pytest.mark.private
 def test_driver_rsrc():
     input_file = Path(get_sample("private/PE/vgk.sys"))
     pe = lief.PE.parse(input_file)
+    assert pe is not None
 
     manager = pe.resources_manager
     assert isinstance(manager, lief.PE.ResourcesManager)
 
     version = manager.version[0]
-    assert version.file_info.signature == 0xfeef04bd
+    assert version.file_info.signature == 0xFEEF04BD
     assert version.file_info.struct_version == 0x10000
     assert version.file_info.file_version_ms == 65552
     assert version.file_info.file_version_ls == 1048583
@@ -923,7 +1060,10 @@ def test_driver_rsrc():
     assert version.file_info.file_flags_mask == 63
     assert version.file_info.file_flags == 0
     assert version.file_info.file_os == 262148
-    assert version.file_info.file_os == lief.PE.ResourceVersion.fixed_file_info_t.VERSION_OS.NT_WINDOWS32.value
+    assert (
+        version.file_info.file_os
+        == lief.PE.ResourceVersion.fixed_file_info_t.VERSION_OS.NT_WINDOWS32.value
+    )
     assert version.file_info.file_type == 3581946624
     assert version.file_info.file_subtype == 0
     assert version.file_info.file_date_ms == 0
@@ -933,15 +1073,17 @@ def test_driver_rsrc():
 def test_issue_1282(tmp_path: Path):
     input_file = Path(get_sample("PE/test.debug.repro.exe"))
     pe = lief.PE.parse(input_file)
+    assert pe is not None
     assert pe.get_section(".rsrc") is None
 
-    node = lief.PE.ResourceData([1,2,3])
+    node = lief.PE.ResourceData([1, 2, 3])
     pe.set_resources(node)
     lief.logging.info(pe.resources)
 
-    out_path = tmp_path/ input_file.name
+    out_path = tmp_path / input_file.name
     pe.write(out_path)
 
     new = lief.PE.parse(out_path)
+    assert new is not None
     assert new.get_section(".rsrc") is not None
     assert new.resources is not None

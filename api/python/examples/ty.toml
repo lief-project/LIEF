@@ -1,0 +1,7 @@
+[environment]
+extra-paths = [".."]
+
+[rules]
+unused-type-ignore-comment = "ignore"
+unused-ignore-comment = "ignore"
+unresolved-attribute = "ignore"

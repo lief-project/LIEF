@@ -1,20 +1,20 @@
-#!/usr/bin/env python
 import itertools
 import os
 import random
 import stat
 import subprocess
-import pytest
 from pathlib import Path
 from subprocess import Popen
 
 import lief
-from utils import get_sample, has_recent_glibc, is_linux, is_x86_64
+import pytest
+from utils import get_sample, has_recent_glibc, is_linux, is_x86_64, parse_elf
+
 is_updated_linux = is_linux() and is_x86_64() and has_recent_glibc()
 
 
 def test_rpath():
-    etterlog = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
+    etterlog = parse_elf("ELF/ELF64_x86-64_binary_etterlog.bin")
 
     dynamic_entries = etterlog.dynamic_entries
 
@@ -25,8 +25,9 @@ def test_rpath():
     assert isinstance(last, lief.ELF.DynamicEntryRpath)
     assert last.rpath == "/usr/lib"
 
+
 def test_runpath():
-    etterlog = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_systemd-resolve.bin'))
+    etterlog = parse_elf("ELF/ELF64_x86-64_binary_systemd-resolve.bin")
 
     dynamic_entries = etterlog.dynamic_entries
 
@@ -39,8 +40,9 @@ def test_runpath():
 
 
 def test_gnuhash():
-    ls = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_ls.bin'))
+    ls = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
     gnu_hash = ls.gnu_hash
+    assert gnu_hash is not None
 
     assert gnu_hash.nb_buckets == 33
     assert gnu_hash.symbol_index == 109
@@ -55,31 +57,86 @@ def test_gnuhash():
     buckets = gnu_hash.buckets
     assert len(buckets) == 33
 
-    buckets_test = [109, 110, 0, 0, 0, 0, 0, 111, 113, 114, 0, 0, 0, 115, 0, 116, 0, 0,
-                    117, 118, 119, 0, 120, 0, 0, 121, 123, 124, 126, 128, 129, 130, 0]
+    buckets_test = [
+        109,
+        110,
+        0,
+        0,
+        0,
+        0,
+        0,
+        111,
+        113,
+        114,
+        0,
+        0,
+        0,
+        115,
+        0,
+        116,
+        0,
+        0,
+        117,
+        118,
+        119,
+        0,
+        120,
+        0,
+        0,
+        121,
+        123,
+        124,
+        126,
+        128,
+        129,
+        130,
+        0,
+    ]
     assert buckets_test == buckets
 
-
     hash_values = gnu_hash.hash_values
-    hash_values_test = [0x60E0C78D, 0xF54162E5, 0x7FFD8E4E, 0x1C8BF239, 0x0EEFD3EB, 0x1C8C1D29, 0x1C5871D9,
-                        0x5B7F3E03, 0x759A6A7F, 0x0EF18DB9, 0x0BA53E4D, 0x9789A097, 0x9E7650BC, 0x0D39AD3D,
-                        0x12F7C433, 0xEB01FAB6, 0xECD54543, 0xAD3C9892, 0x72632CCF, 0x12F7A2B3, 0x7C92E3BB,
-                        0x7C96F087]
+    hash_values_test = [
+        0x60E0C78D,
+        0xF54162E5,
+        0x7FFD8E4E,
+        0x1C8BF239,
+        0x0EEFD3EB,
+        0x1C8C1D29,
+        0x1C5871D9,
+        0x5B7F3E03,
+        0x759A6A7F,
+        0x0EF18DB9,
+        0x0BA53E4D,
+        0x9789A097,
+        0x9E7650BC,
+        0x0D39AD3D,
+        0x12F7C433,
+        0xEB01FAB6,
+        0xECD54543,
+        0xAD3C9892,
+        0x72632CCF,
+        0x12F7A2B3,
+        0x7C92E3BB,
+        0x7C96F087,
+    ]
     assert hash_values == hash_values_test
 
-    #for s in list(ls.dynamic_symbols)[gnu_hash.symbol_index:]:
+    # for s in list(ls.dynamic_symbols)[gnu_hash.symbol_index:]:
     #    print(gnu_hash.check(s.name), s.name)
-    assert all(gnu_hash.check(x.name) for x in list(ls.dynamic_symbols)[gnu_hash.symbol_index:]) # type: ignore
+    assert all(
+        gnu_hash.check(x.name)  # type: ignore
+        for x in list(ls.dynamic_symbols)[gnu_hash.symbol_index :]
+    )
 
     assert not gnu_hash.check("foofdsfdsfds")
     assert not gnu_hash.check("fazertrvkdfsrezklqpfjeopqdi")
 
-@pytest.mark.parametrize("sample", [
-    "ELF/ELF64_x86-64_binary_ls.bin"
-])
+
+@pytest.mark.parametrize("sample", ["ELF/ELF64_x86-64_binary_ls.bin"])
 def test_permutation(tmp_path: Path, sample: str):
 
     binary = lief.ELF.parse(get_sample(sample))
+    assert binary is not None
     dynamic_symbols = binary.dynamic_symbols
 
     permutation = list(range(1, len(dynamic_symbols)))
@@ -97,14 +154,18 @@ def test_permutation(tmp_path: Path, sample: str):
     st = os.stat(output)
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen([output, "--help"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
-        stdout = P.stdout.read().decode('utf8')
+    with Popen(
+        [output, "--help"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ) as P:
+        assert P.stdout is not None
+        stdout = P.stdout.read().decode("utf8")
         lief.logging.info(stdout)
         P.communicate()
         assert P.returncode == 0
 
+
 def test_notes():
-    systemd_resolve = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_systemd-resolve.bin'))
+    systemd_resolve = parse_elf("ELF/ELF64_x86-64_binary_systemd-resolve.bin")
     notes = systemd_resolve.notes
     assert len(notes) == 3
 
@@ -125,37 +186,59 @@ def test_notes():
     assert n1.abi == lief.ELF.NoteAbi.ABI.LINUX
     assert n1.version == [2, 6, 32]
 
-    assert list(n2.description) == [0x7e, 0x68, 0x6c, 0x7d,
-                                    0x79, 0x9b, 0xa4, 0xcd,
-                                    0x32, 0xa2, 0x34, 0xe8,
-                                    0x4f, 0xd7, 0x45, 0x98,
-                                    0x21, 0x32, 0x9d, 0xc8]
+    assert list(n2.description) == [
+        0x7E,
+        0x68,
+        0x6C,
+        0x7D,
+        0x79,
+        0x9B,
+        0xA4,
+        0xCD,
+        0x32,
+        0xA2,
+        0x34,
+        0xE8,
+        0x4F,
+        0xD7,
+        0x45,
+        0x98,
+        0x21,
+        0x32,
+        0x9D,
+        0xC8,
+    ]
 
     assert "".join(map(chr, n3.description)) == "gold 1.12\x00\x00\x00"
 
-def test_symbols_access():
-    hello = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_hello-gdb.bin'))
 
-    symbols         = hello.symbols
+def test_symbols_access():
+    hello = parse_elf("ELF/ELF64_x86-64_binary_hello-gdb.bin")
+
+    symbols = hello.symbols
     dynamic_symbols = hello.dynamic_symbols
-    symtab_symbols  = hello.symtab_symbols
+    symtab_symbols = hello.symtab_symbols
 
     assert all(s in symbols for s in dynamic_symbols)
     assert all(s in symbols for s in symtab_symbols)
 
+
 def test_strings():
-    hello = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_all.bin'))
+    hello = parse_elf("ELF/ELF64_x86-64_binary_all.bin")
 
     assert len(hello.strings) > 0
     assert "add_1" in hello.strings
 
-def test_relocation_size():
-    aarch64_toybox = lief.ELF.parse(get_sample('ELF/ELF64_AARCH64_piebinary_toybox.pie'))
-    arm_ls         = lief.ELF.parse(get_sample('ELF/ELF32_ARM_binary_ls.bin'))
-    x86_ls         = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_ls.bin'))
-    x86_64_ls      = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_ld.bin'))
 
-    for r in itertools.chain(aarch64_toybox.dynamic_relocations, aarch64_toybox.pltgot_relocations):
+def test_relocation_size():
+    aarch64_toybox = parse_elf("ELF/ELF64_AARCH64_piebinary_toybox.pie")
+    arm_ls = parse_elf("ELF/ELF32_ARM_binary_ls.bin")
+    x86_ls = parse_elf("ELF/ELF32_x86_binary_ls.bin")
+    x86_64_ls = parse_elf("ELF/ELF64_x86-64_binary_ld.bin")
+
+    for r in itertools.chain(
+        aarch64_toybox.dynamic_relocations, aarch64_toybox.pltgot_relocations
+    ):
         if r.type == lief.ELF.Relocation.TYPE.AARCH64_RELATIVE:
             assert r.size == 64
 
@@ -178,7 +261,6 @@ def test_relocation_size():
         if r.type == lief.ELF.Relocation.TYPE.ARM_JUMP_SLOT:
             assert r.size == 32
 
-
     for r in itertools.chain(x86_ls.dynamic_relocations, x86_ls.pltgot_relocations):
         if r.type == lief.ELF.Relocation.TYPE.X86_GLOB_DAT:
             assert r.size == 32
@@ -189,8 +271,9 @@ def test_relocation_size():
         if r.type == lief.ELF.Relocation.TYPE.X86_JUMP_SLOT:
             assert r.size == 32
 
-
-    for r in itertools.chain(x86_64_ls.dynamic_relocations, x86_64_ls.pltgot_relocations):
+    for r in itertools.chain(
+        x86_64_ls.dynamic_relocations, x86_64_ls.pltgot_relocations
+    ):
         if r.type == lief.ELF.Relocation.TYPE.X86_64_GLOB_DAT:
             assert r.size == 64
 
@@ -200,15 +283,19 @@ def test_relocation_size():
         if r.type == lief.ELF.Relocation.TYPE.X86_64_JUMP_SLOT:
             assert r.size == 64
 
+
 def test_sectionless():
     sample = "ELF/ELF64_x86-64_binary_rvs.bin"
     rvs = lief.ELF.parse(get_sample(sample))
+    assert rvs is not None
     dynsym = list(rvs.dynamic_symbols)
     assert len(dynsym) == 10
+
 
 def test_dynamic_flags():
     sample = "ELF/ELF32_ARM_binary_ls.bin"
     ls = lief.ELF.parse(get_sample(sample))
+    assert ls is not None
     d_flags = ls.get(lief.ELF.DynamicEntry.TAG.FLAGS)
     d_flags_1 = ls.get(lief.ELF.DynamicEntry.TAG.FLAGS_1)
 
@@ -222,6 +309,7 @@ def test_dynamic_flags():
 def test_unwind_arm():
     sample = "ELF/ELF32_ARM_binary_ls.bin"
     ls = lief.ELF.parse(get_sample(sample))
+    assert ls is not None
 
     assert ls.original_size == Path(get_sample(sample)).stat().st_size
 
@@ -241,6 +329,7 @@ def test_unwind_arm():
 def test_unwind_x86():
     sample = "ELF/ELF64_x86-64_binary_ld.bin"
     ld = lief.ELF.parse(get_sample(sample))
+    assert ld is not None
 
     functions = sorted(ld.functions, key=lambda f: f.address)
 
@@ -261,8 +350,10 @@ def test_unwind_x86():
 def test_misc():
     sample = "ELF/ELF64_x86-64_binary_ld.bin"
     ld = lief.ELF.parse(get_sample(sample))
+    assert ld is not None
 
     text = ld.get_section(".text")
+    assert text is not None
 
     assert not ld.has_section_with_offset(0)
     assert not ld.has_section_with_va(0xFFFFFFFF)
@@ -278,9 +369,7 @@ def test_misc():
     d8 02 00 00 00 00 00 00 d8 02 00 00 00 00 00 00
     08 00 00 00 00 00 00 00
     """
-    raw = raw.replace("\n", "") \
-             .replace("  ", " ") \
-             .replace("  ", " ").strip()
+    raw = raw.replace("\n", "").replace("  ", " ").replace("  ", " ").strip()
     hexdigits = raw.split(" ")
     raw_bytes = bytes(int(c, 16) for c in hexdigits)
 
@@ -289,5 +378,6 @@ def test_misc():
 
 @pytest.mark.private
 def test_issue_1241():
-    elf = lief.ELF.parse(get_sample("private/ELF/issue_1241.bin"))
+    elf = parse_elf("private/ELF/issue_1241.bin")
+    assert elf.gnu_hash is not None
     assert len(elf.gnu_hash.bloom_filters) == 16384

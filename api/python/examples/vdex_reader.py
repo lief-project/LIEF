@@ -14,7 +14,7 @@ from lief import VDEX, DEX
 EXIT_STATUS = 0
 terminal_rows, terminal_columns = 100, 100
 try:
-    terminal_rows, terminal_columns = os.popen('stty size', 'r').read().split()
+    terminal_rows, terminal_columns = os.popen("stty size", "r").read().split()
 except ValueError:
     pass
 
@@ -23,7 +23,7 @@ class exceptions_handler(object):
     func = None
 
     def __init__(self, exceptions, on_except_callback=None):
-        self.exceptions         = exceptions
+        self.exceptions = exceptions
         self.on_except_callback = on_except_callback
 
     def __call__(self, *args, **kwargs):
@@ -44,6 +44,7 @@ class exceptions_handler(object):
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 traceback.print_tb(exc_traceback)
                 print("-" * 60)
+
 
 @exceptions_handler(Exception)
 def print_information(vdexfile):
@@ -67,52 +68,63 @@ def print_header(vdexfile):
     header = vdexfile.header
     print(header)
 
+
 def main():
-    parser = argparse.ArgumentParser(usage='%(prog)s [options] VDEX files')
-    parser.add_argument('-a', '--all',
-            action='store_true', dest='show_all',
-            help='Show all information')
+    parser = argparse.ArgumentParser(usage="%(prog)s [options] VDEX files")
+    parser.add_argument(
+        "-a", "--all", action="store_true", dest="show_all", help="Show all information"
+    )
 
-    parser.add_argument('-H', '--header',
-            action='store_true', dest='show_header',
-            help='Display header')
+    parser.add_argument(
+        "-H", "--header", action="store_true", dest="show_header", help="Display header"
+    )
 
-    parser.add_argument("file",
-            metavar="<dex-file>",
-            help='Target DEX File')
+    parser.add_argument("file", metavar="<dex-file>", help="Target DEX File")
     # Logging setup
-    logger_group = parser.add_argument_group('Logger')
+    logger_group = parser.add_argument_group("Logger")
     verbosity = logger_group.add_mutually_exclusive_group()
 
-    verbosity.add_argument('--debug',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.DEBUG)
+    verbosity.add_argument(
+        "--debug",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.DEBUG,
+    )
 
-    verbosity.add_argument('--trace',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.TRACE)
+    verbosity.add_argument(
+        "--trace",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.TRACE,
+    )
 
-    verbosity.add_argument('--info',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.INFO)
+    verbosity.add_argument(
+        "--info",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.INFO,
+    )
 
-    verbosity.add_argument('--warn',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.WARN)
+    verbosity.add_argument(
+        "--warn",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.WARN,
+    )
 
-    verbosity.add_argument('--err',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.ERROR)
+    verbosity.add_argument(
+        "--err",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.ERROR,
+    )
 
-    verbosity.add_argument('--critical',
-            dest='main_verbosity',
-            action='store_const',
-            const=lief.logging.LEVEL.CRITICAL)
+    verbosity.add_argument(
+        "--critical",
+        dest="main_verbosity",
+        action="store_const",
+        const=lief.logging.LEVEL.CRITICAL,
+    )
 
     parser.set_defaults(main_verbosity=lief.logging.LEVEL.WARN)
 

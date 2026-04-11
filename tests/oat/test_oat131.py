@@ -1,13 +1,15 @@
 import lief
 from utils import get_sample
 
+
 def test_header():
     CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_131_x86_CallDeviceId.oat"))
+    assert CallDeviceId is not None
     header = CallDeviceId.header
 
     assert header.magic == [111, 97, 116, 10]
     assert header.version == 131
-    assert header.checksum == 0x8e82f9b5
+    assert header.checksum == 0x8E82F9B5
     assert header.instruction_set == lief.OAT.INSTRUCTION_SETS.X86
     assert header.nb_dex_files == 1
 
@@ -24,11 +26,13 @@ def test_header():
 
     assert header.image_patch_delta == 15335424
 
-    assert header.image_file_location_oat_checksum == 0xdacfe293
-    assert header.image_file_location_oat_data_begin == 0x716a9000
+    assert header.image_file_location_oat_checksum == 0xDACFE293
+    assert header.image_file_location_oat_data_begin == 0x716A9000
+
 
 def test_oat_dex_files():
     CallDeviceId = lief.OAT.parse(get_sample("OAT/OAT_131_x86_CallDeviceId.oat"))
+    assert CallDeviceId is not None
     assert len(CallDeviceId.oat_dex_files) == 1
 
     # OAT Dex File 0
@@ -39,14 +43,16 @@ def test_oat_dex_files():
     assert oat_dex_file.dex_offset == 28
     assert not oat_dex_file.has_dex_file
 
+
 def test_oat_classes():
-    oat_file  = get_sample("OAT/OAT_131_x86_CallDeviceId.oat")
+    oat_file = get_sample("OAT/OAT_131_x86_CallDeviceId.oat")
     vdex_file = get_sample("VDEX/VDEX_10_x86_CallDeviceId.vdex")
 
-    #oat_file  = get_sample("OAT/OAT_131_AArch64_svc.oat")
-    #vdex_file = get_sample("VDEX/VDEX_10_AArch64_svc.vdex")
+    # oat_file  = get_sample("OAT/OAT_131_AArch64_svc.oat")
+    # vdex_file = get_sample("VDEX/VDEX_10_AArch64_svc.vdex")
 
     CallDeviceId = lief.OAT.parse(oat_file, vdex_file)
+    assert CallDeviceId is not None
     assert len(CallDeviceId.classes) == 1
 
     # OAT Class 0
@@ -55,14 +61,16 @@ def test_oat_classes():
     assert cls.fullname == "Lre/android/art/CallDeviceId;"
     assert cls.index == 0
     assert len(cls.methods) == 0
-    #assert cls.status == lief.OAT.OAT_CLASS_STATUS.INITIALIZED # TODO
+    # assert cls.status == lief.OAT.OAT_CLASS_STATUS.INITIALIZED # TODO
     assert cls.type == lief.OAT.OAT_CLASS_TYPES.NONE_COMPILED
 
+
 def test_oat_methods():
-    oat_file  = get_sample("OAT/OAT_124_x86-64_CallDeviceId.oat")
+    oat_file = get_sample("OAT/OAT_124_x86-64_CallDeviceId.oat")
     vdex_file = get_sample("VDEX/VDEX_06_x86-64_CallDeviceId.vdex")
 
     CallDeviceId = lief.OAT.parse(oat_file, vdex_file)
+    assert CallDeviceId is not None
     assert len(CallDeviceId.methods) == 1
 
     assert all(m.is_dex2dex_optimized for m in CallDeviceId.methods)

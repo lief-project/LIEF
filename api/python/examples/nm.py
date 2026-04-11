@@ -14,11 +14,13 @@
 # >>> nm("C:\\Windows\\explorer.exe")
 
 import sys
+
 from lief import parse
 
+
 def nm(filename):
-    """ Return symbols from *filename* binary """
-    binary  = parse(filename) # Build an abstract binary
+    """Return symbols from *filename* binary"""
+    binary = parse(filename)  # Build an abstract binary
     symbols = binary.symbols
 
     if len(symbols) > 0:
@@ -29,11 +31,8 @@ def nm(filename):
 
 
 if __name__ == "__main__":
-
     if len(sys.argv) != 2:
         print("Usage: " + sys.argv[0] + " <binary>")
         sys.exit(-1)
 
     nm(sys.argv[1])
-
-

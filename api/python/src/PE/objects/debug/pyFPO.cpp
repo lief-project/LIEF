@@ -35,7 +35,7 @@ void create<FPO>(nb::module_& m) {
 
   using FRAME_TYPE = FPO::FRAME_TYPE;
   enum_<FRAME_TYPE>(dbg, "FRAME_TYPE")
-    .value("FPO", FRAME_TYPE::FPO)
+    .value("FPO_", FRAME_TYPE::FPO)
     .value("TRAP", FRAME_TYPE::TRAP)
     .value("TSS", FRAME_TYPE::TSS)
     .value("NON_FPO", FRAME_TYPE::NON_FPO);

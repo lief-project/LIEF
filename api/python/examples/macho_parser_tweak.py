@@ -5,8 +5,8 @@ import time
 # Do not parse dyld info
 config = lief.MachO.ParserConfig()
 config.parse_dyld_bindings = False
-config.parse_dyld_exports  = False
-config.parse_dyld_rebases  = False
+config.parse_dyld_exports = False
+config.parse_dyld_rebases = False
 
 t1 = time.time()
 lief.MachO.parse(sys.argv[1], config)

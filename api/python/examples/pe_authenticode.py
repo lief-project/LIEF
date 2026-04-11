@@ -5,7 +5,7 @@ import sys
 import lief
 
 # Description:
-# -----------
+# -----------
 # Print certificates included in a signed PE
 #
 # Example:
@@ -26,19 +26,18 @@ import lief
 # Valid to:                     2010-1-22 20:49:22
 # Issuer:                       C=US, ST=Washington, L=Redmond, O=Microsoft Corporation, CN=Microsoft Windows Verification PCA
 # Subject:                      C=US, ST=Washington, L=Redmond, O=Microsoft Corporation, OU=MOPR, CN=Microsoft Windows
-# ....
+# ....
+
 
 def print_crt(binary):
     for crt in binary.signatures[0].certificates:
         print(crt)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: {} <pe_binary>".format(sys.argv[0]))
         sys.exit(1)
 
     binary = lief.parse(sys.argv[1])
     print_crt(binary)
-
-
-

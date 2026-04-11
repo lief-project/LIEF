@@ -779,9 +779,9 @@ class Binary(lief.Binary):
     @property
     def symbols(self) -> Binary.it_symbols: ... # type: ignore
 
-    def has_symbol(self, name: str) -> bool: ...
+    def has_symbol(self, name: str) -> bool: ... # type: ignore
 
-    def get_symbol(self, name: str) -> Symbol | None: ...
+    def get_symbol(self, name: str) -> Symbol | None: ... # type: ignore
 
     @property
     def imported_symbols(self) -> Binary.it_filter_symbols: ...
@@ -888,7 +888,7 @@ class Binary(lief.Binary):
     def rpaths(self) -> Binary.it_rpaths: ...
 
     @property
-    def has_symbol_command(self) -> bool: ...
+    def has_symbol_command(self) -> bool: ... # type: ignore
 
     @property
     def symbol_command(self) -> SymbolCommand | None: ...

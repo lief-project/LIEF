@@ -1,20 +1,20 @@
 #!python
-import lief
 import ctypes
-
-from pathlib import Path
 from multiprocessing import Process
+from pathlib import Path
 
-from utils import (
-    get_sample, is_windows, is_windows_x86_64, win_exec
-)
+import lief
+from utils import get_sample, is_windows, is_windows_x86_64, win_exec
+
 if is_windows():
     SEM_NOGPFAULTERRORBOX = 0x0002  # From MSDN
-    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX) # type: ignore
+    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)  # type: ignore
+
 
 def _load_library(path: Path):
-    lib = ctypes.windll.LoadLibrary(path.as_posix()) # type: ignore
+    lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
+
 
 def _run_sample(input_path: Path, output: Path):
     if not is_windows_x86_64():
@@ -27,7 +27,13 @@ def _run_sample(input_path: Path, output: Path):
         assert p.exitcode == 0
 
     if input_path.name == "pe_reader.exe":
-        ret = win_exec(output, gui=False, args=[output.as_posix(), ])
+        ret = win_exec(
+            output,
+            gui=False,
+            args=[
+                output.as_posix(),
+            ],
+        )
         assert ret is not None
 
         retcode, stdout = ret
@@ -35,17 +41,25 @@ def _run_sample(input_path: Path, output: Path):
         assert len(stdout) > 0
 
     if input_path.name == "tls_callbacks.exe":
-        ret = win_exec(output, gui=False, args=[output.as_posix(), ])
+        ret = win_exec(
+            output,
+            gui=False,
+            args=[
+                output.as_posix(),
+            ],
+        )
         assert ret is not None
 
         retcode, stdout = ret
         assert retcode == 0
         assert len(stdout) > 0
 
+
 def test_remove_tls_callback(tmp_path: Path):
     input_path = Path(get_sample("PE/tls_callbacks.exe"))
 
     pe = lief.PE.parse(input_path)
+    assert pe is not None
     tls = pe.tls
     assert tls is not None
 
@@ -65,6 +79,7 @@ def test_remove_tls_callback(tmp_path: Path):
     pe.write(output)
 
     new = lief.PE.parse(output)
+    assert new is not None
 
     check, msg = lief.PE.check_layout(new)
     assert check, msg
@@ -86,9 +101,11 @@ def test_remove_tls_callback(tmp_path: Path):
         assert "Hello World" in stdout
         assert "TLS Callback" not in stdout
 
+
 def test_add_callback(tmp_path: Path):
     input_path = Path(get_sample("PE/tls_callbacks.exe"))
     pe = lief.PE.parse(input_path)
+    assert pe is not None
     tls = pe.tls
     assert tls is not None
 
@@ -110,6 +127,7 @@ def test_add_callback(tmp_path: Path):
     pe.write(output)
 
     new = lief.PE.parse(output)
+    assert new is not None
 
     check, msg = lief.PE.check_layout(new)
     assert check, msg
@@ -142,6 +160,7 @@ def test_add_callback(tmp_path: Path):
         assert "Hello World" in stdout
         assert "TLS Callback #2" in stdout
 
+
 def test_remove_tls(tmp_path: Path):
     """
     Check that we can strip the whole TLS info
@@ -149,6 +168,7 @@ def test_remove_tls(tmp_path: Path):
     input_path = Path(get_sample("PE/tls_callbacks.exe"))
 
     pe = lief.PE.parse(input_path)
+    assert pe is not None
     tls = pe.tls
     assert tls is not None
 
@@ -161,6 +181,7 @@ def test_remove_tls(tmp_path: Path):
     pe.write(output)
 
     new = lief.PE.parse(output)
+    assert new is not None
 
     check, msg = lief.PE.check_layout(new)
     assert check, msg
@@ -184,6 +205,7 @@ def test_create_tls(tmp_path: Path):
     input_path = Path(get_sample("PE/tls_callbacks.exe"))
 
     pe = lief.PE.parse(input_path)
+    assert pe is not None
     tls = pe.tls
     assert tls is not None
 
@@ -196,6 +218,7 @@ def test_create_tls(tmp_path: Path):
     pe.write(empty_tls_path)
 
     empty_tls = lief.PE.parse(empty_tls_path)
+    assert empty_tls is not None
 
     check, msg = lief.PE.check_layout(empty_tls)
     assert check, msg
@@ -214,6 +237,7 @@ def test_create_tls(tmp_path: Path):
     empty_tls.write(output)
 
     new = lief.PE.parse(output)
+    assert new is not None
 
     check, msg = lief.PE.check_layout(new)
     assert check, msg

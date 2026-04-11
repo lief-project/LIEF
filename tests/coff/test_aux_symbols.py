@@ -1,10 +1,13 @@
-import lief
-from utils import get_sample
 from textwrap import dedent
+from typing import cast
+
+import lief
+from utils import parse_coff
+
 
 def test_token_def():
-    coff = lief.COFF.parse(get_sample("COFF/psetargv.obj"))
-    aux_token: lief.COFF.AuxiliaryCLRToken = coff.symbols[7].auxiliary_symbols[0]
+    coff = parse_coff("COFF/psetargv.obj")
+    aux_token = cast(lief.COFF.AuxiliaryCLRToken, coff.symbols[7].auxiliary_symbols[0])
     assert isinstance(aux_token, lief.COFF.AuxiliaryCLRToken)
 
     assert str(aux_token) == dedent("""\
@@ -22,4 +25,9 @@ def test_token_def():
     assert aux_token.aux_type == 1
     assert aux_token.reserved == 1
     assert aux_token.symbol_idx == 10
-    assert aux_token.symbol.name == "??0CppInlineNamespaceAttribute@?A0xb81de522@vc.cppcli.attributes@@$$FQE$AAM@PE$AAVString@System@@@Z"
+    _sym = aux_token.symbol
+    assert _sym is not None
+    assert (
+        _sym.name
+        == "??0CppInlineNamespaceAttribute@?A0xb81de522@vc.cppcli.attributes@@$$FQE$AAM@PE$AAVString@System@@@Z"
+    )

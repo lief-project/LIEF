@@ -1,18 +1,29 @@
 import lief
 import pytest
-from utils import get_sample
+from utils import parse_coff
 
 if not lief.__extended__:
     pytest.skip("skipping: extended version only", allow_module_level=True)
 
+
 def test_simple():
-    coff = lief.COFF.parse(get_sample("COFF/disa_test.obj"))
+    coff = parse_coff("COFF/disa_test.obj")
 
-    assert coff.find_demangled_function("int __cdecl bar(int, int)").value == 0
-    assert coff.find_function("?foo@@YAHHH@Z").value == 32
+    _bar = coff.find_demangled_function("int __cdecl bar(int, int)")
+    assert _bar is not None
+    assert _bar.value == 0
+    _foo = coff.find_function("?foo@@YAHHH@Z")
+    assert _foo is not None
+    assert _foo.value == 32
 
-    assert str(next(coff.disassemble("?foo@@YAHHH@Z"))) == "0x000020: mov dword ptr [rsp + 16], edx"
-    assert str(next(coff.disassemble("int __cdecl bar(int, int)"))) == "0x000000: mov dword ptr [rsp + 16], edx"
+    assert (
+        str(next(coff.disassemble("?foo@@YAHHH@Z")))
+        == "0x000020: mov dword ptr [rsp + 16], edx"
+    )
+    assert (
+        str(next(coff.disassemble("int __cdecl bar(int, int)")))
+        == "0x000000: mov dword ptr [rsp + 16], edx"
+    )
     main_disa = list(coff.disassemble("main"))
 
     assert len(main_disa) == 11

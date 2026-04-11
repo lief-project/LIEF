@@ -1,14 +1,14 @@
-#!/usr/bin/env python
 import os
 import stat
 import subprocess
-import pytest
-from subprocess import Popen
-from typing import List
 from pathlib import Path
+from subprocess import Popen
+from typing import Any, List, cast
 
 import lief
-from utils import get_compiler, is_linux, lief_logging
+import pytest
+from utils import get_compiler, is_linux
+
 if not is_linux():
     pytest.skip("requires Linux", allow_module_level=True)
 
@@ -46,30 +46,40 @@ int main(int argc, char **argv) {
 
 
 def compile_libadd(out: Path, infile: Path, extra_flags: List[str]):
-    CC_FLAGS = ['-fPIC', '-shared', '-Wl,-soname,libadd.so'] + extra_flags
-    cmd = [COMPILER, '-o', out] + CC_FLAGS + [infile]
+    CC_FLAGS = ["-fPIC", "-shared", "-Wl,-soname,libadd.so"] + extra_flags
+    cmd = [COMPILER, "-o", out] + CC_FLAGS + [infile]
     lief.logging.info("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
 
-    with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
-        stdout = P.stdout.read().decode('utf8')
+    with Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent
+    ) as P:
+        assert P.stdout is not None
+        stdout = P.stdout.read().decode("utf8")
         lief.logging.info(stdout)
 
+
 def compile_binadd(out: Path, infile: Path, extra_flags: List[str]):
-    CC_FLAGS = ['-fPIC', '-pie', '-L', out.parent] + extra_flags
-    cmd = [COMPILER, '-o', out] + CC_FLAGS + [infile, '-ladd']
+    CC_FLAGS = ["-fPIC", "-pie", "-L", out.parent] + extra_flags
+    cmd = [COMPILER, "-o", out] + CC_FLAGS + [infile, "-ladd"]
     lief.logging.info("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
 
-    with Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent) as P:
-        stdout = P.stdout.read().decode('utf8')
+    with Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=out.parent
+    ) as P:
+        assert P.stdout is not None
+        stdout = P.stdout.read().decode("utf8")
         lief.logging.info(stdout)
 
 
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
-@pytest.mark.parametrize("style", [
-    ("sysv", False),
-    ("both", True),
-    ("gnu",  True),
-])
+@pytest.mark.parametrize(
+    "style",
+    [
+        ("sysv", False),
+        ("both", True),
+        ("gnu", True),
+    ],
+)
 def test_add_dynamic_symbols(tmp_path: Path, style):
     hash_style, symbol_sorted = style
     link_opt = f"-Wl,--hash-style={hash_style}"
@@ -78,7 +88,7 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
     libadd_c = tmp_path / "libadd.c"
 
     binadd_bin = tmp_path / "binadd.bin"
-    libadd_so  = tmp_path / "libadd.so"
+    libadd_so = tmp_path / "libadd.so"
 
     binadd_c.write_text(BINADD_C)
     libadd_c.write_text(LIBADD_C)
@@ -87,45 +97,74 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
     compile_binadd(binadd_bin, binadd_c, [link_opt])
 
     libadd = lief.ELF.parse(libadd_so)
+    assert libadd is not None
 
     dynamic_symbols = list(libadd.dynamic_symbols)
     for sym in dynamic_symbols:
         libadd.add_dynamic_symbol(sym)
     dynamic_section = libadd.get_section(".dynsym")
+    assert dynamic_section is not None
     libadd.extend(dynamic_section, dynamic_section.entry_size * len(dynamic_symbols))
     if hash_style != "gnu":
         hash_section = libadd.get_section(".hash")
+        assert hash_section is not None
         libadd.extend(hash_section, hash_section.entry_size * len(dynamic_symbols))
     libadd.write(libadd_so)
 
-    opt = {
-      'stdout': subprocess.PIPE,
-      'stderr': subprocess.STDOUT,
-      'env'   : {"LD_LIBRARY_PATH": tmp_path.as_posix()}
+    opt: dict[str, Any] = {
+        "universal_newlines": True,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.STDOUT,
+        "env": {"LD_LIBRARY_PATH": tmp_path.as_posix()},
     }
 
-    with Popen([binadd_bin, '1', '2'], **opt) as P: # type: ignore
-        stdout = P.stdout.read().decode("utf8")
+    with Popen([binadd_bin, "1", "2"], **opt) as P:
+        assert P.stdout is not None
+        stdout = P.stdout.read()
         P.communicate()
         assert P.returncode == 0
         assert "From myLIb, a + b = 3" in stdout
 
     libadd = lief.ELF.parse(libadd_so)
+    assert libadd is not None
     dynamic_section = libadd.get_section(".dynsym")
+    assert dynamic_section is not None
     # TODO: Size of libadd.dynamic_symbols is larger than  dynamic_symbols_size.
     dynamic_symbols_size = int(dynamic_section.size / dynamic_section.entry_size)
     dynamic_symbols = list(libadd.dynamic_symbols)[:dynamic_symbols_size]
     if symbol_sorted:
         first_not_null_symbol_index = dynamic_section.information
-        first_exported_symbol_index = next(i for i, sym in enumerate(dynamic_symbols) if sym.shndx != 0)
+        first_exported_symbol_index = next(
+            i for i, sym in enumerate(dynamic_symbols) if sym.shndx != 0
+        )
 
-        assert all(map(lambda sym: sym.shndx == 0 and sym.binding == lief.ELF.Symbol.BINDING.LOCAL,
-                       dynamic_symbols[:first_not_null_symbol_index]))
+        assert all(
+            map(
+                lambda sym: (
+                    sym.shndx == 0 and sym.binding == lief.ELF.Symbol.BINDING.LOCAL
+                ),
+                dynamic_symbols[:first_not_null_symbol_index],
+            )
+        )
 
-        assert (all(map(lambda sym: sym.shndx == 0 and sym.binding != lief.ELF.Symbol.BINDING.LOCAL,
-                        dynamic_symbols[first_not_null_symbol_index:first_exported_symbol_index])))
+        assert all(
+            map(
+                lambda sym: (
+                    sym.shndx == 0 and sym.binding != lief.ELF.Symbol.BINDING.LOCAL
+                ),
+                dynamic_symbols[
+                    first_not_null_symbol_index:first_exported_symbol_index
+                ],
+            )
+        )
 
-        assert (all(map(lambda sym: sym.shndx != 0, dynamic_symbols[first_exported_symbol_index:])))
+        assert all(
+            map(
+                lambda sym: sym.shndx != 0,
+                dynamic_symbols[first_exported_symbol_index:],
+            )
+        )
+
 
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_remove_library(tmp_path: Path):
@@ -133,7 +172,7 @@ def test_remove_library(tmp_path: Path):
     libadd_c = tmp_path / "libadd.c"
 
     binadd_bin = tmp_path / "binadd.bin"
-    libadd_so  = tmp_path / "libadd.so"
+    libadd_so = tmp_path / "libadd.so"
 
     binadd_c.write_text(BINADD_C)
     libadd_c.write_text(LIBADD_C)
@@ -142,8 +181,10 @@ def test_remove_library(tmp_path: Path):
     compile_binadd(binadd_bin, binadd_c, [])
 
     binadd = lief.ELF.parse(binadd_bin)
+    assert binadd is not None
 
     libadd_needed = binadd.get_library("libadd.so")
+    assert libadd_needed is not None
     binadd -= libadd_needed
     assert not binadd.has_library("libadd.so")
 
@@ -154,7 +195,7 @@ def test_remove_tag(tmp_path: Path):
     libadd_c = tmp_path / "libadd.c"
 
     binadd_bin = tmp_path / "binadd.bin"
-    libadd_so  = tmp_path / "libadd.so"
+    libadd_so = tmp_path / "libadd.so"
 
     binadd_c.write_text(BINADD_C)
     libadd_c.write_text(LIBADD_C)
@@ -163,9 +204,13 @@ def test_remove_tag(tmp_path: Path):
     compile_binadd(binadd_bin, binadd_c, [])
 
     binadd = lief.ELF.parse(binadd_bin)
+    assert binadd is not None
 
     binadd -= lief.ELF.DynamicEntry.TAG.NEEDED
-    assert all(e.tag != lief.ELF.DynamicEntry.TAG.NEEDED for e in binadd.dynamic_entries)
+    assert all(
+        e.tag != lief.ELF.DynamicEntry.TAG.NEEDED for e in binadd.dynamic_entries
+    )
+
 
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_runpath_api(tmp_path: Path):
@@ -173,7 +218,7 @@ def test_runpath_api(tmp_path: Path):
     libadd_c = tmp_path / "libadd.c"
 
     binadd_bin = tmp_path / "binadd.bin"
-    libadd_so  = tmp_path / "libadd.so"
+    libadd_so = tmp_path / "libadd.so"
 
     binadd_c.write_text(BINADD_C)
     libadd_c.write_text(LIBADD_C)
@@ -182,9 +227,10 @@ def test_runpath_api(tmp_path: Path):
     compile_binadd(binadd_bin, binadd_c, [])
 
     binadd = lief.ELF.parse(binadd_bin)
+    assert binadd is not None
 
     rpath = lief.ELF.DynamicEntryRunPath()
-    rpath = binadd.add(rpath)
+    rpath = cast(lief.ELF.DynamicEntryRunPath, binadd.add(rpath))
     rpath += "/tmp"
 
     assert rpath.paths == ["/tmp"]
@@ -206,13 +252,14 @@ def test_runpath_api(tmp_path: Path):
     rpath.remove("/foo").remove("/bar")
     assert rpath.runpath == ""
 
+
 @pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_change_libname(tmp_path: Path):
     binadd_c = tmp_path / "binadd.c"
     libadd_c = tmp_path / "libadd.c"
 
     binadd_bin = tmp_path / "binadd.bin"
-    libadd_so  = tmp_path / "libadd.so"
+    libadd_so = tmp_path / "libadd.so"
 
     binadd_c.write_text(BINADD_C)
     libadd_c.write_text(LIBADD_C)
@@ -221,25 +268,30 @@ def test_change_libname(tmp_path: Path):
     compile_binadd(binadd_bin, binadd_c, [])
 
     libadd = lief.ELF.parse(libadd_so)
+    assert libadd is not None
     binadd = lief.ELF.parse(binadd_bin)
+    assert binadd is not None
 
     new_name = "libwhichhasalongverylongname.so"
 
     assert lief.ELF.DynamicEntry.TAG.SONAME in libadd
-    soname_entry: lief.ELF.DynamicEntryLibrary = libadd[lief.ELF.DynamicEntry.TAG.SONAME]
+    soname_entry = cast(
+        lief.ELF.DynamicEntryLibrary, libadd[lief.ELF.DynamicEntry.TAG.SONAME]
+    )
     soname_entry.name = new_name
 
     libfoo_path = tmp_path / new_name
     libadd.write(libfoo_path)
 
     libfoo = lief.ELF.parse(libfoo_path)
-
+    assert libfoo is not None
     new_so_name = libfoo[lief.ELF.DynamicEntry.TAG.SONAME]
     assert isinstance(new_so_name, lief.ELF.DynamicSharedObject)
     # Check builder did the job right
     assert new_so_name.name == new_name
 
     libadd_needed = binadd.get_library("libadd.so")
+    assert libadd_needed is not None
     libadd_needed.name = new_name
 
     # Add a RPATH entry
@@ -256,7 +308,10 @@ def test_change_libname(tmp_path: Path):
     st = os.stat(new_binadd_path)
     os.chmod(new_binadd_path, st.st_mode | stat.S_IEXEC)
 
-    with Popen([new_binadd_path, '1', '2'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as P:
+    with Popen(
+        [new_binadd_path, "1", "2"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ) as P:
+        assert P.stdout is not None
         stdout = P.stdout.read().decode("utf8")
         P.communicate()
         lief.logging.info(stdout)

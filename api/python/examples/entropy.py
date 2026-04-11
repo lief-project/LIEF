@@ -17,16 +17,14 @@ from pyqtgraph.Qt import QtCore, QtGui
 
 
 class Entropy(object):
-
-    DEFAULT_BLOCK_SIZE  = 512
+    DEFAULT_BLOCK_SIZE = 512
     DEFAULT_DATA_POINTS = 2048
-    DEFAULT_THRESHOLD   = 9
+    DEFAULT_THRESHOLD = 9
 
     def __init__(self, path):
-        self.binary     = parse(path)
+        self.binary = parse(path)
         self.block_size = None
-        self.result     = dict((section, []) for section in self.binary.sections)
-
+        self.result = dict((section, []) for section in self.binary.sections)
 
     def entropy(self, data):
         entropy = 0
@@ -43,16 +41,19 @@ class Entropy(object):
                 if p_x > 0:
                     entropy -= p_x * math.log(p_x, 2)
 
-        return (entropy)
+        return entropy
 
     def compute_entropy_section(self, section):
         content = section.content
-        size    = len(content)
+        size = len(content)
 
         if self.block_size is None:
             block_size = size / self.DEFAULT_DATA_POINTS
             # Round up to the nearest DEFAULT_BLOCK_SIZE
-            block_size = int(block_size + ((self.DEFAULT_BLOCK_SIZE - block_size) % self.DEFAULT_BLOCK_SIZE))
+            block_size = int(
+                block_size
+                + ((self.DEFAULT_BLOCK_SIZE - block_size) % self.DEFAULT_BLOCK_SIZE)
+            )
         else:
             block_size = self.block_size
 
@@ -61,13 +62,12 @@ class Entropy(object):
 
         i = 0
         while (i + block_size) < size:
-            entropy = self.entropy(content[i:i + block_size])
-            self.result[section].append((section.offset + i , entropy))
+            entropy = self.entropy(content[i : i + block_size])
+            self.result[section].append((section.offset + i, entropy))
             i += block_size
 
-
     def plot(self):
-        plt = pg.plot(title = "Entropy")
+        plt = pg.plot(title="Entropy")
         plt.addLegend()
 
         for idx, (section, result) in enumerate(self.result.items()):
@@ -77,12 +77,15 @@ class Entropy(object):
                 x.append(offset)
                 y.append(entropy)
             if len(result) > self.DEFAULT_THRESHOLD:
-                c1 = plt.plot(x, y,\
-                        pen=pg.intColor(idx * 10, 100),\
-                        name=section.name,\
-                        antialias = True,\
-                        fillLevel=0,\
-                        fillBrush=pg.intColor(idx * 10, 100, alpha = 40))
+                c1 = plt.plot(
+                    x,
+                    y,
+                    pen=pg.intColor(idx * 10, 100),
+                    name=section.name,
+                    antialias=True,
+                    fillLevel=0,
+                    fillBrush=pg.intColor(idx * 10, 100, alpha=40),
+                )
 
     def run(self):
 
@@ -90,14 +93,13 @@ class Entropy(object):
             self.compute_entropy_section(section)
         self.plot()
 
-        if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+        if (sys.flags.interactive != 1) or not hasattr(QtCore, "PYQT_VERSION"):
             QtGui.QApplication.instance().exec_()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: {} <binary>".format(sys.argv[0]))
-        sys.exit(0);
+        sys.exit(0)
 
     Entropy(sys.argv[1]).run()
-

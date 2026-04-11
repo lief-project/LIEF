@@ -1,20 +1,20 @@
 import lief
 import pytest
+from utils import is_x86_64, parse_elf
 
-from utils import is_x86_64, get_sample
 
 @pytest.mark.skipif(not is_x86_64(), reason="requires x86-64")
 def test_hash():
-    issue_863 = lief.ELF.parse(get_sample('ELF/issue_863.elf'))
-    hello_c_debug = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_hello-c-debug.bin'))
-    empty_gnu_hash = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_empty-gnu-hash.bin'))
-    arm_ls = lief.ELF.parse(get_sample('ELF/ELF32_ARM_binary_ls.bin'))
-    libfreebl3 = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_library_libfreebl3.so'))
-    _test_897 = lief.ELF.parse(get_sample('ELF/test_897.elf'))
-    etterlog = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
-    resolve = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_systemd-resolve.bin'))
-    lib_symbol_versions = lief.ELF.parse(get_sample('ELF/lib_symbol_versions.so'))
-    elf32_bin_all = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_all.bin'))
+    issue_863 = parse_elf("ELF/issue_863.elf")
+    hello_c_debug = parse_elf("ELF/ELF64_x86-64_binary_hello-c-debug.bin")
+    empty_gnu_hash = parse_elf("ELF/ELF64_x86-64_binary_empty-gnu-hash.bin")
+    arm_ls = parse_elf("ELF/ELF32_ARM_binary_ls.bin")
+    libfreebl3 = parse_elf("ELF/ELF64_x86-64_library_libfreebl3.so")
+    _test_897 = parse_elf("ELF/test_897.elf")
+    etterlog = parse_elf("ELF/ELF64_x86-64_binary_etterlog.bin")
+    resolve = parse_elf("ELF/ELF64_x86-64_binary_systemd-resolve.bin")
+    lib_symbol_versions = parse_elf("ELF/lib_symbol_versions.so")
+    elf32_bin_all = parse_elf("ELF/ELF32_x86_binary_all.bin")
 
     assert hash(issue_863) > 0
     assert issue_863.sysv_hash is not None
@@ -56,22 +56,30 @@ def test_hash():
     assert hash(etterlog.symbols_version[0]) > 0
     assert hash(lief.ELF.SymbolVersion.local) > 0
 
-    assert hash(lib_symbol_versions.get_dynamic_symbol("foo").symbol_version.symbol_version_auxiliary) > 0
+    foo_sym = lib_symbol_versions.get_dynamic_symbol("foo")
+    assert foo_sym is not None
+    foo_version = foo_sym.symbol_version
+    assert foo_version is not None
+    assert hash(foo_version.symbol_version_auxiliary) > 0
     assert hash(lib_symbol_versions.symbols_version_definition[0]) > 0
     assert hash(elf32_bin_all.symbols_version_requirement[0]) > 0
-    assert hash(elf32_bin_all.symbols_version_requirement[0].get_auxiliary_symbols()[0]) > 0
+    assert (
+        hash(elf32_bin_all.symbols_version_requirement[0].get_auxiliary_symbols()[0])
+        > 0
+    )
+
 
 def test_str(capsys):
-    issue_863 = lief.ELF.parse(get_sample('ELF/issue_863.elf'))
-    hello_c_debug = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_hello-c-debug.bin'))
-    empty_gnu_hash = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_empty-gnu-hash.bin'))
-    arm_ls = lief.ELF.parse(get_sample('ELF/ELF32_ARM_binary_ls.bin'))
-    libfreebl3 = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_library_libfreebl3.so'))
-    _test_897 = lief.ELF.parse(get_sample('ELF/test_897.elf'))
-    etterlog = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_etterlog.bin'))
-    resolve = lief.ELF.parse(get_sample('ELF/ELF64_x86-64_binary_systemd-resolve.bin'))
-    lib_symbol_versions = lief.ELF.parse(get_sample('ELF/lib_symbol_versions.so'))
-    elf32_bin_all = lief.ELF.parse(get_sample('ELF/ELF32_x86_binary_all.bin'))
+    issue_863 = parse_elf("ELF/issue_863.elf")
+    hello_c_debug = parse_elf("ELF/ELF64_x86-64_binary_hello-c-debug.bin")
+    empty_gnu_hash = parse_elf("ELF/ELF64_x86-64_binary_empty-gnu-hash.bin")
+    arm_ls = parse_elf("ELF/ELF32_ARM_binary_ls.bin")
+    libfreebl3 = parse_elf("ELF/ELF64_x86-64_library_libfreebl3.so")
+    _test_897 = parse_elf("ELF/test_897.elf")
+    etterlog = parse_elf("ELF/ELF64_x86-64_binary_etterlog.bin")
+    resolve = parse_elf("ELF/ELF64_x86-64_binary_systemd-resolve.bin")
+    lib_symbol_versions = parse_elf("ELF/lib_symbol_versions.so")
+    elf32_bin_all = parse_elf("ELF/ELF32_x86_binary_all.bin")
 
     lief.logging.info(issue_863)
     assert issue_863.sysv_hash is not None
@@ -91,7 +99,6 @@ def test_str(capsys):
 
     assert hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH] is not None
     lief.logging.info(hello_c_debug[lief.ELF.DynamicEntry.TAG.GNU_HASH])
-
 
     assert hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY] is not None
     lief.logging.info(hello_c_debug[lief.ELF.DynamicEntry.TAG.INIT_ARRAY])
@@ -113,7 +120,13 @@ def test_str(capsys):
     lief.logging.info(etterlog.symbols_version[0])
     lief.logging.info(lief.ELF.SymbolVersion.local)
 
-    lief.logging.info(lib_symbol_versions.get_dynamic_symbol("foo").symbol_version.symbol_version_auxiliary)
+    foo_sym = lib_symbol_versions.get_dynamic_symbol("foo")
+    assert foo_sym is not None
+    foo_version = foo_sym.symbol_version
+    assert foo_version is not None
+    lief.logging.info(foo_version.symbol_version_auxiliary)
     lief.logging.info(lib_symbol_versions.symbols_version_definition[0])
     lief.logging.info(elf32_bin_all.symbols_version_requirement[0])
-    lief.logging.info(elf32_bin_all.symbols_version_requirement[0].get_auxiliary_symbols()[0])
+    lief.logging.info(
+        elf32_bin_all.symbols_version_requirement[0].get_auxiliary_symbols()[0]
+    )

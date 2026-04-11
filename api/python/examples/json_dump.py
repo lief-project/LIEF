@@ -11,4 +11,4 @@ obj = lief.parse(sys.argv[1])
 
 json_data = json.loads(lief.to_json(obj))
 
-print(json.dumps(json_data, sort_keys = True, indent = 4))
+print(json.dumps(json_data, sort_keys=True, indent=4))

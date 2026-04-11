@@ -1,0 +1,8 @@
+[environment]
+python-version = "3.9"
+
+[rules]
+unused-type-ignore-comment = "ignore"
+unused-ignore-comment = "ignore"
+invalid-argument-type = "ignore"
+redundant-final-classvar = "ignore"

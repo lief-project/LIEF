@@ -1,210 +1,235 @@
-#!/usr/bin/env python
-import subprocess
-import pytest
 import stat
+import subprocess
+from pathlib import Path
+from subprocess import Popen
+from typing import Any, cast
 
 import lief
-import pathlib
-
-from subprocess import Popen
-from pathlib import Path
-
+import pytest
 from utils import (
-    get_sample, is_linux, is_x86_64, glibc_version, check_layout
+    check_layout,
+    get_sample,
+    glibc_version,
+    is_linux,
+    is_x86_64,
+    parse_elf,
 )
 
-def test_issue_872(tmp_path):
-    tmp = pathlib.Path(tmp_path)
 
-    elf: lief.ELF.Binary = lief.ELF.parse(get_sample('ELF/i872_risv.elf'))
+def test_issue_872(tmp_path: Path):
+    elf = parse_elf("ELF/i872_risv.elf")
     payload_sec = elf.get_section(".payload")
+    assert payload_sec is not None
     offset = payload_sec.offset
 
     new_section = lief.ELF.Section(".new_section")
-    new_section.virtual_address = 0xa0000000
+    new_section.virtual_address = 0xA0000000
     new_section.add(lief.ELF.Section.FLAGS.ALLOC)
     new_section.size = 0x1000
-    new_section.content = [0xa5] * 0x1000
+    new_section.content = [0xA5] * 0x1000
     elf.add(new_section)
 
-    outpath = tmp / "i872_risv_modified.elf"
+    outpath = tmp_path / "i872_risv_modified.elf"
     elf.write(outpath)
 
     check_layout(outpath)
 
-    modified: lief.ELF.Binary = lief.ELF.parse(outpath)
-    new_offset = modified.get_section(".payload").offset
+    modified = cast(lief.ELF.Binary, lief.ELF.parse(outpath))
+    payload_section = modified.get_section(".payload")
+    assert payload_section is not None
+    new_offset = payload_section.offset
 
     new_section = modified.get_section(".new_section")
+    assert new_section is not None
     new_segment = modified.segment_from_offset(new_section.offset)
 
     assert offset == new_offset
 
-    assert new_section.virtual_address == 0xa0000000
+    assert new_section.virtual_address == 0xA0000000
     assert new_segment is not None
-    assert new_segment.virtual_address == 0xa0000000
+    assert new_segment.virtual_address == 0xA0000000
+
 
 @pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
-@pytest.mark.parametrize("mode", [
-    lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
-    lief.ELF.Binary.PHDR_RELOC.FILE_END,
-    lief.ELF.Binary.PHDR_RELOC.BSS_END
-])
-def test_static_musl(tmp_path, mode):
-    sample = get_sample("ELF/i872_hello_musl.elf")
-    elf: lief.ELF.Binary = lief.ELF.parse(sample)
+@pytest.mark.parametrize(
+    "mode",
+    [
+        lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
+        lief.ELF.Binary.PHDR_RELOC.FILE_END,
+        lief.ELF.Binary.PHDR_RELOC.BSS_END,
+    ],
+)
+def test_static_musl(tmp_path: Path, mode):
+    elf = parse_elf("ELF/i872_hello_musl.elf")
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
     segment.type = lief.ELF.Segment.TYPE.LOAD
-    segment.content = [0xcc for _ in range(0x2000)]
+    segment.content = [0xCC for _ in range(0x2000)]
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
     elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
-    popen_args = {
+    popen_args: dict[str, Any] = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
-        "universal_newlines": True
+        "universal_newlines": True,
     }
 
-    with Popen([outpath.as_posix()], **popen_args) as proc: # type: ignore
+    with Popen([outpath.as_posix()], **popen_args) as proc:
+        assert proc.stdout is not None
         stdout = proc.stdout.read()
         assert "Hello World" in stdout, f"Error: {stdout}"
 
 
 @pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
-@pytest.mark.parametrize("mode", [
-    lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
-    lief.ELF.Binary.PHDR_RELOC.FILE_END,
-    lief.ELF.Binary.PHDR_RELOC.BSS_END
-])
-def test_static_musl_bss(tmp_path, mode):
-    sample = get_sample("ELF/i872_hello_musl_bss.elf")
-    elf: lief.ELF.Binary = lief.ELF.parse(sample)
+@pytest.mark.parametrize(
+    "mode",
+    [
+        lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
+        lief.ELF.Binary.PHDR_RELOC.FILE_END,
+        lief.ELF.Binary.PHDR_RELOC.BSS_END,
+    ],
+)
+def test_static_musl_bss(tmp_path: Path, mode):
+    elf = parse_elf("ELF/i872_hello_musl_bss.elf")
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
     segment.type = lief.ELF.Segment.TYPE.LOAD
-    segment.content = [0xcc for _ in range(0x2000)]
+    segment.content = [0xCC for _ in range(0x2000)]
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
     elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
-    popen_args = {
+    popen_args: dict[str, Any] = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
-        "universal_newlines": True
+        "universal_newlines": True,
     }
 
-    with Popen([outpath.as_posix()], **popen_args) as proc: # type: ignore
+    with Popen([outpath.as_posix()], **popen_args) as proc:
+        assert proc.stdout is not None
         stdout = proc.stdout.read()
         assert "Hello World" in stdout, f"Error: {stdout}"
 
+
 @pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
-@pytest.mark.parametrize("mode", [
-    lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
-    lief.ELF.Binary.PHDR_RELOC.FILE_END,
-    lief.ELF.Binary.PHDR_RELOC.BSS_END
-])
-def test_static(tmp_path, mode):
-    sample = get_sample("ELF/i872_hello.elf")
-    elf: lief.ELF.Binary = lief.ELF.parse(sample)
+@pytest.mark.parametrize(
+    "mode",
+    [
+        lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
+        lief.ELF.Binary.PHDR_RELOC.FILE_END,
+        lief.ELF.Binary.PHDR_RELOC.BSS_END,
+    ],
+)
+def test_static(tmp_path: Path, mode):
+    elf = parse_elf("ELF/i872_hello.elf")
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
     segment.type = lief.ELF.Segment.TYPE.LOAD
-    segment.content = [0xcc for _ in range(0x2000)]
+    segment.content = [0xCC for _ in range(0x2000)]
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
     elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
-    popen_args = {
+    popen_args: dict[str, Any] = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
-        "universal_newlines": True
+        "universal_newlines": True,
     }
 
-    with Popen([outpath.as_posix()], **popen_args) as proc: # type: ignore
+    with Popen([outpath.as_posix()], **popen_args) as proc:
+        assert proc.stdout is not None
         stdout = proc.stdout.read()
         assert "Hello World" in stdout, f"Error: {stdout}"
 
 
 @pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
-@pytest.mark.parametrize("mode", [
-    lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
-    lief.ELF.Binary.PHDR_RELOC.FILE_END,
-    lief.ELF.Binary.PHDR_RELOC.BSS_END
-])
-def test_static_bss(tmp_path, mode):
+@pytest.mark.parametrize(
+    "mode",
+    [
+        lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
+        lief.ELF.Binary.PHDR_RELOC.FILE_END,
+        lief.ELF.Binary.PHDR_RELOC.BSS_END,
+    ],
+)
+def test_static_bss(tmp_path: Path, mode):
     sample = get_sample("ELF/i872_hello_bss.elf")
-    elf: lief.ELF.Binary = lief.ELF.parse(sample)
+    elf = cast(lief.ELF.Binary, lief.ELF.parse(sample))
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
     segment.type = lief.ELF.Segment.TYPE.LOAD
-    segment.content = [0xcc for _ in range(0x2000)]
+    segment.content = [0xCC for _ in range(0x2000)]
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
     elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
-    popen_args = {
+    popen_args: dict[str, Any] = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
-        "universal_newlines": True
+        "universal_newlines": True,
     }
 
-    with Popen([outpath.as_posix()], **popen_args) as proc: # type: ignore
+    with Popen([outpath.as_posix()], **popen_args) as proc:
+        assert proc.stdout is not None
         stdout = proc.stdout.read()
         assert "Hello World" in stdout, f"Error: {stdout}"
 
+
 @pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
-@pytest.mark.parametrize("mode", [
-    lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
-    lief.ELF.Binary.PHDR_RELOC.FILE_END,
-    lief.ELF.Binary.PHDR_RELOC.BSS_END
-])
-def test_docker_init(tmp_path, mode):
+@pytest.mark.parametrize(
+    "mode",
+    [
+        lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
+        lief.ELF.Binary.PHDR_RELOC.FILE_END,
+        lief.ELF.Binary.PHDR_RELOC.BSS_END,
+    ],
+)
+def test_docker_init(tmp_path: Path, mode):
     sample = get_sample("ELF/docker-init.elf")
-    elf: lief.ELF.Binary = lief.ELF.parse(sample)
+    elf = cast(lief.ELF.Binary, lief.ELF.parse(sample))
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
     segment.type = lief.ELF.Segment.TYPE.LOAD
-    segment.content = [0xcc for _ in range(0x2000)]
+    segment.content = [0xCC for _ in range(0x2000)]
 
     elf.add(segment)
     outpath = tmp_path / "modified.elf"
     elf.write(outpath)
     outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
 
-    popen_args = {
+    popen_args: dict[str, Any] = {
         "stdout": subprocess.PIPE,
         "stderr": subprocess.STDOUT,
-        "universal_newlines": True
+        "universal_newlines": True,
     }
 
-    with Popen([outpath.as_posix(), "--version"], **popen_args) as proc: # type: ignore
+    with Popen([outpath.as_posix(), "--version"], **popen_args) as proc:
+        assert proc.stdout is not None
         stdout = proc.stdout.read()
         assert "tini version 0.19.0" in stdout, f"Error: {stdout}"
 
+
 @pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
-@pytest.mark.parametrize("mode", [
-    lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP,
-    lief.ELF.Binary.PHDR_RELOC.BSS_END
-])
+@pytest.mark.parametrize(
+    "mode", [lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP, lief.ELF.Binary.PHDR_RELOC.BSS_END]
+)
 def test_python312d(tmp_path: Path, mode: lief.ELF.Binary.PHDR_RELOC):
     sample = Path(get_sample("ELF/python3.12d"))
 
-    elf: lief.ELF.Binary = lief.ELF.parse(sample)
+    elf = parse_elf(sample)
     elf.relocate_phdr_table(mode)
 
     segment = lief.ELF.Segment()
@@ -225,12 +250,13 @@ def test_python312d(tmp_path: Path, mode: lief.ELF.Binary.PHDR_RELOC):
 
     if glibc_version() >= (2, 38):
         outpath.chmod(outpath.stat().st_mode | stat.S_IEXEC)
-        popen_args = {
+        popen_args: dict[str, Any] = {
             "stdout": subprocess.PIPE,
             "stderr": subprocess.STDOUT,
-            "universal_newlines": True
+            "universal_newlines": True,
         }
 
-        with Popen([outpath.as_posix(), "--version"], **popen_args) as proc: # type: ignore
+        with Popen([outpath.as_posix(), "--version"], **popen_args) as proc:
+            assert proc.stdout is not None
             stdout = proc.stdout.read()
             assert "Python 3.12.7" in stdout, f"Error: {stdout}"

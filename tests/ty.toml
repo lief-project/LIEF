@@ -1,0 +1,6 @@
+[environment]
+python-version = "3.14"
+
+[rules]
+unused-type-ignore-comment = "ignore"
+unused-ignore-comment = "ignore"

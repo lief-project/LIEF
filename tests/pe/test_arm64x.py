@@ -1,62 +1,70 @@
-"""
-Tests related to ARM64X
-"""
-import lief
+"""Tests related to ARM64X"""
 
 from pathlib import Path
 from textwrap import dedent
+from typing import cast
+
+import lief
 from utils import get_sample
+
 
 def test_ms_win_security():
     input_path = Path(get_sample("PE/win11_arm64x_api-ms-win-security-base-l1-1-0.dll"))
     pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+    assert pe is not None
     assert not pe.is_arm64ec
     assert pe.is_arm64x
 
     assert pe.nested_pe_binary is not None
 
+
 def test_exception_issue():
     input_path = Path(get_sample("PE/arm64x_ImagingEngine.dll"))
     pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+    assert pe is not None
 
     assert len(pe.exceptions) == 9123
 
-    assert pe.exceptions[0].offset == 0x368a00 + 0
-    assert pe.exceptions[1].offset == 0x368a00 + 8
-    assert pe.exceptions[2].offset == 0x368a00 + 16
+    assert pe.exceptions[0].offset == 0x368A00 + 0
+    assert pe.exceptions[1].offset == 0x368A00 + 8
+    assert pe.exceptions[2].offset == 0x368A00 + 16
 
     # Indent regression check
     for e in pe.exceptions:
         assert str(e)
 
+
 def test_photo():
     input_path = Path(get_sample("PE/arm64x_PhotoViewer.dll"))
     pe = lief.PE.parse(input_path)
+    assert pe is not None
     assert not pe.is_arm64ec
     assert pe.is_arm64x
 
     config = pe.load_configuration
+    assert config is not None
 
     assert config.size == 0x140
     assert config.characteristics == 0x140
     assert config.security_cookie == 0x0000000180165000
     assert config.cast_guard_os_determined_failure_mode == 0x0000000180107098
 
-    metadata: lief.PE.CHPEMetadataARM64 = config.chpe_metadata
-    assert metadata is not None
+    chpe_metadata = config.chpe_metadata
+    assert chpe_metadata is not None
+    metadata = cast(lief.PE.CHPEMetadataARM64, chpe_metadata)
 
     assert metadata.version == 2
     assert metadata.code_map_count == 5
-    assert metadata.code_map == 0x12dd98
+    assert metadata.code_map == 0x12DD98
 
-    assert metadata.code_ranges_to_entrypoints == 0x12dbe8
+    assert metadata.code_ranges_to_entrypoints == 0x12DBE8
     assert metadata.redirection_metadata == 0x177000
     assert metadata.os_arm64x_dispatch_call_no_redirect == 0x107000
     assert metadata.os_arm64x_dispatch_ret == 0x107008
     assert metadata.os_arm64x_dispatch_call == 0x107018
     assert metadata.os_arm64x_dispatch_icall == 0x107010
     assert metadata.os_arm64x_dispatch_icall_cfg == 0x107020
-    assert metadata.alternate_entry_point == 0x78de0
+    assert metadata.alternate_entry_point == 0x78DE0
     assert metadata.auxiliary_iat == 0x162000
     assert metadata.code_ranges_to_entry_points_count == 8
     assert metadata.redirection_metadata_count == 8
@@ -65,9 +73,9 @@ def test_photo():
     assert metadata.extra_rfe_table == 0x175578
     assert metadata.extra_rfe_table_size == 0x24
     assert metadata.os_arm64x_dispatch_fptr == 0x107038
-    assert metadata.auxiliary_iat_copy == 0x1609f8
+    assert metadata.auxiliary_iat_copy == 0x1609F8
     assert metadata.auxiliary_delay_import == 0x164000
-    assert metadata.auxiliary_delay_import_copy == 0x15c5e0
+    assert metadata.auxiliary_delay_import_copy == 0x15C5E0
     assert metadata.bitfield_info == 0
 
     code_range = metadata.code_ranges
@@ -77,11 +85,11 @@ def test_photo():
     assert code_range[0].type == lief.PE.CHPEMetadataARM64.range_entry_t.TYPE.AMD64
 
     assert code_range[1].start == 0x00003000
-    assert code_range[1].end == 0x000754a4
+    assert code_range[1].end == 0x000754A4
     assert code_range[1].type == lief.PE.CHPEMetadataARM64.range_entry_t.TYPE.ARM64
 
     assert code_range[2].start == 0x00076000
-    assert code_range[2].end == 0x001023ac
+    assert code_range[2].end == 0x001023AC
     assert code_range[2].type == lief.PE.CHPEMetadataARM64.range_entry_t.TYPE.ARM64EC
 
     assert str(metadata) == dedent("""\
@@ -129,23 +137,61 @@ def test_photo():
       [0x00002070, 0x00002080] --> 0x00002070
     """)
 
+
 def test_empty_tls():
-    input_path = Path(get_sample("PE/win11_arm64x_Windows.Media.Protection.PlayReady.dll"))
+    input_path = Path(
+        get_sample("PE/win11_arm64x_Windows.Media.Protection.PlayReady.dll")
+    )
     pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
-    nested = lief.PE.parse(list(pe.nested_pe_binary.write_to_bytes()))
-    assert nested.tls.addressof_callbacks == 0x18087a1d8
+    assert pe is not None
+    nested_binary = pe.nested_pe_binary
+    assert nested_binary is not None
+    nested = lief.PE.parse(list(nested_binary.write_to_bytes()))
+    assert nested is not None
+    tls = nested.tls
+    assert tls is not None
+    assert tls.addressof_callbacks == 0x18087A1D8
+
 
 def test_exceptions():
-    input_path = Path(get_sample("PE/win11_arm64x_Windows.Media.Protection.PlayReady.dll"))
+    input_path = Path(
+        get_sample("PE/win11_arm64x_Windows.Media.Protection.PlayReady.dll")
+    )
     pe = lief.PE.parse(input_path, lief.PE.ParserConfig.all)
+    assert pe is not None
 
     assert len(pe.exceptions) == 11731
 
-    assert len([e for e in pe.exceptions if isinstance(e, lief.PE.RuntimeFunctionX64)]) == 4
-    assert len([e for e in pe.exceptions if isinstance(e, lief.PE.RuntimeFunctionAArch64)]) == 11727
+    assert (
+        len([e for e in pe.exceptions if isinstance(e, lief.PE.RuntimeFunctionX64)])
+        == 4
+    )
+    assert (
+        len([e for e in pe.exceptions if isinstance(e, lief.PE.RuntimeFunctionAArch64)])
+        == 11727
+    )
 
     nested_pe = pe.nested_pe_binary
+    assert nested_pe is not None
 
     assert len(nested_pe.exceptions) == 11731
-    assert len([e for e in nested_pe.exceptions if isinstance(e, lief.PE.RuntimeFunctionX64)]) == 4
-    assert len([e for e in nested_pe.exceptions if isinstance(e, lief.PE.RuntimeFunctionAArch64)]) == 11727
+    assert (
+        len(
+            [
+                e
+                for e in nested_pe.exceptions
+                if isinstance(e, lief.PE.RuntimeFunctionX64)
+            ]
+        )
+        == 4
+    )
+    assert (
+        len(
+            [
+                e
+                for e in nested_pe.exceptions
+                if isinstance(e, lief.PE.RuntimeFunctionAArch64)
+            ]
+        )
+        == 11727
+    )

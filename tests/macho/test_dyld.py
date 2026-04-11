@@ -1,124 +1,167 @@
-#!/usr/bin/env python
-import lief
 import pathlib
+from pathlib import Path
 from struct import unpack_from
-from utils import get_sample
+
+import lief
+from utils import get_sample, parse_macho
+
 
 def test_exports_trie():
-    target = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_exports-trie-LLVM.bin')).at(0)
+    target = parse_macho("MachO/MachO64_x86-64_binary_exports-trie-LLVM.bin").at(0)
+    assert target is not None
     assert target.has_dyld_info
-    exports = target.dyld_info.exports
+    dyld_info = target.dyld_info
+    assert dyld_info is not None
+    exports = dyld_info.exports
 
     assert len(exports) == 6
 
     assert exports[0].address == 0
+    assert exports[0].symbol is not None
     assert exports[0].symbol.name == "_malloc"
 
     assert exports[1].address == 0
+    assert exports[1].symbol is not None
     assert exports[1].symbol.name == "_myfree"
 
-    assert exports[2].address == 0xf70
+    assert exports[2].address == 0xF70
+    assert exports[2].symbol is not None
     assert exports[2].symbol.name == "_myWeak"
 
     assert exports[3].address == 0x1018
+    assert exports[3].symbol is not None
     assert exports[3].symbol.name == "_myTLV"
 
     assert exports[4].address == 0x12345678
+    assert exports[4].symbol is not None
     assert exports[4].symbol.name == "_myAbs"
 
-    assert exports[5].address == 0xf60
+    assert exports[5].address == 0xF60
+    assert exports[5].symbol is not None
     assert exports[5].symbol.name == "_foo"
 
 
 def test_bind():
-    target = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_bind-LLVM.bin')).at(0)
+    target = parse_macho("MachO/MachO64_x86-64_binary_bind-LLVM.bin").at(0)
+    assert target is not None
     assert target.has_dyld_info
-    bindings = target.dyld_info.bindings
+    dyld_info = target.dyld_info
+    assert dyld_info is not None
+    bindings = dyld_info.bindings
 
     assert len(bindings) == 7
 
     assert bindings[0].binding_class == lief.MachO.DyldBindingInfo.CLASS.STANDARD
     assert bindings[0].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[0].address == 0x1028
+    assert bindings[0].symbol is not None
     assert bindings[0].symbol.name == "_any"
+    assert bindings[0].segment is not None
     assert bindings[0].segment.name == "__DATA"
     assert bindings[0].library_ordinal == -2
 
     assert bindings[1].binding_class == lief.MachO.DyldBindingInfo.CLASS.STANDARD
     assert bindings[1].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[1].address == 0x1020
+    assert bindings[1].symbol is not None
     assert bindings[1].symbol.name == "_fromApp"
+    assert bindings[1].segment is not None
     assert bindings[1].segment.name == "__DATA"
     assert bindings[1].library_ordinal == -1
 
     assert bindings[2].binding_class == lief.MachO.DyldBindingInfo.CLASS.STANDARD
     assert bindings[2].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[2].address == 0x1018
+    assert bindings[2].symbol is not None
     assert bindings[2].symbol.name == "_myfunc"
+    assert bindings[2].segment is not None
     assert bindings[2].segment.name == "__DATA"
     assert bindings[2].library_ordinal == 0
 
     assert bindings[3].binding_class == lief.MachO.DyldBindingInfo.CLASS.STANDARD
     assert bindings[3].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[3].address == 0x1000
+    assert bindings[3].symbol is not None
     assert bindings[3].symbol.name == "_foo"
+    assert bindings[3].segment is not None
     assert bindings[3].segment.name == "__DATA"
+    assert bindings[3].library is not None
     assert bindings[3].library.name == "libfoo.dylib"
 
     assert bindings[4].binding_class == lief.MachO.DyldBindingInfo.CLASS.STANDARD
     assert bindings[4].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[4].address == 0x1008
+    assert bindings[4].symbol is not None
     assert bindings[4].symbol.name == "_bar"
+    assert bindings[4].segment is not None
     assert bindings[4].segment.name == "__DATA"
+    assert bindings[4].library is not None
     assert bindings[4].library.name == "libbar.dylib"
 
     assert bindings[5].binding_class == lief.MachO.DyldBindingInfo.CLASS.STANDARD
     assert bindings[5].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[5].address == 0x1010
+    assert bindings[5].symbol is not None
     assert bindings[5].symbol.name == "_malloc"
+    assert bindings[5].segment is not None
     assert bindings[5].segment.name == "__DATA"
+    assert bindings[5].library is not None
     assert bindings[5].library.name == "/usr/lib/libSystem.B.dylib"
-
 
     # From Weak bind
     assert bindings[6].binding_class == lief.MachO.DyldBindingInfo.CLASS.WEAK
     assert bindings[6].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[6].address == 0x1000
+    assert bindings[6].symbol is not None
     assert bindings[6].symbol.name == "_foo"
+    assert bindings[6].segment is not None
     assert bindings[6].segment.name == "__DATA"
 
 
 def test_lazy_bind():
-    target = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_lazy-bind-LLVM.bin')).at(0)
+    target = parse_macho("MachO/MachO64_x86-64_binary_lazy-bind-LLVM.bin").at(0)
+    assert target is not None
     assert target.has_dyld_info
 
-    bindings = list(target.dyld_info.bindings)[1:] # Skip the 1st one (Standard one)
+    dyld_info = target.dyld_info
+    assert dyld_info is not None
+    bindings = list(dyld_info.bindings)[1:]  # Skip the 1st one (Standard one)
     assert len(bindings) == 3
 
     assert bindings[0].binding_class == lief.MachO.DyldBindingInfo.CLASS.LAZY
     assert bindings[0].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[0].address == 0x100001010
+    assert bindings[0].symbol is not None
     assert bindings[0].symbol.name == "_foo"
+    assert bindings[0].segment is not None
     assert bindings[0].segment.name == "__DATA"
+    assert bindings[0].library is not None
     assert bindings[0].library.name == "libfoo.dylib"
 
     assert bindings[1].binding_class == lief.MachO.DyldBindingInfo.CLASS.LAZY
     assert bindings[1].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[1].address == 0x100001018
+    assert bindings[1].symbol is not None
     assert bindings[1].symbol.name == "_bar"
+    assert bindings[1].segment is not None
     assert bindings[1].segment.name == "__DATA"
+    assert bindings[1].library is not None
     assert bindings[1].library.name == "libbar.dylib"
 
     assert bindings[2].binding_class == lief.MachO.DyldBindingInfo.CLASS.LAZY
     assert bindings[2].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[2].address == 0x100001020
+    assert bindings[2].symbol is not None
     assert bindings[2].symbol.name == "_malloc"
+    assert bindings[2].segment is not None
     assert bindings[2].segment.name == "__DATA"
+    assert bindings[2].library is not None
     assert bindings[2].library.name == "/usr/lib/libSystem.B.dylib"
 
 
 def test_rebases():
-    target = lief.MachO.parse(get_sample('MachO/MachO64_x86-64_binary_rebase-LLVM.bin')).at(0)
+    target = parse_macho("MachO/MachO64_x86-64_binary_rebase-LLVM.bin").at(0)
+    assert target is not None
     assert target.has_dyld_info
 
     relocations = target.relocations
@@ -127,88 +170,117 @@ def test_rebases():
 
     assert relocations[0].address == 0x00001010
     assert not relocations[0].pc_relative
-    assert relocations[0].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[0].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[0].section is not None
     assert relocations[0].section.name == "__data"
+    assert relocations[0].segment is not None
     assert relocations[0].segment.name == "__DATA"
 
     assert relocations[1].address == 0x00001028
     assert not relocations[1].pc_relative
-    assert relocations[1].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[1].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[1].section is not None
     assert relocations[1].section.name == "__data"
+    assert relocations[1].segment is not None
     assert relocations[1].segment.name == "__DATA"
 
     assert relocations[2].address == 0x00001030
     assert not relocations[2].pc_relative
-    assert relocations[2].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[2].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[2].section is not None
     assert relocations[2].section.name == "__data"
+    assert relocations[2].segment is not None
     assert relocations[2].segment.name == "__DATA"
 
     assert relocations[3].address == 0x00001038
     assert not relocations[3].pc_relative
-    assert relocations[3].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[3].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[3].section is not None
     assert relocations[3].section.name == "__data"
+    assert relocations[3].segment is not None
     assert relocations[3].segment.name == "__DATA"
 
     assert relocations[4].address == 0x00001040
     assert not relocations[4].pc_relative
-    assert relocations[4].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[4].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[4].section is not None
     assert relocations[4].section.name == "__data"
+    assert relocations[4].segment is not None
     assert relocations[4].segment.name == "__DATA"
 
     assert relocations[5].address == 0x00001258
     assert not relocations[5].pc_relative
-    assert relocations[5].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[5].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[5].section is not None
     assert relocations[5].section.name == "__data"
+    assert relocations[5].segment is not None
     assert relocations[5].segment.name == "__DATA"
-
 
     assert relocations[6].address == 0x00001278
     assert not relocations[6].pc_relative
-    assert relocations[6].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[6].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[6].section is not None
     assert relocations[6].section.name == "__mystuff"
+    assert relocations[6].segment is not None
     assert relocations[6].segment.name == "__DATA"
 
     assert relocations[7].address == 0x00001288
     assert not relocations[7].pc_relative
-    assert relocations[7].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[7].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[7].section is not None
     assert relocations[7].section.name == "__mystuff"
+    assert relocations[7].segment is not None
     assert relocations[7].segment.name == "__DATA"
 
     assert relocations[8].address == 0x00001298
     assert not relocations[8].pc_relative
-    assert relocations[8].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[8].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[8].section is not None
     assert relocations[8].section.name == "__mystuff"
+    assert relocations[8].segment is not None
     assert relocations[8].segment.name == "__DATA"
 
     assert relocations[9].address == 0x000012A8
     assert not relocations[9].pc_relative
-    assert relocations[9].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[9].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[9].section is not None
     assert relocations[9].section.name == "__mystuff"
+    assert relocations[9].segment is not None
     assert relocations[9].segment.name == "__DATA"
 
-def test_threaded_opcodes(tmp_path):
-    bin_path = pathlib.Path(get_sample('MachO/FatMachO64_x86-64_arm64_binary_ls.bin'))
+
+def test_threaded_opcodes(tmp_path: Path):
+    bin_path = pathlib.Path(get_sample("MachO/FatMachO64_x86-64_arm64_binary_ls.bin"))
     fat = lief.MachO.parse(bin_path)
+    assert fat is not None
     target = fat.take(lief.MachO.Header.CPU_TYPE.ARM64)
+    assert target is not None
     assert target.has_dyld_info
 
     relocations = target.relocations
-    bindings = target.dyld_info.bindings
+    dyld_info = target.dyld_info
+    assert dyld_info is not None
+    bindings = dyld_info.bindings
 
     assert len(relocations) == 39
     assert len(bindings) == 82
 
-    assert relocations[38].address == 0x10000c008
+    assert relocations[38].address == 0x10000C008
     assert not relocations[38].pc_relative
-    assert relocations[38].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[38].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[38].section is not None
     assert relocations[38].section.name == "__data"
+    assert relocations[38].segment is not None
     assert relocations[38].segment.name == "__DATA"
 
     assert bindings[81].binding_class == lief.MachO.DyldBindingInfo.CLASS.THREADED
     assert bindings[81].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[81].address == 0x100008288
+    assert bindings[81].symbol is not None
     assert bindings[81].symbol.name == "_optind"
+    assert bindings[81].segment is not None
     assert bindings[81].segment.name == "__DATA_CONST"
+    assert bindings[81].library is not None
     assert bindings[81].library.name == "/usr/lib/libSystem.B.dylib"
 
     output_path = f"{tmp_path}/{bin_path.name}"
@@ -217,12 +289,16 @@ def test_threaded_opcodes(tmp_path):
 
     lief.logging.info(output_path)
     fat_written_target = lief.MachO.parse(output_path)
+    assert fat_written_target is not None
     written_target = fat_written_target.take(lief.MachO.Header.CPU_TYPE.ARM64)
+    assert written_target is not None
     for r in written_target.relocations:
         lief.logging.info(r)
 
     relocations = written_target.relocations
-    bindings = written_target.dyld_info.bindings
+    dyld_info = written_target.dyld_info
+    assert dyld_info is not None
+    bindings = dyld_info.bindings
 
     checked, err = lief.MachO.check_layout(written_target)
     assert checked, err
@@ -230,18 +306,24 @@ def test_threaded_opcodes(tmp_path):
     assert len(relocations) == 39
     assert len(bindings) == 82
 
-    assert relocations[38].address == 0x10000c008
+    assert relocations[38].address == 0x10000C008
     assert not relocations[38].pc_relative
-    assert relocations[38].type == int(lief.MachO.DyldInfo.REBASE_TYPE.POINTER)
+    assert relocations[38].type == lief.MachO.DyldInfo.REBASE_TYPE.POINTER
+    assert relocations[38].section is not None
     assert relocations[38].section.name == "__data"
+    assert relocations[38].segment is not None
     assert relocations[38].segment.name == "__DATA"
 
     assert bindings[81].binding_class == lief.MachO.DyldBindingInfo.CLASS.THREADED
     assert bindings[81].binding_type == lief.MachO.DyldBindingInfo.TYPE.POINTER
     assert bindings[81].address == 0x100008288
+    assert bindings[81].symbol is not None
     assert bindings[81].symbol.name == "_optind"
+    assert bindings[81].segment is not None
     assert bindings[81].segment.name == "__DATA_CONST"
+    assert bindings[81].library is not None
     assert bindings[81].library.name == "/usr/lib/libSystem.B.dylib"
+
 
 def test_shift_dyldinforeloc_taggedptr(tmp_path: pathlib.Path):
     # c.f. https://github.com/lief-project/LIEF/issues/1300
@@ -249,15 +331,18 @@ def test_shift_dyldinforeloc_taggedptr(tmp_path: pathlib.Path):
         # See `src/MachO/Binary.tcc`: `patch_relocation()`
         reloc = macho.relocations[idx]
         segment = macho.segment_from_virtual_address(reloc.address)
+        assert segment is not None
         offset = macho.virtual_address_to_offset(reloc.address)
+        assert isinstance(offset, int)
         relative_offset = offset - segment.file_offset
-        (target,) = unpack_from('<Q', segment.content.tobytes(), relative_offset)
+        (target,) = unpack_from("<Q", segment.content.tobytes(), relative_offset)
         assert target == expected_value
 
-    output = f'{tmp_path}/libmamba.4.0.1.dylib'
+    output = f"{tmp_path}/libmamba.4.0.1.dylib"
     shift_value = 0x4000
 
-    macho = lief.MachO.parse(get_sample('MachO/libmamba.4.0.1.dylib')).at(0)
+    macho = parse_macho("MachO/libmamba.4.0.1.dylib").at(0)
+    assert macho is not None
     assert macho.has_dyld_info
     check_relocation_value(macho, 242, 0x8000000000305D78)
     check_relocation_value(macho, 4619, 0x800000000030D7F9)
@@ -266,6 +351,9 @@ def test_shift_dyldinforeloc_taggedptr(tmp_path: pathlib.Path):
     check_relocation_value(macho, 4619, 0x800000000030D7F9 + shift_value)
     macho.write(output)
 
-    macho = lief.MachO.parse(output).at(0)
+    fat_parsed = lief.MachO.parse(output)
+    assert fat_parsed is not None
+    macho = fat_parsed.at(0)
+    assert macho is not None
     check_relocation_value(macho, 242, 0x8000000000305D78 + shift_value)
     check_relocation_value(macho, 4619, 0x800000000030D7F9 + shift_value)

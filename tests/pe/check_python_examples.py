@@ -1,17 +1,21 @@
-import pytest
 import sys
 from pathlib import Path
 
-from utils import lief_samples_dir, import_from_file
+import pytest
+from utils import import_from_file, lief_samples_dir
 
 samples_dir = Path(lief_samples_dir())
 
 LIEF_PY_DIR = Path(__file__).parent / ".." / ".." / "api" / "python" / "examples"
 
-@pytest.mark.parametrize("pe", [
-    "PE/PE32_x86_library_kernel32.dll",
-    "PE/PE64_x86-64_atapi.sys",
-])
+
+@pytest.mark.parametrize(
+    "pe",
+    [
+        "PE/PE32_x86_library_kernel32.dll",
+        "PE/PE64_x86-64_atapi.sys",
+    ],
+)
 def test_pe_reader(monkeypatch, pe):
     sample = samples_dir / Path(pe)
     target = LIEF_PY_DIR / "pe_reader.py"
@@ -20,9 +24,13 @@ def test_pe_reader(monkeypatch, pe):
         m.setattr(sys, "argv", [target.name, "--all", sample.as_posix()])
         pe_reader.main()
 
-@pytest.mark.parametrize("pe", [
-    "PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe",
-])
+
+@pytest.mark.parametrize(
+    "pe",
+    [
+        "PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe",
+    ],
+)
 def test_pe_authenticode_reader(monkeypatch, tmp_path: Path, pe):
     out = tmp_path / "out.p7b"
     sample = samples_dir / Path(pe)
@@ -30,14 +38,30 @@ def test_pe_authenticode_reader(monkeypatch, tmp_path: Path, pe):
     authenticode_reader = import_from_file("authenticode_reader", target)
 
     with monkeypatch.context() as m:
-        m.setattr(sys, "argv", [target.name,
-            "--all", "--crt", "--hash", "--check", "--allow-expired", "--save",
-            out.as_posix(), sample.as_posix()])
+        m.setattr(
+            sys,
+            "argv",
+            [
+                target.name,
+                "--all",
+                "--crt",
+                "--hash",
+                "--check",
+                "--allow-expired",
+                "--save",
+                out.as_posix(),
+                sample.as_posix(),
+            ],
+        )
         authenticode_reader.main()
 
-@pytest.mark.parametrize("pe", [
-    "PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe",
-])
+
+@pytest.mark.parametrize(
+    "pe",
+    [
+        "PE/PE32_x86-64_binary_avast-free-antivirus-setup-online.exe",
+    ],
+)
 def test_pe_authenticode_api(monkeypatch, pe):
     sample = samples_dir / Path(pe)
     target = LIEF_PY_DIR / "authenticode" / "api_example.py"

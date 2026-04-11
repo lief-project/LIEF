@@ -143,7 +143,7 @@ void create<Builder>(nb::module_& m) {
         "Write the build result into the ``output`` file"_doc,
         "output"_a)
 
-    .def("bytes", [] (Builder& self) -> nb::bytes {
+    .def("raw_bytes", [] (Builder& self) {
           std::ostringstream out;
           self.write(out);
           return nb::to_bytes(out.str());

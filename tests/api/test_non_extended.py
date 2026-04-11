@@ -1,12 +1,13 @@
 import lief
 import pytest
-from utils import get_sample
+from utils import get_sample, parse_elf
 
 if lief.__extended__:
     pytest.skip("skipping: non-extended version only", allow_module_level=True)
 
+
 def test_debug_info(capsys):
-    elf = lief.ELF.parse(get_sample("ELF/simple-gcc-c.bin"))
+    elf = parse_elf("ELF/simple-gcc-c.bin")
     info = elf.debug_info
     assert info is None
     captured = capsys.readouterr()

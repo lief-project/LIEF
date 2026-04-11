@@ -1,14 +1,18 @@
+from textwrap import dedent
+
 import lief
 import pytest
 from utils import get_sample
 
-from textwrap import dedent
-
 if not lief.__extended__:
     pytest.skip("skipping: extended version only", allow_module_level=True)
 
+
 def test_annotations():
-    libdexprotector = lief.dwarf.load(get_sample("private/DWARF/binaryninja/libdexprotector.so.dwarf"))
+    libdexprotector = lief.dwarf.load(
+        get_sample("private/DWARF/binaryninja/libdexprotector.so.dwarf")
+    )
+    assert libdexprotector is not None
     func = libdexprotector.find_function("JNI_OnLoad")
     assert func is not None
 
@@ -58,9 +62,14 @@ def test_annotations():
         } /* End: 0x0009a4 */
     }""")
 
+
 def test_anonymous_enum():
-    libdexprotector = lief.dwarf.load(get_sample("private/DWARF/binaryninja/libdexprotector.so.dwarf"))
+    libdexprotector = lief.dwarf.load(
+        get_sample("private/DWARF/binaryninja/libdexprotector.so.dwarf")
+    )
+    assert libdexprotector is not None
     r_debug = libdexprotector.find_type("r_debug_t")
+    assert r_debug is not None
 
     assert r_debug.to_decl() == dedent("""\
     struct r_debug_t {
