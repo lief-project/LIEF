@@ -71,7 +71,13 @@ void create<CorePrStatus>(nb::module_& m) {
     .def_prop_rw("status",
         nb::overload_cast<>(&CorePrStatus::status, nb::const_),
         nb::overload_cast<const CorePrStatus::pr_status_t&>(&CorePrStatus::status),
-        "Info associated with the signal"_doc)
+        R"doc(
+        Status information from a core dump
+
+        This structure mirrors the kernel's ``prstatus`` data embedded in
+        ``NT_PRSTATUS`` core-dump notes and exposes signal state, process
+        identifiers, and CPU-time accounting.
+        )doc"_doc)
 
     .def_prop_ro("architecture", &CorePrStatus::architecture,
         R"doc(Original target architecture.)doc"_doc)

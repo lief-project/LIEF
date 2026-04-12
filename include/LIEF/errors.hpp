@@ -76,7 +76,10 @@ namespace LIEF {
 template<typename T>
 class LIEF_MAYBE_UNUSED result : public tl::expected<T, lief_errors> {
   public:
+  using ExpectedType = T;
   using tl::expected<T, lief_errors>::expected;
+  result(tl::expected<T, lief_errors> e) :
+    tl::expected<T, lief_errors>::expected(std::move(e)) {}
 };
 
 /// Get the error code associated with the result

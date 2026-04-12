@@ -13,32 +13,33 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/ELF/Note.hpp"
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/ELF/Note.hpp"
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 
-class ELF_Note : public Mirror<LIEF::ELF::Note> {
+class ELF_QNXStack : public ELF_Note {
   public:
-  using lief_t = LIEF::ELF::Note;
-  using Mirror::Mirror;
+  using lief_t = LIEF::ELF::QNXStack;
+  ELF_QNXStack(const lief_t& impl) :
+    ELF_Note(static_cast<const ELF_Note::lief_t&>(impl)) {}
 
-  friend class ELF_Binary;
-
-  std::string name() const {
-    return get().name();
-  }
-  uint32_t get_type() const {
-    return to_int(get().type());
-  }
-  uint32_t original_type() const {
-    return get().original_type();
-  }
-  uint64_t size() const {
-    return get().size();
+  auto stack_size() const {
+    return impl().stack_size();
   }
 
-  Span description() const {
-    return make_span(get().description());
+  auto stack_allocated() const {
+    return impl().stack_allocated();
+  }
+
+  auto is_executable() const {
+    return impl().is_executable();
+  }
+
+  static bool classof(const ELF_Note& note) {
+    return lief_t::classof(&note.get());
+  }
+
+  private:
+  const lief_t& impl() const {
+    return as<lief_t>(this);
   }
 };

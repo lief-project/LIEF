@@ -111,6 +111,14 @@ class RandomRangeIterator {
 template<class T, class ContainerT>
 class ContainerIterator {
   public:
+  ContainerIterator(const ContainerIterator&) = delete;
+  ContainerIterator& operator=(const ContainerIterator&) = delete;
+
+  ContainerIterator(ContainerIterator&&) = delete;
+  ContainerIterator& operator=(ContainerIterator&&) = delete;
+
+  ~ContainerIterator() = default;
+
   std::unique_ptr<T> next() {
     if (begin_ == end_) {
       return nullptr;
@@ -127,8 +135,9 @@ class ContainerIterator {
   }
 
   protected:
-  ContainerIterator(ContainerT&& C) :
-    container_(std::forward<ContainerT>(C)),
+  template<class CT>
+  ContainerIterator(CT&& C) :
+    container_(std::forward<CT>(C)),
     begin_(std::begin(container_)),
     end_(std::end(container_)) {}
 

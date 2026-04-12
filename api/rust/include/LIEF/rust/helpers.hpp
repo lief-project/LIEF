@@ -14,10 +14,34 @@
  */
 #pragma once
 #include <type_traits>
+#include <array>
+#include <vector>
+#include <algorithm>
 
 template<typename T>
 inline auto to_int(T value) {
   using underlying_t = typename std::underlying_type_t<T>;
   static_assert(std::is_enum_v<T>, "Must be an enum");
   return static_cast<underlying_t>(value);
+}
+
+template<class T, size_t N>
+inline std::vector<uint64_t> to_vector(const std::array<T, N>& array) {
+  std::vector<uint64_t> result;
+  result.reserve(array.size());
+  std::transform(array.begin(), array.end(), std::back_inserter(result),
+                 [](const T& value) { return (uint64_t)value; });
+  return result;
+}
+
+template<class T>
+inline std::vector<uint64_t> to_vector(const std::vector<T>& vec) {
+  if (vec.empty()) {
+    return {};
+  }
+  std::vector<uint64_t> result;
+  result.reserve(vec.size());
+  std::transform(vec.begin(), vec.end(), std::back_inserter(result),
+                 [](const T& value) { return (uint64_t)value; });
+  return result;
 }

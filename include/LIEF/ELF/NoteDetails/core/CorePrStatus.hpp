@@ -45,6 +45,11 @@ class LIEF_API CorePrStatus : public Note {
     uint64_t usec = 0;
   };
 
+  /// Status information from a core dump
+  ///
+  /// This structure mirrors the kernel's `prstatus` data embedded in
+  /// `NT_PRSTATUS` core-dump notes and exposes signal state, process
+  /// identifiers, and CPU-time accounting.
   struct pr_status_t {
     siginfo_t info;
 

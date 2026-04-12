@@ -15,11 +15,12 @@
 #pragma once
 #include "LIEF/errors.hpp"
 namespace details {
+
 template<class T>
-inline auto make_error(LIEF::result<T>&& result, uint32_t& err) {
+inline auto make_error(LIEF::result<T> result, uint32_t& err) {
   if (result) {
     err = 0;
-    return *result;
+    return std::move(*result);
   }
   err = static_cast<uint32_t>(LIEF::get_error(result));
   return T{};

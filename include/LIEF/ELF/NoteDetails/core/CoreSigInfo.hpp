@@ -33,12 +33,13 @@ class LIEF_API CoreSigInfo : public Note {
     return std::unique_ptr<CoreSigInfo>(new CoreSigInfo(*this));
   }
 
-  /// Signal number of an error if it can't be resolved
+  /// Signal number or an error if it can't be resolved
   result<int32_t> signo() const;
-  /// Signal code of an error if it can't be resolved
+
+  /// Signal code or an error if it can't be resolved
   result<int32_t> sigcode() const;
 
-  /// Signal error number of an error if it can't be resolved
+  /// Signal error number or an error if it can't be resolved
   result<int32_t> sigerrno() const;
 
   void signo(uint32_t value);
