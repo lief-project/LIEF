@@ -70,6 +70,28 @@
 
   * Add support for the ``aarch64-linux-android/x86_64-linux-android`` targets
 
+:C++:
+
+  * Add ``LIEF_LIFETIMEBOUND`` annotations wrapping ``[[clang::lifetimebound]]``
+    to leverage Clang's `lifetime analysis <https://clang.llvm.org/docs/LifetimeSafety.html>`_.
+    This helps detect dangling references at compile time for methods that return
+    references or iterators tied to an object's lifetime:
+
+    .. code-block:: cpp
+
+      // Clang can now warn about this dangling reference:
+      auto& hdr = LIEF::ELF::Parser::parse("a.out")->header();
+      LIEF_INFO("{}", hdr.header_size());
+      // /src/src/ELF/Binary.cpp:63:15: error: object whose reference is captured
+      // does not live long enough [-Werror,-Wlifetime-safety-use-after-scope]
+      //    63 |   auto& hdr = LIEF::ELF::Parser::parse("a.out")->header();
+      //       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // /src/src/ELF/Binary.cpp:63:47: note: destroyed here
+      //    63 |   auto& hdr = LIEF::ELF::Parser::parse("a.out")->header();
+      //       |                                               ^
+      // /src/src/ELF/Binary.cpp:64:19: note: later used here
+      //    64 |   LIEF_INFO("{}", hdr.header_size());
+
 :Dependencies:
 
   * Update nanobind to version ``v2.11.x``

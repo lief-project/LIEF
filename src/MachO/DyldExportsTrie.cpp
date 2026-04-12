@@ -60,8 +60,8 @@ void DyldExportsTrie::accept(Visitor& visitor) const {
   visitor.visit(*this);
 }
 
-void DyldExportsTrie::add(std::unique_ptr<ExportInfo> info) {
-  export_info_.push_back(std::move(info));
+ExportInfo* DyldExportsTrie::add(std::unique_ptr<ExportInfo> info) {
+  return export_info_.emplace_back(std::move(info)).get();
 }
 
 std::string DyldExportsTrie::show_export_trie() const {

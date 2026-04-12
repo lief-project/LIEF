@@ -82,11 +82,11 @@ class LIEF_API Relocation : public Object {
   }
 
   /// Iterator over the RelocationEntry
-  it_const_entries entries() const {
+  it_const_entries entries() const LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
-  it_entries entries() {
+  it_entries entries() LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
@@ -98,7 +98,7 @@ class LIEF_API Relocation : public Object {
     block_size_ = block_size;
   }
 
-  RelocationEntry& add_entry(const RelocationEntry& entry);
+  RelocationEntry& add_entry(const RelocationEntry& entry) LIEF_LIFETIMEBOUND;
 
   void accept(Visitor& visitor) const override;
 

@@ -52,8 +52,8 @@ class LIEF_API Field : public Object {
   bool has_class() const;
 
   /// Class associated with this Field
-  const Class* cls() const;
-  Class* cls();
+  const Class* cls() const LIEF_LIFETIMEBOUND;
+  Class* cls() LIEF_LIFETIMEBOUND;
 
   /// Index in the DEX Fields pool
   size_t index() const;
@@ -62,8 +62,8 @@ class LIEF_API Field : public Object {
   bool is_static() const;
 
   /// Field's prototype
-  const Type* type() const;
-  Type* type();
+  const Type* type() const LIEF_LIFETIMEBOUND;
+  Type* type() LIEF_LIFETIMEBOUND;
 
   void accept(Visitor& visitor) const override;
 

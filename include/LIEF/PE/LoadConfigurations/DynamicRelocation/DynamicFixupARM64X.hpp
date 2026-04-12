@@ -78,11 +78,11 @@ class LIEF_API DynamicFixupARM64X : public DynamicFixup {
   std::string to_string() const override;
 
   /// Iterator over the different fixup entries
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return entries_;
   }
 

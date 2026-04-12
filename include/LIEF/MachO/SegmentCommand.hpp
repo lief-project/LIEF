@@ -168,11 +168,11 @@ class LIEF_API SegmentCommand : public LoadCommand {
   }
 
   /// Return an iterator over the MachO::Section linked to this segment
-  it_sections sections() {
+  it_sections sections() LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
-  it_const_sections sections() const {
+  it_const_sections sections() const LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
@@ -182,16 +182,16 @@ class LIEF_API SegmentCommand : public LoadCommand {
   /// the relocations are managed by the Dyld::rebase_opcodes.
   /// On the other hand, for object files (``.o``) this iterator should not be
   /// empty
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
   /// Get the section with the given name
-  const Section* get_section(const std::string& name) const;
-  Section* get_section(const std::string& name);
+  const Section* get_section(const std::string& name) const LIEF_LIFETIMEBOUND;
+  Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND;
 
   /// The raw content of this segment
   span<const uint8_t> content() const {
@@ -242,7 +242,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   void content(content_t data);
 
   /// Add a new section in this segment
-  Section& add_section(const Section& section);
+  Section& add_section(const Section& section) LIEF_LIFETIMEBOUND;
 
   /// Remove all the sections linked to this segment
   void remove_all_sections();

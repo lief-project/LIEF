@@ -311,7 +311,7 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   /// Clear the content of the section with the given ``value``
-  Section& clear(uint8_t value = 0);
+  Section& clear(uint8_t value = 0) LIEF_LIFETIMEBOUND;
 
   /// Add the given ELF_SECTION_FLAGS
   void add(FLAGS flag);
@@ -351,15 +351,15 @@ class LIEF_API Section : public LIEF::Section {
     entry_size_ = entry_size;
   }
 
-  it_segments segments() {
+  it_segments segments() LIEF_LIFETIMEBOUND {
     return segments_;
   }
 
-  it_const_segments segments() const {
+  it_const_segments segments() const LIEF_LIFETIMEBOUND {
     return segments_;
   }
 
-  Section& as_frame() {
+  Section& as_frame() LIEF_LIFETIMEBOUND {
     is_frame_ = true;
     return *this;
   }

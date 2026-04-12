@@ -50,7 +50,7 @@ class LIEF_API VersionMin : public LoadCommand {
   ~VersionMin() override = default;
 
   /// Return the version as an array
-  const version_t& version() const {
+  const version_t& version() const LIEF_LIFETIMEBOUND {
     return version_;
   }
   void version(const version_t& version) {
@@ -58,7 +58,7 @@ class LIEF_API VersionMin : public LoadCommand {
   }
 
   /// Return the sdk version as an array
-  const version_t& sdk() const {
+  const version_t& sdk() const LIEF_LIFETIMEBOUND {
     return sdk_;
   }
   void sdk(const version_t& sdk) {

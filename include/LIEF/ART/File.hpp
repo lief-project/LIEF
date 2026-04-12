@@ -33,8 +33,8 @@ class LIEF_API File : public Object {
   File& operator=(const File& copy) = delete;
   File(const File& copy) = delete;
 
-  const Header& header() const;
-  Header& header();
+  const Header& header() const LIEF_LIFETIMEBOUND;
+  Header& header() LIEF_LIFETIMEBOUND;
 
   void accept(Visitor& visitor) const override;
 

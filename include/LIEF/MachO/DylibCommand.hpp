@@ -97,7 +97,7 @@ class LIEF_API DylibCommand : public LoadCommand {
   }
 
   /// Library name
-  const std::string& name() const {
+  const std::string& name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 

@@ -1034,9 +1034,7 @@ LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
   if (SegmentCommand::classof(command.get())) {
     add_cached_segment(*command->as<SegmentCommand>());
   }
-  LoadCommand* ptr = command.get();
-  commands_.push_back(std::move(command));
-  return ptr;
+  return commands_.emplace_back(std::move(command)).get();
 }
 
 LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
@@ -1083,9 +1081,7 @@ LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
   if (auto* segment = copy->cast<SegmentCommand>()) {
     add_cached_segment(*segment);
   }
-  LoadCommand* copy_ptr = copy.get();
-  commands_.insert(commands_.begin() + index, std::move(copy));
-  return copy_ptr;
+  return commands_.insert(commands_.begin() + index, std::move(copy))->get();
 }
 
 bool Binary::remove(const LoadCommand& command) {
@@ -2536,8 +2532,6 @@ Symbol& Binary::add(const Symbol& symbol) {
 }
 
 Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {
-  Symbol* symbol = nullptr;
-
   auto sym = std::make_unique<Symbol>();
   sym->category_ = Symbol::CATEGORY::LOCAL;
   sym->origin_ = Symbol::ORIGIN::SYMTAB;
@@ -2546,9 +2540,7 @@ Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {
 
   sym->value(address);
   sym->name(name);
-  symbol = sym.get();
-  symbols_.push_back(std::move(sym));
-  return symbol;
+  return symbols_.emplace_back(std::move(sym)).get();
 }
 
 ExportInfo* Binary::add_exported_function(uint64_t address,
@@ -2560,9 +2552,7 @@ ExportInfo* Binary::add_exported_function(uint64_t address,
       export_info->address(address);
       symbol->export_info_ = export_info.get();
 
-      auto* info = export_info.get();
-      exports->add(std::move(export_info));
-      return info;
+      return exports->add(std::move(export_info));
     }
 
     if (DyldInfo* info = dyld_info()) {
@@ -2571,9 +2561,7 @@ ExportInfo* Binary::add_exported_function(uint64_t address,
       export_info->address(address);
       symbol->export_info_ = export_info.get();
 
-      auto* info_ptr = export_info.get();
-      info->add(std::move(export_info));
-      return info_ptr;
+      return info->add(std::move(export_info));
     }
   }
   return nullptr;

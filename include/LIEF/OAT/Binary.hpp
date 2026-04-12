@@ -68,20 +68,20 @@ class LIEF_API Binary : public ELF::Binary {
   Binary(const Binary& copy) = delete;
 
   /// OAT Header
-  const Header& header() const;
-  Header& header();
+  const Header& header() const LIEF_LIFETIMEBOUND;
+  Header& header() LIEF_LIFETIMEBOUND;
 
   /// Iterator over LIEF::DEX::File
-  it_dex_files dex_files();
-  it_const_dex_files dex_files() const;
+  it_dex_files dex_files() LIEF_LIFETIMEBOUND;
+  it_const_dex_files dex_files() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over LIEF::OAT::DexFile
-  it_oat_dex_files oat_dex_files();
-  it_const_oat_dex_files oat_dex_files() const;
+  it_oat_dex_files oat_dex_files() LIEF_LIFETIMEBOUND;
+  it_const_oat_dex_files oat_dex_files() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over LIEF::OAT::Class
-  it_const_classes classes() const;
-  it_classes classes();
+  it_const_classes classes() const LIEF_LIFETIMEBOUND;
+  it_classes classes() LIEF_LIFETIMEBOUND;
 
   /// Check if the current OAT has the given class
   bool has_class(const std::string& class_name) const;
@@ -89,19 +89,19 @@ class LIEF_API Binary : public ELF::Binary {
 
   /// Return the LIEF::OAT::Class with the given name or
   /// a nullptr if the class can't be found
-  const Class* get_class(const std::string& class_name) const;
+  const Class* get_class(const std::string& class_name) const LIEF_LIFETIMEBOUND;
 
-  Class* get_class(const std::string& class_name);
+  Class* get_class(const std::string& class_name) LIEF_LIFETIMEBOUND;
 
   /// Return the LIEF::OAT::Class at the given index or a nullptr
   /// if it does not exist
-  const Class* get_class(size_t index) const;
+  const Class* get_class(size_t index) const LIEF_LIFETIMEBOUND;
 
-  Class* get_class(size_t index);
+  Class* get_class(size_t index) LIEF_LIFETIMEBOUND;
 
   /// Iterator over LIEF::OAT::Method
-  it_const_methods methods() const;
-  it_methods methods();
+  it_const_methods methods() const LIEF_LIFETIMEBOUND;
+  it_methods methods() LIEF_LIFETIMEBOUND;
 
   dex2dex_info_t dex2dex_info() const;
 

@@ -270,11 +270,11 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return @link ELF::Header Elf header @endlink
-  Header& header() {
+  Header& header() LIEF_LIFETIMEBOUND {
     return header_;
   }
 
-  const Header& header() const {
+  const Header& header() const LIEF_LIFETIMEBOUND {
     return header_;
   }
 
@@ -290,11 +290,11 @@ class LIEF_API Binary : public LIEF::Binary {
   uint64_t next_virtual_address() const;
 
   /// Return an iterator over the binary's sections
-  it_sections sections() {
+  it_sections sections() LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
-  it_const_sections sections() const {
+  it_const_sections sections() const LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
@@ -304,28 +304,28 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return binary's segments
-  it_segments segments() {
+  it_segments segments() LIEF_LIFETIMEBOUND {
     return segments_;
   }
 
-  it_const_segments segments() const {
+  it_const_segments segments() const LIEF_LIFETIMEBOUND {
     return segments_;
   }
 
   /// Return binary's dynamic entries
-  it_dynamic_entries dynamic_entries() {
+  it_dynamic_entries dynamic_entries() LIEF_LIFETIMEBOUND {
     return dynamic_entries_;
   }
 
-  it_const_dynamic_entries dynamic_entries() const {
+  it_const_dynamic_entries dynamic_entries() const LIEF_LIFETIMEBOUND {
     return dynamic_entries_;
   }
 
   /// Add the given dynamic entry and return the new entry
-  DynamicEntry& add(const DynamicEntry& entry);
+  DynamicEntry& add(const DynamicEntry& entry) LIEF_LIFETIMEBOUND;
 
   /// Add the given note and return the created entry
-  Note& add(const Note& note);
+  Note& add(const Note& note) LIEF_LIFETIMEBOUND;
 
   /// Remove the given dynamic entry
   void remove(const DynamicEntry& entry);
@@ -358,73 +358,77 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return an iterator over the binary's dynamic symbols
   /// The dynamic symbols are those located in the ``.dynsym`` section
-  it_dynamic_symbols dynamic_symbols() {
+  it_dynamic_symbols dynamic_symbols() LIEF_LIFETIMEBOUND {
     return dynamic_symbols_;
   }
 
-  it_const_dynamic_symbols dynamic_symbols() const {
+  it_const_dynamic_symbols dynamic_symbols() const LIEF_LIFETIMEBOUND {
     return dynamic_symbols_;
   }
 
   /// Return symbols which are exported by the binary
-  it_exported_symbols exported_symbols();
-  it_const_exported_symbols exported_symbols() const;
+  it_exported_symbols exported_symbols() LIEF_LIFETIMEBOUND;
+  it_const_exported_symbols exported_symbols() const LIEF_LIFETIMEBOUND;
 
   /// Return symbols which are imported by the binary
-  it_imported_symbols imported_symbols();
-  it_const_imported_symbols imported_symbols() const;
+  it_imported_symbols imported_symbols() LIEF_LIFETIMEBOUND;
+  it_const_imported_symbols imported_symbols() const LIEF_LIFETIMEBOUND;
 
   /// Return the debug symbols from the `.symtab` section.
-  it_symtab_symbols symtab_symbols() {
+  it_symtab_symbols symtab_symbols() LIEF_LIFETIMEBOUND {
     return symtab_symbols_;
   }
 
-  it_const_symtab_symbols symtab_symbols() const {
+  it_const_symtab_symbols symtab_symbols() const LIEF_LIFETIMEBOUND {
     return symtab_symbols_;
   }
 
   /// Return the symbol versions
-  it_symbols_version symbols_version() {
+  it_symbols_version symbols_version() LIEF_LIFETIMEBOUND {
     return symbol_version_table_;
   }
-  it_const_symbols_version symbols_version() const {
+  it_const_symbols_version symbols_version() const LIEF_LIFETIMEBOUND {
     return symbol_version_table_;
   }
 
   /// Return symbols version definition
-  it_symbols_version_definition symbols_version_definition() {
+  it_symbols_version_definition symbols_version_definition() LIEF_LIFETIMEBOUND {
     return symbol_version_definition_;
   }
 
-  it_const_symbols_version_definition symbols_version_definition() const {
+  it_const_symbols_version_definition
+      symbols_version_definition() const LIEF_LIFETIMEBOUND {
     return symbol_version_definition_;
   }
 
   /// Return Symbol version requirement
-  it_symbols_version_requirement symbols_version_requirement() {
+  it_symbols_version_requirement symbols_version_requirement() LIEF_LIFETIMEBOUND {
     return symbol_version_requirements_;
   }
 
-  it_const_symbols_version_requirement symbols_version_requirement() const {
+  it_const_symbols_version_requirement
+      symbols_version_requirement() const LIEF_LIFETIMEBOUND {
     return symbol_version_requirements_;
   }
 
   /// Return dynamic relocations
-  it_dynamic_relocations dynamic_relocations();
-  it_const_dynamic_relocations dynamic_relocations() const;
+  it_dynamic_relocations dynamic_relocations() LIEF_LIFETIMEBOUND;
+  it_const_dynamic_relocations dynamic_relocations() const LIEF_LIFETIMEBOUND;
 
   /// Add a new *dynamic* relocation.
   ///
   /// We consider a dynamic relocation as a relocation which is not plt-related
   ///
   /// See: add_pltgot_relocation
-  Relocation& add_dynamic_relocation(const Relocation& relocation);
+  Relocation&
+      add_dynamic_relocation(const Relocation& relocation) LIEF_LIFETIMEBOUND;
 
   /// Add a .plt.got relocation. This kind of relocation is usually
   /// associated with a PLT stub that aims at resolving the underlying symbol
   ///
   /// See also: add_dynamic_relocation
-  Relocation& add_pltgot_relocation(const Relocation& relocation);
+  Relocation&
+      add_pltgot_relocation(const Relocation& relocation) LIEF_LIFETIMEBOUND;
 
   /// Add relocation for object file (.o)
   ///
@@ -437,26 +441,26 @@ class LIEF_API Binary : public LIEF::Binary {
                                     const Section& section);
 
   /// Return `plt.got` relocations
-  it_pltgot_relocations pltgot_relocations();
-  it_const_pltgot_relocations pltgot_relocations() const;
+  it_pltgot_relocations pltgot_relocations() LIEF_LIFETIMEBOUND;
+  it_const_pltgot_relocations pltgot_relocations() const LIEF_LIFETIMEBOUND;
 
   /// Return relocations used in an object file (``*.o``)
-  it_object_relocations object_relocations();
-  it_const_object_relocations object_relocations() const;
+  it_object_relocations object_relocations() LIEF_LIFETIMEBOUND;
+  it_const_object_relocations object_relocations() const LIEF_LIFETIMEBOUND;
 
   /// Return **all** relocations present in the binary
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
   /// Return relocation associated with the given address.
   /// It returns a ``nullptr`` if it is not found
-  const Relocation* get_relocation(uint64_t address) const;
-  Relocation* get_relocation(uint64_t address) {
+  const Relocation* get_relocation(uint64_t address) const LIEF_LIFETIMEBOUND;
+  Relocation* get_relocation(uint64_t address) LIEF_LIFETIMEBOUND {
     return const_cast<Relocation*>(
         static_cast<const Binary*>(this)->get_relocation(address)
     );
@@ -464,8 +468,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return relocation associated with the given Symbol
   /// It returns a ``nullptr`` if it is not found
-  const Relocation* get_relocation(const Symbol& symbol) const;
-  Relocation* get_relocation(const Symbol& symbol) {
+  const Relocation* get_relocation(const Symbol& symbol) const LIEF_LIFETIMEBOUND;
+  Relocation* get_relocation(const Symbol& symbol) LIEF_LIFETIMEBOUND {
     return const_cast<Relocation*>(
         static_cast<const Binary*>(this)->get_relocation(symbol)
     );
@@ -473,8 +477,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return relocation associated with the given Symbol name
   /// It returns a ``nullptr`` if it is not found
-  const Relocation* get_relocation(const std::string& symbol_name) const;
-  Relocation* get_relocation(const std::string& symbol_name) {
+  const Relocation*
+      get_relocation(const std::string& symbol_name) const LIEF_LIFETIMEBOUND;
+  Relocation* get_relocation(const std::string& symbol_name) LIEF_LIFETIMEBOUND {
     return const_cast<Relocation*>(
         static_cast<const Binary*>(this)->get_relocation(symbol_name)
     );
@@ -489,7 +494,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the GnuHash object in **readonly**
   /// If the ELF binary does not use the GNU hash table, return a nullptr
-  const GnuHash* gnu_hash() const {
+  const GnuHash* gnu_hash() const LIEF_LIFETIMEBOUND {
     return use_gnu_hash() ? gnu_hash_.get() : nullptr;
   }
 
@@ -502,7 +507,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the SysvHash object as a **read-only** object
   /// If the ELF binary does not use the legacy sysv hash table, return a nullptr
-  const SysvHash* sysv_hash() const {
+  const SysvHash* sysv_hash() const LIEF_LIFETIMEBOUND {
     return use_sysv_hash() ? sysv_hash_.get() : nullptr;
   }
 
@@ -519,12 +524,12 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return Section with the given `name`. If the section can't be
   /// found, it returns a nullptr
-  Section* get_section(const std::string& name) {
+  Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->get_section(name)
     );
   }
-  const Section* get_section(const std::string& name) const;
+  const Section* get_section(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Return the `.text` section. If the section
   /// can't be found, it returns a nullptr
@@ -571,19 +576,20 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return an iterator on both static and dynamic symbols
-  it_symbols symbols() {
+  it_symbols symbols() LIEF_LIFETIMEBOUND {
     return symtab_dyn_symbols();
   }
 
-  it_const_symbols symbols() const {
+  it_const_symbols symbols() const LIEF_LIFETIMEBOUND {
     return symtab_dyn_symbols();
   }
 
   /// Export the given symbol and create it if it doesn't exist
-  Symbol& export_symbol(const Symbol& symbol);
+  Symbol& export_symbol(const Symbol& symbol) LIEF_LIFETIMEBOUND;
 
   /// Export the symbol with the given name and create it if it doesn't exist
-  Symbol& export_symbol(const std::string& symbol_name, uint64_t value = 0);
+  Symbol& export_symbol(const std::string& symbol_name,
+                        uint64_t value = 0) LIEF_LIFETIMEBOUND;
 
   /// Check if the symbol with the given ``name`` exists in the dynamic symbols
   /// table
@@ -593,9 +599,10 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Get the dynamic symbol from the given name.
   /// Return a nullptr if it can't be found
-  const Symbol* get_dynamic_symbol(const std::string& name) const;
+  const Symbol*
+      get_dynamic_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* get_dynamic_symbol(const std::string& name) {
+  Symbol* get_dynamic_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(
         static_cast<const Binary*>(this)->get_dynamic_symbol(name)
     );
@@ -608,9 +615,10 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Get the symtab symbol from the given name
   /// Return a nullptr if it can't be found
-  const Symbol* get_symtab_symbol(const std::string& name) const;
+  const Symbol*
+      get_symtab_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* get_symtab_symbol(const std::string& name) {
+  Symbol* get_symtab_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(
         static_cast<const Binary*>(this)->get_symtab_symbol(name)
     );
@@ -665,19 +673,20 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// This function requires a well-formed ELF binary
   Section* add(const Section& section, bool loaded = true,
-               SEC_INSERT_POS pos = SEC_INSERT_POS::AUTO);
+               SEC_INSERT_POS pos = SEC_INSERT_POS::AUTO) LIEF_LIFETIMEBOUND;
 
-  Section* extend(const Section& section, uint64_t size);
+  Section* extend(const Section& section, uint64_t size) LIEF_LIFETIMEBOUND;
 
   /// Add a symtab symbol
-  Symbol& add_symtab_symbol(const Symbol& symbol);
+  Symbol& add_symtab_symbol(const Symbol& symbol) LIEF_LIFETIMEBOUND;
 
   /// Add a dynamic symbol with the associated SymbolVersion
-  Symbol& add_dynamic_symbol(const Symbol& symbol,
-                             const SymbolVersion* version = nullptr);
+  Symbol& add_dynamic_symbol(const Symbol& symbol, const SymbolVersion* version =
+                                                       nullptr) LIEF_LIFETIMEBOUND;
 
   /// Create a symbol for the function at the given address and export it
-  Symbol& add_exported_function(uint64_t address, const std::string& name = "");
+  Symbol& add_exported_function(uint64_t address,
+                                const std::string& name = "") LIEF_LIFETIMEBOUND;
 
   /// Add a library as dependency
   DynamicEntryLibrary& add_library(const std::string& library_name);
@@ -687,7 +696,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Get the library object (DynamicEntryLibrary) from the given name
   /// If the library can't be found, it returns a nullptr.
-  DynamicEntryLibrary* get_library(const std::string& library_name) {
+  DynamicEntryLibrary*
+      get_library(const std::string& library_name) LIEF_LIFETIMEBOUND {
     return const_cast<DynamicEntryLibrary*>(
         static_cast<const Binary*>(this)->get_library(library_name)
     );
@@ -695,7 +705,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Get the library object (DynamicEntryLibrary) from the given name
   /// If the library can't be found, it returns a nullptr.
-  const DynamicEntryLibrary* get_library(const std::string& library_name) const;
+  const DynamicEntryLibrary*
+      get_library(const std::string& library_name) const LIEF_LIFETIMEBOUND;
 
   /// Check if the given library name exists in the current binary
   bool has_library(const std::string& name) const {
@@ -709,16 +720,16 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @return The segment added. `Virtual address` and `File Offset` might change.
   ///
   /// This function requires a well-formed ELF binary
-  Segment* add(const Segment& segment, uint64_t base = 0);
+  Segment* add(const Segment& segment, uint64_t base = 0) LIEF_LIFETIMEBOUND;
 
   /// Replace the segment given in 2nd parameter with the segment given in the
   /// first one and return the updated segment.
   ///
   /// @warning The ``original_segment`` is no longer valid after this function
   Segment* replace(const Segment& new_segment, const Segment& original_segment,
-                   uint64_t base = 0);
+                   uint64_t base = 0) LIEF_LIFETIMEBOUND;
 
-  Segment* extend(const Segment& segment, uint64_t size);
+  Segment* extend(const Segment& segment, uint64_t size) LIEF_LIFETIMEBOUND;
 
 
   /// Patch the content at virtual address @p address with @p patch_value
@@ -843,9 +854,11 @@ class LIEF_API Binary : public LIEF::Binary {
   /// If @p skip_nobits is set (which is the case by default), this function won't
   /// consider section for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss,
   /// ...``)
-  const Section* section_from_offset(uint64_t offset,
-                                     bool skip_nobits = true) const;
-  Section* section_from_offset(uint64_t offset, bool skip_nobits = true) {
+  const Section*
+      section_from_offset(uint64_t offset,
+                          bool skip_nobits = true) const LIEF_LIFETIMEBOUND;
+  Section* section_from_offset(uint64_t offset,
+                               bool skip_nobits = true) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->section_from_offset(offset, skip_nobits)
     );
@@ -856,10 +869,12 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// If @p skip_nobits is set (which is the case by default), this function won't
   /// consider section for which type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
-  const Section* section_from_virtual_address(uint64_t address,
-                                              bool skip_nobits = true) const;
-  Section* section_from_virtual_address(uint64_t address,
-                                        bool skip_nobits = true) {
+  const Section* section_from_virtual_address(
+      uint64_t address, bool skip_nobits = true
+  ) const LIEF_LIFETIMEBOUND;
+  Section*
+      section_from_virtual_address(uint64_t address,
+                                   bool skip_nobits = true) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->section_from_virtual_address(address,
                                                                        skip_nobits)
@@ -868,17 +883,20 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the ELF::Segment from the given @p address. Return a nullptr
   /// if a segment can't be found.
-  const Segment* segment_from_virtual_address(uint64_t address) const;
-  Segment* segment_from_virtual_address(uint64_t address) {
+  const Segment*
+      segment_from_virtual_address(uint64_t address) const LIEF_LIFETIMEBOUND;
+  Segment* segment_from_virtual_address(uint64_t address) LIEF_LIFETIMEBOUND {
     return const_cast<Segment*>(
         static_cast<const Binary*>(this)->segment_from_virtual_address(address)
     );
   }
 
 
-  const Segment* segment_from_virtual_address(Segment::TYPE type,
-                                              uint64_t address) const;
-  Segment* segment_from_virtual_address(Segment::TYPE type, uint64_t address) {
+  const Segment*
+      segment_from_virtual_address(Segment::TYPE type,
+                                   uint64_t address) const LIEF_LIFETIMEBOUND;
+  Segment* segment_from_virtual_address(Segment::TYPE type,
+                                        uint64_t address) LIEF_LIFETIMEBOUND {
     return const_cast<Segment*>(
         static_cast<const Binary*>(this)->segment_from_virtual_address(type,
                                                                        address)
@@ -887,8 +905,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the ELF::Segment from the @p offset. Return a nullptr
   /// if a segment can't be found.
-  const Segment* segment_from_offset(uint64_t offset) const;
-  Segment* segment_from_offset(uint64_t offset) {
+  const Segment* segment_from_offset(uint64_t offset) const LIEF_LIFETIMEBOUND;
+  Segment* segment_from_offset(uint64_t offset) LIEF_LIFETIMEBOUND {
     return const_cast<Segment*>(
         static_cast<const Binary*>(this)->segment_from_offset(offset)
     );
@@ -896,29 +914,29 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the **first** ELF::DynamicEntry associated with the given tag
   /// If the tag can't be found, it returns a nullptr
-  const DynamicEntry* get(DynamicEntry::TAG tag) const;
-  DynamicEntry* get(DynamicEntry::TAG tag) {
+  const DynamicEntry* get(DynamicEntry::TAG tag) const LIEF_LIFETIMEBOUND;
+  DynamicEntry* get(DynamicEntry::TAG tag) LIEF_LIFETIMEBOUND {
     return const_cast<DynamicEntry*>(static_cast<const Binary*>(this)->get(tag));
   }
 
   /// Return the **first** ELF::Segment associated with the given type.
   /// If a segment can't be found, it returns a nullptr.
-  const Segment* get(Segment::TYPE type) const;
-  Segment* get(Segment::TYPE type) {
+  const Segment* get(Segment::TYPE type) const LIEF_LIFETIMEBOUND;
+  Segment* get(Segment::TYPE type) LIEF_LIFETIMEBOUND {
     return const_cast<Segment*>(static_cast<const Binary*>(this)->get(type));
   }
 
   /// Return the **first** ELF::Note associated with the given type
   /// If a note can't be found, it returns a nullptr.
-  const Note* get(Note::TYPE type) const;
-  Note* get(Note::TYPE type) {
+  const Note* get(Note::TYPE type) const LIEF_LIFETIMEBOUND;
+  Note* get(Note::TYPE type) LIEF_LIFETIMEBOUND {
     return const_cast<Note*>(static_cast<const Binary*>(this)->get(type));
   }
 
   /// Return the **first** ELF::Section associated with the given type
   /// If a section can't be found, it returns a nullptr.
-  const Section* get(Section::TYPE type) const;
-  Section* get(Section::TYPE type) {
+  const Section* get(Section::TYPE type) const LIEF_LIFETIMEBOUND;
+  Section* get(Section::TYPE type) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(static_cast<const Binary*>(this)->get(type));
   }
 
@@ -971,11 +989,11 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return an iterator over the ELF's LIEF::ELF::Note
   ///
   /// @see has_note
-  it_const_notes notes() const {
+  it_const_notes notes() const LIEF_LIFETIMEBOUND {
     return notes_;
   }
 
-  it_notes notes() {
+  it_notes notes() LIEF_LIFETIMEBOUND {
     return notes_;
   }
 
@@ -1041,10 +1059,12 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Try to find the SymbolVersionRequirement associated with the given library
   /// name (e.g. `libc.so.6`)
-  const SymbolVersionRequirement*
-      find_version_requirement(const std::string& libname) const;
+  const SymbolVersionRequirement* find_version_requirement(
+      const std::string& libname
+  ) const LIEF_LIFETIMEBOUND;
 
-  SymbolVersionRequirement* find_version_requirement(const std::string& name) {
+  SymbolVersionRequirement*
+      find_version_requirement(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<SymbolVersionRequirement*>(
         static_cast<const Binary*>(this)->find_version_requirement(name)
     );

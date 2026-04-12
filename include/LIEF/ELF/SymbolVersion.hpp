@@ -73,11 +73,11 @@ class LIEF_API SymbolVersion : public Object {
 
   /// SymbolVersionAux associated with the current Version if any,
   /// or a nullptr
-  SymbolVersionAux* symbol_version_auxiliary() {
+  SymbolVersionAux* symbol_version_auxiliary() LIEF_LIFETIMEBOUND {
     return symbol_aux_;
   }
 
-  const SymbolVersionAux* symbol_version_auxiliary() const {
+  const SymbolVersionAux* symbol_version_auxiliary() const LIEF_LIFETIMEBOUND {
     return symbol_aux_;
   }
 

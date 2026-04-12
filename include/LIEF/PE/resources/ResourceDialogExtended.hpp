@@ -152,11 +152,11 @@ class LIEF_API ResourceDialogExtended : public ResourceDialog {
   }
 
   /// Iterator over the control items of this dialog box
-  it_items items() {
+  it_items items() LIEF_LIFETIMEBOUND {
     return items_;
   }
 
-  it_const_items items() const {
+  it_const_items items() const LIEF_LIFETIMEBOUND {
     return items_;
   }
 

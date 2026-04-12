@@ -564,15 +564,17 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
                      return s->type() == new_segment->type();
                    });
 
-  Segment* seg_ptr = new_segment.get();
+  Segment* seg_ptr = nullptr;
   if (it_new_segment_place == segments_.rend()) {
-    segments_.push_back(std::move(new_segment));
+    seg_ptr = segments_.emplace_back(std::move(new_segment)).get();
   } else {
     const size_t idx =
         std::distance(segments_.begin(), it_new_segment_place.base());
-    segments_.insert(segments_.begin() + idx, std::move(new_segment));
+    seg_ptr =
+        segments_.insert(segments_.begin() + idx, std::move(new_segment))->get();
   }
   phdr_reloc_info_.nb_segments--;
+  assert(seg_ptr != nullptr);
   return seg_ptr;
 }
 
@@ -651,16 +653,17 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
                      return s->type() == new_segment->type();
                    });
 
-  Segment* seg_ptr = new_segment.get();
+  Segment* seg_ptr = nullptr;
 
   if (it_new_segment_place == segments_.rend()) {
-    segments_.push_back(std::move(new_segment));
+    seg_ptr = segments_.emplace_back(std::move(new_segment)).get();
   } else {
     const size_t idx =
         std::distance(segments_.begin(), it_new_segment_place.base());
-    segments_.insert(segments_.begin() + idx, std::move(new_segment));
+    seg_ptr =
+        segments_.insert(segments_.begin() + idx, std::move(new_segment))->get();
   }
-
+  assert(seg_ptr != nullptr);
   return seg_ptr;
 }
 

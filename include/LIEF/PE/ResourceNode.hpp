@@ -115,11 +115,11 @@ class LIEF_API ResourceNode : public Object {
   std::string utf8_name() const;
 
   /// Iterator on node's children
-  it_childs childs() {
+  it_childs childs() LIEF_LIFETIMEBOUND {
     return childs_;
   }
 
-  it_const_childs childs() const {
+  it_const_childs childs() const LIEF_LIFETIMEBOUND {
     return childs_;
   }
 
@@ -167,10 +167,10 @@ class LIEF_API ResourceNode : public Object {
 
   /// Add a new child to the current node, taking the ownership
   /// of the provided `unique_ptr`
-  ResourceNode& add_child(std::unique_ptr<ResourceNode> child);
+  ResourceNode& add_child(std::unique_ptr<ResourceNode> child) LIEF_LIFETIMEBOUND;
 
   /// Add a new child to the current node
-  ResourceNode& add_child(const ResourceNode& child) {
+  ResourceNode& add_child(const ResourceNode& child) LIEF_LIFETIMEBOUND {
     return add_child(child.clone());
   }
 

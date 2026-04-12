@@ -220,136 +220,145 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
     return bitfield_info_;
   }
 
-  it_range_entries code_ranges() {
+  it_range_entries code_ranges() LIEF_LIFETIMEBOUND {
     return range_entries_;
   }
 
-  it_const_range_entries code_ranges() const {
+  it_const_range_entries code_ranges() const LIEF_LIFETIMEBOUND {
     return range_entries_;
   }
 
-  it_redirection_entries redirections() {
+  it_redirection_entries redirections() LIEF_LIFETIMEBOUND {
     return redirection_entries_;
   }
 
-  it_const_redirection_entries redirections() const {
+  it_const_redirection_entries redirections() const LIEF_LIFETIMEBOUND {
     return redirection_entries_;
   }
 
-  it_code_range_entry_point code_range_entry_point() {
+  it_code_range_entry_point code_range_entry_point() LIEF_LIFETIMEBOUND {
     return code_range_entry_point_entries_;
   }
 
-  it_const_code_range_entry_point code_range_entry_point() const {
+  it_const_code_range_entry_point
+      code_range_entry_point() const LIEF_LIFETIMEBOUND {
     return code_range_entry_point_entries_;
   }
 
-  CHPEMetadataARM64& code_map(uint32_t value) {
+  CHPEMetadataARM64& code_map(uint32_t value) LIEF_LIFETIMEBOUND {
     code_map_rva_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& code_map_count(uint32_t value) {
+  CHPEMetadataARM64& code_map_count(uint32_t value) LIEF_LIFETIMEBOUND {
     code_map_cnt_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& code_ranges_to_entrypoints(uint32_t value) {
+  CHPEMetadataARM64&
+      code_ranges_to_entrypoints(uint32_t value) LIEF_LIFETIMEBOUND {
     code_ranges_to_ep_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& redirection_metadata(uint32_t value) {
+  CHPEMetadataARM64& redirection_metadata(uint32_t value) LIEF_LIFETIMEBOUND {
     redirection_metadata_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& os_arm64x_dispatch_call_no_redirect(uint32_t value) {
+  CHPEMetadataARM64&
+      os_arm64x_dispatch_call_no_redirect(uint32_t value) LIEF_LIFETIMEBOUND {
     os_arm64x_dispatch_call_no_redirect_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& os_arm64x_dispatch_ret(uint32_t value) {
+  CHPEMetadataARM64& os_arm64x_dispatch_ret(uint32_t value) LIEF_LIFETIMEBOUND {
     os_arm64x_dispatch_ret_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& os_arm64x_dispatch_call(uint32_t value) {
+  CHPEMetadataARM64& os_arm64x_dispatch_call(uint32_t value) LIEF_LIFETIMEBOUND {
     os_arm64x_dispatch_call_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& os_arm64x_dispatch_icall(uint32_t value) {
+  CHPEMetadataARM64& os_arm64x_dispatch_icall(uint32_t value) LIEF_LIFETIMEBOUND {
     os_arm64x_dispatch_icall_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& os_arm64x_dispatch_icall_cfg(uint32_t value) {
+  CHPEMetadataARM64&
+      os_arm64x_dispatch_icall_cfg(uint32_t value) LIEF_LIFETIMEBOUND {
     os_arm64x_dispatch_icall_cfg_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& alternate_entry_point(uint32_t value) {
+  CHPEMetadataARM64& alternate_entry_point(uint32_t value) LIEF_LIFETIMEBOUND {
     alternate_ep_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& auxiliary_iat(uint32_t value) {
+  CHPEMetadataARM64& auxiliary_iat(uint32_t value) LIEF_LIFETIMEBOUND {
     aux_iat_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& code_ranges_to_entry_points_count(uint32_t value) {
+  CHPEMetadataARM64&
+      code_ranges_to_entry_points_count(uint32_t value) LIEF_LIFETIMEBOUND {
     code_ranges_to_ep_cnt_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& redirection_metadata_count(uint32_t value) {
+  CHPEMetadataARM64&
+      redirection_metadata_count(uint32_t value) LIEF_LIFETIMEBOUND {
     redirection_metadata_cnt_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& get_x64_information_function_pointer(uint32_t value) {
+  CHPEMetadataARM64&
+      get_x64_information_function_pointer(uint32_t value) LIEF_LIFETIMEBOUND {
     get_x64_information_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& set_x64_information_function_pointer(uint32_t value) {
+  CHPEMetadataARM64&
+      set_x64_information_function_pointer(uint32_t value) LIEF_LIFETIMEBOUND {
     set_x64_information_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& extra_rfe_table(uint32_t value) {
+  CHPEMetadataARM64& extra_rfe_table(uint32_t value) LIEF_LIFETIMEBOUND {
     extra_rfe_table_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& extra_rfe_table_size(uint32_t value) {
+  CHPEMetadataARM64& extra_rfe_table_size(uint32_t value) LIEF_LIFETIMEBOUND {
     extra_rfe_table_size_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& os_arm64x_dispatch_fptr(uint32_t value) {
+  CHPEMetadataARM64& os_arm64x_dispatch_fptr(uint32_t value) LIEF_LIFETIMEBOUND {
     os_arm64x_dispatch_fptr_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& auxiliary_iat_copy(uint32_t value) {
+  CHPEMetadataARM64& auxiliary_iat_copy(uint32_t value) LIEF_LIFETIMEBOUND {
     aux_iat_copy_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& auxiliary_delay_import(uint32_t value) {
+  CHPEMetadataARM64& auxiliary_delay_import(uint32_t value) LIEF_LIFETIMEBOUND {
     aux_delay_import_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& auxiliary_delay_import_copy(uint32_t value) {
+  CHPEMetadataARM64&
+      auxiliary_delay_import_copy(uint32_t value) LIEF_LIFETIMEBOUND {
     aux_delay_import_copy_ = value;
     return *this;
   }
 
-  CHPEMetadataARM64& bitfield_info(uint32_t value) {
+  CHPEMetadataARM64& bitfield_info(uint32_t value) LIEF_LIFETIMEBOUND {
     bitfield_info_ = value;
     return *this;
   }

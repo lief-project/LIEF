@@ -126,26 +126,26 @@ class LIEF_API Signature : public Object {
   }
 
   /// Return the ContentInfo
-  const ContentInfo& content_info() const {
+  const ContentInfo& content_info() const LIEF_LIFETIMEBOUND {
     return content_info_;
   }
 
   /// Return an iterator over x509 certificates
-  it_const_crt certificates() const {
+  it_const_crt certificates() const LIEF_LIFETIMEBOUND {
     return certificates_;
   }
 
-  it_crt certificates() {
+  it_crt certificates() LIEF_LIFETIMEBOUND {
     return certificates_;
   }
 
   /// Return an iterator over the signers (SignerInfo) defined in the PKCS #7
   /// signature
-  it_const_signers_t signers() const {
+  it_const_signers_t signers() const LIEF_LIFETIMEBOUND {
     return signers_;
   }
 
-  it_signers_t signers() {
+  it_signers_t signers() LIEF_LIFETIMEBOUND {
     return signers_;
   }
 

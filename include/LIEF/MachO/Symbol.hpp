@@ -155,10 +155,10 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   /// Return the ExportInfo associated with this symbol (or nullptr if not present)
   /// @see has_export_info
-  const ExportInfo* export_info() const {
+  const ExportInfo* export_info() const LIEF_LIFETIMEBOUND {
     return export_info_;
   }
-  ExportInfo* export_info() {
+  ExportInfo* export_info() LIEF_LIFETIMEBOUND {
     return export_info_;
   }
 
@@ -171,11 +171,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
   /// Return the BindingInfo associated with this symbol (or nullptr if not
   /// present)
   /// @see has_binding_info
-  const BindingInfo* binding_info() const {
+  const BindingInfo* binding_info() const LIEF_LIFETIMEBOUND {
     return binding_info_;
   }
 
-  BindingInfo* binding_info() {
+  BindingInfo* binding_info() LIEF_LIFETIMEBOUND {
     return binding_info_;
   }
 
@@ -189,11 +189,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   /// Return the library in which the symbol is defined.
   /// It returns a null pointer if the library can't be resolved
-  const DylibCommand* library() const {
+  const DylibCommand* library() const LIEF_LIFETIMEBOUND {
     return library_;
   }
 
-  DylibCommand* library() {
+  DylibCommand* library() LIEF_LIFETIMEBOUND {
     return library_;
   }
 

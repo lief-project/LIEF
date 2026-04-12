@@ -284,11 +284,11 @@ class LIEF_API Segment : public Object {
   size_t get_content_size() const;
 
   /// Iterator over the sections wrapped by this segment
-  it_sections sections() {
+  it_sections sections() LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
-  it_const_sections sections() const {
+  it_const_sections sections() const LIEF_LIFETIMEBOUND {
     return sections_;
   }
 

@@ -124,12 +124,12 @@ class LIEF_API ResourcesManager : public Object {
 
   /// Return the ResourceNode associated with the given TYPE
   /// or a nullptr if not found;
-  ResourceNode* get_node_type(TYPE type) {
+  ResourceNode* get_node_type(TYPE type) LIEF_LIFETIMEBOUND {
     return const_cast<ResourceNode*>(
         static_cast<const ResourcesManager*>(this)->get_node_type(type)
     );
   }
-  const ResourceNode* get_node_type(TYPE type) const;
+  const ResourceNode* get_node_type(TYPE type) const LIEF_LIFETIMEBOUND;
 
   /// List of TYPE present in the resources
   std::vector<TYPE> get_types() const;
@@ -167,7 +167,7 @@ class LIEF_API ResourcesManager : public Object {
   }
 
   /// Return the list of the icons present in the resources
-  it_const_icons icons() const;
+  it_const_icons icons() const LIEF_LIFETIMEBOUND;
 
   /// Add an icon to the resources
   void add_icon(const ResourceIcon& icon);
@@ -180,7 +180,7 @@ class LIEF_API ResourcesManager : public Object {
   }
 
   /// Return the list of the dialogs present in the resource
-  it_const_dialogs dialogs() const;
+  it_const_dialogs dialogs() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the resources contain a string table
   bool has_string_table() const {

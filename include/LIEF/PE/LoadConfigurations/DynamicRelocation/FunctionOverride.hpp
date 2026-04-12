@@ -79,34 +79,36 @@ class LIEF_API FunctionOverride : public DynamicFixup {
   }
 
   /// Iterator over the overriding info
-  it_func_overriding_info func_overriding_info() {
+  it_func_overriding_info func_overriding_info() LIEF_LIFETIMEBOUND {
     return overriding_info_;
   }
 
-  it_const_func_overriding_info func_overriding_info() const {
+  it_const_func_overriding_info func_overriding_info() const LIEF_LIFETIMEBOUND {
     return overriding_info_;
   }
 
   /// Iterator over the BDD info
-  it_bdd_info bdd_info() {
+  it_bdd_info bdd_info() LIEF_LIFETIMEBOUND {
     return bdd_info_;
   }
 
-  it_const_bdd_info bdd_info() const {
+  it_const_bdd_info bdd_info() const LIEF_LIFETIMEBOUND {
     return bdd_info_;
   }
 
   /// Find the `IMAGE_BDD_INFO` at the given offset
-  image_bdd_info_t* find_bdd_info(uint32_t offset);
+  image_bdd_info_t* find_bdd_info(uint32_t offset) LIEF_LIFETIMEBOUND;
 
   /// Find the `IMAGE_BDD_INFO` associated with the given info
-  image_bdd_info_t* find_bdd_info(const FunctionOverrideInfo& info);
+  image_bdd_info_t*
+      find_bdd_info(const FunctionOverrideInfo& info) LIEF_LIFETIMEBOUND;
 
-  const image_bdd_info_t* find_bdd_info(uint32_t offset) const {
+  const image_bdd_info_t* find_bdd_info(uint32_t offset) const LIEF_LIFETIMEBOUND {
     return const_cast<FunctionOverride*>(this)->find_bdd_info(offset);
   }
 
-  const image_bdd_info_t* find_bdd_info(const FunctionOverrideInfo& info) const {
+  const image_bdd_info_t*
+      find_bdd_info(const FunctionOverrideInfo& info) const LIEF_LIFETIMEBOUND {
     return const_cast<FunctionOverride*>(this)->find_bdd_info(info);
   }
 

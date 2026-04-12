@@ -167,18 +167,18 @@ class LIEF_API Debug : public Object {
   }
 
   /// The section where debug data is located
-  const Section* section() const {
+  const Section* section() const LIEF_LIFETIMEBOUND {
     return section_;
   }
 
-  Section* section() {
+  Section* section() LIEF_LIFETIMEBOUND {
     return section_;
   }
 
   /// Debug data associated with this entry
-  span<uint8_t> payload();
+  span<uint8_t> payload() LIEF_LIFETIMEBOUND;
 
-  span<const uint8_t> payload() const {
+  span<const uint8_t> payload() const LIEF_LIFETIMEBOUND {
     return const_cast<Debug*>(this)->payload();
   }
 

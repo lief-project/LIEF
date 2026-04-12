@@ -160,21 +160,22 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   }
 
   /// Iterator over the bindings (ChainedBindingInfo) associated with this command
-  it_binding_info bindings() {
+  it_binding_info bindings() LIEF_LIFETIMEBOUND {
     return all_bindings_;
   }
 
   /// Iterator over the bindings (ChainedBindingInfo) associated with this command
-  it_const_binding_info bindings() const {
+  it_const_binding_info bindings() const LIEF_LIFETIMEBOUND {
     return all_bindings_;
   }
 
   /// Iterator over the chained fixup metadata
-  it_chained_starts_in_segments_t chained_starts_in_segments() {
+  it_chained_starts_in_segments_t chained_starts_in_segments() LIEF_LIFETIMEBOUND {
     return chained_starts_in_segment_;
   }
 
-  it_const_chained_starts_in_segments_t chained_starts_in_segments() const {
+  it_const_chained_starts_in_segments_t
+      chained_starts_in_segments() const LIEF_LIFETIMEBOUND {
     return chained_starts_in_segment_;
   }
 

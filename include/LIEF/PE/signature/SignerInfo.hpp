@@ -119,12 +119,12 @@ class LIEF_API SignerInfo : public Object {
   }
 
   /// Iterator over LIEF::PE::Attribute for **authenticated** attributes
-  it_const_attributes_t authenticated_attributes() const {
+  it_const_attributes_t authenticated_attributes() const LIEF_LIFETIMEBOUND {
     return authenticated_attributes_;
   }
 
   /// Iterator over LIEF::PE::Attribute for **unauthenticated** attributes
-  it_const_attributes_t unauthenticated_attributes() const {
+  it_const_attributes_t unauthenticated_attributes() const LIEF_LIFETIMEBOUND {
     return unauthenticated_attributes_;
   }
 
@@ -133,31 +133,33 @@ class LIEF_API SignerInfo : public Object {
   ///
   /// It returns **the first** entry that matches the given type. If it can't be
   /// found, it returns a nullptr.
-  const Attribute* get_attribute(Attribute::TYPE type) const;
+  const Attribute* get_attribute(Attribute::TYPE type) const LIEF_LIFETIMEBOUND;
 
   /// Return the authenticated attribute matching the given
   /// PE::SIG_ATTRIBUTE_TYPES.
   ///
   /// It returns **the first** entry that matches the given type. If it can't be
   /// found, it returns a nullptr.
-  const Attribute* get_auth_attribute(Attribute::TYPE type) const;
+  const Attribute*
+      get_auth_attribute(Attribute::TYPE type) const LIEF_LIFETIMEBOUND;
 
   /// Return the un-authenticated attribute matching the given
   /// PE::SIG_ATTRIBUTE_TYPES.
   ///
   /// It returns **the first** entry that matches the given type. If it can't be
   /// found, it returns a nullptr.
-  const Attribute* get_unauth_attribute(Attribute::TYPE type) const;
+  const Attribute*
+      get_unauth_attribute(Attribute::TYPE type) const LIEF_LIFETIMEBOUND;
 
   /// x509 certificate used by this signer. If it can't be found, it returns a
   /// nullptr
-  const x509* cert() const {
+  const x509* cert() const LIEF_LIFETIMEBOUND {
     return cert_.get();
   }
 
   /// x509 certificate used by this signer. If it can't be found, it returns a
   /// nullptr
-  x509* cert() {
+  x509* cert() LIEF_LIFETIMEBOUND {
     return cert_.get();
   }
 

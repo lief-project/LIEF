@@ -49,7 +49,7 @@ class LIEF_API DylinkerCommand : public LoadCommand {
   std::ostream& print(std::ostream& os) const override;
 
   /// Path to the linker (or loader)
-  const std::string& name() const {
+  const std::string& name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 

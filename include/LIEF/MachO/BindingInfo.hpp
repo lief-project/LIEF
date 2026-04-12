@@ -67,10 +67,10 @@ class LIEF_API BindingInfo : public Object {
 
   /// The MachO::SegmentCommand associated with the BindingInfo or
   /// a nullptr of it is not bind to a SegmentCommand
-  const SegmentCommand* segment() const {
+  const SegmentCommand* segment() const LIEF_LIFETIMEBOUND {
     return segment_;
   }
-  SegmentCommand* segment() {
+  SegmentCommand* segment() LIEF_LIFETIMEBOUND {
     return segment_;
   }
 
@@ -81,10 +81,10 @@ class LIEF_API BindingInfo : public Object {
 
   /// MachO::DylibCommand associated with the BindingInfo or a nullptr
   /// if not present
-  const DylibCommand* library() const {
+  const DylibCommand* library() const LIEF_LIFETIMEBOUND {
     return library_;
   }
-  DylibCommand* library() {
+  DylibCommand* library() LIEF_LIFETIMEBOUND {
     return library_;
   }
 
@@ -95,10 +95,10 @@ class LIEF_API BindingInfo : public Object {
 
   /// MachO::Symbol associated with the BindingInfo or
   /// a nullptr if not present
-  const Symbol* symbol() const {
+  const Symbol* symbol() const LIEF_LIFETIMEBOUND {
     return symbol_;
   }
-  Symbol* symbol() {
+  Symbol* symbol() LIEF_LIFETIMEBOUND {
     return symbol_;
   }
 

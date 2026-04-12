@@ -45,11 +45,11 @@ class LIEF_API DynamicFixupGeneric : public DynamicFixup {
   }
 
   /// Iterator over the relocations
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 

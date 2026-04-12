@@ -66,13 +66,14 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
   void paths(const std::vector<std::string>& paths);
 
   /// Insert a ``path`` at the given ``position``
-  DynamicEntryRpath& insert(size_t pos, const std::string& path);
+  DynamicEntryRpath& insert(size_t pos,
+                            const std::string& path) LIEF_LIFETIMEBOUND;
 
   /// Append the given ``path``
-  DynamicEntryRpath& append(std::string path);
+  DynamicEntryRpath& append(std::string path) LIEF_LIFETIMEBOUND;
 
   /// Remove the given ``path``
-  DynamicEntryRpath& remove(const std::string& path);
+  DynamicEntryRpath& remove(const std::string& path) LIEF_LIFETIMEBOUND;
 
   DynamicEntryRpath& operator+=(std::string path) {
     return append(std::move(path));

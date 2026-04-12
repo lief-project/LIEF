@@ -72,16 +72,16 @@ class LIEF_API SymbolVersionRequirement : public Object {
   }
 
   /// Auxiliary entries as an iterator over SymbolVersionAuxRequirement
-  it_aux_requirement auxiliary_symbols() {
+  it_aux_requirement auxiliary_symbols() LIEF_LIFETIMEBOUND {
     return aux_requirements_;
   }
 
-  it_const_aux_requirement auxiliary_symbols() const {
+  it_const_aux_requirement auxiliary_symbols() const LIEF_LIFETIMEBOUND {
     return aux_requirements_;
   }
 
   /// Return the library name associated with this requirement (e.g. ``libc.so.6``)
-  const std::string& name() const {
+  const std::string& name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -94,14 +94,17 @@ class LIEF_API SymbolVersionRequirement : public Object {
   }
 
   /// Add a version auxiliary requirement to the existing list
-  SymbolVersionAuxRequirement&
-      add_aux_requirement(const SymbolVersionAuxRequirement& aux_requirement);
+  SymbolVersionAuxRequirement& add_aux_requirement(
+      const SymbolVersionAuxRequirement& aux_requirement
+  ) LIEF_LIFETIMEBOUND;
 
   /// Try to find the SymbolVersionAuxRequirement with the given name (e.g.
   /// `GLIBC_2.27`)
-  const SymbolVersionAuxRequirement* find_aux(const std::string& name) const;
+  const SymbolVersionAuxRequirement*
+      find_aux(const std::string& name) const LIEF_LIFETIMEBOUND;
 
-  SymbolVersionAuxRequirement* find_aux(const std::string& name) {
+  SymbolVersionAuxRequirement*
+      find_aux(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<SymbolVersionAuxRequirement*>(
         static_cast<const SymbolVersionRequirement*>(this)->find_aux(name)
     );

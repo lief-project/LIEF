@@ -397,29 +397,29 @@ class LIEF_API ResourceDialog : public Object {
     return cy_;
   }
 
-  ResourceDialog& style(uint32_t value) {
+  ResourceDialog& style(uint32_t value) LIEF_LIFETIMEBOUND {
     style_ = value;
     return *this;
   }
 
-  ResourceDialog& extended_style(uint32_t value) {
+  ResourceDialog& extended_style(uint32_t value) LIEF_LIFETIMEBOUND {
     extended_style_ = value;
     return *this;
   }
 
-  ResourceDialog& x(int16_t value) {
+  ResourceDialog& x(int16_t value) LIEF_LIFETIMEBOUND {
     x_ = value;
     return *this;
   }
-  ResourceDialog& y(int16_t value) {
+  ResourceDialog& y(int16_t value) LIEF_LIFETIMEBOUND {
     y_ = value;
     return *this;
   }
-  ResourceDialog& cx(int16_t value) {
+  ResourceDialog& cx(int16_t value) LIEF_LIFETIMEBOUND {
     cx_ = value;
     return *this;
   }
-  ResourceDialog& cy(int16_t value) {
+  ResourceDialog& cy(int16_t value) LIEF_LIFETIMEBOUND {
     cy_ = value;
     return *this;
   }
@@ -446,12 +446,12 @@ class LIEF_API ResourceDialog : public Object {
     return *this;
   }
 
-  ResourceDialog& title(std::u16string value) {
+  ResourceDialog& title(std::u16string value) LIEF_LIFETIMEBOUND {
     title_ = std::move(value);
     return *this;
   }
 
-  ResourceDialog& title(const std::string& title);
+  ResourceDialog& title(const std::string& title) LIEF_LIFETIMEBOUND;
 
   /// Check if the dialog used to given dialog style
   bool has(DIALOG_STYLES style) const {
@@ -478,7 +478,7 @@ class LIEF_API ResourceDialog : public Object {
   std::vector<WINDOW_EXTENDED_STYLES> windows_ext_styles_list() const;
 
   /// title of the dialog box
-  const std::u16string& title() const {
+  const std::u16string& title() const LIEF_LIFETIMEBOUND {
     return title_;
   }
 

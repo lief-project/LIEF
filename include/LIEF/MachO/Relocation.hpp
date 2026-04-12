@@ -102,10 +102,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   /// Symbol associated with the relocation, if any,
   /// otherwise a nullptr.
-  Symbol* symbol() {
+  Symbol* symbol() LIEF_LIFETIMEBOUND {
     return symbol_;
   }
-  const Symbol* symbol() const {
+  const Symbol* symbol() const LIEF_LIFETIMEBOUND {
     return symbol_;
   }
 
@@ -116,10 +116,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   /// Section associated with the relocation, if any,
   /// otherwise a nullptr.
-  Section* section() {
+  Section* section() LIEF_LIFETIMEBOUND {
     return section_;
   }
-  const Section* section() const {
+  const Section* section() const LIEF_LIFETIMEBOUND {
     return section_;
   }
 
@@ -130,10 +130,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   /// SegmentCommand associated with the relocation, if any,
   /// otherwise a nullptr.
-  SegmentCommand* segment() {
+  SegmentCommand* segment() LIEF_LIFETIMEBOUND {
     return segment_;
   }
-  const SegmentCommand* segment() const {
+  const SegmentCommand* segment() const LIEF_LIFETIMEBOUND {
     return segment_;
   }
 

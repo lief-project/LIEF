@@ -101,38 +101,38 @@ class LIEF_API Binary {
   }
 
   /// Iterator over the different sections located in this COFF binary
-  it_sections sections() {
+  it_sections sections() LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
-  it_const_sections sections() const {
+  it_const_sections sections() const LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
   /// Iterator over **all** the relocations used by this COFF binary
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
   /// Iterator over the COFF's symbols
-  it_symbols symbols() {
+  it_symbols symbols() LIEF_LIFETIMEBOUND {
     return symbols_;
   }
 
-  it_const_symbols symbols() const {
+  it_const_symbols symbols() const LIEF_LIFETIMEBOUND {
     return symbols_;
   }
 
   /// Iterator over the COFF's strings
-  it_const_strings_table string_table() const {
+  it_const_strings_table string_table() const LIEF_LIFETIMEBOUND {
     return strings_table_;
   }
 
-  it_strings_table string_table() {
+  it_strings_table string_table() LIEF_LIFETIMEBOUND {
     return strings_table_;
   }
 
@@ -140,7 +140,7 @@ class LIEF_API Binary {
   ///
   /// \warning This offset must include the first 4 bytes holding the size of
   ///          the table. Hence, the first string starts a the offset 4.
-  String* find_string(uint32_t offset) {
+  String* find_string(uint32_t offset) LIEF_LIFETIMEBOUND {
     auto it = std::find_if(strings_table_.begin(), strings_table_.end(),
                            [offset](const String& item) {
                              return offset == item.offset();
@@ -148,28 +148,29 @@ class LIEF_API Binary {
     return it == strings_table_.end() ? nullptr : &*it;
   }
 
-  const String* find_string(uint32_t offset) const {
+  const String* find_string(uint32_t offset) const LIEF_LIFETIMEBOUND {
     return const_cast<Binary*>(this)->find_string(offset);
   }
 
   /// Iterator over the functions implemented in this COFF
-  it_const_function functions() const;
+  it_const_function functions() const LIEF_LIFETIMEBOUND;
 
-  it_functions functions();
+  it_functions functions() LIEF_LIFETIMEBOUND;
 
   /// Try to find the function (symbol) with the given name
-  const Symbol* find_function(const std::string& name) const;
+  const Symbol* find_function(const std::string& name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* find_function(const std::string& name) {
+  Symbol* find_function(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(
         static_cast<const Binary*>(this)->find_function(name)
     );
   }
 
   /// Try to find the function (symbol) with the given **demangled** name
-  const Symbol* find_demangled_function(const std::string& name) const;
+  const Symbol*
+      find_demangled_function(const std::string& name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* find_demangled_function(const std::string& name) {
+  Symbol* find_demangled_function(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(
         static_cast<const Binary*>(this)->find_demangled_function(name)
     );

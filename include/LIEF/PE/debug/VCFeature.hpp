@@ -76,27 +76,27 @@ class LIEF_API VCFeature : public Debug {
     return guards_;
   }
 
-  VCFeature& pre_vcpp(uint32_t value) {
+  VCFeature& pre_vcpp(uint32_t value) LIEF_LIFETIMEBOUND {
     pre_vc_ = value;
     return *this;
   }
 
-  VCFeature& c_cpp(uint32_t value) {
+  VCFeature& c_cpp(uint32_t value) LIEF_LIFETIMEBOUND {
     c_cpp_ = value;
     return *this;
   }
 
-  VCFeature& gs(uint32_t value) {
+  VCFeature& gs(uint32_t value) LIEF_LIFETIMEBOUND {
     gs_ = value;
     return *this;
   }
 
-  VCFeature& sdl(uint32_t value) {
+  VCFeature& sdl(uint32_t value) LIEF_LIFETIMEBOUND {
     sdl_ = value;
     return *this;
   }
 
-  VCFeature& guards(uint32_t value) {
+  VCFeature& guards(uint32_t value) LIEF_LIFETIMEBOUND {
     guards_ = value;
     return *this;
   }

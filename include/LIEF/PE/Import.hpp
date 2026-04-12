@@ -72,11 +72,11 @@ class LIEF_API Import : public Object {
   }
 
   /// Iterator over the PE::ImportEntry
-  it_const_entries entries() const {
+  it_const_entries entries() const LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
-  it_entries entries() {
+  it_entries entries() LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
@@ -102,15 +102,15 @@ class LIEF_API Import : public Object {
   result<uint32_t> get_function_rva_from_iat(const std::string& function) const;
 
   /// Return the imported function with the given name
-  ImportEntry* get_entry(const std::string& name) {
+  ImportEntry* get_entry(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<ImportEntry*>(
         static_cast<const Import*>(this)->get_entry(name)
     );
   }
-  const ImportEntry* get_entry(const std::string& name) const;
+  const ImportEntry* get_entry(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Return the library's name (e.g. `kernel32.dll`)
-  const std::string& name() const {
+  const std::string& name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -128,11 +128,11 @@ class LIEF_API Import : public Object {
   /// It should be the one at index PE::DataDirectory::TYPES::IMPORT_TABLE
   ///
   /// If the data directory can't be found, return a nullptr
-  DataDirectory* directory() {
+  DataDirectory* directory() LIEF_LIFETIMEBOUND {
     return directory_;
   }
 
-  const DataDirectory* directory() const {
+  const DataDirectory* directory() const LIEF_LIFETIMEBOUND {
     return directory_;
   }
 
@@ -140,22 +140,22 @@ class LIEF_API Import : public Object {
   /// It should be the one at index PE::DataDirectory::TYPES::IAT
   ///
   /// If the data directory can't be found, return a nullptr
-  DataDirectory* iat_directory() {
+  DataDirectory* iat_directory() LIEF_LIFETIMEBOUND {
     return iat_directory_;
   }
 
-  const DataDirectory* iat_directory() const {
+  const DataDirectory* iat_directory() const LIEF_LIFETIMEBOUND {
     return iat_directory_;
   }
 
   /// Add a new import entry (i.e. an imported function)
-  ImportEntry& add_entry(const ImportEntry& entry) {
+  ImportEntry& add_entry(const ImportEntry& entry) LIEF_LIFETIMEBOUND {
     entries_.emplace_back(new ImportEntry(entry));
     return *entries_.back();
   }
 
   /// Add a new import entry with the given name (i.e. an imported function)
-  ImportEntry& add_entry(const std::string& name) {
+  ImportEntry& add_entry(const std::string& name) LIEF_LIFETIMEBOUND {
     entries_.emplace_back(new ImportEntry(name));
     return *entries_.back();
   }

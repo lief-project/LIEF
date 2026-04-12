@@ -138,7 +138,7 @@ class LIEF_API ThreadLocalVariables : public LIEF::MachO::Section {
 
   /// Return an iterator range over the Thunk descriptors stored in this
   /// section.
-  thunks_it thunks() const {
+  thunks_it thunks() const LIEF_LIFETIMEBOUND {
     auto B = Iterator(*this, 0);
     auto E = Iterator(*this, nb_thunks());
     return make_range(std::move(B), std::move(E)); // NOLINT

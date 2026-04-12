@@ -73,7 +73,7 @@ class LIEF_API DelayImport : public Object {
   }
 
   /// Return the library's name (e.g. `kernel32.dll`)
-  const std::string& name() const {
+  const std::string& name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
   void name(std::string name) {
@@ -138,12 +138,12 @@ class LIEF_API DelayImport : public Object {
   }
 
   /// Iterator over the DelayImport's entries (DelayImportEntry)
-  it_entries entries() {
+  it_entries entries() LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
   /// Iterator over the DelayImport's entries (DelayImportEntry)
-  it_const_entries entries() const {
+  it_const_entries entries() const LIEF_LIFETIMEBOUND {
     return entries_;
   }
 

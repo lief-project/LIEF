@@ -50,11 +50,11 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   }
 
   /// Return the array values (list of pointers)
-  array_t& array() {
+  array_t& array() LIEF_LIFETIMEBOUND {
     return array_;
   }
 
-  const array_t& array() const {
+  const array_t& array() const LIEF_LIFETIMEBOUND {
     return array_;
   }
   void array(const array_t& array) {
@@ -62,16 +62,16 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   }
 
   /// Insert the given function at ``pos``
-  DynamicEntryArray& insert(size_t pos, uint64_t function);
+  DynamicEntryArray& insert(size_t pos, uint64_t function) LIEF_LIFETIMEBOUND;
 
   /// Append the given function
-  DynamicEntryArray& append(uint64_t function) {
+  DynamicEntryArray& append(uint64_t function) LIEF_LIFETIMEBOUND {
     array_.push_back(function);
     return *this;
   }
 
   /// Remove the given function
-  DynamicEntryArray& remove(uint64_t function);
+  DynamicEntryArray& remove(uint64_t function) LIEF_LIFETIMEBOUND;
 
   /// Number of function registred in this array
   size_t size() const {

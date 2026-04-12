@@ -268,11 +268,11 @@ class LIEF_API Relocation : public LIEF::Relocation {
   }
 
   /// Symbol associated with the relocation (or a nullptr)
-  Symbol* symbol() {
+  Symbol* symbol() LIEF_LIFETIMEBOUND {
     return symbol_;
   }
 
-  const Symbol* symbol() const {
+  const Symbol* symbol() const LIEF_LIFETIMEBOUND {
     return symbol_;
   }
 
@@ -282,20 +282,20 @@ class LIEF_API Relocation : public LIEF::Relocation {
   }
 
   /// The section in which the relocation is applied (or a nullptr)
-  Section* section() {
+  Section* section() LIEF_LIFETIMEBOUND {
     return section_;
   }
 
-  const Section* section() const {
+  const Section* section() const LIEF_LIFETIMEBOUND {
     return section_;
   }
 
   /// The associated symbol table (or a nullptr)
-  Section* symbol_table() {
+  Section* symbol_table() LIEF_LIFETIMEBOUND {
     return symbol_table_;
   }
 
-  const Section* symbol_table() const {
+  const Section* symbol_table() const LIEF_LIFETIMEBOUND {
     return symbol_table_;
   }
 

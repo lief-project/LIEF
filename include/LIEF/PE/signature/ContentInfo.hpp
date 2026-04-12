@@ -134,11 +134,11 @@ class LIEF_API ContentInfo : public Object {
     return value_->content_type();
   }
 
-  Content& value() {
+  Content& value() LIEF_LIFETIMEBOUND {
     return *value_;
   }
 
-  const Content& value() const {
+  const Content& value() const LIEF_LIFETIMEBOUND {
     return *value_;
   }
 

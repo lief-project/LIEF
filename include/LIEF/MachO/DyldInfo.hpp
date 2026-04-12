@@ -301,10 +301,10 @@ class LIEF_API DyldInfo : public LoadCommand {
   }
 
   /// Return **Lazy** Binding's opcodes as raw data
-  span<const uint8_t> lazy_bind_opcodes() const {
+  span<const uint8_t> lazy_bind_opcodes() const LIEF_LIFETIMEBOUND {
     return lazy_bind_opcodes_;
   }
-  span<uint8_t> lazy_bind_opcodes() {
+  span<uint8_t> lazy_bind_opcodes() LIEF_LIFETIMEBOUND {
     return lazy_bind_opcodes_;
   }
 
@@ -315,11 +315,11 @@ class LIEF_API DyldInfo : public LoadCommand {
   std::string show_lazy_bind_opcodes() const;
 
   /// Iterator over BindingInfo entries
-  it_binding_info bindings() {
+  it_binding_info bindings() LIEF_LIFETIMEBOUND {
     return binding_info_;
   }
 
-  it_const_binding_info bindings() const {
+  it_const_binding_info bindings() const LIEF_LIFETIMEBOUND {
     return binding_info_;
   }
 
@@ -354,25 +354,25 @@ class LIEF_API DyldInfo : public LoadCommand {
   }
 
   /// Iterator over ExportInfo entries
-  it_export_info exports() {
+  it_export_info exports() LIEF_LIFETIMEBOUND {
     return export_info_;
   }
-  it_const_export_info exports() const {
+  it_const_export_info exports() const LIEF_LIFETIMEBOUND {
     return export_info_;
   }
 
   /// Return Export's trie as raw data
-  span<const uint8_t> export_trie() const {
+  span<const uint8_t> export_trie() const LIEF_LIFETIMEBOUND {
     return export_trie_;
   }
-  span<uint8_t> export_trie() {
+  span<uint8_t> export_trie() LIEF_LIFETIMEBOUND {
     return export_trie_;
   }
 
   /// Set new trie
   void export_trie(buffer_t raw);
 
-  /// Return the export trie in a humman-readable way
+  /// Return the export trie in a human-readable way
   std::string show_export_trie() const;
 
   void rebase(const info_t& info) {
@@ -427,7 +427,7 @@ class LIEF_API DyldInfo : public LoadCommand {
     export_ = {std::get<0>(export_info()), size};
   }
 
-  void add(std::unique_ptr<ExportInfo> info);
+  ExportInfo* add(std::unique_ptr<ExportInfo> info) LIEF_LIFETIMEBOUND;
 
   void accept(Visitor& visitor) const override;
 

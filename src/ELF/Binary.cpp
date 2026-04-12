@@ -135,9 +135,7 @@ DynamicEntry& Binary::add(const DynamicEntry& entry) {
                             e->tag() == DynamicEntry::TAG::DT_NULL_;
                    });
 
-  auto* ptr = new_one.get();
-  dynamic_entries_.insert(it_new_place, std::move(new_one));
-  return *ptr;
+  return **dynamic_entries_.insert(it_new_place, std::move(new_one));
 }
 
 
@@ -1154,9 +1152,7 @@ Segment* Binary::replace(const Segment& new_segment,
       new_segment_ptr->file_offset() + new_segment_ptr->physical_size();
   header.section_headers_offset(new_section_hdr_offset);
 
-  Segment* seg = new_segment_ptr.get();
-  segments_.push_back(std::move(new_segment_ptr));
-  return seg;
+  return segments_.emplace_back(std::move(new_segment_ptr)).get();
 }
 
 
@@ -3233,7 +3229,7 @@ Section* Binary::add_section(std::unique_ptr<Section> sec) {
                    });
 
   if (it_new_sec_place == sections_.end()) {
-    sections_.push_back(std::move(sec));
+    sec_ptr = sections_.emplace_back(std::move(sec)).get();
   } else {
     size_t idx = std::distance(sections_.begin(), it_new_sec_place);
     for (const auto& section : sections_) {
@@ -3245,7 +3241,7 @@ Section* Binary::add_section(std::unique_ptr<Section> sec) {
     if (header_.section_name_table_idx() >= idx) {
       header_.section_name_table_idx(header_.section_name_table_idx() + 1);
     }
-    sections_.insert(it_new_sec_place, std::move(sec));
+    sec_ptr = sections_.insert(it_new_sec_place, std::move(sec))->get();
   }
 
   return sec_ptr;

@@ -252,11 +252,11 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   }
 
   /// Iterator over the indirect symbols indexed by this command
-  it_indirect_symbols indirect_symbols() {
+  it_indirect_symbols indirect_symbols() LIEF_LIFETIMEBOUND {
     return indirect_symbols_;
   }
 
-  it_const_indirect_symbols indirect_symbols() const {
+  it_const_indirect_symbols indirect_symbols() const LIEF_LIFETIMEBOUND {
     return indirect_symbols_;
   }
 

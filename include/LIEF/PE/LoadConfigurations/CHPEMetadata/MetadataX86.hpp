@@ -89,58 +89,71 @@ class LIEF_API CHPEMetadataX86 : public CHPEMetadata {
     return wowa64_rdtsc_function_pointer_;
   }
 
-  CHPEMetadataX86& chpe_code_address_range_offset(uint32_t value) {
+  CHPEMetadataX86&
+      chpe_code_address_range_offset(uint32_t value) LIEF_LIFETIMEBOUND {
     chpe_code_address_range_offset_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& chpe_code_address_range_count(uint32_t value) {
+  CHPEMetadataX86&
+      chpe_code_address_range_count(uint32_t value) LIEF_LIFETIMEBOUND {
     chpe_code_address_range_count_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& wowa64_exception_handler_function_pointer(uint32_t value) {
+  CHPEMetadataX86& wowa64_exception_handler_function_pointer(
+      uint32_t value
+  ) LIEF_LIFETIMEBOUND {
     wowa64_exception_handler_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& wowa64_dispatch_call_function_pointer(uint32_t value) {
+  CHPEMetadataX86&
+      wowa64_dispatch_call_function_pointer(uint32_t value) LIEF_LIFETIMEBOUND {
     wowa64_dispatch_call_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& wowa64_dispatch_indirect_call_function_pointer(uint32_t value) {
+  CHPEMetadataX86& wowa64_dispatch_indirect_call_function_pointer(
+      uint32_t value
+  ) LIEF_LIFETIMEBOUND {
     wowa64_dispatch_indirect_call_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataX86&
-      wowa64_dispatch_indirect_call_cfg_function_pointer(uint32_t value) {
+  CHPEMetadataX86& wowa64_dispatch_indirect_call_cfg_function_pointer(
+      uint32_t value
+  ) LIEF_LIFETIMEBOUND {
     wowa64_dispatch_indirect_call_cfg_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& wowa64_dispatch_ret_function_pointer(uint32_t value) {
+  CHPEMetadataX86&
+      wowa64_dispatch_ret_function_pointer(uint32_t value) LIEF_LIFETIMEBOUND {
     wowa64_dispatch_ret_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& wowa64_dispatch_ret_leaf_function_pointer(uint32_t value) {
+  CHPEMetadataX86& wowa64_dispatch_ret_leaf_function_pointer(
+      uint32_t value
+  ) LIEF_LIFETIMEBOUND {
     wowa64_dispatch_ret_leaf_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& wowa64_dispatch_jump_function_pointer(uint32_t value) {
+  CHPEMetadataX86&
+      wowa64_dispatch_jump_function_pointer(uint32_t value) LIEF_LIFETIMEBOUND {
     wowa64_dispatch_jump_function_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& compiler_iat_pointer(uint32_t value) {
+  CHPEMetadataX86& compiler_iat_pointer(uint32_t value) LIEF_LIFETIMEBOUND {
     compiler_iat_pointer_ = value;
     return *this;
   }
 
-  CHPEMetadataX86& wowa64_rdtsc_function_pointer(uint32_t value) {
+  CHPEMetadataX86&
+      wowa64_rdtsc_function_pointer(uint32_t value) LIEF_LIFETIMEBOUND {
     wowa64_rdtsc_function_pointer_ = value;
     return *this;
   }

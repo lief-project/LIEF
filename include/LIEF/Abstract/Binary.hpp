@@ -132,13 +132,13 @@ class LIEF_API Binary : public Object {
 
   /// Return an iterator over the abstracted symbols in which the elements **can**
   /// be modified
-  it_symbols symbols() {
+  it_symbols symbols() LIEF_LIFETIMEBOUND {
     return get_abstract_symbols();
   }
 
   /// Return an iterator over the abstracted symbols in which the elements
   /// **can't** be modified
-  it_const_symbols symbols() const {
+  it_const_symbols symbols() const LIEF_LIFETIMEBOUND {
     return const_cast<Binary*>(this)->get_abstract_symbols();
   }
 
@@ -149,18 +149,18 @@ class LIEF_API Binary : public Object {
 
   /// Return the Symbol with the given name
   /// If the symbol does not exist, return a nullptr
-  const Symbol* get_symbol(const std::string& name) const;
+  const Symbol* get_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* get_symbol(const std::string& name) {
+  Symbol* get_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
   }
 
   /// Return an iterator over the binary's sections (LIEF::Section)
-  it_sections sections() {
+  it_sections sections() LIEF_LIFETIMEBOUND {
     return get_abstract_sections();
   }
 
-  it_const_sections sections() const {
+  it_const_sections sections() const LIEF_LIFETIMEBOUND {
     return const_cast<Binary*>(this)->get_abstract_sections();
   }
 
@@ -168,11 +168,11 @@ class LIEF_API Binary : public Object {
   virtual void remove_section(const std::string& name, bool clear = false) = 0;
 
   /// Return an iterator over the binary relocation (LIEF::Relocation)
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return get_abstract_relocations();
   }
 
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return const_cast<Binary*>(this)->get_abstract_relocations();
   }
 
@@ -304,7 +304,7 @@ class LIEF_API Binary : public Object {
   ///
   /// \warning This function requires LIEF's extended version otherwise it
   /// **always** return a nullptr
-  DebugInfo* debug_info() const;
+  DebugInfo* debug_info() const LIEF_LIFETIMEBOUND;
 
   /// Disassemble code starting at the given virtual address and with the given
   /// size.

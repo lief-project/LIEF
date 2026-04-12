@@ -252,10 +252,10 @@ class LIEF_API Section : public LIEF::Section {
 
   /// The segment associated with this section or a nullptr
   /// if not present
-  SegmentCommand* segment() {
+  SegmentCommand* segment() LIEF_LIFETIMEBOUND {
     return segment_;
   }
-  const SegmentCommand* segment() const {
+  const SegmentCommand* segment() const LIEF_LIFETIMEBOUND {
     return segment_;
   }
 
@@ -273,10 +273,10 @@ class LIEF_API Section : public LIEF::Section {
   ///
   /// This iterator is likely to be empty of executable and libraries while it
   /// should not for object files (``.o``)
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 

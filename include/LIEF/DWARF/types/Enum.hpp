@@ -56,7 +56,7 @@ class LIEF_API Enum : public Type {
   std::vector<Entry> entries() const;
 
   /// The underlying type that is used to encode this enum
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
   /// Try to find the enum matching the given value
   optional<Entry> find_entry(int64_t value) const;

@@ -94,12 +94,12 @@ class LIEF_API Builder {
   /// Perform the build of the provided ELF binary
   void build();
 
-  config_t& config() {
+  config_t& config() LIEF_LIFETIMEBOUND {
     return config_;
   }
 
   /// Return the built ELF binary as a byte vector
-  const std::vector<uint8_t>& get_build();
+  const std::vector<uint8_t>& get_build() LIEF_LIFETIMEBOUND;
 
   /// Write the built ELF binary in the ``filename`` given in parameter
   void write(const std::string& filename) const;

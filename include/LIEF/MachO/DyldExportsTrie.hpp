@@ -95,12 +95,12 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
     return export_info_;
   }
 
-  /// Print the exports trie in a humman-readable way
+  /// Print the exports trie in a human-readable way
   std::string show_export_trie() const;
 
   /// Add an entrie in the current trie.
   /// See also: LIEF::MachO::Binary::add_exported_function
-  void add(std::unique_ptr<ExportInfo> info);
+  ExportInfo* add(std::unique_ptr<ExportInfo> info) LIEF_LIFETIMEBOUND;
 
   void accept(Visitor& visitor) const override;
 

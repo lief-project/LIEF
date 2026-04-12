@@ -82,17 +82,17 @@ class LIEF_API EnclaveImport {
   /// The unique identifier of the primary module for the enclave, if the type()
   /// is TYPE::UNIQUE_ID. Otherwise, the author identifier of the primary module
   /// for the enclave.
-  const long_id_t& id() const {
+  const long_id_t& id() const LIEF_LIFETIMEBOUND {
     return id_;
   }
 
   /// The family identifier of the primary module for the enclave.
-  const short_id_t& family_id() const {
+  const short_id_t& family_id() const LIEF_LIFETIMEBOUND {
     return family_id_;
   }
 
   /// The image identifier of the primary module for the enclave.
-  const short_id_t& image_id() const {
+  const short_id_t& image_id() const LIEF_LIFETIMEBOUND {
     return image_id_;
   }
 
@@ -103,7 +103,7 @@ class LIEF_API EnclaveImport {
   }
 
   /// Resolved import name
-  const std::string& import_name() const {
+  const std::string& import_name() const LIEF_LIFETIMEBOUND {
     return import_name_;
   }
 
@@ -112,42 +112,42 @@ class LIEF_API EnclaveImport {
     return reserved_;
   }
 
-  EnclaveImport& type(TYPE ty) {
+  EnclaveImport& type(TYPE ty) LIEF_LIFETIMEBOUND {
     type_ = ty;
     return *this;
   }
 
-  EnclaveImport& min_security_version(uint32_t value) {
+  EnclaveImport& min_security_version(uint32_t value) LIEF_LIFETIMEBOUND {
     min_security_version_ = value;
     return *this;
   }
 
-  EnclaveImport& id(const long_id_t& value) {
+  EnclaveImport& id(const long_id_t& value) LIEF_LIFETIMEBOUND {
     id_ = value;
     return *this;
   }
 
-  EnclaveImport& family_id(const short_id_t& value) {
+  EnclaveImport& family_id(const short_id_t& value) LIEF_LIFETIMEBOUND {
     family_id_ = value;
     return *this;
   }
 
-  EnclaveImport& image_id(const short_id_t& value) {
+  EnclaveImport& image_id(const short_id_t& value) LIEF_LIFETIMEBOUND {
     image_id_ = value;
     return *this;
   }
 
-  EnclaveImport& import_name_rva(uint32_t value) {
+  EnclaveImport& import_name_rva(uint32_t value) LIEF_LIFETIMEBOUND {
     import_name_rva_ = value;
     return *this;
   }
 
-  EnclaveImport& reserved(uint32_t value) {
+  EnclaveImport& reserved(uint32_t value) LIEF_LIFETIMEBOUND {
     reserved_ = value;
     return *this;
   }
 
-  EnclaveImport& import_name(std::string name) {
+  EnclaveImport& import_name(std::string name) LIEF_LIFETIMEBOUND {
     import_name_ = std::move(name);
     return *this;
   }

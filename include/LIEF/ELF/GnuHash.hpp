@@ -86,17 +86,17 @@ class LIEF_API GnuHash : public Object {
   }
 
   /// Bloom filters
-  const std::vector<uint64_t>& bloom_filters() const {
+  const std::vector<uint64_t>& bloom_filters() const LIEF_LIFETIMEBOUND {
     return bloom_filters_;
   }
 
   /// Hash buckets
-  const std::vector<uint32_t>& buckets() const {
+  const std::vector<uint32_t>& buckets() const LIEF_LIFETIMEBOUND {
     return buckets_;
   }
 
   /// Hash values
-  const std::vector<uint32_t>& hash_values() const {
+  const std::vector<uint32_t>& hash_values() const LIEF_LIFETIMEBOUND {
     return hash_values_;
   }
 

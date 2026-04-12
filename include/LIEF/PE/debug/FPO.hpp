@@ -97,11 +97,11 @@ class LIEF_API FPO : public Debug {
   }
 
   /// Iterator over the FPO entries
-  it_const_entries entries() const {
+  it_const_entries entries() const LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
-  it_entries entries() {
+  it_entries entries() LIEF_LIFETIMEBOUND {
     return entries_;
   }
 

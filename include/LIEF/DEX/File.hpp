@@ -84,25 +84,25 @@ class LIEF_API File : public Object {
   void location(const std::string& location);
 
   /// DEX header
-  const Header& header() const;
-  Header& header();
+  const Header& header() const LIEF_LIFETIMEBOUND;
+  Header& header() LIEF_LIFETIMEBOUND;
 
   /// **All** classes used in the DEX file
-  it_const_classes classes() const;
-  it_classes classes();
+  it_const_classes classes() const LIEF_LIFETIMEBOUND;
+  it_classes classes() LIEF_LIFETIMEBOUND;
 
   /// Check if the given class name exists
   bool has_class(const std::string& class_name) const;
 
   /// Return the DEX::Class object associated with the given name
-  const Class* get_class(const std::string& class_name) const;
+  const Class* get_class(const std::string& class_name) const LIEF_LIFETIMEBOUND;
 
-  Class* get_class(const std::string& class_name);
+  Class* get_class(const std::string& class_name) LIEF_LIFETIMEBOUND;
 
   /// Return the DEX::Class object associated with the given index
-  const Class* get_class(size_t index) const;
+  const Class* get_class(size_t index) const LIEF_LIFETIMEBOUND;
 
-  Class* get_class(size_t index);
+  Class* get_class(size_t index) LIEF_LIFETIMEBOUND;
 
   /// De-optimize information
   dex2dex_info_t dex2dex_info() const;
@@ -111,24 +111,24 @@ class LIEF_API File : public Object {
   std::string dex2dex_json_info() const;
 
   /// Return an iterator over **all** the DEX::Method used in this DEX file
-  it_const_methods methods() const;
-  it_methods methods();
+  it_const_methods methods() const LIEF_LIFETIMEBOUND;
+  it_methods methods() LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over **all** the DEX::Field used in this DEX file
-  it_const_fields fields() const;
-  it_fields fields();
+  it_const_fields fields() const LIEF_LIFETIMEBOUND;
+  it_fields fields() LIEF_LIFETIMEBOUND;
 
   /// String pool
-  it_const_strings strings() const;
-  it_strings strings();
+  it_const_strings strings() const LIEF_LIFETIMEBOUND;
+  it_strings strings() LIEF_LIFETIMEBOUND;
 
   /// Type pool
-  it_const_types types() const;
-  it_types types();
+  it_const_types types() const LIEF_LIFETIMEBOUND;
+  it_types types() LIEF_LIFETIMEBOUND;
 
   /// Prototype pool
-  it_prototypes prototypes();
-  it_const_prototypes prototypes() const;
+  it_prototypes prototypes() LIEF_LIFETIMEBOUND;
+  it_const_prototypes prototypes() const LIEF_LIFETIMEBOUND;
 
   /// DEX Map
   const MapList& map() const;

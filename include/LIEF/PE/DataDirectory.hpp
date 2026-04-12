@@ -100,18 +100,18 @@ class LIEF_API DataDirectory : public Object {
   }
 
   /// Raw content (bytes) referenced by this data directory
-  span<const uint8_t> content() const {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return const_cast<DataDirectory*>(this)->content();
   }
 
-  span<uint8_t> content();
+  span<uint8_t> content() LIEF_LIFETIMEBOUND;
 
   /// Section associated with the DataDirectory
-  Section* section() {
+  Section* section() LIEF_LIFETIMEBOUND {
     return section_;
   }
 
-  const Section* section() const {
+  const Section* section() const LIEF_LIFETIMEBOUND {
     return section_;
   }
 

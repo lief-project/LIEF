@@ -51,7 +51,7 @@ class LIEF_API SourceVersion : public LoadCommand {
   ~SourceVersion() override = default;
 
   /// Return the version as an array
-  const version_t& version() const {
+  const version_t& version() const LIEF_LIFETIMEBOUND {
     return version_;
   }
   void version(const version_t& version) {

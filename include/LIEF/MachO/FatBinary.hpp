@@ -70,10 +70,10 @@ class LIEF_API FatBinary {
     return binaries_.empty();
   }
 
-  it_binaries begin() {
+  it_binaries begin() LIEF_LIFETIMEBOUND {
     return binaries_;
   }
-  it_const_binaries begin() const {
+  it_const_binaries begin() const LIEF_LIFETIMEBOUND {
     return binaries_;
   }
 
@@ -97,11 +97,11 @@ class LIEF_API FatBinary {
 
   /// Get a pointer to the MachO::Binary specified by the ``index``.
   /// It returns a nullptr if the binary does not exist at the given index.
-  Binary* at(size_t index) {
+  Binary* at(size_t index) LIEF_LIFETIMEBOUND {
     return const_cast<Binary*>(static_cast<const FatBinary*>(this)->at(index));
   }
 
-  const Binary* at(size_t index) const {
+  const Binary* at(size_t index) const LIEF_LIFETIMEBOUND {
     if (index >= size()) {
       return nullptr;
     }
@@ -147,12 +147,12 @@ class LIEF_API FatBinary {
   /// Reconstruct the Fat binary object and return his content as bytes
   std::vector<uint8_t> raw();
 
-  Binary* get(Header::CPU_TYPE cpu) {
+  Binary* get(Header::CPU_TYPE cpu) LIEF_LIFETIMEBOUND {
     return const_cast<Binary*>(static_cast<const FatBinary*>(this)->get(cpu));
   }
 
   /// Gets a pointer to the MachO::Binary that matches the given architecture
-  const Binary* get(Header::CPU_TYPE cpu) const;
+  const Binary* get(Header::CPU_TYPE cpu) const LIEF_LIFETIMEBOUND;
 
   Binary* operator[](Header::CPU_TYPE cpu) {
     return get(cpu);

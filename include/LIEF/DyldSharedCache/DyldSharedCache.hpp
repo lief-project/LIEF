@@ -147,16 +147,18 @@ class LIEF_API DyldSharedCache {
 
   /// Find the Dylib that encompasses the given virtual address.
   /// It returns a nullptr if a Dylib can't be found.
-  std::unique_ptr<Dylib> find_lib_from_va(uint64_t va) const;
+  std::unique_ptr<Dylib> find_lib_from_va(uint64_t va) const LIEF_LIFETIMEBOUND;
 
   /// Find the Dylib whose Dylib::path matches the provided path.
-  std::unique_ptr<Dylib> find_lib_from_path(const std::string& path) const;
+  std::unique_ptr<Dylib>
+      find_lib_from_path(const std::string& path) const LIEF_LIFETIMEBOUND;
 
   /// Find the Dylib whose filename of Dylib::path matches the provided name.
   ///
   /// If multiple libraries have the same name (but with a different path),
   /// the **first one** matching the provided name is returned.
-  std::unique_ptr<Dylib> find_lib_from_name(const std::string& name) const;
+  std::unique_ptr<Dylib>
+      find_lib_from_name(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// True if the subcaches are associated with this cache
   bool has_subcaches() const;
@@ -173,7 +175,7 @@ class LIEF_API DyldSharedCache {
   ///   std::string path = libaries[i]->path();
   /// }
   /// ```
-  dylib_iterator libraries() const;
+  dylib_iterator libraries() const LIEF_LIFETIMEBOUND;
 
   /// Return an interator over the mapping information of this dyld shared cache.
   ///
@@ -212,7 +214,8 @@ class LIEF_API DyldSharedCache {
   std::vector<uint8_t> get_content_from_va(uint64_t va, uint64_t size) const;
 
   /// Find the sub-DyldSharedCache that wraps the given virtual address
-  std::unique_ptr<DyldSharedCache> cache_for_address(uint64_t va) const;
+  std::unique_ptr<DyldSharedCache>
+      cache_for_address(uint64_t va) const LIEF_LIFETIMEBOUND;
 
   /// Return the principal dyld shared cache in the case of multiple subcaches
   std::unique_ptr<DyldSharedCache> main_cache() const;

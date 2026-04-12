@@ -76,7 +76,7 @@ class LIEF_API VolatileMetadata {
     return access_table_rva_;
   }
 
-  const access_table_t& access_table() const {
+  const access_table_t& access_table() const LIEF_LIFETIMEBOUND {
     return access_table_;
   }
 
@@ -94,35 +94,35 @@ class LIEF_API VolatileMetadata {
     return info_ranges_.size() * sizeof(range_t);
   }
 
-  it_const_info_ranges_t info_ranges() const {
+  it_const_info_ranges_t info_ranges() const LIEF_LIFETIMEBOUND {
     return info_ranges_;
   }
 
-  it_info_ranges_t info_ranges() {
+  it_info_ranges_t info_ranges() LIEF_LIFETIMEBOUND {
     return info_ranges_;
   }
 
-  VolatileMetadata& size(uint32_t value) {
+  VolatileMetadata& size(uint32_t value) LIEF_LIFETIMEBOUND {
     size_ = value;
     return *this;
   }
 
-  VolatileMetadata& min_version(uint16_t min) {
+  VolatileMetadata& min_version(uint16_t min) LIEF_LIFETIMEBOUND {
     min_version_ = min;
     return *this;
   }
 
-  VolatileMetadata& max_version(uint16_t max) {
+  VolatileMetadata& max_version(uint16_t max) LIEF_LIFETIMEBOUND {
     max_version_ = max;
     return *this;
   }
 
-  VolatileMetadata& access_table_rva(uint32_t value) {
+  VolatileMetadata& access_table_rva(uint32_t value) LIEF_LIFETIMEBOUND {
     access_table_rva_ = value;
     return *this;
   }
 
-  VolatileMetadata& info_range_rva(uint32_t value) {
+  VolatileMetadata& info_range_rva(uint32_t value) LIEF_LIFETIMEBOUND {
     info_range_rva_ = value;
     return *this;
   }

@@ -59,7 +59,7 @@ class LIEF_API CoreFile : public Note {
   }
 
   /// Coredump file entries
-  const files_t& files() const {
+  const files_t& files() const LIEF_LIFETIMEBOUND {
     return files_;
   }
 

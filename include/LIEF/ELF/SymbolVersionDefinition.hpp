@@ -79,11 +79,11 @@ class LIEF_API SymbolVersionDefinition : public Object {
   }
 
   /// SymbolVersionAux entries
-  it_version_aux symbols_aux() {
+  it_version_aux symbols_aux() LIEF_LIFETIMEBOUND {
     return symbol_version_aux_;
   }
 
-  it_const_version_aux symbols_aux() const {
+  it_const_version_aux symbols_aux() const LIEF_LIFETIMEBOUND {
     return symbol_version_aux_;
   }
 

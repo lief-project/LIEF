@@ -53,12 +53,12 @@ class LIEF_API File : public Object {
   File(const File& copy) = delete;
 
   /// VDEX Header
-  const Header& header() const;
-  Header& header();
+  const Header& header() const LIEF_LIFETIMEBOUND;
+  Header& header() LIEF_LIFETIMEBOUND;
 
   /// Iterator over LIEF::DEX::Files registered
-  it_dex_files dex_files();
-  it_const_dex_files dex_files() const;
+  it_dex_files dex_files() LIEF_LIFETIMEBOUND;
+  it_const_dex_files dex_files() const LIEF_LIFETIMEBOUND;
 
   dex2dex_info_t dex2dex_info() const;
 

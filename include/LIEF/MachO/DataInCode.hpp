@@ -83,11 +83,11 @@ class LIEF_API DataInCode : public LoadCommand {
   }
 
   /// Iterator over the DataCodeEntry
-  it_const_entries entries() const {
+  it_const_entries entries() const LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
-  it_entries entries() {
+  it_entries entries() LIEF_LIFETIMEBOUND {
     return entries_;
   }
 

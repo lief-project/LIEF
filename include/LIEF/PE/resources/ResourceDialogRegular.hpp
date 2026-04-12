@@ -111,11 +111,11 @@ class LIEF_API ResourceDialogRegular : public ResourceDialog {
   }
 
   /// Iterator over the different control items
-  it_items items() {
+  it_items items() LIEF_LIFETIMEBOUND {
     return items_;
   }
 
-  it_const_items items() const {
+  it_const_items items() const LIEF_LIFETIMEBOUND {
     return items_;
   }
 

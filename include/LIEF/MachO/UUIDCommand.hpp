@@ -47,7 +47,7 @@ class LIEF_API UUIDCommand : public LoadCommand {
   ~UUIDCommand() override = default;
 
   /// The UUID as a 16-bytes array
-  const uuid_t& uuid() const {
+  const uuid_t& uuid() const LIEF_LIFETIMEBOUND {
     return uuid_;
   }
   void uuid(const uuid_t& uuid) {

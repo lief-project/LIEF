@@ -17,6 +17,8 @@
 #ifndef LIEF_SYMBOL_VISIBILITY_H
 #define LIEF_SYMBOL_VISIBILITY_H
 
+#include "LIEF/compiler_attributes.hpp"
+
 /* Thanks to
  * https://github.com/aguinet/dragonffi/blob/40f3fecb9530a2ef840f63882c5284ea5e8dc9e8/include/dffi/exports.h
  */

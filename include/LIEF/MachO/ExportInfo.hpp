@@ -111,28 +111,28 @@ class LIEF_API ExportInfo : public Object {
   }
 
   /// MachO::Symbol associated with this export or a nullptr if no symbol
-  const Symbol* symbol() const {
+  const Symbol* symbol() const LIEF_LIFETIMEBOUND {
     return symbol_;
   }
-  Symbol* symbol() {
+  Symbol* symbol() LIEF_LIFETIMEBOUND {
     return symbol_;
   }
 
   /// If the export is a ExportInfo::FLAGS::REEXPORT,
   /// this returns the (optional) MachO::Symbol
-  Symbol* alias() {
+  Symbol* alias() LIEF_LIFETIMEBOUND {
     return alias_;
   }
-  const Symbol* alias() const {
+  const Symbol* alias() const LIEF_LIFETIMEBOUND {
     return alias_;
   }
 
   /// If the export is a ExportInfo::FLAGS::REEXPORT,
   /// this returns the (optional) library (MachO::DylibCommand)
-  DylibCommand* alias_library() {
+  DylibCommand* alias_library() LIEF_LIFETIMEBOUND {
     return alias_location_;
   }
-  const DylibCommand* alias_library() const {
+  const DylibCommand* alias_library() const LIEF_LIFETIMEBOUND {
     return alias_location_;
   }
 

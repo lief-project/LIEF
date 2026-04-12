@@ -39,8 +39,8 @@ class LIEF_API Prototype : public Object {
   Prototype(const Prototype& other);
 
   /// Type returned or a nullptr if not resolved
-  const Type* return_type() const;
-  Type* return_type();
+  const Type* return_type() const LIEF_LIFETIMEBOUND;
+  Type* return_type() LIEF_LIFETIMEBOUND;
 
   /// Types of the parameters
   it_const_params parameters_type() const;

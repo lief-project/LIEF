@@ -57,20 +57,20 @@ class LIEF_API MsCounterSign : public Attribute {
   }
 
   /// Iterator over the LIEF::PE::x509 certificates of this counter signature
-  it_const_certificates certificates() const {
+  it_const_certificates certificates() const LIEF_LIFETIMEBOUND {
     return certificates_;
   }
 
-  it_certificates certificates() {
+  it_certificates certificates() LIEF_LIFETIMEBOUND {
     return certificates_;
   }
 
   /// Signer iterator (same as LIEF::PE::SignerInfo)
-  it_const_signers signers() const {
+  it_const_signers signers() const LIEF_LIFETIMEBOUND {
     return signers_;
   }
 
-  it_signers signers() {
+  it_signers signers() LIEF_LIFETIMEBOUND {
     return signers_;
   }
 

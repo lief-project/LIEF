@@ -49,16 +49,16 @@ class LIEF_API Method : public Object {
   std::string name() const;
 
   /// OAT Class associated with this Method
-  const Class* oat_class() const;
-  Class* oat_class();
+  const Class* oat_class() const LIEF_LIFETIMEBOUND;
+  Class* oat_class() LIEF_LIFETIMEBOUND;
 
   /// Check if a LIEF::DEX::Method is associated with
   /// this Method
   bool has_dex_method() const;
 
   /// LIEF::DEX::Method associated (if any)
-  const DEX::Method* dex_method() const;
-  DEX::Method* dex_method();
+  const DEX::Method* dex_method() const LIEF_LIFETIMEBOUND;
+  DEX::Method* dex_method() LIEF_LIFETIMEBOUND;
 
   /// True if the optimization is DEX
   bool is_dex2dex_optimized() const;

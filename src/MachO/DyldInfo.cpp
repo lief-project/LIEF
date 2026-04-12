@@ -2227,8 +2227,8 @@ DyldInfo& DyldInfo::update_export_trie(vector_iostream& stream) {
 }
 
 
-void DyldInfo::add(std::unique_ptr<ExportInfo> info) {
-  export_info_.push_back(std::move(info));
+ExportInfo* DyldInfo::add(std::unique_ptr<ExportInfo> info) {
+  return export_info_.emplace_back(std::move(info)).get();
 }
 
 std::ostream& DyldInfo::print(std::ostream& os) const {

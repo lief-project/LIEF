@@ -47,7 +47,7 @@ class LIEF_API String {
   ~String() = default;
 
   /// The actual string
-  const std::string& str() const {
+  const std::string& str() const LIEF_LIFETIMEBOUND {
     return str_;
   }
 
@@ -57,12 +57,12 @@ class LIEF_API String {
     return offset_;
   }
 
-  String& str(std::string str) {
+  String& str(std::string str) LIEF_LIFETIMEBOUND {
     str_ = std::move(str);
     return *this;
   }
 
-  String& offset(uint32_t value) {
+  String& offset(uint32_t value) LIEF_LIFETIMEBOUND {
     offset_ = value;
     return *this;
   }

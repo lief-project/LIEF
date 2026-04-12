@@ -74,11 +74,11 @@ class LIEF_API Pogo : public Debug {
   }
 
   /// An iterator over the different POGO elements
-  it_entries entries() {
+  it_entries entries() LIEF_LIFETIMEBOUND {
     return entries_;
   }
 
-  it_const_entries entries() const {
+  it_const_entries entries() const LIEF_LIFETIMEBOUND {
     return entries_;
   }
 

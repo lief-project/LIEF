@@ -68,11 +68,11 @@ class LIEF_API FunctionStarts : public LoadCommand {
   /// table.
   ///
   /// @warning The address is relative to the ``__TEXT`` segment
-  const std::vector<uint64_t>& functions() const {
+  const std::vector<uint64_t>& functions() const LIEF_LIFETIMEBOUND {
     return functions_;
   }
 
-  std::vector<uint64_t>& functions() {
+  std::vector<uint64_t>& functions() LIEF_LIFETIMEBOUND {
     return functions_;
   }
 

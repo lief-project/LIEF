@@ -165,7 +165,7 @@ class LIEF_API BinaryStream {
     pos_ = pos;
   }
 
-  const BinaryStream& increment_pos(size_t value) const {
+  const BinaryStream& increment_pos(size_t value) const LIEF_LIFETIMEBOUND {
     pos_ += value;
     return *this;
   }

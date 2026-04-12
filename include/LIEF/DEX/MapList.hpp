@@ -56,10 +56,10 @@ class LIEF_API MapList : public Object {
   bool has(MapItem::TYPES type) const;
 
   /// Return the LIEF::DEX::MapItem associated with the given type
-  const MapItem& get(MapItem::TYPES type) const;
+  const MapItem& get(MapItem::TYPES type) const LIEF_LIFETIMEBOUND;
 
   /// Return the LIEF::DEX::MapItem associated with the given type
-  MapItem& get(MapItem::TYPES type);
+  MapItem& get(MapItem::TYPES type) LIEF_LIFETIMEBOUND;
 
   /// Return the LIEF::DEX::MapItem associated with the given type
   const MapItem& operator[](MapItem::TYPES type) const;

@@ -88,8 +88,8 @@ class LIEF_API Type : public Object {
   size_t dim() const;
 
   /// In the case of a TYPES::ARRAY, return the array's type
-  const Type& underlying_array_type() const;
-  Type& underlying_array_type();
+  const Type& underlying_array_type() const LIEF_LIFETIMEBOUND;
+  Type& underlying_array_type() LIEF_LIFETIMEBOUND;
 
   void accept(Visitor& visitor) const override;
 

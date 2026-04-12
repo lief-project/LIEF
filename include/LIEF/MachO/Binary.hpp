@@ -223,39 +223,39 @@ class LIEF_API Binary : public LIEF::Binary {
   Binary& operator=(const Binary&) = delete;
 
   /// Return a reference to the MachO::Header
-  Header& header() {
+  Header& header() LIEF_LIFETIMEBOUND {
     return header_;
   }
 
-  const Header& header() const {
+  const Header& header() const LIEF_LIFETIMEBOUND {
     return header_;
   }
 
   /// Return an iterator over the MachO LoadCommand present
   /// in the binary
-  it_commands commands() {
+  it_commands commands() LIEF_LIFETIMEBOUND {
     return commands_;
   }
 
-  it_const_commands commands() const {
+  it_const_commands commands() const LIEF_LIFETIMEBOUND {
     return commands_;
   }
 
   /// Return an iterator over the MachO::Binary associated
   /// with the LoadCommand::TYPE::FILESET_ENTRY commands
-  it_fileset_binaries filesets() {
+  it_fileset_binaries filesets() LIEF_LIFETIMEBOUND {
     return filesets_;
   }
 
-  it_const_fileset_binaries filesets() const {
+  it_const_fileset_binaries filesets() const LIEF_LIFETIMEBOUND {
     return filesets_;
   }
 
   /// Return binary's @link MachO::Symbol symbols @endlink
-  it_symbols symbols() {
+  it_symbols symbols() LIEF_LIFETIMEBOUND {
     return symbols_;
   }
-  it_const_symbols symbols() const {
+  it_const_symbols symbols() const LIEF_LIFETIMEBOUND {
     return symbols_;
   }
 
@@ -266,8 +266,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return Symbol from the given name. If the symbol does not
   /// exists, it returns a null pointer
-  const Symbol* get_symbol(const std::string& name) const;
-  Symbol* get_symbol(const std::string& name) {
+  const Symbol* get_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
+  Symbol* get_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
   }
 
@@ -275,12 +275,12 @@ class LIEF_API Binary : public LIEF::Binary {
   static bool is_exported(const Symbol& symbol);
 
   /// Return binary's exported symbols (iterator over LIEF::MachO::Symbol)
-  it_exported_symbols exported_symbols() {
+  it_exported_symbols exported_symbols() LIEF_LIFETIMEBOUND {
     return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
               return is_exported(*symbol);
             }};
   }
-  it_const_exported_symbols exported_symbols() const {
+  it_const_exported_symbols exported_symbols() const LIEF_LIFETIMEBOUND {
     return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
               return is_exported(*symbol);
             }};
@@ -290,46 +290,46 @@ class LIEF_API Binary : public LIEF::Binary {
   static bool is_imported(const Symbol& symbol);
 
   /// Return binary's imported symbols (iterator over LIEF::MachO::Symbol)
-  it_imported_symbols imported_symbols() {
+  it_imported_symbols imported_symbols() LIEF_LIFETIMEBOUND {
     return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
               return is_imported(*symbol);
             }};
   }
 
-  it_const_imported_symbols imported_symbols() const {
+  it_const_imported_symbols imported_symbols() const LIEF_LIFETIMEBOUND {
     return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
               return is_imported(*symbol);
             }};
   }
 
   /// Return binary imported libraries (MachO::DylibCommand)
-  it_libraries libraries() {
+  it_libraries libraries() LIEF_LIFETIMEBOUND {
     return libraries_;
   }
 
-  it_const_libraries libraries() const {
+  it_const_libraries libraries() const LIEF_LIFETIMEBOUND {
     return libraries_;
   }
 
   /// Return an iterator over the SegmentCommand
-  it_segments segments() {
+  it_segments segments() LIEF_LIFETIMEBOUND {
     return segments_;
   }
-  it_const_segments segments() const {
+  it_const_segments segments() const LIEF_LIFETIMEBOUND {
     return segments_;
   }
 
   /// Return an iterator over the MachO::Section
-  it_sections sections() {
+  it_sections sections() LIEF_LIFETIMEBOUND {
     return sections_;
   }
-  it_const_sections sections() const {
+  it_const_sections sections() const LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
   /// Return an iterator over the MachO::Relocation
-  it_relocations relocations();
-  it_const_relocations relocations() const;
+  it_relocations relocations() LIEF_LIFETIMEBOUND;
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND;
 
   /// Reconstruct the binary object and write the result in the given `filename`
   ///
@@ -365,40 +365,41 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the LoadCommand associated with the given LoadCommand::TYPE
   /// or a nullptr if the command can't be found.
-  const LoadCommand* get(LoadCommand::TYPE type) const;
-  LoadCommand* get(LoadCommand::TYPE type) {
+  const LoadCommand* get(LoadCommand::TYPE type) const LIEF_LIFETIMEBOUND;
+  LoadCommand* get(LoadCommand::TYPE type) LIEF_LIFETIMEBOUND {
     return const_cast<LoadCommand*>(static_cast<const Binary*>(this)->get(type));
   }
 
-  LoadCommand* add(std::unique_ptr<LoadCommand> command);
+  LoadCommand* add(std::unique_ptr<LoadCommand> command) LIEF_LIFETIMEBOUND;
 
   /// Insert a new LoadCommand
-  LoadCommand* add(const LoadCommand& command) {
+  LoadCommand* add(const LoadCommand& command) LIEF_LIFETIMEBOUND {
     return add(command.clone());
   }
 
   /// Insert a new LoadCommand at the specified `index`
-  LoadCommand* add(const LoadCommand& command, size_t index);
+  LoadCommand* add(const LoadCommand& command, size_t index) LIEF_LIFETIMEBOUND;
 
   /// Insert the given DylibCommand
-  LoadCommand* add(const DylibCommand& library);
+  LoadCommand* add(const DylibCommand& library) LIEF_LIFETIMEBOUND;
 
   /// Add a new LC_SEGMENT command from the given SegmentCommand
-  LoadCommand* add(const SegmentCommand& segment);
+  LoadCommand* add(const SegmentCommand& segment) LIEF_LIFETIMEBOUND;
 
   /// Insert a new shared library through a `LC_LOAD_DYLIB` command
-  LoadCommand* add_library(const std::string& name);
+  LoadCommand* add_library(const std::string& name) LIEF_LIFETIMEBOUND;
 
   /// Add a new MachO::Section in the __TEXT segment
-  Section* add_section(const Section& section);
+  Section* add_section(const Section& section) LIEF_LIFETIMEBOUND;
 
   /// Try to find the library with the given library name.
   ///
   /// This function tries to match the fullpath of the DylibCommand or the
   /// library name suffix.
-  const DylibCommand* find_library(const std::string& name) const;
+  const DylibCommand*
+      find_library(const std::string& name) const LIEF_LIFETIMEBOUND;
 
-  DylibCommand* find_library(const std::string& name) {
+  DylibCommand* find_library(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<DylibCommand*>(
         static_cast<const Binary*>(this)->find_library(name)
     );
@@ -408,7 +409,8 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// @warning This method may corrupt the file if the segment is not the first one
   ///          nor the last one
-  Section* add_section(const SegmentCommand& segment, const Section& section);
+  Section* add_section(const SegmentCommand& segment,
+                       const Section& section) LIEF_LIFETIMEBOUND;
 
   /// Remove the section with the name provided in the first parameter.
   ///
@@ -474,7 +476,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the section from the given name of a nullptr
   /// if the section can't be found.
-  Section* get_section(const std::string& name) {
+  Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->get_section(name)
     );
@@ -482,19 +484,20 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the section from the given name or a nullptr
   /// if the section can't be found
-  const Section* get_section(const std::string& name) const;
+  const Section* get_section(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Return the section from the segment with the name
   /// given in the first parameter and with the section's name provided in the
   /// second parameter. If the section cannot be found, it returns a nullptr
-  Section* get_section(const std::string& segname, const std::string& secname) {
+  Section* get_section(const std::string& segname,
+                       const std::string& secname) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->get_section(segname, secname)
     );
   }
 
   const Section* get_section(const std::string& segname,
-                             const std::string& secname) const;
+                             const std::string& secname) const LIEF_LIFETIMEBOUND;
 
   /// Check if a segment with the given name exists
   bool has_segment(const std::string& name) const {
@@ -502,10 +505,11 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the segment from the given name
-  const SegmentCommand* get_segment(const std::string& name) const;
+  const SegmentCommand*
+      get_segment(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Return the segment from the given name
-  SegmentCommand* get_segment(const std::string& name) {
+  SegmentCommand* get_segment(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<SegmentCommand*>(
         static_cast<const Binary*>(this)->get_segment(name)
     );
@@ -531,23 +535,26 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the MachO::Section that encompasses the provided offset.
   /// If a section can't be found, it returns a null pointer (`nullptr`)
-  Section* section_from_offset(uint64_t offset) {
+  Section* section_from_offset(uint64_t offset) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->section_from_offset(offset)
     );
   }
-  const Section* section_from_offset(uint64_t offset) const;
+  const Section* section_from_offset(uint64_t offset) const LIEF_LIFETIMEBOUND;
 
   /// Return the MachO::Section that encompasses the provided virtual address.
   /// If a section can't be found, it returns a null pointer (`nullptr`)
-  Section* section_from_virtual_address(uint64_t virtual_address) {
+  Section*
+      section_from_virtual_address(uint64_t virtual_address) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->section_from_virtual_address(
             virtual_address
         )
     );
   }
-  const Section* section_from_virtual_address(uint64_t virtual_address) const;
+  const Section* section_from_virtual_address(
+      uint64_t virtual_address
+  ) const LIEF_LIFETIMEBOUND;
 
   /// Convert a virtual address to an offset in the file
   result<uint64_t> virtual_address_to_offset(uint64_t virtual_address) const;
@@ -563,12 +570,13 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return the binary's SegmentCommand that encompasses the provided offset
   ///
   /// If a SegmentCommand can't be found it returns a null pointer (`nullptr`).
-  SegmentCommand* segment_from_offset(uint64_t offset) {
+  SegmentCommand* segment_from_offset(uint64_t offset) LIEF_LIFETIMEBOUND {
     return const_cast<SegmentCommand*>(
         static_cast<const Binary*>(this)->segment_from_offset(offset)
     );
   }
-  const SegmentCommand* segment_from_offset(uint64_t offset) const;
+  const SegmentCommand*
+      segment_from_offset(uint64_t offset) const LIEF_LIFETIMEBOUND;
 
   /// Return the index of the given SegmentCommand
   size_t segment_index(const SegmentCommand& segment) const;
@@ -580,15 +588,17 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the binary's SegmentCommand which encompasses the given virtual
   /// address or a nullptr if not found.
-  SegmentCommand* segment_from_virtual_address(uint64_t virtual_address) {
+  SegmentCommand*
+      segment_from_virtual_address(uint64_t virtual_address) LIEF_LIFETIMEBOUND {
     return const_cast<SegmentCommand*>(
         static_cast<const Binary*>(this)->segment_from_virtual_address(
             virtual_address
         )
     );
   }
-  const SegmentCommand*
-      segment_from_virtual_address(uint64_t virtual_address) const;
+  const SegmentCommand* segment_from_virtual_address(
+      uint64_t virtual_address
+  ) const LIEF_LIFETIMEBOUND;
 
   /// Return the range of virtual addresses
   range_t va_ranges() const;
@@ -675,8 +685,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::UUIDCommand if present, a nullptr otherwise.
-  UUIDCommand* uuid();
-  const UUIDCommand* uuid() const;
+  UUIDCommand* uuid() LIEF_LIFETIMEBOUND;
+  const UUIDCommand* uuid() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::MainCommand command.
   bool has_main_command() const {
@@ -684,8 +694,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::MainCommand if present, a nullptr otherwise.
-  MainCommand* main_command();
-  const MainCommand* main_command() const;
+  MainCommand* main_command() LIEF_LIFETIMEBOUND;
+  const MainCommand* main_command() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::DylinkerCommand.
   bool has_dylinker() const {
@@ -693,8 +703,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::DylinkerCommand if present, a nullptr otherwise.
-  DylinkerCommand* dylinker();
-  const DylinkerCommand* dylinker() const;
+  DylinkerCommand* dylinker() LIEF_LIFETIMEBOUND;
+  const DylinkerCommand* dylinker() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::DyldInfo command.
   bool has_dyld_info() const {
@@ -702,8 +712,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::Dyld command if present, a nullptr otherwise.
-  DyldInfo* dyld_info();
-  const DyldInfo* dyld_info() const;
+  DyldInfo* dyld_info() LIEF_LIFETIMEBOUND;
+  const DyldInfo* dyld_info() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::FunctionStarts command.
   bool has_function_starts() const {
@@ -711,8 +721,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::FunctionStarts command if present, a nullptr otherwise.
-  FunctionStarts* function_starts();
-  const FunctionStarts* function_starts() const;
+  FunctionStarts* function_starts() LIEF_LIFETIMEBOUND;
+  const FunctionStarts* function_starts() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::SourceVersion command.
   bool has_source_version() const {
@@ -720,8 +730,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::SourceVersion command if present, a nullptr otherwise.
-  SourceVersion* source_version();
-  const SourceVersion* source_version() const;
+  SourceVersion* source_version() LIEF_LIFETIMEBOUND;
+  const SourceVersion* source_version() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::VersionMin command.
   bool has_version_min() const {
@@ -729,8 +739,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::VersionMin command if present, a nullptr otherwise.
-  VersionMin* version_min();
-  const VersionMin* version_min() const;
+  VersionMin* version_min() LIEF_LIFETIMEBOUND;
+  const VersionMin* version_min() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::ThreadCommand command.
   bool has_thread_command() const {
@@ -738,8 +748,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::ThreadCommand command if present, a nullptr otherwise.
-  ThreadCommand* thread_command();
-  const ThreadCommand* thread_command() const;
+  ThreadCommand* thread_command() LIEF_LIFETIMEBOUND;
+  const ThreadCommand* thread_command() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::Routine command.
   bool has_routine_command() const {
@@ -747,8 +757,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::Routine command if present, a nullptr otherwise.
-  Routine* routine_command();
-  const Routine* routine_command() const;
+  Routine* routine_command() LIEF_LIFETIMEBOUND;
+  const Routine* routine_command() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::RPathCommand command.
   bool has_rpath() const {
@@ -756,12 +766,12 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::RPathCommand command if present, a nullptr otherwise.
-  RPathCommand* rpath();
-  const RPathCommand* rpath() const;
+  RPathCommand* rpath() LIEF_LIFETIMEBOUND;
+  const RPathCommand* rpath() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over **all** the MachO::RPathCommand commands.
-  it_rpaths rpaths();
-  it_const_rpaths rpaths() const;
+  it_rpaths rpaths() LIEF_LIFETIMEBOUND;
+  it_const_rpaths rpaths() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::SymbolCommand command.
   bool has_symbol_command() const {
@@ -769,8 +779,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::SymbolCommand if present, a nullptr otherwise.
-  SymbolCommand* symbol_command();
-  const SymbolCommand* symbol_command() const;
+  SymbolCommand* symbol_command() LIEF_LIFETIMEBOUND;
+  const SymbolCommand* symbol_command() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::DynamicSymbolCommand command.
   bool has_dynamic_symbol_command() const {
@@ -778,8 +788,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::SymbolCommand if present, a nullptr otherwise.
-  DynamicSymbolCommand* dynamic_symbol_command();
-  const DynamicSymbolCommand* dynamic_symbol_command() const;
+  DynamicSymbolCommand* dynamic_symbol_command() LIEF_LIFETIMEBOUND;
+  const DynamicSymbolCommand* dynamic_symbol_command() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary is signed with `LC_CODE_SIGNATURE` command
   bool has_code_signature() const {
@@ -787,12 +797,12 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::CodeSignature if present, a nullptr otherwise.
-  CodeSignature* code_signature() {
+  CodeSignature* code_signature() LIEF_LIFETIMEBOUND {
     return const_cast<CodeSignature*>(
         static_cast<const Binary*>(this)->code_signature()
     );
   }
-  const CodeSignature* code_signature() const;
+  const CodeSignature* code_signature() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary is signed with the command `DYLIB_CODE_SIGN_DRS`
   bool has_code_signature_dir() const {
@@ -800,12 +810,12 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::CodeSignatureDir if present, a nullptr otherwise.
-  CodeSignatureDir* code_signature_dir() {
+  CodeSignatureDir* code_signature_dir() LIEF_LIFETIMEBOUND {
     return const_cast<CodeSignatureDir*>(
         static_cast<const Binary*>(this)->code_signature_dir()
     );
   }
-  const CodeSignatureDir* code_signature_dir() const;
+  const CodeSignatureDir* code_signature_dir() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a MachO::DataInCode command.
   bool has_data_in_code() const {
@@ -813,8 +823,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::DataInCode if present, a nullptr otherwise.
-  DataInCode* data_in_code();
-  const DataInCode* data_in_code() const;
+  DataInCode* data_in_code() LIEF_LIFETIMEBOUND;
+  const DataInCode* data_in_code() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has segment split info.
   bool has_segment_split_info() const {
@@ -822,8 +832,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::SegmentSplitInfo if present, a nullptr otherwise.
-  SegmentSplitInfo* segment_split_info();
-  const SegmentSplitInfo* segment_split_info() const;
+  SegmentSplitInfo* segment_split_info() LIEF_LIFETIMEBOUND;
+  const SegmentSplitInfo* segment_split_info() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has a sub framework command.
   bool has_sub_framework() const {
@@ -836,16 +846,16 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::DyldEnvironment if present, a nullptr otherwise.
-  EncryptionInfo* encryption_info();
-  const EncryptionInfo* encryption_info() const;
+  EncryptionInfo* encryption_info() LIEF_LIFETIMEBOUND;
+  const EncryptionInfo* encryption_info() const LIEF_LIFETIMEBOUND;
 
   /// Return the MachO::SubFramework if present, a nullptr otherwise.
-  SubFramework* sub_framework();
-  const SubFramework* sub_framework() const;
+  SubFramework* sub_framework() LIEF_LIFETIMEBOUND;
+  const SubFramework* sub_framework() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over **all** the MachO::SubClient commands.
-  it_sub_clients subclients();
-  it_const_sub_clients subclients() const;
+  it_sub_clients subclients() LIEF_LIFETIMEBOUND;
+  it_const_sub_clients subclients() const LIEF_LIFETIMEBOUND;
 
   bool has_subclients() const;
 
@@ -855,8 +865,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::DyldEnvironment if present, a nullptr otherwise
-  DyldEnvironment* dyld_environment();
-  const DyldEnvironment* dyld_environment() const;
+  DyldEnvironment* dyld_environment() LIEF_LIFETIMEBOUND;
+  const DyldEnvironment* dyld_environment() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has the BuildVersion command.
   bool has_build_version() const {
@@ -864,8 +874,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::BuildVersion if present, a nullptr otherwise.
-  BuildVersion* build_version();
-  const BuildVersion* build_version() const;
+  BuildVersion* build_version() LIEF_LIFETIMEBOUND;
+  const BuildVersion* build_version() const LIEF_LIFETIMEBOUND;
 
   /// Return the platform for which this Mach-O has been compiled for
   BuildVersion::PLATFORMS platform() const {
@@ -894,8 +904,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
-  DyldChainedFixups* dyld_chained_fixups();
-  const DyldChainedFixups* dyld_chained_fixups() const;
+  DyldChainedFixups* dyld_chained_fixups() LIEF_LIFETIMEBOUND;
+  const DyldChainedFixups* dyld_chained_fixups() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
   bool has_dyld_exports_trie() const {
@@ -903,8 +913,8 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
-  DyldExportsTrie* dyld_exports_trie();
-  const DyldExportsTrie* dyld_exports_trie() const;
+  DyldExportsTrie* dyld_exports_trie() LIEF_LIFETIMEBOUND;
+  const DyldExportsTrie* dyld_exports_trie() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has the command LC_TWO_LEVEL_HINTS.
   bool has_two_level_hints() const {
@@ -912,12 +922,12 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
-  TwoLevelHints* two_level_hints() {
+  TwoLevelHints* two_level_hints() LIEF_LIFETIMEBOUND {
     return const_cast<TwoLevelHints*>(
         static_cast<const Binary*>(this)->two_level_hints()
     );
   }
-  const TwoLevelHints* two_level_hints() const;
+  const TwoLevelHints* two_level_hints() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has the command LC_LINKER_OPTIMIZATION_HINT.
   bool has_linker_opt_hint() const {
@@ -925,18 +935,20 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::LinkerOptHint if present, a nullptr otherwise.
-  LinkerOptHint* linker_opt_hint() {
+  LinkerOptHint* linker_opt_hint() LIEF_LIFETIMEBOUND {
     return const_cast<LinkerOptHint*>(
         static_cast<const Binary*>(this)->linker_opt_hint()
     );
   }
-  const LinkerOptHint* linker_opt_hint() const;
+  const LinkerOptHint* linker_opt_hint() const LIEF_LIFETIMEBOUND;
 
   /// Add a symbol in the export trie of the current binary
-  ExportInfo* add_exported_function(uint64_t address, const std::string& name);
+  ExportInfo* add_exported_function(uint64_t address,
+                                    const std::string& name) LIEF_LIFETIMEBOUND;
 
   /// Add a symbol in LC_SYMTAB command of the current binary
-  Symbol* add_local_symbol(uint64_t address, const std::string& name);
+  Symbol* add_local_symbol(uint64_t address,
+                           const std::string& name) LIEF_LIFETIMEBOUND;
 
   /// Return Objective-C metadata if present
   std::unique_ptr<objc::Metadata> objc_metadata() const;
@@ -956,15 +968,15 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the MachO::AtomInfo if present, a nullptr otherwise.
-  AtomInfo* atom_info() {
+  AtomInfo* atom_info() LIEF_LIFETIMEBOUND {
     return const_cast<AtomInfo*>(static_cast<const Binary*>(this)->atom_info());
   }
-  const AtomInfo* atom_info() const;
+  const AtomInfo* atom_info() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over the different `LC_NOTE` commands
-  it_notes notes();
+  it_notes notes() LIEF_LIFETIMEBOUND;
 
-  it_const_notes notes() const;
+  it_const_notes notes() const LIEF_LIFETIMEBOUND;
 
   /// True if the binary contains `LC_NOTE` command(s)
   bool has_notes() const {
@@ -977,13 +989,13 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the FunctionVariants if present, a nullptr otherwise.
-  FunctionVariants* function_variants() {
+  FunctionVariants* function_variants() LIEF_LIFETIMEBOUND {
     return const_cast<FunctionVariants*>(
         static_cast<const Binary*>(this)->function_variants()
     );
   }
 
-  const FunctionVariants* function_variants() const;
+  const FunctionVariants* function_variants() const LIEF_LIFETIMEBOUND;
 
   /// `true` if the binary has the command `LC_FUNCTION_VARIANT_FIXUPS`.
   bool has_function_variant_fixups() const {
@@ -1047,7 +1059,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Add a symbol to this binary
-  Symbol& add(const Symbol& symbol);
+  Symbol& add(const Symbol& symbol) LIEF_LIFETIMEBOUND;
 
   ~Binary() override;
 

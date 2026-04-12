@@ -70,11 +70,11 @@ class LIEF_API FilesetCommand : public LoadCommand {
 
   /// Return a pointer on the LIEF::MachO::Binary associated
   /// with this entry
-  const Binary* binary() const {
+  const Binary* binary() const LIEF_LIFETIMEBOUND {
     return binary_;
   }
 
-  Binary* binary() {
+  Binary* binary() LIEF_LIFETIMEBOUND {
     return binary_;
   }
 

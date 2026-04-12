@@ -129,11 +129,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
   }
 
   /// Section associated with the symbol or a nullptr if it does not exist.
-  Section* section() {
+  Section* section() LIEF_LIFETIMEBOUND {
     return section_;
   }
 
-  const Section* section() const {
+  const Section* section() const LIEF_LIFETIMEBOUND {
     return section_;
   }
 
@@ -174,11 +174,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
 
   /// Return the SymbolVersion associated with this symbol.
   /// If there is no symbol version, return a nullptr
-  SymbolVersion* symbol_version() {
+  SymbolVersion* symbol_version() LIEF_LIFETIMEBOUND {
     return symbol_version_;
   }
 
-  const SymbolVersion* symbol_version() const {
+  const SymbolVersion* symbol_version() const LIEF_LIFETIMEBOUND {
     return symbol_version_;
   }
 

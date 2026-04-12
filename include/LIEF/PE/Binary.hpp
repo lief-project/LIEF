@@ -196,57 +196,58 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Find the section associated that encompasses the given offset.
   ///
   /// If no section can be found, return a nullptr
-  Section* section_from_offset(uint64_t offset) {
+  Section* section_from_offset(uint64_t offset) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->section_from_offset(offset)
     );
   }
-  const Section* section_from_offset(uint64_t offset) const;
+  const Section* section_from_offset(uint64_t offset) const LIEF_LIFETIMEBOUND;
 
   /// Find the section associated that encompasses the given RVA.
   ///
   /// If no section can be found, return a nullptr
-  Section* section_from_rva(uint64_t virtual_address) {
+  Section* section_from_rva(uint64_t virtual_address) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->section_from_rva(virtual_address)
     );
   }
-  const Section* section_from_rva(uint64_t virtual_address) const;
+  const Section*
+      section_from_rva(uint64_t virtual_address) const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the PE's Section
-  it_sections sections() {
+  it_sections sections() LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
-  it_const_sections sections() const {
+  it_const_sections sections() const LIEF_LIFETIMEBOUND {
     return sections_;
   }
 
   /// Return a reference to the PE::DosHeader object
-  DosHeader& dos_header() {
+  DosHeader& dos_header() LIEF_LIFETIMEBOUND {
     return dos_header_;
   }
 
-  const DosHeader& dos_header() const {
+  const DosHeader& dos_header() const LIEF_LIFETIMEBOUND {
     return dos_header_;
   }
 
   /// Return a reference to the PE::Header object
-  Header& header() {
+  Header& header() LIEF_LIFETIMEBOUND {
     return header_;
   }
 
-  const Header& header() const {
+  const Header& header() const LIEF_LIFETIMEBOUND {
     return header_;
   }
 
   /// Header that follows the header(). It is named optional from the COFF
   /// specfication but it is mandatory in a PE file.
-  OptionalHeader& optional_header() {
+  OptionalHeader& optional_header() LIEF_LIFETIMEBOUND {
     return optional_header_;
   }
 
-  const OptionalHeader& optional_header() const {
+  const OptionalHeader& optional_header() const LIEF_LIFETIMEBOUND {
     return optional_header_;
   }
 
@@ -265,16 +266,16 @@ class LIEF_API Binary : public LIEF::Binary {
   uint32_t sizeof_headers() const;
 
   /// Return a reference to the TLS object
-  TLS* tls() {
+  TLS* tls() LIEF_LIFETIMEBOUND {
     return tls_.get();
   }
 
-  const TLS* tls() const {
+  const TLS* tls() const LIEF_LIFETIMEBOUND {
     return tls_.get();
   }
 
   /// Set a TLS object in the current Binary
-  TLS& tls(const TLS& tls);
+  TLS& tls(const TLS& tls) LIEF_LIFETIMEBOUND;
 
   /// Check if the current binary has a TLS object
   bool has_tls() const {
@@ -342,11 +343,11 @@ class LIEF_API Binary : public LIEF::Binary {
   bool is_reproducible_build() const;
 
   /// Return an iterator over the Signature object(s) if the binary is signed
-  it_const_signatures signatures() const {
+  it_const_signatures signatures() const LIEF_LIFETIMEBOUND {
     return signatures_;
   }
 
-  it_signatures signatures() {
+  it_signatures signatures() LIEF_LIFETIMEBOUND {
     return signatures_;
   }
 
@@ -382,31 +383,31 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<uint8_t> authentihash(ALGORITHMS algo) const;
 
   /// Return the Export object
-  Export* get_export() {
+  Export* get_export() LIEF_LIFETIMEBOUND {
     return export_.get();
   }
 
-  const Export* get_export() const {
+  const Export* get_export() const LIEF_LIFETIMEBOUND {
     return export_.get();
   }
 
-  Export& set_export(const Export& export_table);
+  Export& set_export(const Export& export_table) LIEF_LIFETIMEBOUND;
 
   /// Return binary Symbols
-  it_symbols symbols() {
+  it_symbols symbols() LIEF_LIFETIMEBOUND {
     return symbols_;
   }
 
-  it_const_symbols symbols() const {
+  it_const_symbols symbols() const LIEF_LIFETIMEBOUND {
     return symbols_;
   }
 
   /// Iterator over the strings located in the COFF string table
-  it_const_strings_table coff_string_table() const {
+  it_const_strings_table coff_string_table() const LIEF_LIFETIMEBOUND {
     return strings_table_;
   }
 
-  it_strings_table coff_string_table() {
+  it_strings_table coff_string_table() LIEF_LIFETIMEBOUND {
     return strings_table_;
   }
 
@@ -414,7 +415,7 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// \warning This offset must include the first 4 bytes holding the size of
   ///          the table. Hence, the first string starts a the offset 4.
-  COFF::String* find_coff_string(uint32_t offset) {
+  COFF::String* find_coff_string(uint32_t offset) LIEF_LIFETIMEBOUND {
     auto it = std::find_if(strings_table_.begin(), strings_table_.end(),
                            [offset](const COFF::String& item) {
                              return offset == item.offset();
@@ -422,24 +423,25 @@ class LIEF_API Binary : public LIEF::Binary {
     return it == strings_table_.end() ? nullptr : &*it;
   }
 
-  const COFF::String* find_coff_string(uint32_t offset) const {
+  const COFF::String* find_coff_string(uint32_t offset) const LIEF_LIFETIMEBOUND {
     return const_cast<Binary*>(this)->find_coff_string(offset);
   }
 
   /// Return resources as a tree or a nullptr if there is no resources
-  ResourceNode* resources() {
+  ResourceNode* resources() LIEF_LIFETIMEBOUND {
     return resources_.get();
   }
 
-  const ResourceNode* resources() const {
+  const ResourceNode* resources() const LIEF_LIFETIMEBOUND {
     return resources_.get();
   }
 
   /// Change or set the current resource tree with the new one provided in
   /// parameter.
-  ResourceNode* set_resources(const ResourceNode& root);
+  ResourceNode* set_resources(const ResourceNode& root) LIEF_LIFETIMEBOUND;
 
-  ResourceNode* set_resources(std::unique_ptr<ResourceNode> root);
+  ResourceNode*
+      set_resources(std::unique_ptr<ResourceNode> root) LIEF_LIFETIMEBOUND;
 
   /// Return the ResourcesManager (class to manage resources more easily than the
   /// tree one)
@@ -449,12 +451,12 @@ class LIEF_API Binary : public LIEF::Binary {
   /// If the secion can't be found, return a nullptr
   ///
   /// @param[in] name Name of the Section
-  Section* get_section(const std::string& name) {
+  Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->get_section(name)
     );
   }
-  const Section* get_section(const std::string& name) const;
+  const Section* get_section(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Return the section associated with import table or a
   /// nullptr if the binary does not have an import table
@@ -478,39 +480,40 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove(const Section& section, bool clear = false);
 
   /// Add a section to the binary and return the section added.
-  Section* add_section(const Section& section);
+  Section* add_section(const Section& section) LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the PE's Relocation
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
   /// Add a new PE Relocation
-  Relocation& add_relocation(const Relocation& relocation);
+  Relocation& add_relocation(const Relocation& relocation) LIEF_LIFETIMEBOUND;
 
   /// Remove all the relocations
   void remove_all_relocations();
 
   /// Return an iterator over the DataDirectory present in the Binary
-  it_data_directories data_directories() {
+  it_data_directories data_directories() LIEF_LIFETIMEBOUND {
     return data_directories_;
   }
 
-  it_const_data_directories data_directories() const {
+  it_const_data_directories data_directories() const LIEF_LIFETIMEBOUND {
     return data_directories_;
   }
 
   /// Return the DataDirectory with the given type (or index)
-  DataDirectory* data_directory(DataDirectory::TYPES type) {
+  DataDirectory* data_directory(DataDirectory::TYPES type) LIEF_LIFETIMEBOUND {
     return const_cast<DataDirectory*>(
         static_cast<const Binary*>(this)->data_directory(type)
     );
   }
-  const DataDirectory* data_directory(DataDirectory::TYPES type) const;
+  const DataDirectory*
+      data_directory(DataDirectory::TYPES type) const LIEF_LIFETIMEBOUND;
 
   /// Check if the current binary has the given DataDirectory::TYPES
   bool has(DataDirectory::TYPES type) const {
@@ -518,16 +521,16 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return an iterator over the Debug entries
-  it_debug_entries debug() {
+  it_debug_entries debug() LIEF_LIFETIMEBOUND {
     return debug_;
   }
 
-  it_const_debug_entries debug() const {
+  it_const_debug_entries debug() const LIEF_LIFETIMEBOUND {
     return debug_;
   }
 
   /// Add a new debug entry
-  Debug* add_debug_info(const Debug& entry);
+  Debug* add_debug_info(const Debug& entry) LIEF_LIFETIMEBOUND;
 
   /// Remove a specific debug entry
   bool remove_debug(const Debug& entry);
@@ -536,24 +539,24 @@ class LIEF_API Binary : public LIEF::Binary {
   bool clear_debug();
 
   /// Return the CodeViewPDB object if present
-  const CodeViewPDB* codeview_pdb() const;
+  const CodeViewPDB* codeview_pdb() const LIEF_LIFETIMEBOUND;
 
   /// Retrun the LoadConfiguration object or a nullptr if the binary does not
   /// use the LoadConfiguration
-  const LoadConfiguration* load_configuration() const {
+  const LoadConfiguration* load_configuration() const LIEF_LIFETIMEBOUND {
     return loadconfig_.get();
   }
 
-  LoadConfiguration* load_configuration() {
+  LoadConfiguration* load_configuration() LIEF_LIFETIMEBOUND {
     return loadconfig_.get();
   }
 
   /// Return the overlay content
-  span<const uint8_t> overlay() const {
+  span<const uint8_t> overlay() const LIEF_LIFETIMEBOUND {
     return overlay_;
   }
 
-  span<uint8_t> overlay() {
+  span<uint8_t> overlay() LIEF_LIFETIMEBOUND {
     return overlay_;
   }
 
@@ -577,11 +580,11 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return a reference to the RichHeader object
-  RichHeader* rich_header() {
+  RichHeader* rich_header() LIEF_LIFETIMEBOUND {
     return rich_header_.get();
   }
 
-  const RichHeader* rich_header() const {
+  const RichHeader* rich_header() const LIEF_LIFETIMEBOUND {
     return rich_header_.get();
   }
 
@@ -594,24 +597,25 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return an iterator over the binary imports
-  it_imports imports() {
+  it_imports imports() LIEF_LIFETIMEBOUND {
     return imports_;
   }
 
-  it_const_imports imports() const {
+  it_const_imports imports() const LIEF_LIFETIMEBOUND {
     return imports_;
   }
 
   /// Return the Import matching the provided name (case sensitive)
   ///
   /// If the import can't be found, it returns a nullptr
-  Import* get_import(const std::string& import_name) {
+  Import* get_import(const std::string& import_name) LIEF_LIFETIMEBOUND {
     return const_cast<Import*>(
         static_cast<const Binary*>(this)->get_import(import_name)
     );
   }
 
-  const Import* get_import(const std::string& import_name) const;
+  const Import*
+      get_import(const std::string& import_name) const LIEF_LIFETIMEBOUND;
 
   /// `True` if the binary imports the given library name
   bool has_import(const std::string& import_name) const {
@@ -634,12 +638,14 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Returns the DelayImport matching the given name. If it can't be
   /// found, it returns a nullptr
-  DelayImport* get_delay_import(const std::string& import_name) {
+  DelayImport*
+      get_delay_import(const std::string& import_name) LIEF_LIFETIMEBOUND {
     return const_cast<DelayImport*>(
         static_cast<const Binary*>(this)->get_delay_import(import_name)
     );
   }
-  const DelayImport* get_delay_import(const std::string& import_name) const;
+  const DelayImport*
+      get_delay_import(const std::string& import_name) const LIEF_LIFETIMEBOUND;
 
 
   /// `True` if the binary delay-imports the given library name
@@ -651,7 +657,8 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// The second parameter `pos` defines where to insert the import.
   /// If negative (default), the import is appended to the end of the list.
-  Import& add_import(const std::string& name, int32_t pos = -1) {
+  Import& add_import(const std::string& name,
+                     int32_t pos = -1) LIEF_LIFETIMEBOUND {
     if (pos < 0) {
       imports_.push_back(std::unique_ptr<Import>(new Import(name)));
       return *imports_.back();
@@ -864,11 +871,11 @@ class LIEF_API Binary : public LIEF::Binary {
   /// \warning This function requires that the option
   /// LIEF::PE::ParserConfig::parse_exceptions was turned on (default is false)
   /// when parsing the binary
-  it_exceptions exceptions() {
+  it_exceptions exceptions() LIEF_LIFETIMEBOUND {
     return exceptions_;
   }
 
-  it_const_exceptions exceptions() const {
+  it_const_exceptions exceptions() const LIEF_LIFETIMEBOUND {
     return exceptions_;
   }
 
@@ -877,9 +884,9 @@ class LIEF_API Binary : public LIEF::Binary {
   /// \warning This function requires that the option
   /// LIEF::PE::ParserConfig::parse_exceptions was turned on (default is false)
   /// when parsing the binary
-  ExceptionInfo* find_exception_at(uint32_t rva);
+  ExceptionInfo* find_exception_at(uint32_t rva) LIEF_LIFETIMEBOUND;
 
-  const ExceptionInfo* find_exception_at(uint32_t rva) const {
+  const ExceptionInfo* find_exception_at(uint32_t rva) const LIEF_LIFETIMEBOUND {
     return const_cast<Binary*>(this)->find_exception_at(rva);
   }
 

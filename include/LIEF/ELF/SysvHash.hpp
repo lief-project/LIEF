@@ -62,12 +62,12 @@ class LIEF_API SysvHash : public Object {
   }
 
   /// Buckets values
-  const std::vector<uint32_t>& buckets() const {
+  const std::vector<uint32_t>& buckets() const LIEF_LIFETIMEBOUND {
     return buckets_;
   }
 
   /// Chains values
-  const std::vector<uint32_t>& chains() const {
+  const std::vector<uint32_t>& chains() const LIEF_LIFETIMEBOUND {
     return chains_;
   }
 

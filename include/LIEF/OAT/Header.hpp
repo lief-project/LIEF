@@ -100,16 +100,16 @@ class LIEF_API Header : public Object {
 
   uint32_t key_value_size() const;
 
-  it_key_values_t key_values();
-  it_const_key_values_t key_values() const;
+  it_key_values_t key_values() LIEF_LIFETIMEBOUND;
+  it_const_key_values_t key_values() const LIEF_LIFETIMEBOUND;
 
   keys_t keys() const;
   values_t values() const;
 
-  const std::string* get(HEADER_KEYS key) const;
-  std::string* get(HEADER_KEYS key);
+  const std::string* get(HEADER_KEYS key) const LIEF_LIFETIMEBOUND;
+  std::string* get(HEADER_KEYS key) LIEF_LIFETIMEBOUND;
 
-  Header& set(HEADER_KEYS key, const std::string& value);
+  Header& set(HEADER_KEYS key, const std::string& value) LIEF_LIFETIMEBOUND;
 
   const std::string* operator[](HEADER_KEYS key) const;
   std::string* operator[](HEADER_KEYS key);

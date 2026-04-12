@@ -116,11 +116,11 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
   }
 
   /// Bytes that contain the unwind codes.
-  span<const uint8_t> unwind_code() const {
+  span<const uint8_t> unwind_code() const LIEF_LIFETIMEBOUND {
     return unwind_code_;
   }
 
-  span<uint8_t> unwind_code() {
+  span<uint8_t> unwind_code() LIEF_LIFETIMEBOUND {
     return unwind_code_;
   }
 
@@ -142,11 +142,11 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
   }
 
   /// Iterator over the epilog scopes
-  it_epilog_scopes epilog_scopes() {
+  it_epilog_scopes epilog_scopes() LIEF_LIFETIMEBOUND {
     return epilog_scopes_;
   }
 
-  it_const_epilog_scopes epilog_scopes() const {
+  it_const_epilog_scopes epilog_scopes() const LIEF_LIFETIMEBOUND {
     return epilog_scopes_;
   }
 
@@ -185,12 +185,12 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
     return *this;
   }
 
-  UnpackedFunction& epilog_scopes(epilog_scopes_t scopes) {
+  UnpackedFunction& epilog_scopes(epilog_scopes_t scopes) LIEF_LIFETIMEBOUND {
     epilog_scopes_ = std::move(scopes);
     return *this;
   }
 
-  UnpackedFunction& unwind_code(std::vector<uint8_t> code) {
+  UnpackedFunction& unwind_code(std::vector<uint8_t> code) LIEF_LIFETIMEBOUND {
     unwind_code_ = std::move(code);
     return *this;
   }

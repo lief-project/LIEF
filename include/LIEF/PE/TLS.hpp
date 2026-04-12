@@ -67,7 +67,7 @@ class LIEF_API TLS : public Object {
   }
 
   /// Add a new TLS callback
-  TLS& add_callback(uint64_t addr) {
+  TLS& add_callback(uint64_t addr) LIEF_LIFETIMEBOUND {
     callbacks_.push_back(addr);
     return *this;
   }
@@ -123,11 +123,11 @@ class LIEF_API TLS : public Object {
 
   /// Return the DataDirectory associated with this object or a nullptr
   /// If it exists, its type should be DataDirectory::TYPES::TLS_TABLE
-  DataDirectory* directory() {
+  DataDirectory* directory() LIEF_LIFETIMEBOUND {
     return directory_;
   }
 
-  const DataDirectory* directory() const {
+  const DataDirectory* directory() const LIEF_LIFETIMEBOUND {
     return directory_;
   }
 
@@ -137,11 +137,11 @@ class LIEF_API TLS : public Object {
   }
 
   /// The section associated with the entry (or a nullptr)
-  Section* section() {
+  Section* section() LIEF_LIFETIMEBOUND {
     return section_;
   }
 
-  const Section* section() const {
+  const Section* section() const LIEF_LIFETIMEBOUND {
     return section_;
   }
 

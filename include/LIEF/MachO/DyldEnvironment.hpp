@@ -48,7 +48,7 @@ class LIEF_API DyldEnvironment : public LoadCommand {
   std::ostream& print(std::ostream& os) const override;
 
   /// The actual environment variable
-  const std::string& value() const {
+  const std::string& value() const LIEF_LIFETIMEBOUND {
     return value_;
   }
 

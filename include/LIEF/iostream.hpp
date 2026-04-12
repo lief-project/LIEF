@@ -47,12 +47,12 @@ class LIEF_API vector_iostream {
   vector_iostream(bool endian_swap) :
     endian_swap_(endian_swap) {}
 
-  vector_iostream& reserve(size_t size) {
+  vector_iostream& reserve(size_t size) LIEF_LIFETIMEBOUND {
     raw_->reserve(size);
     return *this;
   }
 
-  vector_iostream& increase_capacity(size_t size) {
+  vector_iostream& increase_capacity(size_t size) LIEF_LIFETIMEBOUND {
     raw_->reserve(raw_->size() + size);
     return *this;
   }
@@ -113,7 +113,7 @@ class LIEF_API vector_iostream {
     return *this;
   }
 
-  vector_iostream& align(size_t alignment, uint8_t fill = 0);
+  vector_iostream& align(size_t alignment, uint8_t fill = 0) LIEF_LIFETIMEBOUND;
 
   template<typename T>
   vector_iostream& write(const std::pair<T, T>& p) {
@@ -144,8 +144,8 @@ class LIEF_API vector_iostream {
     return opt ? write<T>(*opt) : *this;
   }
 
-  vector_iostream& write_uleb128(uint64_t value);
-  vector_iostream& write_sleb128(int64_t value);
+  vector_iostream& write_uleb128(uint64_t value) LIEF_LIFETIMEBOUND;
+  vector_iostream& write_sleb128(int64_t value) LIEF_LIFETIMEBOUND;
 
   vector_iostream& get(std::vector<uint8_t>& c) {
     c = *raw_;
@@ -174,11 +174,11 @@ class LIEF_API vector_iostream {
     return *this;
   }
 
-  vector_iostream& seek_end() {
+  vector_iostream& seek_end() LIEF_LIFETIMEBOUND {
     return seekp(raw_->size());
   }
 
-  vector_iostream& pad(size_t size, uint8_t value = 0) {
+  vector_iostream& pad(size_t size, uint8_t value = 0) LIEF_LIFETIMEBOUND {
     raw_->resize(raw_->size() + size, value);
     return *this;
   }

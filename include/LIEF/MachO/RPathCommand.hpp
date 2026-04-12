@@ -54,7 +54,7 @@ class LIEF_API RPathCommand : public LoadCommand {
   ~RPathCommand() override = default;
 
   /// The rpath value as a string
-  const std::string& path() const {
+  const std::string& path() const LIEF_LIFETIMEBOUND {
     return path_;
   }
 

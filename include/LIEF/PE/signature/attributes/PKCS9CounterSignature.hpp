@@ -56,7 +56,7 @@ class LIEF_API PKCS9CounterSignature : public Attribute {
   }
 
   /// SignerInfo as described in the RFC #2985
-  const SignerInfo& signer() const {
+  const SignerInfo& signer() const LIEF_LIFETIMEBOUND {
     return this->signer_;
   }
 

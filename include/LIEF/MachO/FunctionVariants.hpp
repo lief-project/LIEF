@@ -218,11 +218,11 @@ class LIEF_API FunctionVariants : public LoadCommand {
     }
 
     /// Iterator over the different RuntimeTableEntry entries
-    it_entries entries() {
+    it_entries entries() LIEF_LIFETIMEBOUND {
       return entries_;
     }
 
-    it_const_entries entries() const {
+    it_const_entries entries() const LIEF_LIFETIMEBOUND {
       return entries_;
     }
 
@@ -292,11 +292,11 @@ class LIEF_API FunctionVariants : public LoadCommand {
 
   /// Iterator over the different RuntimeTable entries located in the content
   /// of this `__LINKEDIT` command
-  it_runtime_table runtime_table() {
+  it_runtime_table runtime_table() LIEF_LIFETIMEBOUND {
     return runtime_table_;
   }
 
-  it_const_runtime_table runtime_table() const {
+  it_const_runtime_table runtime_table() const LIEF_LIFETIMEBOUND {
     return runtime_table_;
   }
 

@@ -73,25 +73,25 @@ class LIEF_API FunctionOverrideInfo {
     return rvas_;
   }
 
-  it_relocations relocations() {
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
-  it_const_relocations relocations() const {
+  it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
 
-  FunctionOverrideInfo& original_rva(uint32_t value) {
+  FunctionOverrideInfo& original_rva(uint32_t value) LIEF_LIFETIMEBOUND {
     original_rva_ = value;
     return *this;
   }
 
-  FunctionOverrideInfo& bdd_offset(uint32_t value) {
+  FunctionOverrideInfo& bdd_offset(uint32_t value) LIEF_LIFETIMEBOUND {
     bdd_offset_ = value;
     return *this;
   }
 
-  FunctionOverrideInfo& base_reloc_size(uint32_t value) {
+  FunctionOverrideInfo& base_reloc_size(uint32_t value) LIEF_LIFETIMEBOUND {
     base_relocsz_ = value;
     return *this;
   }

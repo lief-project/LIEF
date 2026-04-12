@@ -52,7 +52,7 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
   }
 
   /// Underlying Signature object
-  const Signature& sig() const {
+  const Signature& sig() const LIEF_LIFETIMEBOUND {
     return sig_;
   }
 

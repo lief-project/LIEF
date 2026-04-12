@@ -62,4 +62,14 @@
   #define LIEF_MAYBE_UNUSED
 #endif
 
+#if defined(__has_cpp_attribute)
+  #if __has_cpp_attribute(clang::lifetimebound)
+    #define LIEF_LIFETIMEBOUND [[clang::lifetimebound]]
+  #else
+    #define LIEF_LIFETIMEBOUND
+  #endif
+#else
+  #define LIEF_LIFETIMEBOUND
+#endif
+
 #endif
