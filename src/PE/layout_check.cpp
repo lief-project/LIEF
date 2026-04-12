@@ -114,7 +114,7 @@ class LayoutChecker {
 
   template<typename... Args>
   bool error(const char* fmt, const Args&... args) {
-    error_msg = fmt::format(fmt, args...);
+    error_msg = fmt::format(fmt::runtime(fmt), args...);
     return false;
   }
 

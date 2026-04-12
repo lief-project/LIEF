@@ -24,11 +24,20 @@
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryCLRToken.hpp"
 
+#include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+
 #include "COFF/structures.hpp"
 
 #include "logging.hpp"
 
 namespace LIEF::COFF {
+Parser::Parser(std::unique_ptr<BinaryStream> stream, const ParserConfig& config,
+               Header::KIND kind) :
+  stream_(std::move(stream)),
+  kind_(kind),
+  config_(config) {}
+
 std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
                                       const ParserConfig& config) {
   if (stream == nullptr) {
@@ -46,6 +55,15 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
     return std::move(parser.bin_);
   }
 
+  return nullptr;
+}
+
+std::unique_ptr<Binary> Parser::parse(const std::string& file,
+                                      const ParserConfig& config) {
+  if (auto strm = VectorStream::from_file(file)) {
+    return parse(std::unique_ptr<VectorStream>(new VectorStream(std::move(*strm))),
+                 config);
+  }
   return nullptr;
 }
 

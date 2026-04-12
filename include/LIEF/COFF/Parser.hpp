@@ -17,10 +17,9 @@
 #define LIEF_COFF_PARSER_H
 #include <map>
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/visibility.h"
-
-#include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/errors.hpp"
 
 #include "LIEF/COFF/ParserConfig.hpp"
 #include "LIEF/COFF/Header.hpp"
@@ -43,14 +42,7 @@ class Parser {
   /// Parse the COFF binary pointed by the `file` argument with the given config
   static std::unique_ptr<Binary>
       parse(const std::string& file,
-            const ParserConfig& config = ParserConfig::default_conf()) {
-    if (auto strm = VectorStream::from_file(file)) {
-      return parse(
-          std::unique_ptr<VectorStream>(new VectorStream(std::move(*strm))), config
-      );
-    }
-    return nullptr;
-  }
+            const ParserConfig& config = ParserConfig::default_conf());
 
   /// \private
   struct SymSec {
@@ -83,10 +75,7 @@ class Parser {
 
   private:
   Parser(std::unique_ptr<BinaryStream> stream, const ParserConfig& config,
-         Header::KIND kind) :
-    stream_(std::move(stream)),
-    kind_(kind),
-    config_(config) {}
+         Header::KIND kind);
 
   ok_error_t process();
   ok_error_t parse_header();

@@ -61,6 +61,25 @@
 
 namespace LIEF {
 
+namespace assembly {
+namespace details {
+class Instruction {};
+class InstructionIt {};
+
+class Engine {};
+}
+
+namespace x86::details {
+class Operand {};
+class OperandIt {};
+}
+
+namespace aarch64::details {
+class Operand {};
+class OperandIt {};
+}
+}
+
 // ----------------------------------------------------------------------------
 // Abstract/Binary.hpp
 // ----------------------------------------------------------------------------
@@ -139,22 +158,6 @@ Binary::instructions_it Binary::disassemble(const uint8_t* /*buffer*/,
 #endif
 
 namespace assembly {
-namespace details {
-class Instruction {};
-class InstructionIt {};
-
-class Engine {};
-}
-
-namespace x86::details {
-class Operand {};
-class OperandIt {};
-}
-
-namespace aarch64::details {
-class Operand {};
-class OperandIt {};
-}
 
 // ----------------------------------------------------------------------------
 // asm/Instruction.hpp
