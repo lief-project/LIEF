@@ -30,9 +30,9 @@ void create<DynamicSharedObject>(nb::module_& m) {
   nb::class_<DynamicSharedObject, DynamicEntry>(m, "DynamicSharedObject",
       R"delim(
       Class which represents a ``DT_SONAME`` entry in the dynamic table
-      This kind of entry is usually used no name the original library.
+      This kind of entry is usually used to name the original library.
 
-      This entry is not present for executable.
+      This entry is not present for executables.
       )delim"_doc)
 
     .def(nb::init<const std::string &>(),

@@ -36,7 +36,7 @@ class FatBinary;
 /// The main interface to parse a Mach-O binary.
 ///
 /// This class is used to parse both Fat & non-Fat binary.
-/// Non-fat binaries are considerated as a **fat** with
+/// Non-fat binaries are considered as a **fat** with
 /// only one architecture. This is why MachO::Parser::parse outputs
 /// a FatBinary object.
 class LIEF_API Parser : public LIEF::Parser {
@@ -53,7 +53,7 @@ class LIEF_API Parser : public LIEF::Parser {
   /// of the parser
   ///
   /// @param[in] filename   Path to the Mach-O file
-  /// @param[in] conf       Parser configuration (Defaut: ParserConfig::deep)
+  /// @param[in] conf       Parser configuration (Default: ParserConfig::deep)
   static std::unique_ptr<FatBinary>
       parse(const std::string& filename,
             const ParserConfig& conf = ParserConfig::deep());
@@ -65,13 +65,13 @@ class LIEF_API Parser : public LIEF::Parser {
   /// of the parser
   ///
   /// @param[in] data       Mach-O file as a vector of bytes
-  /// @param[in] conf       Parser configuration (Defaut: ParserConfig::deep)
+  /// @param[in] conf       Parser configuration (Default: ParserConfig::deep)
   static std::unique_ptr<FatBinary>
       parse(const std::vector<uint8_t>& data,
             const ParserConfig& conf = ParserConfig::deep());
 
 
-  /// Parser a Mach-O binary from the provided BinaryStream.
+  /// Parse a Mach-O binary from the provided BinaryStream.
   static std::unique_ptr<FatBinary>
       parse(std::unique_ptr<BinaryStream> stream,
             const ParserConfig& conf = ParserConfig::deep());

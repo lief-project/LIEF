@@ -32,8 +32,8 @@ void create<ResourceStringTable>(nb::module_& m) {
   nb::class_<ResourceStringTable, LIEF::Object> obj(m, "ResourceStringTable",
     R"doc(
     This class represents the ``StringTable`` structure. This structure
-    can be seen as a dictionary of key, values with key and values defined a
-    utf-16 string.
+    can be seen as a dictionary of key, values with key and values defined as
+    utf-16 strings.
     )doc"_doc
   );
 

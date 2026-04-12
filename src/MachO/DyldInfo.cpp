@@ -882,7 +882,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
     return *lhs < *rhs;
   };
 
-  // In recent version of dyld, relocations are melt with bindings
+  // In recent versions of dyld, relocations are merged with bindings
   if (binding_encoding_version_ != BINDING_ENCODING_VERSION::V1) {
     return *this;
   }
@@ -973,7 +973,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
   // ===========================================
   // 2. Second optimization
   // Combine rebase/add pairs
-  // Base on ld64-274.2/src/ld/LinkEdit.hpp:257
+  // Based on ld64-274.2/src/ld/LinkEdit.hpp:257
   // ===========================================
   dst = output.begin();
   for (auto it = output.begin(); it->opcode != REBASE_OPCODES::DONE; ++it) {
@@ -993,7 +993,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
 
   // ===========================================
   // 3. Third optimization
-  // Base on ld64-274.2/src/ld/LinkEdit.hpp:274
+  // Based on ld64-274.2/src/ld/LinkEdit.hpp:274
   // ===========================================
   dst = output.begin();
   for (auto it = output.begin(); it->opcode != REBASE_OPCODES::DONE; ++it) {
@@ -1026,7 +1026,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
   // ===========================================
   // 4. Fourth optimization
   // Use immediate encodings
-  // Base on ld64-274.2/src/ld/LinkEdit.hpp:303
+  // Based on ld64-274.2/src/ld/LinkEdit.hpp:303
   // ===========================================
   const size_t pint_size = binary_->pointer_size();
   for (auto it = output.begin(); it->opcode != REBASE_OPCODES::DONE; ++it) {
@@ -1622,7 +1622,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(
     const DyldInfo::bind_container_t& bindings, vector_iostream& stream
 ) {
   // This function updates the standard bindings opcodes (i.e. not lazy and not
-  // weak) The following code is mainly inspired from LinkEdit.hpp:
+  // weak). The following code is mainly inspired from LinkEdit.hpp:
   // BindingInfoAtom<A>::encodeV1()
 
   std::vector<details::binding_instruction> instructions;

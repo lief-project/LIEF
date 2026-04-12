@@ -32,7 +32,7 @@ struct pe_dos_header;
 }
 
 /// Class which represents the DosHeader, the **first**
-/// structure presents at the beginning of a PE file.
+/// structure present at the beginning of a PE file.
 ///
 /// Most of the attributes of this structures are no longer relevant.
 class LIEF_API DosHeader : public Object {
@@ -212,7 +212,7 @@ class LIEF_API DosHeader : public Object {
 
   static DosHeader create(PE_TYPE type);
 
-  /// \private
+  /// @private
   LIEF_LOCAL DosHeader() = default;
 
   private:

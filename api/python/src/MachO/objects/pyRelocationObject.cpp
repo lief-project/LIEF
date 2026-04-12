@@ -28,7 +28,7 @@ void create<RelocationObject>(nb::module_& m) {
 
   nb::class_<RelocationObject, Relocation>(m, "RelocationObject",
       R"delim(
-      Class that represents a relocation presents in the MachO object
+      Class that represents a relocation present in the MachO object
       file (``.o``). Usually, this kind of relocation is found in the :class:`lief.MachO.Section`.
       )delim"_doc)
 

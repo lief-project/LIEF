@@ -72,7 +72,7 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// Find the type with the given name
   std::unique_ptr<Type> find_type(const std::string& name) const;
 
-  /// Find the type with at the given index
+  /// Find the type at the given index
   std::unique_ptr<Type> find_type(uint32_t index) const;
 
   /// Try to find the PublicSymbol from the given name (based on the public symbol

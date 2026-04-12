@@ -40,12 +40,12 @@ class LIEF_API Variable {
   /// relevant in the case of a static global variable. For stack variable, you
   /// should use set_stack_offset.
   ///
-  /// This function set the `DW_AT_location` attribute
+  /// This function sets the `DW_AT_location` attribute
   Variable& set_addr(uint64_t address);
 
   /// Set the stack offset of this variable.
   ///
-  /// This function set the `DW_AT_location` attribute
+  /// This function sets the `DW_AT_location` attribute
   Variable& set_stack_offset(uint64_t offset);
 
   /// Mark this variable as **imported**

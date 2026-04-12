@@ -135,7 +135,7 @@ class LIEF_API VolatileMetadata {
     return os;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL static std::unique_ptr<VolatileMetadata> parse(Parser& ctx,
                                                             BinaryStream& stream);
 

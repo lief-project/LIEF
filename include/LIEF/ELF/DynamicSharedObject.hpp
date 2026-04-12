@@ -27,7 +27,7 @@ namespace ELF {
 /// Class which represents a ``DT_SONAME`` entry in the dynamic table
 /// This kind of entry is usually used to name the original library.
 ///
-/// This entry is not present for executable.
+/// This entry is not present for executables.
 class LIEF_API DynamicSharedObject : public DynamicEntry {
 
   public:

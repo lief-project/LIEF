@@ -109,7 +109,7 @@ class LIEF_API FunctionOverrideInfo {
 
   ~FunctionOverrideInfo();
 
-  /// \private
+  /// @private
   LIEF_LOCAL static std::unique_ptr<FunctionOverrideInfo> parse(Parser& ctx,
                                                                 SpanStream& strm);
 

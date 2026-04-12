@@ -120,15 +120,15 @@ class LIEF_API FunctionOverride : public DynamicFixup {
 
   ~FunctionOverride() override;
 
-  /// \private
+  /// @private
   LIEF_LOCAL static std::unique_ptr<FunctionOverride> parse(Parser& ctx,
                                                             SpanStream& strm);
 
-  /// \private
+  /// @private
   LIEF_LOCAL static ok_error_t parse_override_info(Parser& ctx, SpanStream& strm,
                                                    FunctionOverride& func);
 
-  /// \private
+  /// @private
   LIEF_LOCAL static ok_error_t parse_bdd_info(Parser& ctx, SpanStream& strm,
                                               FunctionOverride& func);
 

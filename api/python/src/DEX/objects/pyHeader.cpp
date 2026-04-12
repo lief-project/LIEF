@@ -84,7 +84,7 @@ void create<Header>(nb::module_& m) {
         "Methods identifiers"_doc)
 
     .def_prop_ro("classes", nb::overload_cast<>(&Header::classes, nb::const_),
-        "Classess identifiers"_doc)
+        "Classes identifiers"_doc)
 
     .def_prop_ro("data", nb::overload_cast<>(&Header::data, nb::const_),
         "Raw data. Should be align on 32-bits"_doc)

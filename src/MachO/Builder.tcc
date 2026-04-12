@@ -112,7 +112,7 @@ size_t Builder::get_cmd_size(const LoadCommand& cmd) {
 template<typename T>
 ok_error_t Builder::build_linkedit() {
   // NOTE(romain): the order in which the linkedit_data_command are placed
-  // in the __LINKEDIT segment, needs to follow cctools / checkout.c / dyld_order()
+  // in the __LINKEDIT segment needs to follow cctools / checkout.c / dyld_order()
   SegmentCommand* linkedit = binary_->get_segment("__LINKEDIT");
   if (linkedit == nullptr) {
     return ok();
@@ -545,7 +545,7 @@ template<class T>
 ok_error_t Builder::build(DyldInfo& dyld_info) {
   LIEF_DEBUG("Build '{}'", to_string(dyld_info.command()));
 
-  // /!\ Force to update relocation cache that is used by the following functions
+  // WARNING: Force update of the relocation cache used by the following functions
   // TODO(romain): This looks like a hack
   binary_->relocations();
 
@@ -692,10 +692,10 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
   //{
   //   // Note: We lay out the symbol table so that the strings for the stabs
   //   (local) symbols are at the
-  //   // end of the string pool.  The stabs strings are not used when calculated
+  //   // end of the string pool.  The stabs strings are not used when calculating
   //   the UUID for the image.
   //   // If the stabs strings were not last, the string offsets for all other
-  //   symbols may very which would alter the UUID.
+  //   symbols may vary which would alter the UUID.
   //
   //   // reserve space for local symbols
   //  +---------------------+
@@ -728,7 +728,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
   details::symtab_command symtab{};
   DynamicSymbolCommand* dynsym = binary_->dynamic_symbol_command();
 
-  /* 1. Fille the n_list table */ {
+  /* 1. Fill the n_list table */ {
     for (Symbol& s : binary_->symbols()) {
       if (s.origin() != Symbol::ORIGIN::SYMTAB) {
         continue;
@@ -766,7 +766,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
     strtab = raw_symbol_names.raw();
   }
 
-  /* 2. Fille the n_list table */ {
+  /* 2. Fill the n_list table */ {
     const size_t nb_symbols = local_syms.size() + ext_syms.size() +
                               undef_syms.size() + other_syms.size();
     vector_iostream nlist_table;

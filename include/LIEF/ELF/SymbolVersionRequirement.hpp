@@ -113,7 +113,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
   /// Try to remove the auxiliary requirement symbol with the given name.
   /// The function returns true if the operation succeed, false otherwise.
   ///
-  /// \warning this function invalidates all the references (pointers) of
+  /// @warning this function invalidates all the references (pointers) of
   ///          SymbolVersionAuxRequirement. Therefore, the user is responsible
   ///          to ensure that the auxiliary requirement is no longer used in the
   ///          ELF binary (e.g. in SymbolVersion)
@@ -127,7 +127,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
   /// Try to remove the given auxiliary requirement symbol.
   /// The function returns true if the operation succeed, false otherwise.
   ///
-  /// \warning this function invalidates all the references (pointers) of
+  /// @warning this function invalidates all the references (pointers) of
   ///          SymbolVersionAuxRequirement. Therefore, the user is responsible
   ///          to ensure that the auxiliary requirement is no longer used in the
   ///          ELF binary (e.g. in SymbolVersion)

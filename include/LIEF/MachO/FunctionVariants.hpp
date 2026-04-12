@@ -142,7 +142,7 @@ class LIEF_API FunctionVariants : public LoadCommand {
       return os;
     }
 
-    /// \private
+    /// @private
     LIEF_LOCAL void set_flags(std::vector<FLAGS> flags) {
       flags_ = std::move(flags);
     }
@@ -163,10 +163,10 @@ class LIEF_API FunctionVariants : public LoadCommand {
     public:
     using entries_t = std::vector<RuntimeTableEntry>;
 
-    /// Iterator that output RuntimeTableEntry&
+    /// Iterator that outputs RuntimeTableEntry&
     using it_entries = ref_iterator<entries_t&>;
 
-    /// Iterator that output const RuntimeTableEntry&
+    /// Iterator that outputs const RuntimeTableEntry&
     using it_const_entries = const_ref_iterator<const entries_t&>;
 
     /// Enumeration describing the namespace or category of a function variant.

@@ -107,7 +107,7 @@ void create<CorePrStatus>(nb::module_& m) {
     .def_prop_ro("register_values", &CorePrStatus::register_values,
       R"doc(
       List of the register values.
-      This list is **guarantee** to be as long as the number of registers defined
+      This list is **guaranteed** to be as long as the number of registers defined
       in the :class:`~.Registers` or empty if it can't be resolved.
 
       Thus, one can access a specific register through:
@@ -115,7 +115,7 @@ void create<CorePrStatus>(nb::module_& m) {
       .. code-block:: python
 
         reg_vals: list[int] = note.register_values()
-        x20 = reg_vals[CorePrStatus.Registesr.AARCH64.X20.value]
+        x20 = reg_vals[CorePrStatus.Registers.AARCH64.X20.value]
       )doc"_doc
     )
 

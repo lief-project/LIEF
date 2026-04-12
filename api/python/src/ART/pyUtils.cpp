@@ -30,7 +30,7 @@ void init_utils(nb::module_& m) {
 
   lief_mod->def("is_art",
       nb::overload_cast<const std::vector<uint8_t>&>(&is_art),
-      "Check if the **raw data** given in parameter is a ART"_doc,
+      "Check if the **raw data** given in parameter is an ART"_doc,
       "raw"_a);
 
   m.def("version",

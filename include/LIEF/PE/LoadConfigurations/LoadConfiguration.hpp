@@ -803,32 +803,32 @@ class LIEF_API LoadConfiguration : public Object {
     return os;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL static ok_error_t parse_seh_table(Parser& ctx, BinaryStream& stream,
                                                LoadConfiguration& config);
 
-  /// \private
+  /// @private
   LIEF_LOCAL static ok_error_t
       parse_guard_functions(Parser& ctx, BinaryStream& stream,
                             LoadConfiguration& config, size_t count,
                             guard_functions_t LoadConfiguration::* dst);
 
-  /// \private
+  /// @private
   LIEF_LOCAL static ok_error_t parse_dyn_relocs(Parser& ctx,
                                                 LoadConfiguration& config);
 
-  /// \private
+  /// @private
   template<uint8_t version, class PE_T>
   LIEF_LOCAL static ok_error_t
       parse_dyn_relocs_entries(Parser& ctx, BinaryStream& stream,
                                LoadConfiguration& config, size_t size);
 
-  /// \private
+  /// @private
   template<class PE_T>
   LIEF_LOCAL static ok_error_t parse_enclave_config(Parser& ctx,
                                                     LoadConfiguration& config);
 
-  /// \private
+  /// @private
   LIEF_LOCAL static ok_error_t parse_volatile_metadata(Parser& ctx,
                                                        LoadConfiguration& config);
 

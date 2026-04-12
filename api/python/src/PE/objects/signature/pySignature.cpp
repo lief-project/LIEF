@@ -183,7 +183,7 @@ void create<Signature>(nb::module_& m) {
            and that its value matches hash of ContentInfo
         6. Check the validity of the PKCS #9 counter signature if present
         7. If the signature doesn't embed a signing-time in the counter signature, check the certificate
-           validity. (See :attr:`lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING` and :attr:`lief.pe.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME`)
+           validity. (See :attr:`lief.PE.Signature.VERIFICATION_CHECKS.LIFETIME_SIGNING` and :attr:`lief.PE.Signature.VERIFICATION_CHECKS.SKIP_CERT_TIME`)
 
         See: :class:`lief.PE.Signature.VERIFICATION_CHECKS` to tweak the behavior
 

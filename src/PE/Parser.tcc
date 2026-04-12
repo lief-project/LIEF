@@ -354,7 +354,7 @@ ok_error_t Parser::parse_import_table() {
     }
 
 
-    // We assume that a DLL name should be at least 4 length size and "printable
+    // We assume that a DLL name should be at least 4 characters long and printable
     const std::string& imp_name = import->name();
     if (!is_valid_dll_name(imp_name)) {
       if (!imp_name.empty()) {

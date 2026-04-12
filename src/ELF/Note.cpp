@@ -478,7 +478,7 @@ std::unique_ptr<Note> Note::create(const std::string& name, Note::TYPE ntype,
   }
   std::string norm_name = owner;
 
-  // The name of these types have a special meaning
+  // The names of these types have a special meaning
   if (ntype != Note::TYPE::GNU_BUILD_ATTRIBUTE_FUNC &&
       ntype != Note::TYPE::GNU_BUILD_ATTRIBUTE_OPEN)
   {

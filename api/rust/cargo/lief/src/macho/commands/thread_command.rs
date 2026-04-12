@@ -49,7 +49,7 @@ impl ThreadCommand<'_> {
     }
 
     /// The actual thread state as a vector of bytes. Depending on the architecture(),
-    /// these data can be casted into `x86_thread_state_t, x86_thread_state64_t, ...`
+    /// these data can be cast into `x86_thread_state_t, x86_thread_state64_t, ...`
     pub fn state(&self) -> &[u8] {
         to_slice!(self.ptr.state());
     }

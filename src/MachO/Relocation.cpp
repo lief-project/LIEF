@@ -38,7 +38,7 @@ Relocation::Relocation(uint64_t address, uint8_t type) :
 
 Relocation& Relocation::operator=(const Relocation& other) {
   if (&other != this) {
-    /* Do not copy pointer as they could be not bind to the same Binary */
+    /* Do not copy pointers as they could be bound to a different Binary */
     address_ = other.address_;
     size_ = other.size_;
     type_ = other.type_;

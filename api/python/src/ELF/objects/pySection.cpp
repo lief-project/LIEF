@@ -200,7 +200,7 @@ void create<Section>(nb::module_& m) {
         Original size of the section's data.
 
         This value is used by the :class:`~lief.ELF.Builder` to determine if it needs
-        to be relocated to avoid an override of the data
+        to be relocated to avoid an overwrite of the data
         )delim"_doc)
 
     .def_prop_rw("alignment",

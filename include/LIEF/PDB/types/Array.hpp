@@ -27,7 +27,7 @@ class LIEF_API Array : public Type {
   public:
   using Type::Type;
 
-  /// The number of element in this array
+  /// The number of elements in this array
   size_t numberof_elements() const;
 
   /// Type of the elements

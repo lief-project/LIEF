@@ -52,8 +52,8 @@ void create<X86Features>(nb::module_& m) {
     )doc"_doc
   )
     ENTRY(NONE, "For the original ``GNU_PROPERTY_X86_FEATURE_1_AND`` property")
-    ENTRY(NEEDED, "For the original ``GNU_PROPERTY_X86_FEATURE_2_USED`` property")
-    ENTRY(USED, "For the original ``GNU_PROPERTY_X86_FEATURE_2_NEEDED`` property")
+    ENTRY(NEEDED, "For the original ``GNU_PROPERTY_X86_FEATURE_2_NEEDED`` property")
+    ENTRY(USED, "For the original ``GNU_PROPERTY_X86_FEATURE_2_USED`` property")
   ;
 # undef ENTRY
 

@@ -31,7 +31,7 @@ class MappingInfoIt;
 
 /// This class represents a `dyld_cache_mapping_info` entry.
 ///
-/// It provides information about the relationshiop between on-disk shared cache
+/// It provides information about the relationship between on-disk shared cache
 /// and in-memory shared cache.
 class LIEF_API MappingInfo {
   public:

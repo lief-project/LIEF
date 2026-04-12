@@ -56,7 +56,7 @@ class LIEF_API EncryptionInfo : public LoadCommand {
     return csize_;
   }
 
-  /// The encryption system. 0 means no encrypted
+  /// The encryption system. 0 means not encrypted
   uint32_t crypt_id() const {
     return cid_;
   }

@@ -34,7 +34,7 @@ void create<FatBinary>(nb::module_& m) {
 
   nb::class_<FatBinary> fat(m, "FatBinary",
       R"delim(
-      Class which represent a Mach-O (fat) binary
+      Class which represents a Mach-O (fat) binary
       This object is also used for representing Mach-O binaries that are **NOT FAT**
       )delim"_doc);
 
@@ -56,7 +56,7 @@ void create<FatBinary>(nb::module_& m) {
         "binaries"_a)
 
     .def_prop_ro("size", &FatBinary::size,
-      "Number of " RST_CLASS_REF(lief.MachO.Binary) " registred"_doc)
+      "Number of " RST_CLASS_REF(lief.MachO.Binary) " registered"_doc)
 
     .def("at",
       nb::overload_cast<size_t>(&FatBinary::at),

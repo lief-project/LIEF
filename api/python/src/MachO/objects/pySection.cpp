@@ -113,7 +113,7 @@ void create<Section>(nb::module_& m) {
         Offset of the relocation table. This value should be 0
         for executable and libraries as the relocations are managed by the :attr:`lief.MachO.DyldInfo.rebase`
 
-        Other the other hand, for object files (``.o``) this value should not be 0
+        On the other hand, for object files (``.o``) this value should not be 0
         )delim"_doc)
 
     .def_prop_rw("numberof_relocations",

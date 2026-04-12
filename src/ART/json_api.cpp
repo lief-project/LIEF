@@ -37,4 +37,4 @@ std::string to_json(const Object& v) {
 #endif
 }
 
-} // namespace VDEX
+} // namespace LIEF::ART

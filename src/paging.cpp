@@ -45,8 +45,8 @@ page_sizes_t get_pagesize(const ELF::Binary& elf) {
   // These page sizes are coming from lld's ELF linker.
   //
   // Some architectures can have different page sizes for which
-  // LLVM define a "Common" (`defaultCommonPageSize`) page size and a "Max"
-  // page size (`defaultMaxPageSize`). In LIEF we return the Common page size
+  // LLVM defines a "Common" (`defaultCommonPageSize`) page size and a "Max"
+  // page size (`defaultMaxPageSize`). In LIEF, we return the Common page size
   // and users can still configure another page size with
   // LIEF::ELF::ParserConfig::page_size
   // NOLINTBEGIN(bugprone-branch-clone)

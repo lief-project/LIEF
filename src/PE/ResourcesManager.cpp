@@ -218,7 +218,7 @@ ResourcesManager::it_const_icons ResourcesManager::icons() const {
         icon.lang_ = lang_from_id(grp_icon_lvl3.id());
         icon.sublang_ = sublang_from_id(grp_icon_lvl3.id());
 
-        // Find the icon the RESOURCE_TYPES::ICON tree that matched entry.ID
+        // Find the icon in the RESOURCE_TYPES::ICON tree that matches entry.ID
         ResourceNode::it_const_childs sub_nodes_icons = root_icon->childs();
         const auto it =
             std::find_if(sub_nodes_icons.begin(), sub_nodes_icons.end(),
@@ -363,7 +363,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original,
     return;
   }
 
-  // Update group in which the icon is registred
+  // Update group in which the icon is registered
   for (ResourceNode& grp_icon_lvl2 : icon_grp_node->childs()) {
     for (ResourceNode& grp_icon_lvl3 : grp_icon_lvl2.childs()) {
       auto* icon_group_node = grp_icon_lvl3.cast<ResourceData>();

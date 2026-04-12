@@ -40,7 +40,7 @@ void create<ResourceNode>(nb::module_& m) {
       R"delim(
       Class which represents a Node in the resource tree.
 
-      It is extended by :class:`lief.PE.ResourceData` and :class:`lief.PE.ResourceNode`
+      It is extended by :class:`lief.PE.ResourceData` and :class:`lief.PE.ResourceDirectory`
       )delim"_doc);
 
   init_ref_iterator<ResourceNode::it_childs>(res_node, "it_childs");

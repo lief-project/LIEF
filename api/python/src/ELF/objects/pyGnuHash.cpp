@@ -62,27 +62,27 @@ void create<GnuHash>(nb::module_& m) {
 
     .def("check_bloom_filter",
         &GnuHash::check_bloom_filter,
-        "Check if the given hash pass the bloom filter"_doc,
+        "Check if the given hash passes the bloom filter"_doc,
         "hash"_a)
 
     .def("check_bucket",
         &GnuHash::check_bucket,
-        "Check if the given hash pass the bucket filter"_doc,
+        "Check if the given hash passes the bucket filter"_doc,
         "hash"_a)
 
     .def("check",
         nb::overload_cast<const std::string&>(&GnuHash::check, nb::const_),
         "Check if the symbol *probably* exists. If "
         "the returned value is ``false`` you can assume at ``100%`` that "
-        "the symbol with the given name doesn't exists. If ``true`` you can't "
-        "do any assumption "_doc,
+        "the symbol with the given name doesn't exist. If ``true`` you can't "
+        "do any assumption"_doc,
         "symbol_name"_a)
 
     .def("check",
         nb::overload_cast<uint32_t>(&GnuHash::check, nb::const_),
-        "Check if the symbol associated with the given *probably* exists. If "
+        "Check if the symbol associated with the given hash *probably* exists. If "
         "the returned value is ``false`` you can assume at ``100%`` that "
-        "the symbol doesn't exists. If ``true`` you can't "
+        "the symbol doesn't exist. If ``true`` you can't "
         "do any assumption"_doc,
         "hash_value"_a)
 

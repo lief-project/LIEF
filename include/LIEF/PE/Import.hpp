@@ -84,21 +84,21 @@ class LIEF_API Import : public Object {
   /// **identical** to the content of the Import Lookup Table (`ILT`) until the
   /// image is bound.
   ///
-  /// \warning This address could change when re-building the binary
+  /// @warning This address could change when re-building the binary
   uint32_t import_address_table_rva() const {
     return iat_rva_;
   }
 
   /// Return the relative virtual address of the import lookup table.
   ///
-  /// \warning This address could change when re-building the binary
+  /// @warning This address could change when re-building the binary
   uint32_t import_lookup_table_rva() const {
     return ilt_rva_;
   }
 
   /// Return the Function's RVA from the import address table (`IAT`)
   ///
-  /// \warning This address could change when re-building the binary
+  /// @warning This address could change when re-building the binary
   result<uint32_t> get_function_rva_from_iat(const std::string& function) const;
 
   /// Return the imported function with the given name
@@ -136,7 +136,7 @@ class LIEF_API Import : public Object {
     return directory_;
   }
 
-  /// Return the PE::DataDirectory associated associated with the IAT.
+  /// Return the PE::DataDirectory associated with the IAT.
   /// It should be the one at index PE::DataDirectory::TYPES::IAT
   ///
   /// If the data directory can't be found, return a nullptr
@@ -162,12 +162,12 @@ class LIEF_API Import : public Object {
 
   /// Remove the import entry with the given name.
   ///
-  /// Return true if the deletion succeed, false otherwise
+  /// Return true if the deletion succeeded, false otherwise
   bool remove_entry(const std::string& name);
 
   /// Remove the import entry with the given ordinal number
   ///
-  /// Return true if the deletion succeed, false otherwise
+  /// Return true if the deletion succeeded, false otherwise
   bool remove_entry(uint32_t ordinal);
 
   void import_lookup_table_rva(uint32_t rva) {
@@ -178,7 +178,7 @@ class LIEF_API Import : public Object {
     iat_rva_ = rva;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL size_t nb_original_func() const {
     return nb_original_func_;
   }

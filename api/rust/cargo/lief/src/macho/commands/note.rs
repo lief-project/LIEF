@@ -4,7 +4,7 @@ use crate::to_slice;
 use lief_ffi as ffi;
 use std::marker::PhantomData;
 
-/// Class that represent the `LC_NOTE` command.
+/// Class that represents the `LC_NOTE` command.
 ///
 /// This command is used to include arbitrary notes or metadata within a binary.
 pub struct Note<'a> {

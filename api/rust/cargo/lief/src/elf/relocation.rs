@@ -12,7 +12,7 @@ use crate::{declare_iterator, to_result};
 
 use super::Symbol;
 
-/// Structure which reprents an ELF relocation
+/// Structure which represents an ELF relocation
 pub struct Relocation<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Relocation>,
     _owner: PhantomData<&'a ffi::ELF_Binary>,

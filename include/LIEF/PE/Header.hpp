@@ -148,7 +148,7 @@ class LIEF_API Header : public Object {
     RELOCS_STRIPPED = 0x0001,  /**< The file does not contain base relocations and
                                   must be loaded at its preferred base. If this
                                   cannot be done, the loader will error.*/
-    EXECUTABLE_IMAGE = 0x0002, /**< File is executable (i.e. no unresolved externel
+    EXECUTABLE_IMAGE = 0x0002, /**< File is executable (i.e. no unresolved external
                                   references). */
     LINE_NUMS_STRIPPED = 0x0004, /**< COFF line numbers have been stripped. This is
                                     deprecated and should be 0 */
@@ -290,7 +290,7 @@ class LIEF_API Header : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Header& entry);
 
-  /// \private
+  /// @private
   LIEF_LOCAL Header() = default;
 
   private:

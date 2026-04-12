@@ -414,7 +414,7 @@ ok_error_t Builder::build_resources() {
 
     // Note(romain): We could/should leverage this optimization:
     //
-    // If the the `.rsrc` section has some kind of padding that is large
+    // If the `.rsrc` section has some kind of padding that is large
     // enough, then we can use this area to avoid relocating the `.rsrc` location
     //
     // const bool padding_is_large = section->padding().size() >= delta;
@@ -937,7 +937,7 @@ ok_error_t Builder::build_debug_info() {
   bool relocate_hdr = false;
 
   {
-    // Clear the original headers since it will be either: relocated or
+    // Clear the original headers since they will be either relocated or
     // overwritten
     span<uint8_t> raw = debug_dir->content();
     std::memset(raw.data(), 0, raw.size());

@@ -66,7 +66,7 @@ class LIEF_API QNXStack : public Note {
 };
 
 
-} // namepsace ELF
+} // namespace ELF
 } // namespace LIEF
 
 #endif

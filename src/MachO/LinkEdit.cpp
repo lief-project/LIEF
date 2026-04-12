@@ -40,7 +40,7 @@ namespace LIEF::MachO {
  * data. When resizing the ``SegmentCommand.data_`` we can break this span as the
  * internal buffer of ``data_`` might be relocated.
  *
- * The following helpers keep an internal consistent state of the data
+ * The following helpers keep an internally consistent state of the data
  */
 
 inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr,

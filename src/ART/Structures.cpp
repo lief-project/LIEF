@@ -32,5 +32,4 @@ constexpr uint32_t details::ART44::nb_image_roots;
 constexpr uint32_t details::ART46::nb_image_roots;
 constexpr uint32_t details::ART56::nb_image_roots;
 
-} // Namespace ART
-// Namespace LIEF
+} // namespace LIEF::ART

@@ -219,7 +219,7 @@ impl Header<'_> {
 
     /// Return the CPU subtype supported by the Mach-O binary.
     /// For ARM architectures, this value could represent the minimum version
-    /// for which the Mach-O binary has been compiled for.
+    /// for which the Mach-O binary has been compiled.
     pub fn cpu_subtype(&self) -> u32 {
         self.ptr.cpu_subtype()
     }

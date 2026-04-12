@@ -27,7 +27,7 @@ template<>
 void create<DosHeader>(nb::module_& m) {
   nb::class_<DosHeader, LIEF::Object>(m, "DosHeader",
       R"delim(
-      Class which represents the DosHeader, the **first** structure presents at the beginning of a PE file.
+      Class which represents the DosHeader, the **first** structure present at the beginning of a PE file.
 
       Most of the attributes of this structures are not relevant, except :attr:`~lief.PE.DosHeader.addressof_new_exeheader`
       )delim"_doc)

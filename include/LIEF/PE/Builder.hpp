@@ -109,7 +109,7 @@ class LIEF_API Builder {
         std::function<void(Binary*, const Import*, const ImportEntry*, uint32_t)>;
     resolved_iat_cbk_t resolved_iat_cbk = nullptr;
 
-    /// \private
+    /// @private
     bool force_relocating = false;
   };
 

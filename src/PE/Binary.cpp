@@ -793,7 +793,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
       .write(optional_header_.win32_version_value())
       .write(optional_header_.sizeof_image())
       .write(optional_header_.sizeof_headers())
-      // optional_header_.checksum()) is not a part of the hash
+      // optional_header_.checksum() is not part of the hash
       .write(static_cast<uint16_t>(optional_header_.subsystem()))
       .write(static_cast<uint16_t>(optional_header_.dll_characteristics()))
       .write_sized_int(optional_header_.sizeof_stack_reserve(), sizeof_ptr)
@@ -952,7 +952,7 @@ Signature::VERIFICATION_FLAGS
   }
   const auto& spc_indirect_data = static_cast<const SpcIndirectData&>(content);
 
-  // Check that the authentihash matches Content Info's digest
+  // Check that the authentihash matches ContentInfo's digest
   const std::vector<uint8_t>& authhash = authentihash(sig.digest_algorithm());
   const span<const uint8_t> chash = spc_indirect_data.digest();
   if (authhash != std::vector<uint8_t>(chash.begin(), chash.end())) {

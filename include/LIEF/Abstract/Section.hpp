@@ -39,18 +39,18 @@ class LIEF_API Section : public Object {
   Section& operator=(const Section&) = default;
   Section(const Section&) = default;
 
-  /// section's name
+  /// Section's name
   virtual std::string name() const {
     return name_.c_str();
   }
 
-  /// Return the **complete** section's name which might
+  /// Return the **complete** section's name which might include
   /// trailing (``0``) bytes
   virtual const std::string& fullname() const {
     return name_;
   }
 
-  ///  section's content
+  /// Section's content
   virtual span<const uint8_t> content() const {
     return {};
   }
@@ -60,7 +60,7 @@ class LIEF_API Section : public Object {
     size_ = size;
   }
 
-  /// section's size (size in the binary, not the virtual size)
+  /// Section's size (size in the binary, not the virtual size)
   virtual uint64_t size() const {
     return size_;
   }

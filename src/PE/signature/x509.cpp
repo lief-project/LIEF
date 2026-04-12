@@ -41,7 +41,7 @@
 #include "mbedtls_wraps.h"
 
 namespace {
-// Copy this function from mbedtls since it is not exported
+// Copied from mbedtls since this function is not exported
 inline int x509_get_current_time(mbedtls_x509_time* now) {
   struct tm *lt = nullptr, tm_buf{};
   mbedtls_time_t tt{};
@@ -64,11 +64,11 @@ inline int x509_get_current_time(mbedtls_x509_time* now) {
   return (ret);
 }
 
-/* mbedtls escapes non printable character with '?' which can be an issue as
+/* mbedtls escapes non-printable characters with '?' which can be an issue as
  * described in https://github.com/lief-project/LIEF/issues/703. As there is no way
  * to programmatically tweak this behavior, here is a copy of the original function
- * (from <src>/library/x509.c) which skips the non printable character. It seems
- * that Windows follows this behavior as descbied in the Github's issue
+ * (from <src>/library/x509.c) which skips non-printable characters. It seems
+ * that Windows follows this behavior as described in the GitHub issue
  */
 // NOLINTBEGIN
 // clang-format off
@@ -252,8 +252,7 @@ x509::certificates_t x509::parse(const std::vector<uint8_t>& content) {
 
 
 bool x509::check_time(const date_t& before, const date_t& after) {
-  // Implementation taken
-  // from
+  // Implementation taken from
   // https://github.com/ARMmbed/mbedtls/blob/1c54b5410fd48d6bcada97e30cac417c5c7eea67/library/x509.c#L926-L962
   if (before[0] > after[0]) {
     LIEF_DEBUG("{} > {}", before[0], after[0]);
@@ -432,7 +431,7 @@ std::vector<uint8_t> pkcs1_15_unpad(const std::vector<uint8_t>& input) {
     return {};
   }
 
-  // According ot the RFC, the leading byte must be 0:
+  // According to the RFC, the leading byte must be 0:
   if (input[0] != 0x00) {
     return {};
   }
@@ -518,7 +517,7 @@ bool x509::check_signature(const std::vector<uint8_t>& hash,
                               signature.size());
 
   /* If the verification failed with mbedtls_pk_verify it
-   * does not necessarily means that the signatures don't match.
+   * does not necessarily mean that the signatures don't match.
    *
    * For RSA public-key scheme, mbedtls encodes the hash with
    * rsa_rsassa_pkcs1_v15_encode() so that it expands the hash value with encoded

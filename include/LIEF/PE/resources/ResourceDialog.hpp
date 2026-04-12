@@ -453,17 +453,17 @@ class LIEF_API ResourceDialog : public Object {
 
   ResourceDialog& title(const std::string& title) LIEF_LIFETIMEBOUND;
 
-  /// Check if the dialog used to given dialog style
+  /// Check if the dialog uses the given dialog style
   bool has(DIALOG_STYLES style) const {
     return (style_ & (uint32_t)style) != 0;
   }
 
-  /// Check if the dialog used to given window style
+  /// Check if the dialog uses the given window style
   bool has(WINDOW_STYLES style) const {
     return (style_ & (uint32_t)style) != 0;
   }
 
-  /// Check if the dialog used to given extended window style
+  /// Check if the dialog uses the given extended window style
   bool has(WINDOW_EXTENDED_STYLES style) const {
     return (extended_style_ & (uint32_t)style) != 0;
   }

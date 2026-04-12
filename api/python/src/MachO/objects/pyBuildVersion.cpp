@@ -118,7 +118,7 @@ void create<BuildVersion>(nb::module_& m) {
 
     .def_prop_ro("tools",
         nb::overload_cast<>(&BuildVersion::tools, nb::const_),
-        "List of " RST_CLASS_REF(BuildToolVersion) " used when while this binary"_doc)
+        "List of " RST_CLASS_REF(BuildToolVersion) " used while building this binary"_doc)
 
     LIEF_DEFAULT_STR(BuildVersion);
 

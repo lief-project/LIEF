@@ -379,7 +379,7 @@ Symbol& Binary::add_exported_function(uint64_t address, const std::string& name)
     return export_symbol(*s);
   }
 
-  // Second: Check if a symbol with the given 'name' exists in the **static**
+  // Second: Check if a symbol with the given 'name' exists in the **static** table
   s = get_symtab_symbol(funcname);
   if (s != nullptr) {
     s->type(Symbol::TYPE::FUNC);
@@ -1000,8 +1000,8 @@ bool Binary::is_pie() const {
   }
 
   /* If the ELF binary uses an interpreter, then it is position
-   * independant since the interpreter aims at loading the binary at a random base
-   * address
+   * independent since the interpreter aims at loading the binary at a random base
+   * address.
    */
   if (it_segment != segments_.end()) {
     return true;
@@ -1011,7 +1011,7 @@ bool Binary::is_pie() const {
    * the case, for instance, when compiling with the -static-pie flag
    *
    * While header().file_type() == E_TYPE::ET_DYN is a requirement
-   * for PIC binary (Position independant **CODE**), it does not enable
+   * for PIC binary (Position independent **CODE**), it does not enable
    * to distinguish PI **Executables** from libraries.
    *
    * Therefore, we add the following checks:
@@ -2438,7 +2438,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
 
         /* uint64_t code_alignment         = */ vs.read_uleb128();
         /* int64_t  data_alignment         = */ vs.read_sleb128();
-        /* uint64_t return_addres_register = */ vs.read_uleb128();
+        /* uint64_t return_address_register = */ vs.read_uleb128();
         if (cie_augmentation_string.find('z') != std::string::npos) {
           /* int64_t  augmentation_length    = */ vs.read_uleb128();
         }
@@ -2850,8 +2850,8 @@ uint64_t Binary::relocate_phdr_table_v2() {
     return 0;
   }
 
-  // "expand" the .bss area. It is required since the bss area that is mapped
-  // needs to be set to 0
+  // Expand the .bss area. This is required since the mapped bss area
+  // needs to be zero-initialized.
   const uint64_t original_psize = bss_segment->physical_size();
 
   /*
@@ -3007,7 +3007,7 @@ uint64_t Binary::relocate_phdr_table_v1() {
   // to consider this relocation valid
   static constexpr auto MIN_POTENTIAL_SIZE = 2;
 
-  // check if we already relocated the segment table in the larger segment's cave
+  // Check if we already relocated the segment table in the largest segment's cave
   if (phdr_reloc_info_.new_offset > 0) {
     return phdr_reloc_info_.new_offset;
   }
@@ -3031,13 +3031,13 @@ uint64_t Binary::relocate_phdr_table_v1() {
     }
   }
 
-  // Take the 2 adjacent segments that have the larger "cave"
+  // Take the 2 adjacent segments that have the largest "cave"
   Segment* seg_to_extend = nullptr;
   Segment* next_to_extend = nullptr;
   size_t potential_size = 0;
   const size_t nb_loads = load_seg.size();
 
-  // This function requires to have at least 2 segments
+  // This function requires at least 2 segments
   if (nb_loads <= 1) {
     return 0;
   }

@@ -99,7 +99,7 @@ class LIEF_API DynamicFixup {
 
   virtual ~DynamicFixup() = default;
 
-  /// \private
+  /// @private
   static LIEF_LOCAL ok_error_t parse(Parser& ctx, SpanStream& stream,
                                      DynamicRelocation& R);
 

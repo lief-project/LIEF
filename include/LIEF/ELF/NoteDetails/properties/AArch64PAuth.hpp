@@ -27,7 +27,7 @@ namespace ELF {
 
 /// This class represents the `GNU_PROPERTY_AARCH64_FEATURE_PAUTH` property.
 ///
-/// \note If both: AArch64PAuth::platform and AArch64PAuth::version are set to
+/// @note If both AArch64PAuth::platform and AArch64PAuth::version are set to
 /// 0, this means that the binary is incompatible with PAuth ABI extension.
 class LIEF_API AArch64PAuth : public NoteGnuProperty::Property {
   public:

@@ -682,7 +682,7 @@ ok_error_t Builder::build_relocatable() {
   }
 
   // Check if we should relocate or create a .strtab section.
-  // We assume that a .shstrtab is always prensent
+  // We assume that a .shstrtab is always present
   if (!layout->is_strtab_shared_shstrtab() && !binary_->symtab_symbols_.empty()) {
     Section* sec_symtab = binary_->get(Section::TYPE::SYMTAB);
     if (sec_symtab == nullptr) {
@@ -722,7 +722,7 @@ ok_error_t Builder::build_relocatable() {
 
   build_section_relocations<ELF_T>();
 
-  // Since object file only have sections, we don't have to process segments
+  // Since object files only have sections, we don't have to process segments
   if (!binary_->sections_.empty()) {
     build_sections<ELF_T>();
   }
@@ -808,7 +808,7 @@ ok_error_t Builder::build_sections() {
     const bool should_commit_data =
         !section->is_frame() && section->size() > 0 &&
         section->file_offset() > 0 &&
-        // SHT_NOTBITS sections should not be considered.
+        // SHT_NOBITS sections should not be considered.
         // Nevertheless, some (malformed or tricky) ELF binaries
         // might use this type to put content.
         section->type() != Section::TYPE::NOBITS;
@@ -840,7 +840,7 @@ ok_error_t Builder::build_sections() {
     shdr.sh_addralign = static_cast<Elf_Word>(section->alignment());
     shdr.sh_entsize = static_cast<Elf_Word>(section->entry_size());
 
-    // Write Section'header
+    // Write section header
     if (section_headers_offset > 0) {
       const uint64_t offset = section_headers_offset + i * sizeof(Elf_Shdr);
       LIEF_DEBUG("[Header ] {:20}: {:#012x} - {:#012x}", section->name(), offset,
@@ -1278,7 +1278,7 @@ ok_error_t Builder::build_symbol_hash() {
     ++idx;
   }
 
-  // to be improved...?
+  // TODO: This could be improved
   if (should_swap()) {
     for (size_t i = 0; i < buckets_limits; i++) {
       swap_endian(&new_hash_table_ptr[i]);
@@ -1505,8 +1505,8 @@ ok_error_t Builder::build_android_relocations() {
     return ok();
   }
 
-  /* The relocations might have been update when adding the new segment
-   * (->relocate()). Thus the cache might be invalidated
+  /* The relocations might have been updated when adding the new segment
+   * (->relocate()). Thus the cache might be invalidated.
    */
   auto& layout = static_cast<ExeLayout&>(*layout_);
   const size_t computed_size = layout.android_relocations_size<ELF_T>();
@@ -1544,8 +1544,8 @@ ok_error_t Builder::build_relative_relocations() {
   if (!config_.relr) {
     return ok();
   }
-  /* The relocations might have been update when adding the new segment
-   * (->relocate()). Thus the cache might be invalidated
+  /* The relocations might have been updated when adding the new segment
+   * (->relocate()). Thus the cache might be invalidated.
    */
   auto& layout = static_cast<ExeLayout&>(*layout_);
   const size_t computed_size = layout.relative_relocations_size<ELF_T>();
@@ -1617,7 +1617,7 @@ ok_error_t Builder::build_dynamic_relocations() {
     dt_reloc = dt_rela;
     dt_relocsz = binary_->get(DynamicEntry::TAG::RELASZ);
   } else {
-    // Fallback on relation type REL
+    // Fallback on relocation type REL
     dt_reloc = dt_rel;
     dt_relocsz = binary_->get(DynamicEntry::TAG::RELSZ);
   }

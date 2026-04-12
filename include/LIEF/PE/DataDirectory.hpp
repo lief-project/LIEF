@@ -133,7 +133,7 @@ class LIEF_API DataDirectory : public Object {
   LIEF_API friend std::ostream& operator<<(std::ostream& os,
                                            const DataDirectory& entry);
 
-  /// \private
+  /// @private
   LIEF_LOCAL
   std::unique_ptr<SpanStream> stream(bool sized = true) const;
 

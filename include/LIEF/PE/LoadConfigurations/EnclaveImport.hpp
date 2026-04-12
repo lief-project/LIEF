@@ -160,7 +160,7 @@ class LIEF_API EnclaveImport {
     return os;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL static result<EnclaveImport> parse(Parser& ctx, BinaryStream& stream);
 
   private:

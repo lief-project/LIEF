@@ -138,7 +138,7 @@ class LIEF_API Binary {
 
   /// Try to find the COFF string at the given offset in the COFF string table.
   ///
-  /// \warning This offset must include the first 4 bytes holding the size of
+  /// @warning This offset must include the first 4 bytes holding the size of
   ///          the table. Hence, the first string starts a the offset 4.
   String* find_string(uint32_t offset) LIEF_LIFETIMEBOUND {
     auto it = std::find_if(strings_table_.begin(), strings_table_.end(),
@@ -186,7 +186,7 @@ class LIEF_API Binary {
   /// }
   /// ```
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(const Symbol& symbol) const;
 
   /// Disassemble code for the given symbol name
@@ -198,13 +198,13 @@ class LIEF_API Binary {
   /// }
   /// ```
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(const std::string& symbol) const;
 
   /// Disassemble code provided by the given buffer at the specified
   /// `address` parameter.
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(const uint8_t* buffer, size_t size,
                               uint64_t address = 0) const;
 
@@ -212,7 +212,7 @@ class LIEF_API Binary {
   /// Disassemble code provided by the given vector of bytes at the specified
   /// `address` parameter.
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(const std::vector<uint8_t>& buffer,
                               uint64_t address = 0) const {
     return disassemble(buffer.data(), buffer.size(), address);

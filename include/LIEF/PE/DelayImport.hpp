@@ -121,7 +121,7 @@ class LIEF_API DelayImport : public Object {
   ///
   /// According to the PE specifications, this table is an
   /// exact copy of the delay import address table that can be
-  /// used to to restore the original IAT the case of unloading.
+  /// used to restore the original IAT in the case of unloading.
   uint32_t uiat() const {
     return unload_iat_;
   }

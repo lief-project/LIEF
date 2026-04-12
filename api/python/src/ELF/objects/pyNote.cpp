@@ -119,7 +119,7 @@ void create<Note>(nb::module_& m) {
 
     .def_static("create", create_overload_1,
       R"doc(
-      Create the owner name, the type and the description
+      Create a note from the owner name, the type, and the description
 
       Depending on the note, the filetype, the architecture and the ELF class might
       be needed.

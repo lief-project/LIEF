@@ -58,7 +58,7 @@ void create<DataInCode>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("add", &DataInCode::add,
-        "Add an new " RST_CLASS_REF(lief.MachO.DataCodeEntry) ""_doc,
+        "Add a new " RST_CLASS_REF(lief.MachO.DataCodeEntry) ""_doc,
         "entry"_a)
 
     .def_prop_ro("content",

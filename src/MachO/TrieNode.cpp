@@ -107,7 +107,7 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info,
 
 // Mainly inspired from LLVM:
 // lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp - addOrderedNodes
-// Add info in nodes making sure every parents node is inserted before
+// Add info in nodes making sure every parent node is inserted before
 TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info,
                                       std::vector<TrieNode*>& nodes) {
   if (!ordered_) {
@@ -219,7 +219,7 @@ TrieNode& TrieNode::write(vector_iostream& buffer) {
     buffer.write<uint8_t>(0);
   }
 
-  // Number of childs
+  // Number of children
   if (children_.size() >= 256) {
     LIEF_WARN("Too many children ({:d})", children_.size());
     return *this;

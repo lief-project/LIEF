@@ -147,14 +147,14 @@ class LIEF_API ThreadLocalVariables : public LIEF::MachO::Section {
   /// Number of Thunk descriptors in this section.
   size_t nb_thunks() const;
 
-  /// Access the Thunk at the given \p idx, or return an empty optional if the
+  /// Access the Thunk at the given @p idx, or return an empty optional if the
   /// index is out of range.
   optional<Thunk> get(size_t idx) const;
 
-  /// Change the Thunk at the given \p idx
+  /// Change the Thunk at the given @p idx
   void set(size_t idx, const Thunk& thunk);
 
-  /// Access the Thunk at the given \p idx
+  /// Access the Thunk at the given @p idx
   optional<Thunk> operator[](size_t idx) const {
     return get(idx);
   }

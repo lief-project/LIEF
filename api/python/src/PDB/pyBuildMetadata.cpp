@@ -120,7 +120,7 @@ void create<pdb::BuildMetadata>(nb::module_& m) {
     .def_rw("major", &version_t::major, "Major version"_doc)
     .def_rw("minor", &version_t::minor, "Minor version"_doc)
     .def_rw("build", &version_t::build, "Build version"_doc)
-    .def_rw("qfe", &version_t::qfe, "Quick Fix Engineeringa version"_doc);
+    .def_rw("qfe", &version_t::qfe, "Quick Fix Engineering version"_doc);
 
 
   using build_info_t = BuildMetadata::build_info_t;

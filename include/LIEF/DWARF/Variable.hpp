@@ -105,7 +105,7 @@ class LIEF_API Variable {
   /// The name of the variable which is used for linking (`DW_AT_linkage_name`).
   ///
   /// This name differs from name() as it is usually mangled. The function
-  /// return an empty string if the linkage name is not available.
+  /// returns an empty string if the linkage name is not available.
   std::string linkage_name() const;
 
   /// Address of the variable.

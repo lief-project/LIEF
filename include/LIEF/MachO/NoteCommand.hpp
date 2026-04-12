@@ -29,7 +29,7 @@ namespace details {
 struct note_command;
 }
 
-/// Class that represent the `LC_NOTE` command.
+/// Class that represents the `LC_NOTE` command.
 ///
 /// This command is used to include arbitrary notes or metadata within a binary.
 class LIEF_API NoteCommand : public LoadCommand {

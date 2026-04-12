@@ -152,12 +152,12 @@ class LIEF_API ResourcesManager : public Object {
   /// all required nodes are created.
   void manifest(const std::string& manifest);
 
-  /// `true` if resources a LIEF::PE::ResourceVersion
+  /// `true` if resources contain a LIEF::PE::ResourceVersion
   bool has_version() const {
     return get_node_type(TYPE::VERSION) != nullptr;
   }
 
-  /// Return a list of verison info (`VS_VERSIONINFO`).
+  /// Return a list of version info (`VS_VERSIONINFO`).
   std::vector<ResourceVersion> version() const;
 
   /// `true` if resources contain a LIEF::PE::ResourceIcon

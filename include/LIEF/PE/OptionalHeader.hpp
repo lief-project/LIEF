@@ -64,7 +64,7 @@ class LIEF_API OptionalHeader : public Object {
     NATIVE = 1,                    ///< Device drivers and native Windows processes
     WINDOWS_GUI = 2,               ///< The Windows GUI subsystem.
     WINDOWS_CUI = 3,               ///< The Windows character subsystem.
-    OS2_CUI = 5,                   ///< The OS/2 character subsytem.
+    OS2_CUI = 5,                   ///< The OS/2 character subsystem.
     POSIX_CUI = 7,                 ///< The POSIX character subsystem.
     NATIVE_WINDOWS = 8,            ///< Native Windows 9x driver.
     WINDOWS_CE_GUI = 9,            ///< Windows CE.

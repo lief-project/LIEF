@@ -61,7 +61,7 @@ class LIEF_API DynamicFixupGeneric : public DynamicFixup {
 
   ~DynamicFixupGeneric() override;
 
-  /// \private
+  /// @private
   LIEF_LOCAL static std::unique_ptr<DynamicFixupGeneric> parse(Parser& ctx,
                                                                SpanStream& strm);
 

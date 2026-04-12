@@ -42,7 +42,7 @@ class LIEF_API RichHeader : public Object {
 
   static constexpr uint8_t RICH_MAGIC[] = {'R', 'i', 'c', 'h'};
   static constexpr uint32_t RICH_MAGIC_INT = 0x68636952;    // 'Rich'
-  static constexpr uint32_t DANS_MAGIC_NUMBER = 0x536E6144; // 'Rich'
+  static constexpr uint32_t DANS_MAGIC_NUMBER = 0x536E6144; // 'DanS'
 
   RichHeader() = default;
   RichHeader(const RichHeader&) = default;

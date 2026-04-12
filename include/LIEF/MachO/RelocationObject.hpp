@@ -31,7 +31,7 @@ struct relocation_info;
 struct scattered_relocation_info;
 }
 
-/// Class that represents a relocation presents in the MachO object
+/// Class that represents a relocation present in the MachO object
 /// file (``.o``). Usually, this kind of relocation is found in the MachO::Section
 ///
 /// @see RelocationDyld

@@ -226,7 +226,7 @@ impl std::fmt::Debug for Dyld<'_> {
     }
 }
 
-/// Structure that represents a fixup (i.e. relocation) from  the recent from `LC_DYLD_CHAINED_FIXUPS`
+/// Structure that represents a fixup (i.e. relocation) from the `LC_DYLD_CHAINED_FIXUPS`
 /// command
 pub struct Fixup<'a> {
     ptr: cxx::UniquePtr<ffi::MachO_RelocationFixup>,

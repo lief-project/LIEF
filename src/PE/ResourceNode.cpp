@@ -103,7 +103,7 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
   auto directory = std::make_unique<ResourceDirectory>(directory_table);
   directory->set_depth(depth);
 
-  // Iterate over the childs
+  // Iterate over the children
   for (size_t idx = 0; idx < (numberof_name_entries + numberof_ID_entries); ++idx)
   {
 

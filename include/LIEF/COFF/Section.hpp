@@ -112,7 +112,7 @@ class LIEF_API Section : public LIEF::Section {
 
   /// Number of relocations.
   ///
-  /// \warning If the number of relocations is greater than 0xFFFF (maximum
+  /// @warning If the number of relocations is greater than 0xFFFF (maximum
   ///          value for 16-bits integer), then the number of relocations is
   ///          stored in the virtual address of the **first** relocation.
   uint16_t numberof_relocations() const {
@@ -170,7 +170,7 @@ class LIEF_API Section : public LIEF::Section {
     return symbols_;
   }
 
-  /// Return comdat infomration (only if the section has the
+  /// Return comdat information (only if the section has the
   /// CHARACTERISTICS::LNK_COMDAT characteristic)
   optional<ComdatInfo> comdat_info() const;
 

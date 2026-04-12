@@ -31,19 +31,19 @@ namespace ELF {
 class LIEF_API CorePrPsInfo : public Note {
   public:
   struct info_t {
-    uint8_t state = 0;    /// Numeric process state
-    char sname = ' ';     /// printable character representing state
-    bool zombie = false;  /// Whether the process is a zombie
-    uint8_t nice = 0;     /// Nice value
-    uint64_t flag = 0;    /// Process flag
-    uint32_t uid = 0;     /// Process user ID
-    uint32_t gid = 0;     /// Process group ID
-    uint32_t pid = 0;     /// Process ID
-    uint32_t ppid = 0;    /// Process parent ID
-    uint32_t pgrp = 0;    /// Process group
-    uint32_t sid = 0;     /// Process session id
-    std::string filename; /// Filename of the executable
-    std::string args;     /// Initial part of the arguments
+    uint8_t state = 0;    ///< Numeric process state
+    char sname = ' ';     ///< Printable character representing state
+    bool zombie = false;  ///< Whether the process is a zombie
+    uint8_t nice = 0;     ///< Nice value
+    uint64_t flag = 0;    ///< Process flag
+    uint32_t uid = 0;     ///< Process user ID
+    uint32_t gid = 0;     ///< Process group ID
+    uint32_t pid = 0;     ///< Process ID
+    uint32_t ppid = 0;    ///< Process parent ID
+    uint32_t pgrp = 0;    ///< Process group
+    uint32_t sid = 0;     ///< Process session ID
+    std::string filename; ///< Filename of the executable
+    std::string args;     ///< Initial part of the arguments
 
     /// Return the filename without the ending `\x00`
     std::string filename_stripped() const {
@@ -90,7 +90,7 @@ class LIEF_API CorePrPsInfo : public Note {
   Header::CLASS class_ = Header::CLASS::NONE;
 };
 
-} // namepsace ELF
+} // namespace ELF
 } // namespace LIEF
 
 #endif

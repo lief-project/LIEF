@@ -53,7 +53,7 @@ class LIEF_API DynamicRelocationV2 : public DynamicRelocation {
 
   ~DynamicRelocationV2() override = default;
 
-  /// \private
+  /// @private
   template<class PE_T>
   LIEF_LOCAL static std::unique_ptr<DynamicRelocationV2> parse(Parser& ctx,
                                                                BinaryStream& strm);

@@ -32,7 +32,7 @@ namespace logging {
 
 /// **Hierarchical** logging level
 ///
-/// From a given level set, all levels below this ! level are enabled
+/// From a given level set, all levels below this level are enabled
 ///
 /// For example, if LEVEL::INFO is enabled then LEVEL::WARN, LEVEL::ERR are also
 /// enabled
@@ -61,7 +61,7 @@ LIEF_API void enable();
 /// Change the logging level (**hierarchical**)
 LIEF_API void set_level(LEVEL level);
 
-/// Change the logger as a file-base logging and set its path
+/// Change the logger to a file-based logging and set its path
 LIEF_API void set_path(const std::string& path);
 
 /// Log a message with the LIEF's logger
@@ -189,10 +189,10 @@ LIEF_API void enable(const char* name);
 /// Set the log level for the logger with the given name
 LIEF_API void set_level(const char* name, LEVEL level);
 
-/// Change the logger with the given as a file-base logging and set its path
+/// Change the logger with the given name to a file-based logging and set its path
 LIEF_API void set_path(const char* name, const std::string& path);
 
-/// Log a message with the logger whose name in provided in the first parameter
+/// Log a message with the logger whose name is provided in the first parameter
 LIEF_API void log(const char* name, LEVEL level, const std::string& msg);
 
 /// Set a spdlog sink for the logger with the given name

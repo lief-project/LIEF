@@ -43,10 +43,10 @@ class LIEF_API Type {
 
   virtual ~Type();
 
-  /// \private
+  /// @private
   static std::unique_ptr<Type> create(std::unique_ptr<details::Type> impl);
 
-  /// \private
+  /// @private
   details::Type& impl() {
     assert(impl_ != nullptr);
     return *impl_;

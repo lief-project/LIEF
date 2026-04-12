@@ -32,7 +32,7 @@ template<>
 void create<LoadCommand>(nb::module_& m) {
 
   nb::class_<LoadCommand, LIEF::Object> cls(m, "LoadCommand",
-      "Based class for the Mach-O load commands"_doc);
+      "Base class for the Mach-O load commands"_doc);
 
 
 
@@ -112,7 +112,7 @@ void create<LoadCommand>(nb::module_& m) {
     .def_prop_rw("size",
         nb::overload_cast<>(&LoadCommand::size, nb::const_),
         nb::overload_cast<uint32_t>(&LoadCommand::size),
-        "Size of the command (should be greather than ``sizeof(load_command)``)"_doc)
+        "Size of the command (should be greater than ``sizeof(load_command)``)"_doc)
 
     .def_prop_rw("data",
         nb::overload_cast<>(&LoadCommand::data, nb::const_),

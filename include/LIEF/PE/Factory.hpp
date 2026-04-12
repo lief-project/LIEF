@@ -34,7 +34,7 @@ class LIEF_API Factory {
   Factory(Factory&&);
   Factory& operator=(Factory&&);
 
-  /// Initiate the factory to construct a PE which the given type
+  /// Initiate the factory to construct a PE with the given type
   static std::unique_ptr<Factory> create(PE_TYPE type);
 
   Factory& add_section(const Section& section) {

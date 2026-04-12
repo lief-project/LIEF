@@ -49,7 +49,7 @@ enum class lief_errors : uint32_t {
 
 const char* to_string(lief_errors err);
 
-/// Create an standard error code from lief_errors
+/// Create a standard error code from lief_errors
 inline tl::unexpected<lief_errors> make_error_code(lief_errors e) {
   return tl::make_unexpected(e);
 }
@@ -63,14 +63,14 @@ namespace LIEF {
 ///
 /// Typical usage is:
 ///
-/// \code{.cpp}
+/// @code{.cpp}
 /// result<int> intval = my_function();
 /// if (intval) {
 ///  int val = intval.value();
 /// } else { // There is an error
 ///  std::cout << get_error(intval).message() << "\n";
 /// }
-/// \endcode
+/// @endcode
 ///
 /// See https://tl.tartanllama.xyz/en/latest/api/expected.html for more details
 template<typename T>
@@ -106,14 +106,14 @@ inline ok_t ok() {
 /// writing ``result<void> f(...)``. Instead, it makes the output
 /// explicit such as:
 ///
-/// \code{.cpp}
+/// @code{.cpp}
 /// ok_error_t process() {
 ///   if (fail) {
 ///     return make_error_code(...);
 ///   }
 ///   return ok();
 /// }
-/// \endcode
+/// @endcode
 class LIEF_MAYBE_UNUSED ok_error_t : public result<ok_t> {
   public:
   using result<ok_t>::result;

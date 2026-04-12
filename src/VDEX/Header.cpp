@@ -101,5 +101,4 @@ std::ostream& operator<<(std::ostream& os, const Header& header) {
 
 Header::~Header() = default;
 
-} // Namespace VDEX
-// Namespace LIEF
+} // namespace LIEF::VDEX

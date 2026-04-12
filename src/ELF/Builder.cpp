@@ -139,8 +139,8 @@ uint32_t Builder::sort_dynamic_symbols() {
   if (Section* section = binary_->get_section(".dynsym")) {
     if (section->information() != first_non_local_symbol_index) {
       // TODO: Erase null entries of dynamic symbol table and symbol version
-      // table if information of .dynsym section is smaller than null entries
-      // num.
+      // table if the .dynsym section info is smaller than the number of null
+      // entries.
       LIEF_DEBUG("Info field of {} section changed from {:d} to {:d}",
                  section->name(), section->information(),
                  first_non_local_symbol_index);

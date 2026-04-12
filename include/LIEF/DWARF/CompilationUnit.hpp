@@ -173,7 +173,7 @@ class LIEF_API CompilationUnit {
   /// This value matches the `DW_AT_comp_dir` attribute
   std::string compilation_dir() const;
 
-  /// Original Language of this compilation unit.
+  /// Original language of this compilation unit.
   ///
   /// This value matches the `DW_AT_language` attribute.
   Language language() const;
@@ -190,7 +190,7 @@ class LIEF_API CompilationUnit {
   /// between the lowest address and the highest that are not owned by the CU),
   /// then it returns the sum of **all** the address ranges owned by this CU.
   ///
-  /// If the compilation unit is **not** fragmented, then is basically returns
+  /// If the compilation unit is **not** fragmented, then it basically returns
   /// `high_address - low_address`.
   uint64_t size() const;
 
@@ -262,7 +262,7 @@ class LIEF_API CompilationUnit {
   types_it types() const;
 
 
-  /// Return an iterator over all the variables defined in the this compilation
+  /// Return an iterator over all the variables defined in this compilation
   /// unit:
   ///
   /// ```cpp

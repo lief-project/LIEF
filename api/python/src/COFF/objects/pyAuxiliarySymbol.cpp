@@ -44,7 +44,7 @@ void create<AuxiliarySymbol>(nb::module_& m) {
     Class that represents an auxiliary symbol.
 
     An auxiliary symbol has the same size as a regular :class:`lief.PE.Symbol`
-    (18 bytes) but its content depends on the the parent symbol.
+    (18 bytes) but its content depends on the parent symbol.
     )doc"_doc
   );
 

@@ -68,7 +68,7 @@ class LIEF_API Method : public Object {
   size_t index() const;
 
   /// True if this method is a virtual one.
-  /// i.e. not **static**, **private**, **finale** or constructor
+  /// i.e. not **static**, **private**, **final** or constructor
   bool is_virtual() const;
 
   /// Method's prototype or a nullptr if it is not resolved

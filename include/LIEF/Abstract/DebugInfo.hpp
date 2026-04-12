@@ -34,7 +34,7 @@ class DebugInfo;
 /// Users can use this interface to access high-level debug features like
 /// resolving function addresses.
 ///
-/// See: LIEF::pdb::DebugInfo, LIEF::dwarf::DebugInfo
+/// @see LIEF::pdb::DebugInfo, LIEF::dwarf::DebugInfo
 class LIEF_API DebugInfo {
   public:
   friend class Binary;
@@ -62,7 +62,7 @@ class LIEF_API DebugInfo {
   template<class T>
   const T* as() const {
     static_assert(std::is_base_of<DebugInfo, T>::value,
-                  "Require Instruction inheritance");
+                  "Requires DebugInfo inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }

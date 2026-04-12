@@ -48,7 +48,7 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
               nb::type<pdb::CompilationUnit>(), "functions_it", functions);
         },
       R"doc(
-      Return an iterator over the function defined in this compilation unit.
+      Return an iterator over the functions defined in this compilation unit.
       If the PDB does not contain or has an empty DBI stream, it returns
       an empty iterator.
       )doc"_doc, nb::keep_alive<0, 1>()

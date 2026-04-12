@@ -72,43 +72,43 @@ class LIEF_API Header : public Object {
 
   /// Match the result of `Elfxx_Ehdr.e_ident[EI_CLASS]`
   enum class CLASS {
-    NONE = 0, /// Invalid class
-    ELF32,    /// 32-bit objects
-    ELF64,    /// 64-bits objects
+    NONE = 0, ///< Invalid class
+    ELF32,    ///< 32-bit objects
+    ELF64,    ///< 64-bit objects
   };
 
   /// Match the result `Elfxx_Ehdr.e_ident[EI_OSABI]`
   enum class OS_ABI {
-    SYSTEMV = 0,       /// UNIX System V ABI
-    HPUX = 1,          /// HP-UX operating system
-    NETBSD = 2,        /// NetBSD
-    GNU = 3,           /// GNU/Linux
-    LINUX = 3,         /// Historical alias for ELFOSABI_GNU.
-    HURD = 4,          /// GNU/Hurd
-    SOLARIS = 6,       /// Solaris
-    AIX = 7,           /// AIX
-    IRIX = 8,          /// IRIX
-    FREEBSD = 9,       /// FreeBSD
-    TRU64 = 10,        /// TRU64 UNIX
-    MODESTO = 11,      /// Novell Modesto
-    OPENBSD = 12,      /// OpenBSD
-    OPENVMS = 13,      /// OpenVMS
-    NSK = 14,          /// Hewlett-Packard Non-Stop Kernel
-    AROS = 15,         /// AROS
-    FENIXOS = 16,      /// FenixOS
-    CLOUDABI = 17,     /// Nuxi CloudABI
-    C6000_ELFABI = 64, /// Bare-metal TMS320C6000
-    AMDGPU_HSA = 64,   /// AMD HSA runtime
-    C6000_LINUX = 65,  /// Linux TMS320C6000
-    ARM = 97,          /// ARM
-    STANDALONE = 255,  /// Standalone (embedded) application
+    SYSTEMV = 0,       ///< UNIX System V ABI
+    HPUX = 1,          ///< HP-UX operating system
+    NETBSD = 2,        ///< NetBSD
+    GNU = 3,           ///< GNU/Linux
+    LINUX = 3,         ///< Historical alias for ELFOSABI_GNU.
+    HURD = 4,          ///< GNU/Hurd
+    SOLARIS = 6,       ///< Solaris
+    AIX = 7,           ///< AIX
+    IRIX = 8,          ///< IRIX
+    FREEBSD = 9,       ///< FreeBSD
+    TRU64 = 10,        ///< TRU64 UNIX
+    MODESTO = 11,      ///< Novell Modesto
+    OPENBSD = 12,      ///< OpenBSD
+    OPENVMS = 13,      ///< OpenVMS
+    NSK = 14,          ///< Hewlett-Packard Non-Stop Kernel
+    AROS = 15,         ///< AROS
+    FENIXOS = 16,      ///< FenixOS
+    CLOUDABI = 17,     ///< Nuxi CloudABI
+    C6000_ELFABI = 64, ///< Bare-metal TMS320C6000
+    AMDGPU_HSA = 64,   ///< AMD HSA runtime
+    C6000_LINUX = 65,  ///< Linux TMS320C6000
+    ARM = 97,          ///< ARM
+    STANDALONE = 255,  ///< Standalone (embedded) application
   };
 
   /// Match the result `Elfxx_Ehdr.e_ident[EI_DATA]`
   enum class ELF_DATA {
-    NONE = 0, /// Invalid data encoding
-    LSB = 1,  /// 2's complement, little endian
-    MSB = 2,  /// 2's complement, big endian
+    NONE = 0, ///< Invalid data encoding
+    LSB = 1,  ///< 2's complement, little endian
+    MSB = 2,  ///< 2's complement, big endian
   };
 
   Header() = default;

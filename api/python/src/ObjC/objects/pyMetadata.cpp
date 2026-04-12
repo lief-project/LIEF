@@ -59,7 +59,7 @@ void create<objc::Metadata>(nb::module_& m) {
 
     .def("get_protocol", &objc::Metadata::get_protocol,
       R"doc(
-      Try to find the Objective-C class with the given **mangled** name.
+      Try to find the Objective-C protocol with the given **mangled** name.
       )doc"_doc, "name"_a
     )
   ;

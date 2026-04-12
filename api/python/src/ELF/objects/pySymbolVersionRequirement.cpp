@@ -66,7 +66,7 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
     .def("remove_aux_requirement", nb::overload_cast<const std::string&>(&SymbolVersionRequirement::remove_aux_requirement),
         R"doc(
         Try to remove the auxiliary requirement symbol with the given name.
-        The function returns true if the operation succeed, false otherwise.
+        The function returns true if the operation succeeds, false otherwise.
 
         .. warning::
 
@@ -79,7 +79,7 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
     .def("remove_aux_requirement", nb::overload_cast<SymbolVersionAuxRequirement&>(&SymbolVersionRequirement::remove_aux_requirement),
         R"doc(
         Try to remove the given auxiliary requirement symbol.
-        The function returns true if the operation succeed, false otherwise.
+        The function returns true if the operation succeeds, false otherwise.
 
         .. warning::
 

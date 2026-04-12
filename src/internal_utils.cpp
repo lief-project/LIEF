@@ -55,7 +55,7 @@ inline std::string pretty_hex(char c) {
 }
 
 std::vector<std::string> split(const std::string& input, char c = '\n') {
-  // Not really efficient but does not aim to
+  // Not the most efficient approach, but simplicity is the goal here
   std::stringstream strm(input);
   std::vector<std::string> out;
   std::string element;

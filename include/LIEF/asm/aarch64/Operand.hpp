@@ -91,17 +91,17 @@ class LIEF_API Operand {
 
   virtual ~Operand();
 
-  /// \private
+  /// @private
   static LIEF_LOCAL std::unique_ptr<Operand>
       create(std::unique_ptr<details::Operand> impl);
 
-  /// \private
+  /// @private
   LIEF_LOCAL const details::Operand& impl() const {
     assert(impl_ != nullptr);
     return *impl_;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL details::Operand& impl() {
     assert(impl_ != nullptr);
     return *impl_;

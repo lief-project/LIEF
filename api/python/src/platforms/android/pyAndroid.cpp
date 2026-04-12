@@ -45,7 +45,7 @@ void init_versions(nb::module_& m) {
   m.def("version_string",
       &version_string,
       R"delim(
-      Return the :class:`~.ANDROID_VERSIONS` as a string..
+      Return the :class:`~.ANDROID_VERSIONS` as a string.
 
       For example: ``7.0.1``
       )delim"_doc, "version"_a);

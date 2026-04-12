@@ -101,14 +101,14 @@ class LIEF_API SymbolVersion : public Object {
 
   /// Redefine this version as global by dropping its auxiliary version
   ///
-  /// \see as_local() drop_version()
+  /// @see as_local() drop_version()
   void as_global() {
     return drop_version(GLOBAL_VERSION);
   }
 
   /// Redefine this version as local by dropping its auxiliary version
   ///
-  /// \see as_global() drop_version()
+  /// @see as_global() drop_version()
   void as_local() {
     return drop_version(LOCAL_VERSION);
   }

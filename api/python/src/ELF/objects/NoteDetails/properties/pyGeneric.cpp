@@ -27,7 +27,7 @@ void create<Generic>(nb::module_& m) {
       )doc")
     .def_prop_ro("raw_type", &Generic::type,
         R"doc(
-        The original raw type as an integer. This value might depends
+        The original raw type as an integer. This value might depend
         on the architecture and/or the file type.
         )doc");
 

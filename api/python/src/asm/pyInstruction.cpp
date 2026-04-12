@@ -88,7 +88,7 @@ void create<assembly::Instruction>(nb::module_& m) {
     .def_prop_ro("is_barrier", &Instruction::is_barrier,
       R"doc(
       True if the instruction prevents executing the instruction
-      that immediatly follows the current. This includes return
+      that immediately follows the current. This includes return
       or unconditional branch instructions
       )doc"_doc
     )
@@ -99,7 +99,7 @@ void create<assembly::Instruction>(nb::module_& m) {
 
     .def_prop_ro("is_indirect_branch", &Instruction::is_indirect_branch,
       R"doc(
-      True if the instruction is and indirect branch.
+      True if the instruction is an indirect branch.
 
       This includes instructions that branch through a register (e.g.
       ``jmp rax``, ``br x1``).

@@ -31,7 +31,7 @@ class Parser;
 class Builder;
 class Binary;
 
-/// Class which represent a Mach-O (fat) binary
+/// Class which represents a Mach-O (fat) binary
 /// This object is also used for representing Mach-O binaries that are **NOT FAT**
 class LIEF_API FatBinary {
   friend class LIEF::Parser;
@@ -91,8 +91,8 @@ class LIEF_API FatBinary {
     }
   }
 
-  /// Get a pointer to the last MachO::Binary object presents in this Fat Binary.
-  /// It returns a nullptr if no binary are present.
+  /// Get a pointer to the last MachO::Binary object present in this Fat Binary.
+  /// It returns a nullptr if no binaries are present.
   std::unique_ptr<Binary> pop_back();
 
   /// Get a pointer to the MachO::Binary specified by the ``index``.
@@ -133,7 +133,7 @@ class LIEF_API FatBinary {
   /// Extract a MachO::Binary object. Gives ownership to the caller, and
   /// remove it from this FatBinary object.
   ///
-  /// @warning: this invalidates any previously hold iterator!
+  /// @warning This invalidates any previously held iterator!
   std::unique_ptr<Binary> take(size_t index);
 
   /// Take the underlying MachO::Binary that matches the given architecture
@@ -144,7 +144,7 @@ class LIEF_API FatBinary {
   /// @param filename Path to write the reconstructed binary
   void write(const std::string& filename);
 
-  /// Reconstruct the Fat binary object and return his content as bytes
+  /// Reconstruct the Fat binary object and return its content as bytes
   std::vector<uint8_t> raw();
 
   Binary* get(Header::CPU_TYPE cpu) LIEF_LIFETIMEBOUND {

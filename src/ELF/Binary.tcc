@@ -482,8 +482,8 @@ void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift)
 //
 // segment_va % pagesize() == segment_offset % pagesize()
 //
-// It implies that we usually find "cave" between segments
-// that could can be large enough to insert our new phdr table.
+// It implies that we usually find "caves" between segments
+// that could be large enough to insert our new phdr table.
 // To do so, we would just need to extend the PT_LOAD segment associated
 // with the caving.
 template<>

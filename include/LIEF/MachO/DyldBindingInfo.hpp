@@ -31,7 +31,7 @@ namespace MachO {
 /// specifications but it provides a *view* on an entry of the Dyld binding
 /// opcodes.
 ///
-/// @see: BindingInfo
+/// @see BindingInfo
 class LIEF_API DyldBindingInfo : public BindingInfo {
   friend class BinaryParser;
 

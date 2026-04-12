@@ -25,7 +25,7 @@ pub enum Binary {
 }
 
 impl Binary {
-    /// Parse form a file path
+    /// Parse from a file path
     ///
     /// ```
     /// if let Some(Binary::ELF(elf)) = Binary::parse("/bin/ls") {

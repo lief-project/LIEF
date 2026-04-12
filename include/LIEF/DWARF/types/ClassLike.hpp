@@ -48,7 +48,7 @@ class LIEF_API ClassLike : public Type {
     /// If the offset can't be resolved it returns a lief_errors
     result<uint64_t> offset() const;
 
-    /// Offset of the current member in **bits** the struct/union/class
+    /// Offset of the current member in **bits** in the struct/union/class
     ///
     /// This function differs from offset() for aggregates using bit-field
     /// declaration:
@@ -126,7 +126,7 @@ class LIEF_API Class : public ClassLike {
   ~Class() override;
 };
 
-/// This class represents a DWARF `class` type (`DW_TAG_union_type`)
+/// This class represents a DWARF `union` type (`DW_TAG_union_type`)
 class LIEF_API Union : public ClassLike {
   public:
   using ClassLike::ClassLike;

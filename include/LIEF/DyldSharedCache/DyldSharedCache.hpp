@@ -112,11 +112,11 @@ class LIEF_API DyldSharedCache {
   DyldSharedCache(std::unique_ptr<details::DyldSharedCache> impl);
   ~DyldSharedCache();
 
-  /// See the \ref load functions for the details
+  /// See the @ref load functions for the details
   static std::unique_ptr<DyldSharedCache> from_path(const std::string& path,
                                                     const std::string& arch = "");
 
-  /// See the \ref load functions for the details
+  /// See the @ref load functions for the details
   static std::unique_ptr<DyldSharedCache>
       from_files(const std::vector<std::string>& path);
 
@@ -163,7 +163,7 @@ class LIEF_API DyldSharedCache {
   /// True if the subcaches are associated with this cache
   bool has_subcaches() const;
 
-  /// Return an interator over the libraries embedded in this dyld shared cache.
+  /// Return an iterator over the libraries embedded in this dyld shared cache.
   ///
   /// This iterator implements the *random access* trait. Thus, one can use
   /// iterator_range::size, iterator_range::at, iterator_range::operator[] to a
@@ -177,7 +177,7 @@ class LIEF_API DyldSharedCache {
   /// ```
   dylib_iterator libraries() const LIEF_LIFETIMEBOUND;
 
-  /// Return an interator over the mapping information of this dyld shared cache.
+  /// Return an iterator over the mapping information of this dyld shared cache.
   ///
   /// This iterator implements the *random access* trait. Thus, one can use
   /// iterator_range::size, iterator_range::at, iterator_range::operator[] to
@@ -191,7 +191,7 @@ class LIEF_API DyldSharedCache {
   /// ```
   mapping_info_iterator mapping_info() const;
 
-  /// Return an interator over the subcaches associated with this (main) dyld
+  /// Return an iterator over the subcaches associated with this (main) dyld
   /// shared cache.
   ///
   /// This iterator implements the *random access* trait. Thus, one can use
@@ -227,7 +227,7 @@ class LIEF_API DyldSharedCache {
 
   /// Convert the given virtual address into an offset.
   ///
-  /// \warning If the shared cache contains multiple subcaches,
+  /// @warning If the shared cache contains multiple subcaches,
   ///          this function needs to be called on the targeted subcache.
   ///          See cache_for_address() to find the associated subcache.
   result<uint64_t> va_to_offset(uint64_t va) const;
@@ -268,10 +268,10 @@ class LIEF_API DyldSharedCache {
 };
 
 /// Load a shared cache from a single file or from a directory specified
-/// by the \p path parameter.
+/// by the @p path parameter.
 ///
 /// In the case where multiple architectures are
-/// available in the \p path directory, the \p arch parameter can be used to
+/// available in the @p path directory, the @p arch parameter can be used to
 /// define which architecture should be prefered.
 ///
 /// **Example:**

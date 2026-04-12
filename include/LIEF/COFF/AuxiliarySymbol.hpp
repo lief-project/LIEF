@@ -32,7 +32,7 @@ class Symbol;
 /// Class that represents an auxiliary symbol.
 ///
 /// An auxiliary symbol has the same size as a regular LIEF::PE::Symbol (18
-/// bytes) but its content depends on the the parent symbol.
+/// bytes) but its content depends on the parent symbol.
 class LIEF_API AuxiliarySymbol {
   public:
   AuxiliarySymbol() = default;

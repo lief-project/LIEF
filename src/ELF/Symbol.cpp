@@ -110,11 +110,11 @@ bool Symbol::is_exported() const {
   // An export must have an address
   is_exported = is_exported && (value() != 0 || (value() == 0 && size() > 0));
 
-  // An export must be bind to GLOBAL or WEAK
+  // An export must be bound to GLOBAL or WEAK
   is_exported =
       is_exported && (binding() == BINDING::GLOBAL || binding() == BINDING::WEAK);
 
-  // An export must have one of theses types:
+  // An export must have one of these types:
   is_exported =
       is_exported && (type() == TYPE::FUNC || type() == TYPE::GNU_IFUNC ||
                       type() == TYPE::OBJECT);
@@ -147,10 +147,10 @@ bool Symbol::is_imported() const {
     is_imported = is_imported && value() == 0;
   }
 
-  // its name must not be empty
+  // Its name must not be empty
   is_imported = is_imported && !name().empty();
 
-  // It must have a GLOBAL or WEAK bind
+  // It must have a GLOBAL or WEAK binding
   is_imported =
       is_imported && (binding() == BINDING::GLOBAL || binding() == BINDING::WEAK);
 

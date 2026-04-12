@@ -69,7 +69,7 @@ class LIEF_API GnuHash : public Object {
   }
 
   /// Index of the first symbol in the dynamic
-  /// symbols table which accessible with the hash table
+  /// symbols table which is accessible with the hash table
   uint32_t symbol_index() const {
     return symbol_index_;
   }
@@ -116,7 +116,7 @@ class LIEF_API GnuHash : public Object {
 
   /// Check if the symbol associated with the given hash *probably* exists. If
   /// the returned value is ``false`` you can assume at ``100%`` that
-  /// the symbol doesn't exists. If ``true`` you can't
+  /// the symbol doesn't exist. If ``true`` you can't
   /// do any assumption
   bool check(uint32_t hash) const;
 
@@ -150,7 +150,7 @@ class LIEF_API GnuHash : public Object {
 };
 
 
-} // namepsace ELF
+} // namespace ELF
 } // namespace LIEF
 
 #endif

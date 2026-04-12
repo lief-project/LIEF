@@ -49,7 +49,7 @@ void create<dw::editor::CompilationUnit>(nb::module_& m) {
 
     .def("create_typedef", &dw::editor::CompilationUnit::create_typedef,
       R"doc(
-      Create a typdef with the name provided in the first parameter which aliases
+      Create a typedef with the name provided in the first parameter which aliases
       the type provided in the second parameter
       )doc"_doc, "name"_a, "ty"_a)
 

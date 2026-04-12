@@ -222,7 +222,7 @@ class LIEF_API EnclaveConfiguration {
     return os;
   }
 
-  /// \private
+  /// @private
   template<class PE_T>
   LIEF_LOCAL static std::unique_ptr<EnclaveConfiguration>
       parse(Parser& ctx, BinaryStream& stream);

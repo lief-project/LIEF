@@ -137,7 +137,7 @@ ok_error_t Builder::build_tls() {
           0;
 
   const uint64_t imagebase = binary_->optional_header().imagebase();
-  // addressof_callbacks is a VA not a RVA
+  // addressof_callbacks is a VA, not an RVA
   uint32_t tls_callbacks_start = 0;
   uint32_t tls_callbacks_end = 0;
 
@@ -242,8 +242,8 @@ ok_error_t Builder::build_tls() {
                tls_data_.callbacks.size() - original_callback_size);
     Section tls_section(config_.tls_section);
 
-    // We don't necessary need to relocate the TLS header but it can be worth
-    // reserving this space ahead of a potential need. In the "worse" case
+    // We don't necessarily need to relocate the TLS header but it can be worth
+    // reserving this space ahead of a potential need. In the worst case
     // of a PE32+, 36 bytes are reserved.
     const size_t relocated_size =
         align(tls_data_.callbacks.size() + sizeof(tls_header),
@@ -315,7 +315,7 @@ ok_error_t Builder::build_tls() {
     reloc_size -= rm_entries * sizeof(uint16_t);
     reloc_dir->size(reloc_size);
 
-    // Relocation that need to be created:
+    // Relocations that need to be created:
     const size_t req_relocs = tls->callbacks().size();
     LIEF_DEBUG("Need to create #{} relocations", req_relocs);
 
@@ -450,7 +450,7 @@ ok_error_t Builder::build_imports() {
   // | DLL Names                |
   // +--------------------------+
   //
-  // and the layout for PE compiled with MinGW is also different [...].
+  // and the layout for PE files compiled with MinGW is also different [...].
   // Thus, we can't make any assumptions about a standardized layout of the
   // imports.
   //
@@ -603,7 +603,7 @@ ok_error_t Builder::build_imports() {
       if (has_existing_iat && entry.iat_address() != IAT_pos) {
         if (entry.iat_address() > IAT_pos) {
           // This case can happen when a function (or multiple functions)
-          // has been removed from the current Import. To fill this gap,
+          // have been removed from the current Import. To fill this gap,
           // we can pad the missing ILT/IAT entries with the current one
           uint64_t delta = entry.iat_address() - IAT_pos;
           assert(delta % sizeof(uint__) == 0);
@@ -686,7 +686,7 @@ ok_error_t Builder::build_imports() {
      * "Access violation - code c0000005" when the loader tries to write the
      * resolved symbol in our custom IAT.
      *
-     * It seems that windows loader set implicit permissions for the memory
+     * It seems that the Windows loader sets implicit permissions for the memory
      * page wrapped by the IAT DataDirectory:
      *
      *   0:000> !address 0x7ff7bfdb3f00 <--- Address in the genuine IAT
@@ -716,7 +716,7 @@ ok_error_t Builder::build_imports() {
      *   Allocation Protect:     00000080          PAGE_EXECUTE_WRITECOPY
      *
      * To make sure we don't get a memory access violation when the loader
-     * writes the resolved symbol in our IAT, we need to **both**
+     * writes the resolved symbol in our IAT, we need **both**
      * characteristics: MEM_WRITE | CNT_CODE.
      */
     idata_section.add_characteristic(Section::CHARACTERISTICS::MEM_WRITE)

@@ -8,7 +8,7 @@ use super::{Class, DeclOpt, Protocol};
 
 /// This structure is the main interface to inspect Objective-C metadata
 ///
-/// It can be access using the function [`crate::macho::Binary::objc_metadata`]
+/// It can be accessed using the function [`crate::macho::Binary::objc_metadata`]
 pub struct Metadata<'a> {
     ptr: cxx::UniquePtr<ffi::ObjC_Metadata>,
     _owner: PhantomData<&'a ()>,
@@ -44,7 +44,7 @@ impl Metadata<'_> {
         into_optional(self.ptr.get_protocol(name))
     }
 
-    /// Generate a header-like of all the Objective-C metadata identified in the
+    /// Generate a header-like string of all the Objective-C metadata identified in the
     /// binary.
     pub fn to_decl(&self) -> String {
         self.ptr.to_decl().to_string()

@@ -34,7 +34,7 @@ class SubCacheIt;
 /// This class represents a subcache in the case of large/split dyld shared
 /// cache.
 ///
-/// It mirror (and abstracts) the original `dyld_subcache_entry` /
+/// It mirrors (and abstracts) the original `dyld_subcache_entry` /
 /// `dyld_subcache_entry_v1`
 class LIEF_API SubCache {
   public:

@@ -115,7 +115,7 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
   LIEF_API friend std::ostream& operator<<(std::ostream& os,
                                            const ImportEntry& entry);
 
-  /// \private Internal use **only**
+  /// @private Internal use **only**
   LIEF_LOCAL void iat_address(uint64_t rva) {
     rva_ = rva;
   }

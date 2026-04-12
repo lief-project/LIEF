@@ -279,7 +279,7 @@ impl Binary {
         into_optional(self.ptr.objc_metadata())
     }
 
-    /// Return the platform for which this Mach-O has been compiled for
+    /// Return the platform for which this Mach-O has been compiled
     pub fn platform(&self) -> Platform {
         Platform::from(self.ptr.platform())
     }

@@ -34,7 +34,7 @@ LIEF_API bool is_elf(BinaryStream& stream);
 /// Check if the given file is an ELF one.
 LIEF_API bool is_elf(const std::string& file);
 
-/// check if the raw data is an ELF file
+/// Check if the raw data is an ELF file
 LIEF_API bool is_elf(const std::vector<uint8_t>& raw);
 
 /// Check that the layout of the given Binary is correct

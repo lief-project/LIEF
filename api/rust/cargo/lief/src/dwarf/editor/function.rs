@@ -122,7 +122,7 @@ impl Function {
     /// Set the ranges of addresses owned by the implementation of this function
     /// by setting the `DW_AT_ranges` attribute.
     ///
-    /// This setter should be used for non-contiguous function.
+    /// This setter should be used for non-contiguous functions.
     pub fn set_ranges(&mut self, ranges: &[Range]) -> &mut Self {
         let mut ffi_ranges = cxx::CxxVector::new();
         for range in ranges {

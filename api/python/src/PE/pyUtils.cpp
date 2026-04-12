@@ -58,7 +58,7 @@ void init_utils(nb::module_& m) {
         return error_or(static_cast<result<PE_TYPE> (*)(const std::string&)>(&get_type), file);
       },
       R"delim(
-      If the input file is a a valid ``PE``, return the :class:`~.lief.PE.PE_TYPE`.
+      If the input file is a valid ``PE``, return the :class:`~.lief.PE.PE_TYPE`.
       Otherwise, return a :class:`lief.lief_errors`.
       )delim"_doc,
       "file"_a);
@@ -78,7 +78,7 @@ void init_utils(nb::module_& m) {
       Properties of the hash generated:
 
         * Order agnostic
-        * Casse agnostic
+        * Case agnostic
         * Ordinal (**in some extent**) agnostic
 
       If one needs the same output as Virus Total (i.e. pefile), you can use :attr:`~lief.PE.IMPHASH_MODE.PEFILE`

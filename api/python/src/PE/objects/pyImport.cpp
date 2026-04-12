@@ -147,7 +147,7 @@ void create<Import>(nb::module_& m) {
       R"doc(
       Remove the import entry with the given name.
 
-      Return true if the deletion succeed, false otherwise
+      Return True if the deletion succeeds, False otherwise
       )doc"_doc, "name"_a
     )
 
@@ -156,7 +156,7 @@ void create<Import>(nb::module_& m) {
       R"doc(
       Remove the import entry with the given ordinal number
 
-      Return True if the deletion succeed, false otherwise
+      Return True if the deletion succeeds, False otherwise
       )doc"_doc, "ord"_a
     )
 

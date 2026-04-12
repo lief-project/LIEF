@@ -99,7 +99,7 @@ void create<Binary>(nb::module_& m) {
         .. warning::
 
             This function requires LIEF's extended version otherwise it
-            **always** return ``None``
+            **always** returns ``None``
         )doc"_doc,
         nb::keep_alive<0, 1>())
 
@@ -203,7 +203,7 @@ void create<Binary>(nb::module_& m) {
         nb::overload_cast<uint64_t, uint64_t, size_t, Binary::VA_TYPES>(&Binary::patch_address),
         R"delim(
         Patch the address with the given integer value.
-        The virtual address is specified in the first argument, the integer in the second and the integer's size of in third one.
+        The virtual address is specified in the first argument, the integer in the second and the integer's size in the third one.
 
         If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
         a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
@@ -264,7 +264,7 @@ void create<Binary>(nb::module_& m) {
           return nb::cast(nb::cast<LIEF::Binary*>(self));
         },
         R"delim(
-        The *concrete* representation of the binary. Basically, this property cast a :class:`lief.Binary`
+        The *concrete* representation of the binary. Basically, this property casts a :class:`lief.Binary`
         into a :class:`lief.PE.Binary`, :class:`lief.ELF.Binary` or :class:`lief.MachO.Binary`.
 
         See also: :attr:`lief.Binary.abstract`

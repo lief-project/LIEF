@@ -52,7 +52,7 @@ static constexpr auto FILE_FLAGS_ARRAY = {
 };
 
 
-// True is the stream points to a StringFileInfo structure
+// True if the stream points to a StringFileInfo structure
 inline bool is_string_file_info(BinaryStream& strm) {
   ScopedStream scope(strm);
   [[maybe_unused]] auto wLength = scope->read<uint16_t>().value_or(0);
@@ -66,7 +66,7 @@ inline bool is_string_file_info(BinaryStream& strm) {
   return u16tou8(szKey) == "StringFileInfo";
 }
 
-// True is the stream points to a VarFileInfo structure
+// True if the stream points to a VarFileInfo structure
 inline bool is_var_file_info(BinaryStream& strm) {
   ScopedStream scope(strm);
   [[maybe_unused]] auto wLength = scope->read<uint16_t>().value_or(0);

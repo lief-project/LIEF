@@ -72,7 +72,7 @@ class LIEF_API NoteAbi : public Note {
     return note->type() == Note::TYPE::GNU_ABI_TAG;
   }
 
-  //// Size of the description content
+  /// Size of the description content
   static constexpr uint8_t description_size() {
     return /* abi */ sizeof(uint32_t) + /* version */ 3 * sizeof(uint32_t);
   }
@@ -87,7 +87,7 @@ class LIEF_API NoteAbi : public Note {
 
 LIEF_API const char* to_string(NoteAbi::ABI abi);
 
-} // namepsace ELF
+} // namespace ELF
 } // namespace LIEF
 
 #endif

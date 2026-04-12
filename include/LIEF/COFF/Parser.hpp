@@ -44,7 +44,7 @@ class Parser {
       parse(const std::string& file,
             const ParserConfig& config = ParserConfig::default_conf());
 
-  /// \private
+  /// @private
   struct SymSec {
     size_t sec_idx = 0;
     Symbol* symbol = nullptr;
@@ -65,10 +65,10 @@ class Parser {
   /// <=> std::unordered_multimap<section index, Symbol*>
   using SymSecMap = std::vector<SymSec>;
 
-  /// \private
+  /// @private
   LIEF_LOCAL void memoize(String str);
 
-  /// \private
+  /// @private
   LIEF_LOCAL String* find_coff_string(uint32_t offset) const;
 
   ~Parser();

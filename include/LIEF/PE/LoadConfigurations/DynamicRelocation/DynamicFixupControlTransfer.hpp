@@ -87,7 +87,7 @@ class LIEF_API DynamicFixupControlTransfer : public DynamicFixup {
 
   ~DynamicFixupControlTransfer() override = default;
 
-  /// \private
+  /// @private
   LIEF_LOCAL static std::unique_ptr<DynamicFixupControlTransfer>
       parse(Parser& ctx, SpanStream& strm);
 

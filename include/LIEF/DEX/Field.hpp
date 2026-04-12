@@ -30,7 +30,7 @@ namespace DEX {
 class Parser;
 class Class;
 
-/// Class which represent a DEX Field
+/// Class which represents a DEX Field
 class LIEF_API Field : public Object {
   friend class Parser;
 

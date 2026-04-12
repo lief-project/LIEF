@@ -55,7 +55,7 @@ void create<Header>(nb::module_& m) {
   #define ENTRY(X, D) .value(to_string(Header::VERSION::X), Header::VERSION::X, D)
   enum_<Header::VERSION>(header, "VERSION",
     R"delim(
-    Match the result of ``Elfxx_Ehdr.e_version``
+    Matches the result of ``Elfxx_Ehdr.e_version``
     )delim"_doc
   )
     ENTRY(NONE, "Invalid ELF version"_doc)
@@ -66,7 +66,7 @@ void create<Header>(nb::module_& m) {
   #define ENTRY(X, D) .value(to_string(Header::CLASS::X), Header::CLASS::X, D)
   enum_<Header::CLASS>(header, "CLASS",
     R"delim(
-    Match the result of ``Elfxx_Ehdr.e_ident[EI_CLASS]``
+    Matches the result of ``Elfxx_Ehdr.e_ident[EI_CLASS]``
     )delim"_doc
   )
     ENTRY(NONE, "Invalid class"_doc)
@@ -106,7 +106,7 @@ void create<Header>(nb::module_& m) {
   #define ENTRY(X, D) .value(to_string(Header::ELF_DATA::X), Header::ELF_DATA::X, D)
   enum_<Header::ELF_DATA>(header, "ELF_DATA",
     R"delim(
-    Match the result ``Elfxx_Ehdr.e_ident[EI_DATA]``
+    Matches the result of ``Elfxx_Ehdr.e_ident[EI_DATA]``
     )delim"_doc
   )
     ENTRY(NONE, "Invalid data encoding"_doc)
@@ -171,7 +171,7 @@ void create<Header>(nb::module_& m) {
     .def_prop_rw("file_type",
         nb::overload_cast<>(&Header::file_type, nb::const_),
         nb::overload_cast<Header::FILE_TYPE>(&Header::file_type),
-        "Return binary's type. This field determines if the binary is a "
+        "Return binary's type. This field determines if the binary is an "
         "executable, a library..."_doc)
 
     .def_prop_rw("machine_type",

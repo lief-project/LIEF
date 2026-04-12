@@ -91,7 +91,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Internal container for storing PE's Import
   using imports_t = std::vector<std::unique_ptr<Import>>;
 
-  /// Iterator that output Import&
+  /// Iterator that outputs Import&
   using it_imports = ref_iterator<imports_t&, Import*>;
 
   /// Iterator that outputs const Import&
@@ -100,7 +100,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Internal container for storing PE's DelayImport
   using delay_imports_t = std::vector<std::unique_ptr<DelayImport>>;
 
-  /// Iterator that output DelayImport&
+  /// Iterator that outputs DelayImport&
   using it_delay_imports = ref_iterator<delay_imports_t&, DelayImport*>;
 
   /// Iterator that outputs const DelayImport&
@@ -193,7 +193,7 @@ class LIEF_API Binary : public LIEF::Binary {
     return optional_header().imagebase();
   }
 
-  /// Find the section associated that encompasses the given offset.
+  /// Find the section that encompasses the given offset.
   ///
   /// If no section can be found, return a nullptr
   Section* section_from_offset(uint64_t offset) LIEF_LIFETIMEBOUND {
@@ -203,7 +203,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
   const Section* section_from_offset(uint64_t offset) const LIEF_LIFETIMEBOUND;
 
-  /// Find the section associated that encompasses the given RVA.
+  /// Find the section that encompasses the given RVA.
   ///
   /// If no section can be found, return a nullptr
   Section* section_from_rva(uint64_t virtual_address) LIEF_LIFETIMEBOUND {
@@ -242,7 +242,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Header that follows the header(). It is named optional from the COFF
-  /// specfication but it is mandatory in a PE file.
+  /// specification but it is mandatory in a PE file.
   OptionalHeader& optional_header() LIEF_LIFETIMEBOUND {
     return optional_header_;
   }
@@ -367,12 +367,12 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Verify the binary with the Signature object provided in the first parameter.
   /// It can be used to verify a detached signature:
   ///
-  /// \code{.cpp}
+  /// @code{.cpp}
   /// result<Signature> detached = LIEF::PE::SignatureParser::parse("sig.pkcs7")
   /// if (detached) {
   ///   binary->verify_signature(detached.value());
   /// }
-  /// \endcode
+  /// @endcode
   Signature::VERIFICATION_FLAGS
       verify_signature(const Signature& sig,
                        Signature::VERIFICATION_CHECKS checks =
@@ -413,8 +413,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Try to find the COFF string at the given offset in the COFF string table.
   ///
-  /// \warning This offset must include the first 4 bytes holding the size of
-  ///          the table. Hence, the first string starts a the offset 4.
+  /// @warning This offset must include the first 4 bytes holding the size of
+  ///          the table. Hence, the first string starts at the offset 4.
   COFF::String* find_coff_string(uint32_t offset) LIEF_LIFETIMEBOUND {
     auto it = std::find_if(strings_table_.begin(), strings_table_.end(),
                            [offset](const COFF::String& item) {
@@ -448,7 +448,7 @@ class LIEF_API Binary : public LIEF::Binary {
   result<ResourcesManager> resources_manager() const;
 
   /// Return binary's section from its name.
-  /// If the secion can't be found, return a nullptr
+  /// If the section can't be found, return a nullptr
   ///
   /// @param[in] name Name of the Section
   Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND {
@@ -541,7 +541,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return the CodeViewPDB object if present
   const CodeViewPDB* codeview_pdb() const LIEF_LIFETIMEBOUND;
 
-  /// Retrun the LoadConfiguration object or a nullptr if the binary does not
+  /// Return the LoadConfiguration object or a nullptr if the binary does not
   /// use the LoadConfiguration
   const LoadConfiguration* load_configuration() const LIEF_LIFETIMEBOUND {
     return loadconfig_.get();
@@ -670,7 +670,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Remove the imported library with the given `name`
   ///
-  /// Return true if the deletion succeed, false otherwise.
+  /// Return true if the deletion succeeded, false otherwise.
   bool remove_import(const std::string& name);
 
   /// Remove all libraries in the binary
@@ -722,7 +722,7 @@ class LIEF_API Binary : public LIEF::Binary {
                      VA_TYPES addr_type = VA_TYPES::AUTO) override;
 
 
-  /// Fill the content at the provided with a fixed value
+  /// Fill the content at the provided address with a fixed value
   void fill_address(uint64_t address, size_t size, uint8_t value = 0,
                     VA_TYPES addr_type = VA_TYPES::AUTO);
 
@@ -737,8 +737,8 @@ class LIEF_API Binary : public LIEF::Binary {
       Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO
   ) const override;
 
-  /// Return the binary's entrypoint (It is the same value as
-  /// OptionalHeader::addressof_entrypoint
+  /// Return the binary's entrypoint (it is the same value as
+  /// OptionalHeader::addressof_entrypoint)
   uint64_t entrypoint() const override {
     return optional_header_.imagebase() + optional_header_.addressof_entrypoint();
   }
@@ -868,7 +868,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Iterator over the exception (`_RUNTIME_FUNCTION`) functions
   ///
-  /// \warning This function requires that the option
+  /// @warning This function requires that the option
   /// LIEF::PE::ParserConfig::parse_exceptions was turned on (default is false)
   /// when parsing the binary
   it_exceptions exceptions() LIEF_LIFETIMEBOUND {
@@ -881,7 +881,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Try to find the exception info at the given RVA
   ///
-  /// \warning This function requires that the option
+  /// @warning This function requires that the option
   /// LIEF::PE::ParserConfig::parse_exceptions was turned on (default is false)
   /// when parsing the binary
   ExceptionInfo* find_exception_at(uint32_t rva) LIEF_LIFETIMEBOUND;
@@ -904,7 +904,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// This can be used to get the alternative PE binary, targeting a different
   /// architectures.
   ///
-  /// \warning This function requires that the option
+  /// @warning This function requires that the option
   /// LIEF::PE::ParserConfig::parse_arm64x_binary was turned on (default is false)
   /// when parsing the binary
   const Binary* nested_pe_binary() const {
@@ -925,7 +925,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::ostream& print(std::ostream& os) const override;
 
 
-  /// \private
+  /// @private
   ///
   /// Should only be used for the Rust bindings
   LIEF_LOCAL std::unique_ptr<Binary> move_nested_pe_binary() {

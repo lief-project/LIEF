@@ -24,7 +24,7 @@ template<>
 void create<DynamicFixupUnknown>(nb::module_& m) {
   nb::class_<DynamicFixupUnknown, DynamicFixup> obj(m, "DynamicFixupUnknown",
     R"doc(
-    This class represents an special dynamic relocation where the format of the
+    This class represents a special dynamic relocation where the format of the
     fixups is not supported by LIEF.
     )doc"_doc
   );

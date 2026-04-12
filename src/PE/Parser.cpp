@@ -765,7 +765,7 @@ ok_error_t Parser::parse_chpe_exceptions() {
       target_arch = Header::MACHINE_TYPES::ARM64;
       break;
 
-    // ARM64X: CHPE is used to refer ARM64EC binary (which uses a AMD64 machine
+    // ARM64X: CHPE is used to refer to ARM64EC binary (which uses an AMD64 machine
     // type)
     case Header::MACHINE_TYPES::ARM64:
       target_arch = Header::MACHINE_TYPES::AMD64;

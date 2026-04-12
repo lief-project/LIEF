@@ -656,7 +656,7 @@ bool LayoutChecker::check_imports() {
       std::string entry_name = entry.is_ordinal() ?
                                    fmt::format("#{:04d}", entry.ordinal()) :
                                    entry.name();
-      // 2 bytes alignment seems sufficient
+      // 2-byte alignment seems sufficient
       if (iat_address % sizeof(uint16_t) != 0) {
         return error("{}:{} IAT is wrongly aligned: {:#010x}", imp.name(),
                      entry_name, entry.iat_address());

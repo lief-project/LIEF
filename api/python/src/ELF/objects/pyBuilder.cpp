@@ -45,7 +45,7 @@ void create<Builder>(nb::module_& m) {
     .def_rw("dynamic_section", &Builder::config_t::dynamic_section, "Rebuild the `PT_DYNAMIC` segment"_doc)
     .def_rw("fini_array",      &Builder::config_t::fini_array, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.FINI_ARRAY`"_doc)
     .def_rw("init_array",      &Builder::config_t::init_array, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.INIT_ARRAY`"_doc)
-    .def_rw("interpreter",     &Builder::config_t::interpreter, "Rebuild  the `PT_INTERP` segment"_doc)
+    .def_rw("interpreter",     &Builder::config_t::interpreter, "Rebuild the `PT_INTERP` segment"_doc)
     .def_rw("jmprel",          &Builder::config_t::jmprel, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.JMPREL`"_doc)
     .def_rw("notes",           &Builder::config_t::notes, "Rebuild `PT_NOTES` segment(s)"_doc)
     .def_rw("preinit_array",   &Builder::config_t::preinit_array, "Rebuild :attr:`~lief.ELF.DynamicEntry.TAG.PREINIT_ARRAY`"_doc)

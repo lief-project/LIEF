@@ -58,7 +58,7 @@ pub use caching::enable_cache_from_dir;
 ///
 /// In the case where multiple architectures are
 /// available in the `path` directory, the `arch` parameter can be used to
-/// define which architecture should be prefered.
+/// define which architecture should be preferred.
 ///
 /// **Example:**
 ///

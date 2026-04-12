@@ -226,7 +226,7 @@ void create<dw::CompilationUnit>(nb::module_& m) {
 
         ``printf`` is imported from the standard libc so the function is returned by
         the iterator. On the other hand, ``main()`` is implemented in this
-        compilation unit so it is not returned by :attr:`.imported_function` but
+        compilation unit so it is not returned by :attr:`.imported_functions` but
         :attr:`.functions`.
         )delim"_doc
     )
@@ -238,7 +238,7 @@ void create<dw::CompilationUnit>(nb::module_& m) {
               nb::type<dw::CompilationUnit>(), "vars_it", variables);
         }, nb::keep_alive<0, 1>(),
         R"delim(
-        Return an iterator over the variables defined in the any scope
+        Return an iterator over the variables defined in any scope
         of this compilation unit:
 
         .. code-block:: cpp

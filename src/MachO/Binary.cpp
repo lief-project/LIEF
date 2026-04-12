@@ -1699,7 +1699,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
 }
 
 size_t Binary::add_cached_segment(SegmentCommand& segment) {
-  // The new segement should be put **before** the __LINKEDIT segment
+  // The new segment should be put **before** the __LINKEDIT segment
   const auto it_linkedit =
       std::find_if(segments_.begin(), segments_.end(), [](SegmentCommand* cmd) {
         return cmd->name() == "__LINKEDIT";
@@ -2074,7 +2074,7 @@ LIEF::Binary::functions_t Binary::unwind_functions() const {
   static constexpr size_t UNWIND_COMPRESSED = 3;
   static constexpr size_t UNWIND_UNCOMPRESSED = 2;
 
-  // Set container to have functions with unique address
+  // Container to store functions with unique addresses
   static const auto fcmd = [](const Function& l, const Function& r) {
     return l.address() < r.address();
   };

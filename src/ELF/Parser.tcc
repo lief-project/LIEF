@@ -96,7 +96,7 @@ ok_error_t Parser::parse_binary() {
       if (config_.parse_symtab_symbols) {
         // We should have:
         // nb_entries == section->information())
-        // but lots of compiler not respect this rule
+        // but lots of compilers do not respect this rule
         parse_symtab_symbols<ELF_T>(*sec_symbtab,
                                     *binary_->sections_[sec_symbtab->link()]);
       }
@@ -104,8 +104,8 @@ ok_error_t Parser::parse_binary() {
   }
 
 
-  // Parse Symbols's hash
-  // ====================
+  // Parse Symbol hash
+  // ==================
   if (DynamicEntry* dt_hash = binary_->get(DynamicEntry::TAG::HASH)) {
     if (auto res = binary_->virtual_address_to_offset(dt_hash->value())) {
       parse_symbol_sysv_hash(*res);
@@ -1832,8 +1832,8 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset,
   // Symbol version requirement is used to map
   // SymbolVersion::SymbolVersionAux <------> SymbolVersionAuxRequirement
   //
-  // We mask the 15th (7FFF) bit because it sets if this symbol is a hidden on or
-  // not but we don't care
+  // We mask the 15th (7FFF) bit because it indicates if this symbol is a hidden
+  // one or not, but we don't care
   for (const std::unique_ptr<SymbolVersionRequirement>& svr :
        binary_->symbol_version_requirements_)
   {
@@ -1917,8 +1917,8 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset,
   binary_->sizing_info_->verdef = def_size;
 
   // Associate Symbol Version with auxiliary symbol
-  // We mask the 15th bit because it sets if this symbol is a hidden on or not
-  // but we don't care
+  // We mask the 15th bit because it indicates if this symbol is a hidden one or
+  // not, but we don't care
   for (std::unique_ptr<SymbolVersionDefinition>& svd :
        binary_->symbol_version_definition_)
   {

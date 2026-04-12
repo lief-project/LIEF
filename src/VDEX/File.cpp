@@ -93,5 +93,4 @@ std::ostream& operator<<(std::ostream& os, const File& vdex_file) {
   return os;
 }
 
-} // Namespace VDEX
-// Namespace LIEF
+} // namespace LIEF::VDEX

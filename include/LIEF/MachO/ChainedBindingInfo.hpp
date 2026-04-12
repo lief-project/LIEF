@@ -44,7 +44,7 @@ struct dyld_chained_ptr_32_bind;
 /// This class does not represent a structure that exists in the Mach-O format
 /// specifications but it provides a *view* on an entry.
 ///
-/// @see: BindingInfo
+/// @see BindingInfo
 class LIEF_API ChainedBindingInfo : public BindingInfo {
 
   friend class BinaryParser;

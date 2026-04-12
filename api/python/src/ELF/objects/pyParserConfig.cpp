@@ -45,7 +45,7 @@ void create<ParserConfig>(nb::module_& m) {
     .def_rw("parse_symbol_versions", &ParserConfig::parse_symbol_versions,
             "Whether versioning symbols should be parsed"_doc)
     .def_rw("parse_notes", &ParserConfig::parse_notes,
-            "Whether ELF notes  information should be parsed"_doc)
+            "Whether ELF notes information should be parsed"_doc)
     .def_rw("parse_overlay", &ParserConfig::parse_overlay,
             "Whether the overlay data should be parsed")
     .def_rw("count_mtd", &ParserConfig::count_mtd,

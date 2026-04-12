@@ -63,4 +63,4 @@ std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
 }
 
 } // namespace LIEF::PE
-// namepsace LIEF
+// namespace LIEF

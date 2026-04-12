@@ -182,7 +182,7 @@ impl Flags {
     }
 }
 
-/// Structure which reprents an ELF segment
+/// Structure which represents an ELF segment
 pub struct Segment<'a> {
     pub(super) ptr: cxx::UniquePtr<ffi::ELF_Segment>,
     _owner: PhantomData<&'a ffi::ELF_Binary>,

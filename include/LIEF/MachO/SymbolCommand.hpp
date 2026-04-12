@@ -64,7 +64,7 @@ class LIEF_API SymbolCommand : public LoadCommand {
     return strings_offset_;
   }
 
-  /// Size of the size string table
+  /// Size of the string table
   uint32_t strings_size() const {
     return strings_size_;
   }

@@ -55,7 +55,7 @@ void create<SymbolVersionDefinition>(nb::module_& m) {
         "Hash value of the symbol's name (using ELF hash function)"_doc)
 
     .def_prop_ro("ndx", &SymbolVersionDefinition::ndx,
-                 "Numeric value used as an index in the :class`~.ELF.SymbolVersion` table"_doc)
+                 "Numeric value used as an index in the :class:`~.ELF.SymbolVersion` table"_doc)
 
     .def_prop_ro("auxiliary_symbols",
         nb::overload_cast<>(&SymbolVersionDefinition::symbols_aux),

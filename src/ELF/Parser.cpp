@@ -89,7 +89,7 @@ Header::ELF_DATA determine_elf_endianess(ARCH machine) {
 }
 
 /*
- * Get the endianess of the current architecture
+ * Get the endianness of the current architecture
  */
 constexpr Header::ELF_DATA get_endianess() {
 #ifdef __BYTE_ORDER__
@@ -100,8 +100,8 @@ constexpr Header::ELF_DATA get_endianess() {
   return Header::ELF_DATA::MSB;
   #endif
 #endif
-  /* If there are no __BYTE_ORDER__ we take the (arbitrary) decision that we are
-   * on a little endian architecture.
+  /* If there is no __BYTE_ORDER__ we take the (arbitrary) decision that we are
+   * on a little-endian architecture.
    */
   return Header::ELF_DATA::LSB;
 }
@@ -145,7 +145,7 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
   // } ElfN_Ehdr;
   constexpr size_t e_machine_off = offsetof(details::Elf32_Ehdr, e_machine);
   {
-    // Read Machine type with both endianess
+    // Read Machine type with both endianness
     ARCH machine = ARCH::NONE;      // e_machine value without endian swap enabled
     ARCH machine_swap = ARCH::NONE; // e_machine value with endian swap enabled
     if (auto res = stream.peek<uint16_t>(e_machine_off)) {
@@ -288,7 +288,7 @@ Target determine_elf_target(BinaryStream& stream) {
     LIEF_WARN("ELF class from machine type ('{}') does not match ELF class from "
               "e_ident ('{}'). The binary may have been modified.",
               to_string(from_e_machine), to_string(from_ei_class));
-    // Make the priority on Elf_Ehdr.e_machine as it is
+    // Prioritize Elf_Ehdr.e_machine as it is
     // this value that is used by the kernel.
     return {from_e_machine, machine};
   }

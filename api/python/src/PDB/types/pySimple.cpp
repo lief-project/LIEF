@@ -8,7 +8,7 @@ void create<pdb::types::Simple>(nb::module_& m) {
 
   nb::class_<pdb::types::Simple, pdb::Type> type(m, "Simple",
     R"doc(
-    This class represents a primitive types (int, float, ...) which are
+    This class represents primitive types (int, float, ...) which are
     also named *simple* types in the PDB format.
     )doc"_doc
   );

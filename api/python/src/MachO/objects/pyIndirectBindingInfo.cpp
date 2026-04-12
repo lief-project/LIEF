@@ -23,7 +23,7 @@ template<>
 void create<IndirectBindingInfo>(nb::module_& m) {
   nb::class_<IndirectBindingInfo, BindingInfo>(m, "IndirectBindingInfo",
   R"delim(
-  This class represents a binding operation infered from the indirect symbol
+  This class represents a binding operation inferred from the indirect symbol
   table.
   )delim"_doc);
 }

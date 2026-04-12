@@ -42,7 +42,7 @@ void create<AuxiliaryFunctionDefinition>(nb::module_& m) {
       The size of the executable code for the function itself.
 
       If the function is in its own section, the ``SizeOfRawData`` in the section
-      header is greater or equal to this field, depending on alignment consideration
+      header is greater or equal to this field, depending on alignment considerations
       )doc"_doc
     )
 

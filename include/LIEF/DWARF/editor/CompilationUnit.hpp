@@ -61,7 +61,7 @@ class LIEF_API CompilationUnit {
   /// Create an enum type (`DW_TAG_enumeration_type`)
   std::unique_ptr<EnumType> create_enum(const std::string& name);
 
-  /// Create a typdef with the name provided in the first parameter which aliases
+  /// Create a typedef with the name provided in the first parameter which aliases
   /// the type provided in the second parameter
   std::unique_ptr<TypeDef> create_typedef(const std::string& name,
                                           const Type& type);

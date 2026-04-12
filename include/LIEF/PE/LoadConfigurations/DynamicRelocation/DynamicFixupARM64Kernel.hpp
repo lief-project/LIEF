@@ -98,7 +98,7 @@ class LIEF_API DynamicFixupARM64Kernel : public DynamicFixup {
 
   ~DynamicFixupARM64Kernel() override = default;
 
-  /// \private
+  /// @private
   LIEF_LOCAL static std::unique_ptr<DynamicFixupARM64Kernel>
       parse(Parser& ctx, SpanStream& strm);
 

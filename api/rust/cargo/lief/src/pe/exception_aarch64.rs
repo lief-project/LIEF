@@ -229,7 +229,7 @@ impl std::fmt::Debug for Unpacked<'_> {
     }
 }
 
-/// This strucure describes an epilog scope.
+/// This structure describes an epilog scope.
 pub struct EpilogScope<'a> {
     ptr: cxx::UniquePtr<ffi::PE_unwind_aarch64_UnpackedFunction_epilog_scope_t>,
     _owner: PhantomData<&'a ffi::PE_unwind_aarch64_UnpackedFunction>,

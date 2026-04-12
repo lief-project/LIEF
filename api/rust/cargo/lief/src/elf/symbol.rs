@@ -9,7 +9,7 @@ use crate::declare_iterator;
 use crate::elf::Section;
 use crate::generic;
 
-/// Structure which reprents an ELF symbol
+/// Structure which represents an ELF symbol
 pub struct Symbol<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_Symbol>,
     _owner: PhantomData<&'a ffi::ELF_Binary>,

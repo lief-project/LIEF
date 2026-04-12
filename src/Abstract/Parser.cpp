@@ -75,7 +75,7 @@ std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
 
 #if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(filename)) {
-    // For fat binary we take the last one...
+    // For Fat binaries, take the last architecture slice
     std::unique_ptr<MachO::FatBinary> fat = MachO::Parser::parse(filename);
     if (fat != nullptr) {
       return fat->pop_back();
@@ -111,7 +111,7 @@ std::unique_ptr<Binary> Parser::parse(const std::vector<uint8_t>& raw) {
 
 #if defined(LIEF_MACHO_SUPPORT)
   if (MachO::is_macho(raw)) {
-    // For fat binary we take the last one...
+    // For Fat binaries, take the last architecture slice
     std::unique_ptr<MachO::FatBinary> fat = MachO::Parser::parse(raw);
     if (fat != nullptr) {
       return fat->pop_back();

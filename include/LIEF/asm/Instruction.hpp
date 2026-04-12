@@ -124,14 +124,14 @@ class LIEF_API Instruction {
   bool is_trap() const;
 
   /// True if the instruction prevents executing the instruction
-  /// that immediatly follows the current. This includes return
+  /// that immediately follows the current. This includes return
   /// or unconditional branch instructions
   bool is_barrier() const;
 
   /// True if the instruction is a return
   bool is_return() const;
 
-  /// True if the instruction is and indirect branch.
+  /// True if the instruction is an indirect branch.
   ///
   /// This includes instructions that branch through a register (e.g. `jmp rax`,
   /// `br x1`).
@@ -163,7 +163,7 @@ class LIEF_API Instruction {
 
   /// Return the underlying llvm::MCInst implementation.
   ///
-  /// \warning Because of ABI compatibility, this MCInst can **only be used**
+  /// @warning Because of ABI compatibility, this MCInst can **only be used**
   ///          with the **same** version of LLVM used by LIEF (see documentation)
   const llvm::MCInst& mcinst() const;
 
@@ -193,17 +193,17 @@ class LIEF_API Instruction {
 
   virtual ~Instruction();
 
-  /// \private
+  /// @private
   static LIEF_LOCAL std::unique_ptr<Instruction>
       create(std::unique_ptr<details::Instruction> impl);
 
-  /// \private
+  /// @private
   LIEF_LOCAL const details::Instruction& impl() const {
     assert(impl_ != nullptr);
     return *impl_;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL details::Instruction& impl() {
     assert(impl_ != nullptr);
     return *impl_;

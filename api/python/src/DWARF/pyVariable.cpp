@@ -31,7 +31,7 @@ void create<dw::Variable>(nb::module_& m) {
       The name of the variable which is used for linking (``DW_AT_linkage_name``).
 
       This name differs from :attr:`~.name` as it is usually mangled. The function
-      return an empty string if the linkage name is not available.
+      returns an empty string if the linkage name is not available.
       )doc"_doc
     )
     .def_prop_ro("address",

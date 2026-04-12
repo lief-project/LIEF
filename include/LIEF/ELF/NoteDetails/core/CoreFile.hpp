@@ -32,7 +32,7 @@ class LIEF_API CoreFile : public Note {
   public:
   /// Core file entry
   struct entry_t {
-    uint64_t start = 0;    /// Start address of mapped file
+    uint64_t start = 0;    ///< Start address of mapped file
     uint64_t end = 0;      ///< End address of mapped file
     uint64_t file_ofs = 0; ///< Offset (in core) of mapped file
     std::string path;      ///< Path of mapped file
@@ -109,7 +109,7 @@ class LIEF_API CoreFile : public Note {
   Header::CLASS class_ = Header::CLASS::NONE;
 };
 
-} // namepsace ELF
+} // namespace ELF
 } // namespace LIEF
 
 #endif

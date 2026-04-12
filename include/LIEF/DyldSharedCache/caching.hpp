@@ -44,7 +44,7 @@ namespace dsc {
 ///   - Windows: `%USERPROFILE%\.dyld_shared_cache`
 ///
 ///
-/// \see LIEF::dsc::DyldSharedCache::enable_caching for a finer granularity
+/// @see LIEF::dsc::DyldSharedCache::enable_caching for a finer granularity
 LIEF_API bool enable_cache();
 
 /// Same behavior as enable_cache() but with a

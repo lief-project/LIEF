@@ -28,7 +28,7 @@ namespace details {
 struct entry_point_command;
 }
 
-/// Class that represent the LC_MAIN command. This kind
+/// Class that represents the LC_MAIN command. This kind
 /// of command can be used to determine the entrypoint of an executable
 class LIEF_API MainCommand : public LoadCommand {
   public:

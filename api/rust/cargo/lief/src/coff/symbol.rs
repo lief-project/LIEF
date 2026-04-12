@@ -349,10 +349,10 @@ impl generic::Symbol for Symbol<'_> {
     }
 }
 
-/// Class that represents an auxiliary symbols.
+/// Class that represents an auxiliary symbol.
 ///
 /// An auxiliary symbol has the same size as a regular [`Symbol`] (18 bytes) but its content
-/// depends on the the parent symbol.
+/// depends on the parent symbol.
 #[derive(Debug)]
 pub enum AuxiliarySymbols<'a> {
     /// Auxiliary Format 1 from the PE-COFF documentation

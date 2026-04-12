@@ -101,7 +101,7 @@ void create<dw::editor::Function>(nb::module_& m) {
          Set the ranges of addresses owned by the implementation of this function
          by setting the ``DW_AT_ranges`` attribute.
 
-         This setter should be used for non-contiguous function.
+         This setter should be used for non-contiguous functions.
          )doc"_doc, "ranges"_a, nb::rv_policy::reference_internal)
 
     .def("set_external", &dw::editor::Function::set_external,

@@ -167,10 +167,10 @@ void create<Header>(nb::module_& m) {
         "" RST_CLASS_REF(lief.MachO.Header.FLAGS) " as a list"_doc)
 
     .def_prop_ro("is_32bit", &Header::is_32bit,
-                 R"doc(True is the binary is 32-bits)doc"_doc)
+                 R"doc(True if the binary is 32-bits)doc"_doc)
 
     .def_prop_ro("is_64bit", &Header::is_64bit,
-                 R"doc(True is the binary is 64-bits)doc"_doc)
+                 R"doc(True if the binary is 64-bits)doc"_doc)
 
     .def("add",
         nb::overload_cast<Header::FLAGS>(&Header::add),

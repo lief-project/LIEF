@@ -118,7 +118,7 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
       )doc"_doc
     )
     .def_prop_ro("load_address", &dsc::DyldSharedCache::load_address,
-      R"doc(Based address of this cache)doc"_doc
+      R"doc(Base address of this cache)doc"_doc
     )
     .def_prop_ro("arch_name", &dsc::DyldSharedCache::arch_name,
       R"doc(Name of the architecture targeted by this cache (``x86_64h``))doc"_doc
@@ -279,38 +279,38 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
         R"doc(
         Load a shared cache from a list of files.
 
-        .. code-block:: cpp
+        .. code-block:: python
 
           files = [
             "/tmp/dsc/dyld_shared_cache_arm64e",
             "/tmp/dsc/dyld_shared_cache_arm64e.1"
           ]
-          cache = lief.dsc.load(files);
+          cache = lief.dsc.load(files)
         )doc"_doc, "files"_a);
 
   m.def("load", [] (nb::PathLike path, const std::string& arch) {
           return load(path, arch);
         },
         R"doc(
-        Load a shared cache from the a single file or from a directory specified
+        Load a shared cache from a single file or from a directory specified
         by the ``path`` parameter.
 
         In the case where multiple architectures are
         available in the ``path`` directory, the ``arch`` parameter can be used to
-        define which architecture should be prefered.
+        define which architecture should be preferred.
 
         **Example:**
 
         .. code-block:: python
 
-          // From a directory (split caches)
-          cache = lief.dsc.load("vision-pro-2.0/");
+          # From a directory (split caches)
+          cache = lief.dsc.load("vision-pro-2.0/")
 
-          // From a single cache file
-          cache = lief.dsc.load("ios-14.2/dyld_shared_cache_arm64");
+          # From a single cache file
+          cache = lief.dsc.load("ios-14.2/dyld_shared_cache_arm64")
 
-          // From a directory with multiple architectures
-          cache = lief.dsc.load("macos-12.6/", "x86_64h");
+          # From a directory with multiple architectures
+          cache = lief.dsc.load("macos-12.6/", "x86_64h")
         )doc"_doc, "path"_a, "arch"_a = "");
 }
 }

@@ -80,7 +80,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   enum class TYPE : uint32_t {
     /// The symbol is undefined. It is referenced in a different module.
     UNDEFINED = 0x0u,
-    /// The symbol is absolute. The linker doesn't update his value.
+    /// The symbol is absolute. The linker doesn't update its value.
     ABSOLUTE_SYM = 0x2u,
     /// The symbol is defined in the section number given in nlist_base.n_sect.
     SECTION = 0xeu,

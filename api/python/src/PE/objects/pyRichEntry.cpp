@@ -31,7 +31,7 @@ void create<RichEntry>(nb::module_& m) {
       )delim"_doc)
     .def(nb::init<>())
     .def(nb::init<uint16_t, uint16_t, uint32_t>(),
-        "Contructor from "
+        "Constructor from "
         ":attr:`~lief.PE.RichEntry.id`, "
         ":attr:`~lief.PE.RichEntry.build_id` and "
         ":attr:`~lief.PE.RichEntry.count`"_doc,

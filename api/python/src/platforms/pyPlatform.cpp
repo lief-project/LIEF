@@ -31,7 +31,7 @@ void init_platforms(nb::module_& m) {
     .value("OSX",     PLATFORMS::PLAT_OSX);
 
   m.def("current_platform", &current_platform,
-      "Return the current plaform (Linux, Windows, ...) as a :attr:`lief.PLATFORMS` enum"_doc);
+      "Return the current platform (Linux, Windows, ...) as a :attr:`lief.PLATFORMS` enum"_doc);
 
   LIEF::Android::py::init_module(m);
 }

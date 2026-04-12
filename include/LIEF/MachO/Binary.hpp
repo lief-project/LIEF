@@ -265,7 +265,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return Symbol from the given name. If the symbol does not
-  /// exists, it returns a null pointer
+  /// exist, it returns a null pointer
   const Symbol* get_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
   Symbol* get_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
@@ -474,7 +474,7 @@ class LIEF_API Binary : public LIEF::Binary {
     return get_section(name) != nullptr;
   }
 
-  /// Return the section from the given name of a nullptr
+  /// Return the section from the given name or a nullptr
   /// if the section can't be found.
   Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
@@ -845,7 +845,7 @@ class LIEF_API Binary : public LIEF::Binary {
     return encryption_info() != nullptr;
   }
 
-  /// Return the MachO::DyldEnvironment if present, a nullptr otherwise.
+  /// Return the MachO::EncryptionInfo if present, a nullptr otherwise.
   EncryptionInfo* encryption_info() LIEF_LIFETIMEBOUND;
   const EncryptionInfo* encryption_info() const LIEF_LIFETIMEBOUND;
 
@@ -859,7 +859,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   bool has_subclients() const;
 
-  /// `true` if the binary has Dyld envrionment variables.
+  /// `true` if the binary has Dyld environment variables.
   bool has_dyld_environment() const {
     return dyld_environment() != nullptr;
   }
@@ -907,12 +907,12 @@ class LIEF_API Binary : public LIEF::Binary {
   DyldChainedFixups* dyld_chained_fixups() LIEF_LIFETIMEBOUND;
   const DyldChainedFixups* dyld_chained_fixups() const LIEF_LIFETIMEBOUND;
 
-  /// `true` if the binary has the command LC_DYLD_CHAINED_FIXUPS.
+  /// `true` if the binary has the command LC_DYLD_EXPORTS_TRIE.
   bool has_dyld_exports_trie() const {
     return dyld_exports_trie() != nullptr;
   }
 
-  /// Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
+  /// Return the MachO::DyldExportsTrie if present, a nullptr otherwise.
   DyldExportsTrie* dyld_exports_trie() LIEF_LIFETIMEBOUND;
   const DyldExportsTrie* dyld_exports_trie() const LIEF_LIFETIMEBOUND;
 
@@ -921,7 +921,7 @@ class LIEF_API Binary : public LIEF::Binary {
     return two_level_hints() != nullptr;
   }
 
-  /// Return the MachO::DyldChainedFixups if present, a nullptr otherwise.
+  /// Return the MachO::TwoLevelHints if present, a nullptr otherwise.
   TwoLevelHints* two_level_hints() LIEF_LIFETIMEBOUND {
     return const_cast<TwoLevelHints*>(
         static_cast<const Binary*>(this)->two_level_hints()
@@ -1106,7 +1106,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Check if the given segment can go in the offset_seg_ cache
   static LIEF_LOCAL bool can_cache_segment(const SegmentCommand& segment);
 
-  /// \private
+  /// @private
   LIEF_LOCAL size_t available_command_space() const {
     return available_command_space_;
   }
@@ -1140,8 +1140,8 @@ class LIEF_API Binary : public LIEF::Binary {
       get_abstract_imported_libraries() const override;
 
   /// Check that a gap between the load command table and
-  /// the first section is at least \p size bytes.
-  /// If there is not enough space, the gap is grown using \ref shift method.
+  /// the first section is at least @p size bytes.
+  /// If there is not enough space, the gap is grown using the shift method.
   ok_error_t ensure_command_space(size_t size) {
     return available_command_space_ < size ? shift(size) : ok();
   }

@@ -42,12 +42,12 @@ void create<UnpackedFunction>(nb::module_& m) {
 
   nb::class_<epilog_scope_t>(unpacked, "epilog_scope_t",
     R"doc(
-    This strucure describes an epilog scope.
+    This structure describes an epilog scope.
     )doc"_doc
   )
     .def_rw("start_offset", &epilog_scope_t::start_offset,
       R"doc(
-      Offset of the epilog relatives to the start of the function
+      Offset of the epilog relative to the start of the function
       )doc"_doc
     )
     .def_rw("start_index", &epilog_scope_t::start_index,

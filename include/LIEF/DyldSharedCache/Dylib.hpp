@@ -84,13 +84,13 @@ class LIEF_API Dylib {
     /// Whether the segment's offsets should be packed to avoid
     /// an in-memory size while writing back the binary.
     ///
-    /// \note This option does not have an impact on the performances
+    /// @note This option does not have an impact on the performances
     bool pack = true;
 
     /// Fix call instructions that target addresses outside the current dylib
     /// virtual space.
     ///
-    /// \warning Enabling this option can have a significant impact on the
+    /// @warning Enabling this option can have a significant impact on the
     ///          performances. Make sure to enable the internal cache mechanism:
     ///          LIEF::dsc::enable_cache or
     ///          LIEF::dsc::DyldSharedCache::enable_caching
@@ -98,7 +98,7 @@ class LIEF_API Dylib {
 
     /// Fix memory accesses performed outside the dylib's virtual space
     ///
-    /// \warning Enabling this option can have a significant impact on the
+    /// @warning Enabling this option can have a significant impact on the
     ///          performances. Make sure to enable the internal cache mechanism:
     ///          LIEF::dsc::enable_cache or
     ///          LIEF::dsc::DyldSharedCache::enable_caching
@@ -106,7 +106,7 @@ class LIEF_API Dylib {
 
     /// Recover and fix relocations
     ///
-    /// \warning Enabling this option can have a significant impact on the
+    /// @warning Enabling this option can have a significant impact on the
     ///          performances. Make sure to enable the internal cache mechanism:
     ///          LIEF::dsc::enable_cache or
     ///          LIEF::dsc::DyldSharedCache::enable_caching

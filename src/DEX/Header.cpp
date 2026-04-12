@@ -156,5 +156,4 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 Header::~Header() = default;
 
 
-} // Namespace DEX
-// Namespace LIEF
+} // namespace LIEF::DEX

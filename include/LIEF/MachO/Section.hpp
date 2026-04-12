@@ -271,8 +271,8 @@ class LIEF_API Section : public LIEF::Section {
 
   /// Return an iterator over the MachO::Relocation associated with this section
   ///
-  /// This iterator is likely to be empty of executable and libraries while it
-  /// should not for object files (``.o``)
+  /// This iterator is likely to be empty for executables and libraries while it
+  /// should not be for object files (``.o``)
   it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }

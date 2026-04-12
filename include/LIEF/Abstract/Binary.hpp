@@ -167,7 +167,7 @@ class LIEF_API Binary : public Object {
   /// Remove **all** the sections in the underlying binary
   virtual void remove_section(const std::string& name, bool clear = false) = 0;
 
-  /// Return an iterator over the binary relocation (LIEF::Relocation)
+  /// Return an iterator over the binary relocations (LIEF::Relocation)
   it_relocations relocations() LIEF_LIFETIMEBOUND {
     return get_abstract_relocations();
   }
@@ -302,8 +302,8 @@ class LIEF_API Binary : public Object {
   /// use LIEF::pdb::load() or LIEF::pdb::DebugInfo::from_file() to get PDB debug
   /// info.
   ///
-  /// \warning This function requires LIEF's extended version otherwise it
-  /// **always** return a nullptr
+  /// @warning This function requires LIEF's extended version otherwise it
+  /// **always** returns a nullptr
   DebugInfo* debug_info() const LIEF_LIFETIMEBOUND;
 
   /// Disassemble code starting at the given virtual address and with the given
@@ -316,7 +316,7 @@ class LIEF_API Binary : public Object {
   /// }
   /// ```
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(uint64_t address, size_t size) const;
 
   /// Disassemble code starting at the given virtual address
@@ -328,7 +328,7 @@ class LIEF_API Binary : public Object {
   /// }
   /// ```
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(uint64_t address) const;
 
   /// Disassemble code for the given symbol name
@@ -340,13 +340,13 @@ class LIEF_API Binary : public Object {
   /// }
   /// ```
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(const std::string& function) const;
 
   /// Disassemble code provided by the given buffer at the specified
   /// `address` parameter.
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(const uint8_t* buffer, size_t size,
                               uint64_t address = 0) const;
 
@@ -354,7 +354,7 @@ class LIEF_API Binary : public Object {
   /// Disassemble code provided by the given vector of bytes at the specified
   /// `address` parameter.
   ///
-  /// \see LIEF::assembly::Instruction
+  /// @see LIEF::assembly::Instruction
   instructions_it disassemble(const std::vector<uint8_t>& buffer,
                               uint64_t address = 0) const {
     return disassemble(buffer.data(), buffer.size(), address);
@@ -389,13 +389,13 @@ class LIEF_API Binary : public Object {
 
   /// Assemble **and patch** the address with the given LLVM MCInst.
   ///
-  /// \warning Because of ABI compatibility, this MCInst can **only be used**
+  /// @warning Because of ABI compatibility, this MCInst can **only be used**
   ///          with the **same** version of LLVM used by LIEF (see documentation)
   std::vector<uint8_t> assemble(uint64_t address, const llvm::MCInst& inst);
 
   /// Assemble **and patch** the address with the given LLVM MCInst.
   ///
-  /// \warning Because of ABI compatibility, this MCInst can **only be used**
+  /// @warning Because of ABI compatibility, this MCInst can **only be used**
   ///          with the **same** version of LLVM used by LIEF (see documentation)
   std::vector<uint8_t> assemble(uint64_t address,
                                 const std::vector<llvm::MCInst>& insts);
@@ -411,17 +411,16 @@ class LIEF_API Binary : public Object {
   /// the given path, and binds it to the current binary instance. If successful,
   /// it returns a pointer to the loaded DebugInfo object.
   ///
-  /// \param path Path to the external debug file (e.g., `.dwarf`, `.pdb`)
-  /// \return Pointer to the loaded DebugInfo object on success, or `nullptr` on
+  /// @param path Path to the external debug file (e.g., `.dwarf`, `.pdb`)
+  /// @return Pointer to the loaded DebugInfo object on success, or `nullptr` on
   /// failure.
   ///
-  /// \warning It is the caller's responsibility to ensure that the debug file is
+  /// @warning It is the caller's responsibility to ensure that the debug file is
   ///          compatible with the binary. Incorrect associations may lead to
   ///          inconsistent or invalid results.
   ///
-  /// \note This function does not verify that the debug file matches the binary's
-  /// unique
-  ///       identifier (e.g., build ID, GUID).
+  /// @note This function does not verify that the debug file matches the binary's
+  ///       unique identifier (e.g., build ID, GUID).
   DebugInfo* load_debug_info(const std::string& path);
 
   /// Size of the binary when mapped in memory

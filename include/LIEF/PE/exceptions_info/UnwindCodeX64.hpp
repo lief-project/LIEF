@@ -33,7 +33,7 @@ class LIEF_API Code {
   using OPCODE = RuntimeFunctionX64::UNWIND_OPCODES;
   using REG = RuntimeFunctionX64::UNWIND_REG;
 
-  /// \private
+  /// @private
   static std::unique_ptr<Code>
       create_from(const RuntimeFunctionX64::unwind_info_t& info,
                   SpanStream& stream);

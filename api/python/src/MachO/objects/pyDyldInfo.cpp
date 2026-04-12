@@ -121,7 +121,7 @@ void create<DyldInfo>(nb::module_& m) {
 
     .def_prop_ro("show_rebases_opcodes",
         &DyldInfo::show_rebases_opcodes,
-        "Return the rebase opcodes in a humman-readable way"_doc)
+        "Return the rebase opcodes in a human-readable way"_doc)
 
     .def_prop_rw("bind",
         nb::overload_cast<>(&DyldInfo::bind, nb::const_),
@@ -136,7 +136,7 @@ void create<DyldInfo>(nb::module_& m) {
         Conceptually the bind information is a table of tuples:
         ``(seg-index, seg-offset, type, symbol-library-ordinal, symbol-name, addend)``
         The opcodes are a compressed way to encode the table by only encoding when a column changes. In addition simple patterns
-        like for runs of pointers initialzed to the same value can be encoded in a few bytes.
+        like for runs of pointers initialized to the same value can be encoded in a few bytes.
 
         .. seealso::
 
@@ -150,7 +150,7 @@ void create<DyldInfo>(nb::module_& m) {
 
     .def_prop_ro("show_bind_opcodes",
         &DyldInfo::show_bind_opcodes,
-        "Return the bind opcodes in a humman-readable way")
+        "Return the bind opcodes in a human-readable way")
 
     .def_prop_rw("weak_bind",
         nb::overload_cast<>(&DyldInfo::weak_bind, nb::const_),
@@ -184,7 +184,7 @@ void create<DyldInfo>(nb::module_& m) {
 
     .def_prop_ro("show_weak_bind_opcodes",
         &DyldInfo::show_weak_bind_opcodes,
-        "Return the weak bind opcodes in a humman-readable way")
+        "Return the weak bind opcodes in a human-readable way")
 
     .def_prop_rw("lazy_bind",
         nb::overload_cast<>(&DyldInfo::lazy_bind, nb::const_),
@@ -194,7 +194,7 @@ void create<DyldInfo>(nb::module_& m) {
 
         Some uses of external symbols do not need to be bound immediately.
         Instead they can be lazily bound on first use.
-        The lazy_bind are contains a stream of BIND opcodes to bind all lazy symbols.
+        The lazy_bind contains a stream of BIND opcodes to bind all lazy symbols.
         Normal use is that dyld ignores the lazy_bind section when loading an image.
         Instead the static linker arranged for the lazy pointer to initially point
         to a helper function which pushes the offset into the lazy_bind area for the symbol
@@ -213,7 +213,7 @@ void create<DyldInfo>(nb::module_& m) {
 
     .def_prop_ro("show_lazy_bind_opcodes",
         &DyldInfo::show_lazy_bind_opcodes,
-        "Return the weak bind opcodes in a humman-readable way"_doc,
+        "Return the lazy bind opcodes in a human-readable way"_doc,
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("bindings",
@@ -268,7 +268,7 @@ void create<DyldInfo>(nb::module_& m) {
 
     .def_prop_ro("show_export_trie",
         &DyldInfo::show_export_trie,
-        "Return the export trie in a humman-readable way"_doc,
+        "Return the export trie in a human-readable way"_doc,
         nb::rv_policy::reference_internal)
 
     .def("set_rebase_offset", &DyldInfo::set_rebase_offset,

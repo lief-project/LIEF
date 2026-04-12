@@ -887,8 +887,8 @@ bool LayoutChecker::check_linkedit() {
     }
 
     if (chunk.file_offset & (chunk.alignment - 1)) {
-      // In the source code of dyld this is enforced only the provided
-      // policy ask to, but we might want to enforce it by default
+      // In the source code of dyld this is enforced only if the provided
+      // policy asks for it, but we might want to enforce it by default
       return error("mis-aligned LINKEDIT content: {}",
                    chunk_t::to_string(chunk.kind));
     }
@@ -926,9 +926,9 @@ bool LayoutChecker::check_section_contiguity() {
 
   // LIEF allocates space for new/extended sections between the last load command
   // and the first section in the first segment.
-  // We are not willing to change the distance between the end of the `__text`
+  // We do not want to change the distance between the end of the `__text`
   // section and start of `__DATA` segment, keeping `__text` section in a "fixed"
-  // position. Due to above there might happen a "reverse" alignment gap between
+  // position. Due to the above, there might be a "reverse" alignment gap between
   // `__text` section and a section that was allocated in front of it.
   auto is_gap_reversed = [](const Section* LHS, const Section* RHS) {
     return align_down(RHS->offset() - LHS->size(), LHS->alignment());

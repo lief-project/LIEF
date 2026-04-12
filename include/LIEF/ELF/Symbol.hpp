@@ -244,12 +244,12 @@ class LIEF_API Symbol : public LIEF::Symbol {
     return this->binding() == BINDING::GLOBAL;
   }
 
-  /// True if the symbol represent a function
+  /// True if the symbol represents a function
   bool is_function() const {
     return this->type() == TYPE::FUNC;
   }
 
-  /// True if the symbol represent a variable
+  /// True if the symbol represents a variable
   bool is_variable() const {
     return this->type() == TYPE::OBJECT;
   }

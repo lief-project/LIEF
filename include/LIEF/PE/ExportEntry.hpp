@@ -90,7 +90,7 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
 
   /// Address of the current exported function in the DLL.
   ///
-  /// \warning If this entry is **external** to the DLL then it returns 0
+  /// @warning If this entry is **external** to the DLL then it returns 0
   ///          and the external address is returned by function_rva()
   uint32_t address() const {
     return address_;

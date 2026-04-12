@@ -127,7 +127,7 @@ ok_error_t Factory::move_sections() {
 }
 
 ok_error_t Factory::check_overlapping() const {
-  // check that no section are overlapping
+  // Check that no sections are overlapping
   return ok();
 }
 }

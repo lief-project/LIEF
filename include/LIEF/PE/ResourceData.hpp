@@ -104,17 +104,17 @@ class LIEF_API ResourceData : public ResourceNode {
     reserved_ = value;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL vector_iostream edit() {
     return vector_iostream(content_);
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL const std::vector<uint8_t> raw_content() const {
     return content_;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL void set_offset(uint32_t offset) {
     offset_ = offset;
   }
@@ -133,5 +133,5 @@ class LIEF_API ResourceData : public ResourceNode {
 };
 
 } // namespace PE
-} // namepsace LIEF
+} // namespace LIEF
 #endif /* RESOURCEDATA_H */

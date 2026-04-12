@@ -19,17 +19,17 @@ void create<dw::editor::Variable>(nb::module_& m) {
     .def("set_addr", &dw::editor::Variable::set_addr,
       R"doc(
       Set the global address of this variable. Setting this address is only
-      revelant in the case of a static global variable. For stack variable, you
+      relevant in the case of a static global variable. For stack variable, you
       should use :meth:`~.Variable.set_stack_offset`.
 
-      This function set the ``DW_AT_location`` attribute
+      This function sets the ``DW_AT_location`` attribute
       )doc"_doc, "addr"_a, nb::rv_policy::reference_internal)
 
     .def("set_stack_offset", &dw::editor::Variable::set_stack_offset,
       R"doc(
       Set the stack offset of this variable.
 
-      This function set the ``DW_AT_location`` attribute
+      This function sets the ``DW_AT_location`` attribute
       )doc"_doc, "offset"_a, nb::rv_policy::reference_internal)
 
     .def("set_external", &dw::editor::Variable::set_external,

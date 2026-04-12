@@ -36,7 +36,8 @@ struct linkedit_data_command;
 
 /// Class that represents the LC_DYLD_EXPORTS_TRIE command
 ///
-/// In recent Mach-O binaries, this command replace the DyldInfo export trie buffer
+/// In recent Mach-O binaries, this command replaces the DyldInfo export trie
+/// buffer
 class LIEF_API DyldExportsTrie : public LoadCommand {
   friend class BinaryParser;
   friend class Builder;
@@ -98,7 +99,7 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   /// Print the exports trie in a human-readable way
   std::string show_export_trie() const;
 
-  /// Add an entrie in the current trie.
+  /// Add an entry in the current trie.
   /// See also: LIEF::MachO::Binary::add_exported_function
   ExportInfo* add(std::unique_ptr<ExportInfo> info) LIEF_LIFETIMEBOUND;
 
@@ -117,7 +118,7 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
   uint32_t data_offset_ = 0;
   uint32_t data_size_ = 0;
 
-  // Raw payload of the DyldChainedFixups.
+  // Raw payload of the DyldExportsTrie.
   // This payload is located in the __LINKEDIT segment
   span<uint8_t> content_;
 

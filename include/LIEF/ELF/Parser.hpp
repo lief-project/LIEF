@@ -77,7 +77,7 @@ class LIEF_API Parser : public LIEF::Parser {
   /// Parse the given raw data as an ELF binary and return a LIEF::ELF::Binary
   /// object
   ///
-  /// For weird binaries (e.g. sectionless) you can choose which method use to
+  /// For weird binaries (e.g. sectionless) you can choose which method to use to
   /// count dynamic symbols
   ///
   /// @param[in] data Raw ELF as a std::vector of uint8_t
@@ -91,7 +91,7 @@ class LIEF_API Parser : public LIEF::Parser {
   /// Parse the ELF binary from the given stream and return a LIEF::ELF::Binary
   /// object
   ///
-  /// For weird binaries (e.g. sectionless) you can choose which method use to
+  /// For weird binaries (e.g. sectionless) you can choose which method to use to
   /// count dynamic symbols
   ///
   /// @param[in] stream  The stream which wraps the ELF binary

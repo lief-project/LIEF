@@ -125,7 +125,7 @@ void create<SignerInfo>(nb::module_& m) {
         Return the un-authenticated attribute matching the
         given :class:`lief.PE.SIG_ATTRIBUTE_TYPES`
         It returns **the first** entry that matches the given type. If it can't be
-        found, it returns a nullptr
+        found, it returns None
         )delim"_doc,
         "type"_a, nb::rv_policy::reference_internal)
 

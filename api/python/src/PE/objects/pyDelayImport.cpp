@@ -80,7 +80,7 @@ void create<DelayImport>(nb::module_& m) {
         nb::overload_cast<uint32_t>(&DelayImport::names_table),
         R"delim(
         RVA of the delay-load import names table.
-        The content of this table has the layout as the Import lookup table
+        The content of this table has the same layout as the Import lookup table
         )delim"_doc)
 
     .def_prop_rw("biat",
@@ -101,7 +101,7 @@ void create<DelayImport>(nb::module_& m) {
 
         According to the PE specifications, this table is an
         exact copy of the delay import address table that can be
-        used to to restore the original IAT the case of unloading.
+        used to restore the original IAT in the case of unloading.
         )delim"_doc)
 
     .def_prop_rw("timestamp",

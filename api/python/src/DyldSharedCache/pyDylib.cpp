@@ -22,7 +22,7 @@ void create<dsc::Dylib>(nb::module_& m) {
     R"doc(
     This structure is used to tweak the extraction process while calling
     :meth:`lief.dsc.Dylib.get`. These options allow to deoptimize the dylib and
-    get an accurate representation of the origin Mach-O binary.
+    get an accurate representation of the original Mach-O binary.
     )doc"
   )
     .def(nb::init<>())
@@ -132,7 +132,7 @@ void create<dsc::Dylib>(nb::module_& m) {
 
       One can use this function to write back the Mach-O binary on the disk:
 
-      .. code-block:: cpp
+      .. code-block:: python
 
          dyld_cache: lief.dsc.DyldSharedCache = ...
          dyld_cache.libraries[10].get().write("libsystem.dylib")

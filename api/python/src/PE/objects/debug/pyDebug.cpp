@@ -37,7 +37,7 @@ void create<Debug>(nb::module_& m) {
     R"delim(
     This class represents a generic entry in the debug data directory.
     For known types, this class is extended to provide a dedicated API
-    (see: :class:`~.CodeCodeView`)
+    (see: :class:`~.CodeView`)
     )delim"_doc);
 
   enum_<Debug::TYPES>(debug, "TYPES", "The entry types")

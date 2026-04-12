@@ -178,5 +178,4 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 
 Header::~Header() = default;
 
-} // Namespace ART
-// Namespace LIEF
+} // namespace LIEF::ART

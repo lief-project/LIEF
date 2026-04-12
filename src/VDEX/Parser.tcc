@@ -274,10 +274,11 @@ void Parser::parse_quickening_info<details::VDEX10>() {
       }
     }
 
-    size_t nb_code_item = (code_item_end - current_code_item) /
-                          (2 * sizeof(uint32_t)); // The array is compounded of
-                                                  // 1. Code item offset
-                                                  // 2. Quickening offset
+    size_t nb_code_item =
+        (code_item_end - current_code_item) /
+        (2 * sizeof(uint32_t)); // Each array entry is composed of:
+                                // 1. Code item offset
+                                // 2. Quickening offset
 
 
     //  +---------------+         +-----------+
@@ -335,10 +336,10 @@ void Parser::parse_quickening_info<details::VDEX10>() {
       }
       current_code_item +=
           2 *
-          sizeof(uint32_t); // sizeof(code_item_offset) + sizeof(quickening_base)
+          sizeof(uint32_t); // sizeof(code_item_offset) + sizeof(quickening_offset)
     }
 
-    // Resolve methods offset
+    // Resolve method offsets
     const std::vector<uint8_t>& raw = dex_file->raw(/* deoptimize */ false);
     for (DEX::Method& method : dex_file->methods()) {
       const auto it_quick =

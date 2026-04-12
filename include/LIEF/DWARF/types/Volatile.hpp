@@ -29,7 +29,7 @@ class LIEF_API Volatile : public Type {
   public:
   using Type::Type;
 
-  /// This underlying type
+  /// The underlying type
   const Type* underlying_type() const;
 
   const Type* operator->() const {

@@ -47,7 +47,7 @@ void create<EncryptionInfo>(nb::module_& m) {
     .def_prop_rw("crypt_id",
         nb::overload_cast<>(&EncryptionInfo::crypt_id, nb::const_),
         nb::overload_cast<uint32_t>(&EncryptionInfo::crypt_id),
-        "The encryption system. 0 means no encrypted"_doc)
+        "The encryption system. 0 means not encrypted"_doc)
 
     LIEF_DEFAULT_STR(EncryptionInfo);
 

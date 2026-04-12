@@ -27,7 +27,7 @@ namespace ELF {
 
 /// Class representing the ".note.android.ident" section
 ///
-/// @see:
+/// @see
 /// https://android.googlesource.com/platform/ndk/+/ndk-release-r16/sources/crt/crtbrand.S#39
 class LIEF_API AndroidIdent : public Note {
   public:
@@ -78,7 +78,7 @@ class LIEF_API AndroidIdent : public Note {
 };
 
 
-} // namepsace ELF
+} // namespace ELF
 } // namespace LIEF
 
 #endif

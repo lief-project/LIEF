@@ -41,11 +41,11 @@ class Code;
 /// Reference: https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64
 class LIEF_API RuntimeFunctionX64 : public ExceptionInfo {
   public:
-  /// \private
+  /// @private
   LIEF_LOCAL static std::unique_ptr<RuntimeFunctionX64>
       parse(Parser& ctx, BinaryStream& strm, bool skip_unwind = false);
 
-  /// \private
+  /// @private
   LIEF_LOCAL static ok_error_t parse_unwind(Parser& ctx, BinaryStream& strm,
                                             RuntimeFunctionX64& func);
 

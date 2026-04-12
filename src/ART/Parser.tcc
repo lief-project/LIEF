@@ -289,7 +289,7 @@ void Parser::parse_methods() {
   const art_header_t* hdr = reinterpret_cast<const art_header_t*>(stream_->read(0, sizeof(art_header_t)));
 
   uint32_t nb_methods = file_->header().nb_methods_;
-  //TODO check with ART::nb_methods... (more secure)
+  // TODO: check against ART::nb_methods for extra validation
   for (size_t i = 0; i < nb_methods; ++i) {
     IMAGE_METHODS type = static_cast<IMAGE_METHODS>(i);
     uint64_t address = hdr->image_methods[i];

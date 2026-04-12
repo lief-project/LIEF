@@ -43,7 +43,7 @@ bool Layout::is_strtab_shared_shstrtab() const {
 }
 
 size_t Layout::section_strtab_size() {
-  // could be moved in the class base.
+  // Could be moved into the base class.
   if (!raw_strtab_.empty()) {
     return raw_strtab_.size();
   }
@@ -83,7 +83,7 @@ size_t Layout::section_shstr_size() {
 
   vector_iostream raw_shstrtab(should_swap());
 
-  // In the ELF format all the .str sections
+  // In the ELF format, all string table sections
   // start with a null entry.
   raw_shstrtab.write<uint8_t>(0);
   std::vector<std::string> sec_names;

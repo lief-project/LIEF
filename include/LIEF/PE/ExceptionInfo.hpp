@@ -96,7 +96,7 @@ class LIEF_API ExceptionInfo {
     return const_cast<ExceptionInfo*>(this)->as<T>();
   }
 
-  /// \private
+  /// @private
   void offset(uint64_t value) {
     offset_ = value;
   }

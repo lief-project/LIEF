@@ -118,7 +118,7 @@ void create<DyldChainedFixups>(nb::module_& m) {
         nb::overload_cast<>(&DyldChainedFixups::fixups_version, nb::const_),
         nb::overload_cast<uint32_t>(&DyldChainedFixups::fixups_version),
         R"delim(
-        Chained fixups version. The loader (as far of dyld v852.2) checks
+        Chained fixups version. The loader (as of dyld v852.2) checks
         that this value is set to 0.
         )delim"_doc)
 
@@ -149,7 +149,7 @@ void create<DyldChainedFixups>(nb::module_& m) {
         The compression algorithm (if any) used to store the symbols
         0 means uncompressed while 1 means zlib compressed.
 
-        As far of the version v852.2 of dyld loader, it only supports
+        As of the version v852.2 of dyld loader, it only supports
         **uncompressed** format
         )delim"_doc)
 

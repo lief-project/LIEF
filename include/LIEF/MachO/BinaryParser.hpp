@@ -72,7 +72,7 @@ union dyld_chained_ptr_arm64e_segmented;
 
 /// Class used to parse a **single** binary (i.e. non-FAT)
 ///
-/// @warning This class should not be directly used.
+/// @warning This class should not be used directly.
 ///
 /// @see MachO::Parser
 class LIEF_API BinaryParser : public LIEF::Parser {

@@ -64,7 +64,7 @@ class LIEF_API Symbol : public Object {
     name_ = std::move(name);
   }
 
-  // Symbol's value which is usually the **address** of the symbol
+  /// Symbol's value which is usually the **address** of the symbol
   virtual uint64_t value() const {
     return value_;
   }
@@ -72,7 +72,7 @@ class LIEF_API Symbol : public Object {
     value_ = value;
   }
 
-  /// This size of the symbol (when applicable)
+  /// The size of the symbol (when applicable)
   virtual uint64_t size() const {
     return size_;
   }

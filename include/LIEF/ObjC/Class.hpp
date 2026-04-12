@@ -101,7 +101,7 @@ class LIEF_API Class {
   };
 
   public:
-  /// Iterator for the class's method
+  /// Iterator for the class's methods
   using methods_t = iterator_range<Method::Iterator>;
 
   /// Iterator for the protocols implemented by this class

@@ -31,7 +31,7 @@ namespace LIEF::PE {
 RelocationEntry::BASE_TYPES
     RelocationEntry::type_from_data(Header::MACHINE_TYPES arch, uint16_t data) {
   uint8_t raw_type = get_type(data);
-  // Discriminate the type based on the the provided architecture
+  // Discriminate the type based on the provided architecture
   // for the values that depend on the arch.
   if (raw_type == 5) {
     if (Header::is_mips(arch)) {

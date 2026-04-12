@@ -79,7 +79,7 @@ pub struct ExtractOpt {
     /// virtual space.
     ///
     /// <div class="warning">
-    /// Enabling this option can have a significant impact on the performances.
+    /// Enabling this option can have a significant impact on the performance.
     /// Make sure to enable the internal cache mechanism.
     /// </div>
     ///
@@ -89,7 +89,7 @@ pub struct ExtractOpt {
     /// Fix memory accesses performed outside the dylib's virtual space
     ///
     /// <div class="warning">
-    /// Enabling this option can have a significant impact on the performances.
+    /// Enabling this option can have a significant impact on the performance.
     /// Make sure to enable the internal cache mechanism.
     /// </div>
     ///
@@ -99,7 +99,7 @@ pub struct ExtractOpt {
     /// Recover and fix relocations
     ///
     /// <div class="warning">
-    /// Enabling this option can have a significant impact on the performances.
+    /// Enabling this option can have a significant impact on the performance.
     /// Make sure to enable the internal cache mechanism.
     /// </div>
     ///
@@ -109,7 +109,7 @@ pub struct ExtractOpt {
     /// Fix Objective-C information
     ///
     /// <div class="warning">
-    /// Enabling this option can have a significant impact on the performances.
+    /// Enabling this option can have a significant impact on the performance.
     /// Make sure to enable the internal cache mechanism.
     /// </div>
     ///

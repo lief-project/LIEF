@@ -204,17 +204,17 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
   LIEF_API friend std::ostream& operator<<(std::ostream& os,
                                            const RelocationEntry& entry);
 
-  /// \private
+  /// @private
   LIEF_LOCAL PE::Relocation* parent() {
     return relocation_;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL const PE::Relocation* parent() const {
     return relocation_;
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL void parent(PE::Relocation& R) {
     relocation_ = &R;
   }

@@ -63,7 +63,7 @@ impl Config {
     }
 }
 
-/// Enum that describes the different methods that can be used by the parser to identity
+/// Enum that describes the different methods that can be used by the parser to identify
 /// the number of dynamic symbols
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]

@@ -64,7 +64,7 @@ void create<MapItem>(nb::module_& m) {
 
     .def_prop_ro("size",
         nb::overload_cast<>(&MapItem::size, nb::const_),
-        "count of the number of items to be found at the indicated offset"_doc)
+        "Count of the number of items to be found at the indicated offset"_doc)
 
     LIEF_DEFAULT_STR(MapItem);
 }

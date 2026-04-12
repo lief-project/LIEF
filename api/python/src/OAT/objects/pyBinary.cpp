@@ -65,7 +65,7 @@ void create<Binary>(nb::module_& m) {
         nb::keep_alive<0, 1>())
 
     .def("has_class", &Binary::has_class,
-        "Check if the class if the given name is present in the current OAT binary"_doc)
+        "Check if the class with the given name is present in the current OAT binary"_doc)
 
     .def("get_class",
         nb::overload_cast<const std::string&>(&Binary::get_class),

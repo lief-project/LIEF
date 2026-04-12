@@ -59,7 +59,7 @@ class LIEF_API TLS : public Object {
   TLS(TLS&& other) noexcept = default;
   TLS& operator=(TLS&& other) noexcept = default;
 
-  /// List of the callback associated with the current TLS.
+  /// List of the callbacks associated with the current TLS.
   ///
   /// These functions are called before any other functions.
   const std::vector<uint64_t>& callbacks() const {
@@ -77,7 +77,7 @@ class LIEF_API TLS : public Object {
   /// The system copies all of this data each time a thread is created, so it
   /// must not be corrupted.
   ///
-  /// \note These addresses are not RVA. It is addresses for which there
+  /// @note These addresses are not RVA. They are addresses for which there
   ///       should be a rebase relocation in the `.reloc` section.
   const std::pair<uint64_t, uint64_t>& addressof_raw_data() const {
     return va_rawdata_;

@@ -468,17 +468,17 @@ std::string File::dex2dex_json_info() const {
 #if defined(LIEF_JSON_SUPPORT)
   json mapping = json::object();
 
-  // Iter over the class quickened
+  // Iterate over the quickened classes
   for (const auto& class_map : dex2dex_info()) {
     const Class* clazz = class_map.first;
     const std::string& class_name = clazz->fullname();
     mapping[class_name] = json::object();
 
     const dex2dex_class_info_t& class_info = class_map.second;
-    // Iter over the method within the class
+    // Iterate over the methods within the class
     for (const auto& method_map : class_info) {
 
-      // Index of the method within the Dex File
+      // Index of the method within the DEX file
       uint32_t index = method_map.first->index();
 
       mapping[class_name][std::to_string(index)] = json::object();

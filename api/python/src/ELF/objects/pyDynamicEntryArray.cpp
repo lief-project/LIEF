@@ -31,7 +31,7 @@ template<>
 void create<DynamicEntryArray>(nb::module_& m) {
   nb::class_<DynamicEntryArray, DynamicEntry>(m, "DynamicEntryArray",
       R"delim(
-      Class that represent an Array in the dynamic table.
+      Class that represents an array in the dynamic table.
       This entry is associated with constructors:
       - ``DT_PREINIT_ARRAY``
       - ``DT_INIT_ARRAY``
@@ -47,7 +47,7 @@ void create<DynamicEntryArray>(nb::module_& m) {
     .def_prop_rw("array",
         nb::overload_cast<>(&DynamicEntryArray::array, nb::const_),
         nb::overload_cast<const std::vector<uint64_t>&>(&DynamicEntryArray::array),
-        "Return the array as a list of intergers"_doc,
+        "Return the array as a list of integers"_doc,
         nb::rv_policy::reference_internal)
 
     .def("insert",

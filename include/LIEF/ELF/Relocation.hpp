@@ -49,7 +49,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   enum class PURPOSE {
     NONE = 0,
     PLTGOT = 1,  ///< The relocation is associated with the PLT/GOT resolution
-    DYNAMIC = 2, ///< The relocation is used for regulard data/code relocation
+    DYNAMIC = 2, ///< The relocation is used for regular data/code relocation
     OBJECT = 3,  ///< The relocation is used in an object file
   };
 
@@ -157,7 +157,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   /// Copy constructor.
   ///
-  /// \warning When this constructor is invoked, referenced sections or symbols
+  /// @warning When this constructor is invoked, referenced sections or symbols
   /// are discarded. This means that on the copied Relocation, Relocation::section,
   /// Relocation::symbol and Relocation::symbol_table are set to a nullptr.
   Relocation(const Relocation& other) :

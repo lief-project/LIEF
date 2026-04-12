@@ -92,7 +92,7 @@ void create<RuntimeFunctionX64>(nb::module_& m) {
     .value("ALLOC_SMALL", RuntimeFunctionX64::UNWIND_OPCODES::ALLOC_SMALL,
       R"doc(
       Allocate a small-sized area on the stack. The size of the allocation is
-      the operation info field * 8 + 8, allowing all to 4GB - 8.
+      the operation info field * 8 + 8, allowing allocations up to 128 bytes.
       )doc"_doc
     )
 
@@ -154,7 +154,7 @@ void create<RuntimeFunctionX64>(nb::module_& m) {
 
     .value("EPILOG", RuntimeFunctionX64::UNWIND_OPCODES::EPILOG,
       R"doc(
-      This entry is only revelant for version 2. It describes the function
+      This entry is only relevant for version 2. It describes the function
       epilog.
       )doc"_doc
     )
@@ -235,13 +235,13 @@ void create<RuntimeFunctionX64>(nb::module_& m) {
       An image-relative pointer to either the function's language-specific
       exception or termination handler. This value is set if one of these
       flags is set: :attr:`lief.PE.RuntimeFunctionX64.UNWIND_FLAGS.EXCEPTION_HANDLER`,
-      :attr:`lief.PE.UNWIND_FLAGS.TERMINATE_HANDLER`.
+      :attr:`lief.PE.RuntimeFunctionX64.UNWIND_FLAGS.TERMINATE_HANDLER`.
       )doc"_doc
     )
 
     .def_rw("chained", &unwind_info_t::chained,
       R"doc(
-      If :attr:`lief.PE.UNWIND_FLAGS.CHAIN_INFO` is set, this attributes
+      If :attr:`lief.PE.RuntimeFunctionX64.UNWIND_FLAGS.CHAIN_INFO` is set, this attribute
       references the chained runtime function.
       )doc"_doc
     )

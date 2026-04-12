@@ -48,7 +48,7 @@ void create<SymbolCommand>(nb::module_& m) {
     .def_prop_rw("strings_size",
         nb::overload_cast<>(&SymbolCommand::strings_size, nb::const_),
         nb::overload_cast<uint32_t>(&SymbolCommand::strings_size),
-        "Size of the size string table"_doc)
+        "Size of the string table"_doc)
 
     LIEF_DEFAULT_STR(SymbolCommand);
 }

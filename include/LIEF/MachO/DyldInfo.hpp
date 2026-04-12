@@ -212,7 +212,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   /// Set new opcodes
   void rebase_opcodes(buffer_t raw);
 
-  /// Return the rebase opcodes in a humman-readable way
+  /// Return the rebase opcodes in a human-readable way
   std::string show_rebases_opcodes() const;
 
   /// *Bind* information
@@ -225,7 +225,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   ///    <seg-index, seg-offset, type, symbol-library-ordinal, symbol-name, addend>
   /// The opcodes are a compressed way to encode the table by only
   /// encoding when a column changes.  In addition simple patterns
-  /// like for runs of pointers initialzed to the same value can be
+  /// like for runs of pointers initialized to the same value can be
   /// encoded in a few bytes.
   ///
   /// @see ``/usr/include/mach-o/loader.h``
@@ -244,7 +244,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   /// Set new opcodes
   void bind_opcodes(buffer_t raw);
 
-  /// Return the bind opcodes in a humman-readable way
+  /// Return the bind opcodes in a human-readable way
   std::string show_bind_opcodes() const;
 
   /// *Weak Bind* information
@@ -279,14 +279,14 @@ class LIEF_API DyldInfo : public LoadCommand {
   /// Set new opcodes
   void weak_bind_opcodes(buffer_t raw);
 
-  /// Return the bind opcodes in a humman-readable way
+  /// Return the bind opcodes in a human-readable way
   std::string show_weak_bind_opcodes() const;
 
   /// *Lazy Bind* information
   ///
   /// Some uses of external symbols do not need to be bound immediately.
   /// Instead they can be lazily bound on first use.  The lazy_bind
-  /// are contains a stream of BIND opcodes to bind all lazy symbols.
+  /// area contains a stream of BIND opcodes to bind all lazy symbols.
   /// Normal use is that dyld ignores the lazy_bind section when
   /// loading an image.  Instead the static linker arranged for the
   /// lazy pointer to initially point to a helper function which
@@ -311,7 +311,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   /// Set new opcodes
   void lazy_bind_opcodes(buffer_t raw);
 
-  /// Return the lazy opcodes in a humman-readable way
+  /// Return the lazy opcodes in a human-readable way
   std::string show_lazy_bind_opcodes() const;
 
   /// Iterator over BindingInfo entries

@@ -64,7 +64,7 @@ void create<DyldExportsTrie>(nb::module_& m) {
 
     .def("show_export_trie",
          &DyldExportsTrie::show_export_trie,
-         "Show the trie in a humman-readable way"_doc)
+         "Show the trie in a human-readable way"_doc)
 
     LIEF_DEFAULT_STR(DyldExportsTrie);
 }

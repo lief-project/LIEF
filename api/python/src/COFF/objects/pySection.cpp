@@ -111,7 +111,7 @@ void create<Section>(nb::module_& m) {
     .def_prop_rw("characteristics",
       nb::overload_cast<>(&Section::characteristics, nb::const_),
       nb::overload_cast<uint32_t>(&Section::characteristics),
-      "The characteristics  that describe the purpose of the section"_doc)
+      "The characteristics that describe the purpose of the section"_doc)
 
     .def_prop_ro("characteristics_lists",
       &Section::characteristics_list,
@@ -151,7 +151,7 @@ void create<Section>(nb::module_& m) {
 
     .def_prop_ro("comdat_info", &Section::comdat_info,
       R"doc(
-      Return comdat infomration (only if the section has the
+      Return comdat information (only if the section has the
       :attr:`lief.PE.Section.CHARACTERISTICS.LNK_COMDAT` characteristic)
       )doc"_doc
     )

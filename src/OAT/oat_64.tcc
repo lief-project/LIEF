@@ -136,5 +136,4 @@ void Parser::parse_dex_files<details::OAT64_t>() {
 }
 
 
-} // Namespace OAT
-// Namespace LIEF
+} // namespace LIEF::OAT

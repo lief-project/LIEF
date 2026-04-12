@@ -8,7 +8,7 @@ void create<dsc::MappingInfo>(nb::module_& m) {
     R"doc(
     This class represents a ``dyld_cache_mapping_info`` entry.
 
-    It provides information about the relationshiop between on-disk shared cache
+    It provides information about the relationship between on-disk shared cache
     and in-memory shared cache.
     )doc"_doc
   );

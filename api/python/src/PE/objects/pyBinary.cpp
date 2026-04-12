@@ -70,7 +70,7 @@ void create<Binary>(nb::module_& m) {
   bin
     .def_prop_ro("sections",
         nb::overload_cast<>(&Binary::sections),
-        "Return binary's an iterator over the PE's " RST_CLASS_REF(lief.PE.Section) ""_doc,
+        "Return an iterator over the PE's " RST_CLASS_REF(lief.PE.Section) ""_doc,
         nb::keep_alive<0, 1>())
 
     .def_prop_ro("dos_header",
@@ -318,7 +318,7 @@ void create<Binary>(nb::module_& m) {
 
     .def("get_section",
         nb::overload_cast<const std::string&>(&Binary::get_section),
-        "Return the " RST_CLASS_REF(lief.PE.Section) " object from the given name or None if not not found"_doc,
+        "Return the " RST_CLASS_REF(lief.PE.Section) " object from the given name or None if not found"_doc,
         "section_name"_a,
         nb::rv_policy::reference_internal)
 
@@ -387,7 +387,7 @@ void create<Binary>(nb::module_& m) {
 
     .def("get_delay_import",
         nb::overload_cast<const std::string&>(&Binary::get_delay_import),
-        "Return the " RST_CLASS_REF(lief.PE.DelayImport) " from the given name or None if not not found"_doc,
+        "Return the " RST_CLASS_REF(lief.PE.DelayImport) " from the given name or None if not found"_doc,
         "import_name"_a,
         nb::rv_policy::reference_internal)
 
@@ -399,7 +399,7 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("resources",
         nb::overload_cast<>(&Binary::resources),
-        "Return the " RST_CLASS_REF(lief.PE.ResourceNode) " tree or None if not not present"_doc,
+        "Return the " RST_CLASS_REF(lief.PE.ResourceNode) " tree or None if not present"_doc,
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("overlay",
@@ -534,7 +534,7 @@ void create<Binary>(nb::module_& m) {
         })
 
     .def("fill_address", &Binary::fill_address,
-         "Fill the content at the provided with a fixed value"_doc,
+         "Fill the content at the provided address with a fixed value"_doc,
          "address"_a, "size"_a, "value"_a = 0, "addr_type"_a = Binary::VA_TYPES::AUTO)
 
     .def_prop_ro("coff_string_table", nb::overload_cast<>(&Binary::coff_string_table),

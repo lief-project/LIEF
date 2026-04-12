@@ -129,7 +129,7 @@ pub enum OsAbi {
     CLOUDABI,
     /// Bare-metal TMS320C6000
     C6000_ELFABI,
-    /// AMD HSA runtim
+    /// AMD HSA runtime
     AMDGPU_HSA,
     /// Linux TMS320C6000
     C6000_LINUX,
@@ -205,7 +205,7 @@ impl From<OsAbi> for u32 {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 /// Match the result `Elfxx_Ehdr.e_ident[EI_DATA]`
 pub enum ElfData {
-    /// Invalid data encodin
+    /// Invalid data encoding
     NONE,
     /// 2's complement, little endian
     LSB,
@@ -315,7 +315,7 @@ impl Header<'_> {
     }
 
     /// Return the size of a section header (i.e. `sizeof(Elfxx_Shdr)`)
-    /// This size should be 64 for a ``ELF64`` binary and 40 for an ``ELF32``.
+    /// This size should be 64 for an ``ELF64`` binary and 40 for an ``ELF32``.
     pub fn section_header_size(&self) -> u32 {
         self.ptr.section_header_size()
     }

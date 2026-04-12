@@ -73,7 +73,7 @@ class LIEF_API ResourceNode : public Object {
   /// Parse the resource tree from the provided BinaryStream stream and
   /// with the original RVA provided in the second parameter.
   ///
-  /// The RVA value should be come from the DataDirectory::RVA associated with
+  /// The RVA value should come from the DataDirectory::RVA associated with
   /// the resource tree.
   static std::unique_ptr<ResourceNode> parse(BinaryStream& stream, uint64_t rva);
 
@@ -206,21 +206,21 @@ class LIEF_API ResourceNode : public Object {
     return oss.str();
   }
 
-  /// Access the children at the given index in a safety way.
+  /// Access the children at the given index in a safe way.
   ///
-  /// \warning For internal use only
+  /// @warning For internal use only
   ///
-  /// \private
+  /// @private
   LIEF_LOCAL const ResourceNode& safe_get_at(size_t idx) const;
 
-  /// \private
+  /// @private
   LIEF_LOCAL ResourceNode& safe_get_at(size_t idx) {
     return const_cast<ResourceNode&>(
         static_cast<const ResourceNode*>(this)->safe_get_at(idx)
     );
   }
 
-  /// \private
+  /// @private
   LIEF_LOCAL void set_depth(uint32_t depth) {
     depth_ = depth;
   }

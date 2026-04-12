@@ -36,7 +36,7 @@ struct pe_debug;
 
 /// This class represents a generic entry in the debug data directory.
 /// For known types, this class is extended to provide a dedicated API
-/// (see: CodeCodeView)
+/// (see: CodeView)
 class LIEF_API Debug : public Object {
   friend class Parser;
   friend class Builder;

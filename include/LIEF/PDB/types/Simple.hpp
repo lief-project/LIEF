@@ -22,7 +22,7 @@ namespace LIEF {
 namespace pdb {
 namespace types {
 
-/// This class represents a primitive types (int, float, ...) which are
+/// This class represents primitive types (int, float, ...) which are
 /// also named *simple* types in the PDB format.
 class LIEF_API Simple : public Type {
   public:

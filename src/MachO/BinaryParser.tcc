@@ -302,7 +302,7 @@ ok_error_t BinaryParser::parse_load_commands() {
 
         if (auto* memory_stram = stream_->cast<MemoryStream>()) {
           // Link the memory stream with our
-          // binary object so that is can translate virtual address to offset
+          // binary object so that it can translate virtual address to offset
           memory_stram->binary(*binary_);
         }
 
@@ -591,9 +591,9 @@ ok_error_t BinaryParser::parse_load_commands() {
         break;
       }
 
-      // =============
-      // Symbols table
-      // =============
+      // ============
+      // Symbol table
+      // ============
       case LoadCommand::TYPE::SYMTAB:
       {
         /*
@@ -638,7 +638,7 @@ ok_error_t BinaryParser::parse_load_commands() {
       }
 
       // ===============
-      // Dyd Info
+      // Dyld Info
       // ===============
       case LoadCommand::TYPE::DYLD_INFO:
       case LoadCommand::TYPE::DYLD_INFO_ONLY:
@@ -995,9 +995,9 @@ ok_error_t BinaryParser::parse_load_commands() {
         }
 
 
-        /* TODO(romain): This part needs to be refactored
-         * we should not have to make this kind construction and move
-         * with the BinaryParser constructor
+        /* TODO(romain): This part needs to be refactored.
+         * We should not have to make this kind of construction and move
+         * with the BinaryParser constructor.
          */
         const size_t current_pos = stream_->pos();
         if (!visited_.insert(cmd->fileoff).second) {
@@ -1867,7 +1867,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
                   segment_offset + sizeof(uint64_t) >= content.size())
               {
                 LIEF_WARN("Bad segment offset ({:#x})", segment_offset);
-                delta = 0; // exit from de do ... while
+                delta = 0; // exit from the do ... while
                 break;
               }
               auto value = *reinterpret_cast<const uint64_t*>(content.data() +
@@ -1921,7 +1921,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
           }
           case DyldInfo::BIND_SUBOPCODE_THREADED::SET_BIND_ORDINAL_TABLE_SIZE_ULEB:
           {
-            // Maxium number of elements according to dyld's MachOAnalyzer.cpp
+            // Maximum number of elements according to dyld's MachOAnalyzer.cpp
             static constexpr size_t MAX_COUNT = 65535;
             auto val = stream_->read_uleb128();
             if (!val) {
@@ -2448,7 +2448,7 @@ ok_error_t BinaryParser::do_rebase(uint8_t type, uint8_t segment_idx,
 
   auto reloc = std::make_unique<RelocationDyld>(address, type);
 
-  // result.second is true if the insertion succeed
+  // result.second is true if the insertion succeeded
   reloc->architecture_ = binary_->header().cpu_type();
 
   // Tie section and segment
@@ -2955,7 +2955,7 @@ result<uint64_t> BinaryParser::next_chain(
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24:
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_FIRMWARE:
     {
-      /* offset point to a dyld_chained_ptr_arm64e_* structure */
+      /* offset points to a dyld_chained_ptr_arm64e_* structure */
       details::dyld_chained_ptr_arm64e chain;
       if (auto res = stream_->peek<decltype(chain)>(chain_offset)) {
         chain = *res;
@@ -3114,7 +3114,7 @@ ok_error_t BinaryParser::process_fixup(
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND:
     case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E_USERLAND24:
     {
-      /* offset point to a dyld_chained_ptr_arm64e_* structure */
+      /* offset points to a dyld_chained_ptr_arm64e_* structure */
       details::dyld_chained_ptr_arm64e fixup;
       if (auto res = stream_->peek<decltype(fixup)>(chain_offset)) {
         fixup = *res;
@@ -3427,7 +3427,7 @@ ok_error_t BinaryParser::do_chained_fixup(
   // The fixup is a rebase.
 
   /* In the dyld source code (MachOLoaded.cpp) there is
-   * a distinction between with DYLD_CHAINED_PTR_64:
+   * a distinction with DYLD_CHAINED_PTR_64:
    *
    *  // plain rebase (old format target is vmaddr, new format target is offset)
    *  if ( segInfo->pointer_format == DYLD_CHAINED_PTR_64 )
@@ -4228,7 +4228,7 @@ ok_error_t BinaryParser::post_process(FunctionVariantFixups& cmd) {
 
 /* This method is needed since the C++ copy constructor of ChainedBindingInfo
  * does not (on purpose) copy the pointers associated with the object.
- * Thus we need this helper to maker sure that in the context on the parser,
+ * Thus we need this helper to make sure that in the context of the parser,
  * the pointers are correctly copied.
  */
 void BinaryParser::copy_from(ChainedBindingInfo& to, ChainedBindingInfo& from) {

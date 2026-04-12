@@ -29,7 +29,7 @@ void create<String>(nb::module_& m) {
     R"doc(
     This class represents a string located in the COFF string table.
 
-    Some of these strings can be used for section's name where its lenght is greater than 8
+    Some of these strings can be used for section's name where its length is greater than 8
     bytes. See: :attr:`~.Section.coff_string`.
 
     Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#coff-string-table

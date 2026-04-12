@@ -346,13 +346,13 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Remove **all** notes with the given type
   void remove(Note::TYPE type);
 
-  /// Remove the given segment. If \p clear is set, the original content of the
+  /// Remove the given segment. If @p clear is set, the original content of the
   /// segment will be filled with zeros before removal.
   void remove(const Segment& seg, bool clear = false);
 
   /// Remove all segments associated with the given type.
   ///
-  /// If \p clear is set, the original content of the segment will be filled
+  /// If @p clear is set, the original content of the segment will be filled
   /// with zeros before removal.
   void remove(Segment::TYPE type, bool clear = false);
 
@@ -626,7 +626,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return list of the strings used by the ELF binary.
   ///
-  /// Basically, this function looks for string in the ``.roadata`` section
+  /// Basically, this function looks for strings in the ``.rodata`` section
   string_list_t strings(size_t min_size = 5) const;
 
   /// Remove symbols with the given name in both:
@@ -636,7 +636,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @see remove_symtab_symbol, remove_dynamic_symbol
   void remove_symbol(const std::string& name);
 
-  /// Remove symtabl symbols with the given name
+  /// Remove symtab symbols with the given name
   void remove_symtab_symbol(const std::string& name);
   void remove_symtab_symbol(Symbol* symbol);
 
@@ -980,7 +980,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// ``.fini_array``)
   LIEF::Binary::functions_t dtor_functions() const;
 
-  /// List of the functions found the in the binary.
+  /// List of the functions found in the binary.
   LIEF::Binary::functions_t functions() const;
 
   /// ``true`` if the binary embeds notes
@@ -1073,7 +1073,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Deletes all required symbol versions linked to the specified library name.
   /// The function returns true if the operation succeed, false otherwise.
   ///
-  /// \warning To maintain consistency, this function also removes versions
+  /// @warning To maintain consistency, this function also removes versions
   ///          associated with dynamic symbols that are linked to the specified
   ///          library name.
   bool remove_version_requirement(const std::string& libname);

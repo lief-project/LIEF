@@ -297,13 +297,13 @@ void create<ResourceDialog>(nb::module_& m) {
     )
 
     .def("has", nb::overload_cast<ResourceDialog::DIALOG_STYLES>(&ResourceDialog::has, nb::const_),
-         "Check if the dialog used to given dialog style"_doc)
+         "Check if the dialog uses the given dialog style"_doc)
 
     .def("has", nb::overload_cast<ResourceDialog::WINDOW_STYLES>(&ResourceDialog::has, nb::const_),
-         "Check if the dialog used to given window style"_doc)
+         "Check if the dialog uses the given window style"_doc)
 
     .def("has", nb::overload_cast<ResourceDialog::WINDOW_EXTENDED_STYLES>(&ResourceDialog::has, nb::const_),
-         "Check if the dialog used to given extended window style"_doc)
+         "Check if the dialog uses the given extended window style"_doc)
 
     .def_prop_ro("styles_list", &ResourceDialog::styles_list,
                  "List of :class:`~.DIALOG_STYLES` used by this dialog"_doc)

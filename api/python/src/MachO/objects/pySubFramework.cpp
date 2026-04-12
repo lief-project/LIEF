@@ -29,7 +29,7 @@ void create<SubFramework>(nb::module_& m) {
   nb::class_<SubFramework, LoadCommand>(m, "SubFramework",
       R"delim(
       Class that represents the SubFramework command.
-      Accodring to the Mach-O ``loader.h`` documentation:
+      According to the Mach-O ``loader.h`` documentation:
 
 
       > A dynamically linked shared library may be a subframework of an umbrella

@@ -283,10 +283,10 @@ class LIEF_API Visitor {
   /// Method to visit a LIEF::PE::DosHeader
   LIEF_PE_VISITABLE(DosHeader)
 
-  /// Method to visit a LIEF::PE:RichHeader
+  /// Method to visit a LIEF::PE::RichHeader
   LIEF_PE_VISITABLE(RichHeader)
 
-  /// Method to visit a LIEF::PE:RichEntry
+  /// Method to visit a LIEF::PE::RichEntry
   LIEF_PE_VISITABLE(RichEntry)
 
   /// Method to visit a LIEF::PE::Header
@@ -346,7 +346,7 @@ class LIEF_API Visitor {
   /// Method to visit a LIEF::PE::ResourceDirectory
   LIEF_PE_VISITABLE(ResourceDirectory)
 
-  /// Method to visit a LIEF::PE::ResourceVersion
+  /// Method to visit a LIEF::PE::ResourcesManager
   LIEF_PE_VISITABLE(ResourcesManager)
 
   /// Method to visit a LIEF::PE::ResourceVersion
@@ -552,16 +552,16 @@ class LIEF_API Visitor {
   /// Method to visit a LIEF::MachO::DyldEnvironment
   LIEF_MACHO_VISITABLE(DyldEnvironment)
 
-  /// Method to visit a LIEF::MachO::DyldEnvironment
+  /// Method to visit a LIEF::MachO::EncryptionInfo
   LIEF_MACHO_VISITABLE(EncryptionInfo)
 
-  /// Method to visit a LIEF::MachO:BuildVersion:
+  /// Method to visit a LIEF::MachO::BuildVersion
   LIEF_MACHO_VISITABLE(BuildVersion)
 
-  /// Method to visit a LIEF::MachO:BuildToolVersion:
+  /// Method to visit a LIEF::MachO::BuildToolVersion
   LIEF_MACHO_VISITABLE(BuildToolVersion)
 
-  /// Method to visit a LIEF::MachO:BuildToolVersion:
+  /// Method to visit a LIEF::MachO::FilesetCommand
   LIEF_MACHO_VISITABLE(FilesetCommand)
 
   /// Method to visit a LIEF::MachO::CodeSignatureDir
@@ -619,13 +619,13 @@ class LIEF_API Visitor {
   /// Method to visit a LIEF::DEX::Type
   LIEF_DEX_VISITABLE(Type)
 
-  /// Method to visit a LIEF::DEX:Prototype:
+  /// Method to visit a LIEF::DEX::Prototype
   LIEF_DEX_VISITABLE(Prototype)
 
-  /// Method to visit a LIEF::DEX:MapList:
+  /// Method to visit a LIEF::DEX::MapList
   LIEF_DEX_VISITABLE(MapList)
 
-  /// Method to visit a LIEF::DEX:MapItem:
+  /// Method to visit a LIEF::DEX::MapItem
   LIEF_DEX_VISITABLE(MapItem)
 
   // VDEX part

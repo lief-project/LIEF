@@ -23,7 +23,7 @@ namespace LIEF::VDEX::py {
 
 void init_utils(nb::module_& m) {
   lief_mod->def("is_vdex", nb::overload_cast<const std::string&>(&is_vdex),
-      "Check if the **file** given in parameter is an VDEX"_doc,
+      "Check if the **file** given in parameter is a VDEX"_doc,
       "path"_a);
 
   lief_mod->def("is_vdex", nb::overload_cast<const std::vector<uint8_t>&>(&is_vdex),

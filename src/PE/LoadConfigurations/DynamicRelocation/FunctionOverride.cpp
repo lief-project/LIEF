@@ -198,7 +198,7 @@ image_bdd_info_t* FunctionOverride::find_bdd_info(uint32_t offset) {
   // The current `parse_bdd_info` function parses the bdd_info in sequence
   // with increasing offset on the stream. This means that the func.bdd_info_
   // is already sorted by image_bdd_info_t::original_offset. We can leverage
-  // this property to perform a binary search in O(log2(N)) instead of a O(N)
+  // this property to perform a binary search in O(log2(N)) instead of an O(N)
   auto it = std::lower_bound(
       bdd_info_.begin(), bdd_info_.end(), image_bdd_info_t{0, 0, offset, {}, {}},
       [](const image_bdd_info_t& LHS, const image_bdd_info_t& RHS) {

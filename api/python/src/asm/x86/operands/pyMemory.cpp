@@ -45,7 +45,7 @@ void create<x86::operands::Memory>(nb::module_& m) {
       R"doc(
       The segment register associated with the memory operation.
 
-      For ``mov eax, dword ptr gs:[0]`` is would return ``gs``
+      For ``mov eax, dword ptr gs:[0]`` it would return ``gs``
       )doc"_doc
     )
 

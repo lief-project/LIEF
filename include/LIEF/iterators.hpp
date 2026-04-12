@@ -280,14 +280,14 @@ class ref_iterator {
 };
 
 
-/// Iterator which return const ref on container's values
+/// Iterator which returns a const ref on container's values
 template<class T, typename U = typename decay_t<T>::value_type,
          class CT = typename std::add_const<T>::type>
 using const_ref_iterator =
     ref_iterator<CT, U, typename decay_t<CT>::const_iterator>;
 
 
-/// Iterator which return a ref on container's values given predicates
+/// Iterator which returns a ref on container's values given predicates
 template<class T, typename U = typename decay_t<T>::value_type,
          class ITERATOR_T = typename decay_t<T>::iterator>
 class filter_iterator {
@@ -553,7 +553,7 @@ class filter_iterator {
   typename filter_iterator::difference_type distance_ = 0;
 };
 
-/// Iterator which return a const ref on container's values given predicates
+/// Iterator which returns a const ref on container's values given predicates
 template<class T, typename U = typename decay_t<T>::value_type,
          class CT = typename std::add_const<T>::type>
 using const_filter_iterator =
@@ -643,13 +643,13 @@ iterator_range<T> make_range(T&& x, T&& y) {
 /// Iterators are expected to have const rules analogous to pointers, with a
 /// single, const-qualified operator*() that returns ReferenceT. This matches
 /// the second and third pointers in the following example:
-/// \code
+/// @code
 ///   int Value;
 ///   { int *I = &Value; }             // ReferenceT 'int&'
 ///   { int *const I = &Value; }       // ReferenceT 'int&'; const
 ///   { const int *I = &Value; }       // ReferenceT 'const int&'
 ///   { const int *const I = &Value; } // ReferenceT 'const int&'; const
-/// \endcode
+/// @endcode
 /// If an iterator facade returns a handle to its own state, then T (and
 /// PointerT and ReferenceT) should usually be const-qualified. Otherwise, if
 /// clients are expected to modify the handle itself, the field can be declared
@@ -828,7 +828,7 @@ class iterator_facade_base {
 /// CRTP base class for adapting an iterator to a different type.
 ///
 /// This class can be used through CRTP to adapt one iterator into another.
-/// Typically this is done through providing in the derived class a custom \c
+/// Typically this is done through providing in the derived class a custom @c
 /// operator* implementation. Other methods can be overridden as well.
 template<typename DerivedT, typename WrappedIteratorT,
          typename IteratorCategoryT =
@@ -933,9 +933,9 @@ class iterator_adaptor_base
 /// The typical usage of this is to expose a type that iterates over Ts, but
 /// which is implemented with some iterator over T*s:
 ///
-/// \code
+/// @code
 ///   using iterator = pointee_iterator<SmallVectorImpl<T *>::iterator>;
-/// \endcode
+/// @endcode
 template<typename WrappedIteratorT,
          typename T = typename std::
              remove_reference<decltype(**std::declval<WrappedIteratorT>())>::type>

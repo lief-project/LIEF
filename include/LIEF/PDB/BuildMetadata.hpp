@@ -137,7 +137,7 @@ class LIEF_API BuildMetadata {
     /// Build version
     uint16_t build = 0;
 
-    /// Quick Fix Engineeringa version
+    /// Quick Fix Engineering version
     uint16_t qfe = 0;
   };
 

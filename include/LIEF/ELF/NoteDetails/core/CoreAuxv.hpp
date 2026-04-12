@@ -52,7 +52,7 @@ class LIEF_API CoreAuxv : public Note {
     FPUCW,         /**< Used FPU control word.  */
     DCACHEBSIZE,   /**< Data cache block size.  */
     ICACHEBSIZE,   /**< Instruction cache block size.  */
-    UCACHEBSIZE,   /**< Instruction cache block size.  */
+    UCACHEBSIZE,   /**< Unified cache block size.  */
     IGNOREPPC,     /**< Entry should be ignored.  */
     SECURE,        /**< Boolean, was exec setuid-like?.  */
     BASE_PLATFORM, /**< String identifying real platform  */
@@ -114,7 +114,7 @@ class LIEF_API CoreAuxv : public Note {
 
 LIEF_API const char* to_string(CoreAuxv::TYPE type);
 
-} // namepsace ELF
+} // namespace ELF
 } // namespace LIEF
 
 #endif

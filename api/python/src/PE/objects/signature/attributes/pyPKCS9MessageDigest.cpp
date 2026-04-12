@@ -49,7 +49,7 @@ void create<PKCS9MessageDigest>(nb::module_& m) {
     .def_prop_ro("digest",
         [] (const PKCS9MessageDigest& digest) {
           return nb::to_bytes(digest.digest());
-        }, "Message digeset as a blob of bytes as described in the RFC"_doc);
+        }, "Message digest as a blob of bytes as described in the RFC"_doc);
 }
 
 }

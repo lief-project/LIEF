@@ -29,8 +29,8 @@ class BinaryStream;
 namespace PE {
 
 /// This class represents the `StringTable` structure. This structure
-/// can be seen as a dictionary of key, values with key and values defined a
-/// utf-16 string.
+/// can be seen as a dictionary of key-value pairs with keys and values defined as
+/// UTF-16 strings.
 class LIEF_API ResourceStringTable : public Object {
   public:
   /// An entry in this table which is composed of an UTF-16 key and an UTF-16

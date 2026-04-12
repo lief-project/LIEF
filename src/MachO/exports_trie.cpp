@@ -141,7 +141,7 @@ std::vector<uint8_t> create_trie(const exports_list_t& exports,
   std::unique_ptr<TrieNode> start = TrieNode::create("");
   std::vector<std::unique_ptr<TrieNode>> nodes;
 
-  // Build the tree adding every symbols to the root.
+  // Build the tree by adding every symbol to the root.
   TrieNode* start_ptr = start.get();
 
   for (const std::unique_ptr<ExportInfo>& info : exports) {

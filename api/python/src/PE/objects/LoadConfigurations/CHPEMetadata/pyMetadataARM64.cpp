@@ -56,7 +56,7 @@ void create<CHPEMetadataARM64>(nb::module_& m) {
 
     range
       .def_rw("start_offset", &range_entry_t::start_offset,
-        "Raw data (include start RVA and type"_doc
+        "Raw data (includes start RVA and type)"_doc
       )
       .def_rw("length", &range_entry_t::length,
         "Range's length"_doc

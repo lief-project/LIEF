@@ -83,7 +83,7 @@ class LIEF_API DynamicEntry : public Object {
     SYMTAB_SHNDX = 34,    /**< Address of SYMTAB_SHNDX section */
     RELRSZ = 35,          /**< Total size of RELR relative relocations */
     RELR = 36,            /**< Address of RELR relative relocations */
-    RELRENT = 37,         /**< Size of one RELR relative relocaction */
+    RELRENT = 37,         /**< Size of one RELR relative relocation */
 
     // GNU Extensions
     GNU_HASH = 0x6FFFFEF5,    /**< Reference to the GNU hash table. */
@@ -118,7 +118,7 @@ class LIEF_API DynamicEntry : public Object {
                                     (Android specific). */
     ANDROID_RELR = 0x6FFFE000, /**< The offset of new relr relocation data (Android
                                   specific). */
-    ANDROID_RELRSZ = 0x6FFFE001, /**< The size of nre relr relocation data in bytes
+    ANDROID_RELRSZ = 0x6FFFE001, /**< The size of new relr relocation data in bytes
                                     (Android specific). */
     ANDROID_RELRENT = 0x6FFFE003,   /**< The size of a new relr relocation entry
                                        (Android specific). */

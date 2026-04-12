@@ -389,7 +389,7 @@ impl std::fmt::Debug for Pogo<'_> {
     }
 }
 
-/// Structure which reprents an entry in the [`Pogo`] debug structure
+/// Structure which represents an entry in the [`Pogo`] debug structure
 pub struct PogoEntry<'a> {
     ptr: cxx::UniquePtr<ffi::PE_PogoEntry>,
     _owner: PhantomData<&'a ffi::PE_Pogo>,

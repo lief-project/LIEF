@@ -752,7 +752,7 @@ void create<Binary>(nb::module_& m) {
 
     .def("add_local_symbol",
         &Binary::add_local_symbol,
-        "Add a new a new symbol in the LC_SYMTAB"_doc,
+        "Add a new symbol in the LC_SYMTAB"_doc,
         "address"_a, "name"_a,
         nb::rv_policy::reference_internal)
 

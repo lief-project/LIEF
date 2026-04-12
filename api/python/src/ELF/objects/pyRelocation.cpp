@@ -93,7 +93,7 @@ void create<Relocation>(nb::module_& m) {
         nb::overload_cast<Symbol*>(&Relocation::symbol),
         R"delim(
         :class:`~lief.ELF.Symbol` associated with the relocation or None
-        if no symbol are associated with this relocation.
+        if no symbol is associated with this relocation.
         )delim"_doc,
         nb::rv_policy::reference_internal)
 
@@ -115,17 +115,17 @@ void create<Relocation>(nb::module_& m) {
     .def_prop_ro("symbol_table",
       nb::overload_cast<>(&Relocation::symbol_table),
       R"delim(
-      the symbol table :class:`~lief.ELF.Section` which the relocation references
+      The symbol table :class:`~lief.ELF.Section` which the relocation references
       )delim"_doc,
       nb::rv_policy::reference_internal)
 
     .def_prop_ro("is_rela",
       &Relocation::is_rela,
-      "``True`` if the relocation **uses** the :attr:`~lief.ELF.Relocation.addend` proprety"_doc)
+      "``True`` if the relocation **uses** the :attr:`~lief.ELF.Relocation.addend` property"_doc)
 
     .def_prop_ro("is_rel",
       &Relocation::is_rel,
-      "``True`` if the relocation **doesn't use** the :attr:`~lief.ELF.Relocation.addend` proprety"_doc)
+      "``True`` if the relocation **doesn't use** the :attr:`~lief.ELF.Relocation.addend` property"_doc)
 
     .def("r_info", &Relocation::r_info,
       R"delim(

@@ -152,7 +152,7 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("dynamic_entries",
         nb::overload_cast<>(&Binary::dynamic_entries),
-        "Return an iterator to " RST_CLASS_REF(lief.ELF.DynamicEntry) " entries as a list"_doc,
+        "Return an iterator to " RST_CLASS_REF(lief.ELF.DynamicEntry) " entries"_doc,
         nb::keep_alive<0, 1>())
 
     .def("add",
@@ -163,17 +163,17 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("symtab_symbols",
         nb::overload_cast<>(&Binary::symtab_symbols),
-        "Return an iterator to static  " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
+        "Return an iterator to static " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
         nb::keep_alive<0, 1>())
 
     .def_prop_ro("dynamic_symbols",
         nb::overload_cast<>(&Binary::dynamic_symbols),
-        "Return an iterator to dynamic  " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
+        "Return an iterator to dynamic " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
         nb::keep_alive<0, 1>())
 
     .def_prop_ro("symbols",
         nb::overload_cast<>(&Binary::symbols),
-        "Return an iterator over both **static** and **dynamic**  " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
+        "Return an iterator over both **static** and **dynamic** " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
         nb::keep_alive<0, 1>())
 
     .def_prop_ro("exported_symbols",
@@ -183,12 +183,12 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("imported_symbols",
         nb::overload_cast<>(&Binary::imported_symbols),
-        "Return dynamic  " RST_CLASS_REF(lief.ELF.Symbol) " which are imported"_doc,
+        "Return dynamic " RST_CLASS_REF(lief.ELF.Symbol) " which are imported"_doc,
         nb::keep_alive<0, 1>())
 
     .def_prop_ro("dynamic_relocations",
         nb::overload_cast<>(&Binary::dynamic_relocations),
-        "Return an iterator over dynamics " RST_CLASS_REF(lief.ELF.Relocation) ""_doc,
+        "Return an iterator over dynamic " RST_CLASS_REF(lief.ELF.Relocation) ""_doc,
         nb::keep_alive<0, 1>())
 
     .def("add_dynamic_relocation",
@@ -217,11 +217,11 @@ void create<Binary>(nb::module_& m) {
         R"delim(
         Add relocation for object file (.o)
 
-        The first parameter is the section to add while the second parameter
+        The first parameter is the relocation to add while the second parameter
         is the :class:`~lief.ELF.Section` associated with the relocation.
 
         If there is an error, this function returns a nullptr. Otherwise, it returns
-        the relocation added.",
+        the relocation added.
         )delim"_doc,
         "relocation"_a, "section"_a,
         nb::rv_policy::reference_internal)
@@ -243,7 +243,7 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("symbols_version",
         nb::overload_cast<>(&Binary::symbols_version),
-        "Return an iterator " RST_CLASS_REF(lief.ELF.SymbolVersion) ""_doc,
+        "Return an iterator over " RST_CLASS_REF(lief.ELF.SymbolVersion) ""_doc,
         nb::keep_alive<0, 1>())
 
     .def_prop_ro("symbols_version_requirement",
@@ -263,7 +263,7 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("gnu_hash",
         &Binary::gnu_hash,
         "Return the " RST_CLASS_REF(lief.ELF.GnuHash) " object\n\n"
-        "Hash are used by the loader to speed up symbols resolution (GNU Version)"_doc,
+        "Hashes are used by the loader to speed up symbol resolution (GNU Version)"_doc,
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("use_sysv_hash",
@@ -273,7 +273,7 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("sysv_hash",
         &Binary::sysv_hash,
         "Return the " RST_CLASS_REF(lief.ELF.SysvHash) " object\n\n"
-        "Hash are used by the loader to speed up symbols resolution (SYSV version)"_doc,
+        "Hashes are used by the loader to speed up symbol resolution (SYSV version)"_doc,
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("imagebase",
@@ -299,7 +299,7 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_ro("functions",
         &Binary::functions,
-       "List of the functions found the in the binary"_doc)
+       "List of the functions found in the binary"_doc)
 
     .def_prop_rw("interpreter",
         nb::overload_cast<>(&Binary::interpreter, nb::const_),
@@ -395,7 +395,7 @@ void create<Binary>(nb::module_& m) {
     .def("has",
         nb::overload_cast<DynamicEntry::TAG>(&Binary::has, nb::const_),
         R"delim(
-        Check if it exists a :class:`~lief.ELF.DynamicEntry` with the given
+        Check if there exists a :class:`~lief.ELF.DynamicEntry` with the given
         :class:`~lief.ELF.DynamicEntry.TAG`
         )delim"_doc,
         "tag"_a)
@@ -539,13 +539,13 @@ void create<Binary>(nb::module_& m) {
 
     .def("extend",
         nb::overload_cast<const Segment&, uint64_t>(&Binary::extend),
-        "Extend the given given " RST_CLASS_REF(lief.ELF.Segment) " by the given size"_doc,
+        "Extend the given " RST_CLASS_REF(lief.ELF.Segment) " by the given size"_doc,
         "segment"_a, "size"_a,
         nb::rv_policy::reference_internal)
 
     .def("extend",
         nb::overload_cast<const Section&, uint64_t>(&Binary::extend),
-        "Extend the given given " RST_CLASS_REF(lief.ELF.Section) " by the given size"_doc,
+        "Extend the given " RST_CLASS_REF(lief.ELF.Section) " by the given size"_doc,
         "segment"_a, "size"_a,
         nb::rv_policy::reference_internal)
 
@@ -704,7 +704,7 @@ void create<Binary>(nb::module_& m) {
     .def("get_strings",
         nb::overload_cast<const size_t>(&Binary::strings, nb::const_),
         "Return list of strings used in the current ELF file with a minimal size given in first parameter (Default: 5)\n"
-        "It looks for strings in the ``.roadata`` section"_doc,
+        "It looks for strings in the ``.rodata`` section"_doc,
         "min_size"_a = 5,
         nb::rv_policy::move)
 
@@ -721,7 +721,7 @@ void create<Binary>(nb::module_& m) {
           return elf_strings_encoded;
         },
         "Return list of strings used in the current ELF file.\n"
-        "Basically this function looks for strings in the ``.roadata`` section"_doc,
+        "Basically this function looks for strings in the ``.rodata`` section"_doc,
         nb::rv_policy::move)
 
     .def("remove_symtab_symbol",
@@ -786,7 +786,7 @@ void create<Binary>(nb::module_& m) {
         "True if data are appended to the end of the binary"_doc)
 
     .def_prop_ro("is_targeting_android", &Binary::is_targeting_android,
-      R"doc(True if the current is targeting Android)doc"_doc
+      R"doc(True if the current binary is targeting Android)doc"_doc
     )
 
     .def("get_section_idx", [] (const Binary& self, const Section& sec) {
@@ -812,7 +812,7 @@ void create<Binary>(nb::module_& m) {
           std::vector<uint8_t> buffer(ptr, ptr + bytes.size());
           self.overlay(std::move(buffer));
         },
-        "Overlay data that are not a part of the ELF format"_doc)
+        "Overlay data that is not part of the ELF format"_doc)
 
     .def("relocate_phdr_table",
          &Binary::relocate_phdr_table,
@@ -829,7 +829,7 @@ void create<Binary>(nb::module_& m) {
     .def("get_relocated_dynamic_array", &Binary::get_relocated_dynamic_array,
       R"doc(
       Return the array defined by the given tag (e.g.
-      :attr:`~.DynamicEntry.TAG.INIT_ARRAY` with relocations applied (if any)
+      :attr:`~.DynamicEntry.TAG.INIT_ARRAY`) with relocations applied (if any)
       )doc"_doc,
       "array_tag"_a
     )
@@ -845,7 +845,7 @@ void create<Binary>(nb::module_& m) {
     .def("remove_version_requirement", &Binary::remove_version_requirement,
       R"doc(
       Deletes all required symbol versions linked to the specified library name.
-      The function returns true if the operation succeed, false otherwise.
+      The function returns true if the operation succeeds, false otherwise.
 
       .. warning::
 

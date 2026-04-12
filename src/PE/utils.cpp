@@ -210,8 +210,8 @@ std::string get_imphash_std(const Binary& binary) {
     }
     lstr += to_lower(entries_string);
 
-    // use write(uint8_t*, size_t) instead of write(const std::string&) to avoid
-    // null char
+    // Use write(uint8_t*, size_t) instead of write(const std::string&) to avoid
+    // including the null terminator
     hs.write(reinterpret_cast<const uint8_t*>(lstr.data()), lstr.size());
     lstr.clear();
   }

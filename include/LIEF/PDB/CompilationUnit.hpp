@@ -98,7 +98,7 @@ class LIEF_API CompilationUnit {
     std::unique_ptr<details::CompilationUnitIt> impl_;
   };
 
-  /// Iterator over the sources file (std::string)
+  /// Iterator over the source files (std::string)
   using sources_iterator =
       iterator_range<std::vector<std::string>::const_iterator>;
 
@@ -112,7 +112,7 @@ class LIEF_API CompilationUnit {
   /// `e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvlp.obj`)
   std::string module_name() const;
 
-  /// Name of path to the original binary object (COFF, Archive) in which
+  /// Name or path to the original binary object (COFF, Archive) in which
   /// the compilation unit was located before being linked.
   /// e.g. `e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvl.lib`
   std::string object_filename() const;

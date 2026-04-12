@@ -66,7 +66,7 @@ class LIEF_API MapItem : public Object {
   /// The type of the item
   TYPES type() const;
 
-  /// Reserved value (likely for alignment prupose)
+  /// Reserved value (likely for alignment purpose)
   uint16_t reserved() const;
 
   /// The number of elements (the real meaning depends on the type)
