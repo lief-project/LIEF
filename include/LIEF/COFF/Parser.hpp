@@ -40,7 +40,7 @@ class Parser {
             const ParserConfig& config = ParserConfig::default_conf());
 
   /// Parse the COFF binary pointed by the `file` argument with the given config
-  static std::unique_ptr<Binary>
+  static LIEF_API std::unique_ptr<Binary>
       parse(const std::string& file,
             const ParserConfig& config = ParserConfig::default_conf());
 
