@@ -27,6 +27,7 @@
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/PE/signature/RsaInfo.hpp"
 
 #include <psa/crypto_builtin_primitives.h>
 
@@ -598,7 +599,26 @@ std::ostream& operator<<(std::ostream& os, const Signature& signature) {
   Signature::it_const_crt certs = signature.certificates();
   os << fmt::format("#{:d} certificate(s):\n", certs.size());
   for (const x509& crt : certs) {
-    os << fmt::format("  - {}\n", crt.issuer()); // TODO(romain): RSA-2048, ...
+    std::string key_info;
+    switch (crt.key_type()) {
+      case x509::KEY_TYPES::RSA:
+      case x509::KEY_TYPES::RSA_ALT:
+      case x509::KEY_TYPES::RSASSA_PSS:
+      {
+        std::unique_ptr<RsaInfo> rsa = crt.rsa_info();
+        key_info = rsa != nullptr ? fmt::format("RSA-{}", rsa->key_size()) : "RSA";
+        break;
+      }
+      case x509::KEY_TYPES::ECKEY:
+      case x509::KEY_TYPES::ECKEY_DH:
+      case x509::KEY_TYPES::ECDSA: key_info = "EC"; break;
+      default: break;
+    }
+    if (key_info.empty()) {
+      os << fmt::format("  - {}\n", crt.issuer());
+    } else {
+      os << fmt::format("  - {} ({})\n", crt.issuer(), key_info);
+    }
   }
 
   Signature::it_const_signers_t signers = signature.signers();
