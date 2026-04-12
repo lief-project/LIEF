@@ -84,6 +84,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
   set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "")
 endif()
 
+set(LIEF_EXTRA_FLAGS)
+
+message(STATUS "LIEF_EXTRA_FLAGS:                  ${LIEF_EXTRA_FLAGS}")
 message(STATUS "CMAKE_CXX_FLAGS_RELEASE:           ${CMAKE_CXX_FLAGS_RELEASE}")
 message(STATUS "CMAKE_CXX_FLAGS_RELWITHDEBINFO:    ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
 message(STATUS "CMAKE_CXX_FLAGS_DEBUG:             ${CMAKE_CXX_FLAGS_DEBUG}")
@@ -107,6 +110,10 @@ include(GNUInstallDirs)
 # ======================
 add_library(LIB_LIEF src/Object.cpp)
 add_subdirectory(src)
+
+if (LIEF_EXTRA_FLAGS)
+  target_compile_options(LIB_LIEF PRIVATE ${LIEF_EXTRA_FLAGS})
+endif()
 
 if(NOT LIEF_PY_LIEF_EXT)
   add_library(LIEF::LIEF ALIAS LIB_LIEF)

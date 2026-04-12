@@ -1,14 +1,15 @@
 from __future__ import annotations
+
+import os
+import re
 import shlex
 import subprocess
-import re
 import sys
-import os
-
-from setup import ROOT_DIR
-from scikit_build_core.settings.skbuild_read_settings import rich_print as _rich_print
 from shutil import which
-from typing import Optional
+
+from scikit_build_core._logging import rich_print as _rich_print
+from setup import ROOT_DIR
+
 
 def rich_print(*args):
     if sys.platform.startswith("win"):
@@ -19,12 +20,13 @@ def rich_print(*args):
         return print(*args)
     return _rich_print(*args)
 
+
 class Versioning:
-    COMMAND         = '{git} describe --tags --long --dirty'
-    GIT_BRANCH      = '{git} rev-parse --abbrev-ref HEAD'
-    IS_TAGGED_CMD   = '{git} tag --list --points-at=HEAD'
-    FMT_DEV         = '{tag}.dev0'
-    FMT_TAGGED      = '{tag}'
+    COMMAND = "{git} describe --tags --long --dirty"
+    GIT_BRANCH = "{git} rev-parse --abbrev-ref HEAD"
+    IS_TAGGED_CMD = "{git} tag --list --points-at=HEAD"
+    FMT_DEV = "{tag}.dev0"
+    FMT_TAGGED = "{tag}"
     CMAKE_VERSION_R = r"set\(LIEF_VERSION_(MAJOR|MINOR|PATCH)\s(\d+)\)"
 
     def __init__(self):
@@ -34,14 +36,14 @@ class Versioning:
         args = dict(kwargs)
         args["git"] = self._git
         cmd_list = shlex.split(cmd.format(**args))
-        return subprocess.check_output(cmd_list,
-                                       text=True,
-                                       cwd=ROOT_DIR.as_posix()).strip()
+        return subprocess.check_output(
+            cmd_list, text=True, cwd=ROOT_DIR.as_posix()
+        ).strip()
 
     def has_git(self) -> bool:
         return self._git is not None and (ROOT_DIR / ".git").is_dir()
 
-    def get_branch(self) -> Optional[str]:
+    def get_branch(self) -> str | None:
         if not self.has_git():
             return None
 
@@ -59,16 +61,16 @@ class Versioning:
 
         if branch is not None and branch.startswith("release/"):
             _, version = branch.split("release/")
-            major, minor, patch = version.split('.')
-            if patch == 'x':
+            major, minor, patch = version.split(".")
+            if patch == "x":
                 return f"{major}.{minor}"
             return version
 
-        parts = version.split('-')
+        parts = version.split("-")
         assert len(parts) in (3, 4)
         dirty = len(parts) == 4
         tag, count, sha = parts[:3]
-        MA, MI, PA = map(int, tag.split(".")) # 0.9.0 -> (0, 9, 0)
+        MA, MI, PA = map(int, tag.split("."))  # 0.9.0 -> (0, 9, 0)
 
         if is_dev:
             if MI == 17:
@@ -78,11 +80,11 @@ class Versioning:
             else:
                 tag = f"{MA}.{MI + 1}.{0}"
 
-        if count == '0' and not dirty:
+        if count == "0" and not dirty:
             return tag
-        return fmt.format(tag=tag, gitsha=sha.lstrip('g'))
+        return fmt.format(tag=tag, gitsha=sha.lstrip("g"))
 
-    def version_from_git(self) -> Optional[str]:
+    def version_from_git(self) -> str | None:
         if not self.has_git():
             return None
 
@@ -90,21 +92,24 @@ class Versioning:
             is_tagged = self._exec_git_cmd(Versioning.IS_TAGGED_CMD) != ""
             git_version = self._exec_git_cmd(Versioning.COMMAND)
             if is_tagged:
-                return self.format_version(version=git_version, fmt=Versioning.FMT_TAGGED)
-            return self.format_version(version=git_version, fmt=Versioning.FMT_DEV, is_dev=True)
+                return self.format_version(
+                    version=git_version, fmt=Versioning.FMT_TAGGED
+                )
+            return self.format_version(
+                version=git_version, fmt=Versioning.FMT_DEV, is_dev=True
+            )
         except Exception as e:
             rich_print(f"[red]Error: {e}")
             return None
 
-    def version_from_cmake(self) -> Optional[str]:
+    def version_from_cmake(self) -> str | None:
         main_cmake = ROOT_DIR / "CMakeLists.txt"
         cmakefile = main_cmake.read_text()
-        major: Optional[int] = None
-        minor: Optional[int] = None
-        patch: Optional[int] = None
+        major: int | None = None
+        minor: int | None = None
+        patch: int | None = None
 
-        itre = re.finditer(Versioning.CMAKE_VERSION_R, cmakefile,
-                           flags=re.MULTILINE)
+        itre = re.finditer(Versioning.CMAKE_VERSION_R, cmakefile, flags=re.MULTILINE)
 
         for cmake_version in itre:
             typ, value = cmake_version.groups()

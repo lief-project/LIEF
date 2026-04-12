@@ -76,6 +76,11 @@ set_target_properties(pyLIEF PROPERTIES
   OUTPUT_NAME                  "_lief"
 )
 
+
+if (LIEF_EXTRA_FLAGS)
+  target_compile_options(pyLIEF PRIVATE ${LIEF_EXTRA_FLAGS})
+endif()
+
 if (MSVC AND NOT CLANG_CL AND NOT LIEF_EXTERNAL_SPDLOG)
   target_compile_definitions(pyLIEF PRIVATE FMT_UNICODE=0)
 endif()

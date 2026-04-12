@@ -5148,6 +5148,24 @@ class AArch64PAuth(NoteGnuProperty.Property):
     @property
     def version(self) -> int: ...
 
+class Needed(NoteGnuProperty.Property):
+    class NEED(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> Needed.NEED: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        UNKNOWN = 0
+
+        INDIRECT_EXTERN_ACCESS = 1
+
+    @property
+    def needs(self) -> list[Needed.NEED]: ...
+
 class X86Features(NoteGnuProperty.Property):
     @property
     def features(self) -> list[tuple[X86Features.FLAG, X86Features.FEATURE]]: ...
