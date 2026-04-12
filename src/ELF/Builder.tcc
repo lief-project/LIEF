@@ -1182,7 +1182,7 @@ ok_error_t Builder::build_dynamic_section() {
 
       default:
       {
-        // TODO(romain): Support DT_AUXILIARY
+        break;
       }
     }
 
