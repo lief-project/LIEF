@@ -30,6 +30,7 @@
 #include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
 #include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
 #include "LIEF/ELF/NoteDetails/properties/Generic.hpp"
+#include "LIEF/ELF/NoteDetails/properties/Needed.hpp"
 
 namespace LIEF::ELF::py {
 
@@ -68,6 +69,7 @@ void create<NoteGnuProperty>(nb::module_& m) {
 
   create<AArch64Feature>(m);
   create<AArch64PAuth>(m);
+  create<Needed>(m);
   create<X86Features>(m);
   create<X86ISA>(m);
   create<StackSize>(m);

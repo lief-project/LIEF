@@ -576,10 +576,42 @@ impl std::fmt::Debug for NoCopyOnProtected<'_> {
     }
 }
 
-/// Needed property
+#[allow(non_camel_case_types)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+/// Flags for the `GNU_PROPERTY_1_NEEDED` property
+pub enum NeedFlag {
+    UNKNOWN,
+    /// The object needs indirect external access
+    INDIRECT_EXTERN_ACCESS,
+}
+
+impl From<u64> for NeedFlag {
+    fn from(value: u64) -> Self {
+        match value {
+            0 => NeedFlag::UNKNOWN,
+            1 => NeedFlag::INDIRECT_EXTERN_ACCESS,
+            _ => NeedFlag::UNKNOWN,
+        }
+    }
+}
+
+/// Needed property (`GNU_PROPERTY_1_NEEDED`)
+///
+/// This property conveys information about additional features that the
+/// object file needs at runtime (e.g. indirect external access).
 pub struct Needed<'a> {
     ptr: cxx::UniquePtr<ffi::ELF_NoteGnuProperty_Needed>,
     _owner: PhantomData<&'a ffi::ELF_NoteGnuProperty>,
+}
+
+impl Needed<'_> {
+    /// Return the list of needed features
+    pub fn needs(&self) -> Vec<NeedFlag> {
+        Vec::from(self.ptr.needs().as_slice())
+            .into_iter()
+            .map(NeedFlag::from)
+            .collect()
+    }
 }
 
 impl NoteProperty for Needed<'_> {
@@ -601,6 +633,7 @@ impl std::fmt::Debug for Needed<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Needed")
             .field("type", &self.property_type())
+            .field("needs", &self.needs())
             .finish()
     }
 }

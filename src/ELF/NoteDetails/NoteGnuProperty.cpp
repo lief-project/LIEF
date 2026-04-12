@@ -30,6 +30,7 @@
 #include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
 #include "LIEF/ELF/NoteDetails/properties/X86Feature.hpp"
 #include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"
+#include "LIEF/ELF/NoteDetails/properties/Needed.hpp"
 #include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
@@ -117,7 +118,7 @@ inline std::unique_ptr<NoteGnuProperty::Property>
           (GNU_PROPERTY_UINT32_OR_LO <= type && type <= GNU_PROPERTY_UINT32_OR_HI))
       {
         switch (type) {
-          // TODO(romain): We need to support GNU_PROPERTY_1_NEEDED
+          case GNU_PROPERTY_1_NEEDED: return Needed::create(content);
           default: return Generic::create(type);
         }
       }

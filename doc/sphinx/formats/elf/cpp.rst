@@ -260,6 +260,13 @@ AArch64 PAuth
 
 ----------
 
+Needed
+******
+
+.. doxygenclass:: LIEF::ELF::Needed
+
+----------
+
 No Copy on Protected
 ********************
 

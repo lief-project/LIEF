@@ -266,6 +266,31 @@ def test_note_properties():
     ]
 
 
+def test_note_needed():
+    # GNU_PROPERTY_1_NEEDED with INDIRECT_EXTERN_ACCESS (bit 0 set)
+    GNU_PROPERTY_1_NEEDED = (
+        "040000001000000005000000474e5500008000b0040000000100000000000000"
+    )
+
+    note = lief.ELF.Note.create(
+        raw=bytes.fromhex(GNU_PROPERTY_1_NEEDED),
+        file_type=lief.ELF.Header.FILE_TYPE.NONE,
+        arch=lief.ELF.ARCH.X86_64,
+        cls=lief.ELF.Header.CLASS.ELF64,
+    )
+    assert isinstance(note, lief.ELF.NoteGnuProperty)
+    assert len(note.properties) == 1
+    assert note.find(lief.ELF.NoteGnuProperty.Property.TYPE.NEEDED) is not None
+
+    prop = note.properties[0]
+    assert isinstance(prop, lief.ELF.Needed)
+    assert prop.type == lief.ELF.NoteGnuProperty.Property.TYPE.NEEDED
+    assert prop.needs == [lief.ELF.Needed.NEED.INDIRECT_EXTERN_ACCESS]
+    assert str(prop)
+    lief.logging.info(prop)
+    lief.logging.info(note)
+
+
 @pytest.mark.private
 def test_qnx_note():
     qnx = parse_elf("private/ELF/qnx_aarch64le_bsdtar")

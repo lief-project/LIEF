@@ -358,6 +358,17 @@ AArch64 PAuth
 
 
 
+Needed
+******
+
+.. lief-inheritance:: lief._lief.ELF.Needed
+  :top-classes: lief._lief.ELF.NoteGnuProperty.Property
+  :parts: 2
+
+.. autoclass:: lief.ELF.Needed
+
+----------
+
 No Copy on Protected
 ********************
 

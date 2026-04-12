@@ -102,6 +102,10 @@ class ELF_NoteGnuProperty_Needed : public ELF_NoteGnuProperty_Property {
         static_cast<const ELF_NoteGnuProperty_Property::lief_t&>(impl)
     ) {}
 
+  auto needs() const {
+    return to_vector(as<lief_t>(this).needs());
+  }
+
   static bool classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }

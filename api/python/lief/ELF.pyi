@@ -5159,7 +5159,7 @@ class Needed(NoteGnuProperty.Property):
 
         def __int__(self) -> int: ...
 
-        UNKNOWN = 0
+        NEED = 0
 
         INDIRECT_EXTERN_ACCESS = 1
 
