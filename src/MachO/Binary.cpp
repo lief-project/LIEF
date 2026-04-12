@@ -2644,36 +2644,164 @@ bool Binary::can_cache_segment(const SegmentCommand& segment) {
 Binary::~Binary() = default;
 
 std::ostream& Binary::print(std::ostream& os) const {
-  os << "Header" << '\n';
-  os << "======" << '\n';
+  using namespace fmt;
+  os << "Header {\n" << indent(LIEF::to_string(header()), 2) << "}\n";
 
-  os << header();
-  os << '\n';
-
-
-  os << "Commands" << '\n';
-  os << "========" << '\n';
-  for (const LoadCommand& cmd : commands()) {
-    os << cmd << '\n';
+  if (auto cmds = commands(); !cmds.empty()) {
+    os << fmt::format("Commands (#{})\n", cmds.size());
+    for (size_t i = 0; i < cmds.size(); ++i) {
+      os << fmt::format("  Command #{:02} {{\n", i)
+         << indent(LIEF::to_string(cmds[i]), 4) << "  }\n";
+    }
   }
 
-  os << '\n';
-
-  os << "Sections" << '\n';
-  os << "========" << '\n';
-  for (const Section& section : sections()) {
-    os << section << '\n';
+  {
+    const auto segs = segments();
+    if (!segs.empty()) {
+      os << fmt::format("Segments (#{})\n", segs.size());
+      for (size_t i = 0; i < segs.size(); ++i) {
+        os << fmt::format("  Segment #{:02} {{\n", i)
+           << indent(LIEF::to_string(segs[i]), 4) << "  }\n";
+      }
+    }
   }
 
-  os << '\n';
-
-  os << "Symbols" << '\n';
-  os << "=======" << '\n';
-  for (const Symbol& symbol : symbols()) {
-    os << symbol << '\n';
+  {
+    const auto secs = sections();
+    if (!secs.empty()) {
+      os << fmt::format("Sections (#{})\n", secs.size());
+      for (size_t i = 0; i < secs.size(); ++i) {
+        os << fmt::format("  Section #{:02} {{\n", i)
+           << indent(LIEF::to_string(secs[i]), 4) << "  }\n";
+      }
+    }
   }
 
-  os << '\n';
+  if (auto libs = libraries(); !libs.empty()) {
+    os << fmt::format("Libraries (#{})\n", libs.size());
+    for (const DylibCommand& lib : libs) {
+      os << "  " << lib << '\n';
+    }
+  }
+
+  if (auto syms = symbols(); !syms.empty()) {
+    os << fmt::format("Symbols (#{})\n", syms.size());
+    for (const Symbol& symbol : syms) {
+      os << "  " << symbol << '\n';
+    }
+  }
+
+  if (auto syms = exported_symbols(); !syms.empty()) {
+    os << fmt::format("Exported Symbols (#{})\n", syms.size());
+    for (const Symbol& symbol : syms) {
+      os << "  " << symbol << '\n';
+    }
+  }
+
+  if (auto syms = imported_symbols(); !syms.empty()) {
+    os << fmt::format("Imported Symbols (#{})\n", syms.size());
+    for (const Symbol& symbol : syms) {
+      os << "  " << symbol << '\n';
+    }
+  }
+
+  if (auto relocs = relocations(); !relocs.empty()) {
+    os << fmt::format("Relocations (#{})\n", relocs.size());
+    for (const Relocation& R : relocs) {
+      os << "  " << R << '\n';
+    }
+  }
+
+  if (auto paths = rpaths(); !paths.empty()) {
+    os << fmt::format("RPaths (#{})\n", paths.size());
+    for (const RPathCommand& rp : paths) {
+      os << "  " << rp << '\n';
+    }
+  }
+
+  if (auto n = notes(); !n.empty()) {
+    os << fmt::format("Notes (#{})\n", n.size());
+    for (size_t i = 0; i < n.size(); ++i) {
+      os << fmt::format("  Note #{:02} {{\n", i)
+         << indent(LIEF::to_string(n[i]), 4) << "  }\n";
+    }
+  }
+
+  if (auto fsets = filesets(); !fsets.empty()) {
+    os << fmt::format("Filesets (#{})\n", fsets.size());
+    for (const Binary& fs : fsets) {
+      os << indent(LIEF::to_string(fs), 2);
+    }
+  }
+
+  if (const UUIDCommand* cmd = uuid()) {
+    os << "UUID {\n" << indent(LIEF::to_string(*cmd), 2) << "}\n";
+  }
+
+  if (const MainCommand* cmd = main_command()) {
+    os << "Main Command {\n" << indent(LIEF::to_string(*cmd), 2) << "}\n";
+  }
+
+  if (const DylinkerCommand* cmd = dylinker()) {
+    os << "Dylinker {\n" << indent(LIEF::to_string(*cmd), 2) << "}\n";
+  }
+
+  if (const DyldInfo* info = dyld_info()) {
+    os << "Dyld Info {\n" << indent(LIEF::to_string(*info), 2) << "}\n";
+  }
+
+  if (const FunctionStarts* fs = function_starts()) {
+    os << "Function Starts {\n" << indent(LIEF::to_string(*fs), 2) << "}\n";
+  }
+
+  if (const SourceVersion* sv = source_version()) {
+    os << "Source Version {\n" << indent(LIEF::to_string(*sv), 2) << "}\n";
+  }
+
+  if (const BuildVersion* bv = build_version()) {
+    os << "Build Version {\n" << indent(LIEF::to_string(*bv), 2) << "}\n";
+  }
+
+  if (const VersionMin* vm = version_min()) {
+    os << "Version Min {\n" << indent(LIEF::to_string(*vm), 2) << "}\n";
+  }
+
+  if (const CodeSignature* cs = code_signature()) {
+    os << "Code Signature {\n" << indent(LIEF::to_string(*cs), 2) << "}\n";
+  }
+
+  if (const CodeSignatureDir* csd = code_signature_dir()) {
+    os << "Code Signature Dir {\n" << indent(LIEF::to_string(*csd), 2) << "}\n";
+  }
+
+  if (const DataInCode* dic = data_in_code()) {
+    os << "Data In Code {\n" << indent(LIEF::to_string(*dic), 2) << "}\n";
+  }
+
+  if (const DyldChainedFixups* dcf = dyld_chained_fixups()) {
+    os << "Dyld Chained Fixups {\n" << indent(LIEF::to_string(*dcf), 2) << "}\n";
+  }
+
+  if (const DyldExportsTrie* det = dyld_exports_trie()) {
+    os << "Dyld Exports Trie {\n" << indent(LIEF::to_string(*det), 2) << "}\n";
+  }
+
+  if (const EncryptionInfo* ei = encryption_info()) {
+    os << "Encryption Info {\n" << indent(LIEF::to_string(*ei), 2) << "}\n";
+  }
+
+  if (const TwoLevelHints* tlh = two_level_hints()) {
+    os << "Two Level Hints {\n" << indent(LIEF::to_string(*tlh), 2) << "}\n";
+  }
+
+  if (const SubFramework* sf = sub_framework()) {
+    os << "Sub Framework {\n" << indent(LIEF::to_string(*sf), 2) << "}\n";
+  }
+
+  if (const DyldEnvironment* de = dyld_environment()) {
+    os << "Dyld Environment {\n" << indent(LIEF::to_string(*de), 2) << "}\n";
+  }
+
   return os;
 }
 

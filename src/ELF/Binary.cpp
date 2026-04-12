@@ -3312,144 +3312,102 @@ bool Binary::remove_version_requirement(const std::string& libname) {
 }
 
 std::ostream& Binary::print(std::ostream& os) const {
+  using namespace fmt;
+  os << "Header {\n" << indent(LIEF::to_string(header()), 2) << "}\n";
 
-  os << "Header" << '\n';
-  os << "======" << '\n';
-
-  os << header();
-  os << '\n';
-
-
-  os << "Sections" << '\n';
-  os << "========" << '\n';
-  for (const Section& section : sections()) {
-    os << section << '\n';
-  }
-  os << '\n';
-
-
-  os << "Segments" << '\n';
-  os << "========" << '\n';
-  for (const Segment& segment : segments()) {
-    os << segment << '\n';
-  }
-
-  os << '\n';
-
-
-  os << "Dynamic entries" << '\n';
-  os << "===============" << '\n';
-
-  for (const DynamicEntry& entry : dynamic_entries()) {
-    os << entry << '\n';
-  }
-
-  os << '\n';
-
-
-  os << "Dynamic symbols" << '\n';
-  os << "===============" << '\n';
-
-  for (const Symbol& symbol : dynamic_symbols()) {
-    os << symbol << '\n';
-  }
-
-  os << '\n';
-
-
-  os << "Symtab symbols" << '\n';
-  os << "==============" << '\n';
-
-  for (const Symbol& symbol : symtab_symbols()) {
-    os << symbol << '\n';
-  }
-
-  os << '\n';
-
-
-  os << "Symbol versions" << '\n';
-  os << "===============" << '\n';
-
-  for (const SymbolVersion& sv : symbols_version()) {
-    os << sv << '\n';
-  }
-
-  os << '\n';
-
-
-  os << "Symbol versions definition" << '\n';
-  os << "==========================" << '\n';
-
-  for (const SymbolVersionDefinition& svd : symbols_version_definition()) {
-    os << svd << '\n';
-  }
-
-  os << '\n';
-
-
-  os << "Symbol version requirement" << '\n';
-  os << "==========================" << '\n';
-
-  for (const SymbolVersionRequirement& svr : symbols_version_requirement()) {
-    os << svr << '\n';
-  }
-
-  os << '\n';
-
-
-  os << "Dynamic relocations" << '\n';
-  os << "===================" << '\n';
-
-  for (const Relocation& relocation : dynamic_relocations()) {
-    os << relocation << '\n';
-  }
-
-  os << '\n';
-
-
-  os << ".plt.got relocations" << '\n';
-  os << "====================" << '\n';
-
-  for (const Relocation& relocation : pltgot_relocations()) {
-    os << relocation << '\n';
-  }
-
-  os << '\n';
-
-  if (notes().size() > 0) {
-    os << "Notes" << '\n';
-    os << "=====" << '\n';
-
-    it_const_notes notes = this->notes();
-    for (size_t i = 0; i < notes.size(); ++i) {
-      std::string title = "Note #" + std::to_string(i);
-      os << title << '\n';
-      os << std::string(title.size(), '-') << '\n';
-      os << notes[i] << '\n';
+  {
+    const auto secs = sections();
+    if (!secs.empty()) {
+      os << fmt::format("Sections (#{})\n", secs.size());
+      for (size_t i = 0; i < secs.size(); ++i) {
+        os << fmt::format("  Section #{:02} {{\n", i)
+           << indent(LIEF::to_string(secs[i]), 4) << "  }\n";
+      }
     }
-    os << '\n';
   }
 
-  os << '\n';
-  if (use_gnu_hash()) {
-    os << "GNU Hash Table" << '\n';
-    os << "==============" << '\n';
-
-    os << gnu_hash() << '\n';
-
-    os << '\n';
+  {
+    const auto segs = segments();
+    if (!segs.empty()) {
+      os << fmt::format("Segments (#{})\n", segs.size());
+      for (size_t i = 0; i < segs.size(); ++i) {
+        os << fmt::format("  Segment #{:02} {{\n", i)
+           << indent(LIEF::to_string(segs[i]), 4) << "  }\n";
+      }
+    }
   }
 
-
-  if (use_sysv_hash()) {
-    os << "SYSV Hash Table" << '\n';
-    os << "===============" << '\n';
-
-    os << sysv_hash() << '\n';
-
-    os << '\n';
+  if (auto entries = dynamic_entries(); !entries.empty()) {
+    os << fmt::format("Dynamic Entries (#{})\n", entries.size());
+    for (const DynamicEntry& entry : entries) {
+      os << "  " << entry << '\n';
+    }
   }
 
+  if (auto syms = dynamic_symbols(); !syms.empty()) {
+    os << fmt::format("Dynamic Symbols (#{})\n", syms.size());
+    for (const Symbol& symbol : syms) {
+      os << "  " << symbol << '\n';
+    }
+  }
+
+  if (auto syms = symtab_symbols(); !syms.empty()) {
+    os << fmt::format("Symtab Symbols (#{})\n", syms.size());
+    for (const Symbol& symbol : syms) {
+      os << "  " << symbol << '\n';
+    }
+  }
+
+  if (auto vers = symbols_version(); !vers.empty()) {
+    os << fmt::format("Symbol Versions (#{})\n", vers.size());
+    for (const SymbolVersion& sv : vers) {
+      os << "  " << sv << '\n';
+    }
+  }
+
+  if (auto defs = symbols_version_definition(); !defs.empty()) {
+    os << fmt::format("Symbol Version Definitions (#{})\n", defs.size());
+    for (const SymbolVersionDefinition& svd : defs) {
+      os << indent(LIEF::to_string(svd), 2);
+    }
+  }
+
+  if (auto reqs = symbols_version_requirement(); !reqs.empty()) {
+    os << fmt::format("Symbol Version Requirements (#{})\n", reqs.size());
+    for (const SymbolVersionRequirement& svr : reqs) {
+      os << indent(LIEF::to_string(svr), 2);
+    }
+  }
+
+  if (auto relocs = dynamic_relocations(); !relocs.empty()) {
+    os << fmt::format("Dynamic Relocations (#{})\n", relocs.size());
+    for (const Relocation& relocation : relocs) {
+      os << "  " << relocation << '\n';
+    }
+  }
+
+  if (auto relocs = pltgot_relocations(); !relocs.empty()) {
+    os << fmt::format(".plt.got Relocations (#{})\n", relocs.size());
+    for (const Relocation& relocation : relocs) {
+      os << "  " << relocation << '\n';
+    }
+  }
+
+  if (auto n = this->notes(); !n.empty()) {
+    os << fmt::format("Notes (#{})\n", n.size());
+    for (size_t i = 0; i < n.size(); ++i) {
+      os << fmt::format("  Note #{:02} {{\n", i)
+         << indent(LIEF::to_string(n[i]), 4) << "  }\n";
+    }
+  }
+
+  if (const GnuHash* gnu = gnu_hash()) {
+    os << "GNU Hash Table {\n" << indent(LIEF::to_string(*gnu), 2) << "}\n";
+  }
+
+  if (const SysvHash* sysv = sysv_hash()) {
+    os << "SYSV Hash Table {\n" << indent(LIEF::to_string(*sysv), 2) << "}\n";
+  }
 
   return os;
 }
