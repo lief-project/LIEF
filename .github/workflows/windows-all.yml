@@ -7,8 +7,8 @@ on:
       - '**'
 
 env:
-  python-test-version: '3.10'
-  python-version: '3.9'
+  python-test-version: '3.13'
+  python-version: '3.13'
   CLICOLOR_FORCE: "1"
   FORCE_COLOR: "1"
   GCC_COLORS: "yes"
@@ -167,7 +167,7 @@ jobs:
     needs: build-sdk
     strategy:
       matrix:
-        python-version: [3.9, '3.10', '3.11', '3.12', '3.13', '3.14']
+        python-version: ['3.12', '3.13', '3.14']
         arch: ['x86', 'x64']
       fail-fast: false
     env:

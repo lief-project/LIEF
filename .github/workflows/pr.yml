@@ -2,8 +2,8 @@ name: LIEF PR
 on: [pull_request, workflow_dispatch]
 
 env:
-  python-osx-version: '3.10'
-  python-win-version: '3.10'
+  python-osx-version: '3.12'
+  python-win-version: '3.12'
 
 jobs:
   osx:
