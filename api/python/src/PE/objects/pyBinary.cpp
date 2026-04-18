@@ -394,7 +394,7 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("resources_manager",
         [] (Binary& self) {
           return error_or(&Binary::resources_manager, self);
-        },
+        }, nb::keep_alive<0, 1>(), nb::rv_policy::reference_internal,
         "Return the " RST_CLASS_REF(lief.PE.ResourcesManager) " to manage resources"_doc)
 
     .def_prop_ro("resources",

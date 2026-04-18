@@ -445,7 +445,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the ResourcesManager (class to manage resources more easily than the
   /// tree one)
-  result<ResourcesManager> resources_manager() const;
+  result<ResourcesManager> resources_manager() const LIEF_LIFETIMEBOUND;
 
   /// Return binary's section from its name.
   /// If the section can't be found, return a nullptr
