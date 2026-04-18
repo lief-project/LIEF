@@ -1,9 +1,10 @@
 #pragma once
 
+#include <nanobind/nanobind.h>
+
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/synchronous_factory.h>
 #include <spdlog/details/null_mutex.h>
-#include <mutex>
 
 #include <Python.h>
 
@@ -14,16 +15,27 @@ struct py_stderr_tag {};
 struct py_stdout_tag {};
 
 template<typename Mutex, typename ErrOrOut = py_stderr_tag>
-class python_base_sink final : public base_sink<Mutex> {
+class python_base_sink final : public base_sink<details::null_mutex> {
   public:
   explicit python_base_sink() = default;
+
   protected:
+  void set_pattern_(const std::string &pattern) override {
+    nanobind::ft_lock_guard lock(pymu_);
+    base_sink<details::null_mutex>::set_pattern_(pattern);
+  }
+
+  void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) override {
+    nanobind::ft_lock_guard lock(pymu_);
+    base_sink<details::null_mutex>::set_formatter_(std::move(sink_formatter));
+  }
+
   void flush_() override {}
   void sink_it_(const details::log_msg &msg) override {
     // See: https://github.com/python/cpython/blob/453da532fee26dc4f83d4cab77eb9bdb17b941e6/Python/sysmodule.c#L4001
     static constexpr auto BUFFER_SIZE = 1000;
     memory_buf_t formatted;
-    base_sink<Mutex>::formatter_->format(msg, formatted);
+    base_sink<details::null_mutex>::formatter_->format(msg, formatted);
     std::string msg_str(formatted.data(), formatted.size());
 
     const size_t nb_chunks = (msg_str.size() / BUFFER_SIZE) + 1;
@@ -40,9 +52,11 @@ class python_base_sink final : public base_sink<Mutex> {
       }
     }
   }
+  private:
+  Mutex pymu_;
 };
 
-using python_stderr_sink_mt = python_base_sink<std::mutex, py_stderr_tag>;
+using python_stderr_sink_mt = python_base_sink<nanobind::ft_mutex, py_stderr_tag>;
 using python_stderr_sink_st = python_base_sink<details::null_mutex, py_stderr_tag>;
 } // namespace sinks
 

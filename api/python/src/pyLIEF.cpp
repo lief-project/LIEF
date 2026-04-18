@@ -105,8 +105,7 @@ void init_object(nb::module_& m) {
 
 void init_python_sink() {
   spdlog::details::registry::instance().drop("LIEF");
-  std::shared_ptr<spdlog::logger> logger = spdlog::stderr_python_mt("LIEF");
-  LIEF::logging::set_logger(std::move(logger));
+  LIEF::logging::set_logger(spdlog::stderr_python_mt("LIEF"));
 }
 
 template<LIEF::logging::LEVEL lvl>
