@@ -1087,3 +1087,9 @@ def test_issue_1282(tmp_path: Path):
     assert new is not None
     assert new.get_section(".rsrc") is not None
     assert new.resources is not None
+
+
+def test_infinite_recursion():
+    """Bug found with Codex 5.3"""
+    pe = lief.PE.parse(get_sample("PE/pe_deep_rsrc.bin"))
+    assert pe is not None

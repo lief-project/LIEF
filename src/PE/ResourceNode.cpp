@@ -83,43 +83,48 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
     const details::pe_resource_directory_table& directory_table,
     uint32_t base_offset, uint32_t current_offset, uint32_t depth
 ) {
+  static constexpr auto MAX_DEPTH = 1000;
+  if (depth > MAX_DEPTH) {
+    LIEF_WARN("Tree max depth reached (max: {})", MAX_DEPTH);
+    return nullptr;
+  }
+
+  if (!visited_.insert(base_offset + current_offset).second) {
+    if (visited_.size() == 1) {
+      // Only print once
+      LIEF_WARN("Infinite loop detected in resources");
+    }
+    return nullptr;
+  }
   const uint32_t numberof_ID_entries = directory_table.NumberOfIDEntries;
   const uint32_t numberof_name_entries = directory_table.NumberOfNameEntries;
 
   size_t directory_array_offset =
       current_offset + sizeof(details::pe_resource_directory_table);
-  details::pe_resource_directory_entries entries_array{};
-
-  if (auto res_entries_array =
-          stream_.peek<details::pe_resource_directory_entries>(
-              directory_array_offset
-          ))
-  {
-    entries_array = *res_entries_array;
-  } else {
+  auto entries_array =
+      stream_.peek<details::pe_resource_directory_entries>(directory_array_offset);
+  if (!entries_array) {
     return nullptr;
   }
-
   auto directory = std::make_unique<ResourceDirectory>(directory_table);
   directory->set_depth(depth);
 
   // Iterate over the children
   for (size_t idx = 0; idx < (numberof_name_entries + numberof_ID_entries); ++idx)
   {
-
-    uint32_t data_rva = entries_array.RVA;
-    uint32_t id = entries_array.NameID.IntegerID;
+    uint32_t data_rva = entries_array->RVA;
+    uint32_t id = entries_array->NameID.IntegerID;
 
     directory_array_offset += sizeof(details::pe_resource_directory_entries);
-    if (auto res_entries_array =
-            stream_.peek<details::pe_resource_directory_entries>(
-                directory_array_offset
-            ))
-    {
-      entries_array = *res_entries_array;
-    } else {
+    auto next_entries_array = stream_.peek<details::pe_resource_directory_entries>(
+        directory_array_offset
+    );
+
+    if (!entries_array) {
       break;
     }
+
+    entries_array = next_entries_array;
 
     result<std::u16string> name;
 
@@ -130,10 +135,10 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
       LIEF_DEBUG("base_offset={:#06x}, string_offset={:#06x}", base_offset,
                  string_offset);
 
-      auto res_length = stream_.peek<uint16_t>(string_offset);
-      if (res_length && *res_length <= 100) {
-        name = stream_.peek_u16string_at(string_offset + sizeof(uint16_t),
-                                         *res_length);
+      auto length = stream_.peek<uint16_t>(string_offset);
+      if (length && *length <= 100) {
+        name =
+            stream_.peek_u16string_at(string_offset + sizeof(uint16_t), *length);
         if (!name) {
           LIEF_ERR("Corrupted node name for node id {}", id);
         }
@@ -142,32 +147,19 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
 
     if ((0x80000000 & data_rva) == 0) { // We are on a leaf
       uint32_t offset = base_offset + data_rva;
-      details::pe_resource_data_entry data_entry{};
-
-      if (!visited_.insert(offset).second) {
-        if (visited_.size() == 1) {
-          // Only print once
-          LIEF_WARN("Infinite loop detected in resources");
-        }
+      auto data_entry = stream_.peek<details::pe_resource_data_entry>(offset);
+      if (!data_entry) {
         break;
       }
 
-      if (auto res_data_entry =
-              stream_.peek<details::pe_resource_data_entry>(offset))
-      {
-        data_entry = *res_data_entry;
-      } else {
-        break;
-      }
+      auto content_offset = rva_to_offset(data_entry->DataRVA);
 
-      auto content_offset = rva_to_offset(data_entry.DataRVA);
-
-      uint32_t content_size = data_entry.Size;
-      uint32_t code_page = data_entry.Codepage;
+      uint32_t content_size = data_entry->Size;
+      uint32_t code_page = data_entry->Codepage;
 
       std::vector<uint8_t> leaf_data;
       if (content_offset && stream_.peek_data(leaf_data, *content_offset,
-                                              content_size, data_entry.DataRVA))
+                                              content_size, data_entry->DataRVA))
       {
         auto node =
             std::make_unique<ResourceData>(std::move(leaf_data), code_page);
@@ -187,33 +179,22 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
     } else { // We are on a directory
       const uint32_t directory_rva = data_rva & (~0x80000000);
       const uint32_t offset = base_offset + directory_rva;
-      if (!visited_.insert(offset).second) {
-        if (visited_.size() == 1) {
-          // Only print once
-          LIEF_WARN("Infinite loop detected in resources");
-        }
-        break;
-      }
-
-      if (auto res_next_dir_table =
-              stream_.peek<details::pe_resource_directory_table>(offset))
-      {
-        if (auto node = parse_resource_node(*res_next_dir_table, base_offset,
-                                            offset, depth + 1))
-        {
-          if (name) {
-            node->name(*name);
-          }
-          node->id(id);
-          directory->push_child(std::move(node));
-        } else {
-          // node is a nullptr
-          continue;
-        }
-      } else {
+      auto next_dir_table =
+          stream_.peek<details::pe_resource_directory_table>(offset);
+      if (!next_dir_table) {
         LIEF_WARN("Corrupted directory for node id {}", id);
         break;
       }
+      auto node =
+          parse_resource_node(*next_dir_table, base_offset, offset, depth + 1);
+      if (node == nullptr) {
+        continue;
+      }
+      if (name) {
+        node->name(*name);
+      }
+      node->id(id);
+      directory->push_child(std::move(node));
     }
   }
   return directory;
