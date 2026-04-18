@@ -17,7 +17,6 @@
 #define LIEF_PE_RESOURCES_MANAGER_H
 #include <ostream>
 
-#include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
@@ -25,7 +24,6 @@
 #include "LIEF/PE/resources/ResourceVersion.hpp"
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
-#include "LIEF/PE/resources/ResourceStringTable.hpp"
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
 
 namespace LIEF {
