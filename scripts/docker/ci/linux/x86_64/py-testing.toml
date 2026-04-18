@@ -17,6 +17,19 @@ extra-cmake-opt  = [
   "-DCMAKE_MODULE_PATH=/cmake/linux/",
 ]
 
+compilation-flags = [
+  "-O2",
+  "-fuse-ld=lld",
+  "-g", "-gdwarf-5",
+  "-fdata-sections", "-ffunction-sections",
+  "-Wno-unused-command-line-argument",
+  "-Wno-unused-parameter",
+  "-Wno-deprecated-declarations",
+  # Coverage flags
+  "-fprofile-instr-generate", "-fcoverage-mapping",
+  "-fno-omit-frame-pointer",
+]
+
 [lief.formats]
 elf     = true
 pe      = true
