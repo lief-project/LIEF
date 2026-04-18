@@ -23,7 +23,7 @@ class CommandResult:
     def __bool__(self):
         return not self.retcode
 
-    def __str__(self):
+    def __str__(self):  # pragma: no cover
         if bool(self):
             return self.output
         return self.error
@@ -146,9 +146,6 @@ def modif_3(libadd: lief.ELF.Binary, output: Path):
 
 @pytest.mark.parametrize("modifier", [modif_1, modif_2, modif_3])
 def test_libadd(tmp_path: Path, modifier):
-    if not is_linux():
-        pytest.skip("unsupported system")
-
     libadd_src = tmp_path / "libadd.c"
     binadd_src = tmp_path / "binadd.c"
 

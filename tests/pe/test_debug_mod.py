@@ -18,7 +18,7 @@ def _get_default_config() -> lief.PE.Builder.config_t:
     return conf
 
 
-def _load_library(path: Path):
+def _load_library(path: Path):  # pragma: no cover
     lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
@@ -211,3 +211,115 @@ def test_clear_debug(tmp_path: Path):
     assert not new.has_debug
 
     _run_sample(input_path, output)
+
+
+def test_dbg_modify_pdbchecksum(tmp_path: Path):
+    """
+    Modify PDBChecksum hash to trigger payload relocation (delta > 0).
+    Covers build_pdbchecksum and the relocation branch.
+    """
+    input_path = Path(get_sample("PE/WinStore.Instrumentation.dll"))
+    pe = lief.PE.parse(input_path)
+    assert pe is not None
+
+    pdbchecksum = None
+    for dbg in pe.debug:
+        if isinstance(dbg, lief.PE.PDBChecksum):
+            pdbchecksum = dbg
+            break
+    assert pdbchecksum is not None
+
+    # Make the hash much larger to force relocation
+    pdbchecksum.hash = [0xAA] * 512
+
+    output = tmp_path / input_path.name
+    pe.write(output, _get_default_config())
+
+    new = lief.PE.parse(output)
+    assert new is not None
+    check, msg = lief.PE.check_layout(new)
+    assert check, msg
+
+
+def test_dbg_modify_repro(tmp_path: Path):
+    """
+    Modify Repro hash to trigger payload relocation (delta > 0).
+    Covers build_repro and the relocation branch.
+    """
+    input_path = Path(get_sample("PE/WinStore.Instrumentation.dll"))
+    pe = lief.PE.parse(input_path)
+    assert pe is not None
+
+    repro = None
+    for dbg in pe.debug:
+        if isinstance(dbg, lief.PE.Repro):
+            repro = dbg
+            break
+    assert repro is not None
+
+    # Make the hash much larger to force relocation
+    repro.hash = bytes([0xBB] * 1024)
+
+    output = tmp_path / input_path.name
+    pe.write(output, _get_default_config())
+
+    new = lief.PE.parse(output)
+    assert new is not None
+    check, msg = lief.PE.check_layout(new)
+    assert check, msg
+
+
+def test_dbg_modify_vcfeatures(tmp_path: Path):
+    """
+    Covers build_vcfeatures.
+    """
+    input_path = Path(get_sample("PE/ANCUtility.dll"))
+    pe = lief.PE.parse(input_path)
+    assert pe is not None
+
+    vcfeat = None
+    for dbg in pe.debug:
+        if isinstance(dbg, lief.PE.VCFeature):
+            vcfeat = dbg
+            break
+    assert vcfeat is not None
+
+    vcfeat.pre_vcpp = 42
+    vcfeat.c_cpp = 99
+
+    output = tmp_path / input_path.name
+    pe.write(output, _get_default_config())
+
+    new = lief.PE.parse(output)
+    assert new is not None
+    check, msg = lief.PE.check_layout(new)
+    assert check, msg
+
+
+def test_dbg_modify_exdllcharacteristics(tmp_path: Path):
+    """
+    Covers build_exdllcharacteristics.
+    """
+    input_path = Path(get_sample("PE/arm64x_ImagingEngine.dll"))
+    pe = lief.PE.parse(input_path)
+    assert pe is not None
+
+    exdll = None
+    for dbg in pe.debug:
+        if isinstance(dbg, lief.PE.ExDllCharacteristics):
+            exdll = dbg
+            break
+    assert exdll is not None
+
+    exdll.characteristics = int(
+        lief.PE.ExDllCharacteristics.CHARACTERISTICS.CET_COMPAT
+        | lief.PE.ExDllCharacteristics.CHARACTERISTICS.HOTPATCH_COMPATIBLE
+    )
+
+    output = tmp_path / input_path.name
+    pe.write(output, _get_default_config())
+
+    new = lief.PE.parse(output)
+    assert new is not None
+    check, msg = lief.PE.check_layout(new)
+    assert check, msg

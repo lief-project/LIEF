@@ -137,6 +137,11 @@ def test_data_directories():
     assert import_dir_sec.name == "INIT"
     assert md5(import_dir.content).hexdigest() == "5306ea0dad00863a03848629a835e3d3"
 
+    # Coverage: str()/hash() on DataDirectory
+    output = str(dirs[1])
+    assert len(output) > 0
+    assert hash(dirs[1]) != 0
+
     assert dirs[2].rva == 0x8000
     assert dirs[2].size == 0x3F0
     assert dirs[2].has_section
@@ -424,6 +429,16 @@ def test_imports():
     assert kernel32.get_entry("LeaveCriticalSection") != kernel32.entries[11].copy()
     assert kernel32.get_function_rva_from_iat("LeaveCriticalSection") == 96
 
+    # Coverage: str()/hash() on Import and ImportEntry
+    output = str(kernel32)
+    assert "KERNEL32" in output
+    assert hash(kernel32) != 0
+    entry_str = str(entry_12)
+    assert "LeaveCriticalSection" in entry_str
+    assert hash(entry_12) != 0
+    # Coverage: demangled_name (may be empty without extended LIEF)
+    _ = entry_12.demangled_name
+
     msvcrt = imports[1]
     assert msvcrt.name == "msvcrt.dll"
     assert msvcrt.import_address_table_rva == 0x82CC
@@ -445,6 +460,29 @@ def test_imports():
     )
     assert msvcrt.get_function_rva_from_iat("") == lief.lief_errors.not_found
     assert msvcrt.get_function_rva_from_iat("__C_specific_handler") == 0
+
+
+def test_import_remove_entry_ordinal():
+    pe = parse_pe("PE/PE64_x86-64_binary_mfc-application.exe")
+    assert pe is not None
+    oleaut32 = pe.get_import("OLEAUT32.dll")
+    assert oleaut32 is not None
+
+    # Find the ordinal import
+    ordinal_entry = None
+    for entry in oleaut32.entries:
+        if entry.is_ordinal:
+            ordinal_entry = entry
+            break
+    assert ordinal_entry is not None
+    ordinal_val = ordinal_entry.ordinal
+
+    nb_before = len(oleaut32.entries)
+    assert oleaut32.remove_entry(ordinal_val)
+    assert len(oleaut32.entries) == nb_before - 1
+
+    # Try removing a non-existent ordinal
+    assert not oleaut32.remove_entry(0xDEAD)
 
 
 def test_issue_imports():
@@ -495,6 +533,28 @@ def test_issue_exports():
     assert entry.forward_information.library == ""
 
     assert exports.copy() == exports
+
+    # Coverage: str()/hash() on Export and ExportEntry
+    output = str(exports)
+    assert "Uniscribe" in output
+    assert hash(exports) != 0
+    entry_str = str(entry)
+    assert len(entry_str) > 0
+    assert hash(entry) != 0
+    # Coverage: demangled_name (may be empty without extended LIEF)
+    _ = entry.demangled_name
+
+    # Coverage: find_entry by ordinal and by RVA
+    found = exports.find_entry(7)
+    assert found is not None
+    assert found.name == "ncProxyXll"
+
+    found_rva = exports.find_entry_at(0x203A0)
+    assert found_rva is not None
+    assert found_rva.name == "ncProxyXll"
+
+    assert exports.find_entry(9999) is None
+    assert exports.find_entry_at(0xDEAD) is None
 
 
 def test_issue_685():
@@ -625,6 +685,14 @@ def test_relocations():
     assert r3.size == 0
 
     assert relocation.copy() == relocation
+
+    # Coverage: str()/hash() on Relocation and RelocationEntry
+    output = str(relocations[0])
+    assert len(output) > 0
+    assert hash(relocations[0]) != 0
+    entry_str = str(relocations[0].entries[0])
+    assert len(entry_str) > 0
+    assert hash(relocations[0].entries[0]) != 0
 
 
 def test_symbols():
@@ -823,6 +891,10 @@ def test_config():
     assert len(avast.relocations) == 0
     assert len(avast.signatures) == 0
     assert avast.resources is None
+
+    # Coverage: str() on ParserConfig
+    output = str(config)
+    assert len(output) > 0
 
 
 def test_overlay():

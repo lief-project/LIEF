@@ -22,7 +22,7 @@ def main():
         "--name", "-n", default="", help="Name of the function to create"
     )
     parser.add_argument(
-        "--output", "-o", default="libfoo.so", help="Output name. (Default: %(default)"
+        "--output", "-o", default="libfoo.so", help="Output name. (Default: %(default)s)"
     )
 
     parser.add_argument("binary", help="The target binary")

@@ -8,7 +8,7 @@ from utils import get_sample, parse_pe
 
 try:
     sys.set_int_max_str_digits(0)
-except Exception:
+except Exception:  # pragma: no cover
     pass
 
 

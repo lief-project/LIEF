@@ -268,6 +268,9 @@ def test_pdbchecksum(tmp_path: Path):
         == "a0:d9:eb:9c:15:9f:77:2f:27:a5:84:b2:a6:a9:b7:a5:58:5c:ca:af:4d:9d:9a:d5:17:b1:bd:7c:62:fb:cd:73"
     )
     assert pdbchecksum.algorithm == lief.PE.PDBChecksum.HASH_ALGO.SHA256
+    output = str(pdbchecksum)
+    assert "SHA256" in output or "sha256" in output.lower()
+    assert hash(pdbchecksum) != 0
 
     pdbchecksum.hash = [1] * len(pdbchecksum.hash)
 
@@ -400,6 +403,13 @@ def test_fpo(tmp_path: Path):
     assert not fpo.entries[246].use_seh
     assert fpo.entries[246].type == lief.PE.FPO.FRAME_TYPE.FPO_
     assert fpo.entries[246].parameters_size == 8
+
+    # Coverage: str() on FPO and entries
+    output = str(fpo)
+    assert len(output) > 0
+    assert hash(fpo) != 0
+    entry_str = str(fpo.entries[0])
+    assert len(entry_str) > 0
 
     output_path = tmp_path / input_path.name
     pe.write(output_path)

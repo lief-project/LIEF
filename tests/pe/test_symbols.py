@@ -1,9 +1,8 @@
-import lief
 import pytest
 from utils import parse_pe
 
 
-@pytest.mark.skipif(not lief.__extended__, reason="needs LIEF extended")
+@pytest.mark.lief_extended
 def test_demangling():
     pe = parse_pe("PE/BrowserCore.exe")
     imp = pe.get_import("msvcp_win.dll")

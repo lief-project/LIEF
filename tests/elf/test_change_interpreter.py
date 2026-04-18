@@ -7,10 +7,10 @@ from subprocess import Popen
 
 import lief
 import pytest
-from utils import check_layout, is_linux
+from utils import check_layout
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
+@pytest.mark.linux
 @pytest.mark.parametrize(
     "target",
     [
@@ -40,15 +40,14 @@ def test_change_interpreter(tmp_path: Path, target):
 
     check_layout(output)
 
-    if is_linux():
-        st = os.stat(output)
-        os.chmod(output, st.st_mode | stat.S_IEXEC)
+    st = os.stat(output)
+    os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-        with Popen(
-            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        ) as P:
-            assert P.stdout is not None
-            stdout = P.stdout.read().decode("utf8")
-            lief.logging.info(stdout)
-            P.communicate()
-            assert P.returncode != -signal.SIGSEGV
+    with Popen(
+        output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ) as P:
+        assert P.stdout is not None
+        stdout = P.stdout.read().decode("utf8")
+        lief.logging.info(stdout)
+        P.communicate()
+        assert P.returncode != -signal.SIGSEGV

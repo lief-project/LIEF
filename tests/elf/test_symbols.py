@@ -48,7 +48,7 @@ def test_remove_symbol(tmp_path: Path):
             assert "Hello world" in stdout
 
 
-@pytest.mark.skipif(not lief.__extended__, reason="needs LIEF extended")
+@pytest.mark.lief_extended
 def test_demangling():
     elf = parse_elf("ELF/ELF64_x86-64_library_libtriton.so")
 

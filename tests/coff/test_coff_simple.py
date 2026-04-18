@@ -134,6 +134,15 @@ def test_simple_coff():
     assert coff.find_function("NONE") is None
     assert coff.find_function("main") is not None
 
+    # Coverage: Binary::to_string() (full binary print)
+    output = str(coff)
+    assert "Section" in output
+    assert "Symbol" in output
+    assert "Relocation" in output
+
+    # Coverage: find_demangled_function (needs extended LIEF, but exercises the path)
+    _ = coff.find_demangled_function("NONE")
+
 
 def test_bigobj_coff():
     assert lief.is_coff(get_sample("COFF/x64_debug_cl_bigobj.obj"))
@@ -150,6 +159,64 @@ def test_bigobj_coff():
     assert header.flags == 0
     assert header.metadata_size == 0
     assert header.metadata_offset == 0
+
+    # Coverage: Binary::to_string for bigobj
+    output = str(coff)
+    assert "Section" in output
+
+
+def test_auxiliary_file():
+    coff = parse_coff("COFF/comdata_tls.obj")
+    assert coff is not None
+
+    found = False
+    for sym in coff.symbols:
+        for aux in sym.auxiliary_symbols:
+            if isinstance(aux, lief.COFF.AuxiliaryFile):
+                output = str(aux)
+                assert "tls_callbacks.cpp" in output
+                found = True
+                break
+        if found:
+            break
+    assert found
+
+
+def test_header_setters():
+    """Exercise setter methods on COFF headers to cover inline setters."""
+    coff = parse_coff("COFF/arm64_debug_cl.obj")
+    header = cast(lief.COFF.RegularHeader, coff.header)
+
+    # RegularHeader setters
+    header.machine = header.machine
+    header.nb_sections = header.nb_sections
+    header.timedatestamp = header.timedatestamp
+    header.pointerto_symbol_table = header.pointerto_symbol_table
+    header.nb_symbols = header.nb_symbols
+    header.sizeof_optionalheader = header.sizeof_optionalheader
+    header.characteristics = header.characteristics
+
+    # BigObjHeader setters
+    coff2 = parse_coff("COFF/x64_debug_cl_bigobj.obj")
+    header2 = cast(lief.COFF.BigObjHeader, coff2.header)
+    header2.machine = header2.machine
+    header2.timedatestamp = header2.timedatestamp
+    header2.sizeof_data = header2.sizeof_data
+    header2.flags = header2.flags
+    header2.metadata_size = header2.metadata_size
+    header2.metadata_offset = header2.metadata_offset
+
+    # Section setters
+    sec = coff.sections[0]
+    sec.virtual_size = sec.virtual_size
+    sec.virtual_address = sec.virtual_address
+    sec.sizeof_raw_data = sec.sizeof_raw_data
+    sec.pointerto_raw_data = sec.pointerto_raw_data
+    sec.pointerto_relocation = sec.pointerto_relocation
+    sec.pointerto_line_numbers = sec.pointerto_line_numbers
+    sec.numberof_relocations = sec.numberof_relocations
+    sec.numberof_line_numbers = sec.numberof_line_numbers
+    sec.characteristics = sec.characteristics
 
 
 def test_comdat():

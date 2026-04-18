@@ -22,18 +22,12 @@ from utils import (
 )
 
 
-def align_to(value, alignment):
-    # llvm::alignTo
-    assert (alignment & (alignment - 1)) == 0  # is power of two
-    return (value + alignment - 1) & ~(alignment - 1)
-
-
 def dyld_check(path: Path):
     dyld_info_path = Path("/usr/bin/dyld_info")
-    if not dyld_info_path.exists():
+    if not dyld_info_path.exists():  # pragma: no cover
         dyld_info_path = shutil.which("dyld_info")
 
-    if dyld_info_path is None:
+    if dyld_info_path is None:  # pragma: no cover
         return
 
     cmd = [str(dyld_info_path), "-validate_only", str(path)]

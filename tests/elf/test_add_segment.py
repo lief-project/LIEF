@@ -10,25 +10,15 @@ import pytest
 from utils import (
     check_layout,
     get_sample,
-    has_recent_glibc,
+    glibc_version,
     is_aarch64,
     is_linux,
     is_x86_64,
 )
 
-is_updated_linux = pytest.mark.skipif(
-    not (is_linux() and is_x86_64() and has_recent_glibc()),
-    reason="needs a recent x86-64 Linux system",
-)
-
-is_linux_x64 = pytest.mark.skipif(
-    not (is_linux() and is_x86_64()), reason="needs a Linux x86-64"
-)
-
 CWD = Path(__file__).parent
 
 
-@is_updated_linux
 def test_simple(tmp_path: Path):
     sample_path = get_sample("ELF/ELF64_x86-64_binary_ls.bin")
     stub = lief.ELF.parse(CWD / "hello_lief.bin")
@@ -49,19 +39,19 @@ def test_simple(tmp_path: Path):
     target.write(output)
     check_layout(output)
 
-    st = os.stat(output)
-    os.chmod(output, st.st_mode | stat.S_IEXEC)
+    if is_linux() and is_x86_64() and glibc_version() >= (2, 30):
+        st = os.stat(output)
+        os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen(
-        output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    ) as P:
-        assert P.stdout is not None
-        stdout = P.stdout.read().decode("utf8")
-        lief.logging.info(stdout)
-        assert re.search(r"LIEF is Working", stdout) is not None
+        with Popen(
+            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as P:
+            assert P.stdout is not None
+            stdout = P.stdout.read().decode("utf8")
+            lief.logging.info(stdout)
+            assert re.search(r"LIEF is Working", stdout) is not None
 
 
-@is_updated_linux
 def test_gcc(tmp_path: Path):
     sample_path = get_sample("ELF/ELF64_x86-64_binary_gcc.bin")
     stub = lief.ELF.parse(CWD / "hello_lief.bin")
@@ -81,19 +71,20 @@ def test_gcc(tmp_path: Path):
     target.write(output)
     check_layout(output)
 
-    st = os.stat(output)
-    os.chmod(output, st.st_mode | stat.S_IEXEC)
+    if is_linux() and is_x86_64() and glibc_version() >= (2, 30):
+        st = os.stat(output)
+        os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen(
-        output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    ) as P:
-        assert P.stdout is not None
-        stdout = P.stdout.read().decode("utf8")
-        lief.logging.info(stdout)
-        assert re.search(r"LIEF is Working", stdout) is not None
+        with Popen(
+            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as P:
+            assert P.stdout is not None
+            stdout = P.stdout.read().decode("utf8")
+            lief.logging.info(stdout)
+            assert re.search(r"LIEF is Working", stdout) is not None
 
 
-@is_linux_x64
+@pytest.mark.linux("x86_64")
 def test_static(tmp_path: Path):
     sample_path = get_sample("ELF/ELF64_x86-64_binary_static-binary.bin")
     stub = lief.ELF.parse(CWD / "hello_lief.bin")
@@ -125,7 +116,7 @@ def test_static(tmp_path: Path):
         assert re.search(r"LIEF is Working", stdout) is not None
 
 
-@pytest.mark.skipif(not is_linux(), reason="needs a Linux system")
+@pytest.mark.linux
 @pytest.mark.parametrize(
     "binpath",
     [
@@ -143,7 +134,7 @@ def test_static(tmp_path: Path):
         "/usr/bin/file",
     ],
 )
-def test_add_segment(tmp_path: Path, binpath):
+def test_add_segment(tmp_path: Path, binpath: str):
     target = Path(binpath)
     if not target.is_file():
         lief.logging.info(f"{target} does not exists. Skip!")

@@ -19,7 +19,7 @@ if is_windows():
     ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)  # type: ignore
 
 
-def _load_library(path: Path):
+def _load_library(path: Path):  # pragma: no cover
     lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
@@ -100,7 +100,7 @@ def test_import_simple(tmp_path: Path, sample: str):
                 assert elhs.iat_value == erhs.iat_value
         return True
 
-    if sample.startswith("private/") and not has_private_samples():
+    if sample.startswith("private/") and not has_private_samples():  # pragma: no cover
         pytest.skip(reason="needs private samples")
         return
 
@@ -151,7 +151,7 @@ def test_remove_entry(tmp_path: Path, sample: str):
     being able to run the binary
     """
 
-    if sample.startswith("private/") and not has_private_samples():
+    if sample.startswith("private/") and not has_private_samples():  # pragma: no cover
         pytest.skip(reason="needs private samples")
         return
 
@@ -207,7 +207,7 @@ def test_remove_entry(tmp_path: Path, sample: str):
     ],
 )
 def test_rename(tmp_path: Path, sample: str):
-    if sample.startswith("private/") and not has_private_samples():
+    if sample.startswith("private/") and not has_private_samples():  # pragma: no cover
         pytest.skip(reason="needs private samples")
 
     input_path = Path(get_sample(sample))
@@ -269,7 +269,7 @@ def test_add_import(tmp_path: Path, sample: str):
         assert imp.name == "kernel32.dll"
         assert rva > 0
 
-    if sample.startswith("private/") and not has_private_samples():
+    if sample.startswith("private/") and not has_private_samples():  # pragma: no cover
         pytest.skip(reason="needs private samples")
 
     input_path = Path(get_sample(sample))
@@ -286,8 +286,6 @@ def test_add_import(tmp_path: Path, sample: str):
     nb_entries = len(kernel32.entries)
 
     for entry in kernel32.entries:
-        if entry.is_ordinal:
-            continue
         entry_name = entry.name
         assert isinstance(entry_name, str)
         new_import.add_entry(entry_name)
@@ -325,7 +323,7 @@ def test_remove_import(tmp_path: Path, sample: str):
     """
     Make sure we can strip an imported library
     """
-    if sample.startswith("private/") and not has_private_samples():
+    if sample.startswith("private/") and not has_private_samples():  # pragma: no cover
         pytest.skip(reason="needs private samples")
         return
 

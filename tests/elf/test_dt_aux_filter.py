@@ -16,6 +16,9 @@ def test_dt_auxiliary(tmp_path: Path):
     assert aux_entry is not None
 
     assert aux_entry.name == "libfoo.so"
+    output = str(aux_entry)
+    assert "libfoo.so" in output
+    assert hash(aux_entry) != 0
 
     new_name = "libau" + "x" * 200 + ".so"
     aux_entry.name = new_name
@@ -44,6 +47,9 @@ def test_dt_filter(tmp_path: Path):
     assert filter_entry is not None
 
     assert filter_entry.name == "libtoto.so"
+    output = str(filter_entry)
+    assert "libtoto.so" in output
+    assert hash(filter_entry) != 0
 
     new_name = "lib" + "f" * 200 + "ilter.so"
     filter_entry.name = new_name

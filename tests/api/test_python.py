@@ -84,14 +84,14 @@ def test_wrong_io():
         pass
 
     class Wrong3(io.IOBase):
-        def tell(self):
+        def tell(self):  # pragma: no cover
             return 0
 
     class Wrong4(io.IOBase):
-        def tell(self):
+        def tell(self):  # pragma: no cover
             return 0
 
-        def seek(self, offset: int, whence: int = 0) -> int:
+        def seek(self, offset: int, whence: int = 0) -> int:  # pragma: no cover
             return 0
 
     class Wrong5(io.IOBase):
@@ -101,10 +101,10 @@ def test_wrong_io():
         def seek(self, offset: int, whence: int = 0) -> int:
             return 0
 
-        def read(self):
+        def read(self):  # pragma: no cover
             return None
 
-        def readinto(self, size):
+        def readinto(self, size):  # pragma: no cover
             return None
 
     wrong = Wrong1()

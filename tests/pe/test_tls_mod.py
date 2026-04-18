@@ -11,12 +11,12 @@ if is_windows():
     ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)  # type: ignore
 
 
-def _load_library(path: Path):
+def _load_library(path: Path):  # pragma: no cover
     lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
 
-def _run_sample(input_path: Path, output: Path):
+def _run_sample(input_path: Path, output: Path):  # pragma: no cover
     if not is_windows_x86_64():
         return
 
@@ -256,3 +256,49 @@ def test_create_tls(tmp_path: Path):
         assert "Hello World" in stdout
         assert "TLS Callback #1" in stdout
         assert "TLS Callback #2" in stdout
+
+
+def test_create_tls_with_raw_data(tmp_path: Path):
+    """
+    Create a TLS with addressof_raw_data set to exercise the relocation
+    creation for RawDataStartVA/RawDataEndVA in build_tls.
+    Also sets addressof_callbacks to a non-zero value before assigning TLS
+    to cover the "Replacing existing address of callbacks" warning path.
+    """
+    input_path = Path(get_sample("PE/tls_callbacks.exe"))
+
+    pe = lief.PE.parse(input_path)
+    assert pe is not None
+    pe.remove_tls()
+
+    empty_tls_path = tmp_path / "empty_tls.exe"
+    pe.write(empty_tls_path)
+
+    empty_tls = lief.PE.parse(empty_tls_path)
+    assert empty_tls is not None
+    assert empty_tls.tls is None
+
+    imagebase = empty_tls.optional_header.imagebase
+
+    tls = lief.PE.TLS()
+    tls.callbacks = [0x140001000]
+    tls.addressof_raw_data = (imagebase + 0x3000, imagebase + 0x3060)
+    # Set a non-zero addressof_callbacks to trigger the replacement warning
+    tls.addressof_callbacks = imagebase + 0x5000
+
+    empty_tls.tls = tls
+    output = tmp_path / "crafted_tls_raw.exe"
+    empty_tls.write(output)
+
+    new = lief.PE.parse(output)
+    assert new is not None
+
+    check, msg = lief.PE.check_layout(new)
+    assert check, msg
+
+    new_tls = new.tls
+    assert new_tls is not None
+    assert new_tls.callbacks[0] == 0x140001000
+    raw_start, raw_end = new_tls.addressof_raw_data
+    assert raw_start > 0
+    assert raw_end > 0

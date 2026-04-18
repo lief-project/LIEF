@@ -6,14 +6,14 @@ void process_file(const std::filesystem::path& target) {
   config.parse_dyld_rebases = true;
   config.parse_dyld_exports = true;
   config.parse_dyld_bindings = true;
-  auto binary = LIEF::MachO::Parser::parse(target, config);
+  auto binary = LIEF::MachO::Parser::parse(target.string(), config);
 }
 
 void process_dir(const std::filesystem::path& target) {
   for (const auto& e : std::filesystem::directory_iterator(target)) {
     if (e.is_directory()) {
       process_dir(e.path());
-    } else if (e.is_regular_file() && LIEF::MachO::is_macho(e.path())) {
+    } else if (e.is_regular_file() && LIEF::MachO::is_macho(e.path().string())) {
       process_file(e.path());
     }
   }

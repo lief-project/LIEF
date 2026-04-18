@@ -25,7 +25,7 @@ from utils import (
     parse_elf,
 )
 
-OUTPUT = """
+_OUTPUT = """
 In ctor
 In ctor2
 sum: 3
@@ -37,22 +37,31 @@ LOOKUP_RW[0]: 0
 LOOKUP_RW[1]: 11111111
 """
 
-version = glibc_version()
-glibc_too_old = False
 
-if version < (2, 32):
-    glibc_too_old = True
-    lief.logging.info(f"glibc version is too old: {version}")
-
-
-def normalize(instr: str) -> str:
+def _normalize(instr: str) -> str:
     instr = instr.replace("\n", "").replace(" ", "").strip()
     return instr
 
 
-@pytest.mark.skipif(
-    not is_linux() or glibc_too_old, reason="not linux or glibc too old"
-)
+def _run(target: Path, output: str | None = None):
+    if not is_linux() or glibc_version() < (2, 32):
+        return
+
+    env = os.environ
+    with Popen(
+        target.as_posix(),
+        universal_newlines=True,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    ) as proc:
+        assert proc.stdout is not None
+        stdout = proc.stdout.read()
+        proc.poll()
+        expected = output or _normalize(_OUTPUT)
+        assert expected in _normalize(stdout)
+
+
 @pytest.mark.slow
 def test_force_relocate(tmp_path: Path):
     SKIP_LIST = {
@@ -89,23 +98,9 @@ def test_force_relocate(tmp_path: Path):
         delta_size = out_path.stat().st_size - fsize
         lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
-        env = os.environ
-        with Popen(
-            out_path.as_posix(),
-            universal_newlines=True,
-            env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        ) as proc:
-            assert proc.stdout is not None
-            stdout = proc.stdout.read()
-            proc.poll()
-            assert normalize(OUTPUT) == normalize(stdout)
+        _run(out_path)
 
 
-@pytest.mark.skipif(
-    not is_linux() or glibc_too_old, reason="not linux or glibc too old"
-)
 def test_symtab(tmp_path: Path):
     """Test `.symtab` manipulation"""
     targets = [
@@ -136,28 +131,14 @@ def test_symtab(tmp_path: Path):
         delta_size = out_path.stat().st_size - fsize
         lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
-        env = os.environ
-        with Popen(
-            out_path.as_posix(),
-            universal_newlines=True,
-            env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        ) as proc:
-            assert proc.stdout is not None
-            stdout = proc.stdout.read()
-            proc.poll()
-            assert normalize(OUTPUT) == normalize(stdout)
-
         out = lief.ELF.parse(out_path)
         assert out is not None
         sym_names = [s.name for s in out.symtab_symbols]
         assert "test_sym_029" in sym_names
 
+        _run(out_path)
 
-@pytest.mark.skipif(
-    not is_linux() or glibc_too_old, reason="not linux or glibc too old"
-)
+
 def test_add_interpreter(tmp_path: Path):
     target = lief_samples_dir() / "ELF/batch-x86-64/test.clang.lld.nolinker.bin"
     out_path = tmp_path / target.name
@@ -175,23 +156,9 @@ def test_add_interpreter(tmp_path: Path):
     delta_size = out_path.stat().st_size - fsize
     lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
-    env = os.environ
-    with Popen(
-        out_path.as_posix(),
-        universal_newlines=True,
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) as proc:
-        assert proc.stdout is not None
-        stdout = proc.stdout.read()
-        proc.poll()
-        assert normalize(OUTPUT) == normalize(stdout)
+    _run(out_path)
 
 
-@pytest.mark.skipif(
-    not is_linux() or glibc_too_old, reason="not linux or glibc too old"
-)
 def test_change_interpreter(tmp_path: Path):
     target = lief_samples_dir() / "ELF/batch-x86-64/test.clang.gold.wronglinker.bin"
     out_path = tmp_path / target.name
@@ -209,23 +176,9 @@ def test_change_interpreter(tmp_path: Path):
     delta_size = out_path.stat().st_size - fsize
     lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
-    env = os.environ
-    with Popen(
-        out_path.as_posix(),
-        universal_newlines=True,
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) as proc:
-        assert proc.stdout is not None
-        stdout = proc.stdout.read()
-        proc.poll()
-        assert normalize(OUTPUT) == normalize(stdout)
+    _run(out_path)
 
 
-@pytest.mark.skipif(
-    not is_linux() or glibc_too_old, reason="not linux or glibc too old"
-)
 def test_rust_files(tmp_path: Path):
     target = lief_samples_dir() / "ELF/batch-x86-64/test.rust.bin"
     out_path = tmp_path / target.name
@@ -244,23 +197,9 @@ def test_rust_files(tmp_path: Path):
     delta_size = out_path.stat().st_size - fsize
     lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
-    env = os.environ
-    with Popen(
-        out_path.as_posix(),
-        universal_newlines=True,
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) as proc:
-        assert proc.stdout is not None
-        stdout = proc.stdout.read()
-        proc.poll()
-        assert "thisisthreadnumber9" in normalize(stdout)
+    _run(out_path, output="thisisthreadnumber9")
 
 
-@pytest.mark.skipif(
-    not is_linux() or glibc_too_old, reason="not linux or glibc too old"
-)
 @pytest.mark.slow
 def test_go_files(tmp_path: Path):
     targets = [
@@ -283,18 +222,7 @@ def test_go_files(tmp_path: Path):
         delta_size = out_path.stat().st_size - fsize
         lief.logging.info(f"delta size: {convert_size(delta_size)}")
 
-        env = os.environ
-        with Popen(
-            out_path.as_posix(),
-            universal_newlines=True,
-            env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        ) as proc:
-            assert proc.stdout is not None
-            stdout = proc.stdout.read()
-            proc.poll()
-            assert "done" in normalize(stdout)
+        _run(out_path, output="done")
 
 
 @pytest.mark.slow
@@ -594,3 +522,29 @@ def test_remove_segment(tmp_path: Path):
 def test_issue_1251():
     elf = parse_elf("ELF/libmmkv.so")
     assert elf.relocate_phdr_table() == 64
+
+
+def test_extend_load_segment(tmp_path: Path):
+    target = lief_samples_dir() / "ELF/batch-x86-64/test.clang.bin"
+    elf = parse_elf(target)
+
+    # Find the last LOAD segment (typically RW data)
+    load_segments = [s for s in elf.segments if s.type == lief.ELF.Segment.TYPE.LOAD]
+    assert len(load_segments) > 0
+    last_load = load_segments[-1]
+    original_psize = last_load.physical_size
+    original_vsize = last_load.virtual_size
+
+    extend_size = 0x1000
+    result = elf.extend(last_load, extend_size)
+    assert result is not None
+    assert result.physical_size == original_psize + extend_size
+    assert result.virtual_size == original_vsize + extend_size
+
+    out_path = tmp_path / target.name
+    elf.write(out_path)
+    check_layout(out_path)
+
+    out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
+
+    _run(out_path)

@@ -6,14 +6,7 @@ from typing import Any, cast
 
 import lief
 import pytest
-from utils import (
-    check_layout,
-    get_sample,
-    glibc_version,
-    is_linux,
-    is_x86_64,
-    parse_elf,
-)
+from utils import check_layout, get_sample, glibc_version, parse_elf
 
 
 def test_issue_872(tmp_path: Path):
@@ -50,7 +43,7 @@ def test_issue_872(tmp_path: Path):
     assert new_segment.virtual_address == 0xA0000000
 
 
-@pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
+@pytest.mark.linux("x86-64")
 @pytest.mark.parametrize(
     "mode",
     [
@@ -84,7 +77,7 @@ def test_static_musl(tmp_path: Path, mode):
         assert "Hello World" in stdout, f"Error: {stdout}"
 
 
-@pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
+@pytest.mark.linux("x86-64")
 @pytest.mark.parametrize(
     "mode",
     [
@@ -118,7 +111,7 @@ def test_static_musl_bss(tmp_path: Path, mode):
         assert "Hello World" in stdout, f"Error: {stdout}"
 
 
-@pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
+@pytest.mark.linux("x86-64")
 @pytest.mark.parametrize(
     "mode",
     [
@@ -152,7 +145,7 @@ def test_static(tmp_path: Path, mode):
         assert "Hello World" in stdout, f"Error: {stdout}"
 
 
-@pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
+@pytest.mark.linux("x86-64")
 @pytest.mark.parametrize(
     "mode",
     [
@@ -187,7 +180,7 @@ def test_static_bss(tmp_path: Path, mode):
         assert "Hello World" in stdout, f"Error: {stdout}"
 
 
-@pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
+@pytest.mark.linux("x86-64")
 @pytest.mark.parametrize(
     "mode",
     [
@@ -222,7 +215,7 @@ def test_docker_init(tmp_path: Path, mode):
         assert "tini version 0.19.0" in stdout, f"Error: {stdout}"
 
 
-@pytest.mark.skipif(not (is_linux() and is_x86_64()), reason="incompatible env")
+@pytest.mark.linux("x86-64")
 @pytest.mark.parametrize(
     "mode", [lief.ELF.Binary.PHDR_RELOC.SEGMENT_GAP, lief.ELF.Binary.PHDR_RELOC.BSS_END]
 )

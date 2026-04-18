@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-import lief
-import sys
 import os
+import sys
+
+import lief
 
 # Parse PE file
 pe = lief.parse(sys.argv[1])

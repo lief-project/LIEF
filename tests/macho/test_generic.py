@@ -1,4 +1,6 @@
 import hashlib
+import struct
+from pathlib import Path
 from typing import cast
 
 import lief
@@ -85,6 +87,9 @@ def test_rpath_cmd():
     rpath = rpathmacho.rpath
     assert rpath is not None
     assert rpath.path == "@executable_path/../lib"
+    output = str(rpath)
+    assert "@executable_path/../lib" in output
+    assert hash(rpath) != 0
 
 
 def test_rpaths():
@@ -186,6 +191,15 @@ def test_data_in_code():
     assert dcode.entries[3].offset == 10
     assert dcode.entries[3].length == 1
 
+    # Exercise str() on DataCodeEntry (covers operator<< and to_string)
+    entry_str = str(dcode.entries[0])
+    assert "DATA" in entry_str
+    assert hash(dcode.entries[0]) != 0
+
+    # Exercise str() on DataInCode
+    output = str(dcode)
+    assert len(output) > 0
+
 
 def test_segment_split_info():
     binary = parse_macho("MachO/FAT_MachO_x86_x86-64_library_libdyld.dylib").at(1)
@@ -196,6 +210,9 @@ def test_segment_split_info():
     assert ssi is not None
     assert ssi.data_offset == 32852
     assert ssi.data_size == 292
+    output = str(ssi)
+    assert "offset" in output
+    assert hash(ssi) != 0
 
 
 def test_dyld_environment():
@@ -208,6 +225,9 @@ def test_dyld_environment():
         dyld_env.value
         == "DYLD_VERSIONED_FRAMEWORK_PATH=/System/Library/StagedFrameworks/Safari"
     )
+    output = str(dyld_env)
+    assert "DYLD_VERSIONED_FRAMEWORK_PATH" in output
+    assert hash(dyld_env) != 0
 
 
 def test_sub_framework():
@@ -217,6 +237,10 @@ def test_sub_framework():
     sub_framework = binary.sub_framework
     assert sub_framework is not None
     assert sub_framework.umbrella == "System"
+    output = str(sub_framework)
+    assert "System" in output
+    assert hash(sub_framework) != 0
+    assert "umbrella" in lief.to_json(sub_framework)
 
 
 def test_unwind():
@@ -260,6 +284,25 @@ def test_build_version():
     assert len(tools) == 1
     assert tools[0].version == [409, 12, 0]
     assert tools[0].tool == lief.MachO.BuildToolVersion.TOOLS.LD
+
+    # Exercise str() on BuildVersion (covers the print() method)
+    output = str(build_version)
+    assert "IOS" in output
+    assert "12.1.0" in output
+
+    # Exercise str() on BuildToolVersion
+    tool_str = str(tools[0])
+    assert len(tool_str) > 0
+
+    # Exercise property setters
+    build_version.platform = lief.MachO.BuildVersion.PLATFORMS.MACOS
+    assert build_version.platform == lief.MachO.BuildVersion.PLATFORMS.MACOS
+
+    build_version.minos = [13, 0, 0]
+    assert build_version.minos == [13, 0, 0]
+
+    build_version.sdk = [13, 1, 0]
+    assert build_version.sdk == [13, 1, 0]
 
 
 def test_segment_index():
@@ -437,6 +480,9 @@ def test_subclients():
 
     assert macho.subclients[0].client == "NewsArticles"
     assert macho.subclients[-1].client == "StocksAppKitBundle"
+    output = str(macho.subclients[0])
+    assert "NewsArticles" in output
+    assert hash(macho.subclients[0]) != 0
 
 
 def test_bindings_iterator():
@@ -492,6 +538,9 @@ def test_routine():
     assert routine.reserved4 == 0
     assert routine.reserved5 == 0
     assert routine.reserved6 == 0
+    output = str(routine)
+    assert "init_address" in output
+    assert hash(routine) != 0
 
 
 @pytest.mark.private
@@ -533,3 +582,129 @@ def test_virtual_address_to_offset_bss():
 
     offset = macho.virtual_address_to_offset(data_segment.virtual_address)
     assert offset is lief.lief_errors.conversion_error
+
+
+def test_encryption_info_str():
+    macho = parse_macho("MachO/RNCryptor.bin").at(0)
+    assert macho is not None
+    enc_info = macho.encryption_info
+    assert enc_info is not None
+    output = str(enc_info)
+    assert "crypt" in output
+    assert hash(enc_info) != 0
+
+
+def test_dyld_exports_trie_str():
+    fat = parse_macho(
+        "MachO/9edfb04c55289c6c682a25211a4b30b927a86fe50b014610d04d6055bd4ac23d_crypt_and_hash.macho"
+    )
+    target = fat.take(lief.MachO.Header.CPU_TYPE.ARM64)
+    assert target is not None
+    exports = cast(
+        lief.MachO.DyldExportsTrie,
+        target.get(lief.MachO.LoadCommand.TYPE.DYLD_EXPORTS_TRIE),
+    )
+    assert exports is not None
+    output = str(exports)
+    assert "offset" in output
+
+    trie_output = exports.show_export_trie()
+    assert len(trie_output) > 0
+    assert hash(exports) != 0
+
+
+def test_header_flags():
+    macho = parse_macho("MachO/MachO64_x86-64_binary_all.bin").at(0)
+    assert macho is not None
+    header = macho.header
+    assert header is not None
+
+    output = str(header)
+    assert "Magic" in output
+
+    flags_list = header.flags_list
+    assert len(flags_list) > 0
+
+    header.add(lief.MachO.Header.FLAGS.ROOT_SAFE)
+    assert header.has(lief.MachO.Header.FLAGS.ROOT_SAFE)
+
+    header.remove(lief.MachO.Header.FLAGS.ROOT_SAFE)
+    assert not header.has(lief.MachO.Header.FLAGS.ROOT_SAFE)
+    assert hash(header) != 0
+
+
+def test_dylinker_str():
+    macho = parse_macho("MachO/MachO64_x86-64_binary_all.bin").at(0)
+    assert macho is not None
+    dylinker = macho.dylinker
+    assert dylinker is not None
+    output = str(dylinker)
+    assert "dyld" in output
+
+
+def test_dynamic_symbol_command_str():
+    macho = parse_macho("MachO/MachO64_x86-64_binary_all.bin").at(0)
+    assert macho is not None
+    dyscmd = macho.dynamic_symbol_command
+    assert dyscmd is not None
+    output = str(dyscmd)
+    assert "local" in output.lower()
+
+
+def test_main_command_str():
+    macho = parse_macho("MachO/MachO64_x86-64_binary_all.bin").at(0)
+    assert macho is not None
+    main_cmd = macho.main_command
+    assert main_cmd is not None
+    output = str(main_cmd)
+    assert "entrypoint" in output
+
+
+def test_dylib_command_str():
+    macho = parse_macho("MachO/MachO64_x86-64_binary_all.bin").at(0)
+    assert macho is not None
+    libs = macho.libraries
+    assert len(libs) > 0
+    output = str(libs[0])
+    assert "name=" in output
+
+
+def test_note_command_str(tmp_path: Path):
+    src = get_sample("MachO/MachO64_x86-64_binary_all.bin")
+    with open(src, "rb") as f:
+        data = bytearray(f.read())
+
+    # Inject an LC_NOTE command into the binary
+    HEADER_SIZE = 32
+    ncmds = struct.unpack_from("<I", data, 16)[0]
+    sizeofcmds = struct.unpack_from("<I", data, 20)[0]
+
+    LC_NOTE = 0x31
+    note_cmdsize = 40
+    note_owner = b"TestNote\x00\x00\x00\x00\x00\x00\x00\x00"
+    note_cmd = struct.pack("<II16sQQ", LC_NOTE, note_cmdsize, note_owner, 0, 0)
+
+    insert_pos = HEADER_SIZE + sizeofcmds
+    data[insert_pos:insert_pos] = note_cmd
+    struct.pack_into("<I", data, 16, ncmds + 1)
+    struct.pack_into("<I", data, 20, sizeofcmds + note_cmdsize)
+
+    patched = tmp_path / "with_note.bin"
+    patched.write_bytes(data)
+
+    fat = lief.MachO.parse(patched)
+    assert fat is not None
+    macho = fat.at(0)
+    assert macho is not None
+    note = macho[lief.MachO.LoadCommand.TYPE.NOTE]
+    assert note is not None
+    output = str(note)
+    assert len(output) > 0
+
+
+def test_load_command_str():
+    macho = parse_macho("MachO/MachO64_x86-64_binary_all.bin").at(0)
+    assert macho is not None
+    for cmd in macho.commands:
+        output = str(cmd)
+        assert len(output) > 0

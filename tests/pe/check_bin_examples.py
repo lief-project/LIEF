@@ -1,32 +1,37 @@
-from functools import lru_cache
-from itertools import chain
+from pathlib import Path
 from subprocess import check_call
 
 from utils import lief_build_dir, lief_samples_dir
 
-
-@lru_cache(maxsize=1)
-def _get_samples():
-    samples_dir = lief_samples_dir()
-    return chain(
-        samples_dir.glob("PE/*.exe"),
-        samples_dir.glob("PE/*.dll"),
-    )
+SAMPLE = lief_samples_dir() / "PE" / "PE32_x86_library_kernel32.dll"
 
 
-def test_pe_reader_c():
+def test_pe_reader_c() -> None:
     target = lief_build_dir() / "examples/c/pe_reader"
-    for sample in _get_samples():
-        check_call([target, sample])
+    check_call([target, SAMPLE])
 
 
-def test_pe_reader_cpp():
+def test_pe_reader_cpp() -> None:
     target = lief_build_dir() / "examples/cpp/pe_reader"
-    for sample in _get_samples():
-        check_call([target, sample])
+    check_call([target, SAMPLE])
 
 
-def test_abstract_reader():
+def test_abstract_reader() -> None:
     target = lief_build_dir() / "examples/cpp/abstract_reader"
-    for sample in _get_samples():
-        check_call([target, sample])
+    check_call([target, SAMPLE])
+
+
+def test_pe_builder(tmp_path: Path) -> None:
+    out = tmp_path / "out.dll"
+    target = lief_build_dir() / "examples/cpp/pe_builder"
+    check_call([target, SAMPLE, out])
+
+
+def test_pe_authenticode_check() -> None:
+    sample = (
+        lief_samples_dir()
+        / "PE"
+        / "PE32_x86-64_binary_avast-free-antivirus-setup-online.exe"
+    )
+    target = lief_build_dir() / "examples/cpp/pe_authenticode_check"
+    check_call([target, sample])

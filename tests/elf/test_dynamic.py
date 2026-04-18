@@ -9,7 +9,7 @@ import lief
 import pytest
 from utils import get_compiler, is_linux
 
-if not is_linux():
+if not is_linux():  # pragma: no cover
     pytest.skip("requires Linux", allow_module_level=True)
 
 COMPILER = get_compiler()
@@ -71,7 +71,6 @@ def compile_binadd(out: Path, infile: Path, extra_flags: List[str]):
         lief.logging.info(stdout)
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 @pytest.mark.parametrize(
     "style",
     [
@@ -166,7 +165,6 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
         )
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_remove_library(tmp_path: Path):
     binadd_c = tmp_path / "binadd.c"
     libadd_c = tmp_path / "libadd.c"
@@ -189,7 +187,6 @@ def test_remove_library(tmp_path: Path):
     assert not binadd.has_library("libadd.so")
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_remove_tag(tmp_path: Path):
     binadd_c = tmp_path / "binadd.c"
     libadd_c = tmp_path / "libadd.c"
@@ -212,7 +209,6 @@ def test_remove_tag(tmp_path: Path):
     )
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_runpath_api(tmp_path: Path):
     binadd_c = tmp_path / "binadd.c"
     libadd_c = tmp_path / "libadd.c"
@@ -253,7 +249,6 @@ def test_runpath_api(tmp_path: Path):
     assert rpath.runpath == ""
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_change_libname(tmp_path: Path):
     binadd_c = tmp_path / "binadd.c"
     libadd_c = tmp_path / "libadd.c"
@@ -297,6 +292,8 @@ def test_change_libname(tmp_path: Path):
     # Add a RPATH entry
     rpath = lief.ELF.DynamicEntryRunPath(tmp_path.as_posix())
     rpath = binadd.add(rpath)
+
+    assert rpath is not None
 
     new_binadd_path = tmp_path / "binadd_updated.bin"
     binadd.write(new_binadd_path)

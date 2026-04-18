@@ -62,6 +62,16 @@ def test_simple():
     assert messageboxa.hint == 0x285
     lief.logging.info(messageboxa)
 
+    # Coverage: str()/hash() on DelayImport and DelayImportEntry
+    output = str(shlwapi)
+    assert "SHLWAPI" in output
+    assert hash(shlwapi) != 0
+    entry_str = str(strstra)
+    assert "StrStrA" in entry_str
+    assert hash(strstra) != 0
+    # Coverage: demangled_name (may be empty without extended LIEF)
+    _ = strstra.demangled_name
+
 
 def test_cmd():
     """

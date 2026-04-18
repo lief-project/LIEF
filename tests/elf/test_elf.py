@@ -24,6 +24,10 @@ def test_rpath():
     last = rpath.pop()
     assert isinstance(last, lief.ELF.DynamicEntryRpath)
     assert last.rpath == "/usr/lib"
+    assert last.paths == ["/usr/lib"]
+    output = str(last)
+    assert "/usr/lib" in output
+    assert hash(last) != 0
 
 
 def test_runpath():
@@ -37,6 +41,9 @@ def test_runpath():
     last = runpath.pop()
     assert isinstance(last, lief.ELF.DynamicEntryRunPath)
     assert last.runpath == "/usr/lib/systemd"
+    output = str(last)
+    assert "/usr/lib/systemd" in output
+    assert hash(last) != 0
 
 
 def test_gnuhash():
@@ -130,6 +137,10 @@ def test_gnuhash():
 
     assert not gnu_hash.check("foofdsfdsfds")
     assert not gnu_hash.check("fazertrvkdfsrezklqpfjeopqdi")
+
+    output = str(gnu_hash)
+    assert len(output) > 0
+    assert hash(gnu_hash) != 0
 
 
 @pytest.mark.parametrize("sample", ["ELF/ELF64_x86-64_binary_ls.bin"])
@@ -305,6 +316,39 @@ def test_dynamic_flags():
     assert lief.ELF.DynamicEntryFlags.FLAG.BIND_NOW in d_flags
     assert lief.ELF.DynamicEntryFlags.FLAG.NOW in d_flags_1
 
+    # Test str() and hash() on DynamicEntryFlags
+    output = str(d_flags)
+    assert len(output) > 0
+    output_1 = str(d_flags_1)
+    assert len(output_1) > 0
+    assert hash(d_flags) != 0
+
+    # Test flags list
+    flags_list = d_flags.flags
+    assert len(flags_list) > 0
+    flags_list_1 = d_flags_1.flags
+    assert len(flags_list_1) > 0
+
+    # Test add/remove on FLAGS
+    d_flags.add(lief.ELF.DynamicEntryFlags.FLAG.STATIC_TLS)
+    assert d_flags.has(lief.ELF.DynamicEntryFlags.FLAG.STATIC_TLS)
+    d_flags.remove(lief.ELF.DynamicEntryFlags.FLAG.STATIC_TLS)
+    assert not d_flags.has(lief.ELF.DynamicEntryFlags.FLAG.STATIC_TLS)
+
+    # Test add/remove on FLAGS_1
+    d_flags_1.add(lief.ELF.DynamicEntryFlags.FLAG.NODELETE)
+    assert d_flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.NODELETE)
+    d_flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.NODELETE)
+    assert not d_flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.NODELETE)
+
+    # Cross-type checks: FLAGS entry should not accept FLAGS_1 values and vice versa
+    assert not d_flags.has(lief.ELF.DynamicEntryFlags.FLAG.NOW)
+    assert not d_flags_1.has(lief.ELF.DynamicEntryFlags.FLAG.BIND_NOW)
+    d_flags.add(lief.ELF.DynamicEntryFlags.FLAG.NOW)  # should be no-op
+    d_flags_1.add(lief.ELF.DynamicEntryFlags.FLAG.BIND_NOW)  # should be no-op
+    d_flags.remove(lief.ELF.DynamicEntryFlags.FLAG.NOW)  # should be no-op
+    d_flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.BIND_NOW)  # should be no-op
+
 
 def test_unwind_arm():
     sample = "ELF/ELF32_ARM_binary_ls.bin"
@@ -381,3 +425,127 @@ def test_issue_1241():
     elf = parse_elf("private/ELF/issue_1241.bin")
     assert elf.gnu_hash is not None
     assert len(elf.gnu_hash.bloom_filters) == 16384
+
+
+def test_dynamic_entry_array():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
+    assert elf is not None
+
+    init_array = elf.get(lief.ELF.DynamicEntry.TAG.INIT_ARRAY)
+    assert init_array is not None
+    assert isinstance(init_array, lief.ELF.DynamicEntryArray)
+
+    output = str(init_array)
+    assert len(output) > 0
+    assert hash(init_array) != 0
+
+    arr = init_array.array
+    assert len(arr) > 0
+
+    # Test indexing
+    assert init_array[0] == arr[0]
+
+
+def test_symbol_version_str():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
+    assert elf is not None
+
+    # Test SymbolVersionRequirement
+    svr_list = elf.symbols_version_requirement
+    assert len(svr_list) > 0
+    output = str(svr_list[0])
+    assert len(output) > 0
+    assert hash(svr_list[0]) != 0
+
+    # Test SymbolVersion
+    for sym in elf.dynamic_symbols:
+        sv = sym.symbol_version
+        if sv is not None:
+            output = str(sv)
+            assert len(output) > 0
+            break
+
+
+def test_header_str():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
+    assert elf is not None
+
+    header = elf.header
+    output = str(header)
+    assert "Class" in output
+    assert hash(header) != 0
+
+
+def test_symbol_str():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
+    assert elf is not None
+
+    for sym in elf.dynamic_symbols:
+        output = str(sym)
+        assert len(output) > 0
+        break
+
+
+def test_symtab_symbol_str():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_all.bin")
+    assert elf is not None
+    for sym in elf.symtab_symbols:
+        output = str(sym)
+        assert len(output) > 0
+        break
+
+
+def test_note_str():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_systemd-resolve.bin")
+    assert elf is not None
+    for note in elf.notes:
+        output = str(note)
+        assert len(output) > 0
+        assert hash(note) != 0
+
+
+def test_dynamic_entries_str():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
+    assert elf is not None
+    for entry in elf.dynamic_entries:
+        output = str(entry)
+        assert len(output) > 0
+
+
+def test_section_str():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
+    assert elf is not None
+    for section in elf.sections:
+        output = str(section)
+        assert len(output) > 0
+        break
+
+
+def test_segment_str():
+    elf = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
+    assert elf is not None
+    for segment in elf.segments:
+        output = str(segment)
+        assert len(output) > 0
+        break
+
+
+def test_header_setters():
+    """Exercise setter methods on ELF Header to cover inline setters."""
+    elf = parse_elf("ELF/ELF64_x86-64_binary_ls.bin")
+    assert elf is not None
+
+    hdr = elf.header
+    hdr.file_type = hdr.file_type
+    hdr.machine_type = hdr.machine_type
+    hdr.object_file_version = hdr.object_file_version
+    hdr.entrypoint = hdr.entrypoint
+    hdr.program_header_offset = hdr.program_header_offset
+    hdr.section_header_offset = hdr.section_header_offset
+    hdr.processor_flag = hdr.processor_flag
+    hdr.header_size = hdr.header_size
+    hdr.program_header_size = hdr.program_header_size
+    hdr.numberof_segments = hdr.numberof_segments
+    hdr.section_header_size = hdr.section_header_size
+    hdr.numberof_sections = hdr.numberof_sections
+    hdr.section_name_table_idx = hdr.section_name_table_idx

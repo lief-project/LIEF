@@ -82,6 +82,10 @@ def test_android_note(tmp_path: Path):
     assert note.ndk_version[:4] == "r16b"
     assert note.ndk_build_number[:7] == "4479499"
 
+    output_str = str(note)
+    assert "SDK" in output_str or "sdk" in output_str.lower()
+    assert hash(note) != 0
+
     note.sdk_version = 15
     note.ndk_version = "r15c"
     note.ndk_build_number = "123456"

@@ -1,0 +1,43 @@
+[paths]
+source =
+    tests/
+
+[run]
+branch = True
+relative_files = True
+omit =
+    */api/python/*
+    */tests/utils.py
+    */tests/conftest.py
+    */tests/run_pytest.py
+    ; Require LIEF extended
+    */tests/coff/test_disassembler.py
+    */tests/api/test_demangle.py
+    */tests/dwarf/*
+    */tests/objc/*
+    */tests/assembly/*
+    */tests/pdb/*
+    */tests/dyld-shared-cache/*
+
+[report]
+; Regexes for lines to exclude from consideration
+exclude_also =
+    ; Don't complain about missing debug-only code:
+    def __repr__
+    if self\.debug
+
+    ; Don't complain if tests don't hit defensive assertion code:
+    raise AssertionError
+    raise NotImplementedError
+    raise RuntimeError
+
+    ; Don't complain if non-runnable code isn't run:
+    if 0:
+    if __name__ == .__main__.:
+    if lief.__extended__:
+    if stderr:
+    if not file.exists():
+
+    ; Don't complain about these markers
+    @pytest\.mark\.lief_extended
+    @pytest\.mark\.slow

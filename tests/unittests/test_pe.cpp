@@ -20,14 +20,27 @@
 #include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/hash.hpp"
 #include "LIEF/PE/Parser.hpp"
+#include "LIEF/PE/ParserConfig.hpp"
 #include "LIEF/PE/debug/Debug.hpp"
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
 #include "LIEF/PE/debug/Pogo.hpp"
 #include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/PE/debug/FPO.hpp"
+#include "LIEF/PE/debug/PDBChecksum.hpp"
+#include "LIEF/PE/debug/ExDllCharacteristics.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/DelayImport.hpp"
+#include "LIEF/PE/CodeIntegrity.hpp"
 
 #include "utils.hpp"
 
@@ -104,5 +117,119 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
         test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
     std::unique_ptr<LIEF::Binary> pe = LIEF::Parser::parse(path);
     REQUIRE(LIEF::PE::Binary::classof(pe.get()));
+  }
+
+  SECTION("to_string-coverage") {
+    // FPO::FRAME_TYPE to_string
+    CHECK(std::string(PE::to_string(PE::FPO::FRAME_TYPE::FPO)) == "FPO");
+    CHECK(std::string(PE::to_string(PE::FPO::FRAME_TYPE::TRAP)) == "TRAP");
+    CHECK(std::string(PE::to_string(PE::FPO::FRAME_TYPE::TSS)) == "TSS");
+    CHECK(std::string(PE::to_string(PE::FPO::FRAME_TYPE::NON_FPO)) == "NON_FPO");
+    CHECK(std::string(PE::to_string(static_cast<PE::FPO::FRAME_TYPE>(0xFF))) ==
+          "UNKNOWN");
+
+    // PDBChecksum::HASH_ALGO to_string
+    CHECK(std::string(PE::to_string(PE::PDBChecksum::HASH_ALGO::SHA256)) ==
+          "SHA256");
+    CHECK(std::string(
+              PE::to_string(static_cast<PE::PDBChecksum::HASH_ALGO>(0xFF))
+          ) == "UNKNOWN");
+
+    // ExDllCharacteristics::CHARACTERISTICS to_string
+    CHECK(std::string(
+              PE::to_string(PE::ExDllCharacteristics::CHARACTERISTICS::CET_COMPAT)
+          ) == "CET_COMPAT");
+    CHECK(std::string(PE::to_string(
+              static_cast<PE::ExDllCharacteristics::CHARACTERISTICS>(0xDEAD)
+          )) == "UNKNOWN");
+
+    // ParserConfig to_string
+    PE::ParserConfig cfg;
+    std::ostringstream oss;
+    oss << cfg;
+    CHECK(!oss.str().empty());
+  }
+
+  SECTION("str-coverage") {
+    std::string path =
+        test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
+    auto bin = PE::Parser::parse(path);
+    REQUIRE(bin != nullptr);
+
+    // Export str
+    if (auto* exp = bin->get_export()) {
+      std::ostringstream oss;
+      oss << *exp;
+      CHECK(!oss.str().empty());
+
+      for (const auto& entry : exp->entries()) {
+        std::ostringstream oss2;
+        oss2 << entry;
+        CHECK(!oss2.str().empty());
+        break;
+      }
+    }
+
+    // Import str
+    for (const auto& imp : bin->imports()) {
+      std::ostringstream oss;
+      oss << imp;
+      CHECK(!oss.str().empty());
+
+      for (const auto& entry : imp.entries()) {
+        std::ostringstream oss2;
+        oss2 << entry;
+        CHECK(!oss2.str().empty());
+        break;
+      }
+      break;
+    }
+
+    // Section str
+    for (const auto& sec : bin->sections()) {
+      std::ostringstream oss;
+      oss << sec;
+      CHECK(!oss.str().empty());
+      break;
+    }
+
+    // Relocation / RelocationEntry str
+    for (const auto& reloc : bin->relocations()) {
+      std::ostringstream oss;
+      oss << reloc;
+      CHECK(!oss.str().empty());
+
+      for (const auto& entry : reloc.entries()) {
+        std::ostringstream oss2;
+        oss2 << entry;
+        CHECK(!oss2.str().empty());
+        break;
+      }
+      break;
+    }
+
+    // DataDirectory str
+    for (const auto& dir : bin->data_directories()) {
+      std::ostringstream oss;
+      oss << dir;
+      CHECK(!oss.str().empty());
+      break;
+    }
+
+    // Debug str
+    for (const auto& dbg : bin->debug()) {
+      std::ostringstream oss;
+      oss << dbg;
+      CHECK(!oss.str().empty());
+      break;
+    }
+
+    // CodeIntegrity
+    {
+      PE::CodeIntegrity ci;
+      std::ostringstream oss;
+      oss << ci;
+      CHECK(!oss.str().empty());
+    }
   }
 }

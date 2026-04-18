@@ -1,6 +1,5 @@
 import ctypes
 import random
-import sys
 import zipfile
 from hashlib import md5
 from pathlib import Path
@@ -15,7 +14,7 @@ if is_windows():
     ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)  # type: ignore
 
 
-def _dump_icon(icon: lief.PE.ResourceIcon):
+def _dump_icon(icon: lief.PE.ResourceIcon):  # pragma: no cover
     raw = icon.serialize()
     lines = []
     tmp: list[str] = []
@@ -51,13 +50,8 @@ def test_change_icons():
     cmd_resources_manger = cmd.resources_manager
     assert isinstance(cmd_resources_manger, lief.PE.ResourcesManager)
 
-    if not mfc_resources_manger.has_icons:
-        lief.logging.info(f"'{mfc_path.name}' has no manifest. Abort!")
-        sys.exit(1)
-
-    if not cmd_resources_manger.has_icons:
-        lief.logging.info(f"'{mfc_path.name}' has no manifest. Abort!")
-        sys.exit(1)
+    assert mfc_resources_manger.has_icons
+    assert cmd_resources_manger.has_icons
 
     mfc_icons = mfc_resources_manger.icons
     cmd_icons = cmd_resources_manger.icons
@@ -138,6 +132,10 @@ def test_resource_accelerator():
     assert accelerator[2].ansi == lief.PE.ACCELERATOR_CODES.S.value
     assert accelerator[2].id == 0xE103
     assert accelerator[2].padding == 0
+
+    # Coverage: str() on ResourceAccelerator
+    output = str(accelerator[0])
+    assert len(output) > 0
 
 
 def test_resource_version():

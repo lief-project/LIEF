@@ -75,9 +75,6 @@ def compile_binadd(tmp_path: Path, flag: str):
 
 @pytest.mark.parametrize("flag", ["-Wl,--hash-style=gnu", "-Wl,--hash-style=sysv"])
 def test_simple(tmp_path: Path, flag: str):
-    if not is_linux():
-        pytest.skip("unsupported system")
-
     (tmp_path / "libadd.c").write_text(LIBADD_C)
     (tmp_path / "binadd.c").write_text(BINADD_C)
 

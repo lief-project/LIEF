@@ -93,9 +93,6 @@ def compile_binadd(tmp_path: Path):
 
 
 def test_simple(tmp_path: Path):
-    if not is_linux():
-        pytest.skip("unsupported system")
-
     (tmp_path / "libadd.c").write_text(LIBADD_C)
     (tmp_path / "binadd.c").write_text(BINADD_C)
 

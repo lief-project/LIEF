@@ -59,7 +59,6 @@ def compile_bin(out: Path, obj: Path, add_c: Path):
         lief.logging.info(stdout)
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_write_object(tmp_path: Path):
     binadd_c = tmp_path / "binadd.c"
     add_c = tmp_path / "add.c"
@@ -94,7 +93,6 @@ def test_write_object(tmp_path: Path):
     )
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
 def test_update_addend_object(tmp_path: Path):
     binadd_c = tmp_path / "binadd.c"
     binadd_o = tmp_path / "binadd.o"

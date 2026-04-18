@@ -1,4 +1,3 @@
-import pathlib
 import re
 import stat
 import subprocess
@@ -11,21 +10,17 @@ import pytest
 from utils import check_layout, get_sample, has_recent_glibc, is_linux, is_x86_64
 
 
-@pytest.mark.skipif(
-    not (is_linux() and is_x86_64() and has_recent_glibc()), reason="incompatible env"
-)
+@pytest.mark.linux
 def test_freebl(tmp_path: Path):
-    tmp = pathlib.Path(tmp_path)
-
     libfreebl3_path = get_sample("ELF/ELF64_x86-64_library_libfreebl3.so")
 
-    output_ls = tmp / "ls.new"
-    output_libfreebl3 = tmp / "libfreebl3.so"
+    output_ls = tmp_path / "ls.new"
+    output_libfreebl3 = tmp_path / "libfreebl3.so"
 
     libfreebl3 = lief.ELF.parse(libfreebl3_path)
     assert libfreebl3 is not None
     ls = lief.ELF.parse("/usr/bin/ls")
-    if ls is None:
+    if ls is None:  # pragma: no cover
         ls = lief.ELF.parse("/bin/ls")
     assert ls is not None
 
@@ -47,12 +42,15 @@ def test_freebl(tmp_path: Path):
     check_layout(output_ls)
     check_layout(output_libfreebl3)
 
-    output_ls.chmod(output_ls.stat().st_mode | stat.S_IEXEC)
-    output_libfreebl3.chmod(output_libfreebl3.stat().st_mode | stat.S_IEXEC)
-    with Popen(
-        [output_ls, "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    ) as proc:
-        assert proc.stdout is not None
-        stdout = proc.stdout.read()
-        lief.logging.info(stdout.decode("utf8"))
-        assert re.search(r"ls \(GNU coreutils\) ", stdout.decode("utf8")) is not None
+    if is_linux() and is_x86_64() and has_recent_glibc():
+        output_ls.chmod(output_ls.stat().st_mode | stat.S_IEXEC)
+        output_libfreebl3.chmod(output_libfreebl3.stat().st_mode | stat.S_IEXEC)
+        with Popen(
+            [output_ls, "--version"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as proc:
+            assert proc.stdout is not None
+            stdout = proc.stdout.read()
+            lief.logging.info(stdout.decode("utf8"))
+            assert (
+                re.search(r"ls \(GNU coreutils\) ", stdout.decode("utf8")) is not None
+            )

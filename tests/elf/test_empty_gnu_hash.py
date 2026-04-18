@@ -1,23 +1,14 @@
 import ctypes
 import os
 import stat
+from pathlib import Path
 from typing import cast
 
 import lief
-import pytest
-from utils import check_layout, get_sample, has_recent_glibc, is_linux, is_x86_64
-
-SYMBOLS = {
-    "myinstance": 0x1159,
-    "myinit": 0x1175,
-    "mycalc": 0x1199,
-    "mydelete": 0x1214,
-}
+from utils import check_layout, get_sample, glibc_version, is_linux, is_x86_64
 
 
-@pytest.mark.skipif(not is_linux() or not is_x86_64(), reason="requires Linux x86-64")
-@pytest.mark.skipif(not has_recent_glibc(), reason="needs a recent GLIBC version")
-def test_gnu_hash(tmpdir):
+def test_gnu_hash(tmpdir: Path):
     target_path = get_sample("ELF/ELF64_x86-64_binary_empty-gnu-hash.bin")
     output = os.path.join(tmpdir, "libnoempty.so")
 
@@ -28,18 +19,26 @@ def test_gnu_hash(tmpdir):
     )
     entry_flag.remove(lief.ELF.DynamicEntryFlags.FLAG.PIE)
 
-    for name, addr in SYMBOLS.items():
+    symbols = {
+        "myinstance": 0x1159,
+        "myinit": 0x1175,
+        "mycalc": 0x1199,
+        "mydelete": 0x1214,
+    }
+
+    for name, addr in symbols.items():
         binary.add_exported_function(addr, name)
     binary.write(output)
 
     check_layout(output)
 
-    st = os.stat(output)
-    os.chmod(output, st.st_mode | stat.S_IEXEC)
-    lief.logging.info(output)
+    if is_linux() and is_x86_64() and glibc_version() >= (2, 30):
+        st = os.stat(output)
+        os.chmod(output, st.st_mode | stat.S_IEXEC)
+        lief.logging.info(output)
 
-    lib = ctypes.cdll.LoadLibrary(output)
+        lib = ctypes.cdll.LoadLibrary(output)
 
-    # Raise 'AttributeError' if not exported
-    lief.logging.info(lib.myinstance)
-    assert lib.myinstance is not None
+        # Raise 'AttributeError' if not exported
+        lief.logging.info(lib.myinstance)
+        assert lib.myinstance is not None

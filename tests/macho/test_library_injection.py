@@ -23,9 +23,6 @@ void my_constructor(void) {
 
 
 def compile(output: Path, extra_flags: list[str] | None = None) -> str:
-    if not is_osx():
-        return ""
-
     extra_flags = extra_flags if extra_flags else []
     with tempfile.NamedTemporaryFile(
         prefix="libexample_", suffix=".c", delete=False

@@ -16,12 +16,12 @@ from utils import (
 )
 
 
-def _load_library(path: Path):
+def _load_library(path: Path):  # pragma: no cover
     lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
 
-def _load_library_1(path: Path):
+def _load_library_1(path: Path):  # pragma: no cover
     lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
@@ -29,7 +29,7 @@ def _load_library_1(path: Path):
     assert getattr(lib, "foo", None) is None
 
 
-def _load_library_2(path: Path):
+def _load_library_2(path: Path):  # pragma: no cover
     lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
@@ -40,7 +40,7 @@ def _load_library_2(path: Path):
     assert lib.removeAppxInUserContext is not None
 
 
-def _load_library_3(path: Path):
+def _load_library_3(path: Path):  # pragma: no cover
     lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
@@ -49,7 +49,7 @@ def _load_library_3(path: Path):
     assert lib.cbk2() >= 0
 
 
-def _run_sample(input_path: Path, output: Path):
+def _run_sample(input_path: Path, output: Path):  # pragma: no cover
     if not is_windows() or not is_x86_64():
         return
 

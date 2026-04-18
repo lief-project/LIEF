@@ -23,7 +23,7 @@ if is_windows():
     ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX)  # type: ignore
 
 
-def _load_library(path: Path):
+def _load_library(path: Path):  # pragma: no cover
     lib = ctypes.windll.LoadLibrary(path.as_posix())  # type: ignore
     assert lib is not None
 
@@ -243,6 +243,27 @@ def test_code_injection(tmp_path: Path):
             lief.logging.info(stdout)
             assert proc.returncode == 0
             assert "Hello World" in stdout
+
+
+def test_build_remove_imports(tmp_path: Path):
+    """Clear all imports and rebuild. Covers the imports-empty path."""
+    pe = lief.PE.parse(get_sample("PE/PE64_x86-64_binary_winhello64-mingw.exe"))
+    assert pe is not None
+    assert len(pe.imports) > 0
+
+    pe.remove_all_imports()
+
+    config = lief.PE.Builder.config_t()
+    config.imports = True
+
+    output = tmp_path / "no_imports.exe"
+    pe.write(output, config)
+
+    new = lief.PE.parse(output)
+    assert new is not None
+    check, msg = lief.PE.check_layout(new)
+    assert check, msg
+    assert len(new.imports) == 0
 
 
 @pytest.mark.private

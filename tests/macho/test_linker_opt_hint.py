@@ -24,3 +24,5 @@ def test_simple():
     )
 
     assert hash(opthint) > 0
+    output = str(opthint)
+    assert "offset" in output

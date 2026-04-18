@@ -43,4 +43,6 @@ def test_code_signature_dir():
     )
 
     assert hash(code_signature_dirs) > 0
+    output = str(code_signature_dirs)
+    assert "offset" in output
     # lief.MachO.LoadCommand.TYPE.LINKER_OPTIMIZATION_HINT

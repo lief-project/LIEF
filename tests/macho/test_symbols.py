@@ -154,7 +154,7 @@ def test_symbol_library():
     assert sym2.library_ordinal == 1
 
 
-@pytest.mark.skipif(not lief.__extended__, reason="needs LIEF extended")
+@pytest.mark.lief_extended
 def test_demangling():
     macho = parse_macho("MachO/FAT_MachO_x86_x86-64_library_libc++abi.dylib").at(0)
     assert macho is not None

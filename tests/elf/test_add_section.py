@@ -7,11 +7,10 @@ from pathlib import Path
 from subprocess import Popen
 
 import lief
-import pytest
 from utils import (
     check_layout,
     get_sample,
-    has_recent_glibc,
+    glibc_version,
     is_aarch64,
     is_linux,
     is_x86_64,
@@ -35,13 +34,6 @@ def _get_stub() -> lief.ELF.Binary:
     return stub
 
 
-is_updated_linux = pytest.mark.skipif(
-    not (is_linux() and is_x86_64() and has_recent_glibc()),
-    reason="needs a recent system",
-)
-
-
-@is_updated_linux
 def test_simple(tmp_path: Path):
     stub = _get_stub()
     sample_path = get_sample("ELF/ELF64_x86-64_binary_ls.bin")
@@ -67,19 +59,19 @@ def test_simple(tmp_path: Path):
     ls.write(output)
     check_layout(output)
 
-    st = os.stat(output)
-    os.chmod(output, st.st_mode | stat.S_IEXEC)
+    if is_linux() and is_x86_64() and glibc_version() >= (2, 30):
+        st = os.stat(output)
+        os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen(
-        output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    ) as P:
-        assert P.stdout is not None
-        stdout = P.stdout.read().decode("utf8")
-        lief.logging.info(stdout)
-        assert re.search(r"LIEF is Working", stdout) is not None
+        with Popen(
+            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as P:
+            assert P.stdout is not None
+            stdout = P.stdout.read().decode("utf8")
+            lief.logging.info(stdout)
+            assert re.search(r"LIEF is Working", stdout) is not None
 
 
-@is_updated_linux
 def test_gcc(tmp_path: Path):
     stub = _get_stub()
     sample_path = get_sample("ELF/ELF64_x86-64_binary_gcc.bin")
@@ -107,13 +99,14 @@ def test_gcc(tmp_path: Path):
     gcc.write(output)
     check_layout(output)
 
-    st = os.stat(output)
-    os.chmod(output, st.st_mode | stat.S_IEXEC)
+    if is_linux() and is_x86_64() and glibc_version() >= (2, 30):
+        st = os.stat(output)
+        os.chmod(output, st.st_mode | stat.S_IEXEC)
 
-    with Popen(
-        output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    ) as P:
-        assert P.stdout is not None
-        stdout = P.stdout.read().decode("utf8")
-        lief.logging.info(stdout)
-        assert re.search(r"LIEF is Working", stdout) is not None
+        with Popen(
+            output.as_posix(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as P:
+            assert P.stdout is not None
+            stdout = P.stdout.read().decode("utf8")
+            lief.logging.info(stdout)
+            assert re.search(r"LIEF is Working", stdout) is not None

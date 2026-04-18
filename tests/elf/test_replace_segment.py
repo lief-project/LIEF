@@ -7,10 +7,16 @@ from subprocess import Popen
 
 import lief
 import pytest
-from utils import get_sample, has_recent_glibc, is_aarch64, is_linux, is_x86_64
+from utils import (
+    check_layout,
+    get_sample,
+    has_recent_glibc,
+    is_aarch64,
+    is_linux,
+    is_x86_64,
+)
 
 is_updated_linux = is_linux() and is_x86_64() and has_recent_glibc()
-is_linux_x64 = is_linux() and is_x86_64()
 
 CWD = Path(__file__).parent
 
@@ -23,9 +29,7 @@ def test_simple(tmp_path: Path):
     target = lief.ELF.parse(sample_path)
     assert target is not None
 
-    if lief.ELF.Segment.TYPE.NOTE not in target:
-        lief.logging.err("Note not found!")
-        return
+    assert lief.ELF.Segment.TYPE.NOTE in target
 
     segment = stub.segments[0]
     original_va = segment.virtual_address
@@ -38,6 +42,8 @@ def test_simple(tmp_path: Path):
 
     target.header.entrypoint = new_ep
     target.write(output)
+
+    check_layout(output)
 
     if is_updated_linux:
         st = os.stat(output)
@@ -60,9 +66,7 @@ def test_gcc(tmp_path: Path):
     target = lief.ELF.parse(sample_path)
     assert target is not None
 
-    if lief.ELF.Segment.TYPE.NOTE not in target:
-        lief.logging.err("Note not found!")
-        return
+    assert lief.ELF.Segment.TYPE.NOTE in target
 
     segment = stub.segments[0]
     original_va = segment.virtual_address
@@ -75,6 +79,8 @@ def test_gcc(tmp_path: Path):
 
     target.header.entrypoint = new_ep
     target.write(output)
+
+    check_layout(output)
 
     if is_updated_linux:
         st = os.stat(output)
@@ -89,8 +95,8 @@ def test_gcc(tmp_path: Path):
             assert re.search(r"LIEF is Working", stdout) is not None
 
 
-@pytest.mark.skipif(not is_linux(), reason="requires Linux")
-@pytest.mark.skipif(not Path("/usr/bin/ssh").is_file(), reason="missing '/usr/bin/ssh'")
+@pytest.mark.linux
+@pytest.mark.skipif(not os.path.isfile("/usr/bin/ssh"), reason="missing '/usr/bin/ssh'")
 def test_ssh(tmp_path: Path):
     stub = None
     if is_x86_64():
@@ -103,9 +109,7 @@ def test_ssh(tmp_path: Path):
     assert stub is not None
     assert target is not None
 
-    if lief.ELF.Segment.TYPE.NOTE not in target:
-        lief.logging.warn("Note not found!")
-        return
+    assert lief.ELF.Segment.TYPE.NOTE in target
 
     segment = stub.segments[0]
     original_va = segment.virtual_address
@@ -118,6 +122,8 @@ def test_ssh(tmp_path: Path):
 
     target.header.entrypoint = new_ep
     target.write(output)
+
+    # check_layout(output)
 
     if is_linux() and has_recent_glibc():
         st = os.stat(output)
