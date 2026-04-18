@@ -1,9 +1,22 @@
-from setuptools import msvc
 import os
-import sys
-from subprocess import check_call
 import shutil
+import sys
 from pathlib import Path
+from subprocess import check_call
+
+
+def _get_vc_env(vc_arch: str) -> dict[str, str]:
+    try:
+        from setuptools import distutils  # type: ignore
+
+        return distutils._msvccompiler._get_vc_env(vc_arch)
+    except AttributeError:
+        from setuptools._distutils import (
+            _msvccompiler,
+        )
+
+        return _msvccompiler._get_vc_env(vc_arch)  # type: ignore
+
 
 env = os.environ
 
@@ -38,23 +51,24 @@ BUILD_STATIC_PATH.mkdir(exist_ok=True)
 BUILD_SHARED_PATH.mkdir(exist_ok=True)
 
 is64 = sys.maxsize > 2**32
-arch = 'x64' if is64 else 'x86'
+arch = "x64" if is64 else "x86"
 
-ninja_env = msvc.msvc14_get_vc_env(arch)
-env.update(ninja_env)
+env.update(_get_vc_env(arch))
 
 cmake_config_static = [
-    "-G", "Ninja",
+    "-G",
+    "Ninja",
     "-DCMAKE_BUILD_TYPE=Release",
     "-DBUILD_SHARED_LIBS=off",
     "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded",
     "-DLIEF_PYTHON_API=off",
     "-DLIEF_INSTALL_COMPILED_EXAMPLES=on",
-    f"-DCMAKE_INSTALL_PREFIX={INSTALL_DIR.as_posix()}"
+    f"-DCMAKE_INSTALL_PREFIX={INSTALL_DIR.as_posix()}",
 ]
 
 cmake_config_shared = [
-    "-G", "Ninja",
+    "-G",
+    "Ninja",
     "-DCMAKE_BUILD_TYPE=Release",
     "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL",
     "-DBUILD_SHARED_LIBS=on",
@@ -62,26 +76,36 @@ cmake_config_shared = [
     "-DLIEF_INSTALL_COMPILED_EXAMPLES=off",
 ]
 
-build_args = ['--config', 'Release']
-configure_cmd = ['cmake', LIEF_SRC.resolve().as_posix()]
+build_args = ["--config", "Release"]
+configure_cmd = ["cmake", LIEF_SRC.resolve().as_posix()]
 
 print("Building shared version")
-check_call(configure_cmd + cmake_config_shared,
-           cwd=BUILD_SHARED_PATH.resolve().as_posix(),
-           env=env)
-check_call(['cmake', '--build', '.', '--target', "all"] + build_args,
-           cwd=BUILD_SHARED_PATH.resolve().as_posix(),
-           env=env)
+check_call(
+    configure_cmd + cmake_config_shared,
+    cwd=BUILD_SHARED_PATH.resolve().as_posix(),
+    env=env,
+)
+check_call(
+    ["cmake", "--build", ".", "--target", "all"] + build_args,
+    cwd=BUILD_SHARED_PATH.resolve().as_posix(),
+    env=env,
+)
 
 print("Building static version")
-check_call(configure_cmd + cmake_config_static,
-           cwd=BUILD_STATIC_PATH.resolve().as_posix(),
-           env=env)
+check_call(
+    configure_cmd + cmake_config_static,
+    cwd=BUILD_STATIC_PATH.resolve().as_posix(),
+    env=env,
+)
 
-check_call(['cmake', '--build', '.', '--target', "install"] + build_args,
-           cwd=BUILD_STATIC_PATH.resolve().as_posix(),
-           env=env)
+check_call(
+    ["cmake", "--build", ".", "--target", "install"] + build_args,
+    cwd=BUILD_STATIC_PATH.resolve().as_posix(),
+    env=env,
+)
 
-check_call([CPACK_BIN, '--config', CPACK_CONFIG_PATH.resolve().as_posix()],
-           cwd=BUILD_PATH.resolve().as_posix(),
-           env=env)
+check_call(
+    [CPACK_BIN, "--config", CPACK_CONFIG_PATH.resolve().as_posix()],
+    cwd=BUILD_PATH.resolve().as_posix(),
+    env=env,
+)
