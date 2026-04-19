@@ -29,6 +29,9 @@ template<class T>
 void init_ref_iterator(nanobind::handle& m, const char* it_name) {
   using ElementTy = typename T::value_type;
 
+  static nb::ft_mutex mu;
+  nb::ft_lock_guard lock(mu);
+
   if (auto type = nb::type<T>(); type.is_valid()) {
     m.attr(it_name) = type;
     return;

@@ -31,6 +31,9 @@ iterator make_rnd_iterator_impl(handle scope, const char *name,
                             Extra &&...extra) {
     using State = random_iterator_state<Access, Policy, Iterator, Sentinel, ValueType, Extra...>;
 
+    static ft_mutex mu;
+    ft_lock_guard lock(mu);
+
     if (!type<State>().is_valid()) {
         class_<State>(scope, name)
             .def("__iter__", [](handle h) { return h; })
