@@ -16,6 +16,7 @@
 #include "internal_utils.hpp"
 #include <ctime>
 #include <chrono>
+#include <mutex>
 
 namespace LIEF {
 
@@ -89,6 +90,10 @@ std::string indent(const std::string& input, size_t level) {
 std::string ts_to_str(uint64_t timestamp) {
   using namespace fmt;
   using namespace std::chrono;
+
+  static std::mutex mu;
+  std::scoped_lock lock(mu);
+
   system_clock::time_point tp =
       system_clock::time_point(std::chrono::seconds(timestamp));
   std::time_t t = std::chrono::system_clock::to_time_t(tp);
