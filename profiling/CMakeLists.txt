@@ -19,4 +19,8 @@ foreach(src_target ${SRC_TARGETS})
 
   target_compile_options(${output_name} PUBLIC ${PROFILING_FLAGS})
   target_link_libraries(${output_name} PRIVATE LIB_LIEF)
+
+  if (LIEF_ASAN)
+    target_link_libraries(${output_name} INTERFACE libclang_rt.asan.a)
+  endif()
 endforeach()

@@ -322,10 +322,13 @@ target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 set(SANITIZER_FLAGS -fno-omit-frame-pointer -g -O1)
 if(LIEF_ASAN)
   message(STATUS "Address sanitizer enabled")
-  list(APPEND SANITIZER_FLAGS -fsanitize=address)
+  list(APPEND SANITIZER_FLAGS
+    -fsanitize=address
+    -fsanitize-address-use-after-scope
+    -fsanitize-address-use-after-return=runtime
+  )
 
   target_link_options(LIB_LIEF PUBLIC -fsanitize=address)
-  target_link_libraries(LIB_LIEF INTERFACE libclang_rt.asan.so)
 endif()
 
 if(LIEF_LSAN)

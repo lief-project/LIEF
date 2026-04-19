@@ -83,6 +83,10 @@ foreach(example ${LIEF_CPP_EXAMPLES})
 
   target_link_libraries(${output_name} PUBLIC LIB_LIEF)
 
+  if (LIEF_ASAN)
+    target_link_libraries(${output_name} INTERFACE libclang_rt.asan.a)
+  endif()
+
   if (CMAKE_BUILD_TYPE MATCHES "Release")
     if (UNIX AND NOT APPLE)
         add_custom_command(

@@ -131,6 +131,10 @@ if(SKBUILD)
   endif()
 endif()
 
+if (LIEF_ASAN)
+  target_link_libraries(pyLIEF INTERFACE libclang_rt.asan.so)
+endif()
+
 if (LIEF_PYTHON_STATIC)
   install(TARGETS nanobind-static pyLIEF
           DESTINATION lib/python-${Python_VERSION})
