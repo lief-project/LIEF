@@ -7,21 +7,11 @@ from textwrap import dedent
 
 import lief
 import pytest
-from utils import get_sample, is_64bits_platform, lru_cache, parse_pe
-
-
-@lru_cache(maxsize=1)
-def _winhello64() -> lief.PE.Binary:
-    return parse_pe("PE/PE64_x86-64_binary_winhello64-mingw.exe")
-
-
-@lru_cache(maxsize=1)
-def _atapi() -> lief.PE.Binary:
-    return parse_pe("PE/PE64_x86-64_atapi.sys")
+from utils import get_sample, is_64bits_platform, parse_pe
 
 
 def test_dos_header():
-    atapi = _atapi()
+    atapi = parse_pe("PE/PE64_x86-64_atapi.sys")
     dos_header = atapi.dos_header
 
     assert dos_header.copy() == dos_header
@@ -52,7 +42,7 @@ def test_dos_header():
 
 
 def test_header():
-    atapi = _atapi()
+    atapi = parse_pe("PE/PE64_x86-64_atapi.sys")
     header = atapi.header
 
     assert header.copy() == header
@@ -72,7 +62,7 @@ def test_header():
 
 
 def test_optional_header():
-    atapi = _atapi()
+    atapi = parse_pe("PE/PE64_x86-64_atapi.sys")
     header = atapi.optional_header
     lief.logging.info(header)
 
@@ -112,7 +102,7 @@ def test_optional_header():
 
 
 def test_data_directories():
-    atapi = _atapi()
+    atapi = parse_pe("PE/PE64_x86-64_atapi.sys")
     dirs = atapi.data_directories
 
     assert dirs[0].rva == 0x0
@@ -268,8 +258,8 @@ def test_data_directories():
 
 
 def test_sections():
-    winhello64 = _winhello64()
-    atapi = _atapi()
+    winhello64 = parse_pe("PE/PE64_x86-64_binary_winhello64-mingw.exe")
+    atapi = parse_pe("PE/PE64_x86-64_atapi.sys")
     sections = winhello64.sections
 
     assert len(sections) == 17
@@ -383,7 +373,7 @@ def test_sections():
 
 
 def test_tls():
-    winhello64 = _winhello64()
+    winhello64 = parse_pe("PE/PE64_x86-64_binary_winhello64-mingw.exe")
     assert winhello64.has_tls
 
     tls = winhello64.tls
@@ -407,7 +397,7 @@ def test_tls():
 
 
 def test_imports():
-    winhello64 = _winhello64()
+    winhello64 = parse_pe("PE/PE64_x86-64_binary_winhello64-mingw.exe")
     imports = winhello64.imports
 
     assert len(imports) == 2
@@ -577,7 +567,7 @@ def test_issue_685():
 
 
 def test_rich_header():
-    atapi = _atapi()
+    atapi = parse_pe("PE/PE64_x86-64_atapi.sys")
     rheader = atapi.rich_header
     assert rheader is not None
     assert rheader.key == 0xA476A6E3
