@@ -103,3 +103,9 @@ def test_huge_recursion():
     """Bug found with Codex 5.3"""
     macho = lief.MachO.parse(get_sample("MachO/deep_exports.bin"))
     assert macho is not None
+
+
+def test_zero_div():
+    """Bug found with Codex 5.3"""
+    macho = lief.MachO.parse(get_sample("MachO/stub_div0.bin"))
+    assert macho is not None

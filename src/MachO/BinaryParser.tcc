@@ -4062,6 +4062,9 @@ ok_error_t BinaryParser::infer_indirect_bindings() {
       uint32_t stride = type == Section::TYPE::SYMBOL_STUBS ?
                             section.reserved2() :
                             sizeof(typename MACHO_T::uint);
+      if (stride == 0) {
+        continue;
+      }
       uint32_t count = section.size() / stride;
       uint32_t n = section.reserved1();
       auto indirect_syms = dynsym->indirect_symbols();
