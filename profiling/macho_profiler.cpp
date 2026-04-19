@@ -2,11 +2,8 @@
 #include <filesystem>
 
 void process_file(const std::filesystem::path& target) {
-  LIEF::MachO::ParserConfig config;
-  config.parse_dyld_rebases = true;
-  config.parse_dyld_exports = true;
-  config.parse_dyld_bindings = true;
-  auto binary = LIEF::MachO::Parser::parse(target.string(), config);
+  auto binary = LIEF::MachO::Parser::parse(target.string(),
+                                           LIEF::MachO::ParserConfig::deep());
 }
 
 void process_dir(const std::filesystem::path& target) {

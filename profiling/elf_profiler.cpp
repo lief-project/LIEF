@@ -2,7 +2,7 @@
 #include <filesystem>
 
 void process_file(const std::filesystem::path& target) {
-  LIEF::ELF::Parser::parse(target.string());
+  LIEF::ELF::Parser::parse(target.string(), LIEF::ELF::ParserConfig::all());
 }
 
 void process_dir(const std::filesystem::path& target) {
