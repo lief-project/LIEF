@@ -37,6 +37,7 @@
 
 namespace LIEF::logging {
 
+static std::mutex Mutex; // NOLINT
 
 std::shared_ptr<spdlog::logger> create_basic_logger_mt(const std::string& name,
                                                        const std::string& path,
@@ -50,6 +51,7 @@ static std::shared_ptr<spdlog::logger>
                    [[maybe_unused]] const std::string& logcat_tag = "",
                    [[maybe_unused]] const std::string& filepath = "/tmp/lief.log",
                    [[maybe_unused]] bool truncate = true) {
+  std::scoped_lock lock(Mutex);
   auto& registry = spdlog::details::registry::instance();
   registry.drop(name);
 
@@ -87,17 +89,18 @@ LEVEL Logger::get_level() {
 
 
 Logger& Logger::instance(const char* name) {
-  static Logger::instances_t instances;
-  static std::mutex mu;
-  std::scoped_lock LK(mu);
+  static instances_t instances;
 
-  if (auto it = instances.find(name); it != instances.end()) {
-    return *it->second;
+  {
+    std::scoped_lock lock(Mutex);
+    if (auto it = instances.find(name); it != instances.end()) {
+      return *it->second;
+    }
   }
 
   if (instances.empty()) {
     std::atexit([] {
-      std::scoped_lock LK(mu);
+      std::scoped_lock lock(Mutex);
       for (const auto& [name, instance] : instances) {
         delete instance;
       }
@@ -106,7 +109,10 @@ Logger& Logger::instance(const char* name) {
   }
 
   auto* impl = new Logger(default_logger(/*name=*/name));
-  instances.insert({name, impl});
+  {
+    std::scoped_lock lock(Mutex);
+    instances.insert({name, impl});
+  }
   return *impl;
 }
 
@@ -115,6 +121,7 @@ void Logger::reset() {
 }
 
 Logger& Logger::set_log_path(const std::string& path) {
+  std::scoped_lock lock(Mutex);
   auto& registry = spdlog::details::registry::instance();
   registry.drop(DEFAULT_NAME);
   auto logger = create_basic_logger_mt(DEFAULT_NAME, path, /*truncate=*/true);
