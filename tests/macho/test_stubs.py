@@ -10,14 +10,9 @@ def test_simple():
 
     assert (
         len(
-            [
-                s
-                for s in macho.sections
-                if s.type == lief.MachO.Section.TYPE.SYMBOL_STUBS
-            ]
-        )
-        == 1
-    )
+            [s for s in macho.sections if s.type == lief.MachO.Section.TYPE.SYMBOL_STUBS] # fmt: off
+        ) == 1
+    )  # fmt: off
     assert len(stubs) == 25
 
     assert stubs[0].address == 0x236A3C1BC
@@ -114,19 +109,10 @@ def test_empty_section():
 def test_stub_resolution():
     raw_stub = [
         # Address: 0x3c47b08
-        0x10,
-        0x79,
-        0x00,
-        0xF0,  # ADRP  X16, #0x4B6A000
-        0x10,
-        0x9E,
-        0x43,
-        0xF9,  # LDR   X16, [X16,#0x738]
-        0x00,
-        0x02,
-        0x1F,
-        0xD6,  # BR    X16
-    ]
+        0x10, 0x79, 0x00, 0xF0,  # ADRP  X16, #0x4B6A000
+        0x10, 0x9E, 0x43, 0xF9,  # LDR   X16, [X16,#0x738]
+        0x00, 0x02, 0x1F, 0xD6,  # BR    X16
+    ]  # fmt: off
     target = lief.MachO.Stub.target_info_t(lief.MachO.Header.CPU_TYPE.ARM64, 0)
     stub = lief.MachO.Stub(target, 0x3C47B08, raw_stub)
     assert (
@@ -137,19 +123,10 @@ def test_stub_resolution():
 
     raw_stub = [
         # Address: 0x1804e4284
-        0x50,
-        0x2B,
-        0x23,
-        0x90,  # ADRP  X16, #0x1C6A4C000
-        0x10,
-        0x22,
-        0x13,
-        0x91,  # ADD   X16, X16, #0x4C8
-        0x00,
-        0x02,
-        0x1F,
-        0xD6,  # BR    X16
-    ]
+        0x50, 0x2B, 0x23, 0x90,  # ADRP  X16, #0x1C6A4C000
+        0x10, 0x22, 0x13, 0x91,  # ADD   X16, X16, #0x4C8
+        0x00, 0x02, 0x1F, 0xD6,  # BR    X16
+    ]  # fmt: off
     target = lief.MachO.Stub.target_info_t(lief.MachO.Header.CPU_TYPE.ARM64, 0)
     stub = lief.MachO.Stub(target, 0x1804E4284, raw_stub)
     assert (
@@ -160,23 +137,11 @@ def test_stub_resolution():
 
     raw_stub = [
         # Address: 0x2018310
-        0x91,
-        0x08,
-        0x00,
-        0x90,  # ADRP x17, #1114112
-        0x31,
-        0x02,
-        0x00,
-        0x91,  # ADD  X17, X17, #0
-        0x30,
-        0x02,
-        0x40,
-        0xF9,  # LDR  X16, [X17]
-        0x11,
-        0x0A,
-        0x1F,
-        0xD7,  # BRAA x16, x17
-    ]
+        0x91, 0x08, 0x00, 0x90,  # ADRP x17, #1114112
+        0x31, 0x02, 0x00, 0x91,  # ADD  X17, X17, #0
+        0x30, 0x02, 0x40, 0xF9,  # LDR  X16, [X17]
+        0x11, 0x0A, 0x1F, 0xD7,  # BRAA x16, x17
+    ]  # fmt: off
     target = lief.MachO.Stub.target_info_t(lief.MachO.Header.CPU_TYPE.ARM64, 2)
     stub = lief.MachO.Stub(target, 0x2018310, raw_stub)
     assert (
@@ -187,19 +152,10 @@ def test_stub_resolution():
 
     raw_stub = [
         # Address: 0x100175f2c
-        0x1F,
-        0x20,
-        0x03,
-        0xD5,  # NOP
-        0xD0,
-        0x13,
-        0x3B,
-        0x58,  # LDR X16, #483960
-        0x00,
-        0x02,
-        0x1F,
-        0xD6,  # BR  X16
-    ]
+        0x1F, 0x20, 0x03, 0xD5,  # NOP
+        0xD0, 0x13, 0x3B, 0x58,  # LDR X16, #483960
+        0x00, 0x02, 0x1F, 0xD6,  # BR  X16
+    ]  # fmt: off
     target = lief.MachO.Stub.target_info_t(lief.MachO.Header.CPU_TYPE.ARM64, 2)
     stub = lief.MachO.Stub(target, 0x100175F2C, raw_stub)
     assert (
@@ -210,13 +166,8 @@ def test_stub_resolution():
 
     raw_stub = [
         # Address: 0x100003b14
-        0xFF,
-        0x25,
-        0xE6,
-        0x44,
-        0x00,
-        0x00,  # jmp qword ptr [rip + 17638]
-    ]
+        0xFF, 0x25, 0xE6, 0x44, 0x00, 0x00,  # jmp qword ptr [rip + 17638]
+    ]  # fmt: off
     target = lief.MachO.Stub.target_info_t(lief.MachO.Header.CPU_TYPE.X86_64, 0)
     stub = lief.MachO.Stub(target, 0x100003B14, raw_stub)
     assert (
