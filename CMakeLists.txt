@@ -345,8 +345,6 @@ if(LIEF_TSAN)
   list(APPEND SANITIZER_FLAGS -fsanitize=thread)
 
   target_link_options(LIB_LIEF PUBLIC -fsanitize=thread)
-
-  target_link_libraries(LIB_LIEF INTERFACE tsan)
 endif()
 
 if(LIEF_USAN)

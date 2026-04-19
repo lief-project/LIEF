@@ -23,4 +23,8 @@ foreach(src_target ${SRC_TARGETS})
   if (LIEF_ASAN)
     target_link_libraries(${output_name} INTERFACE libclang_rt.asan.a)
   endif()
+
+  if (LIEF_TSAN)
+    target_link_libraries(${output_name} INTERFACE libclang_rt.tsan.a)
+  endif()
 endforeach()
