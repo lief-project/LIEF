@@ -83,7 +83,7 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
     const details::pe_resource_directory_table& directory_table,
     uint32_t base_offset, uint32_t current_offset, uint32_t depth
 ) {
-  static constexpr auto MAX_DEPTH = 1000;
+  static constexpr auto MAX_DEPTH = 60;
   if (depth > MAX_DEPTH) {
     LIEF_WARN("Tree max depth reached (max: {})", MAX_DEPTH);
     return nullptr;
@@ -149,6 +149,10 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
       uint32_t offset = base_offset + data_rva;
       auto data_entry = stream_.peek<details::pe_resource_data_entry>(offset);
       if (!data_entry) {
+        break;
+      }
+
+      if (!visited_.insert(offset).second) {
         break;
       }
 
