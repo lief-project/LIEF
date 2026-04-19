@@ -2,7 +2,7 @@ from pathlib import Path
 
 import lief
 import pytest
-from utils import parse_macho
+from utils import get_sample, parse_macho
 
 
 def test_945():
@@ -97,3 +97,9 @@ def test_issue_ntype(tmp_path: Path):
     new = fat.at(0)
     assert new is not None
     assert new.symbols[0].raw_type == 60
+
+
+def test_huge_recursion():
+    """Bug found with Codex 5.3"""
+    macho = lief.MachO.parse(get_sample("MachO/deep_exports.bin"))
+    assert macho is not None

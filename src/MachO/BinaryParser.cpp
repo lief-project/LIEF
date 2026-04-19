@@ -146,7 +146,14 @@ ok_error_t BinaryParser::init_and_parse() {
 ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
                                            BinaryStream& stream, uint64_t start,
                                            const std::string& prefix,
-                                           bool* invalid_names) {
+                                           uint32_t depth, bool* invalid_names) {
+  static constexpr auto MAX_DEPTH = 60;
+
+  if (depth > MAX_DEPTH) {
+    LIEF_WARN("Maximum recursion depth reached ({})", MAX_DEPTH);
+    return make_error_code(lief_errors::parsing_error);
+  }
+
   if (!stream) {
     return make_error_code(lief_errors::read_error);
   }
@@ -330,7 +337,7 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
 
     {
       ScopedStream scoped(stream, child_node_offet);
-      parse_export_trie(exports, *scoped, start, name, invalid_names);
+      parse_export_trie(exports, *scoped, start, name, depth + 1, invalid_names);
     }
   }
 
@@ -374,7 +381,7 @@ ok_error_t BinaryParser::parse_dyld_exports() {
 
   bool invalid_names = false;
   parse_export_trie(exports->export_info_, trie_stream, offset, "",
-                    &invalid_names);
+                    /*depth=*/0, &invalid_names);
   return ok();
 }
 
@@ -417,7 +424,7 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
 
   bool invalid_names = false;
   parse_export_trie(dyldinfo->export_info_, trie_stream, offset, "",
-                    &invalid_names);
+                    /*depth=*/0, &invalid_names);
   return ok();
 }
 
