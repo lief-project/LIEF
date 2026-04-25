@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -14,7 +15,7 @@ def main():
     args = parser.parse_args()
 
     os.environ.setdefault("LIEF_BUILD_DIR", args.build_dir)
-    pytest.main(
+    retcode = pytest.main(
         [
             str(e)
             for e in [
@@ -28,6 +29,9 @@ def main():
             ]
         ]
     )
+
+    print(f"Retcode: {retcode}")
+    sys.exit(retcode)
 
 
 if __name__ == "__main__":
