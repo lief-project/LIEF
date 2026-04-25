@@ -2,3 +2,4 @@ pytest==9.0.3
 requests==2.33.0
 progressbar2==4.5.0
 coverage==7.13.5
+pytest-run-parallel==0.8.2
