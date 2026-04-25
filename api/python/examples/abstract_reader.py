@@ -1,15 +1,20 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Format-agnostic binary reader.
 
-# Description
-# -----------
-# Universal format reader.
-# Input can be PE, ELF or Mach-O
+Uses the abstract layer of LIEF to render the common subset of
+information (header, sections, relocations, symbols, imports,
+exports, libraries) for an ELF, PE or Mach-O binary.
+
+Example:
+
+    $ python abstract_reader.py -a /bin/ls
+"""
+
+import argparse
+import sys
+import traceback
 
 import lief
-import sys
-import argparse
-import traceback
 
 
 class exceptions_handler(object):
@@ -43,7 +48,6 @@ def print_header(binary):
     print("== Header ==\n")
     format_str = "{:<15} {:<30}"
     format_hex = "{:<15} 0x{:<13x}"
-    format_dec = "{:<15} {:<30d}"
 
     modes_str = " - ".join([str(m).split(".")[-1] for m in header.modes])
     bitness = ""
@@ -202,6 +206,12 @@ def main():
     args = parser.parse_args()
 
     binary = lief.parse(args.binary)
+    if binary is None:
+        print(f"Error: failed to parse '{args.binary}'", file=sys.stderr)
+        return 1
+    if isinstance(binary, lief.COFF.Binary):
+        print("COFF objects do not expose an abstract view", file=sys.stderr)
+        return 1
 
     binary = binary.abstract
     if args.show_header or args.show_all:
@@ -229,6 +239,8 @@ def main():
     if (args.show_relocs or args.show_all) and len(binary.relocations) > 0:
         print_relocations(binary)
 
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

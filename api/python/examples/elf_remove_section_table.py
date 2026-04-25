@@ -1,44 +1,45 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Strip the section table from an ELF binary.
 
-# Description
-# -----------
-# Remove the section table from an ELF binary
-# so that some tools are blow minded (e.g. gdb)
-#
-# Example:
-# $ python elf_remove_section_table.py /bin/ls ls_without_sections
-# $ ls
-# elf_remove_section_table.py ls_without_sections
-# $ ls_without_sections
-# $ elf_remove_section_table.py ls_without_sections
-# $ readelf -S ls_without_sections
-#
-# Il n'y a pas de section dans ce fichier.
-# $ gdb ls_without_sections
-# "ls_without_sections": not in executable format: File format not recognized
+Zeros out the ``e_shoff`` and ``e_shnum`` fields of the ELF header so
+that tools relying on the section table (notably ``gdb``, ``readelf
+-S``) lose visibility into the binary while the program headers
+remain intact and the file still runs.
 
+Example:
+
+    $ python elf_remove_section_table.py /bin/ls ls_nosec
+    $ readelf -S ls_nosec
+    There are no sections in this file.
+    $ ./ls_nosec      # still runs
+"""
+
+import argparse
 import sys
+
 import lief
-from lief import ELF
 
 
-def remove_section_table(filename, output):
-    binary = lief.ELF.parse(filename)  # Build an ELF binary
+def remove_section_table(filename: str, output: str) -> int:
+    binary = lief.ELF.parse(filename)
+    if binary is None:
+        print(f"Error: failed to parse '{filename}' as ELF", file=sys.stderr)
+        return 1
 
     header = binary.header
     header.section_header_offset = 0
     header.numberof_sections = 0
     binary.write(output)
+    return 0
 
 
-def main():
-    if len(sys.argv) != 3:
-        print("Usage: {} <elf binary> <output>".format(sys.argv[0]))
-        sys.exit(1)
-
-    remove_section_table(sys.argv[1], sys.argv[2])
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("input", metavar="<elf>", help="Input ELF binary")
+    parser.add_argument("output", metavar="<out>", help="Path to the rewritten binary")
+    args = parser.parse_args()
+    return remove_section_table(args.input, args.output)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -1,38 +1,43 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Format-agnostic ``nm``-style symbol lister.
 
-# Description
-# -----------
-#
-# This tool is a cross format Linux nm like. It prints all symbols
-# present in the binary. For `PE` it will print symbols in the *symbol section*
-# and for `ELF` it will print *static* symbols **AND** *dynamic* symbols.
-#
-# Example:
-#
-# >>> nm("/usr/bin/ls")
-# >>> nm("C:\\Windows\\explorer.exe")
+Prints every symbol found in a binary. For PE files, it prints the
+entries of the *symbol section*; for ELF files, both the static
+(``.symtab``) and dynamic (``.dynsym``) symbols; for Mach-O the
+global symbol table.
 
+Example:
+
+    $ python nm.py /usr/bin/ls
+"""
+
+import argparse
 import sys
 
-from lief import parse
+import lief
 
 
-def nm(filename):
-    """Return symbols from *filename* binary"""
-    binary = parse(filename)  # Build an abstract binary
+def nm(filename: str) -> int:
+    binary = lief.parse(filename)
+    if binary is None:
+        print(f"Error: failed to parse '{filename}'", file=sys.stderr)
+        return 1
+
     symbols = binary.symbols
-
     if len(symbols) > 0:
         for symbol in symbols:
             print(symbol)
     else:
         print("No symbols found")
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("binary", help="Path to the binary to list")
+    args = parser.parse_args()
+    return nm(args.binary)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: " + sys.argv[0] + " <binary>")
-        sys.exit(-1)
-
-    nm(sys.argv[1])
+    sys.exit(main())

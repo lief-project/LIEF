@@ -1,22 +1,39 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Inject a ``.symtab`` entry into a stripped ELF binary.
 
-# Description
-# -----------
-# In this example, we assume that we found
-# the ``main`` function at address 0x402A00
-# and we add a symtab symbol to the binary
-# so that we can do:
-#
-# (gdb) break main
-# Breakpoint 1 at 0x402a00
+Adds a fresh ``SYMTAB``/``STRTAB`` section pair and records a single
+``FUNC`` symbol (by default ``main`` at ``0x402A00``) so that
+debuggers such as ``gdb`` can resolve a symbolic breakpoint on a
+binary whose static symbol table was removed.
 
-from lief import ELF
+Example:
+
+    $ python elf_unstrip.py ./stripped ./unstripped
+    $ gdb ./unstripped
+    (gdb) break main
+    Breakpoint 1 at 0x402a00
+"""
+
+import argparse
 import sys
 
+from lief import ELF
 
-def main():
-    binary = ELF.parse(sys.argv[1])
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("input", metavar="<elf>", help="Input (stripped) ELF binary")
+    parser.add_argument("output", metavar="<out>", help="Output ELF binary")
+    parser.add_argument("--address", type=lambda e: int(e, 0), default=0x402A00,
+                        help="Address of the added symbol (default: 0x402A00)")
+    parser.add_argument("--name", default="main",
+                        help="Name of the added symbol (default: main)")
+    args = parser.parse_args()
+
+    binary = ELF.parse(args.input)
+    if binary is None:
+        print(f"Error: failed to parse '{args.input}' as ELF", file=sys.stderr)
+        return 1
 
     symtab_section = ELF.Section()
     symtab_section.name = ""
@@ -33,30 +50,31 @@ def main():
     symstr_section.alignment = 1
     symstr_section.content = [0] * 100
 
-    symtab_section = binary.add(symtab_section, loaded=False)
-    symstr_section = binary.add(symstr_section, loaded=False)
+    binary.add(symtab_section, loaded=False)
+    binary.add(symstr_section, loaded=False)
+
+    null_symbol = ELF.Symbol()
+    null_symbol.name = ""
+    null_symbol.type = ELF.Symbol.TYPE.NOTYPE
+    null_symbol.value = 0
+    null_symbol.binding = ELF.Symbol.BINDING.LOCAL
+    null_symbol.size = 0
+    null_symbol.shndx = 0
+    binary.add_symtab_symbol(null_symbol)
 
     symbol = ELF.Symbol()
-    symbol.name = ""
-    symbol.type = ELF.Symbol.TYPE.NOTYPE
-    symbol.value = 0
-    symbol.binding = ELF.Symbol.BINDING.LOCAL
-    symbol.size = 0
-    symbol.shndx = 0
-    symbol = binary.add_symtab_symbol(symbol)
-
-    symbol = ELF.Symbol()
-    symbol.name = "main"
+    symbol.name = args.name
     symbol.type = ELF.Symbol.TYPE.FUNC
-    symbol.value = 0x402A00
+    symbol.value = args.address
     symbol.binding = ELF.Symbol.BINDING.LOCAL
     symbol.shndx = 14
     symbol = binary.add_symtab_symbol(symbol)
 
     print(symbol)
 
-    binary.write(sys.argv[2])
+    binary.write(args.output)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

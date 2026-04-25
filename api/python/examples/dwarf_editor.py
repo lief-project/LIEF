@@ -1,25 +1,66 @@
-"""
-This example shows how to create a DWARF file by using LIEF's Python API
+#!/usr/bin/env python
+"""Create a companion DWARF file from a PE binary.
+
+Demonstrates the DWARF editor API: loads a PE binary, synthesises a
+compilation unit with one function returning a pointer to a
+structure and a stack variable, then writes the result to
+``/tmp/out.debug``.
+
+Note: only available with the extended version of LIEF.
+
+Example:
+
+    $ python dwarf_editor.py program.exe
 """
 
+import argparse
 import sys
 
 import lief
 
-if not lief.__extended__:
-    print("This example requires the extended version of LIEF")
 
-pe = lief.PE.parse(sys.argv[1])
-edito = lief.dwarf.Editor.from_binary(pe)
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("file", help="Input PE binary")
+    parser.add_argument(
+        "--output",
+        default="/tmp/out.debug",
+        help="Output DWARF file (default: %(default)s)",
+    )
+    args = parser.parse_args()
 
-unit: lief.dwarf.editor.CompilationUnit = editor.create_compilation_unit()
-unit.set_producer("LIEF")
+    if not lief.__extended__:
+        print("This example requires the extended version of LIEF", file=sys.stderr)
+        return 1
 
-func: lief.dwarf.editor.Function = unit.create_function("hello")
-func.set_address(0x123)
-func.set_return_type(unit.create_structure("my_struct_t").pointer_to())
+    pe = lief.PE.parse(args.file)
+    if pe is None:
+        print(f"Error: failed to parse '{args.file}' as PE", file=sys.stderr)
+        return 1
 
-var: lief.dwarf.editor.Variable = func.create_stack_variable("local_var")
-var.set_stack_offset(8)
+    editor = lief.dwarf.Editor.from_binary(pe)
+    if editor is None:
+        print("Failed to create a DWARF editor", file=sys.stderr)
+        return 1
 
-editor.write("/tmp/out.debug")
+    unit = editor.create_compilation_unit()
+    unit.set_producer("LIEF")
+
+    func = unit.create_function("hello")
+    func.set_address(0x123)
+
+    pointer_type = unit.create_structure("my_struct_t").pointer_to()
+    if pointer_type is None:
+        print("Failed to create the pointer type", file=sys.stderr)
+        return 1
+    func.set_return_type(pointer_type)
+
+    var = func.create_stack_variable("local_var")
+    var.set_stack_offset(8)
+
+    editor.write(args.output)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

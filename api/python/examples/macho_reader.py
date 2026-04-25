@@ -1,25 +1,27 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Pretty-print the structure of a Mach-O binary.
 
-# Description
-# -----------
-# Print information about a Mach-O binary
+Equivalent to ``otool``/``llvm-otool`` with a selection of the most
+useful flags. The file is parsed with ``lief.MachO.parse`` and each
+requested section (header, load commands, segments, symbols, imports,
+...) is rendered as a formatted table.
 
-import sys
-import os
+Example:
+
+    $ python macho_reader.py -a /usr/bin/ls
+"""
+
 import argparse
+import shutil
+import sys
 import traceback
+
 import lief
 from lief import MachO
 
-terminal_rows, terminal_columns = 100, 100
-try:
-    terminal_rows, terminal_columns = os.popen("stty size", "r").read().split()
-except ValueError:
-    pass
-
-terminal_columns = int(terminal_columns)
-terminal_rows = int(terminal_rows)
+_term_size = shutil.get_terminal_size((100, 100))
+terminal_columns = _term_size.columns
+terminal_rows = _term_size.lines
 EXIT_STATUS = 0
 
 
@@ -55,7 +57,6 @@ def print_information(binary):
     print("== Information ==")
     format_str = "{:<30} {:<30}"
     format_hex = "{:<30} 0x{:<28x}"
-    format_dec = "{:<30} {:<30d}"
     header: lief.MachO.Header = binary.header
     cpu = str(header.cpu_type).split(".")[-1]
 
@@ -248,7 +249,7 @@ def print_symbols(binary):
         return
     try:
         maxsize = max([len(symbol.demangled_name) for symbol in symbols])
-    except:
+    except Exception:
         maxsize = max([len(symbol.name) for symbol in symbols])
     maxsize = (
         min(maxsize, terminal_columns - 90)
@@ -281,7 +282,7 @@ def print_symbols(binary):
 
         try:
             symbol_name = symbol.demangled_name
-        except:
+        except Exception:
             symbol_name = symbol.name
         print(
             f_value.format(
@@ -302,7 +303,6 @@ def print_symbol_command(binary):
 
     scmd = binary.symbol_command
 
-    format_str = "{:<17} {:<30}"
     format_hex = "{:<17} 0x{:<28x}"
     format_dec = "{:<17} {:<30d}"
 
@@ -321,7 +321,6 @@ def print_dynamic_symbol_command(binary):
 
     dyscmd = binary.dynamic_symbol_command
 
-    format_str = "{:<36} {:<30}"
     format_hex = "{:<36} 0x{:<28x}"
     format_dec = "{:<36} {:<30d}"
 
@@ -390,9 +389,7 @@ def print_uuid(binary):
 @exceptions_handler(Exception)
 def print_main_command(binary):
 
-    format_str = "{:<13} {:<30}"
     format_hex = "{:<13} 0x{:<28x}"
-    format_dec = "{:<13} {:<30d}"
 
     print("== Main Command ==")
     cmd = binary.main_command
@@ -406,9 +403,7 @@ def print_main_command(binary):
 @exceptions_handler(Exception)
 def print_thread_command(binary):
 
-    format_str = "{:<13} {:<30}"
     format_hex = "{:<13} 0x{:<28x}"
-    format_dec = "{:<13} {:<30d}"
 
     print("== Thread Command ==")
     cmd = binary.thread_command
@@ -423,9 +418,6 @@ def print_thread_command(binary):
 @exceptions_handler(Exception)
 def print_rpath_command(binary):
 
-    format_str = "{:<13} {:<30}"
-    format_hex = "{:<13} 0x{:<28x}"
-    format_dec = "{:<13} {:<30d}"
 
     print("== Rpath Command ==")
     cmd = binary.rpath
@@ -444,9 +436,7 @@ def print_dylinker(binary):
 
 @exceptions_handler(Exception)
 def print_function_starts(binary):
-    format_str = "{:<13} {:<30}"
     format_hex = "{:<13} 0x{:<28x}"
-    format_dec = "{:<13} {:<30d}"
 
     print("== Function Starts ==")
 
@@ -463,9 +453,7 @@ def print_function_starts(binary):
 
 @exceptions_handler(Exception)
 def print_data_in_code(binary):
-    format_str = "{:<13} {:<30}"
     format_hex = "{:<13} 0x{:<28x}"
-    format_dec = "{:<13} {:<30d}"
 
     print("== Data In Code ==")
 
@@ -484,9 +472,7 @@ def print_data_in_code(binary):
 
 @exceptions_handler(Exception)
 def print_segment_split_info(binary):
-    format_str = "{:<13} {:<30}"
     format_hex = "{:<13} 0x{:<28x}"
-    format_dec = "{:<13} {:<30d}"
 
     print("== Segment Split Info ==")
 
@@ -501,8 +487,6 @@ def print_segment_split_info(binary):
 @exceptions_handler(Exception)
 def print_sub_framework(binary):
     format_str = "{:<13} {:<30}"
-    format_hex = "{:<13} 0x{:<28x}"
-    format_dec = "{:<13} {:<30d}"
 
     print("== Sub Framework ==")
 
@@ -515,8 +499,6 @@ def print_sub_framework(binary):
 @exceptions_handler(Exception)
 def print_dyld_environment(binary):
     format_str = "{:<13} {:<30}"
-    format_hex = "{:<13} 0x{:<28x}"
-    format_dec = "{:<13} {:<30d}"
 
     print("== Dyld Environment ==")
 
@@ -721,7 +703,6 @@ def print_relocations(binary):
 @exceptions_handler(Exception)
 def print_encryption_info(binary):
 
-    format_str = "{:<13} {:<30}"
     format_hex = "{:<13} 0x{:<28x}"
     format_dec = "{:<13} {:<30d}"
 
@@ -781,10 +762,10 @@ def print_build_version(binary):
 
 
 def print_chained_fixups(binary: lief.MachO.Binary):
-    if not binary.has_dyld_chained_fixups:
+    fixups = binary.dyld_chained_fixups
+    if fixups is None:
         return
     print("== Dyld Chained Fixups ==")
-    fixups: lief.MachO.DyldChainedFixups = binary.dyld_chained_fixups
     print(fixups)
 
 

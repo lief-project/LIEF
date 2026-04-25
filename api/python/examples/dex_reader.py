@@ -1,22 +1,27 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Pretty-print the structure of an Android DEX file.
 
-# Description
-# -----------
-# Print information about Android DEX files
-import sys
-import os
+Parses a ``.dex`` file with ``lief.DEX.parse`` and renders header,
+classes, methods, fields, strings, types, prototypes and the map
+list, selected by command-line flags.
+
+Example:
+
+    $ python dex_reader.py -a classes.dex
+"""
+
 import argparse
+import shutil
+import sys
 import traceback
+
 import lief
 from lief import DEX
 
 EXIT_STATUS = 0
-terminal_rows, terminal_columns = 100, 100
-try:
-    terminal_rows, terminal_columns = os.popen("stty size", "r").read().split()
-except ValueError:
-    pass
+_term_size = shutil.get_terminal_size((100, 100))
+terminal_columns = _term_size.columns
+terminal_rows = _term_size.lines
 
 
 class exceptions_handler(object):
@@ -49,62 +54,34 @@ class exceptions_handler(object):
 @exceptions_handler(Exception)
 def print_information(dexfile):
     print("== Information ==")
-    format_str = "{:<30} {:<30}"
-    format_hex = "{:<30} 0x{:<28x}"
-    format_dec = "{:<30} {:<30d}"
-    version = dexfile.version
-
-    print("DEX File version: {}".format(version))
+    print("DEX File version: {}".format(dexfile.version))
     print("")
 
 
 @exceptions_handler(Exception)
 def print_header(dexfile):
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
     print("== Header ==")
-    header = dexfile.header
-    print(header)
+    print(dexfile.header)
 
 
 @exceptions_handler(Exception)
 def print_classes(dexfile):
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
-    classes = dexfile.classes
-
     print("== Classes ==")
-    for cls in classes:
+    for cls in dexfile.classes:
         print(cls)
 
 
 @exceptions_handler(Exception)
 def print_fields(dexfile):
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
-    fields = dexfile.fields
-
     print("== Fields ==")
-    for f in fields:
+    for f in dexfile.fields:
         print(f)
 
 
 @exceptions_handler(Exception)
 def print_methods(dexfile):
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
-    methods = dexfile.methods
-
     print("== Methods ==")
-    for m in methods:
+    for m in dexfile.methods:
         print(m)
 
 
@@ -243,6 +220,9 @@ def main():
     lief.logging.set_level(args.main_verbosity)
 
     dexfile = DEX.parse(args.file)
+    if dexfile is None:
+        print(f"Error: failed to parse '{args.file}' as DEX", file=sys.stderr)
+        return 1
 
     print_information(dexfile)
 
@@ -270,8 +250,8 @@ def main():
     if args.show_map or args.show_all:
         print_map(dexfile)
 
-    sys.exit(EXIT_STATUS)
+    return EXIT_STATUS
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

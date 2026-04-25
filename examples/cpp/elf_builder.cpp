@@ -1,45 +1,57 @@
-/* Copyright 2017 - 2026 R. Thomas
- * Copyright 2017 - 2026 Quarkslab
+/* ELF binary modification and rebuild.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Demonstrates how to parse an ELF binary, make modifications (add a section,
+ * add an exported symbol, change library search paths), and write the result.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Usage: ./elf_builder <input_binary> <output_binary>
  */
+
 #include <iostream>
 #include <memory>
-#include <fstream>
-#include <algorithm>
-#include <iterator>
+#include <vector>
 
-#include <LIEF/logging.hpp>
 #include <LIEF/ELF.hpp>
 
+using namespace LIEF::ELF;
+
 int main(int argc, char** argv) {
-  std::cout << "ELF builder" << '\n';
   if (argc != 3) {
-    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>" << '\n';
-    return -1;
+    std::cerr << "Usage: " << argv[0] << " <Input Binary> <Output Binary>\n";
+    return 1;
   }
 
-  std::unique_ptr<LIEF::ELF::Binary> binary = LIEF::ELF::Parser::parse(argv[1]);
-  LIEF::ELF::Segment seg;
-  seg.type(LIEF::ELF::Segment::TYPE::LOAD);
-  // seg.content(std::vector<uint8_t>(0x100));
-  // binary->add(seg);
-  LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
-  // LIEF::logging::set_level(LIEF::logging::LEVEL::LOG_WARN);
-  // binary->get(LIEF::ELF::SEGMENT_TYPES::PT_GNU_RELRO).type(LIEF::ELF::SEGMENT_TYPES::PT_NULL);
-  LIEF::ELF::Builder::config_t config;
-  config.force_relocate = true;
+  auto binary = Parser::parse(argv[1]);
+  if (binary == nullptr) {
+    std::cerr << "Failed to parse: " << argv[1] << "\n";
+    return 1;
+  }
 
+  // Add a new data section with custom content
+  Section new_section(".lief");
+  new_section.type(Section::TYPE::PROGBITS);
+  new_section.add(Section::FLAGS::ALLOC);
+  std::vector<uint8_t> content = {'L', 'I', 'E', 'F'};
+  new_section.content(content);
+  binary->add(new_section);
+
+  // Modify RUNPATH to add a custom library search directory
+  for (DynamicEntry& entry : binary->dynamic_entries()) {
+    if (auto* runpath = entry.cast<DynamicEntryRunPath>()) {
+      std::string current = runpath->runpath();
+      if (!current.empty()) {
+        current += ':';
+      }
+      runpath->runpath(current + "/opt/custom/lib");
+      std::cout << "Updated RUNPATH: " << runpath->runpath() << "\n";
+      break;
+    }
+  }
+
+  // Write the modified binary with relocation support
+  Builder::config_t config;
+  config.force_relocate = true;
   binary->write(argv[2], config);
+
+  std::cout << "Modified binary written to: " << argv[2] << "\n";
   return 0;
 }

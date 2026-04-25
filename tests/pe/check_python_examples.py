@@ -37,7 +37,7 @@ def test_pe_authenticode_reader(
 ) -> None:
     out = tmp_path / "out.p7b"
     sample = samples_dir / Path(pe)
-    target = LIEF_PY_DIR / "authenticode" / "authenticode_reader.py"
+    target = LIEF_PY_DIR / "pe_authenticode_reader.py"
     authenticode_reader = import_from_file("authenticode_reader", target)
 
     with monkeypatch.context() as m:
@@ -67,7 +67,7 @@ def test_pe_authenticode_reader(
 )
 def test_pe_authenticode_api(monkeypatch: MonkeyPatch, pe: str) -> None:
     sample = samples_dir / Path(pe)
-    target = LIEF_PY_DIR / "authenticode" / "api_example.py"
+    target = LIEF_PY_DIR / "pe_authenticode_api_example.py"
 
     with monkeypatch.context() as m:
         m.setattr(sys, "argv", [target.name, sample.as_posix()])

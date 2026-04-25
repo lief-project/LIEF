@@ -1,27 +1,28 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Pretty-print the structure of an ELF binary.
 
-# Description
-# -----------
-# Print information about an ELF binary
+Equivalent to ``readelf`` with a selection of the most useful flags
+(``-h``, ``-S``, ``-l``, ``-d``, ``-s``, ``-r``, ``-V`` ...). The
+target file is parsed with ``lief.ELF.parse`` and the requested
+sections are rendered as formatted tables.
 
-import os
+Example:
+
+    $ python elf_reader.py -a /bin/ls
+"""
+
+import argparse
+import shutil
 import sys
 import textwrap
 import traceback
 
 import lief
 from lief import ELF
-import argparse
 
-terminal_rows, terminal_columns = 100, 110
-try:
-    terminal_rows, terminal_columns = os.popen("stty size", "r").read().split()
-except ValueError:
-    pass
-
-terminal_columns = int(terminal_columns) - 10
-terminal_rows = int(terminal_rows)
+_term_size = shutil.get_terminal_size((110, 100))
+terminal_columns = _term_size.columns - 10
+terminal_rows = _term_size.lines
 
 
 class exceptions_handler(object):
@@ -413,7 +414,6 @@ def print_information(binary):
     print("== Information ==\n")
     format_str = "{:<30} {:<30}"
     format_hex = "{:<30} 0x{:<28x}"
-    format_dec = "{:<30} {:<30d}"
     print(format_hex.format("Address base:", binary.imagebase))
     print(format_hex.format("Virtual size:", binary.virtual_size))
     print(format_str.format("PIE:", str(binary.is_pie)))
@@ -451,7 +451,6 @@ def print_sysv_hash(binary):
     sysv_hash = binary.sysv_hash
 
     format_str = "{:<30} {}"
-    format_hex = "{:<30} 0x{:<28x}"
     format_dec = "{:<30} {:<30d}"
 
     print(format_dec.format("Number of buckets:", sysv_hash.nbucket))
@@ -465,7 +464,6 @@ def print_notes(binary):
     print("== Notes ==\n")
 
     format_str = "{:<19} {}"
-    format_hex = "{:<19} 0x{:<28x}"
     format_dec = "{:<19} {:<30d}"
 
     notes = binary.notes
@@ -744,6 +742,10 @@ def main():
 
     lief.logging.set_level(args.main_verbosity)
     binary = ELF.parse(args.elf_file)
+    if binary is None:
+        print(f"Error: failed to parse '{args.elf_file}' as ELF", file=sys.stderr)
+        return 1
+
     print_information(binary)
     if args.show_all:
         do_file_header = do_section_header = do_program_header = True
@@ -804,6 +806,8 @@ def main():
     if args.show_functions:
         print_functions(binary)
 
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

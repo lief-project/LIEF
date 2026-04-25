@@ -1,17 +1,23 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
-# Description
-# -----------
-# Print information about a PE file
+"""Pretty-print the structure of a PE binary.
 
-import lief
-from lief import PE
-from lief.PE import oid_to_string
+Equivalent to ``dumpbin``/``llvm-readobj`` with a selection of the
+most useful flags. The file is parsed with ``lief.PE.parse`` and each
+requested section (DOS/optional header, sections, imports, exports,
+resources, TLS, debug, authenticode, ...) is rendered as a formatted
+table.
+
+Example:
+
+    $ python pe_reader.py -a program.exe
+"""
 
 import argparse
 import sys
 import traceback
+
+import lief
+from lief import PE
 
 
 class exceptions_handler(object):
@@ -456,8 +462,6 @@ def print_debug(binary):
 
 @exceptions_handler(Exception)
 def print_signature(binary):
-    format_str = "{:<33} {:<30}"
-    format_dec = "{:<33} {:<30d}"
     for signature in binary.signatures:
         print(signature)
 

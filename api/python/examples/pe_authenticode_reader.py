@@ -1,18 +1,26 @@
 #!/usr/bin/env python
-import lief
-from lief.PE import oid_to_string
-import argparse
-import json
-import sys
-import string
-import argparse
-import traceback
-import pathlib
+"""Detailed dump of a PE Authenticode signature (or a standalone .p7b).
 
-try:
-    from prettyprinter import pprint
-except ImportError:
-    from pprint import pprint
+Pretty-prints every attribute of an Authenticode signature: content
+info, digest algorithms, certificates, signers, authenticated and
+unauthenticated attributes (including PKCS9 counter-signatures and
+MS-specific nested signatures).
+
+Can also verify the signature and extract the raw PKCS#7 blob.
+
+Example:
+
+    $ python authenticode_reader.py --all driver.sys
+    $ python authenticode_reader.py --check --allow-expired driver.sys
+    $ python authenticode_reader.py --save out.p7b driver.sys
+"""
+
+import argparse
+import pathlib
+import sys
+import traceback
+
+import lief
 
 HAS_EXCEPTION = False
 
@@ -25,6 +33,7 @@ class exceptions_handler(object):
         self.on_except_callback = on_except_callback
 
     def __call__(self, *args, **kwargs):
+        global HAS_EXCEPTION
         if self.func is None:
             self.func = args[0]
             return self
@@ -37,8 +46,7 @@ class exceptions_handler(object):
             else:
                 print("-" * 60, file=sys.stderr)
                 print("Exception in {}: {}".format(self.func.__name__, e))
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                traceback.print_tb(exc_traceback)
+                traceback.print_exc()
                 print("-" * 60, file=sys.stderr)
 
 
@@ -193,13 +201,13 @@ def print_pkcs_counter_sig(indent: int, auth: lief.PE.PKCS9CounterSignature):
 
     if len(signer.authenticated_attributes) > 0:
         print("{}   Authenticated attributes:".format(" " * indent))
-        for auth in signer.authenticated_attributes:
-            print_attr(indent + 4, auth)
+        for sub_auth in signer.authenticated_attributes:
+            print_attr(indent + 4, sub_auth)
 
     if len(signer.unauthenticated_attributes) > 0:
         print("{}   Un-Authenticated attributes:".format(" " * indent))
-        for auth in signer.unauthenticated_attributes:
-            print_attr(indent + 4, auth)
+        for sub_auth in signer.unauthenticated_attributes:
+            print_attr(indent + 4, sub_auth)
 
 
 @exceptions_handler(Exception)
@@ -365,14 +373,9 @@ def main():
     lief.logging.set_level(args.main_verbosity)
 
     if lief.is_pe(args.file):
-        binary = None
-        try:
-            binary: lief.PE.Binary = lief.PE.parse(args.file)
-            if binary is None:
-                print("Error while parsing {}".format(args.file))
-                sys.exit(1)
-        except lief.exception as e:
-            print(e)
+        binary = lief.PE.parse(args.file)
+        if binary is None:
+            print("Error while parsing {}".format(args.file))
             sys.exit(1)
 
         if args.check_sig:

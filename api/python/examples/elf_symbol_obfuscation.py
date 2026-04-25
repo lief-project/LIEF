@@ -1,63 +1,55 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Obfuscate ``.symtab`` entries by renaming them to random strings.
 
+Replaces every static (``.symtab``) symbol name with a random
+lowercase string of the same length. Useful to hinder naive symbolic
+analysis while preserving binary layout.
 
-# In this example, we replace all symtab symbols in the .symtab
-# with a random name.
-#
-# Example:
-#
-#     >>> readelf -s ./hello_c
-#
-#     28: 0600700 0 OBJECT  LOCAL  DEFAULT 19 __JCR_LIST__
-#     29: 0400420 0 FUNC    LOCAL  DEFAULT 12 deregister_tm_clones
-#     30: 0400460 0 FUNC    LOCAL  DEFAULT 12 register_tm_clones
-#     31: 04004a0 0 FUNC    LOCAL  DEFAULT 12 __do_global_dtors_aux
-#     32: 0600920 1 OBJECT  LOCAL  DEFAULT 24 completed.6940
-#     33: 06006f8 0 OBJECT  LOCAL  DEFAULT 18 __do_global_dtors_aux_fin
-#     ...
-#
-#     >>> python elf_symbol_obfuscation ./hello_c ./hello_c.obf
-#
-#     >>> readelf -s ./hello_c.obf
-#
-#     28: 0600700 0 OBJECT  LOCAL  DEFAULT 19 xnsffdfsryna
-#     29: 0400420 0 FUNC    LOCAL  DEFAULT 12 wsadqwrubbmdugrxzwiv
-#     30: 0400460 0 FUNC    LOCAL  DEFAULT 12 wrgeecrckeskyishte
-#     31: 04004a0 0 FUNC    LOCAL  DEFAULT 12 pqhfpptwtqzuiefrwnwdk
-#     32: 0600920 1 OBJECT  LOCAL  DEFAULT 24 vwevxfvdmcrjdv
-#     33: 06006f8 0 OBJECT  LOCAL  DEFAULT 18 rksefyibghsyhbbnfikknpvzc
+Example:
 
+    $ readelf -s ./hello_c | head -3
+        29: 0400420 0 FUNC LOCAL DEFAULT 12 deregister_tm_clones
+    $ python elf_symbol_obfuscation.py ./hello_c ./hello_c.obf
+    $ readelf -s ./hello_c.obf | head -3
+        29: 0400420 0 FUNC LOCAL DEFAULT 12 wsadqwrubbmdugrxzwiv
+"""
+
+import argparse
+import random
+import string
+import sys
 
 import lief
-import sys
-import random, string
 
 
-def randomword(length):
-    return "".join(random.choice(string.ascii_lowercase) for i in range(length))
+def randomword(length: int) -> str:
+    return "".join(random.choice(string.ascii_lowercase) for _ in range(length))
 
 
-def randomize(binary, output):
-
+def randomize(binary: lief.ELF.Binary, output: str) -> int:
     symbols = binary.symtab_symbols
     if len(symbols) == 0:
-        print("No symbols")
-        return
+        print("No symbols", file=sys.stderr)
+        return 1
     for symbol in symbols:
         symbol.name = randomword(len(symbol.name))
-
     binary.write(output)
+    return 0
 
 
-def main():
-    if len(sys.argv) != 3:
-        print("Usage:", sys.argv[0], "<elf binary> <output binary>")
-        sys.exit(-1)
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("input", metavar="<elf>", help="Input ELF binary")
+    parser.add_argument("output", metavar="<out>", help="Output obfuscated binary")
+    args = parser.parse_args()
 
-    binary = lief.parse(sys.argv[1])
-    randomize(binary, sys.argv[2])
+    binary = lief.ELF.parse(args.input)
+    if binary is None:
+        print(f"Error: failed to parse '{args.input}' as ELF", file=sys.stderr)
+        return 1
+
+    return randomize(binary, args.output)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

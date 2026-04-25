@@ -1,12 +1,17 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Pretty-print the structure of an Android OAT file.
 
-# Description
-# -----------
-# Print information about a Android OAT files
+Parses an ``.oat`` file with ``lief.OAT.parse`` and renders a summary
+of the file (header, embedded DEX files, classes, methods) selected
+by command-line flags.
+
+Example:
+
+    $ python oat_reader.py -a boot.oat
+"""
 
 import argparse
-import os
+import shutil
 import sys
 import traceback
 
@@ -14,11 +19,9 @@ import lief
 from lief import OAT
 
 EXIT_STATUS = 0
-terminal_rows, terminal_columns = 100, 100
-try:
-    terminal_rows, terminal_columns = os.popen("stty size", "r").read().split()
-except ValueError:
-    pass
+_term_size = shutil.get_terminal_size((100, 100))
+terminal_columns = _term_size.columns
+terminal_rows = _term_size.lines
 
 
 class exceptions_handler(object):
@@ -51,9 +54,6 @@ class exceptions_handler(object):
 @exceptions_handler(Exception)
 def print_information(binary):
     print("== Information ==")
-    format_str = "{:<30} {:<30}"
-    format_hex = "{:<30} 0x{:<28x}"
-    format_dec = "{:<30} {:<30d}"
 
     android_version = lief.OAT.android_version(binary.header.version)
     code_name = lief.Android.code_name(android_version)
@@ -70,51 +70,28 @@ def print_information(binary):
 
 @exceptions_handler(Exception)
 def print_header(binary):
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
     print("== Header ==")
-    header = binary.header
-    print(header)
+    print(binary.header)
 
 
 @exceptions_handler(Exception)
 def print_dex_files(binary):
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
-    oat_dex_files = binary.oat_dex_files
-
     print("== Dex files ==")
-    for oat_dex in oat_dex_files:
+    for oat_dex in binary.oat_dex_files:
         print(oat_dex)
 
 
 @exceptions_handler(Exception)
 def print_classes(binary):
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
-    classes = binary.classes
-
     print("== Classes ==")
-    for cls in classes:
+    for cls in binary.classes:
         print(cls)
 
 
 @exceptions_handler(Exception)
 def print_methods(binary):
-    format_str = "{:<33} {:<30}"
-    format_hex = "{:<33} 0x{:<28x}"
-    format_dec = "{:<33} {:<30d}"
-
-    methods = binary.methods
-
     print("== Methods ==")
-    for m in methods:
+    for m in binary.methods:
         print(m)
 
 
@@ -211,6 +188,9 @@ def main():
     lief.logging.set_level(args.main_verbosity)
 
     binary = OAT.parse(args.binary)
+    if binary is None:
+        print(f"Error: failed to parse '{args.binary}' as OAT", file=sys.stderr)
+        return 1
 
     print_information(binary)
 
@@ -226,8 +206,8 @@ def main():
     if args.show_methods and len(binary.methods) > 0:
         print_methods(binary)
 
-    sys.exit(EXIT_STATUS)
+    return EXIT_STATUS
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

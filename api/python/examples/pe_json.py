@@ -1,41 +1,35 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""Dump a PE binary as JSON.
 
-# Description
-# -----------
-# Print information about a PE binary in the JSON format
-#
-# python pe_json.py C:\\windows\\explorer.exe
-#
-# {
-#   "dynamic_entries": [
-#        {
-#            "library": "libcap.so.2",
-#            "tag": "NEEDED",
-#            "value": 1
-#        },
-#        {
-#            "library": "libc.so.6",
-#            "tag": "NEEDED",
-#            "value": 74
-#        },
-# ...
+Parses a PE file and writes a pretty-printed JSON dump of the full
+structure (DOS/optional header, sections, imports, exports, resources,
+...) using ``lief.to_json``.
 
+Example:
+
+    $ python pe_json.py C:\\\\Windows\\\\explorer.exe
+"""
 
 import argparse
-import sys
-import lief
 import json
+import sys
+
+import lief
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("binary", help="PE binary")
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("binary", help="Path to a PE binary")
     args = parser.parse_args()
 
-    binary = lief.parse(args.binary)
+    binary = lief.PE.parse(args.binary)
+    if binary is None:
+        print(f"Error: failed to parse '{args.binary}' as PE", file=sys.stderr)
+        return 1
+
     json_data = json.loads(lief.to_json(binary))
     print(json.dumps(json_data, sort_keys=True, indent=4))
+    return 0
 
 
 if __name__ == "__main__":
