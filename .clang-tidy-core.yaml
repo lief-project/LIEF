@@ -41,6 +41,7 @@ Checks: [
   -misc-use-internal-linkage,
   -performance-enum-size,
   -performance-no-int-to-ptr,
+  -portability-avoid-pragma-once,
 ]
 
 HeaderFilterRegex: '.*'
