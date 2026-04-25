@@ -18,8 +18,8 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
