@@ -47,7 +47,7 @@ void create<Builder>(nb::module_& m) {
                 },
                 R"delim(
                 )delim",
-                "binary"_a, "output"_a)
+                "binary"_a.lock(), "output"_a)
     .def_static("write",
                 [] (Binary& bin, const std::string& out, Builder::config_t config) {
                   auto target = nb::overload_cast<Binary&, const std::string&, Builder::config_t>(&Builder::write);
@@ -55,7 +55,7 @@ void create<Builder>(nb::module_& m) {
                 },
                 R"delim(
                 )delim",
-                "binary"_a, "output"_a, "config"_a)
+                "binary"_a.lock(), "output"_a, "config"_a)
     .def_static("write",
                 [] (FatBinary& fat, const std::string& out) {
                   auto target = nb::overload_cast<FatBinary&, const std::string&>(&Builder::write);
@@ -63,7 +63,7 @@ void create<Builder>(nb::module_& m) {
                 },
                 R"delim(
                 )delim",
-                "fat_binary"_a, "output"_a)
+                "fat_binary"_a.lock(), "output"_a)
     .def_static("write",
                 [] (FatBinary& fat, const std::string& out, Builder::config_t config) {
                   auto target = nb::overload_cast<FatBinary&, const std::string&, Builder::config_t>(&Builder::write);
@@ -71,6 +71,6 @@ void create<Builder>(nb::module_& m) {
                 },
                 R"delim(
                 )delim",
-                "fat_binary"_a, "output"_a, "config"_a);
+                "fat_binary"_a.lock(), "output"_a, "config"_a);
 }
 }

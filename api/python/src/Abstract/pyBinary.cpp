@@ -126,7 +126,7 @@ void create<Binary>(nb::module_& m) {
     .def("remove_section",
         nb::overload_cast<const std::string&, bool>(&Binary::remove_section),
         "Remove the section with the given name"_doc,
-        "name"_a, "clear"_a = false)
+        "name"_a, "clear"_a = false, nb::lock_self())
 
     .def_prop_ro("sections",
         nb::overload_cast<>(&Binary::sections),
@@ -197,7 +197,8 @@ void create<Binary>(nb::module_& m) {
         If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
         a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
         )delim"_doc,
-        "address"_a, "patch_value"_a, "va_type"_a = Binary::VA_TYPES::AUTO)
+        "address"_a, "patch_value"_a, "va_type"_a = Binary::VA_TYPES::AUTO,
+        nb::lock_self())
 
     .def("patch_address",
         nb::overload_cast<uint64_t, uint64_t, size_t, Binary::VA_TYPES>(&Binary::patch_address),
@@ -208,7 +209,8 @@ void create<Binary>(nb::module_& m) {
         If the underlying binary is a PE, one can specify if the virtual address is a :attr:`~lief.Binary.VA_TYPES.RVA` or
         a :attr:`~lief.Binary.VA_TYPES.VA`. By default, it is set to :attr:`~lief.Binary.VA_TYPES.AUTO`.
         )delim"_doc,
-        "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = Binary::VA_TYPES::AUTO)
+        "address"_a, "patch_value"_a, "size"_a = 8, "va_type"_a = Binary::VA_TYPES::AUTO,
+        nb::lock_self())
 
 
     .def("get_content_from_virtual_address", &Binary::get_content_from_virtual_address,
@@ -409,7 +411,7 @@ void create<Binary>(nb::module_& m) {
 
     .def("load_debug_info", [] (Binary& self, const nb::PathLike& pathlike) {
         return self.load_debug_info(pathlike);
-      }, "path"_a, nb::rv_policy::reference_internal,
+      }, "path"_a, nb::lock_self(), nb::rv_policy::reference_internal,
       R"doc(
       Load and associate an external debug file (e.g., DWARF or PDB) with this
       binary.

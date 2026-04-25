@@ -266,6 +266,13 @@ void init(nb::module_& m) {
   m.attr("__is_tagged__") = bool(LIEF_TAGGED);
   m.doc() = "LIEF Python API";
 
+// This attribute defines whether LIEF was compiled without GIL
+#if defined (NB_FREE_THREADED)
+  m.attr("__free_threaded__") = true;
+#else
+  m.attr("__free_threaded__") = false;
+#endif
+
   nb::class_<LIEF::lief_version_t>(m, "lief_version_t")
     .def_rw("major", &LIEF::lief_version_t::major)
     .def_rw("minor", &LIEF::lief_version_t::minor)

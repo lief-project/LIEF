@@ -129,6 +129,7 @@ void create<TLS>(nb::module_& m) {
     .def("add_callback", &TLS::add_callback,
          "Add a new TLS callback"_doc,
          "addr"_a,
+         nb::lock_self(),
          nb::rv_policy::reference_internal)
 
     LIEF_COPYABLE(TLS)

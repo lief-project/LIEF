@@ -544,6 +544,7 @@ void create<Binary>(nb::module_& m) {
         [] (Binary& self, nb::PathLike path) { return self.write(path); },
         "Rebuild the binary and write its content in the file given in the first parameter"_doc,
         "output"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("write",
@@ -555,69 +556,74 @@ void create<Binary>(nb::module_& m) {
         The ``config`` parameter can be used to tweak the building process.
         )doc"_doc,
         "output"_a, "config"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("write_to_bytes", [] (Binary& bin, const Builder::config_t& config) -> nb::bytes {
           std::ostringstream out;
           bin.write(out, config);
           return nb::to_bytes(out.str());
-        }, "config"_a)
+        }, "config"_a, nb::lock_self())
 
     .def("write_to_bytes", [] (Binary& bin) -> nb::bytes {
           std::ostringstream out;
           bin.write(out);
           return nb::to_bytes(out.str());
-        })
+        }, nb::lock_self())
 
     .def("add",
         nb::overload_cast<const DylibCommand&>(&Binary::add),
         "Add a new " RST_CLASS_REF(lief.MachO.DylibCommand) ""_doc,
         "dylib_command"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add",
         nb::overload_cast<const SegmentCommand&>(&Binary::add),
         "Add a new " RST_CLASS_REF(lief.MachO.SegmentCommand) ""_doc,
         "segment"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add",
         nb::overload_cast<const LoadCommand&>(&Binary::add),
         "Add a new " RST_CLASS_REF(lief.MachO.LoadCommand) ""_doc,
         "load_command"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add",
         nb::overload_cast<const LoadCommand&, size_t>(&Binary::add),
         "Add a new " RST_CLASS_REF(lief.MachO.LoadCommand) " at ``index``"_doc,
         "load_command"_a, "index"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("remove",
         nb::overload_cast<const LoadCommand&>(&Binary::remove),
         "Remove a " RST_CLASS_REF(lief.MachO.LoadCommand) ""_doc,
-        "load_command"_a)
+        "load_command"_a, nb::lock_self())
 
     .def("remove",
         nb::overload_cast<LoadCommand::TYPE>(&Binary::remove),
         "Remove **all** the " RST_CLASS_REF(lief.MachO.LoadCommand) " with the given "
         "" RST_CLASS_REF(lief.MachO.LoadCommand.TYPE) ""_doc,
-        "type"_a)
+        "type"_a, nb::lock_self())
 
     .def("remove",
         nb::overload_cast<const Symbol&>(&Binary::remove),
         "Remove the given " RST_CLASS_REF(lief.MachO.Symbol)""_doc,
-        "symbol"_a)
+        "symbol"_a, nb::lock_self())
 
     .def("remove_command",
         nb::overload_cast<size_t>(&Binary::remove_command),
         "Remove the " RST_CLASS_REF(lief.MachO.LoadCommand) " at the given ``index``"_doc,
-        "index"_a)
+        "index"_a, nb::lock_self())
 
     .def("remove_section",
         nb::overload_cast<const std::string&, bool>(&Binary::remove_section),
         "Remove the section with the given name"_doc,
-        "name"_a, "clear"_a = false)
+        "name"_a, "clear"_a = false, nb::lock_self())
 
     .def("remove_section",
         nb::overload_cast<const std::string&, const std::string&, bool>(&Binary::remove_section),
@@ -625,16 +631,17 @@ void create<Binary>(nb::module_& m) {
         Remove the section from the segment with the name
         given in the first parameter and with the section's name provided in the
         second parameter.)delim"_doc,
-        "segname"_a, "secname"_a, "clear"_a = false)
+        "segname"_a, "secname"_a, "clear"_a = false, nb::lock_self())
 
     .def("remove_signature",
         nb::overload_cast<>(&Binary::remove_signature),
-        "Remove the " RST_CLASS_REF(lief.MachO.CodeSignature) " (if any)"_doc)
+        "Remove the " RST_CLASS_REF(lief.MachO.CodeSignature) " (if any)"_doc,
+        nb::lock_self())
 
     .def("remove_symbol",
         nb::overload_cast<const std::string&>(&Binary::remove_symbol),
         "Remove all symbol(s) with the given name"_doc,
-        "name"_a)
+        "name"_a, nb::lock_self())
 
     .def("can_remove",
         nb::overload_cast<const Symbol&>(&Binary::can_remove, nb::const_),
@@ -649,33 +656,35 @@ void create<Binary>(nb::module_& m) {
     .def("unexport",
         nb::overload_cast<const std::string&>(&Binary::unexport),
         "Remove the symbol from the export table"_doc,
-        "name"_a)
+        "name"_a, nb::lock_self())
 
     .def("unexport",
         nb::overload_cast<const Symbol&>(&Binary::unexport),
         "Remove the symbol from the export table"_doc,
-        "symbol"_a)
+        "symbol"_a, nb::lock_self())
 
     .def("extend",
         nb::overload_cast<const LoadCommand&, uint64_t>(&Binary::extend),
         "Extend a " RST_CLASS_REF(lief.MachO.LoadCommand) " by ``size``"_doc,
-        "load_command"_a, "size"_a)
+        "load_command"_a, "size"_a, nb::lock_self())
 
     .def("extend_segment",
         nb::overload_cast<const SegmentCommand&, size_t>(&Binary::extend_segment),
         "Extend the **content** of the given " RST_CLASS_REF(lief.MachO.SegmentCommand) " by ``size``"_doc,
-        "segment_command"_a, "size"_a)
+        "segment_command"_a, "size"_a, nb::lock_self())
 
     .def("add_section",
         nb::overload_cast<const SegmentCommand&, const Section&>(&Binary::add_section),
         "Add a new " RST_CLASS_REF(lief.MachO.Section) " in the given " RST_CLASS_REF(lief.MachO.SegmentCommand) ""_doc,
         "segment"_a, "section"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add_section",
         nb::overload_cast<const Section&>(&Binary::add_section),
         "Add a new " RST_CLASS_REF(lief.MachO.Section) " within the ``__TEXT`` segment"_doc,
         "section"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("find_library", nb::overload_cast<const std::string&>(&Binary::find_library),
@@ -689,12 +698,13 @@ void create<Binary>(nb::module_& m) {
     .def("extend_section",
         nb::overload_cast<Section&, size_t>(&Binary::extend_section),
         "Extend the **content** of the given " RST_CLASS_REF(lief.MachO.Section) " by ``size``"_doc,
-        "section"_a, "size"_a)
+        "section"_a, "size"_a, nb::lock_self())
 
     .def("add_library",
         nb::overload_cast<const std::string&>(&Binary::add_library),
         "Add a new library dependency"_doc,
         "library_name"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("get",
@@ -735,25 +745,27 @@ void create<Binary>(nb::module_& m) {
          Shift the content located right after the Load commands table.
          This operation can be used to add a new command
          )delim"_doc,
-         "value"_a)
+         "value"_a, nb::lock_self())
 
     .def("shift_linkedit",
          [] (Binary& self, size_t width) {
            return error_or(&Binary::shift_linkedit, self, width);
          },
          "Shift the position on the __LINKEDIT data by `width`"_doc,
-         "value"_a)
+         "value"_a, nb::lock_self())
 
     .def("add_exported_function",
         &Binary::add_exported_function,
         "Add a new export in the binary"_doc,
         "address"_a, "name"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add_local_symbol",
         &Binary::add_local_symbol,
         "Add a new symbol in the LC_SYMTAB"_doc,
         "address"_a, "name"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("bindings",

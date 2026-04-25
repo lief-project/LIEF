@@ -72,10 +72,11 @@ void create<FatBinary>(nb::module_& m) {
 
     .def("write", [] (FatBinary& fat, nb::PathLike path) { fat.write(path); },
         "Build a Mach-O universal binary"_doc,
-        "filename"_a)
+        "filename"_a, nb::lock_self())
 
     .def("raw", &FatBinary::raw,
-        "Build a Mach-O universal binary and return its bytes"_doc)
+        "Build a Mach-O universal binary and return its bytes"_doc,
+        nb::lock_self())
 
     .def("get", nb::overload_cast<Header::CPU_TYPE>(&FatBinary::get),
         "Gets the :class:`~.Binary` that matches the given architecture"_doc,

@@ -108,6 +108,22 @@
 :Python:
 
   * Python 3.8 is no longer supported
+  * Add support for the free-threaded Python builds.
+    The C++ core is thread safe on the few static variables,
+    and can be used when the GIL is disabled (:issue:`1255`):
+
+    .. code-block:: python
+
+      from concurrent.futures import ThreadPoolExecutor
+      import lief
+
+      def strip(path: str) -> None:
+          binary = lief.ELF.parse(path)
+          binary.strip()
+          binary.write(f"{path}.stripped")
+
+      with ThreadPoolExecutor() as pool:
+          pool.map(strip, ["/bin/ls", "/bin/cat", "/bin/echo"])
 
 
 0.17.6 - March 18th, 2026

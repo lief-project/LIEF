@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import platform
+import sysconfig
 from pathlib import Path
 from typing import Annotated, Any, Literal
 
@@ -52,7 +53,7 @@ class BuildConfig(BaseModel):
     cache: bool = True
     ninja: bool = False
     stable_abi: bool | EnvString = Field(False, alias="stable-abi")
-    free_threaded: bool | EnvString = Field(False, alias="free-threaded")
+    free_threaded: bool | EnvString | None = Field(None, alias="free-threaded")
     default_target: str = Field("pyLIEF", alias="default-target")
     parallel_jobs: int = Field(0, alias="parallel-jobs")
     compilation_flags: list[str] = Field([], alias="compilation-flags")
@@ -117,10 +118,14 @@ class BuildConfig(BaseModel):
             flags = ";".join(self.lief_extra_compilation_flags)
             out.extend((f"-DLIEF_EXTRA_FLAGS={flags}",))
 
+        free_threaded = self.free_threaded
+        if free_threaded is None:
+            free_threaded = bool(sysconfig.get_config_var("Py_GIL_DISABLED"))
+
         out.extend(
             [
                 f"-DLIEF_PYTHON_STABLE_ABI={cmake_serialize(self.stable_abi)}",
-                f"-DLIEF_PYTHON_FREE_THREADED={cmake_serialize(self.free_threaded)}",
+                f"-DLIEF_PYTHON_FREE_THREADED={cmake_serialize(free_threaded)}",
             ]
         )
 

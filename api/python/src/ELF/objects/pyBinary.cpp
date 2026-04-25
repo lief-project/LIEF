@@ -200,6 +200,7 @@ void create<Binary>(nb::module_& m) {
         See: :meth:`lief.ELF.Binary.add_pltgot_relocation`
         )delim"_doc,
         "relocation"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add_pltgot_relocation",
@@ -210,6 +211,7 @@ void create<Binary>(nb::module_& m) {
         See: :meth:`lief.ELF.Binary.add_dynamic_relocation`
         )delim"_doc,
         "relocation"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add_object_relocation",
@@ -224,6 +226,7 @@ void create<Binary>(nb::module_& m) {
         the relocation added.
         )delim"_doc,
         "relocation"_a, "section"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("pltgot_relocations",
@@ -418,12 +421,12 @@ void create<Binary>(nb::module_& m) {
     .def("patch_pltgot",
         nb::overload_cast<const std::string&, uint64_t>(&Binary::patch_pltgot),
         "Patch the imported symbol's name with the ``address``"_doc,
-        "symbol_name"_a, "address"_a)
+        "symbol_name"_a, "address"_a, nb::lock_self())
 
     .def("patch_pltgot",
         nb::overload_cast<const Symbol&, uint64_t>(&Binary::patch_pltgot),
         "Patch the imported " RST_CLASS_REF(lief.ELF.Symbol) " with the ``address``"_doc,
-        "symbol"_a, "address"_a)
+        "symbol"_a, "address"_a, nb::lock_self())
 
     .def("dynsym_idx",
         nb::overload_cast<const std::string&>(&Binary::dynsym_idx, nb::const_),
@@ -482,6 +485,7 @@ void create<Binary>(nb::module_& m) {
         &Binary::add_symtab_symbol,
         "Add a **static** " RST_CLASS_REF(lief.ELF.Symbol) " to the binary"_doc,
         "symbol"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add_dynamic_symbol",
@@ -492,6 +496,7 @@ void create<Binary>(nb::module_& m) {
         The function also takes an optional :class:`lief.ELF.SymbolVersion`
         )delim"_doc,
         "symbol"_a, "symbol_version"_a = nullptr,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("virtual_address_to_offset",
@@ -510,18 +515,21 @@ void create<Binary>(nb::module_& m) {
         the ``loaded`` parameter has to be set to ``False`` (default: ``True``)
         )delim"_doc,
         "section"_a, "loaded"_a = true, "pos"_a = Binary::SEC_INSERT_POS::AUTO,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add",
         nb::overload_cast<const Segment&, uint64_t>(&Binary::add),
         "Add a new " RST_CLASS_REF(lief.ELF.Segment) " in the binary"_doc,
         "segment"_a, "base"_a = 0,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("add",
         nb::overload_cast<const Note&>(&Binary::add),
         "Add a new " RST_CLASS_REF(lief.ELF.Note) " in the binary"_doc,
         "note"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("replace",
@@ -535,42 +543,45 @@ void create<Binary>(nb::module_& m) {
             The ``original_segment`` is no longer valid after this function
         )delim"_doc,
         "new_segment"_a, "original_segment"_a, "base"_a = 0,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("extend",
         nb::overload_cast<const Segment&, uint64_t>(&Binary::extend),
         "Extend the given " RST_CLASS_REF(lief.ELF.Segment) " by the given size"_doc,
         "segment"_a, "size"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("extend",
         nb::overload_cast<const Section&, uint64_t>(&Binary::extend),
         "Extend the given " RST_CLASS_REF(lief.ELF.Section) " by the given size"_doc,
         "segment"_a, "size"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("remove",
         nb::overload_cast<const DynamicEntry&>(&Binary::remove),
         "Remove the given " RST_CLASS_REF(lief.ELF.DynamicEntry) " from the dynamic table"_doc,
-        "dynamic_entry"_a)
+        "dynamic_entry"_a, nb::lock_self())
 
     .def("remove",
         nb::overload_cast<DynamicEntry::TAG>(&Binary::remove),
         "Remove **all** the " RST_CLASS_REF(lief.ELF.DynamicEntry) " with the given " RST_CLASS_REF(lief.ELF.DynamicEntry.TAG) ""_doc,
-        "tag"_a)
+        "tag"_a, nb::lock_self())
 
     .def("remove",
         nb::overload_cast<const Section&, bool>(&Binary::remove),
         "Remove the given " RST_CLASS_REF(lief.ELF.Section) ". The ``clear`` parameter specifies whether or not "
         "we must fill its content with ``0`` before removing"_doc,
-        "section"_a, "clear"_a = false)
+        "section"_a, "clear"_a = false, nb::lock_self())
 
     .def("remove",
         nb::overload_cast<const Segment&, bool>(&Binary::remove),
         R"doc(
         Remove the segment provided in parameter. If ``clear`` is set, the
         original content of the segment will be filled with zeros before removal.
-        )doc"_doc, "segment"_a, "clear"_a = false)
+        )doc"_doc, "segment"_a, "clear"_a = false, nb::lock_self())
 
 
     .def("remove",
@@ -578,17 +589,17 @@ void create<Binary>(nb::module_& m) {
         R"doc(
         Remove **all** segments with the given type. If ``clear`` is set, the
         original content of the segment will be filled with zeros before removal.
-        )doc"_doc, "type"_a, "clear"_a = false)
+        )doc"_doc, "type"_a, "clear"_a = false, nb::lock_self())
 
     .def("remove",
         nb::overload_cast<const Note&>(&Binary::remove),
         "Remove the given " RST_CLASS_REF(lief.ELF.Note) ""_doc,
-        "note"_a)
+        "note"_a, nb::lock_self())
 
     .def("remove",
         nb::overload_cast<Note::TYPE>(&Binary::remove),
         "Remove **all** the " RST_CLASS_REF(lief.ELF.Note) " with the given " RST_CLASS_REF(lief.ELF.Note.TYPE) ""_doc,
-        "type"_a)
+        "type"_a, nb::lock_self())
 
     .def_prop_ro("has_notes",
         &Binary::has_notes,
@@ -601,17 +612,18 @@ void create<Binary>(nb::module_& m) {
 
     .def("strip",
         &Binary::strip,
-        "Strip the binary"_doc)
+        "Strip the binary"_doc, nb::lock_self())
 
     .def("permute_dynamic_symbols",
         &Binary::permute_dynamic_symbols,
         "Apply the given permutation on the dynamic symbols table"_doc,
-        "permutation"_a)
+        "permutation"_a, nb::lock_self())
 
     .def("write",
         [] (Binary& self, nb::PathLike path) { return self.write(path); },
         "Rebuild the binary and write it in a file"_doc,
         "output"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("write",
@@ -620,19 +632,20 @@ void create<Binary>(nb::module_& m) {
         },
         "Rebuild the binary with the given configuration and write it in a file"_doc,
         "output"_a, "config"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("write_to_bytes", [] (Binary& bin, const Builder::config_t& config) -> nb::bytes {
           std::ostringstream out;
           bin.write(out, config);
           return nb::to_bytes(out.str());
-        }, "config"_a)
+        }, "config"_a, nb::lock_self())
 
     .def("write_to_bytes", [] (Binary& bin) -> nb::bytes {
           std::ostringstream out;
           bin.write(out);
           return nb::to_bytes(out.str());
-        })
+        }, nb::lock_self())
 
     .def_prop_ro("last_offset_section",
         &Binary::last_offset_section,
@@ -649,7 +662,7 @@ void create<Binary>(nb::module_& m) {
     .def("add_library",
         &Binary::add_library,
         "Add a library with the given name as dependency"_doc,
-        "library_name"_a)
+        "library_name"_a, nb::lock_self())
 
     .def("has_library",
         &Binary::has_library,
@@ -659,7 +672,7 @@ void create<Binary>(nb::module_& m) {
     .def("remove_library",
         &Binary::remove_library,
         "Remove the given library"_doc,
-        "library_name"_a)
+        "library_name"_a, nb::lock_self())
 
     .def("get_library",
         nb::overload_cast<const std::string&>(&Binary::get_library),
@@ -726,32 +739,38 @@ void create<Binary>(nb::module_& m) {
 
     .def("remove_symtab_symbol",
         nb::overload_cast<Symbol*>(&Binary::remove_symtab_symbol),
-        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.symtab`` section"_doc)
+        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.symtab`` section"_doc,
+        nb::lock_self())
 
     .def("remove_dynamic_symbol",
         nb::overload_cast<Symbol*>(&Binary::remove_dynamic_symbol),
-        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.dynsym`` section"_doc)
+        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.dynsym`` section"_doc,
+        nb::lock_self())
 
     .def("remove_dynamic_symbol",
         nb::overload_cast<const std::string&>(&Binary::remove_dynamic_symbol),
-        "Remove the " RST_CLASS_REF(lief.ELF.Symbol) " with the name given in parameter from the ``.dynsym`` section"_doc)
+        "Remove the " RST_CLASS_REF(lief.ELF.Symbol) " with the name given in parameter from the ``.dynsym`` section"_doc,
+        nb::lock_self())
 
     .def("add_exported_function",
         &Binary::add_exported_function,
         "Create a symbol for the function at the given ``address`` and create an export"_doc,
         "address"_a, "name"_a = "",
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("export_symbol",
         nb::overload_cast<const Symbol&>(&Binary::export_symbol),
         "Export the given symbol and create an entry if it doesn't exist"_doc,
         "symbol"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("export_symbol",
         nb::overload_cast<const std::string&, uint64_t>(&Binary::export_symbol),
         "Export the symbol with the given name and create an entry if it doesn't exist"_doc,
         "symbol_name"_a, "value"_a = 0,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("get_relocation",
@@ -824,7 +843,7 @@ void create<Binary>(nb::module_& m) {
          segments table. Upon successful relocation, the function returns
          the offset of the relocated segments table. Otherwise, if the function
          fails, it returns 0
-         )delim"_doc, "type"_a = Binary::PHDR_RELOC::AUTO)
+         )delim"_doc, "type"_a = Binary::PHDR_RELOC::AUTO, nb::lock_self())
 
     .def("get_relocated_dynamic_array", &Binary::get_relocated_dynamic_array,
       R"doc(
@@ -851,7 +870,7 @@ void create<Binary>(nb::module_& m) {
 
           To maintain consistency, this function also removes versions associated
           with dynamic symbols that are linked to the specified library name.
-      )doc"_doc, "libname"_a
+      )doc"_doc, "libname"_a, nb::lock_self()
     )
 
     .def(nb::self += Segment(), nb::rv_policy::reference_internal)

@@ -54,7 +54,8 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
 
     .def("add_auxiliary_requirement",
         static_cast<SymbolVersionAuxRequirement& (SymbolVersionRequirement::*)(const SymbolVersionAuxRequirement&)>(&SymbolVersionRequirement::add_aux_requirement),
-        "Add an auxiliary version requirement to the existing entries"_doc)
+        "Add an auxiliary version requirement to the existing entries"_doc,
+        nb::lock_self())
 
     .def("find_aux", nb::overload_cast<const std::string&>(&SymbolVersionRequirement::find_aux),
         R"doc(
@@ -74,7 +75,7 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
             :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is responsible
             to ensure that the auxiliary requirement is no longer used in the
             ELF binary (e.g. in :class:`~.SymbolVersion`)
-        )doc"_doc, "name"_a)
+        )doc"_doc, "name"_a, nb::lock_self())
 
     .def("remove_aux_requirement", nb::overload_cast<SymbolVersionAuxRequirement&>(&SymbolVersionRequirement::remove_aux_requirement),
         R"doc(
@@ -87,7 +88,7 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
             :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is responsible
             to ensure that the auxiliary requirement is no longer used in the
             ELF binary (e.g. in :class:`~.SymbolVersion`)
-        )doc"_doc, "aux"_a)
+        )doc"_doc, "aux"_a, nb::lock_self())
 
     LIEF_DEFAULT_STR(SymbolVersionRequirement);
 }

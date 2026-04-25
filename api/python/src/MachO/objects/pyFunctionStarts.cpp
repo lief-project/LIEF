@@ -60,7 +60,7 @@ void create<FunctionStarts>(nb::module_& m) {
 
     .def("add_function", &FunctionStarts::add_function,
       "Add a new function"_doc,
-      "address"_a)
+      "address"_a, nb::lock_self())
 
     .def_prop_ro("content",
         nb::overload_cast<>(&FunctionStarts::content, nb::const_),

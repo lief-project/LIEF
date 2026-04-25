@@ -8,7 +8,11 @@ import pytest
 CWD = Path(__file__).parent
 
 
-def run(junit_xml: Optional[str] = None, skip_slow: bool = False):
+def run(
+    junit_xml: Optional[str] = None,
+    skip_slow: bool = False,
+    parallel_threads: int | None = None,
+):
     args = [
         str(e)
         for e in [
@@ -36,6 +40,9 @@ def run(junit_xml: Optional[str] = None, skip_slow: bool = False):
     if skip_slow:
         args.append("--skip-slow")
 
+    if parallel_threads is not None:
+        args.append(f"--parallel-threads={parallel_threads}")
+
     retcode = pytest.main(args)
 
     print(f"Retcode: {retcode}")
@@ -48,6 +55,8 @@ def main():
         "--junit-xml", metavar="JUNIT_XML", dest="junit_xml", default=None, type=str
     )
 
+    parser.add_argument("--parallel-threads", default=None, type=int)
+
     parser.add_argument(
         "--skip-slow",
         action="store_true",
@@ -55,7 +64,7 @@ def main():
         help="Skip slow tests",
     )
     args = parser.parse_args()
-    run(args.junit_xml, args.skip_slow)
+    run(args.junit_xml, args.skip_slow, args.parallel_threads)
 
 
 if __name__ == "__main__":

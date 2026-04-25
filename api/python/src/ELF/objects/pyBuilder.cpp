@@ -77,7 +77,8 @@ void create<Builder>(nb::module_& m) {
         [] (Builder& self) {
           return self.build();
         },
-        "Perform the build of the provided ELF binary"_doc)
+        "Perform the build of the provided ELF binary"_doc,
+        nb::lock_self())
 
     .def_prop_ro("config", &Builder::config,
         "Configuration of the builder"_doc,
@@ -86,11 +87,12 @@ void create<Builder>(nb::module_& m) {
      .def("write",
         nb::overload_cast<const std::string&>(&Builder::write, nb::const_),
         "Write the build result into the ``output`` file"_doc,
-        "output"_a)
+        "output"_a, nb::lock_self())
 
     .def("get_build",
         &Builder::get_build,
         "Return the build result as a ``list`` of bytes"_doc,
+        nb::lock_self(),
         nb::rv_policy::reference_internal);
 
 }

@@ -89,6 +89,30 @@ bindings use ``config-default.toml`` in the Python binding directory:
 
    $ PYLIEF_CONF=/tmp/my-custom.toml pip install .
 
+.. _lief_free_threaded:
+
+Free-threaded Python
+~~~~~~~~~~~~~~~~~~~~
+
+Since LIEF 1.0.0, the Python bindings can be compiled against the free-threaded
+Python builds. This is controlled through the
+``free-threaded`` flag of the ``[lief.build]`` section of the configuration:
+
+.. code-block:: toml
+
+  [lief.build]
+  type          = "Release"
+  free-threaded = true
+
+.. warning::
+
+  When MbedTLS is resolved externally (``LIEF_OPT_MBEDTLS_EXTERNAL=ON``), you
+  must make sure that the provided build enables threading support. LIEF
+  cannot tweak the threading configuration in that case.
+
+At runtime, you can check whether the currently loaded extension was compiled
+with free-threading support through :attr:`lief.__free_threaded__`.
+
 .. _lief_debug:
 
 Debugging

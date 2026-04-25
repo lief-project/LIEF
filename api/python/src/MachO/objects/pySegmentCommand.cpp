@@ -152,6 +152,7 @@ void create<SegmentCommand>(nb::module_& m) {
     .def("add_section",
         nb::overload_cast<const Section&>(&SegmentCommand::add_section),
         "section"_a,
+        nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("get_section",

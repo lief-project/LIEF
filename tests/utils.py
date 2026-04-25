@@ -7,6 +7,7 @@ import re
 import stat
 import subprocess
 import sys
+import sysconfig
 import time
 from functools import lru_cache, wraps
 from pathlib import Path
@@ -466,3 +467,8 @@ def convert_size(size_bytes: int) -> str:
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
     return f"{s} {size_name[i]}"
+
+
+def is_free_threaded() -> bool:
+    "Check if the current interpreter supports free-threading"
+    return sysconfig.get_config_var("Py_GIL_DISABLED") == "1" and lief.__free_threaded__

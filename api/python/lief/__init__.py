@@ -6,17 +6,18 @@ if len(__path__) > 0 and __path__[0] not in sys.path:
     from . import _lief  # type: ignore
     from ._lief import *  # type: ignore
     from ._lief import (  # type: ignore
-        __version__,
-        __tag__,
         __commit__,
-        __is_tagged__,
         __extended__,
+        __free_threaded__,
+        __is_tagged__,
+        __tag__,
+        __version__,
     )
 
     if __extended__:
         from ._lief_extended import (  # type: ignore
-            __LIEF_MAIN_COMMIT__,
             __LIEF_EXTENDED_VERSION_STR__,
+            __LIEF_MAIN_COMMIT__,
             __extended_version__,
         )
 

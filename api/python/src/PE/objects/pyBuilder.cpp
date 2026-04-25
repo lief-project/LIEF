@@ -136,18 +136,18 @@ void create<Builder>(nb::module_& m) {
         [] (Builder& self) {
           return error_or(static_cast<ok_error_t(Builder::*)()>(&Builder::build), self);
         },
-        "Perform the build process"_doc)
+        "Perform the build process"_doc, nb::lock_self())
 
     .def("write",
         static_cast<void (Builder::*)(const std::string&) const>(&Builder::write),
         "Write the build result into the ``output`` file"_doc,
-        "output"_a)
+        "output"_a, nb::lock_self())
 
     .def("raw_bytes", [] (Builder& self) {
           std::ostringstream out;
           self.write(out);
           return nb::to_bytes(out.str());
-        })
+        }, nb::lock_self())
     ;
 
 }
