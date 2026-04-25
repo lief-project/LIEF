@@ -250,25 +250,6 @@ std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   return result;
 }
 
-// Relocations
-Binary::it_relocations Binary::relocations() {
-  relocations_t result;
-  for (SegmentCommand* segment : segments_) {
-    std::transform(segment->relocations_.begin(), segment->relocations_.end(),
-                   std::inserter(result, result.begin()),
-                   [](const std::unique_ptr<Relocation>& r) { return r.get(); });
-  }
-
-  for (Section* section : sections_) {
-    std::transform(section->relocations_.begin(), section->relocations_.end(),
-                   std::inserter(result, result.begin()),
-                   [](const std::unique_ptr<Relocation>& r) { return r.get(); });
-  }
-
-  relocations_ = std::move(result);
-  return relocations_;
-}
-
 Binary::it_const_relocations Binary::relocations() const {
   relocations_t result;
   for (const SegmentCommand* segment : segments_) {
@@ -283,7 +264,10 @@ Binary::it_const_relocations Binary::relocations() const {
                    [](const std::unique_ptr<Relocation>& r) { return r.get(); });
   }
 
-  relocations_ = std::move(result);
+  {
+    std::scoped_lock lock(mu_);
+    relocations_ = std::move(result);
+  }
   return relocations_;
 }
 

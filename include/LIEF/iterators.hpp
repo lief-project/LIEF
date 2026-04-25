@@ -43,6 +43,9 @@ using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
 template<class T, typename U = typename decay_t<T>::value_type,
          class ITERATOR_T = typename decay_t<T>::iterator>
 class ref_iterator {
+  template<class, typename, class>
+  friend class ref_iterator;
+
   public:
   using iterator_category = std::bidirectional_iterator_tag;
   using value_type = decay_t<U>;
@@ -72,6 +75,35 @@ class ref_iterator {
     distance_ = other.distance_;
     std::advance(it_, distance_);
     return *this;
+  }
+
+  template<class T2, typename U2, class IT2,
+           typename = typename std::enable_if<
+               !std::is_same<ref_iterator, ref_iterator<T2, U2, IT2>>::value &&
+               std::is_same<decay_t<T>, decay_t<T2>>::value
+           >::type>
+  ref_iterator(const ref_iterator<T2, U2, IT2>& other) :
+    container_{
+        const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(other.container_)
+    },
+    it_{std::begin(container_)},
+    distance_{other.distance_} {
+    std::advance(it_, distance_);
+  }
+
+  template<class T2, typename U2, class IT2,
+           typename = typename std::enable_if<
+               !std::is_same<ref_iterator, ref_iterator<T2, U2, IT2>>::value &&
+               std::is_same<decay_t<T>, decay_t<T2>>::value
+           >::type>
+  // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
+  ref_iterator(ref_iterator<T2, U2, IT2>&& other) noexcept :
+    container_{const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(
+        std::forward<T2>(other.container_)
+    )},
+    it_{std::begin(container_)},
+    distance_{other.distance_} {
+    std::advance(it_, distance_);
   }
 
   ~ref_iterator() = default;

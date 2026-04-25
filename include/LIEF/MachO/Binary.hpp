@@ -20,6 +20,7 @@
 #include <map>
 #include <set>
 #include <memory>
+#include <mutex>
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/Header.hpp"
@@ -328,7 +329,10 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return an iterator over the MachO::Relocation
-  it_relocations relocations() LIEF_LIFETIMEBOUND;
+  it_relocations relocations() LIEF_LIFETIMEBOUND {
+    return static_cast<const Binary*>(this)->relocations();
+  }
+
   it_const_relocations relocations() const LIEF_LIFETIMEBOUND;
 
   /// Reconstruct the binary object and write the result in the given `filename`
@@ -1194,6 +1198,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::vector<uint8_t> overlay_;
   std::vector<std::unique_ptr<IndirectBindingInfo>> indirect_bindings_;
   fileset_info_t fileset_info_;
+  mutable std::mutex mu_;
 };
 
 } // namespace MachO
