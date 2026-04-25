@@ -14,4 +14,6 @@
  */
 #pragma once
 
+namespace LIEF {
 void mbedtls_init();
+}

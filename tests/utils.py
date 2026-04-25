@@ -470,5 +470,5 @@ def convert_size(size_bytes: int) -> str:
 
 
 def is_free_threaded() -> bool:
-    "Check if the current interpreter supports free-threading"
+    """Check if the current interpreter supports free-threading"""
     return sysconfig.get_config_var("Py_GIL_DISABLED") == "1" and lief.__free_threaded__

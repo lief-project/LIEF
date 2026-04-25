@@ -17,7 +17,6 @@
 
 #include <mutex>
 #include <condition_variable>
-#include <cassert>
 #include <mbedtls/threading.h>
 
 inline auto* get_mu(mbedtls_platform_mutex_t* mu) {

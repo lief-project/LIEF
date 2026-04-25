@@ -414,8 +414,8 @@ void ResourcesManager::change_icon(const ResourceIcon& original,
 }
 
 ResourcesManager::it_const_dialogs ResourcesManager::dialogs() const {
-  static std::mutex DIAG_MU;
-  std::scoped_lock lock(DIAG_MU);
+  static std::mutex DIALOG_CACHE_MU;
+  std::scoped_lock lock(DIALOG_CACHE_MU);
   dialogs_.clear();
   const ResourceNode* dialog_node = get_node_type(TYPE::DIALOG);
   if (dialog_node == nullptr) {

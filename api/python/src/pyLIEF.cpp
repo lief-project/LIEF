@@ -266,7 +266,7 @@ void init(nb::module_& m) {
   m.attr("__is_tagged__") = bool(LIEF_TAGGED);
   m.doc() = "LIEF Python API";
 
-// This attribute defines whether LIEF was compiled without GIL
+// This attribute reflects whether LIEF was compiled with free-threading support
 #if defined (NB_FREE_THREADED)
   m.attr("__free_threaded__") = true;
 #else

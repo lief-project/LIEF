@@ -128,7 +128,7 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
   )
   if (LIEF_PYTHON_FREE_THREADED)
     target_compile_definitions(LIB_LIEF PRIVATE
-      # These '#define' have an impact at compile time.
+      # these must be set at LIB_LIEF compile time to be forwarded to MbedTLS
       -DMBEDTLS_THREADING_C
       -DMBEDTLS_THREADING_ALT
     )
@@ -142,7 +142,8 @@ else()
   target_link_libraries(LIB_LIEF PRIVATE
                         MbedTLS::tfpsacrypto MbedTLS::mbedx509)
   if (LIEF_PYTHON_FREE_THREADED)
-    message(WARNING "Python free-threaded needs MbedTLS with threading support")
+    message(WARNING "Python free-threading requires the external MbedTLS to have \
+      been built with threading support. LIEF cannot enforce this.")
   endif()
 endif()
 

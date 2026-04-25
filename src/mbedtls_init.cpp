@@ -29,6 +29,7 @@
   #endif
 #endif
 
+namespace LIEF {
 void mbedtls_init() {
   static std::once_flag ONCE;
   std::call_once(ONCE, [] {
@@ -38,4 +39,5 @@ void mbedtls_init() {
     }
     std::atexit(mbedtls_psa_crypto_free);
   });
+}
 }

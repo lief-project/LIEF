@@ -109,7 +109,7 @@
 
   * Python 3.8 is no longer supported
   * Add support for the free-threaded Python builds.
-    The C++ core is thread safe on the few static variables,
+    The C++ core is now thread-safe with respect to its few static variables,
     and can be used when the GIL is disabled (:issue:`1255`):
 
     .. code-block:: python
