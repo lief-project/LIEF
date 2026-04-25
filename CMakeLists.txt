@@ -126,10 +126,24 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
                              ${MBEDTLS_INCLUDE_DIRS}
                             "${MBEDTLS_SOURCE_DIR}/library"
   )
+  if (LIEF_PYTHON_FREE_THREADED)
+    target_compile_definitions(LIB_LIEF PRIVATE
+      # These '#define' have an impact at compile time.
+      -DMBEDTLS_THREADING_C
+      -DMBEDTLS_THREADING_ALT
+    )
+  endif()
+
+  target_compile_definitions(LIB_LIEF PRIVATE
+    -DTF_PSA_CRYPTO_USER_CONFIG_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config/mbedtls/psa_config.h"
+  )
 else()
   find_package(MbedTLS 4.0.0 REQUIRED)
   target_link_libraries(LIB_LIEF PRIVATE
                         MbedTLS::tfpsacrypto MbedTLS::mbedx509)
+  if (LIEF_PYTHON_FREE_THREADED)
+    message(WARNING "Python free-threaded needs MbedTLS with threading support")
+  endif()
 endif()
 
 target_compile_definitions(LIB_LIEF PRIVATE

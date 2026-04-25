@@ -54,7 +54,7 @@
 
 #include "logging.hpp"
 #include "internal_utils.hpp"
-
+#include "mbedtls_init.hpp"
 
 namespace LIEF::PE {
 
@@ -107,15 +107,7 @@ result<Signature> SignatureParser::parse(BinaryStream& stream, bool skip_header)
 }
 
 result<Signature> SignatureParser::parse_signature(BinaryStream& stream) {
-  static psa_status_t PSA_STATUS = [] {
-    std::atexit(mbedtls_psa_crypto_free);
-    return psa_crypto_init();
-  }();
-
-
-  if (PSA_STATUS != PSA_SUCCESS) {
-    LIEF_WARN("psa_crypto_init() didn't succeed: {}", (int)PSA_STATUS);
-  }
+  mbedtls_init();
 
   Signature signature;
   if (VectorStream::classof(stream)) {

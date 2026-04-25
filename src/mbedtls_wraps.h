@@ -37,6 +37,10 @@ extern "C" {
 #include <mbedtls/pk.h>
 #include <mbedtls/oid.h>
 
+#if defined(MBEDTLS_THREADING_C)
+#include "mbedtls/threading.h"
+#endif
+
 static_assert(MBEDTLS_VERSION_NUMBER == 0x04000000, "Expecting mbedtls 4.0.0");
 
 // From: tf-psa-crypto/include/mbedtls/private/pk_private.h

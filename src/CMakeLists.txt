@@ -12,6 +12,8 @@ target_sources(LIB_LIEF PRIVATE
   utils.cpp
   range.cpp
   visitors/hash.cpp
+  threading_alt.cpp
+  mbedtls_init.cpp
 )
 
 add_subdirectory(BinaryStream)
@@ -70,4 +72,3 @@ endif()
 if(NOT LIEF_ASM)
   add_subdirectory(asm)
 endif()
-
