@@ -353,6 +353,14 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
       return *mapping_.insert({name_str, unit_.create_generic_type(name_str)})
                   .first->second;
     }
+
+    case FragmentTypeClass:
+    {
+      BN_ERR("Not supported: FragmentTypeClass");
+      // Fallback to a 'void'
+      std::unique_ptr<dw::editor::Type> void_ty = unit_.create_void_type();
+      return *mapping_.insert({name_str, std::move(void_ty)}).first->second;
+    }
   }
 }
 
