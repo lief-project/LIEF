@@ -104,6 +104,10 @@
 :Extended:
 
   * Use LLVM ``22.x``
+  * Add support to directly download a package from the **History**:
+
+  .. image:: ./_static/lief-extended-history-link.webp
+    :scale: 50 %
 
 :Python:
 

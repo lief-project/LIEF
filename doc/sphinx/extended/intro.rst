@@ -64,6 +64,13 @@ To access the extended version, you must **oauth-login** with **GitHub** here: |
 Once logged in, you can download the package of your choice
 (e.g., LIEF Extended - Python 3.10 for macOS arm64).
 
+
+.. admonition:: Email
+  :class: warning
+
+  If you don't receive the download email, you can download the package directly
+  from your **History** section.
+
 Versioning
 **********
 
