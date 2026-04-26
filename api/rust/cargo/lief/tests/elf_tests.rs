@@ -138,8 +138,8 @@ fn explore_elf(name: &str, elf: &lief::elf::Binary) {
         format!("{entry:?}");
 
         match entry {
-            dynamic::Entries::Generic(gen) => {
-                format!("{:?}: {}", gen.tag(), gen.value());
+            dynamic::Entries::Generic(generic) => {
+                format!("{:?}: {}", generic.tag(), generic.value());
             }
             dynamic::Entries::Library(lib) => {
                 format!("{:?}: {} {}", lib.tag(), lib.value(), lib.name());
