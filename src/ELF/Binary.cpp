@@ -1853,67 +1853,81 @@ void Binary::shift_segments(uint64_t from, uint64_t shift) {
   }
 }
 
+static void do_dynamic_entry_shift(uint64_t from, uint64_t shift, DynamicEntry &entry, Header::CLASS binary_type) {
+  switch (entry.tag()) {
+    case DynamicEntry::TAG::PLTGOT:
+    case DynamicEntry::TAG::HASH:
+    case DynamicEntry::TAG::GNU_HASH:
+    case DynamicEntry::TAG::STRTAB:
+    case DynamicEntry::TAG::SYMTAB:
+    case DynamicEntry::TAG::RELA:
+    case DynamicEntry::TAG::RELR:
+    case DynamicEntry::TAG::REL:
+    case DynamicEntry::TAG::JMPREL:
+    case DynamicEntry::TAG::INIT:
+    case DynamicEntry::TAG::FINI:
+    case DynamicEntry::TAG::VERSYM:
+    case DynamicEntry::TAG::VERDEF:
+    case DynamicEntry::TAG::VERNEED:
+    case DynamicEntry::TAG::TLSDESC_PLT:
+    case DynamicEntry::TAG::TLSDESC_GOT:
+    case DynamicEntry::TAG::ANDROID_REL:
+    case DynamicEntry::TAG::ANDROID_RELA:
+    case DynamicEntry::TAG::ANDROID_RELR:
+    {
+      if (entry.value() >= from) {
+        entry.value(entry.value() + shift);
+      }
+      return;
+    }
+
+    case DynamicEntry::TAG::INIT_ARRAY:
+    case DynamicEntry::TAG::FINI_ARRAY:
+    case DynamicEntry::TAG::PREINIT_ARRAY:
+    {
+      DynamicEntryArray::array_t& array =
+          entry.as<DynamicEntryArray>()->array();
+      for (uint64_t& address : array) {
+        if (address >= from) {
+          if ((binary_type == Header::CLASS::ELF32 &&
+               static_cast<int32_t>(address) > 0) ||
+              (binary_type == Header::CLASS::ELF64 &&
+               static_cast<int64_t>(address) > 0))
+          {
+            address += shift;
+          }
+        }
+      }
+
+      if (entry.value() >= from) {
+        entry.value(entry.value() + shift);
+      }
+      return;
+    }
+
+    case DynamicEntry::TAG::ANDROID_RELASZ:
+    case DynamicEntry::TAG::ANDROID_RELRCOUNT:
+    case DynamicEntry::TAG::ANDROID_RELRENT:
+    case DynamicEntry::TAG::ANDROID_RELRSZ:
+    case DynamicEntry::TAG::ANDROID_RELSZ:
+    case DynamicEntry::TAG::ANDROID_REL_SIZE:
+    {
+      // Explicitly annotate the entry types that don't need shifting. We want to warn if we miss something.
+      return;
+    }
+  }
+
+  // The lack of a 'default' option in the above cases should also warn at build-time if this is reachable
+  // with a known enum value.
+  LIEF_WARN("Shifting behavior of dynamic entry {} not defined", to_string(entry.tag()));
+}
+
 void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("Shifting dynamic entries by {:#x} from {:#x}", shift, from);
 
   for (std::unique_ptr<DynamicEntry>& entry : dynamic_entries_) {
     LIEF_DEBUG("[BEFORE] {}", to_string(*entry));
-    switch (entry->tag()) {
-      case DynamicEntry::TAG::PLTGOT:
-      case DynamicEntry::TAG::HASH:
-      case DynamicEntry::TAG::GNU_HASH:
-      case DynamicEntry::TAG::STRTAB:
-      case DynamicEntry::TAG::SYMTAB:
-      case DynamicEntry::TAG::RELA:
-      case DynamicEntry::TAG::RELR:
-      case DynamicEntry::TAG::REL:
-      case DynamicEntry::TAG::JMPREL:
-      case DynamicEntry::TAG::INIT:
-      case DynamicEntry::TAG::FINI:
-      case DynamicEntry::TAG::VERSYM:
-      case DynamicEntry::TAG::VERDEF:
-      case DynamicEntry::TAG::VERNEED:
-      case DynamicEntry::TAG::TLSDESC_PLT:
-      case DynamicEntry::TAG::TLSDESC_GOT:
-      case DynamicEntry::TAG::ANDROID_REL:
-      case DynamicEntry::TAG::ANDROID_RELA:
-      case DynamicEntry::TAG::ANDROID_RELR:
-      {
-        if (entry->value() >= from) {
-          entry->value(entry->value() + shift);
-        }
-        break;
-      }
-
-      case DynamicEntry::TAG::INIT_ARRAY:
-      case DynamicEntry::TAG::FINI_ARRAY:
-      case DynamicEntry::TAG::PREINIT_ARRAY:
-      {
-        DynamicEntryArray::array_t& array =
-            entry->as<DynamicEntryArray>()->array();
-        for (uint64_t& address : array) {
-          if (address >= from) {
-            if ((type() == Header::CLASS::ELF32 &&
-                 static_cast<int32_t>(address) > 0) ||
-                (type() == Header::CLASS::ELF64 &&
-                 static_cast<int64_t>(address) > 0))
-            {
-              address += shift;
-            }
-          }
-        }
-
-        if (entry->value() >= from) {
-          entry->value(entry->value() + shift);
-        }
-        break;
-      }
-
-      default:
-      {
-        // LIEF_DEBUG("{} not supported", to_string(entry->tag()));
-      }
-    }
+    do_dynamic_entry_shift(from, shift, *entry, type());
     LIEF_DEBUG("[AFTER ] {}", to_string(*entry));
   }
 }
