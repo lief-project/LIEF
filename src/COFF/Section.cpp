@@ -120,30 +120,30 @@ std::string Section::to_string() const {
   fullname_hex.reserve(name().size());
   std::transform(fullname().begin(), fullname().end(),
                  std::back_inserter(fullname_hex),
-                 [](const char c) { return format("{:02x}", c); });
+                 [](const char c) { return fmt::format("{:02x}", c); });
 
   if (const String* coff_str = coff_string()) {
-    os << format("{:{}} {} ({}, {})\n", "Name:", WIDTH, name(),
-                 join(fullname_hex, " "), coff_str->str());
+    os << fmt::format("{:{}} {} ({}, {})\n", "Name:", WIDTH, name(),
+                 fmt::join(fullname_hex, " "), coff_str->str());
   } else {
-    os << format("{:{}} {} ({})\n", "Name:", WIDTH, name(),
-                 join(fullname_hex, " "));
+    os << fmt::format("{:{}} {} ({})\n", "Name:", WIDTH, name(),
+                 fmt::join(fullname_hex, " "));
   }
 
-  os << format("{:{}} {:#x}\n", "Virtual Size", WIDTH, virtual_size())
-     << format("{:{}} {:#x}\n", "Virtual Address", WIDTH, virtual_address())
-     << format("{:{}} {:#x}\n", "Size of raw data", WIDTH, sizeof_raw_data())
-     << format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH, pointerto_raw_data())
-     << format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
+  os << fmt::format("{:{}} {:#x}\n", "Virtual Size", WIDTH, virtual_size())
+     << fmt::format("{:{}} {:#x}\n", "Virtual Address", WIDTH, virtual_address())
+     << fmt::format("{:{}} {:#x}\n", "Size of raw data", WIDTH, sizeof_raw_data())
+     << fmt::format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH, pointerto_raw_data())
+     << fmt::format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
                pointerto_raw_data(), pointerto_raw_data() + sizeof_raw_data())
-     << format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH,
                pointerto_relocation())
-     << format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH,
                pointerto_line_numbers())
-     << format("{:{}} {:#x}\n", "Number of relocations", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Number of relocations", WIDTH,
                numberof_relocations())
-     << format("{:{}} {:#x}\n", "Number of lines", WIDTH, numberof_line_numbers())
-     << format("{:{}} {}", "Characteristics", WIDTH, join(list_str, ", "));
+     << fmt::format("{:{}} {:#x}\n", "Number of lines", WIDTH, numberof_line_numbers())
+     << fmt::format("{:{}} {}", "Characteristics", WIDTH, fmt::join(list_str, ", "));
 
   return os.str();
 }
