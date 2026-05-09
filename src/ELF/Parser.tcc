@@ -1242,6 +1242,7 @@ ok_error_t Parser::parse_symtab_symbols(const Section& symtab_section,
   LIEF_DEBUG("Parsing symtab symbols");
 
   LIEF::SpanStream stream(symtab_section.content());
+  stream.set_endian_swap(stream_->should_swap());
 
   const auto nb_symbols = static_cast<uint32_t>((symtab_section.size() /
                                                  sizeof(typename ELF_T::Elf_Sym)));
@@ -1708,6 +1709,8 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
   std::unordered_set<Relocation*, RelocationSetHash, RelocationSetEq> reloc_hash;
 
   SpanStream reloc_stream(section.content());
+  reloc_stream.set_endian_swap(stream_->should_swap());
+
   const bool is_object_file =
       binary_->header().file_type() == Header::FILE_TYPE::REL &&
       binary_->segments_.empty();
