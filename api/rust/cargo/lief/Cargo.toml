@@ -11,6 +11,7 @@ homepage.workspace    = true
 keywords.workspace    = true
 repository.workspace  = true
 categories.workspace  = true
+rust-version.workspace = true
 
 [lib]
 doctest = false
@@ -21,8 +22,10 @@ bitflags   = "2.4"
 num-traits = "0.2"
 num-derive = "0.4"
 num-bigint = "0.4"
-tempfile   = "3.14.0"
 lief-ffi   = { version = "1.0.0", path = "../lief-ffi" }
+
+[dev-dependencies]
+tempfile = "3.14.0"
 
 [features]
 default = ["rustls-tls"]
