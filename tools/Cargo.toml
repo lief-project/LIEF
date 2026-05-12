@@ -2,8 +2,12 @@
 members = [
   "lief-patchelf",
 ]
-
 resolver = "2"
+
+[workspace.package]
+authors = ["Romain Thomas <me@romainthomas.fr>"]
+edition = "2021"
+rust-version = "1.74.0"
 
 [profile.release]
 opt-level = 3
