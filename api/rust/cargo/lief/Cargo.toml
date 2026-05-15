@@ -17,7 +17,7 @@ rust-version.workspace = true
 doctest = false
 
 [dependencies]
-cxx        = "=1.0.176"
+cxx        = "=1.0.117"
 bitflags   = "2.11.1"
 num-traits = "0.2"
 num-derive = "0.4"
