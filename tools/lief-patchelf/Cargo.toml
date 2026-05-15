@@ -1,8 +1,9 @@
 [package]
 name = "lief-patchelf"
 version = "1.0.0"
-edition = "2021"
-authors = ["Romain Thomas <me@romainthomas.fr>"]
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 
 [dependencies]
 lief = { path = "../../api/rust/cargo/lief" }

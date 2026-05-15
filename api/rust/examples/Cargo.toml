@@ -2,6 +2,7 @@
 name    = "lief-examples"
 version = "0.0.0"
 edition = "2021"
+rust-version = "1.74.0"
 
 [dependencies]
 lief = { path = "../cargo/lief" }
