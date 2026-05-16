@@ -591,12 +591,31 @@ result<SignatureParser::x509_certificates_t>
   x509_certificates_t certificates;
   const uint64_t cert_end_p = stream.size();
   while (stream.pos() < cert_end_p) {
+    // CMS CertificateChoices (RFC 5652) allows non-X509 entries
+    // tagged [0]..[3] IMPLICIT (extendedCertificate, v1AttrCert, v2AttrCert,
+    // otherCertificateFormat). mbedtls only handles the plain X509 SEQUENCE,
+    // so peek the tag and skip those alternates.
+    const uint8_t tag = stream_get_tag(stream);
+    if ((tag & MBEDTLS_ASN1_CONTEXT_SPECIFIC) == MBEDTLS_ASN1_CONTEXT_SPECIFIC) {
+      // TODO(romain): We might want to process these certificates
+      auto skipped = asn1r.read_tag(tag);
+      if (!skipped) {
+        LIEF_WARN("Failed to skip non-X509 CertificateChoices entry "
+                  "(tag: {:#04x}, pos: {:d}, idx: {})",
+                  tag, stream.pos(), certificates.size());
+        return certificates;
+      }
+      LIEF_DEBUG("Skipping non-X509 CertificateChoices entry "
+                 "(tag: {:#04x}, size: {}, idx: {})",
+                 tag, *skipped, certificates.size());
+      stream.increment_pos(*skipped);
+      continue;
+    }
     auto cert = asn1r.read_cert();
     if (!cert) {
-      LIEF_INFO(
-          "Failed to parse X509 cert pkcs7-signed-data.certificates (pos: {:d})",
-          stream.pos()
-      );
+      LIEF_WARN("Failed to parse X509 cert pkcs7-signed-data.certificates (pos: "
+                "{:d}, idx: {})",
+                stream.pos(), certificates.size());
       return certificates;
     }
 
