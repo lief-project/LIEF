@@ -9,6 +9,13 @@
   #define BN_BITFIELD_SUPPORT 0
 #endif
 
+#if BN_VERSION_MAJOR >= 5 && BN_VERSION_MINOR >= 4
+  #define BN_FRAGMENT_TYPE_CLASS_SUPPORT 1
+#else
+  #define BN_FRAGMENT_TYPE_CLASS_SUPPORT 0
+#endif
+
+
 namespace binaryninja::api_compat {
 namespace bn = BinaryNinja;
 
