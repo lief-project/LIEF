@@ -5,7 +5,7 @@ from textwrap import dedent
 from typing import cast
 
 import lief
-from utils import get_sample, lief_logging
+from utils import get_sample, lief_logging, parse_pe
 
 
 def test_pgo():
@@ -418,3 +418,10 @@ def test_fpo(tmp_path: Path):
     assert new_pe is not None
     fpo = cast(lief.PE.FPO, new_pe.debug[1])
     assert len(fpo.entries) == 247
+
+
+def test_spgo():
+    ntdll = parse_pe("PE/ntdll-arm64.dll")
+    debug = next(dbg for dbg in ntdll.debug if isinstance(dbg, lief.PE.Pogo))
+    assert len(debug.entries)
+    assert debug.signature == lief.PE.Pogo.SIGNATURES.SPGO

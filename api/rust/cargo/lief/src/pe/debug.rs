@@ -320,6 +320,9 @@ pub enum PogoSignature {
     ZERO,
     LCTG,
     PGI,
+    PGO,
+    PGU,
+    SPGO,
     UNKNOWN(u32),
 }
 
@@ -329,6 +332,9 @@ impl From<u32> for PogoSignature {
             0x00000000 => PogoSignature::ZERO,
             0x4C544347 => PogoSignature::LCTG,
             0x50474900 => PogoSignature::PGI,
+            0x50474F00 => PogoSignature::PGO,
+            0x50475500 => PogoSignature::PGU,
+            0x5350474f => PogoSignature::SPGO,
             _ => PogoSignature::UNKNOWN(value),
         }
     }
@@ -340,6 +346,9 @@ impl From<PogoSignature> for u32 {
             PogoSignature::ZERO => 0x00000000,
             PogoSignature::LCTG => 0x4C544347,
             PogoSignature::PGI => 0x50474900,
+            PogoSignature::PGO => 0x50474F00,
+            PogoSignature::PGU => 0x50475500,
+            PogoSignature::SPGO => 0x5350474f,
             PogoSignature::UNKNOWN(v) => v,
         }
     }

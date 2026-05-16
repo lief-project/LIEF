@@ -45,14 +45,19 @@ std::string Pogo::to_string() const {
 }
 
 const char* to_string(Pogo::SIGNATURES e) {
+  // clang-format off
 #define ENTRY(X) std::pair(Pogo::SIGNATURES::X, #X)
   STRING_MAP enums2str{
       ENTRY(UNKNOWN),
       ENTRY(ZERO),
       ENTRY(LCTG),
       ENTRY(PGI),
+      ENTRY(PGO),
+      ENTRY(PGU),
+      ENTRY(SPGO),
   };
 #undef ENTRY
+  // clang-format on
   if (const auto it = enums2str.find(e); it != enums2str.end()) {
     return it->second;
   }
