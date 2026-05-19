@@ -56,7 +56,7 @@ special note :class:`lief.ELF.CoreFile`:
 
 .. code-block:: python
 
-   nt_core_file = core.get(lief.ELF.Note.TYPE.CORE.FILE)
+   nt_core_file = core.get(lief.ELF.Note.TYPE.CORE_FILE)
 
 ELF notes are represented via the main :class:`lief.ELF.Note` interface. Some
 notes, such as :class:`lief.ELF.CoreFile`, expose additional APIs by extending
