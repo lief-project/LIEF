@@ -43,10 +43,6 @@ set(NANOBIND_OPT
   NOMINSIZE
 )
 
-if (LIEF_PYTHON_STATIC)
-  list(APPEND NANOBIND_OPT NB_EXT_STATIC)
-endif()
-
 if (LIEF_PYTHON_STABLE_ABI)
   message(STATUS "Stable ABI enabled")
   list(APPEND NANOBIND_OPT STABLE_ABI)
@@ -55,6 +51,10 @@ endif()
 if (LIEF_PYTHON_FREE_THREADED)
   message(STATUS "Free threading enabled")
   list(APPEND NANOBIND_OPT FREE_THREADED)
+endif()
+
+if (LIEF_PYTHON_STATIC)
+  list(APPEND NANOBIND_OPT NB_EXT_STATIC)
 endif()
 
 nanobind_add_module(
@@ -140,7 +140,11 @@ if (LIEF_TSAN)
 endif()
 
 if (LIEF_PYTHON_STATIC)
-  install(TARGETS nanobind-static pyLIEF
+  set(NANOBIND_TARGET nanobind-static)
+  if (LIEF_PYTHON_STABLE_ABI)
+    set(NANOBIND_TARGET nanobind-static-abi3)
+  endif()
+  install(TARGETS ${NANOBIND_TARGET} pyLIEF
           DESTINATION lib/python-${Python_VERSION})
 
   install(
