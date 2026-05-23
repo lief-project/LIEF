@@ -11,6 +11,7 @@ Checks: [
   -bugprone-macro-parentheses,
   -bugprone-narrowing-conversions,
   -bugprone-reserved-identifier,
+  -bugprone-signed-bitwise,
   -bugprone-signed-char-misuse,
   -cppcoreguidelines-avoid-c-arrays,
   -cppcoreguidelines-avoid-const-or-ref-data-members,
