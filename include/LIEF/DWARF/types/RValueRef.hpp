@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_rvalue_reference_type`
 class LIEF_API RValueReference : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  RValueReference(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  RValueReference(const RValueReference&) = delete;
+  RValueReference& operator=(const RValueReference&) = delete;
+
+  RValueReference(RValueReference&&) noexcept = default;
+  RValueReference& operator=(RValueReference&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::RVALREF;

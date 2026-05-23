@@ -25,7 +25,11 @@ namespace types {
 /// This class represents a `LF_BITFIELD` PDB type
 class LIEF_API BitField : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  BitField(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::BITFIELD;

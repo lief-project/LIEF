@@ -25,7 +25,11 @@ namespace editor {
 /// This class represents an array type (`DW_TAG_array_type`).
 class LIEF_API ArrayType : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  ArrayType(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   static bool classof(const Type* type);
 

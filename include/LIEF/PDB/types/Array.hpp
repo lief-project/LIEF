@@ -25,7 +25,11 @@ namespace types {
 /// This class represents a `LF_ARRAY` PDB type
 class LIEF_API Array : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Array(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   /// The number of elements in this array
   size_t numberof_elements() const;

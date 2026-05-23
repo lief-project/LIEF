@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_reference_type`
 class LIEF_API Reference : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Reference(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Reference(const Reference&) = delete;
+  Reference& operator=(const Reference&) = delete;
+
+  Reference(Reference&&) noexcept = default;
+  Reference& operator=(Reference&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::REF;

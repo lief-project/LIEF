@@ -27,7 +27,18 @@ namespace types {
 /// This class represents a `DW_TAG_template_alias`
 class LIEF_API TemplateAlias : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  TemplateAlias(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  TemplateAlias(const TemplateAlias&) = delete;
+  TemplateAlias& operator=(const TemplateAlias&) = delete;
+
+  TemplateAlias(TemplateAlias&&) noexcept = default;
+  TemplateAlias& operator=(TemplateAlias&&) noexcept = default;
+
   using parameters_t = std::vector<std::unique_ptr<Parameter>>;
 
   /// The underlying type aliased by this type.

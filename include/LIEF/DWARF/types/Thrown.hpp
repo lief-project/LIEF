@@ -27,7 +27,17 @@ namespace types {
 /// This class represents a `DW_TAG_thrown_type`
 class LIEF_API Thrown : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Thrown(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Thrown(const Thrown&) = delete;
+  Thrown& operator=(const Thrown&) = delete;
+
+  Thrown(Thrown&&) noexcept = default;
+  Thrown& operator=(Thrown&&) noexcept = default;
 
   /// The underlying type being thrown
   const Type* underlying_type() const;

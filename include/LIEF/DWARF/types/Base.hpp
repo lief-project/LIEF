@@ -26,7 +26,11 @@ namespace types {
 /// instance -- to represent integers or primitive types.
 class LIEF_API Base : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Base(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   enum class ENCODING {
     NONE = 0,
@@ -52,6 +56,12 @@ class LIEF_API Base : public Type {
     /// Mirror `DW_ATE_address`
     ADDRESS,
   };
+
+  Base(const Base&) = delete;
+  Base& operator=(const Base&) = delete;
+
+  Base(Base&&) noexcept = default;
+  Base& operator=(Base&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::BASE;

@@ -552,6 +552,10 @@ std::string Type::to_decl(const DeclOpt& /*opt*/) const {
   return "";
 }
 
+Type::Type(Type&&) noexcept = default;
+
+Type& Type::operator=(Type&&) noexcept = default;
+
 Type::Type(std::unique_ptr<details::Type> impl) :
   impl_(std::move(impl)) {}
 

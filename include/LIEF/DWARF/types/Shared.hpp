@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_shared_type`
 class LIEF_API Shared : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Shared(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Shared(const Shared&) = delete;
+  Shared& operator=(const Shared&) = delete;
+
+  Shared(Shared&&) noexcept = default;
+  Shared& operator=(Shared&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::SHARED;

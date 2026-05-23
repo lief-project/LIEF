@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_set_type`
 class LIEF_API SetTy : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  SetTy(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  SetTy(const SetTy&) = delete;
+  SetTy& operator=(const SetTy&) = delete;
+
+  SetTy(SetTy&&) noexcept = default;
+  SetTy& operator=(SetTy&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::SET_TYPE;

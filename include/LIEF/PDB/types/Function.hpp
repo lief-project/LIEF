@@ -25,7 +25,11 @@ namespace types {
 /// This class represents a `LF_PROCEDURE` PDB type
 class LIEF_API Function : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Function(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
   using parameters_t = std::vector<std::unique_ptr<Type>>;
 
   /// Type returned by the function

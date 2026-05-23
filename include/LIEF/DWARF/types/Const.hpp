@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_const_type`
 class LIEF_API Const : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Const(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Const(const Const&) = delete;
+  Const& operator=(const Const&) = delete;
+
+  Const(Const&&) noexcept = default;
+  Const& operator=(Const&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::CONST_KIND;

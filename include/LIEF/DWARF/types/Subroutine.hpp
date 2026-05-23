@@ -27,7 +27,17 @@ namespace types {
 /// This class represents a `DW_TAG_subroutine_type`
 class LIEF_API Subroutine : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Subroutine(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Subroutine(const Subroutine&) = delete;
+  Subroutine& operator=(const Subroutine&) = delete;
+
+  Subroutine(Subroutine&&) noexcept = default;
+  Subroutine& operator=(Subroutine&&) noexcept = default;
 
   using parameters_t = std::vector<std::unique_ptr<Parameter>>;
 

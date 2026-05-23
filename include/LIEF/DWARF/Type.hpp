@@ -112,6 +112,15 @@ class LIEF_API Type {
     mutable std::unique_ptr<Type> cached_;
   };
 
+  LIEF_LOCAL Type(std::unique_ptr<details::Type> impl);
+  LIEF_LOCAL Type(details::Type& impl);
+
+  Type(const Type&) = delete;
+  Type& operator=(const Type&) = delete;
+
+  Type(Type&&) noexcept;
+  Type& operator=(Type&&) noexcept;
+
   virtual ~Type();
 
   enum class KIND {
@@ -182,9 +191,6 @@ class LIEF_API Type {
   static std::unique_ptr<Type> create(std::unique_ptr<details::Type> impl);
 
   protected:
-  Type(std::unique_ptr<details::Type> impl);
-  Type(details::Type& impl);
-
   LIEF::details::canbe_unique<details::Type> impl_;
 };
 

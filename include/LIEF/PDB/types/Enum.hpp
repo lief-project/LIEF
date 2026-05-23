@@ -29,7 +29,11 @@ class EnumEntry;
 /// This class represents a `LF_ENUM` PDB type
 class LIEF_API Enum : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Enum(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   /// This class represents an enum entry which is essentially
   /// composed of a name and its value (integer).

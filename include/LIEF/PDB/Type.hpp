@@ -17,6 +17,8 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <type_traits>
+#include <utility>
 
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
@@ -78,6 +80,8 @@ class LIEF_API Type {
     mutable std::unique_ptr<Type> cached_;
   };
 
+  LIEF_LOCAL Type(std::unique_ptr<details::Type> impl);
+
   enum class KIND {
     UNKNOWN = 0,
     CLASS,
@@ -118,7 +122,6 @@ class LIEF_API Type {
   virtual ~Type();
 
   protected:
-  Type(std::unique_ptr<details::Type> impl);
   std::unique_ptr<details::Type> impl_;
 };
 

@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_ptr_to_member_type`
 class LIEF_API PointerToMember : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  PointerToMember(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  PointerToMember(const PointerToMember&) = delete;
+  PointerToMember& operator=(const PointerToMember&) = delete;
+
+  PointerToMember(PointerToMember&&) noexcept = default;
+  PointerToMember& operator=(PointerToMember&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::POINTER_MEMBER;

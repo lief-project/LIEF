@@ -31,7 +31,11 @@ namespace types {
 /// `LF_CLASS` or `LF_UNION`.
 class LIEF_API ClassLike : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  ClassLike(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   /// Attributes iterator
   using attributes_iterator = iterator_range<Attribute::Iterator>;
@@ -63,7 +67,11 @@ class LIEF_API ClassLike : public Type {
 /// Interface for the `LF_STRUCTURE` PDB type
 class LIEF_API Structure : public ClassLike {
   public:
-  using ClassLike::ClassLike;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+  Structure(Args&&... args) :
+    ClassLike(std::forward<Args>(args)...) {}
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::STRUCTURE;
@@ -75,7 +83,11 @@ class LIEF_API Structure : public ClassLike {
 /// Interface for the `LF_CLASS` PDB type
 class LIEF_API Class : public ClassLike {
   public:
-  using ClassLike::ClassLike;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+  Class(Args&&... args) :
+    ClassLike(std::forward<Args>(args)...) {}
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::CLASS;
@@ -87,7 +99,11 @@ class LIEF_API Class : public ClassLike {
 /// Interface for the `LF_INTERFACE` PDB type
 class LIEF_API Interface : public ClassLike {
   public:
-  using ClassLike::ClassLike;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+  Interface(Args&&... args) :
+    ClassLike(std::forward<Args>(args)...) {}
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::INTERFACE;

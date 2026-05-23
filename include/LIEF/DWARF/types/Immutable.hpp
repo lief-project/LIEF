@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_immutable_type`
 class LIEF_API Immutable : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Immutable(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Immutable(const Immutable&) = delete;
+  Immutable& operator=(const Immutable&) = delete;
+
+  Immutable(Immutable&&) noexcept = default;
+  Immutable& operator=(Immutable&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::IMMUTABLE;

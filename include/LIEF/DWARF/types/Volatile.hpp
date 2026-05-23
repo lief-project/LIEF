@@ -27,7 +27,17 @@ namespace types {
 /// This class represents a `DW_TAG_volatile_type`
 class LIEF_API Volatile : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Volatile(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Volatile(const Volatile&) = delete;
+  Volatile& operator=(const Volatile&) = delete;
+
+  Volatile(Volatile&&) noexcept = default;
+  Volatile& operator=(Volatile&&) noexcept = default;
 
   /// The underlying type
   const Type* underlying_type() const;

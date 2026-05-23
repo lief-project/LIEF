@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_typedef` type
 class LIEF_API Typedef : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Typedef(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Typedef(const Typedef&) = delete;
+  Typedef& operator=(const Typedef&) = delete;
+
+  Typedef(Typedef&&) noexcept = default;
+  Typedef& operator=(Typedef&&) noexcept = default;
 
   /// The type aliased by this typedef
   const Type* underlying_type() const;

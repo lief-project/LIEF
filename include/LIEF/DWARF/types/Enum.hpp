@@ -30,7 +30,17 @@ class EnumEntry;
 /// This class represents a `DW_TAG_enumeration_type`
 class LIEF_API Enum : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Enum(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Enum(const Enum&) = delete;
+  Enum& operator=(const Enum&) = delete;
+
+  Enum(Enum&&) noexcept = default;
+  Enum& operator=(Enum&&) noexcept = default;
 
   /// This class represents an enum entry which is essentially
   /// composed of a name and its value (integer).
@@ -39,6 +49,9 @@ class LIEF_API Enum : public Type {
     Entry(std::unique_ptr<details::EnumEntry> impl);
     Entry(Entry&& other) noexcept;
     Entry& operator=(Entry&& other) noexcept;
+
+    Entry(const Entry&) = delete;
+    Entry& operator=(const Entry&) = delete;
 
     /// Enum entry's name
     std::string name() const;

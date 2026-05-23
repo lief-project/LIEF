@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_pointer_type` DWARF type
 class LIEF_API Pointer : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Pointer(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Pointer(const Pointer&) = delete;
+  Pointer& operator=(const Pointer&) = delete;
+
+  Pointer(Pointer&&) noexcept = default;
+  Pointer& operator=(Pointer&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::POINTER;

@@ -36,7 +36,11 @@ class StructMember;
 /// - `DW_TAG_union_type`
 class LIEF_API StructType : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  StructType(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   enum class TYPE : uint32_t {
     CLASS,  /// Discriminant for `DW_TAG_class_type`

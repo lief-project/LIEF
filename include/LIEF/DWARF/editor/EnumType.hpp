@@ -31,7 +31,11 @@ class EnumValue;
 /// This class represents an editable enum type (`DW_TAG_enumeration_type`)
 class LIEF_API EnumType : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  EnumType(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   /// This class represents an enum value
   class LIEF_API Value {

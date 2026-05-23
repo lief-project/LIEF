@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_array_type`
 class LIEF_API Array : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Array(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Array(const Array&) = delete;
+  Array& operator=(const Array&) = delete;
+
+  Array(Array&&) noexcept = default;
+  Array& operator=(Array&&) noexcept = default;
 
   /// Structure that wraps information about the dimension of this array
   struct size_info_t {

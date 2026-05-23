@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_restrict_type`
 class LIEF_API Restrict : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Restrict(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Restrict(const Restrict&) = delete;
+  Restrict& operator=(const Restrict&) = delete;
+
+  Restrict(Restrict&&) noexcept = default;
+  Restrict& operator=(Restrict&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::RESTRICT;

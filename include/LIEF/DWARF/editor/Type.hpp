@@ -16,6 +16,8 @@
 #define LIEF_DWARF_EDITOR_TYPE_H
 #include <memory>
 #include <cassert>
+#include <type_traits>
+#include <utility>
 
 #include "LIEF/visibility.h"
 
