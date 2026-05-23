@@ -15,6 +15,7 @@
  */
 #include <memory>
 #include <algorithm>
+#include <cstring>
 
 #include "logging.hpp"
 
@@ -571,65 +572,6 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
   binary_->sizing_info_->hash = stream_->pos() - offset;
   return ok();
 }
-
-#if 0
-std::unique_ptr<Note> Parser::get_note(uint32_t type, std::string name,
-                                       std::vector<uint8_t> desc_bytes)
-{
-  const E_TYPE ftype = binary_->header().file_type();
-
-  auto conv = Note::convert_type(ftype, type, name);
-  if (!conv) {
-    LIEF_WARN("Unsupported note type {:#x} for owner '{}'", type, name);
-    return std::make_unique<Note>(std::move(name), Note::TYPE::UNKNOWN, type,
-                                  std::move(desc_bytes));
-  }
-
-  Note::TYPE ntype = *conv;
-
-  if (ntype != Note::TYPE::GNU_BUILD_ATTRIBUTE_FUNC &&
-      ntype != Note::TYPE::GNU_BUILD_ATTRIBUTE_OPEN)
-  {
-    name = name.c_str();
-  }
-
-  const ARCH arch = binary_->header().machine_type();
-  const ELF_CLASS cls = binary_->header().identity_class();
-
-  if (cls != ELF_CLASS::ELFCLASS32 && cls != ELF_CLASS::ELFCLASS64) {
-    LIEF_WARN("Invalid ELFCLASS");
-    return nullptr;
-  }
-
-  switch (ntype) {
-    case Note::TYPE::CORE_PRSTATUS:
-        return std::make_unique<CorePrStatus>(arch, cls, std::move(name), type,
-                                              std::move(desc_bytes));
-    case Note::TYPE::CORE_PRPSINFO:
-        return std::make_unique<CorePrPsInfo>(arch, cls, std::move(name), type,
-                                              std::move(desc_bytes));
-    case Note::TYPE::CORE_FILE:
-        return std::make_unique<CoreFile>(arch, cls, std::move(name), type,
-                                          std::move(desc_bytes));
-    case Note::TYPE::CORE_AUXV:
-        return std::make_unique<CoreAuxv>(arch, cls, std::move(name), type,
-                                          std::move(desc_bytes));
-    case Note::TYPE::CORE_SIGINFO:
-        return std::make_unique<CoreSigInfo>(std::move(name), ntype, type,
-                                             std::move(desc_bytes));
-    case Note::TYPE::ANDROID_IDENT:
-        return std::make_unique<AndroidIdent>(std::move(name), ntype, type,
-                                              std::move(desc_bytes));
-    case Note::TYPE::GNU_ABI_TAG:
-        return std::make_unique<NoteAbi>(std::move(name), ntype, type,
-                                         std::move(desc_bytes));
-
-    default:
-        return std::make_unique<Note>(std::move(name), ntype, type,
-                                      std::move(desc_bytes));
-  }
-}
-#endif
 
 ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   static constexpr auto ERROR_THRESHOLD = 6;
