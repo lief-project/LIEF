@@ -117,6 +117,7 @@ inline std::unique_ptr<NoteGnuProperty::Property>
            type <= GNU_PROPERTY_UINT32_AND_HI) ||
           (GNU_PROPERTY_UINT32_OR_LO <= type && type <= GNU_PROPERTY_UINT32_OR_HI))
       {
+        // NOLINTNEXTLINE(bugprone-unhandled-code-paths)
         switch (type) {
           case GNU_PROPERTY_1_NEEDED: return Needed::create(content);
           default: return Generic::create(type);

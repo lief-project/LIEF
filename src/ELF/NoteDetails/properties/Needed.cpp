@@ -32,6 +32,7 @@ std::unique_ptr<Needed> Needed::create(BinaryStream& stream) {
     uint32_t bit = bitmask & (-bitmask);
     bitmask &= ~bit;
 
+    // NOLINTNEXTLINE(bugprone-unhandled-code-paths)
     switch (bit) {
       case GNU_PROPERTY_1_NEEDED_INDIRECT_EXTERN_ACCESS:
         needs.push_back(NEED::INDIRECT_EXTERN_ACCESS);
