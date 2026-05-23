@@ -6,7 +6,7 @@ from utils import check_layout, parse_elf
 
 
 @pytest.mark.private
-def test_issue_1097(tmp_path: Path):
+def test_issue_1326(tmp_path: Path):
     elf = parse_elf("private/ELF/kvrocks2redis")
     check_layout(elf)
 
