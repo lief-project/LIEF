@@ -635,8 +635,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
                                         ptr_size));
   }
 
-  auto alloc =
-      datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  auto alloc = datahandler_->make_hole(last_offset, delta);
 
   if (!alloc) {
     LIEF_ERR("Allocation failed");
