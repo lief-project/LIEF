@@ -78,7 +78,7 @@ class ForwardIterator {
     }
   }
 
-  bool empty() const {
+  auto empty() const {
     return begin_ == end_;
   }
 
@@ -120,7 +120,7 @@ class RandomRangeIterator {
     return std::distance(begin_, end_);
   }
 
-  bool empty() const {
+  auto empty() const {
     return begin_ == end_;
   }
 
@@ -162,7 +162,7 @@ class ContainerIterator {
     return std::distance(begin_, end_);
   }
 
-  bool empty() const {
+  auto empty() const {
     return begin_ == end_;
   }
 

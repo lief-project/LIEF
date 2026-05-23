@@ -28,10 +28,10 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
   }
 
   auto stype() const {
-    return to_int(get().type());
+    return as_u64(get().type());
   }
   auto flags() const {
-    return to_int(get().flags());
+    return as_u32(get().flags());
   }
   auto file_offset() const {
     return get().file_offset();
@@ -60,27 +60,27 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
     get().type((lief_t::TYPE)ty);
   }
 
-  void set_file_offset(uint64_t value) {
+  auto set_file_offset(uint64_t value) {
     get().file_offset(value);
   }
 
-  void set_virtual_address(uint64_t value) {
+  auto set_virtual_address(uint64_t value) {
     get().virtual_address(value);
   }
 
-  void set_physical_address(uint64_t value) {
+  auto set_physical_address(uint64_t value) {
     get().physical_address(value);
   }
 
-  void set_virtual_size(uint64_t value) {
+  auto set_virtual_size(uint64_t value) {
     get().virtual_size(value);
   }
 
-  void set_alignment(uint64_t value) {
+  auto set_alignment(uint64_t value) {
     get().alignment(value);
   }
 
-  void set_content(const uint8_t* ptr, uint64_t size) {
+  auto set_content(const uint8_t* ptr, uint64_t size) {
     get().content({ptr, ptr + size});
   }
 
@@ -88,14 +88,14 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
     return make_span(get().content());
   }
 
-  void fill(char c) {
+  auto fill(int8_t c) {
     get().fill(c);
   }
-  void clear() {
+  auto clear() {
     get().clear();
   }
 
-  std::string to_string() const {
-    return details::to_string(get());
+  auto to_string() const {
+    return to_unique_string(details::to_string(get()));
   }
 };

@@ -43,10 +43,10 @@ class PE_Pogo : public PE_Debug {
   }
 
   uint32_t pogo_signature() const {
-    return to_int(impl().signature());
+    return as_u32(impl().signature());
   }
 
-  static bool classof(const PE_Debug& entry) {
+  static auto classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -55,3 +55,5 @@ class PE_Pogo : public PE_Debug {
     return as<lief_t>(this);
   }
 };
+
+using PE_Pogo_it_entries = PE_Pogo::it_entries;

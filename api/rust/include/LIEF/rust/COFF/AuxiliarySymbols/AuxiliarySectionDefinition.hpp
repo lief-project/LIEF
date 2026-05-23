@@ -46,7 +46,7 @@ class COFF_AuxiliarySectionDefinition : public COFF_AuxiliarySymbol {
     return impl().reserved();
   }
 
-  static bool classof(const COFF_AuxiliarySymbol& entry) {
+  static auto classof(const COFF_AuxiliarySymbol& entry) {
     return lief_t::classof(&entry.get());
   }
 

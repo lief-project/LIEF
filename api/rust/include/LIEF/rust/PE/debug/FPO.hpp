@@ -16,6 +16,7 @@
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/PE/debug/Debug.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PE/debug/FPO.hpp"
 
 
@@ -52,10 +53,10 @@ class PE_FPO_entry_t : private Mirror<LIEF::PE::FPO::entry_t> {
     return get().reserved;
   }
   auto get_type() const {
-    return to_int(get().type);
+    return as_u32(get().type);
   }
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -82,7 +83,7 @@ class PE_FPO : public PE_Debug {
     return std::make_unique<it_entries>(impl());
   }
 
-  static bool classof(const PE_Debug& entry) {
+  static auto classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -91,3 +92,5 @@ class PE_FPO : public PE_Debug {
     return as<lief_t>(this);
   }
 };
+
+using PE_FPO_it_entries = PE_FPO::it_entries;

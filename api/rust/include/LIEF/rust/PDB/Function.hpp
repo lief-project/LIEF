@@ -16,6 +16,7 @@
 
 #include "LIEF/rust/debug_location.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PDB/Function.hpp"
 
 class PDB_Function : private Mirror<LIEF::pdb::Function> {
@@ -24,7 +25,7 @@ class PDB_Function : private Mirror<LIEF::pdb::Function> {
   using lief_t = LIEF::pdb::Function;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto RVA() const {
     return get().RVA();
@@ -33,13 +34,13 @@ class PDB_Function : private Mirror<LIEF::pdb::Function> {
     return get().code_size();
   }
   auto section_name() const {
-    return get().section_name();
+    return to_unique_string(get().section_name());
   }
   auto debug_location() const {
     return details::make_location(get().debug_location());
   }
 
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };

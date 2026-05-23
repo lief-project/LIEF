@@ -45,7 +45,7 @@ class PDB_types_Function : public PDB_Type {
     return std::make_unique<it_parameters>(impl().parameters());
   }
 
-  static bool classof(const PDB_Type& type) {
+  static auto classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
 
@@ -54,3 +54,5 @@ class PDB_types_Function : public PDB_Type {
     return as<lief_t>(this);
   }
 };
+
+using PDB_types_Function_it_parameters = PDB_types_Function::it_parameters;

@@ -45,19 +45,19 @@ class RustStream {
   LIEF_API
   static std::unique_ptr<RustStream> from_rust(uint8_t* buffer, size_t size);
 
-  bool is_elf() const {
+  auto is_elf() const {
     return LIEF::ELF::is_elf(*stream_);
   }
 
-  bool is_pe() const {
+  auto is_pe() const {
     return LIEF::PE::is_pe(*stream_);
   }
 
-  bool is_macho() const {
+  auto is_macho() const {
     return LIEF::MachO::is_macho(*stream_);
   }
 
-  bool is_coff() const {
+  auto is_coff() const {
     return LIEF::COFF::is_coff(*stream_);
   }
 

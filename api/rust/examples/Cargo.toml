@@ -1,11 +1,12 @@
 [package]
 name    = "lief-examples"
 version = "0.0.0"
-edition = "2021"
-rust-version = "1.74.0"
+edition = "2024"
+
+rust-version = "1.85.0"
 
 [dependencies]
-lief = { path = "../cargo/lief" }
+lief = { path = "../crates/lief" }
 
 [[bin]]
 name = "reader"

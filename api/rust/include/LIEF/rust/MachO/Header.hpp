@@ -48,10 +48,10 @@ class MachO_Header : private Mirror<LIEF::MachO::Header> {
     return get().reserved();
   }
 
-  bool is_32bit() const {
+  auto is_32bit() const {
     return get().is_32bit();
   }
-  bool is_64bit() const {
+  auto is_64bit() const {
     return get().is_64bit();
   }
 };

@@ -33,7 +33,7 @@ class DWARF_editor_EnumType : public DWARF_editor_Type {
     impl().set_size(size);
   }
 
-  auto add_value(std::string name, int64_t value) {
+  auto add_value(const std::string& name, int64_t value) {
     return details::try_unique<DWARF_editor_EnumType_Value>(
         impl().add_value(name, value)
     );
@@ -43,7 +43,7 @@ class DWARF_editor_EnumType : public DWARF_editor_Type {
     impl().set_underlying_type(ty.get());
   }
 
-  static bool classof(const DWARF_editor_Type& type) {
+  static auto classof(const DWARF_editor_Type& type) {
     return lief_t::classof(&type.get());
   }
 

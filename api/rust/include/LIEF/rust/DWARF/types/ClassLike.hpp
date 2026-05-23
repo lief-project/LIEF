@@ -18,6 +18,7 @@
 #include "LIEF/rust/DWARF/Function.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class DWARF_types_ClassLike_Member
   : private Mirror<LIEF::dwarf::types::ClassLike::Member> {
@@ -26,7 +27,7 @@ class DWARF_types_ClassLike_Member
   using lief_t = LIEF::dwarf::types::ClassLike::Member;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
 
   uint64_t bit_offset(uint32_t& err) const {
@@ -91,7 +92,7 @@ class DWARF_types_ClassLike : public DWARF_Type {
     }
   };
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 
@@ -116,11 +117,14 @@ class DWARF_types_ClassLike : public DWARF_Type {
   }
 };
 
+using DWARF_types_ClassLike_it_members = DWARF_types_ClassLike::it_members;
+using DWARF_types_ClassLike_it_functions = DWARF_types_ClassLike::it_functions;
+
 class DWARF_types_Structure : public DWARF_types_ClassLike {
   public:
   using lief_t = LIEF::dwarf::types::Structure;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 };
@@ -129,7 +133,7 @@ class DWARF_types_Class : public DWARF_types_ClassLike {
   public:
   using lief_t = LIEF::dwarf::types::Class;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 };
@@ -138,7 +142,7 @@ class DWARF_types_Union : public DWARF_types_ClassLike {
   public:
   using lief_t = LIEF::dwarf::types::Union;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 };
@@ -147,7 +151,7 @@ class DWARF_types_Packed : public DWARF_types_ClassLike {
   public:
   using lief_t = LIEF::dwarf::types::Packed;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 };

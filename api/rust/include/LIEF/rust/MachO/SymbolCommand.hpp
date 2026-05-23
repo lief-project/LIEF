@@ -16,6 +16,7 @@
 #pragma once
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class MachO_SymbolCommand : public MachO_Command {
   using lief_t = LIEF::MachO::SymbolCommand;
@@ -49,7 +50,7 @@ class MachO_SymbolCommand : public MachO_Command {
     return make_span(impl().string_table());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

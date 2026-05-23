@@ -1,0 +1,48 @@
+//! Module for the COFF file format support in LIEF.
+//!
+//! The [`Binary`] structure exposes the main API to inspect a COFF file. It can be instantiated,
+//! using either: [`crate::coff::parse`], [`crate::coff::Binary::parse`] or [`crate::Binary::parse`]
+//!
+//! ```
+//! let coff = lief::coff::parse("demo.obj").unwrap();
+//! for section in coff.sections() {
+//!     println!("section: {}", section.name());
+//! }
+//! ```
+
+use std::path::Path;
+
+pub mod binary;
+pub mod header;
+pub mod relocation;
+pub mod section;
+pub mod string;
+pub mod symbol;
+
+#[doc(inline)]
+pub use symbol::Symbol;
+
+#[doc(inline)]
+pub use string::String;
+
+#[doc(inline)]
+pub use binary::Binary;
+
+#[doc(inline)]
+pub use section::Section;
+
+#[doc(inline)]
+pub use relocation::Relocation;
+
+#[doc(inline)]
+pub use header::{BigObjHeader, Header, RegularHeader};
+
+/// Parse a COFF file from the given file path
+pub fn parse<P: AsRef<Path>>(path: P) -> Option<Binary> {
+    Binary::parse(path)
+}
+
+pub fn is_coff<P: AsRef<Path>>(path: P) -> bool {
+    cxx::let_cxx_string!(__cxx_s = path.as_ref().to_str().unwrap());
+    lief_ffi::COFF_Utils::is_coff(&__cxx_s)
+}

@@ -16,13 +16,14 @@
 #include "LIEF/asm/x86/Operand.hpp"
 
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class asm_x86_Operand : public Mirror<LIEF::assembly::x86::Operand> {
   public:
   using lief_t = LIEF::assembly::x86::Operand;
   using Mirror::Mirror;
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };

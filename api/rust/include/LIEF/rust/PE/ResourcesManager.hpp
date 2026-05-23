@@ -22,6 +22,7 @@
 #include "LIEF/rust/PE/ResourceAccelerator.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_ResourcesManager_string_entry_t
   : private Mirror<LIEF::PE::ResourcesManager::string_entry_t> {
@@ -30,7 +31,7 @@ class PE_ResourcesManager_string_entry_t
   using Mirror::Mirror;
 
   auto string() const {
-    return get().string_u8();
+    return to_unique_string(get().string_u8());
   }
   auto id() const {
     return get().id;
@@ -105,34 +106,34 @@ class PE_ResourcesManager : private Mirror<LIEF::PE::ResourcesManager> {
   }
 
   auto get_types() const {
-    std::vector<uint32_t> values;
+    auto values = make_unique_vector<uint32_t>();
     auto types = get().get_types();
-    std::transform(types.begin(), types.end(), std::back_inserter(values),
+    std::transform(types.begin(), types.end(), std::back_inserter(*values),
                    [](LIEF::PE::ResourcesManager::TYPE ty) {
                      return (uint32_t)ty;
                    });
     return values;
   }
 
-  bool has_type(uint32_t type) const {
+  auto has_type(uint32_t type) const {
     return get().has_type(LIEF::PE::ResourcesManager::TYPE(type));
   }
 
   auto manifest() const {
-    return get().manifest();
+    return to_unique_string(get().manifest());
   }
-  void set_manifest(std::string str) {
+  auto set_manifest(const std::string& str) {
     get().manifest(str);
   }
   auto print_tree() const {
-    return get().print();
+    return to_unique_string(get().print());
   }
 
   auto print_tree_with_depth(uint32_t depth) const {
-    return get().print(depth);
+    return to_unique_string(get().print(depth));
   }
   auto html() const {
-    return get().html();
+    return make_unique_vector<std::string>(get().html());
   }
   auto icons() const {
     return std::make_unique<it_icons>(get());
@@ -147,3 +148,9 @@ class PE_ResourcesManager : private Mirror<LIEF::PE::ResourcesManager> {
     return std::make_unique<it_string_table_entry>(get());
   }
 };
+
+using PE_ResourcesManager_it_icons = PE_ResourcesManager::it_icons;
+using PE_ResourcesManager_it_version = PE_ResourcesManager::it_version;
+using PE_ResourcesManager_it_accelerator = PE_ResourcesManager::it_accelerator;
+using PE_ResourcesManager_it_string_table_entry =
+    PE_ResourcesManager::it_string_table_entry;

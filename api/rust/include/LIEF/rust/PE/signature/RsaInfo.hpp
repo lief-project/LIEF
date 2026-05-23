@@ -17,6 +17,7 @@
 
 #include "LIEF/PE/signature/RsaInfo.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_RsaInfo : private Mirror<LIEF::PE::RsaInfo> {
   public:
@@ -26,25 +27,25 @@ class PE_RsaInfo : private Mirror<LIEF::PE::RsaInfo> {
   uint32_t key_size() const {
     return get().key_size();
   }
-  bool has_public_key() const {
+  auto has_public_key() const {
     return get().has_public_key();
   }
-  bool has_private_key() const {
+  auto has_private_key() const {
     return get().has_private_key();
   }
-  std::vector<uint8_t> N() const {
-    return get().N();
+  auto N() const {
+    return make_unique_vector<uint8_t>(get().N());
   }
-  std::vector<uint8_t> E() const {
-    return get().E();
+  auto E() const {
+    return make_unique_vector<uint8_t>(get().E());
   }
-  std::vector<uint8_t> D() const {
-    return get().D();
+  auto D() const {
+    return make_unique_vector<uint8_t>(get().D());
   }
-  std::vector<uint8_t> P() const {
-    return get().P();
+  auto P() const {
+    return make_unique_vector<uint8_t>(get().P());
   }
-  std::vector<uint8_t> Q() const {
-    return get().Q();
+  auto Q() const {
+    return make_unique_vector<uint8_t>(get().Q());
   }
 };

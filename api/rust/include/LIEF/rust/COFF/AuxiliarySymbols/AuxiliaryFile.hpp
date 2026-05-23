@@ -16,6 +16,7 @@
 
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryFile.hpp"
 #include "LIEF/rust/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class COFF_AuxiliaryFile : public COFF_AuxiliarySymbol {
   public:
@@ -23,11 +24,11 @@ class COFF_AuxiliaryFile : public COFF_AuxiliarySymbol {
   COFF_AuxiliaryFile(const lief_t& obj) :
     COFF_AuxiliarySymbol(obj) {}
 
-  std::string filename() const {
-    return impl().filename();
+  auto filename() const {
+    return to_unique_string(impl().filename());
   }
 
-  static bool classof(const COFF_AuxiliarySymbol& entry) {
+  static auto classof(const COFF_AuxiliarySymbol& entry) {
     return lief_t::classof(&entry.get());
   }
 

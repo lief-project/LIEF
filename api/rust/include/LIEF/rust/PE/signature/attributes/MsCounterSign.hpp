@@ -18,6 +18,7 @@
 #include "LIEF/rust/PE/signature/SignerInfo.hpp"
 #include "LIEF/rust/PE/signature/ContentInfo.hpp"
 #include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_MsCounterSign : public PE_Attribute {
   public:
@@ -49,7 +50,7 @@ class PE_MsCounterSign : public PE_Attribute {
     }
   };
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 
@@ -57,7 +58,7 @@ class PE_MsCounterSign : public PE_Attribute {
     return impl().version();
   }
   auto digest_algorithm() const {
-    return to_int(impl().digest_algorithm());
+    return as_u32(impl().digest_algorithm());
   }
 
   auto content_info() const {
@@ -78,3 +79,6 @@ class PE_MsCounterSign : public PE_Attribute {
     return as<lief_t>(this);
   }
 };
+
+using PE_MsCounterSign_it_certificates = PE_MsCounterSign::it_certificates;
+using PE_MsCounterSign_it_signers = PE_MsCounterSign::it_signers;

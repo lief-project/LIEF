@@ -31,10 +31,10 @@ class ELF_Relocation : public AbstractRelocation {
   uint32_t get_type() const {
     return to_int(impl().type());
   }
-  bool is_rela() const {
+  auto is_rela() const {
     return impl().is_rela();
   }
-  bool is_rel() const {
+  auto is_rel() const {
     return impl().is_rel();
   }
 

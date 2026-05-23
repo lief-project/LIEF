@@ -17,6 +17,7 @@
 
 #include "LIEF/PE/DosHeader.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_DosHeader : private Mirror<LIEF::PE::DosHeader> {
   public:
@@ -66,7 +67,7 @@ class PE_DosHeader : private Mirror<LIEF::PE::DosHeader> {
     return get().overlay_number();
   }
   auto reserved() const {
-    return details::make_vector(get().reserved());
+    return make_unique_vector<uint64_t>(details::make_vector(get().reserved()));
   }
 
   uint16_t oem_id() const {
@@ -77,7 +78,7 @@ class PE_DosHeader : private Mirror<LIEF::PE::DosHeader> {
   }
 
   auto reserved2() const {
-    return details::make_vector(get().reserved2());
+    return make_unique_vector<uint64_t>(details::make_vector(get().reserved2()));
   }
   uint32_t addressof_new_exeheader() const {
     return get().addressof_new_exeheader();

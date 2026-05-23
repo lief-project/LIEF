@@ -18,8 +18,7 @@
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/range.hpp"
 #include "LIEF/rust/optional.hpp"
-#include "LIEF/rust/error.hpp"
-#include "LIEF/rust/debug_location.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class DWARF_LexicalBlock : private Mirror<LIEF::dwarf::LexicalBlock> {
   public:
@@ -41,11 +40,11 @@ class DWARF_LexicalBlock : private Mirror<LIEF::dwarf::LexicalBlock> {
   };
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
 
   auto description() const {
-    return get().description();
+    return to_unique_string(get().description());
   }
 
   uint64_t addr(uint32_t& is_set) const {
@@ -65,10 +64,12 @@ class DWARF_LexicalBlock : private Mirror<LIEF::dwarf::LexicalBlock> {
   }
 
   auto ranges() const {
-    return details::make_range(get().ranges());
+    return make_unique_vector<Range>(details::make_range(get().ranges()));
   }
 
   auto sub_blocks() const {
     return std::make_unique<it_sub_blocks>(get());
   }
 };
+
+using DWARF_LexicalBlock_it_sub_blocks = DWARF_LexicalBlock::it_sub_blocks;

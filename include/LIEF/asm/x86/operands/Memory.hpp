@@ -14,6 +14,8 @@
  */
 #ifndef LIEF_ASM_X86_OPERAND_MEMORY_H
 #define LIEF_ASM_X86_OPERAND_MEMORY_H
+#include <cstdint>
+
 #include "LIEF/asm/x86/Operand.hpp"
 #include "LIEF/asm/x86/registers.hpp"
 

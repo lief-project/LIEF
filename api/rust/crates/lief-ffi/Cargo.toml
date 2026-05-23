@@ -1,0 +1,20 @@
+[package]
+name        = "lief-ffi"
+description = "LIEF ffi"
+edition.workspace      = true
+version.workspace      = true
+authors.workspace      = true
+license.workspace      = true
+rust-version.workspace = true
+
+[dependencies]
+cxx = { workspace = true }
+
+[build-dependencies]
+lief-build = { workspace = true }
+miette     = { workspace = true }
+
+[features]
+default    = ["rustls-tls"]
+rustls-tls = ["lief-build/rustls-tls"]
+native-tls = ["lief-build/native-tls"]

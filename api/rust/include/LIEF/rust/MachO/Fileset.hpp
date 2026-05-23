@@ -18,6 +18,7 @@
 
 #include "LIEF/MachO/FilesetCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_Fileset : public MachO_Command {
   public:
@@ -25,8 +26,8 @@ class MachO_Fileset : public MachO_Command {
   MachO_Fileset(const lief_t& cmd) :
     MachO_Command(cmd) {}
 
-  std::string name() const {
-    return impl().name();
+  auto name() const {
+    return to_unique_string(impl().name());
   }
   uint64_t virtual_address() const {
     return impl().virtual_address();
@@ -35,7 +36,7 @@ class MachO_Fileset : public MachO_Command {
     return impl().file_offset();
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

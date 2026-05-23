@@ -16,6 +16,7 @@
 #ifndef LIEF_MACHO_DYLD_EXPORTS_TRIE_H
 #define LIEF_MACHO_DYLD_EXPORTS_TRIE_H
 #include <memory>
+#include <string>
 #include "LIEF/span.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"

@@ -17,6 +17,7 @@
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class ELF_Section : public AbstractSection {
   public:
@@ -52,8 +53,8 @@ class ELF_Section : public AbstractSection {
     return make_span(impl().content());
   }
 
-  std::string to_string() const {
-    return details::to_string(impl());
+  auto to_string() const {
+    return to_unique_string(details::to_string(impl()));
   }
 
   private:

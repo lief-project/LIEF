@@ -25,7 +25,7 @@ class asm_aarch64_operands_Immediate : public asm_aarch64_Operand {
     return impl().value();
   }
 
-  static bool classof(const asm_aarch64_Operand& inst) {
+  static auto classof(const asm_aarch64_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 

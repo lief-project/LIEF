@@ -20,7 +20,7 @@ class PE_PKCS9TSTInfo : public PE_ContentInfo_Content {
   public:
   using lief_t = LIEF::PE::PKCS9TSTInfo;
 
-  static bool classof(const PE_ContentInfo_Content& info) {
+  static auto classof(const PE_ContentInfo_Content& info) {
     return lief_t::classof(&info.get());
   }
 

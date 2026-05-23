@@ -31,6 +31,6 @@ class MachO_DataCodeEntry : private Mirror<LIEF::MachO::DataCodeEntry> {
     return get().length();
   }
   auto get_type() const {
-    return to_int(get().type());
+    return as_u32(get().type());
   }
 };

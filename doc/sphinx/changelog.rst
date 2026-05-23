@@ -68,7 +68,18 @@
 
 :Rust:
 
-  * Add support for the ``aarch64-linux-android/x86_64-linux-android`` targets
+  .. warning::
+
+    The Minimum Supported Rust Version (MSRV) is now ``1.85.0`` (previously
+    ``1.74.0``).
+
+  * The Rust FFI no longer relies on ``autocxx`` and ``bindgen``. It is now
+    built on top of plain ``cxx``, which simplifies the bindings and reduces
+    the iteration time
+  * The Rust bindings directory has been renamed from ``api/rust/cargo/`` to
+    ``api/rust/crates/``
+  * Add support for the ``aarch64-linux-android`` and ``x86_64-linux-android``
+    targets
 
 :C++:
 

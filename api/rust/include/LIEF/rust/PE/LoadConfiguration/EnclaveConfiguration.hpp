@@ -26,7 +26,7 @@ class PE_EnclaveImport : public Mirror<LIEF::PE::EnclaveImport> {
   using Mirror::Mirror;
 
   auto get_type() const {
-    return to_int(get().type());
+    return as_u32(get().type());
   }
   auto min_security_version() const {
     return get().min_security_version();
@@ -34,8 +34,8 @@ class PE_EnclaveImport : public Mirror<LIEF::PE::EnclaveImport> {
   auto import_name_rva() const {
     return get().import_name_rva();
   }
-  std::string import_name() const {
-    return get().import_name();
+  auto import_name() const {
+    return to_unique_string(get().import_name());
   }
   auto reserved() const {
     return get().reserved();
@@ -50,8 +50,8 @@ class PE_EnclaveImport : public Mirror<LIEF::PE::EnclaveImport> {
     return make_span(get().image_id());
   }
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -119,7 +119,9 @@ class PE_EnclaveConfiguration : public Mirror<LIEF::PE::EnclaveConfiguration> {
   auto enclave_flags() const {
     return get().enclave_flags();
   }
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
+
+using PE_EnclaveConfiguration_it_imports = PE_EnclaveConfiguration::it_imports;

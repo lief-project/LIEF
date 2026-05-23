@@ -1,6 +1,7 @@
 #pragma once
 #include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 #include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_SpcSpOpusInfo : public PE_Attribute {
   public:
@@ -8,14 +9,14 @@ class PE_SpcSpOpusInfo : public PE_Attribute {
   PE_SpcSpOpusInfo(const lief_t& base) :
     PE_Attribute(base) {}
 
-  std::string program_name() const {
-    return impl().program_name();
+  auto program_name() const {
+    return to_unique_string(impl().program_name());
   }
-  std::string more_info() const {
-    return impl().more_info();
+  auto more_info() const {
+    return to_unique_string(impl().more_info());
   }
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 

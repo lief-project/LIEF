@@ -16,6 +16,7 @@
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/rust/COFF/String.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class PE_Binary;
 class PE_Factory;
@@ -35,15 +36,15 @@ class PE_Section : public AbstractSection {
     return std::make_unique<PE_Section>(std::make_unique<lief_t>());
   }
 
-  static auto create_with_name(std::string name) {
-    return std::make_unique<PE_Section>(std::make_unique<lief_t>(std::move(name)));
+  static auto create_with_name(const std::string& name) {
+    return std::make_unique<PE_Section>(std::make_unique<lief_t>(name));
   }
 
-  static auto create_with_content(std::string name, const uint8_t* buffer,
+  static auto create_with_content(const std::string& name, const uint8_t* buffer,
                                   size_t size) {
-    return std::make_unique<PE_Section>(std::make_unique<lief_t>(
-        std::move(name), std::vector<uint8_t>{buffer, buffer + size}
-    ));
+    return std::make_unique<PE_Section>(
+        std::make_unique<lief_t>(name, std::vector<uint8_t>{buffer, buffer + size})
+    );
   }
 
   auto sizeof_raw_data() const {
@@ -83,7 +84,7 @@ class PE_Section : public AbstractSection {
     return details::try_unique<COFF_String>(impl().coff_string());
   }
 
-  void set_virtual_size(uint32_t virtual_size) {
+  auto set_virtual_size(uint32_t virtual_size) {
     impl().virtual_size(virtual_size);
   }
 

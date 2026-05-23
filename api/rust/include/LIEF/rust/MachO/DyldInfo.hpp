@@ -17,11 +17,11 @@
 #include <LIEF/MachO/DyldInfo.hpp>
 
 #include "LIEF/rust/MachO/LoadCommand.hpp"
-#include "LIEF/rust/MachO/BindingInfo.hpp"
 #include "LIEF/rust/MachO/DyldBindingInfo.hpp"
 #include "LIEF/rust/MachO/ExportInfo.hpp"
 
 #include <memory>
+#include "LIEF/rust/Span.hpp"
 
 class MachO_DyldInfo : public MachO_Command {
   public:
@@ -79,7 +79,7 @@ class MachO_DyldInfo : public MachO_Command {
     return make_span(impl().export_trie());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
@@ -88,3 +88,6 @@ class MachO_DyldInfo : public MachO_Command {
     return as<lief_t>(this);
   }
 };
+
+using MachO_DyldInfo_it_bindings = MachO_DyldInfo::it_bindings;
+using MachO_DyldInfo_it_exports = MachO_DyldInfo::it_exports;

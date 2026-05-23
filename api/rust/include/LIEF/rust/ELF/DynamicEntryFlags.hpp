@@ -26,15 +26,15 @@ class ELF_DynamicEntryFlags : public ELF_DynamicEntry {
     return impl().raw_flags();
   }
 
-  void add_flag(uint64_t f) {
+  auto add_flag(uint64_t f) {
     impl().add(lief_t::FLAG(f));
   }
 
-  void remove_flag(uint64_t f) {
+  auto remove_flag(uint64_t f) {
     impl().remove(lief_t::FLAG(f));
   }
 
-  static bool classof(const ELF_DynamicEntry& entry) {
+  static auto classof(const ELF_DynamicEntry& entry) {
     return lief_t::classof(&entry.get());
   }
 

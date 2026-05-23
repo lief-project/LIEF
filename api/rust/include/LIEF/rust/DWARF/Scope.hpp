@@ -23,15 +23,15 @@ class DWARF_Scope : private Mirror<LIEF::dwarf::Scope> {
   using lief_t = LIEF::dwarf::Scope;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto parent() const {
     return details::try_unique<DWARF_Scope>(get().parent());
-  } // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
-  auto get_type() const {
-    return to_int(get().type());
   }
-  auto chained(std::string sep) const {
-    return get().chained(sep);
-  } // NOLINT(performance-unnecessary-value-param)
+  auto get_type() const {
+    return as_u32(get().type());
+  }
+  auto chained(const std::string& sep) const {
+    return to_unique_string(get().chained(sep));
+  }
 };

@@ -60,10 +60,12 @@
 #include "LIEF/rust/ObjC/Metadata.hpp"
 
 #include "LIEF/rust/range.hpp"
+#include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class MachO_Binary_write_config_t {
   public:
-  bool linkedit;
+  bool linkedit = true;
 };
 
 class MachO_Binary : public AbstractBinary {
@@ -407,21 +409,22 @@ class MachO_Binary : public AbstractBinary {
     return std::make_unique<AbstractBinary::it_functions>(impl().functions());
   }
 
-  bool is_ios() const {
+  auto is_ios() const {
     return impl().is_ios();
   }
-  bool is_macos() const {
+  auto is_macos() const {
     return impl().is_macos();
   }
 
-  auto find_library(std::string name) const {
+  auto find_library(const std::string& name) const {
     return details::try_unique<MachO_Dylib>(impl().find_library(name));
   }
 
-  void write(std::string output) {
+  auto write(const std::string& output) {
     impl().write(output);
   }
-  void write_with_config(std::string output, MachO_Binary_write_config_t config) {
+  void write_with_config(const std::string& output,
+                         const MachO_Binary_write_config_t& config) {
     impl().write(output, {config.linkedit});
   }
 
@@ -429,7 +432,7 @@ class MachO_Binary : public AbstractBinary {
     return details::try_unique<MachO_Command>(impl().add(command.get()));
   }
 
-  auto add_library(std::string name) {
+  auto add_library(const std::string& name) {
     return details::try_unique<MachO_Dylib>(
         impl().add_library(name)->cast<LIEF::MachO::DylibCommand>()
     );
@@ -439,7 +442,7 @@ class MachO_Binary : public AbstractBinary {
     return impl().remove((LIEF::MachO::LoadCommand::TYPE)type);
   }
 
-  static bool is_exported(const MachO_Symbol& symbol) {
+  static auto is_exported(const MachO_Symbol& symbol) {
     return lief_t::is_exported(
         static_cast<const LIEF::MachO::Symbol&>(symbol.get())
     );
@@ -449,12 +452,12 @@ class MachO_Binary : public AbstractBinary {
     return std::make_unique<it_fileset_binaries>(impl());
   }
 
-  bool has_filesets() const {
+  auto has_filesets() const {
     return impl().has_filesets();
   }
 
-  std::string fileset_name() const {
-    return impl().fileset_name();
+  auto fileset_name() const {
+    return to_unique_string(impl().fileset_name());
   }
 
   auto fileset_addr() const {
@@ -486,11 +489,11 @@ class MachO_Binary : public AbstractBinary {
     );
   }
 
-  auto get_segment(std::string name) const {
+  auto get_segment(const std::string& name) const {
     return details::try_unique<MachO_SegmentCommand>(impl().get_segment(name));
   }
 
-  auto get_section(std::string segname, std::string secname) const {
+  auto get_section(const std::string& segname, const std::string& secname) const {
     return details::try_unique<MachO_Section>(impl().get_section(segname,
                                                                  secname));
   }
@@ -508,19 +511,19 @@ class MachO_Binary : public AbstractBinary {
     return Range{r.start, r.end};
   }
 
-  bool is_valid_addr(uint64_t address) const {
+  auto is_valid_addr(uint64_t address) const {
     return impl().is_valid_addr(address);
   }
 
-  bool has_symbol(std::string name) const {
+  auto has_symbol(const std::string& name) const {
     return impl().has_symbol(name);
   }
 
-  auto get_symbol(std::string name) const {
+  auto get_symbol(const std::string& name) const {
     return details::try_unique<MachO_Symbol>(impl().get_symbol(name));
   }
 
-  bool has_section(std::string name) const {
+  auto has_section(const std::string& name) const {
     return impl().has_section(name);
   }
 
@@ -528,11 +531,11 @@ class MachO_Binary : public AbstractBinary {
     return details::try_unique<MachO_Section>(impl().section_from_offset(offset));
   }
 
-  bool has_segment(std::string name) const {
+  auto has_segment(const std::string& name) const {
     return impl().has_segment(name);
   }
 
-  bool has_command_type(uint64_t type) const {
+  auto has_command_type(uint64_t type) const {
     return impl().has((LIEF::MachO::LoadCommand::TYPE)type);
   }
 
@@ -542,47 +545,48 @@ class MachO_Binary : public AbstractBinary {
     );
   }
 
-  bool remove_command(uint32_t index) {
+  auto remove_command(uint32_t index) {
     return impl().remove_command(index);
   }
 
-  void remove_section(std::string name, bool clear) {
+  auto remove_section(const std::string& name, bool clear) {
     impl().remove_section(name, clear);
   }
 
-  void remove_section_seg(std::string segname, std::string secname, bool clear) {
+  void remove_section_seg(const std::string& segname, const std::string& secname,
+                          bool clear) {
     impl().remove_section(segname, secname, clear);
   }
 
-  bool remove_signature() {
+  auto remove_signature() {
     return impl().remove_signature();
   }
 
-  bool remove_symbol(std::string name) {
+  auto remove_symbol(const std::string& name) {
     return impl().remove_symbol(name);
   }
 
-  bool can_remove(const MachO_Symbol& sym) const {
+  auto can_remove(const MachO_Symbol& sym) const {
     return impl().can_remove(as<LIEF::MachO::Symbol>(&sym));
   }
 
-  bool can_remove_symbol(std::string name) const {
+  auto can_remove_symbol(const std::string& name) const {
     return impl().can_remove_symbol(name);
   }
 
-  bool unexport_name(std::string name) {
+  auto unexport_name(const std::string& name) {
     return impl().unexport(name);
   }
 
-  bool unexport_symbol(const MachO_Symbol& sym) {
+  auto unexport_symbol(const MachO_Symbol& sym) {
     return impl().unexport(as<LIEF::MachO::Symbol>(&sym));
   }
 
-  bool extend(const MachO_Command& command, uint64_t size) {
+  auto extend(const MachO_Command& command, uint64_t size) {
     return impl().extend(command.get(), size);
   }
 
-  bool extend_segment(const MachO_SegmentCommand& segment, uint64_t size) {
+  auto extend_segment(const MachO_SegmentCommand& segment, uint64_t size) {
     return impl().extend_segment(as<LIEF::MachO::SegmentCommand>(&segment), size);
   }
 
@@ -592,13 +596,13 @@ class MachO_Binary : public AbstractBinary {
     );
   }
 
-  auto add_exported_function(uint64_t address, std::string name) {
+  auto add_exported_function(uint64_t address, const std::string& name) {
     return details::try_unique<MachO_ExportInfo>(
         impl().add_exported_function(address, name)
     );
   }
 
-  auto add_local_symbol(uint64_t address, std::string name) {
+  auto add_local_symbol(uint64_t address, const std::string& name) {
     return details::try_unique<MachO_Symbol>(impl().add_local_symbol(address,
                                                                      name));
   }
@@ -619,3 +623,16 @@ class MachO_Binary : public AbstractBinary {
     return as<lief_t>(this);
   }
 };
+
+using MachO_Binary_it_commands = MachO_Binary::it_commands;
+using MachO_Binary_it_symbols = MachO_Binary::it_symbols;
+using MachO_Binary_it_sections = MachO_Binary::it_sections;
+using MachO_Binary_it_segments = MachO_Binary::it_segments;
+using MachO_Binary_it_libraries = MachO_Binary::it_libraries;
+using MachO_Binary_it_relocations = MachO_Binary::it_relocations;
+using MachO_Binary_it_rpaths = MachO_Binary::it_rpaths;
+using MachO_Binary_it_sub_clients = MachO_Binary::it_sub_clients;
+using MachO_Binary_it_bindings_info = MachO_Binary::it_bindings_info;
+using MachO_Binary_it_stubs = MachO_Binary::it_stubs;
+using MachO_Binary_it_notes = MachO_Binary::it_notes;
+using MachO_Binary_it_fileset_binaries = MachO_Binary::it_fileset_binaries;

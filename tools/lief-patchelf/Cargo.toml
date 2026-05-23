@@ -1,15 +1,20 @@
 [package]
-name = "lief-patchelf"
-version = "1.0.0"
-authors.workspace = true
-edition.workspace = true
+name          = "lief-patchelf"
+description   = "A robust, modern reimplementation of patchelf based on the LIEF"
+documentation = "https://lief.re/doc/latest/tools/lief-patchelf/index.html"
+edition.workspace      = true
+version.workspace      = true
+authors.workspace      = true
+license.workspace      = true
 rust-version.workspace = true
+homepage.workspace     = true
+repository.workspace   = true
 
 [dependencies]
-lief = { path = "../../api/rust/cargo/lief" }
-anyhow = "1.0.86"
-clap  = { version="4.5.40" }
-clap_complete = "4.5.54"
-thiserror = "2.0.11"
-indoc = "2"
-clap_mangen = "0.2.27"
+lief          = { workspace = true }
+anyhow        = { workspace = true }
+clap          = { workspace = true }
+clap_complete = { workspace = true }
+clap_mangen   = { workspace = true }
+thiserror     = { workspace = true }
+indoc         = { workspace = true }

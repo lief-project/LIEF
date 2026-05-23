@@ -44,15 +44,15 @@ class COFF_Symbol : public AbstractSymbol {
   };
 
   auto storage_class() const {
-    return to_int(impl().storage_class());
+    return as_u32(impl().storage_class());
   }
 
   auto base_type() const {
-    return to_int(impl().base_type());
+    return as_u32(impl().base_type());
   }
 
   auto complex_type() const {
-    return to_int(impl().complex_type());
+    return as_u32(impl().complex_type());
   }
 
   auto section_idx() const {
@@ -96,11 +96,11 @@ class COFF_Symbol : public AbstractSymbol {
   }
 
   auto demangled_name() const {
-    return impl().demangled_name();
+    return to_unique_string(impl().demangled_name());
   }
 
   auto to_string() const {
-    return impl().to_string();
+    return to_unique_string(impl().to_string());
   }
 
   private:
@@ -108,3 +108,5 @@ class COFF_Symbol : public AbstractSymbol {
     return as<lief_t>(this);
   }
 };
+
+using COFF_Symbol_it_auxiliary_symbols = COFF_Symbol::it_auxiliary_symbols;

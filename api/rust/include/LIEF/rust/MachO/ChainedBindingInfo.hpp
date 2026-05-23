@@ -16,6 +16,7 @@
 #pragma once
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 #include "LIEF/rust/MachO/BindingInfo.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_ChainedBindingInfo : public MachO_BindingInfo {
   public:
@@ -25,10 +26,10 @@ class MachO_ChainedBindingInfo : public MachO_BindingInfo {
     MachO_BindingInfo(base) {}
 
   auto format() const {
-    return to_int(impl().format());
+    return as_u32(impl().format());
   }
   auto ptr_format() const {
-    return to_int(impl().ptr_format());
+    return as_u32(impl().ptr_format());
   }
   uint32_t offset() const {
     return impl().offset();
@@ -37,7 +38,7 @@ class MachO_ChainedBindingInfo : public MachO_BindingInfo {
     return impl().sign_extended_addend();
   }
 
-  static bool classof(const MachO_BindingInfo& binding) {
+  static auto classof(const MachO_BindingInfo& binding) {
     return lief_t::classof(&binding.get());
   }
 

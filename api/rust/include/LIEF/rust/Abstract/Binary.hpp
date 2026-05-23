@@ -77,10 +77,10 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
   uint64_t original_size() const {
     return get().original_size();
   }
-  bool is_pie() const {
+  auto is_pie() const {
     return get().is_pie();
   }
-  bool has_nx() const {
+  auto has_nx() const {
     return get().has_nx();
   }
 
@@ -128,23 +128,23 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
     return std::make_unique<it_instructions>(get(), ptr, size, addr);
   }
 
-  auto disassemble_function(std::string function) const {
+  auto disassemble_function(const std::string& function) const {
     return std::make_unique<it_instructions>(get(), function);
   }
 
-  auto assemble(uint64_t address, std::string Asm) {
-    return get().assemble(address, Asm);
+  auto assemble(uint64_t address, const std::string& Asm) {
+    return make_unique_vector<uint8_t>(get().assemble(address, Asm));
   }
 
-  auto assemble_with_config(uint64_t address, std::string Asm,
+  auto assemble_with_config(uint64_t address, const std::string& Asm,
                             const AssemblerConfig_r& ffi_config) {
     std::unique_ptr<LIEF::assembly::AssemblerConfig> config =
         from_rust(ffi_config);
     assert(config != nullptr);
-    return get().assemble(address, Asm, *config);
+    return make_unique_vector<uint8_t>(get().assemble(address, Asm, *config));
   }
 
-  auto load_debug_info(std::string file) {
+  auto load_debug_info(const std::string& file) {
     return details::try_unique<AbstracDebugInfo>(get().load_debug_info(file));
   }
 
@@ -152,3 +152,6 @@ class AbstractBinary : public Mirror<LIEF::Binary> {
     return get().page_size();
   }
 };
+
+using AbstractBinary_it_functions = AbstractBinary::it_functions;
+using AbstractBinary_it_instructions = AbstractBinary::it_instructions;

@@ -16,6 +16,7 @@
 #pragma once
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_Dylib : public MachO_Command {
   public:
@@ -23,8 +24,8 @@ class MachO_Dylib : public MachO_Command {
   MachO_Dylib(const lief_t& base) :
     MachO_Command(base) {}
 
-  std::string name() const {
-    return impl().name();
+  auto name() const {
+    return to_unique_string(impl().name());
   }
   uint32_t timestamp() const {
     return impl().timestamp();
@@ -35,53 +36,57 @@ class MachO_Dylib : public MachO_Command {
   }
 
   auto current_version() const {
-    return details::make_vector(impl().current_version());
+    return make_unique_vector<uint64_t>(
+        details::make_vector(impl().current_version())
+    );
   }
 
   auto compatibility_version() const {
-    return details::make_vector(impl().compatibility_version());
+    return make_unique_vector<uint64_t>(
+        details::make_vector(impl().compatibility_version())
+    );
   }
 
-  void set_name(std::string name) {
-    impl().name(std::move(name));
+  auto set_name(const std::string& name) {
+    impl().name(name);
   }
 
-  static auto id_dylib(std::string name, uint32_t timestamp,
+  static auto id_dylib(const std::string& name, uint32_t timestamp,
                        uint32_t current_version, uint32_t compat_version) {
     return std::make_unique<MachO_Dylib>(
         lief_t::id_dylib(name, timestamp, current_version, compat_version)
     );
   }
 
-  static auto load_dylib(std::string name, uint32_t timestamp,
+  static auto load_dylib(const std::string& name, uint32_t timestamp,
                          uint32_t current_version, uint32_t compat_version) {
     return std::make_unique<MachO_Dylib>(
         lief_t::load_dylib(name, timestamp, current_version, compat_version)
     );
   }
 
-  static auto reexport_dylib(std::string name, uint32_t timestamp,
+  static auto reexport_dylib(const std::string& name, uint32_t timestamp,
                              uint32_t current_version, uint32_t compat_version) {
     return std::make_unique<MachO_Dylib>(
         lief_t::reexport_dylib(name, timestamp, current_version, compat_version)
     );
   }
 
-  static auto weak_dylib(std::string name, uint32_t timestamp,
+  static auto weak_dylib(const std::string& name, uint32_t timestamp,
                          uint32_t current_version, uint32_t compat_version) {
     return std::make_unique<MachO_Dylib>(
         lief_t::weak_dylib(name, timestamp, current_version, compat_version)
     );
   }
 
-  static auto lazy_load_dylib(std::string name, uint32_t timestamp,
+  static auto lazy_load_dylib(const std::string& name, uint32_t timestamp,
                               uint32_t current_version, uint32_t compat_version) {
     return std::make_unique<MachO_Dylib>(
         lief_t::lazy_load_dylib(name, timestamp, current_version, compat_version)
     );
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

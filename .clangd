@@ -55,6 +55,13 @@ Diagnostics:
 ---
 If:
   PathMatch:
+    - api/rust/include/LIEF/.*
+CompileFlags:
+  Remove: [-std=gnu++11]
+  Add: [-std=gnu++20]
+
+If:
+  PathMatch:
     - include/LIEF/.*
 CompileFlags:
   Add: [-std=gnu++11]

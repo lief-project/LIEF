@@ -59,16 +59,16 @@ class PE_Debug : public Mirror<LIEF::PE::Debug> {
     return make_span(get().payload());
   }
 
-  void set_characteristics(uint32_t value) {
+  auto set_characteristics(uint32_t value) {
     get().characteristics(value);
   }
-  void set_timestamp(uint32_t value) {
+  auto set_timestamp(uint32_t value) {
     get().timestamp(value);
   }
-  void set_major_version(uint16_t value) {
+  auto set_major_version(uint16_t value) {
     get().major_version(value);
   }
-  void set_minor_version(uint16_t value) {
+  auto set_minor_version(uint16_t value) {
     get().minor_version(value);
   }
 };

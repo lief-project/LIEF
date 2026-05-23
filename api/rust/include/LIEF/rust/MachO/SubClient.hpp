@@ -16,17 +16,18 @@
 #pragma once
 #include "LIEF/MachO/SubClient.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_SubClient : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::SubClient;
   MachO_SubClient(const lief_t& base) :
     MachO_Command(base) {}
-  std::string client() const {
-    return impl().client();
+  auto client() const {
+    return to_unique_string(impl().client());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

@@ -35,7 +35,7 @@ class DWARF_editor_Variable : public Mirror<LIEF::dwarf::editor::Variable> {
     get().set_type(ty.get());
   }
 
-  auto add_description(std::string desc) {
+  auto add_description(const std::string& desc) {
     get().add_description(desc);
   }
 };

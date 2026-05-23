@@ -17,6 +17,7 @@
 
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class MachO_AtomInfo : public MachO_Command {
   public:
@@ -34,7 +35,7 @@ class MachO_AtomInfo : public MachO_Command {
     return make_span(impl().content());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

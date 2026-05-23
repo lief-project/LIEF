@@ -16,6 +16,7 @@
 
 #include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_ExceptionInfo : public Mirror<LIEF::PE::ExceptionInfo> {
   public:
@@ -30,7 +31,7 @@ class PE_ExceptionInfo : public Mirror<LIEF::PE::ExceptionInfo> {
     return get().offset();
   }
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };

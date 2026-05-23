@@ -14,7 +14,7 @@ class PE_PKCS9MessageDigest : public PE_Attribute {
     return make_span(impl().digest());
   }
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 

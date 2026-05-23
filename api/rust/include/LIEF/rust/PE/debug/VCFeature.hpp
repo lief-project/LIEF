@@ -38,7 +38,7 @@ class PE_VCFeature : public PE_Debug {
     return impl().guards();
   }
 
-  static bool classof(const PE_Debug& entry) {
+  static auto classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 

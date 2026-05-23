@@ -18,6 +18,7 @@
 #include "LIEF/rust/PE/DelayImportEntry.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 #include <memory>
 
@@ -42,8 +43,8 @@ class PE_DelayImport : private Mirror<LIEF::PE::DelayImport> {
   uint32_t attribute() const {
     return get().attribute();
   }
-  std::string name() const {
-    return get().name();
+  auto name() const {
+    return to_unique_string(get().name());
   }
   uint32_t handle() const {
     return get().handle();
@@ -68,3 +69,5 @@ class PE_DelayImport : private Mirror<LIEF::PE::DelayImport> {
     return std::make_unique<it_entries>(get());
   }
 };
+
+using PE_DelayImport_it_entries = PE_DelayImport::it_entries;

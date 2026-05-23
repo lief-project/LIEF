@@ -23,7 +23,7 @@ class MachO_Routine : public MachO_Command {
   MachO_Routine(const lief_t& base) :
     MachO_Command(base) {}
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

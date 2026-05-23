@@ -17,6 +17,7 @@
 #include "LIEF/rust/PDB/Type.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PDB_types_Enum_Entry : public Mirror<LIEF::pdb::types::Enum::Entry> {
   public:
@@ -24,7 +25,7 @@ class PDB_types_Enum_Entry : public Mirror<LIEF::pdb::types::Enum::Entry> {
   using lief_t = LIEF::pdb::types::Enum::Entry;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
 
   int64_t value() const {
@@ -70,10 +71,10 @@ class PDB_types_Enum : public PDB_Type {
   }
 
   auto unique_name() const {
-    return impl().unique_name();
+    return to_unique_string(impl().unique_name());
   }
 
-  static bool classof(const PDB_Type& type) {
+  static auto classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
 
@@ -82,3 +83,5 @@ class PDB_types_Enum : public PDB_Type {
     return as<lief_t>(this);
   }
 };
+
+using PDB_types_Enum_it_entries = PDB_types_Enum::it_entries;

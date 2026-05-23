@@ -118,8 +118,7 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     }
   };
 
-  static auto
-      parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
+  static auto parse(const std::string& path) {
     return details::try_unique<COFF_Binary>(LIEF::COFF::Parser::parse(path));
   }
 
@@ -147,11 +146,11 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     return details::try_unique<COFF_String>(get().find_string(offset));
   }
 
-  auto find_function(std::string name) const {
+  auto find_function(const std::string& name) const {
     return details::try_unique<COFF_Symbol>(get().find_function(name));
   }
 
-  auto find_demangled_function(std::string name) const {
+  auto find_demangled_function(const std::string& name) const {
     return details::try_unique<COFF_Symbol>(get().find_demangled_function(name));
   }
 
@@ -163,7 +162,7 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     return std::make_unique<it_instructions>(get(), ptr, size, addr);
   }
 
-  auto disassemble_function(std::string function) const {
+  auto disassemble_function(const std::string& function) const {
     return std::make_unique<it_instructions>(get(), function);
   }
 
@@ -174,6 +173,13 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
   }
 
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };
+
+using COFF_Binary_it_relocations = COFF_Binary::it_relocations;
+using COFF_Binary_it_symbols = COFF_Binary::it_symbols;
+using COFF_Binary_it_sections = COFF_Binary::it_sections;
+using COFF_Binary_it_strings = COFF_Binary::it_strings;
+using COFF_Binary_it_functions = COFF_Binary::it_functions;
+using COFF_Binary_it_instructions = COFF_Binary::it_instructions;

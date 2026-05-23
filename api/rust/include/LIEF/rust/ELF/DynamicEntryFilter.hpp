@@ -22,21 +22,21 @@ class ELF_DynamicEntryFilter : public ELF_DynamicEntry {
   ELF_DynamicEntryFilter(std::unique_ptr<lief_t> impl) :
     ELF_DynamicEntry(std::move(impl)) {}
 
-  static auto create(std::string name) {
+  static auto create(const std::string& name) {
     return std::make_unique<ELF_DynamicEntryFilter>(
-        std::make_unique<lief_t>(std::move(name))
+        std::make_unique<lief_t>(name)
     );
   }
 
-  std::string name() const {
-    return impl().name();
+  auto name() const {
+    return to_unique_string(impl().name());
   }
 
-  void set_name(std::string name) {
-    impl().name(std::move(name));
+  auto set_name(const std::string& name) {
+    impl().name(name);
   }
 
-  static bool classof(const ELF_DynamicEntry& entry) {
+  static auto classof(const ELF_DynamicEntry& entry) {
     return lief_t::classof(&entry.get());
   }
 

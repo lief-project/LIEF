@@ -30,7 +30,7 @@ class MachO_Main : public MachO_Command {
   }
 
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

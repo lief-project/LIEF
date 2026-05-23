@@ -16,14 +16,15 @@
 
 #include "LIEF/COFF/String.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class COFF_String : public Mirror<LIEF::COFF::String> {
   public:
   using lief_t = LIEF::COFF::String;
   using Mirror::Mirror;
 
-  std::string str() const {
-    return get().str();
+  auto str() const {
+    return to_unique_string(get().str());
   }
 
   auto offset() const {

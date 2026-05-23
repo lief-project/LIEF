@@ -23,11 +23,11 @@ class MachO_RelocationObject : public MachO_Relocation {
   MachO_RelocationObject(const lief_t& base) :
     MachO_Relocation(base) {}
 
-  bool is_scattered() const {
+  auto is_scattered() const {
     return impl().is_scattered();
   }
 
-  static bool classof(const MachO_Relocation& reloc) {
+  static auto classof(const MachO_Relocation& reloc) {
     return lief_t::classof(
         *static_cast<const MachO_Relocation::lief_t*>(&reloc.get())
     );

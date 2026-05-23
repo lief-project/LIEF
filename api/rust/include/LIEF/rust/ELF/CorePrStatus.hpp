@@ -58,9 +58,9 @@ class ELF_CorePrStatus : public ELF_Note {
     return (uint32_t)impl().architecture();
   }
 
-  auto status() const {
+  ELF_CorePrStatus_Status status() const {
     const lief_t::pr_status_t& S = impl().status();
-    return std::make_unique<ELF_CorePrStatus_Status>(ELF_CorePrStatus_Status{
+    return {
         .signo = S.info.signo,
         .code = S.info.code,
         .err = S.info.err,
@@ -87,7 +87,7 @@ class ELF_CorePrStatus : public ELF_Note {
 
         .cstime_sec = S.cstime.sec,
         .cstime_usec = S.cstime.usec,
-    });
+    };
   }
 
   uint64_t pc(uint32_t& err) const {
@@ -103,10 +103,10 @@ class ELF_CorePrStatus : public ELF_Note {
   }
 
   auto register_values() const {
-    return impl().register_values();
+    return make_unique_vector<uint64_t>(impl().register_values());
   }
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 

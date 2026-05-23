@@ -19,14 +19,15 @@
 #include "LIEF/rust/error.hpp"
 #include "LIEF/rust/debug_location.hpp"
 #include "LIEF/rust/DebugDeclOpt.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class DWARF_Type : public Mirror<LIEF::dwarf::Type> {
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::Type;
 
-  std::string name(uint32_t& err) const {
-    return details::make_error(get().name(), err);
+  auto name(uint32_t& err) const {
+    return to_unique_string(details::make_error(get().name(), err));
   }
 
   uint64_t size(uint32_t& err) const {
@@ -48,10 +49,10 @@ class DWARF_Type : public Mirror<LIEF::dwarf::Type> {
   }
 
   auto to_decl() const {
-    return get().to_decl();
+    return to_unique_string(get().to_decl());
   }
 
   auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
-    return get().to_decl(opt.conf());
+    return to_unique_string(get().to_decl(opt.conf()));
   }
 };

@@ -19,6 +19,7 @@
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/rust/PE/RichEntry.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_RichHeader : Mirror<LIEF::PE::RichHeader> {
   public:
@@ -40,18 +41,20 @@ class PE_RichHeader : Mirror<LIEF::PE::RichHeader> {
   uint32_t key() const {
     return get().key();
   }
-  void set_key(uint32_t key) {
+  auto set_key(uint32_t key) {
     get().key(key);
   }
 
   auto raw() const {
-    return get().raw();
+    return make_unique_vector<uint8_t>(get().raw());
   }
   auto raw_with_key(uint32_t xor_key) const {
-    return get().raw(xor_key);
+    return make_unique_vector<uint8_t>(get().raw(xor_key));
   }
 
   auto entries() const {
     return std::make_unique<it_entries>(get());
   }
 };
+
+using PE_RichHeader_it_entries = PE_RichHeader::it_entries;

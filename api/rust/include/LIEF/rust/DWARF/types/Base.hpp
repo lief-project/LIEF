@@ -21,12 +21,12 @@ class DWARF_types_Base : public DWARF_Type {
   public:
   using lief_t = LIEF::dwarf::types::Base;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 
   auto encoding() const {
-    return to_int(impl().encoding());
+    return as_u32(impl().encoding());
   }
 
   private:

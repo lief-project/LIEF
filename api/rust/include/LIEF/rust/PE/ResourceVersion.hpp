@@ -24,6 +24,7 @@
 #include "LIEF/PE/resources/ResourceVar.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_ResourceStringTable_entry_t
   : private Mirror<LIEF::PE::ResourceStringTable::entry_t> {
@@ -32,10 +33,10 @@ class PE_ResourceStringTable_entry_t
   using Mirror::Mirror;
 
   auto key() const {
-    return get().key_u8();
+    return to_unique_string(get().key_u8());
   }
   auto value() const {
-    return get().value_u8();
+    return to_unique_string(get().value_u8());
   }
 };
 
@@ -62,7 +63,7 @@ class PE_ResourceStringTable : private Mirror<LIEF::PE::ResourceStringTable> {
     return get().type();
   }
   auto key() const {
-    return get().key_u8();
+    return to_unique_string(get().key_u8());
   }
   auto entries() const {
     return std::make_unique<it_entries>(get());
@@ -78,12 +79,12 @@ class PE_ResourceVar : private Mirror<LIEF::PE::ResourceVar> {
     return get().type();
   }
   auto key() const {
-    return get().key_u8();
+    return to_unique_string(get().key_u8());
   }
 
   auto values() const {
     const auto& v = get().values();
-    return std::vector<uint64_t>(v.begin(), v.end());
+    return make_unique_vector<uint64_t>(v.begin(), v.end());
   }
 };
 
@@ -110,7 +111,7 @@ class PE_ResourceStringFileInfo
     return get().type();
   }
   auto key() const {
-    return get().key_u8();
+    return to_unique_string(get().key_u8());
   }
   auto children() const {
     return std::make_unique<it_children>(get());
@@ -138,7 +139,7 @@ class PE_ResourceVarFileInfo : private Mirror<LIEF::PE::ResourceVarFileInfo> {
     return get().type();
   }
   auto key() const {
-    return get().key_u8();
+    return to_unique_string(get().key_u8());
   }
   auto vars() const {
     return std::make_unique<it_vars>(get());
@@ -154,7 +155,7 @@ class PE_ResourceVersion : private Mirror<LIEF::PE::ResourceVersion> {
     return get().type();
   }
   auto key() const {
-    return get().key_u8();
+    return to_unique_string(get().key_u8());
   }
 
   auto file_info_signature() const {
@@ -207,3 +208,8 @@ class PE_ResourceVersion : private Mirror<LIEF::PE::ResourceVersion> {
     return details::try_unique<PE_ResourceVarFileInfo>(get().var_file_info());
   }
 };
+
+using PE_ResourceStringFileInfo_it_children =
+    PE_ResourceStringFileInfo::it_children;
+using PE_ResourceStringTable_it_entries = PE_ResourceStringTable::it_entries;
+using PE_ResourceVarFileInfo_it_vars = PE_ResourceVarFileInfo::it_vars;

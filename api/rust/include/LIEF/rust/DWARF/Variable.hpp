@@ -20,6 +20,7 @@
 #include "LIEF/rust/error.hpp"
 #include "LIEF/rust/debug_location.hpp"
 #include "LIEF/rust/DebugDeclOpt.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
   public:
@@ -27,10 +28,10 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
   using lief_t = LIEF::dwarf::Variable;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto linkage_name() const {
-    return get().linkage_name();
+    return to_unique_string(get().linkage_name());
   }
 
   int64_t address(uint32_t& err) const {
@@ -64,14 +65,14 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
   }
 
   auto description() const {
-    return get().description();
+    return to_unique_string(get().description());
   }
 
   auto to_decl() const {
-    return get().to_decl();
+    return to_unique_string(get().to_decl());
   }
 
   auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
-    return get().to_decl(opt.conf());
+    return to_unique_string(get().to_decl(opt.conf()));
   }
 };

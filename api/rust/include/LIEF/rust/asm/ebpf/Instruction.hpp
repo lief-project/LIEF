@@ -26,7 +26,7 @@ class asm_ebpf_Instruction : public asm_Instruction {
     return to_int(impl().opcode());
   }
 
-  static bool classof(const asm_Instruction& inst) {
+  static auto classof(const asm_Instruction& inst) {
     return lief_t::classof(&inst.get());
   }
 

@@ -20,7 +20,7 @@ class DWARF_types_Pointer : public DWARF_Type {
   public:
   using lief_t = LIEF::dwarf::types::Pointer;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 

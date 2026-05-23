@@ -20,14 +20,14 @@
 
 class asm_aarch64_operands_Memory_offset_t {
   public:
-  uint64_t value;
-  uint32_t enum_type;
+  uint64_t value = 0;
+  uint32_t enum_type = 0;
 };
 
 class asm_aarch64_operands_Memory_shift_info_t {
   public:
-  int32_t enum_type;
-  int8_t value;
+  int32_t enum_type = 0;
+  int8_t value = 0;
 };
 
 class asm_aarch64_operands_Memory : public asm_aarch64_Operand {
@@ -54,7 +54,7 @@ class asm_aarch64_operands_Memory : public asm_aarch64_Operand {
     };
   }
 
-  static bool classof(const asm_aarch64_Operand& inst) {
+  static auto classof(const asm_aarch64_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 

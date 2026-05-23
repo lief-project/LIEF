@@ -80,13 +80,13 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
   };
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto producer() const {
-    return get().producer();
+    return to_unique_string(get().producer());
   }
   auto compilation_dir() const {
-    return get().compilation_dir();
+    return to_unique_string(get().compilation_dir());
   }
 
   auto low_address() const {
@@ -99,42 +99,28 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
     return get().size();
   }
   auto ranges() const {
-    return details::make_range(get().ranges());
+    return make_unique_vector<Range>(details::make_range(get().ranges()));
   }
 
-  auto language() const {
+  Language language() const {
     auto lang = get().language();
-    return std::make_unique<Language>(Language{/*lang=*/to_int(lang.lang),
-                                               /*version=*/lang.version});
+    return {/*lang=*/to_int(lang.lang),
+            /*version=*/lang.version};
   }
 
-  auto function_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Function>(
-        get().find_function(name)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto function_by_name(const std::string& name) const {
+    return details::try_unique<DWARF_Function>(get().find_function(name));
   }
 
-  auto function_by_address(
-      uint64_t addr
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Function>(
-        get().find_function(addr)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto function_by_address(uint64_t addr) const {
+    return details::try_unique<DWARF_Function>(get().find_function(addr));
   }
 
-  auto variable_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Variable>(
-        get().find_variable(name)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto variable_by_name(const std::string& name) const {
+    return details::try_unique<DWARF_Variable>(get().find_variable(name));
   }
 
-  auto variable_by_address(
-      uint64_t addr
-  ) const { // NOLINT(performance-unnecessary-value-param)
+  auto variable_by_address(uint64_t addr) const {
     return details::try_unique<DWARF_Variable>(
         get().find_variable(addr)
     ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
@@ -156,3 +142,8 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
     return std::make_unique<it_variables>(get());
   }
 };
+
+using DWARF_CompilationUnit_it_functions = DWARF_CompilationUnit::it_functions;
+using DWARF_CompilationUnit_it_types = DWARF_CompilationUnit::it_types;
+using DWARF_CompilationUnit_it_variables = DWARF_CompilationUnit::it_variables;
+using DWARF_CompilationUnit_Language = DWARF_CompilationUnit::Language;

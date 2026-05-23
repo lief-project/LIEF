@@ -19,6 +19,8 @@
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class MachO_FunctionVariants_RuntimeTableEntry
   : public Mirror<LIEF::MachO::FunctionVariants::RuntimeTableEntry> {
@@ -36,15 +38,15 @@ class MachO_FunctionVariants_RuntimeTableEntry
     return make_span(get().flag_bit_nums());
   }
   auto flags() const {
-    std::vector<uint32_t> out;
+    auto out = make_unique_vector<uint32_t>();
     const std::vector<lief_t::FLAGS> flags = get().flags();
-    std::transform(flags.begin(), flags.end(), std::back_inserter(out),
+    std::transform(flags.begin(), flags.end(), std::back_inserter(*out),
                    [](lief_t::FLAGS f) { return (uint32_t)f; });
     return out;
   }
 
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -68,7 +70,7 @@ class MachO_FunctionVariants_RuntimeTable
   };
 
   auto kind() const {
-    return to_int(get().kind());
+    return as_u32(get().kind());
   }
   auto offset() const {
     return get().offset();
@@ -78,9 +80,12 @@ class MachO_FunctionVariants_RuntimeTable
   }
 
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };
+
+using MachO_FunctionVariants_RuntimeTable_it_entries =
+    MachO_FunctionVariants_RuntimeTable::it_entries;
 
 class MachO_FunctionVariants : public MachO_Command {
   public:
@@ -117,7 +122,7 @@ class MachO_FunctionVariants : public MachO_Command {
     return std::make_unique<it_runtime_table>(impl());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
@@ -126,3 +131,6 @@ class MachO_FunctionVariants : public MachO_Command {
     return as<lief_t>(this);
   }
 };
+
+using MachO_FunctionVariants_it_runtime_table =
+    MachO_FunctionVariants::it_runtime_table;

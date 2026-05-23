@@ -30,7 +30,7 @@ class PE_CHPEMetadata : public Mirror<LIEF::PE::CHPEMetadata> {
     return get().version();
   }
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -214,8 +214,8 @@ class PE_CHPEMetadataARM64 : public PE_CHPEMetadata {
     return std::make_unique<it_const_code_range_entry_point>(impl());
   }
 
-  static bool classof(const PE_CHPEMetadata* meta) {
-    return lief_t::classof(&meta->get());
+  static auto classof(const PE_CHPEMetadata& meta) {
+    return lief_t::classof(&meta.get());
   }
 
   private:
@@ -272,8 +272,8 @@ class PE_CHPEMetadataX86 : public PE_CHPEMetadata {
     return details::make_optional(impl().wowa64_rdtsc_function_pointer(), is_set);
   }
 
-  static bool classof(const PE_CHPEMetadata* meta) {
-    return lief_t::classof(&meta->get());
+  static auto classof(const PE_CHPEMetadata& meta) {
+    return lief_t::classof(&meta.get());
   }
 
   private:
@@ -281,3 +281,10 @@ class PE_CHPEMetadataX86 : public PE_CHPEMetadata {
     return as<lief_t>(this);
   }
 };
+
+using PE_CHPEMetadataARM64_it_const_range_entries =
+    PE_CHPEMetadataARM64::it_const_range_entries;
+using PE_CHPEMetadataARM64_it_const_redirection_entries =
+    PE_CHPEMetadataARM64::it_const_redirection_entries;
+using PE_CHPEMetadataARM64_it_const_code_range_entry_point =
+    PE_CHPEMetadataARM64::it_const_code_range_entry_point;

@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/ObjC/Method.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class ObjC_Method : private Mirror<LIEF::objc::Method> {
   public:
@@ -22,10 +23,10 @@ class ObjC_Method : private Mirror<LIEF::objc::Method> {
   using Mirror::Mirror;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto mangled_type() const {
-    return get().mangled_type();
+    return to_unique_string(get().mangled_type());
   }
   uint64_t address() const {
     return get().address();

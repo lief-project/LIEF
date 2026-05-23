@@ -19,6 +19,7 @@
 #include "LIEF/rust/PE/DataDirectories.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 #include <memory>
 
@@ -56,8 +57,8 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
   uint32_t import_lookup_table_rva() const {
     return get().import_lookup_table_rva();
   }
-  std::string name() const {
-    return get().name();
+  auto name() const {
+    return to_unique_string(get().name());
   }
 
   auto name_rva() const {
@@ -80,15 +81,13 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
     return std::make_unique<it_entries>(get());
   }
 
-  auto entry_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
+  auto entry_by_name(const std::string& name) const {
     return details::try_unique<PE_ImportEntry>(
         get().get_entry(name)
     ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto remove_entry_by_name(std::string name) {
+  auto remove_entry_by_name(const std::string& name) {
     return get().remove_entry(name);
   }
 
@@ -97,11 +96,13 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
   }
 
   /// Add a new import entry with the given name (i.e. an imported function)
-  auto add_entry_by_name(std::string name) {
+  auto add_entry_by_name(const std::string& name) {
     return std::make_unique<PE_ImportEntry>(get().add_entry(name));
   }
 
-  void set_name(std::string name) {
-    get().name(std::move(name));
+  auto set_name(const std::string& name) {
+    get().name(name);
   }
 };
+
+using PE_Import_it_entries = PE_Import::it_entries;

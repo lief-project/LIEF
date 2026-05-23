@@ -16,39 +16,38 @@
 #include <string>
 #include "LIEF/rust/PE/Binary.hpp"
 #include "LIEF/rust/PE/Import.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
 
 class PE_Utils {
   public:
-  static bool
-      is_pe(std::string file) { // NOLINT(performance-unnecessary-value-param)
+  static auto is_pe(const std::string& file) {
     return LIEF::PE::is_pe(file);
   }
 
-  static bool check_layout(const PE_Binary& bin, std::string* error) {
+  static auto check_layout(const PE_Binary& bin, std::string* error) {
     return LIEF::PE::check_layout(static_cast<const LIEF::PE::Binary&>(bin.get()),
                                   error);
   }
 
-  static uint32_t
-      get_type(std::string file) { // NOLINT(performance-unnecessary-value-param)
+  static uint32_t get_type(const std::string& file) {
     if (auto res = LIEF::PE::get_type(file)) {
       return static_cast<uint32_t>(*res);
     }
     return 0;
   }
 
-  static std::string get_imphash(const PE_Binary& bin, uint32_t mode) {
-    return LIEF::PE::get_imphash(static_cast<const LIEF::PE::Binary&>(bin.get()),
-                                 LIEF::PE::IMPHASH_MODE(mode));
+  static auto get_imphash(const PE_Binary& bin, uint32_t mode) {
+    return to_unique_string(
+        LIEF::PE::get_imphash(static_cast<const LIEF::PE::Binary&>(bin.get()),
+                              LIEF::PE::IMPHASH_MODE(mode))
+    );
   }
 
-  static std::string oid_to_string(
-      std::string oid
-  ) { // NOLINT(performance-unnecessary-value-param)
+  static auto oid_to_string(const std::string& oid) {
     const char* result = LIEF::PE::oid_to_string(oid);
-    return result ? std::string(result) : "";
+    return to_unique_string(result ? std::string(result) : std::string());
   }
 
   static std::unique_ptr<PE_Import> resolve_ordinals(const PE_Import& imp,

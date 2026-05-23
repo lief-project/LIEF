@@ -35,15 +35,15 @@ class MachO_NoteCommand : public MachO_Command {
     return make_span(impl().owner());
   }
 
-  void set_note_offset(uint64_t value) {
+  auto set_note_offset(uint64_t value) {
     impl().note_offset(value);
   }
 
-  void set_note_size(uint64_t value) {
+  auto set_note_size(uint64_t value) {
     impl().note_size(value);
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

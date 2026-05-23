@@ -40,17 +40,17 @@ class MachO_Symbol : public AbstractSymbol {
     return impl().description();
   }
   auto origin() const {
-    return to_int(impl().origin());
+    return as_u32(impl().origin());
   }
   auto category() const {
-    return to_int(impl().category());
+    return as_u32(impl().category());
   }
-  bool is_external() const {
+  auto is_external() const {
     return impl().is_external();
   }
 
   auto demangled_name() const {
-    return impl().demangled_name();
+    return to_unique_string(impl().demangled_name());
   }
 
   LIEF_API std::unique_ptr<MachO_ExportInfo> export_info() const;

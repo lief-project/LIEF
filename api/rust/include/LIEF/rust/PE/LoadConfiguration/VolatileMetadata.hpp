@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
 
 class PE_VolatileMetadata_range_t
@@ -84,7 +85,9 @@ class PE_VolatileMetadata : public Mirror<LIEF::PE::VolatileMetadata> {
   }
 
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
+
+using PE_VolatileMetadata_it_ranges = PE_VolatileMetadata::it_ranges;

@@ -1,0 +1,71 @@
+use super::Command;
+use crate::common::FromFFI;
+use crate::declare_iterator;
+use lief_ffi as ffi;
+use std::marker::PhantomData;
+
+/// Structure that represents the `LC_RPATH` command.
+///
+/// This command is used to add path for searching libraries
+/// associated with the `@rpath` prefix.
+pub struct RPath<'a> {
+    ptr: cxx::UniquePtr<ffi::MachO_RPathCommand>,
+    _owner: PhantomData<&'a ffi::MachO_Binary>,
+}
+
+impl RPath<'_> {
+    /// Create a new Rpath command with the given path
+    pub fn new(value: &str) -> RPath<'static> {
+        cxx::let_cxx_string!(__cxx_s = value.to_string());
+        RPath::from_ffi(lief_ffi::MachO_RPathCommand::create(&__cxx_s))
+    }
+
+    /// The rpath value as a string
+    pub fn path(&self) -> String {
+        self.ptr.path().to_string()
+    }
+
+    /// Set the rpath value
+    pub fn set_path(&mut self, path: &str) {
+        cxx::let_cxx_string!(__cxx_s = path.to_string());
+        self.ptr.pin_mut().set_path(&__cxx_s);
+    }
+
+    /// Original string offset of the path
+    pub fn path_offset(&self) -> u32 {
+        self.ptr.path_offset()
+    }
+}
+
+impl std::fmt::Debug for RPath<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let base = self as &dyn Command;
+        f.debug_struct("RPath")
+            .field("base", &base)
+            .field("path", &self.path())
+            .finish()
+    }
+}
+
+impl FromFFI<ffi::MachO_RPathCommand> for RPath<'_> {
+    fn from_ffi(cmd: cxx::UniquePtr<ffi::MachO_RPathCommand>) -> Self {
+        Self {
+            ptr: cmd,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl Command for RPath<'_> {
+    fn get_base(&self) -> &ffi::MachO_Command {
+        self.ptr.as_ref().unwrap().as_ref()
+    }
+}
+
+declare_iterator!(
+    RPaths,
+    RPath<'a>,
+    ffi::MachO_RPathCommand,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_rpaths
+);

@@ -22,7 +22,7 @@ class AbstracDebugInfo : public Mirror<LIEF::DebugInfo> {
   using Mirror::Mirror;
   using lief_t = LIEF::DebugInfo;
 
-  uint64_t find_function_address(std::string name, uint32_t& is_set) const {
+  uint64_t find_function_address(const std::string& name, uint32_t& is_set) const {
     return details::make_optional(get().find_function_address(name), is_set);
   }
 };

@@ -35,8 +35,8 @@ class PE_DynamicFixup : public Mirror<LIEF::PE::DynamicFixup> {
   using lief_t = LIEF::PE::DynamicFixup;
   using Mirror::Mirror;
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -61,8 +61,8 @@ class PE_DynamicFixupARM64Kernel_entry
   auto iat_index() const {
     return get().iat_index;
   }
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -88,8 +88,8 @@ class PE_DynamicFixupARM64Kernel : public PE_DynamicFixup {
     return std::make_unique<it_relocations>(impl());
   }
 
-  static bool classof(const PE_DynamicFixup* meta) {
-    return lief_t::classof(&meta->get());
+  static auto classof(const PE_DynamicFixup& meta) {
+    return lief_t::classof(&meta.get());
   }
 
   private:
@@ -114,13 +114,13 @@ class PE_DynamicFixupARM64X_entry
     return get().size;
   }
   auto get_type() const {
-    return to_int(get().type);
+    return as_u32(get().type);
   }
   auto get_bytes() const {
     return make_span(get().bytes);
   }
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -146,8 +146,8 @@ class PE_DynamicFixupARM64X : public PE_DynamicFixup {
     return std::make_unique<it_relocations>(impl());
   }
 
-  static bool classof(const PE_DynamicFixup* meta) {
-    return lief_t::classof(&meta->get());
+  static auto classof(const PE_DynamicFixup& meta) {
+    return lief_t::classof(&meta.get());
   }
 
   private:
@@ -172,8 +172,8 @@ class PE_DynamicFixupControlTransfer_entry
   auto iat_index() const {
     return get().iat_index;
   }
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -201,8 +201,8 @@ class PE_DynamicFixupControlTransfer : public PE_DynamicFixup {
     return std::make_unique<it_relocations>(impl());
   }
 
-  static bool classof(const PE_DynamicFixup* meta) {
-    return lief_t::classof(&meta->get());
+  static auto classof(const PE_DynamicFixup& meta) {
+    return lief_t::classof(&meta.get());
   }
 
   private:
@@ -233,8 +233,8 @@ class PE_DynamicFixupGeneric : public PE_DynamicFixup {
     return std::make_unique<it_relocations>(impl());
   }
 
-  static bool classof(const PE_DynamicFixup* meta) {
-    return lief_t::classof(&meta->get());
+  static auto classof(const PE_DynamicFixup& meta) {
+    return lief_t::classof(&meta.get());
   }
 
   private:
@@ -251,8 +251,8 @@ class PE_DynamicFixupUnknown : public PE_DynamicFixup {
     return make_span(impl().payload());
   }
 
-  static bool classof(const PE_DynamicFixup* meta) {
-    return lief_t::classof(&meta->get());
+  static auto classof(const PE_DynamicFixup& meta) {
+    return lief_t::classof(&meta.get());
   }
 
   private:
@@ -351,8 +351,8 @@ class PE_FunctionOverrideInfo : public Mirror<LIEF::PE::FunctionOverrideInfo> {
   auto base_reloc_size() const {
     return get().base_reloc_size();
   }
-  std::vector<uint32_t> functions_rva() const {
-    return get().functions_rva();
+  auto functions_rva() const {
+    return make_unique_vector<uint32_t>(get().functions_rva());
   }
 
   auto relocations() const {
@@ -360,7 +360,7 @@ class PE_FunctionOverrideInfo : public Mirror<LIEF::PE::FunctionOverrideInfo> {
   }
 
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -416,8 +416,8 @@ class PE_FunctionOverride : public PE_DynamicFixup {
     );
   }
 
-  static bool classof(const PE_DynamicFixup* meta) {
-    return lief_t::classof(&meta->get());
+  static auto classof(const PE_DynamicFixup& meta) {
+    return lief_t::classof(&meta.get());
   }
 
   private:
@@ -425,3 +425,18 @@ class PE_FunctionOverride : public PE_DynamicFixup {
     return as<lief_t>(this);
   }
 };
+
+using PE_DynamicFixupARM64Kernel_it_relocations =
+    PE_DynamicFixupARM64Kernel::it_relocations;
+using PE_DynamicFixupARM64X_it_relocations = PE_DynamicFixupARM64X::it_relocations;
+using PE_DynamicFixupControlTransfer_it_relocations =
+    PE_DynamicFixupControlTransfer::it_relocations;
+using PE_DynamicFixupGeneric_it_relocations =
+    PE_DynamicFixupGeneric::it_relocations;
+using PE_FunctionOverrideInfo_it_relocations =
+    PE_FunctionOverrideInfo::it_relocations;
+using PE_FunctionOverride_image_bdd_info_t_it_relocations =
+    PE_FunctionOverride_image_bdd_info_t::it_relocations;
+using PE_FunctionOverride_it_bdd_info = PE_FunctionOverride::it_bdd_info;
+using PE_FunctionOverride_it_func_overriding_info =
+    PE_FunctionOverride::it_func_overriding_info;

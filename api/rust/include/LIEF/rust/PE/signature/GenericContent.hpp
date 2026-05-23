@@ -16,6 +16,7 @@
 #include "LIEF/rust/PE/signature/ContentInfo.hpp"
 #include "LIEF/PE/signature/GenericContent.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_GenericContent : public PE_ContentInfo_Content {
   public:
@@ -25,11 +26,11 @@ class PE_GenericContent : public PE_ContentInfo_Content {
     return make_span(impl().raw());
   }
 
-  std::string oid() const {
-    return impl().oid();
+  auto oid() const {
+    return to_unique_string(impl().oid());
   }
 
-  static bool classof(const PE_ContentInfo_Content& info) {
+  static auto classof(const PE_ContentInfo_Content& info) {
     return lief_t::classof(&info.get());
   }
 

@@ -16,6 +16,7 @@
 #include <string>
 #include <memory>
 #include <LIEF/PE.hpp>
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/PE/DosHeader.hpp"
 #include "LIEF/rust/PE/Section.hpp"
 #include "LIEF/rust/PE/Import.hpp"
@@ -37,70 +38,71 @@
 #include "LIEF/rust/Abstract/Binary.hpp"
 
 #include "LIEF/rust/COFF/Symbol.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class PE_Binary_write_config_t {
   public:
   static auto create() {
     return std::make_unique<PE_Binary_write_config_t>();
   }
-  void set_import(bool value) {
+  auto set_import(bool value) {
     config_.imports = value;
   }
 
-  void set_exports(bool value) {
+  auto set_exports(bool value) {
     config_.exports = value;
   }
 
-  void set_resources(bool value) {
+  auto set_resources(bool value) {
     config_.resources = value;
   }
 
-  void set_relocations(bool value) {
+  auto set_relocations(bool value) {
     config_.relocations = value;
   }
 
-  void set_load_config(bool value) {
+  auto set_load_config(bool value) {
     config_.load_configuration = value;
   }
 
-  void set_tls(bool value) {
+  auto set_tls(bool value) {
     config_.tls = value;
   }
 
-  void set_overlay(bool value) {
+  auto set_overlay(bool value) {
     config_.overlay = value;
   }
 
-  void set_debug(bool value) {
+  auto set_debug(bool value) {
     config_.debug = value;
   }
 
-  void set_dos_stub(bool value) {
+  auto set_dos_stub(bool value) {
     config_.dos_stub = value;
   }
 
-  void set_rsrc_section(std::string sec) {
-    config_.rsrc_section = std::move(sec);
+  auto set_rsrc_section(const std::string& sec) {
+    config_.rsrc_section = sec;
   }
 
-  void set_idata_section(std::string sec) {
-    config_.idata_section = std::move(sec);
+  auto set_idata_section(const std::string& sec) {
+    config_.idata_section = sec;
   }
 
-  void set_tls_section(std::string sec) {
-    config_.tls_section = std::move(sec);
+  auto set_tls_section(const std::string& sec) {
+    config_.tls_section = sec;
   }
 
-  void set_reloc_section(std::string sec) {
-    config_.reloc_section = std::move(sec);
+  auto set_reloc_section(const std::string& sec) {
+    config_.reloc_section = sec;
   }
 
-  void set_export_section(std::string sec) {
-    config_.export_section = std::move(sec);
+  auto set_export_section(const std::string& sec) {
+    config_.export_section = sec;
   }
 
-  void set_debug_section(std::string sec) {
-    config_.debug_section = std::move(sec);
+  auto set_debug_section(const std::string& sec) {
+    config_.debug_section = sec;
   }
 
   const LIEF::PE::Builder::config_t& conf() const {
@@ -121,31 +123,31 @@ class PE_ParserConfig {
     return config_;
   }
 
-  void set_parse_signature(bool value) {
+  auto set_parse_signature(bool value) {
     config_.parse_signature = value;
   }
 
-  void set_parse_exports(bool value) {
+  auto set_parse_exports(bool value) {
     config_.parse_exports = value;
   }
 
-  void set_parse_imports(bool value) {
+  auto set_parse_imports(bool value) {
     config_.parse_imports = value;
   }
 
-  void set_parse_rsrc(bool value) {
+  auto set_parse_rsrc(bool value) {
     config_.parse_rsrc = value;
   }
 
-  void set_parse_reloc(bool value) {
+  auto set_parse_reloc(bool value) {
     config_.parse_reloc = value;
   }
 
-  void set_parse_exceptions(bool value) {
+  auto set_parse_exceptions(bool value) {
     config_.parse_exceptions = value;
   }
 
-  void set_parse_arm64x_binary(bool value) {
+  auto set_parse_arm64x_binary(bool value) {
     config_.parse_arm64x_binary = value;
   }
 
@@ -294,14 +296,12 @@ class PE_Binary : public AbstractBinary {
   PE_Binary(std::unique_ptr<LIEF::Binary> bin) :
     AbstractBinary(std::move(bin)) {}
 
-  static auto
-      parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
+  static auto parse(const std::string& path) {
     return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(path));
   }
 
-  static auto parse_with_config(
-      std::string path, const PE_ParserConfig& config
-  ) { // NOLINT(performance-unnecessary-value-param)
+  static auto parse_with_config(const std::string& path,
+                                const PE_ParserConfig& config) {
     return details::try_unique<PE_Binary>(LIEF::PE::Parser::parse(path,
                                                                   config.conf()));
   }
@@ -388,16 +388,18 @@ class PE_Binary : public AbstractBinary {
 
   auto verify_signature(uint32_t flags) const {
     using check_t = LIEF::PE::Signature::VERIFICATION_CHECKS;
-    return to_int(impl().verify_signature(check_t(flags)));
+    return as_u32(impl().verify_signature(check_t(flags)));
   }
 
   auto verify_with_signature(const PE_Signature& sig, uint32_t flags) const {
     using check_t = LIEF::PE::Signature::VERIFICATION_CHECKS;
-    return to_int(impl().verify_signature(sig.get(), check_t(flags)));
+    return as_u32(impl().verify_signature(sig.get(), check_t(flags)));
   }
 
-  std::vector<uint8_t> authentihash(uint32_t algo) const {
-    return impl().authentihash(LIEF::PE::ALGORITHMS(algo));
+  auto authentihash(uint32_t algo) const {
+    return make_unique_vector<uint8_t>(
+        impl().authentihash(LIEF::PE::ALGORITHMS(algo))
+    );
   }
 
   auto overlay() const {
@@ -444,9 +446,7 @@ class PE_Binary : public AbstractBinary {
     ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto section_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
+  auto section_by_name(const std::string& name) const {
     return details::try_unique<PE_Section>(
         impl().get_section(name)
     ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
@@ -462,17 +462,13 @@ class PE_Binary : public AbstractBinary {
     ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto import_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
+  auto import_by_name(const std::string& name) const {
     return details::try_unique<PE_Import>(
         impl().get_import(name)
     ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  auto delay_import_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
+  auto delay_import_by_name(const std::string& name) const {
     return details::try_unique<PE_DelayImport>(
         impl().get_delay_import(name)
     ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
@@ -532,31 +528,31 @@ class PE_Binary : public AbstractBinary {
     return std::make_unique<AbstractBinary::it_functions>(impl().functions());
   }
 
-  auto add_import(std::string name) {
+  auto add_import(const std::string& name) {
     return std::make_unique<PE_Import>(impl().add_import(name));
   }
 
-  auto add_import_pos(std::string name, uint32_t pos) {
+  auto add_import_pos(const std::string& name, uint32_t pos) {
     return std::make_unique<PE_Import>(impl().add_import(name, pos));
   }
 
-  void remove_import(std::string name) {
+  auto remove_import(const std::string& name) {
     impl().remove_import(name);
   }
 
-  void remove_all_imports() {
+  auto remove_all_imports() {
     impl().remove_all_imports();
   }
 
-  void remove_tls() {
+  auto remove_tls() {
     impl().remove_tls();
   }
 
-  void set_tls(const PE_TLS& tls) {
+  auto set_tls(const PE_TLS& tls) {
     impl().tls(tls.get());
   }
 
-  void set_resources(const PE_ResourceNode& node) {
+  auto set_resources(const PE_ResourceNode& node) {
     impl().set_resources(node.get());
   }
 
@@ -564,11 +560,11 @@ class PE_Binary : public AbstractBinary {
     return details::try_unique<PE_Debug>(impl().add_debug_info(entry.get()));
   }
 
-  bool remove_debug(const PE_Debug& entry) {
+  auto remove_debug(const PE_Debug& entry) {
     return impl().remove_debug(entry.get());
   }
 
-  bool clear_debug() {
+  auto clear_debug() {
     return impl().clear_debug();
   }
 
@@ -610,16 +606,16 @@ class PE_Binary : public AbstractBinary {
     );
   }
 
-  void write(std::string output) {
+  auto write(const std::string& output) {
     impl().write(output);
   }
 
-  void write_with_config(std::string output,
+  void write_with_config(const std::string& output,
                          const PE_Binary_write_config_t& config) {
     impl().write(output, config.conf());
   }
 
-  void set_export(const PE_Export& exp) {
+  auto set_export(const PE_Export& exp) {
     impl().set_export(exp.get());
   }
 
@@ -627,10 +623,10 @@ class PE_Binary : public AbstractBinary {
     return impl().is_reproducible_build();
   }
 
-  auto has_import(std::string name) const {
+  auto has_import(const std::string& name) const {
     return impl().has_import(name);
   }
-  auto has_delay_import(std::string name) const {
+  auto has_delay_import(const std::string& name) const {
     return impl().has_delay_import(name);
   }
 
@@ -640,15 +636,15 @@ class PE_Binary : public AbstractBinary {
     );
   }
 
-  void remove_section(std::string name, bool clear) {
+  auto remove_section(const std::string& name, bool clear) {
     impl().remove_section(name, clear);
   }
 
-  void fill_address(uint64_t address, uint64_t size, uint8_t value) {
+  auto fill_address(uint64_t address, uint64_t size, uint8_t value) {
     impl().fill_address(address, size, value);
   }
 
-  void remove_all_relocations() {
+  auto remove_all_relocations() {
     impl().remove_all_relocations();
   }
 
@@ -660,3 +656,14 @@ class PE_Binary : public AbstractBinary {
     return as<lief_t>(this);
   }
 };
+
+using PE_Binary_it_debug = PE_Binary::it_debug;
+using PE_Binary_it_signatures = PE_Binary::it_signatures;
+using PE_Binary_it_sections = PE_Binary::it_sections;
+using PE_Binary_it_relocations = PE_Binary::it_relocations;
+using PE_Binary_it_imports = PE_Binary::it_imports;
+using PE_Binary_it_delay_imports = PE_Binary::it_delay_imports;
+using PE_Binary_it_data_directories = PE_Binary::it_data_directories;
+using PE_Binary_it_strings_table = PE_Binary::it_strings_table;
+using PE_Binary_it_symbols = PE_Binary::it_symbols;
+using PE_Binary_it_exceptions = PE_Binary::it_exceptions;

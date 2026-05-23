@@ -52,19 +52,19 @@ class PE_ResourceData : public PE_ResourceNode {
     return make_span(impl().content());
   }
 
-  void set_code_page(uint32_t value) {
+  auto set_code_page(uint32_t value) {
     impl().code_page(value);
   }
 
-  void set_reserved(uint32_t value) {
+  auto set_reserved(uint32_t value) {
     impl().reserved(value);
   }
 
-  void set_content(const uint8_t* ptr, size_t size) {
+  auto set_content(const uint8_t* ptr, size_t size) {
     impl().content(ptr, size);
   }
 
-  static bool classof(const PE_ResourceNode& node) {
+  static auto classof(const PE_ResourceNode& node) {
     return lief_t::classof(&node.get());
   }
 

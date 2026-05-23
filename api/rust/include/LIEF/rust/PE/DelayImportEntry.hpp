@@ -16,6 +16,7 @@
 
 #include "LIEF/PE/DelayImportEntry.hpp"
 #include "LIEF/rust/Abstract/Symbol.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_DelayImportEntry : public AbstractSymbol {
   using lief_t = LIEF::PE::DelayImportEntry;
@@ -24,7 +25,7 @@ class PE_DelayImportEntry : public AbstractSymbol {
   PE_DelayImportEntry(const lief_t& info) :
     AbstractSymbol(const_cast<lief_t&>(info)) {}
 
-  bool is_ordinal() const {
+  auto is_ordinal() const {
     return impl().is_ordinal();
   }
   uint16_t ordinal() const {
@@ -43,7 +44,7 @@ class PE_DelayImportEntry : public AbstractSymbol {
     return impl().data();
   }
   auto demangled_name() const {
-    return impl().demangled_name();
+    return to_unique_string(impl().demangled_name());
   }
 
   private:

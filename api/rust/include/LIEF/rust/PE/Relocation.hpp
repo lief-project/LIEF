@@ -48,3 +48,5 @@ class PE_Relocation : Mirror<LIEF::PE::Relocation> {
     return std::make_unique<it_entries>(get());
   }
 };
+
+using PE_Relocation_it_entries = PE_Relocation::it_entries;

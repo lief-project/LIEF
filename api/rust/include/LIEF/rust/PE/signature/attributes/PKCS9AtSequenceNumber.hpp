@@ -12,7 +12,7 @@ class PE_PKCS9AtSequenceNumber : public PE_Attribute {
     return impl().number();
   }
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 

@@ -21,6 +21,7 @@
 #include "LIEF/rust/ObjC/DeclOpt.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
   public:
@@ -53,15 +54,11 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
     }
   };
 
-  auto get_class(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
+  auto get_class(const std::string& name) const {
     return details::try_unique<ObjC_Class>(get().get_class(name));
   }
 
-  auto get_protocol(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
+  auto get_protocol(const std::string& name) const {
     return details::try_unique<ObjC_Protocol>(get().get_protocol(name));
   }
 
@@ -74,10 +71,13 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
   }
 
   auto to_decl() const {
-    return get().to_decl();
+    return to_unique_string(get().to_decl());
   }
 
-  auto to_decl_with_opt(ObjC_DeclOpt opt) const {
-    return get().to_decl(from_rust_declopt(opt));
+  auto to_decl_with_opt(const ObjC_DeclOpt& opt) const {
+    return to_unique_string(get().to_decl(from_rust_declopt(opt)));
   }
 };
+
+using ObjC_Metadata_it_classes = ObjC_Metadata::it_classes;
+using ObjC_Metadata_it_protocols = ObjC_Metadata::it_protocols;

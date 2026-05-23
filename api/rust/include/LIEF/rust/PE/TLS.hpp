@@ -19,6 +19,7 @@
 #include "LIEF/rust/PE/Section.hpp"
 #include "LIEF/rust/PE/DataDirectories.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class PE_TLS : public Mirror<LIEF::PE::TLS> {
   public:
@@ -29,8 +30,8 @@ class PE_TLS : public Mirror<LIEF::PE::TLS> {
     return std::make_unique<PE_TLS>(std::make_unique<lief_t>());
   }
 
-  std::vector<uint64_t> callbacks() const {
-    return get().callbacks();
+  auto callbacks() const {
+    return make_unique_vector<uint64_t>(get().callbacks());
   }
 
   auto addressof_index() const {
@@ -50,7 +51,9 @@ class PE_TLS : public Mirror<LIEF::PE::TLS> {
     return make_span(get().data_template());
   }
   auto addressof_raw_data() const {
-    return details::make_vector(get().addressof_raw_data());
+    return make_unique_vector<uint64_t>(
+        details::make_vector(get().addressof_raw_data())
+    );
   }
 
   auto section() const {
@@ -64,31 +67,31 @@ class PE_TLS : public Mirror<LIEF::PE::TLS> {
     ); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
-  void add_callback(uint64_t addr) {
+  auto add_callback(uint64_t addr) {
     get().add_callback(addr);
   }
 
-  void set_callbacks(const uint64_t* ptr, size_t size) {
+  auto set_callbacks(const uint64_t* ptr, size_t size) {
     get().callbacks({ptr, ptr + size});
   }
 
-  void set_addressof_index(uint64_t value) {
+  auto set_addressof_index(uint64_t value) {
     get().addressof_index(value);
   }
 
-  void set_addressof_callback(uint64_t value) {
+  auto set_addressof_callback(uint64_t value) {
     get().addressof_callbacks(value);
   }
 
-  void set_sizeof_zero_fill(uint32_t value) {
+  auto set_sizeof_zero_fill(uint32_t value) {
     get().sizeof_zero_fill(value);
   }
 
-  void set_characteristics(uint32_t value) {
+  auto set_characteristics(uint32_t value) {
     get().characteristics(value);
   }
 
-  void set_data_template(const uint8_t* ptr, size_t size) {
+  auto set_data_template(const uint8_t* ptr, size_t size) {
     get().data_template({ptr, ptr + size});
   }
 };

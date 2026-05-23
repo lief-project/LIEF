@@ -17,6 +17,7 @@
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
 #include "LIEF/rust/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include <memory>
 
 class ELF_SymbolVersionRequirement
@@ -47,8 +48,8 @@ class ELF_SymbolVersionRequirement
   uint32_t cnt() const {
     return get().cnt();
   }
-  std::string name() const {
-    return get().name();
+  auto name() const {
+    return to_unique_string(get().name());
   }
 
   auto auxiliary_symbols() const {
@@ -59,17 +60,20 @@ class ELF_SymbolVersionRequirement
     get().version(version);
   }
 
-  auto set_name(std::string name) {
+  auto set_name(const std::string& name) {
     get().name(name);
   }
 
-  auto find_aux(std::string name) const {
+  auto find_aux(const std::string& name) const {
     return details::try_unique<ELF_SymbolVersionAuxRequirement>(
         get().find_aux(name)
     );
   }
 
-  auto remove_aux_requirement_by_name(std::string name) {
+  auto remove_aux_requirement_by_name(const std::string& name) {
     return get().remove_aux_requirement(name);
   }
 };
+
+using ELF_SymbolVersionRequirement_it_auxiliary_symbols =
+    ELF_SymbolVersionRequirement::it_auxiliary_symbols;

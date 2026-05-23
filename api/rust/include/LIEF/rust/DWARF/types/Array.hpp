@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/DWARF/types/Array.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class DWARF_types_array_size_info
   : private Mirror<LIEF::dwarf::types::Array::size_info_t> {
@@ -23,7 +24,7 @@ class DWARF_types_array_size_info
   using lief_t = LIEF::dwarf::types::Array::size_info_t;
 
   auto name() const {
-    return get().name;
+    return to_unique_string(get().name);
   }
 
   uint64_t size() const {
@@ -41,7 +42,7 @@ class DWARF_types_Array : public DWARF_Type {
   public:
   using lief_t = LIEF::dwarf::types::Array;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 

@@ -19,6 +19,7 @@
 #include "LIEF/rust/PDB/Type.hpp"
 #include "LIEF/rust/PDB/types/Attribute.hpp"
 #include "LIEF/rust/PDB/types/Method.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PDB_types_ClassLike : public PDB_Type {
   public:
@@ -52,7 +53,7 @@ class PDB_types_ClassLike : public PDB_Type {
   };
 
   auto unique_name() const {
-    return impl().unique_name();
+    return to_unique_string(impl().unique_name());
   }
 
   auto attributes() const {
@@ -69,12 +70,15 @@ class PDB_types_ClassLike : public PDB_Type {
   }
 };
 
+using PDB_types_ClassLike_it_attributes = PDB_types_ClassLike::it_attributes;
+using PDB_types_ClassLike_it_methods = PDB_types_ClassLike::it_methods;
+
 
 class PDB_types_Class : public PDB_types_ClassLike {
   public:
   using lief_t = LIEF::pdb::types::Class;
 
-  static bool classof(const PDB_Type& type) {
+  static auto classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
 };
@@ -83,7 +87,7 @@ class PDB_types_Structure : public PDB_types_ClassLike {
   public:
   using lief_t = LIEF::pdb::types::Structure;
 
-  static bool classof(const PDB_Type& type) {
+  static auto classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
 };
@@ -92,7 +96,7 @@ class PDB_types_Interface : public PDB_types_ClassLike {
   public:
   using lief_t = LIEF::pdb::types::Interface;
 
-  static bool classof(const PDB_Type& type) {
+  static auto classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
 };

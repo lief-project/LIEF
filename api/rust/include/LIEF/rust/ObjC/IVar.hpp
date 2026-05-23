@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/ObjC/IVar.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class ObjC_IVar : private Mirror<LIEF::objc::IVar> {
   public:
@@ -22,9 +23,9 @@ class ObjC_IVar : private Mirror<LIEF::objc::IVar> {
   using Mirror::Mirror;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto mangled_type() const {
-    return get().mangled_type();
+    return to_unique_string(get().mangled_type());
   }
 };

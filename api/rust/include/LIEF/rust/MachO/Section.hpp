@@ -17,6 +17,7 @@
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_SegmentCommand;
 class MachO_Relocation;
@@ -41,8 +42,8 @@ class MachO_Section : public AbstractSection {
     }
   };
 
-  std::string segment_name() const {
-    return impl().segment_name();
+  auto segment_name() const {
+    return to_unique_string(impl().segment_name());
   }
   auto address() const {
     return impl().address();
@@ -57,10 +58,10 @@ class MachO_Section : public AbstractSection {
     return impl().numberof_relocations();
   }
   auto flags() const {
-    return to_int(impl().flags());
+    return as_u64(impl().flags());
   }
   auto section_type() const {
-    return to_int(impl().type());
+    return as_u64(impl().type());
   }
   auto reserved1() const {
     return impl().reserved1();
@@ -83,7 +84,7 @@ class MachO_Section : public AbstractSection {
     return std::make_unique<it_relocations>(impl());
   }
 
-  bool has_segment() const {
+  auto has_segment() const {
     return impl().has_segment();
   }
 
@@ -95,3 +96,5 @@ class MachO_Section : public AbstractSection {
     return as<lief_t>(this);
   }
 };
+
+using MachO_Section_it_relocations = MachO_Section::it_relocations;

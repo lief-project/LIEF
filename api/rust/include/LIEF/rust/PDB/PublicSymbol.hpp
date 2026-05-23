@@ -15,6 +15,7 @@
 #pragma once
 
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PDB/PublicSymbol.hpp"
 
 class PDB_PublicSymbol : private Mirror<LIEF::pdb::PublicSymbol> {
@@ -23,19 +24,19 @@ class PDB_PublicSymbol : private Mirror<LIEF::pdb::PublicSymbol> {
   using lief_t = LIEF::pdb::PublicSymbol;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto demangled_name() const {
-    return get().demangled_name();
+    return to_unique_string(get().demangled_name());
   }
   auto section_name() const {
-    return get().section_name();
+    return to_unique_string(get().section_name());
   }
   auto RVA() const {
     return get().RVA();
   }
 
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };

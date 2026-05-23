@@ -23,6 +23,7 @@
 #include "LIEF/rust/ObjC/IVar.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class ObjC_Class : private Mirror<LIEF::objc::Class> {
   public:
@@ -81,10 +82,10 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
   };
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto demangled_name() const {
-    return get().demangled_name();
+    return to_unique_string(get().demangled_name());
   }
   auto is_meta() const {
     return get().is_meta();
@@ -108,10 +109,15 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
   }
 
   auto to_decl() const {
-    return get().to_decl();
+    return to_unique_string(get().to_decl());
   }
 
-  auto to_decl_with_opt(ObjC_DeclOpt opt) const {
-    return get().to_decl(from_rust_declopt(opt));
+  auto to_decl_with_opt(const ObjC_DeclOpt& opt) const {
+    return to_unique_string(get().to_decl(from_rust_declopt(opt)));
   }
 };
+
+using ObjC_Class_it_methods = ObjC_Class::it_methods;
+using ObjC_Class_it_protocols = ObjC_Class::it_protocols;
+using ObjC_Class_it_properties = ObjC_Class::it_properties;
+using ObjC_Class_it_ivars = ObjC_Class::it_ivars;

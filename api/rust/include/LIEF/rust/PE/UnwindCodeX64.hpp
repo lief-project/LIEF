@@ -31,8 +31,8 @@ class PE_unwind_x64_Code : public Mirror<LIEF::PE::unwind_x64::Code> {
     return to_int(get().opcode());
   }
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -46,7 +46,7 @@ class PE_unwind_x64_Alloc : public PE_unwind_x64_Code {
     return impl().size();
   }
 
-  static bool classof(const PE_unwind_x64_Code& entry) {
+  static auto classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -66,7 +66,7 @@ class PE_unwind_x64_PushNonVol : public PE_unwind_x64_Code {
     return to_int(impl().reg());
   }
 
-  static bool classof(const PE_unwind_x64_Code& entry) {
+  static auto classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -86,7 +86,7 @@ class PE_unwind_x64_PushMachFrame : public PE_unwind_x64_Code {
     return impl().value();
   }
 
-  static bool classof(const PE_unwind_x64_Code& entry) {
+  static auto classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -106,7 +106,7 @@ class PE_unwind_x64_SetFPReg : public PE_unwind_x64_Code {
     return to_int(impl().reg());
   }
 
-  static bool classof(const PE_unwind_x64_Code& entry) {
+  static auto classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -129,7 +129,7 @@ class PE_unwind_x64_SaveNonVolatile : public PE_unwind_x64_Code {
     return impl().offset();
   }
 
-  static bool classof(const PE_unwind_x64_Code& entry) {
+  static auto classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -153,7 +153,7 @@ class PE_unwind_x64_SaveXMM128 : public PE_unwind_x64_Code {
     return impl().offset();
   }
 
-  static bool classof(const PE_unwind_x64_Code& entry) {
+  static auto classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -177,7 +177,7 @@ class PE_unwind_x64_Epilog : public PE_unwind_x64_Code {
     return impl().size();
   }
 
-  static bool classof(const PE_unwind_x64_Code& entry) {
+  static auto classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -193,7 +193,7 @@ class PE_unwind_x64_Spare : public PE_unwind_x64_Code {
   PE_unwind_x64_Spare(const lief_t& obj) :
     PE_unwind_x64_Code(obj) {}
 
-  static bool classof(const PE_unwind_x64_Code& entry) {
+  static auto classof(const PE_unwind_x64_Code& entry) {
     return lief_t::classof(&entry.get());
   }
 

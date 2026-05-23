@@ -115,7 +115,7 @@ class COFF_Section : public AbstractSection {
   }
 
   auto to_string() const {
-    return impl().to_string();
+    return to_unique_string(impl().to_string());
   }
 
   private:
@@ -123,3 +123,6 @@ class COFF_Section : public AbstractSection {
     return as<lief_t>(this);
   }
 };
+
+using COFF_Section_it_relocations = COFF_Section::it_relocations;
+using COFF_Section_it_symbols = COFF_Section::it_symbols;

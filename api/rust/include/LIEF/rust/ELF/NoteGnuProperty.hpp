@@ -35,7 +35,7 @@ class ELF_NoteGnuProperty_Property
   using Mirror::Mirror;
 
   auto get_type() const {
-    return to_int(get().type());
+    return as_u32(get().type());
   }
 };
 
@@ -51,7 +51,7 @@ class ELF_NoteGnuProperty_AArch64Feature : public ELF_NoteGnuProperty_Property {
     return to_vector(as<lief_t>(this).features());
   }
 
-  static bool classof(const ELF_NoteGnuProperty_Property& prop) {
+  static auto classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }
 };
@@ -72,7 +72,7 @@ class ELF_NoteGnuProperty_AArch64PAuth : public ELF_NoteGnuProperty_Property {
     return as<lief_t>(this).version();
   }
 
-  static bool classof(const ELF_NoteGnuProperty_Property& prop) {
+  static auto classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }
 };
@@ -89,7 +89,7 @@ class ELF_NoteGnuProperty_Generic : public ELF_NoteGnuProperty_Property {
     return as<lief_t>(this).type();
   }
 
-  static bool classof(const ELF_NoteGnuProperty_Property& prop) {
+  static auto classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }
 };
@@ -106,7 +106,7 @@ class ELF_NoteGnuProperty_Needed : public ELF_NoteGnuProperty_Property {
     return to_vector(as<lief_t>(this).needs());
   }
 
-  static bool classof(const ELF_NoteGnuProperty_Property& prop) {
+  static auto classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }
 };
@@ -120,7 +120,7 @@ class ELF_NoteGnuProperty_NoteNoCopyOnProtected
         static_cast<const ELF_NoteGnuProperty_Property::lief_t&>(impl)
     ) {}
 
-  static bool classof(const ELF_NoteGnuProperty_Property& prop) {
+  static auto classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }
 };
@@ -137,7 +137,7 @@ class ELF_NoteGnuProperty_StackSize : public ELF_NoteGnuProperty_Property {
     return as<lief_t>(this).stack_size();
   }
 
-  static bool classof(const ELF_NoteGnuProperty_Property& prop) {
+  static auto classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }
 };
@@ -153,15 +153,15 @@ class ELF_NoteGnuProperty_X86Features : public ELF_NoteGnuProperty_Property {
   // Returns pairs of (flag, feature) as a flat vector: [flag0, feat0, flag1,
   // feat1, ...]
   auto features() const {
-    std::vector<uint64_t> result;
+    auto result = make_unique_vector<uint64_t>();
     for (const auto& [f, feat] : as<lief_t>(this).features()) {
-      result.push_back((uint64_t)f);
-      result.push_back((uint64_t)feat);
+      result->push_back((uint64_t)f);
+      result->push_back((uint64_t)feat);
     }
     return result;
   }
 
-  static bool classof(const ELF_NoteGnuProperty_Property& prop) {
+  static auto classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }
 };
@@ -176,15 +176,15 @@ class ELF_NoteGnuProperty_X86ISA : public ELF_NoteGnuProperty_Property {
 
   // Returns pairs of (flag, isa) as a flat vector: [flag0, isa0, flag1, isa1, ...]
   auto values() const {
-    std::vector<uint64_t> result;
+    auto result = make_unique_vector<uint64_t>();
     for (const auto& [f, isa] : as<lief_t>(this).values()) {
-      result.push_back((uint64_t)f);
-      result.push_back((uint64_t)isa);
+      result->push_back((uint64_t)f);
+      result->push_back((uint64_t)isa);
     }
     return result;
   }
 
-  static bool classof(const ELF_NoteGnuProperty_Property& prop) {
+  static auto classof(const ELF_NoteGnuProperty_Property& prop) {
     return lief_t::classof(&prop.get());
   }
 };
@@ -219,7 +219,7 @@ class ELF_NoteGnuProperty : public ELF_Note {
     );
   }
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 
@@ -228,3 +228,5 @@ class ELF_NoteGnuProperty : public ELF_Note {
     return as<lief_t>(this);
   }
 };
+
+using ELF_NoteGnuProperty_it_properties = ELF_NoteGnuProperty::it_properties;

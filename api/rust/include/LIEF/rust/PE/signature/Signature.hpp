@@ -58,8 +58,7 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
     }
   };
 
-  static auto
-      parse(std::string path) { // NOLINT(performance-unnecessary-value-param)
+  static auto parse(const std::string& path) {
     std::unique_ptr<LIEF::PE::Signature> sig;
     if (auto res = LIEF::PE::SignatureParser::parse(path)) {
       sig = std::make_unique<LIEF::PE::Signature>(std::move(*res));
@@ -82,7 +81,7 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
     return get().version();
   }
   auto digest_algorithm() const {
-    return to_int(get().digest_algorithm());
+    return as_u32(get().digest_algorithm());
   }
   auto raw_der() const {
     return make_span(get().raw_der());
@@ -103,46 +102,34 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
   auto find_crt_by_serial(const uint8_t* serial, size_t size) const {
     return details::try_unique<PE_x509>(
         get().find_crt(std::vector<uint8_t>{serial, serial + size})
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    );
   }
 
-  auto find_crt_by_subject(
-      std::string subject
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PE_x509>(
-        get().find_crt_subject(subject)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto find_crt_by_subject(const std::string& subject) const {
+    return details::try_unique<PE_x509>(get().find_crt_subject(subject));
   }
 
-  auto find_crt_by_subject_and_serial(
-      std::string subject, // NOLINT(performance-unnecessary-value-param)
-      const uint8_t* serial, size_t size
-  ) const {
+  auto find_crt_by_subject_and_serial(const std::string& subject,
+                                      const uint8_t* serial, size_t size) const {
     std::vector<uint8_t> serial_vec{serial, serial + size};
-    return details::try_unique<PE_x509>(
-        get().find_crt_subject(subject, serial_vec)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_x509>(get().find_crt_subject(subject,
+                                                               serial_vec));
   }
 
-  auto find_crt_by_issuer(
-      std::string issuer
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PE_x509>(
-        get().find_crt_issuer(issuer)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto find_crt_by_issuer(const std::string& issuer) const {
+    return details::try_unique<PE_x509>(get().find_crt_issuer(issuer));
   }
 
-  auto find_crt_by_issuer_and_serial(
-      std::string issuer, // NOLINT(performance-unnecessary-value-param)
-      const uint8_t* serial, size_t size
-  ) const {
+  auto find_crt_by_issuer_and_serial(const std::string& issuer,
+                                     const uint8_t* serial, size_t size) const {
     std::vector<uint8_t> serial_vec{serial, serial + size};
-    return details::try_unique<PE_x509>(
-        get().find_crt_issuer(issuer, serial_vec)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_x509>(get().find_crt_issuer(issuer, serial_vec));
   }
 
   auto check(uint32_t flags) const {
-    return to_int(get().check(LIEF::PE::Signature::VERIFICATION_CHECKS(flags)));
+    return as_u32(get().check(LIEF::PE::Signature::VERIFICATION_CHECKS(flags)));
   }
 };
+
+using PE_Signature_it_certificates = PE_Signature::it_certificates;
+using PE_Signature_it_signers = PE_Signature::it_signers;

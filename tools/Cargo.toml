@@ -1,21 +1,32 @@
+[workspace.package]
+authors      = ["Romain Thomas <me@romainthomas.fr>"]
+license      = "Apache-2.0"
+version      = "1.0.0"
+edition      = "2024"
+rust-version = "1.85.0"
+homepage     = "https://lief.re"
+repository   = "https://github.com/lief-project/LIEF"
+
 [workspace]
 members = [
   "lief-patchelf",
 ]
-resolver = "2"
+resolver = "3"
 
-[workspace.package]
-authors = ["Romain Thomas <me@romainthomas.fr>"]
-edition = "2021"
-rust-version = "1.74.0"
+[workspace.dependencies]
+lief          = { path = "../api/rust/crates/lief" }
+anyhow        = "1.0"
+clap          = "4.6"
+clap_complete = "4.6"
+clap_mangen   = "0.3"
+thiserror     = "2.0"
+indoc         = "2"
 
 [profile.release]
-opt-level = 3
-debug = false
 debug-assertions = false
-overflow-checks = false
-incremental = false
-codegen-units = 16
-strip = "symbols"
-lto = "fat"
-panic = "abort"
+overflow-checks  = false
+incremental      = false
+codegen-units    = 16
+strip            = "symbols"
+lto              = "fat"
+panic            = "abort"

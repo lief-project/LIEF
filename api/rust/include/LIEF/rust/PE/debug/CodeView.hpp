@@ -30,7 +30,7 @@ class PE_CodeView : public PE_Debug {
     return to_int(impl().signature());
   }
 
-  static bool classof(const PE_Debug& entry) {
+  static auto classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 
