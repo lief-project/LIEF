@@ -520,6 +520,12 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
   const uint64_t last_offset_aligned = align(last_offset, psize);
   new_segment->file_offset(last_offset_aligned);
 
+  init_alignment(*this, *new_segment, this->ptr_size());
+
+  if (base == 0) {
+    base = align(next_virtual_address(), new_segment->alignment());
+  }
+
   if (segment.virtual_address() == 0) {
     new_segment->virtual_address(base + last_offset_aligned);
   }
@@ -532,9 +538,6 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
   new_segment->handler_size_ = content.size();
   new_segment->physical_size(segmentsize);
   new_segment->virtual_size(segmentsize);
-
-
-  init_alignment(*this, *new_segment, this->ptr_size());
 
   new_segment->datahandler_ = datahandler_.get();
 

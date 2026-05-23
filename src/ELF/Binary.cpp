@@ -1046,13 +1046,11 @@ bool Binary::has_nx() const {
 }
 
 Segment* Binary::add(const Segment& segment, uint64_t base) {
-  const uint64_t new_base = base == 0 ? next_virtual_address() : base;
-
   switch (header().file_type()) {
     case Header::FILE_TYPE::EXEC:
-      return add_segment<Header::FILE_TYPE::EXEC>(segment, new_base);
+      return add_segment<Header::FILE_TYPE::EXEC>(segment, base);
     case Header::FILE_TYPE::DYN:
-      return add_segment<Header::FILE_TYPE::DYN>(segment, new_base);
+      return add_segment<Header::FILE_TYPE::DYN>(segment, base);
     default:
     {
       LIEF_WARN("Adding segment not implemented for {}",
@@ -1081,7 +1079,9 @@ Segment* Binary::replace(const Segment& new_segment,
   uint64_t new_base = base;
 
   if (new_base == 0) {
-    new_base = next_virtual_address();
+    const uint64_t alignment =
+        new_segment.alignment() > 0 ? new_segment.alignment() : page_size();
+    new_base = align(next_virtual_address(), alignment);
   }
 
   span<const uint8_t> content_ref = new_segment.content();
@@ -2004,16 +2004,7 @@ uint64_t Binary::next_virtual_address() const {
         );
       }
   );
-
-  if (type() == Header::CLASS::ELF32) {
-    va = round<uint32_t>(static_cast<uint32_t>(va));
-  }
-
-  if (type() == Header::CLASS::ELF64) {
-    va = round<uint64_t>(static_cast<uint64_t>(va));
-  }
-
-  return va;
+  return align(va, page_size());
 }
 
 
