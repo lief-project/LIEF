@@ -637,7 +637,7 @@ def test_break(tmp_path: Path):
     def process_local_symbol(target: lief.MachO.Binary, sym: lief.MachO.Symbol):
         original_name = sym.name
         assert isinstance(original_name, str)
-        name = list(sym.name)
+        name = list(str(c) for c in sym.name)
         random.shuffle(name)
         sym.name = "_" + "".join(name)
         sym.raw_type = 0xF
