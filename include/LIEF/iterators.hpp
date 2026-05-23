@@ -24,6 +24,8 @@
 #include <type_traits>
 #include <vector>
 
+#include <LIEF/compiler_attributes.hpp>
+
 namespace LIEF {
 
 template<class T>
@@ -652,6 +654,16 @@ template<class T>
 iterator_range<T> make_range(T&& x, T&& y) {
   return iterator_range<T>(std::forward<T>(x), std::forward<T>(y));
 }
+
+} // namespace LIEF
+
+#if LIEF_HAS_STD_RANGES
+template<typename IteratorT>
+inline constexpr bool
+    std::ranges::enable_borrowed_range<LIEF::iterator_range<IteratorT>> = true;
+#endif
+
+namespace LIEF {
 
 
 /// CRTP base class which implements the entire standard iterator facade

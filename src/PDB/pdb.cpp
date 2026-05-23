@@ -156,14 +156,22 @@ std::unique_ptr<BuildMetadata> CompilationUnit::build_metadata() const {
   return nullptr;
 }
 
+CompilationUnit::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 CompilationUnit::Iterator::Iterator(std::unique_ptr<details::CompilationUnitIt>) :
   impl_(nullptr) {}
 
 CompilationUnit::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-CompilationUnit::Iterator::Iterator(Iterator&&) :
-  impl_(nullptr) {}
+CompilationUnit::Iterator& CompilationUnit::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+CompilationUnit::Iterator::Iterator(Iterator&&) noexcept = default;
+CompilationUnit::Iterator&
+    CompilationUnit::Iterator::operator=(Iterator&&) noexcept = default;
 
 CompilationUnit::Iterator::~Iterator() = default;
 
@@ -180,7 +188,17 @@ CompilationUnit::Iterator& CompilationUnit::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<CompilationUnit> CompilationUnit::Iterator::operator*() const {
+void CompilationUnit::Iterator::load() const {}
+
+const CompilationUnit& CompilationUnit::Iterator::operator*() const {
+  return *cached_;
+}
+
+const CompilationUnit* CompilationUnit::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<CompilationUnit> CompilationUnit::Iterator::yield() {
   return nullptr;
 }
 
@@ -197,14 +215,22 @@ PublicSymbol::PublicSymbol(std::unique_ptr<details::PublicSymbol> impl) :
 PublicSymbol::~PublicSymbol() = default;
 
 
+PublicSymbol::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 PublicSymbol::Iterator::Iterator(std::unique_ptr<details::PublicSymbolIt>) :
   impl_(nullptr) {}
 
 PublicSymbol::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-PublicSymbol::Iterator::Iterator(Iterator&&) :
-  impl_(nullptr) {}
+PublicSymbol::Iterator& PublicSymbol::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+PublicSymbol::Iterator::Iterator(Iterator&&) noexcept = default;
+PublicSymbol::Iterator&
+    PublicSymbol::Iterator::operator=(Iterator&&) noexcept = default;
 
 PublicSymbol::Iterator::~Iterator() = default;
 
@@ -216,7 +242,17 @@ PublicSymbol::Iterator& PublicSymbol::Iterator::operator++() {
   return *this;
 }
 
-std::unique_ptr<PublicSymbol> PublicSymbol::Iterator::operator*() const {
+void PublicSymbol::Iterator::load() const {}
+
+const PublicSymbol& PublicSymbol::Iterator::operator*() const {
+  return *cached_;
+}
+
+const PublicSymbol* PublicSymbol::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<PublicSymbol> PublicSymbol::Iterator::yield() {
   return nullptr;
 }
 
@@ -249,14 +285,21 @@ Function::Function(std::unique_ptr<details::Function> impl) :
 Function::~Function() = default;
 
 
+Function::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Function::Iterator::Iterator(std::unique_ptr<details::FunctionIt>) :
   impl_(nullptr) {}
 
 Function::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Function::Iterator::Iterator(Iterator&&) :
-  impl_(nullptr) {}
+Function::Iterator& Function::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Function::Iterator::Iterator(Iterator&&) noexcept = default;
+Function::Iterator& Function::Iterator::operator=(Iterator&&) noexcept = default;
 
 Function::Iterator::~Iterator() = default;
 
@@ -268,7 +311,17 @@ Function::Iterator& Function::Iterator::operator++() {
   return *this;
 }
 
-std::unique_ptr<Function> Function::Iterator::operator*() const {
+void Function::Iterator::load() const {}
+
+const Function& Function::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Function* Function::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Function> Function::Iterator::yield() {
   return nullptr;
 }
 
@@ -325,14 +378,21 @@ Type::~Type() = default;
 Type::Type(std::unique_ptr<details::Type> impl) :
   impl_(std::move(impl)) {}
 
+Type::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Type::Iterator::Iterator(std::unique_ptr<details::TypeIt>) :
   impl_(nullptr) {}
 
 Type::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Type::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Type::Iterator& Type::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Type::Iterator::Iterator(Iterator&&) noexcept = default;
+Type::Iterator& Type::Iterator::operator=(Iterator&&) noexcept = default;
 
 Type::Iterator::~Iterator() = default;
 
@@ -344,7 +404,17 @@ Type::Iterator& Type::Iterator::operator++() {
   return *this;
 }
 
-std::unique_ptr<Type> Type::Iterator::operator*() const {
+void Type::Iterator::load() const {}
+
+const Type& Type::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Type* Type::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Type> Type::Iterator::yield() {
   return nullptr;
 }
 
@@ -485,14 +555,21 @@ Union::~Union() = default;
 Attribute::Attribute(std::unique_ptr<details::Attribute> impl) :
   impl_(std::move(impl)) {}
 
+Attribute::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Attribute::Iterator::Iterator(std::unique_ptr<details::AttributeIt>) :
   impl_(nullptr) {}
 
 Attribute::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Attribute::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Attribute::Iterator& Attribute::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Attribute::Iterator::Iterator(Iterator&&) noexcept = default;
+Attribute::Iterator& Attribute::Iterator::operator=(Iterator&&) noexcept = default;
 
 Attribute::Iterator::~Iterator() = default;
 
@@ -504,7 +581,17 @@ Attribute::Iterator& Attribute::Iterator::operator++() {
   return *this;
 }
 
-std::unique_ptr<Attribute> Attribute::Iterator::operator*() const {
+void Attribute::Iterator::load() const {}
+
+const Attribute& Attribute::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Attribute* Attribute::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Attribute> Attribute::Iterator::yield() {
   return nullptr;
 }
 
@@ -528,14 +615,21 @@ Attribute::~Attribute() = default;
 Method::Method(std::unique_ptr<details::Method> impl) :
   impl_(std::move(impl)) {}
 
+Method::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Method::Iterator::Iterator(std::unique_ptr<details::MethodIt>) :
   impl_(nullptr) {}
 
 Method::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Method::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Method::Iterator& Method::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Method::Iterator::Iterator(Iterator&&) noexcept = default;
+Method::Iterator& Method::Iterator::operator=(Iterator&&) noexcept = default;
 
 Method::Iterator::~Iterator() = default;
 
@@ -547,7 +641,17 @@ Method::Iterator& Method::Iterator::operator++() {
   return *this;
 }
 
-std::unique_ptr<Method> Method::Iterator::operator*() const {
+void Method::Iterator::load() const {}
+
+const Method& Method::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Method* Method::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Method> Method::Iterator::yield() {
   return nullptr;
 }
 

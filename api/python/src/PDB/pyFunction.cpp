@@ -2,7 +2,6 @@
 #include "LIEF/PDB/Function.hpp"
 #include "PDB/pyPDB.hpp"
 
-#include <nanobind/make_iterator.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 

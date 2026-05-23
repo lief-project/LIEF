@@ -15,7 +15,21 @@
 #pragma once
 #include <cstdint>
 #include <memory>
+#include <type_traits>
 #include "LIEF/iterators.hpp"
+
+namespace details {
+template<class It, class = void>
+struct has_yield : std::false_type {};
+
+template<class It>
+struct has_yield<It, std::void_t<decltype(std::declval<It&>().yield())>>
+  : std::true_type {};
+
+
+template<class T>
+constexpr bool has_yield_v = has_yield<T>::value;
+}
 
 template<class T, class V>
 class Iterator {
@@ -25,7 +39,13 @@ class Iterator {
     if (it_ == it_.end()) {
       return nullptr;
     }
-    return std::make_unique<T>(*it_++);
+    if constexpr (details::has_yield_v<V>) {
+      auto owned = it_.yield();
+      ++it_;
+      return owned ? std::make_unique<T>(std::move(owned)) : nullptr;
+    } else {
+      return std::make_unique<T>(*it_++);
+    }
   }
 
   uint64_t size() const {
@@ -47,9 +67,15 @@ class ForwardIterator {
     if (begin_ == end_) {
       return nullptr;
     }
-    auto&& value = *begin_;
-    ++begin_;
-    return std::make_unique<T>(std::move(value));
+    if constexpr (details::has_yield_v<V>) {
+      auto owned = begin_.yield();
+      ++begin_;
+      return owned ? std::make_unique<T>(std::move(owned)) : nullptr;
+    } else {
+      auto&& value = *begin_;
+      ++begin_;
+      return std::make_unique<T>(std::move(value));
+    }
   }
 
   bool empty() const {
@@ -81,7 +107,13 @@ class RandomRangeIterator {
     if (it_ == end_) {
       return nullptr;
     }
-    return std::make_unique<T>(*it_++);
+    if constexpr (details::has_yield_v<V>) {
+      auto owned = it_.yield();
+      ++it_;
+      return owned ? std::make_unique<T>(std::move(owned)) : nullptr;
+    } else {
+      return std::make_unique<T>(*it_++);
+    }
   }
 
   uint64_t size() const {

@@ -161,14 +161,21 @@ std::string Variable::to_decl(const DeclOpt& /*opt*/) const {
 
 Variable::~Variable() = default;
 
+Variable::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Variable::Iterator::Iterator(std::unique_ptr<details::VariableIt>) :
   impl_(nullptr) {}
 
 Variable::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Variable::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Variable::Iterator& Variable::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Variable::Iterator::Iterator(Iterator&&) noexcept = default;
+Variable::Iterator& Variable::Iterator::operator=(Iterator&&) noexcept = default;
 
 Variable::Iterator::~Iterator() = default;
 
@@ -184,7 +191,17 @@ Variable::Iterator& Variable::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<Variable> Variable::Iterator::operator*() const {
+void Variable::Iterator::load() const {}
+
+const Variable& Variable::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Variable* Variable::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Variable> Variable::Iterator::yield() {
   return nullptr;
 }
 
@@ -224,6 +241,9 @@ std::unique_ptr<Parameter>
 // ----------------------------------------------------------------------------
 // DWARF/Function.hpp
 // ----------------------------------------------------------------------------
+Function::Function(std::unique_ptr<details::Function>) :
+  impl_(nullptr) {}
+
 Function::~Function() = default;
 
 Function::instructions_it Function::instructions() const {
@@ -296,14 +316,21 @@ Function::thrown_types_t Function::thrown_types() const {
   return {};
 }
 
+Function::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Function::Iterator::Iterator(std::unique_ptr<details::FunctionIt>) :
   impl_(nullptr) {}
 
 Function::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Function::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Function::Iterator& Function::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Function::Iterator::Iterator(Iterator&&) noexcept = default;
+Function::Iterator& Function::Iterator::operator=(Iterator&&) noexcept = default;
 
 Function::Iterator::~Iterator() = default;
 
@@ -319,7 +346,17 @@ Function::Iterator& Function::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<Function> Function::Iterator::operator*() const {
+void Function::Iterator::load() const {}
+
+const Function& Function::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Function* Function::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Function> Function::Iterator::yield() {
   return nullptr;
 }
 
@@ -437,14 +474,22 @@ CompilationUnit::vars_it CompilationUnit::variables() const {
   return make_empty_iterator<Variable>();
 }
 
+CompilationUnit::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 CompilationUnit::Iterator::Iterator(std::unique_ptr<details::CompilationUnitIt>) :
   impl_(nullptr) {}
 
 CompilationUnit::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-CompilationUnit::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+CompilationUnit::Iterator& CompilationUnit::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+CompilationUnit::Iterator::Iterator(Iterator&&) noexcept = default;
+CompilationUnit::Iterator&
+    CompilationUnit::Iterator::operator=(Iterator&&) noexcept = default;
 
 CompilationUnit::Iterator::~Iterator() = default;
 
@@ -461,7 +506,17 @@ CompilationUnit::Iterator& CompilationUnit::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<CompilationUnit> CompilationUnit::Iterator::operator*() const {
+void CompilationUnit::Iterator::load() const {}
+
+const CompilationUnit& CompilationUnit::Iterator::operator*() const {
+  return *cached_;
+}
+
+const CompilationUnit* CompilationUnit::Iterator::operator->() const {
+  return cached_.get();
+}
+
+std::unique_ptr<CompilationUnit> CompilationUnit::Iterator::yield() {
   return nullptr;
 }
 
@@ -505,14 +560,21 @@ Type::Type(details::Type& impl) :
 
 Type::~Type() = default;
 
+Type::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Type::Iterator::Iterator(std::unique_ptr<details::TypeIt>) :
   impl_(nullptr) {}
 
 Type::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Type::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Type::Iterator& Type::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Type::Iterator::Iterator(Iterator&&) noexcept = default;
+Type::Iterator& Type::Iterator::operator=(Iterator&&) noexcept = default;
 
 Type::Iterator::~Iterator() = default;
 
@@ -528,7 +590,17 @@ Type::Iterator& Type::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<Type> Type::Iterator::operator*() const {
+void Type::Iterator::load() const {}
+
+const Type& Type::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Type* Type::Iterator::operator->() const {
+  return cached_.get();
+}
+
+std::unique_ptr<Type> Type::Iterator::yield() {
   return nullptr;
 }
 // ----------------------------------------------------------------------------
@@ -595,14 +667,22 @@ std::vector<range_t> LexicalBlock::ranges() const {
   return {};
 }
 
+LexicalBlock::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 LexicalBlock::Iterator::Iterator(std::unique_ptr<details::LexicalBlockIt>) :
   impl_(nullptr) {}
 
 LexicalBlock::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-LexicalBlock::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+LexicalBlock::Iterator& LexicalBlock::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+LexicalBlock::Iterator::Iterator(Iterator&&) noexcept = default;
+LexicalBlock::Iterator&
+    LexicalBlock::Iterator::operator=(Iterator&&) noexcept = default;
 
 LexicalBlock::Iterator::~Iterator() = default;
 
@@ -618,7 +698,17 @@ LexicalBlock::Iterator& LexicalBlock::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<LexicalBlock> LexicalBlock::Iterator::operator*() const {
+void LexicalBlock::Iterator::load() const {}
+
+const LexicalBlock& LexicalBlock::Iterator::operator*() const {
+  return *cached_;
+}
+
+const LexicalBlock* LexicalBlock::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<LexicalBlock> LexicalBlock::Iterator::yield() {
   return nullptr;
 }
 

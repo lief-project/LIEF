@@ -37,13 +37,14 @@ class InstructionIt;
 /// This class represents an assembly instruction
 class LIEF_API Instruction {
   public:
-  /// **Lazy-forward** iterator that outputs Instruction
+  /// **Lazy-forward** iterator that disassembles instructions on demand.
   class Iterator final
-    : public iterator_facade_base<Iterator, std::forward_iterator_tag,
-                                  std::unique_ptr<Instruction>, std::ptrdiff_t,
-                                  Instruction*, std::unique_ptr<Instruction>> {
+    : public iterator_facade_base<Iterator, std::forward_iterator_tag, Instruction,
+                                  std::ptrdiff_t, const Instruction*,
+                                  const Instruction&> {
     public:
     using implementation = details::InstructionIt;
+    using iterator_facade_base::operator++;
 
     LIEF_API Iterator();
 
@@ -56,6 +57,7 @@ class LIEF_API Instruction {
 
     LIEF_API ~Iterator();
 
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator++();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
@@ -64,12 +66,20 @@ class LIEF_API Instruction {
       return !(LHS == RHS);
     }
 
-    /// Disassemble and output an Instruction at the current iterator's
-    /// position.
-    LIEF_API std::unique_ptr<Instruction> operator*() const;
+    LIEF_API const Instruction& operator*() const;
+
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const Instruction* operator->() const;
+
+    /// Transfer ownership of the instruction at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<Instruction> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::InstructionIt> impl_;
+    mutable std::unique_ptr<Instruction> cached_;
   };
 
   public:

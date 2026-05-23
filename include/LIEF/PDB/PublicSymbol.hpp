@@ -19,6 +19,7 @@
 #include <string>
 #include <ostream>
 
+#include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -33,60 +34,49 @@ class PublicSymbolIt;
 /// from the PDB's public symbol stream (or Public symbol hash stream)
 class LIEF_API PublicSymbol {
   public:
-  class LIEF_API Iterator {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::forward_iterator_tag,
+                                  PublicSymbol, std::ptrdiff_t,
+                                  const PublicSymbol*, const PublicSymbol&> {
     public:
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = std::unique_ptr<PublicSymbol>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = PublicSymbol*;
-    using reference = PublicSymbol&;
     using implementation = details::PublicSymbolIt;
+    using iterator_facade_base::operator++;
 
-    class LIEF_API PointerProxy {
-      // Inspired from LLVM's iterator_facade_base
-      friend class Iterator;
+    LIEF_API Iterator();
 
-      public:
-      pointer operator->() const {
-        return R.get();
-      }
+    LIEF_API Iterator(std::unique_ptr<details::PublicSymbolIt> impl);
 
-      private:
-      value_type R;
+    LIEF_API Iterator(const Iterator&);
+    LIEF_API Iterator& operator=(const Iterator&);
 
-      template<typename RefT>
-      PointerProxy(RefT&& R) :
-        R(std::forward<RefT>(R)) {
-      } // NOLINT(bugprone-forwarding-reference-overload)
-    };
+    LIEF_API Iterator(Iterator&&) noexcept;
+    LIEF_API Iterator& operator=(Iterator&&) noexcept;
 
-    Iterator(const Iterator&);
-    Iterator(Iterator&&);
-    Iterator(std::unique_ptr<details::PublicSymbolIt> impl);
-    ~Iterator();
+    LIEF_API ~Iterator();
+
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator++();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
 
-    friend LIEF_API bool operator!=(const Iterator& LHS, const Iterator& RHS) {
+    friend bool operator!=(const Iterator& LHS, const Iterator& RHS) {
       return !(LHS == RHS);
     }
 
-    Iterator& operator++();
+    LIEF_API const PublicSymbol& operator*() const;
 
-    Iterator operator++(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const PublicSymbol* operator->() const;
 
-    std::unique_ptr<PublicSymbol> operator*() const;
-
-    PointerProxy operator->() const {
-      return static_cast<const Iterator*>(this)->operator*();
-    }
+    /// Transfer ownership of the public symbol at the current position to
+    /// the caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<PublicSymbol> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::PublicSymbolIt> impl_;
+    mutable std::unique_ptr<PublicSymbol> cached_;
   };
   PublicSymbol(std::unique_ptr<details::PublicSymbol> impl);
   ~PublicSymbol();

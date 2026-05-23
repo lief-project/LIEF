@@ -41,11 +41,12 @@ class LIEF_API Dylib {
   public:
   /// Dylib Iterator
   class LIEF_API Iterator
-    : public iterator_facade_base<Iterator, std::random_access_iterator_tag,
-                                  std::unique_ptr<Dylib>, std::ptrdiff_t, Dylib*,
-                                  std::unique_ptr<Dylib>> {
+    : public iterator_facade_base<Iterator, std::random_access_iterator_tag, Dylib,
+                                  std::ptrdiff_t, const Dylib*, const Dylib&> {
     public:
     using implementation = details::DylibIt;
+
+    Iterator();
 
     Iterator(std::unique_ptr<details::DylibIt> impl);
     Iterator(const Iterator&);
@@ -68,10 +69,20 @@ class LIEF_API Dylib {
       return !(LHS == RHS);
     }
 
-    std::unique_ptr<Dylib> operator*() const;
+    const Dylib& operator*() const;
+
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    const Dylib* operator->() const;
+
+    /// Transfer ownership of the dylib at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    std::unique_ptr<Dylib> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::DylibIt> impl_;
+    mutable std::unique_ptr<Dylib> cached_;
   };
 
   public:

@@ -5,7 +5,6 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
-#include <nanobind/make_iterator.h>
 
 
 namespace LIEF::dsc::py {

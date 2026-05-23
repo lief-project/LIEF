@@ -6,6 +6,8 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/make_iterator.h>
 
+#include "pyOwningIterator.hpp"
+
 #include "pyErr.hpp"
 
 namespace LIEF::dwarf::py {
@@ -101,7 +103,7 @@ void create<dw::types::ClassLike>(nb::module_& m) {
     )
     .def_prop_ro("functions",
         [] (dw::types::ClassLike& self) {
-          auto funcs = self.functions();
+          auto funcs = LIEF::py::owning_range(self.functions());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<dw::types::ClassLike>(), "functions_it", funcs
           );

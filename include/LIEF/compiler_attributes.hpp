@@ -72,4 +72,12 @@
   #define LIEF_LIFETIMEBOUND
 #endif
 
+#if defined(__cpp_lib_ranges) && __cpp_lib_ranges >= 201911L
+  #include <ranges>
+  #define LIEF_HAS_STD_RANGES 1
+#else
+  #define LIEF_HAS_STD_RANGES 0
+#endif
+
+
 #endif

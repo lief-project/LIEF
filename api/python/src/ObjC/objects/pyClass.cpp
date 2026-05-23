@@ -5,6 +5,8 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/make_iterator.h>
 
+#include "pyOwningIterator.hpp"
+
 namespace LIEF::objc::py {
 template<>
 void create<objc::Class>(nb::module_& m) {
@@ -36,7 +38,7 @@ void create<objc::Class>(nb::module_& m) {
     )
     .def_prop_ro("methods",
       [] (objc::Class& self) {
-          auto methods = self.methods();
+          auto methods = LIEF::py::owning_range(self.methods());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<objc::Class>(), "methods_it", methods
           );
@@ -47,7 +49,7 @@ void create<objc::Class>(nb::module_& m) {
     )
     .def_prop_ro("protocols",
       [] (objc::Class& self) {
-          auto protocols = self.protocols();
+          auto protocols = LIEF::py::owning_range(self.protocols());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<objc::Class>(), "protocols_it", protocols
           );
@@ -58,7 +60,7 @@ void create<objc::Class>(nb::module_& m) {
     )
     .def_prop_ro("properties",
       [] (objc::Class& self) {
-          auto properties = self.properties();
+          auto properties = LIEF::py::owning_range(self.properties());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<objc::Class>(), "properties_it", properties
           );
@@ -69,7 +71,7 @@ void create<objc::Class>(nb::module_& m) {
     )
     .def_prop_ro("ivars",
       [] (objc::Class& self) {
-          auto ivars = self.ivars();
+          auto ivars = LIEF::py::owning_range(self.ivars());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<objc::Class>(), "ivars_it", ivars
           );

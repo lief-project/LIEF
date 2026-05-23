@@ -184,7 +184,17 @@ Instruction::Iterator& Instruction::Iterator::operator++() {
   return *this;
 }
 
-std::unique_ptr<Instruction> Instruction::Iterator::operator*() const {
+void Instruction::Iterator::load() const {}
+
+const Instruction& Instruction::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Instruction* Instruction::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Instruction> Instruction::Iterator::yield() {
   return nullptr;
 }
 
@@ -462,7 +472,17 @@ x86::Operand::Iterator& x86::Operand::Iterator::operator++() {
   return *this;
 }
 
-std::unique_ptr<x86::Operand> x86::Operand::Iterator::operator*() const {
+void x86::Operand::Iterator::load() const {}
+
+const x86::Operand& x86::Operand::Iterator::operator*() const {
+  return *cached_;
+}
+
+const x86::Operand* x86::Operand::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<x86::Operand> x86::Operand::Iterator::yield() {
   return nullptr;
 }
 
@@ -572,7 +592,17 @@ aarch64::Operand::Iterator& aarch64::Operand::Iterator::operator++() {
   return *this;
 }
 
-std::unique_ptr<aarch64::Operand> aarch64::Operand::Iterator::operator*() const {
+void aarch64::Operand::Iterator::load() const {}
+
+const aarch64::Operand& aarch64::Operand::Iterator::operator*() const {
+  return *cached_;
+}
+
+const aarch64::Operand* aarch64::Operand::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<aarch64::Operand> aarch64::Operand::Iterator::yield() {
   return nullptr;
 }
 

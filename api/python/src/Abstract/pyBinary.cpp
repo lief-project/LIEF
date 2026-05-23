@@ -41,6 +41,8 @@
 #include "LIEF/asm/Engine.hpp"
 #include "LIEF/asm/Instruction.hpp"
 
+#include "pyOwningIterator.hpp"
+
 #include "Abstract/pyDebugInfoTyHook.hpp"
 
 namespace LIEF::py {
@@ -299,7 +301,7 @@ void create<Binary>(nb::module_& m) {
         "Original size of the binary"_doc)
 
     .def("disassemble", [] (const Binary& self, uint64_t address) {
-          auto insts = self.disassemble(address);
+          auto insts = LIEF::py::owning_range(self.disassemble(address));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<Binary>(), "instructions_it", insts
           );
@@ -318,7 +320,7 @@ void create<Binary>(nb::module_& m) {
     )
 
     .def("disassemble", [] (const Binary& self, uint64_t address, size_t size) {
-          auto insts = self.disassemble(address, size);
+          auto insts = LIEF::py::owning_range(self.disassemble(address, size));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<Binary>(), "instructions_it", insts);
       }, "address"_a, "size"_a, nb::keep_alive<0, 1>(),
@@ -337,7 +339,7 @@ void create<Binary>(nb::module_& m) {
     )
 
     .def("disassemble", [] (const Binary& self, const std::string& function) {
-          auto insts = self.disassemble(function);
+          auto insts = LIEF::py::owning_range(self.disassemble(function));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<Binary>(), "instructions_it", insts);
       }, "function_name"_a, nb::keep_alive<0, 1>(),
@@ -356,10 +358,10 @@ void create<Binary>(nb::module_& m) {
 
     .def("disassemble_from_bytes",
          [] (const Binary& self, const nb::bytes& buffer, uint64_t address) {
-          auto insts = self.disassemble(
+          auto insts = LIEF::py::owning_range(self.disassemble(
             reinterpret_cast<const uint8_t*>(buffer.c_str()),
             buffer.size(), address
-          );
+          ));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<Binary>(), "instructions_it", insts);
       }, "buffer"_a, "address"_a = 0, nb::keep_alive<0, 1>(), nb::keep_alive<0, 2>(),

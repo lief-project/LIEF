@@ -2,6 +2,7 @@
 #include "LIEF/asm/x86/Operand.hpp"
 
 #include "asm/x86/init.hpp"
+#include "pyOwningIterator.hpp"
 
 #include <nanobind/make_iterator.h>
 
@@ -16,7 +17,7 @@ void create<x86::Instruction>(nb::module_& m) {
 
   obj
     .def_prop_ro("operands", [] (const x86::Instruction& self) {
-        auto ops = self.operands();
+        auto ops = LIEF::py::owning_range(self.operands());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
           nb::type<x86::Instruction>(), "operands_it", ops
         );

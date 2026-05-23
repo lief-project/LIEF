@@ -36,66 +36,52 @@ class CompilationUnitIt;
 /// This class represents a CompilationUnit (or Module) in a PDB file
 class LIEF_API CompilationUnit {
   public:
-  class LIEF_API Iterator {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::bidirectional_iterator_tag,
+                                  CompilationUnit, std::ptrdiff_t,
+                                  const CompilationUnit*, const CompilationUnit&> {
     public:
-    using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = std::unique_ptr<CompilationUnit>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = CompilationUnit*;
-    using reference = CompilationUnit&;
     using implementation = details::CompilationUnitIt;
+    using iterator_facade_base::operator++;
+    using iterator_facade_base::operator--;
 
-    class PointerProxy {
-      // Inspired from LLVM's iterator_facade_base
-      friend class Iterator;
+    LIEF_API Iterator();
 
-      public:
-      pointer operator->() const {
-        return R.get();
-      }
+    LIEF_API Iterator(std::unique_ptr<details::CompilationUnitIt> impl);
 
-      private:
-      value_type R;
+    LIEF_API Iterator(const Iterator&);
+    LIEF_API Iterator& operator=(const Iterator&);
 
-      template<typename RefT>
-      PointerProxy(RefT&& R) :
-        R(std::forward<RefT>(R)) {
-      } // NOLINT(bugprone-forwarding-reference-overload)
-    };
+    LIEF_API Iterator(Iterator&&) noexcept;
+    LIEF_API Iterator& operator=(Iterator&&) noexcept;
 
-    Iterator(const Iterator&);
-    Iterator(Iterator&&);
-    Iterator(std::unique_ptr<details::CompilationUnitIt> impl);
-    ~Iterator();
+    LIEF_API ~Iterator();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
-    friend LIEF_API bool operator!=(const Iterator& LHS, const Iterator& RHS) {
+    friend bool operator!=(const Iterator& LHS, const Iterator& RHS) {
       return !(LHS == RHS);
     }
 
-    Iterator& operator++();
-    Iterator& operator--();
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator++();
 
-    Iterator operator--(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      --*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator--();
 
-    Iterator operator++(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    LIEF_API const CompilationUnit& operator*() const;
 
-    std::unique_ptr<CompilationUnit> operator*() const;
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const CompilationUnit* operator->() const;
 
-    PointerProxy operator->() const {
-      return static_cast<const Iterator*>(this)->operator*();
-    }
+    /// Transfer ownership of the compilation unit at the current position
+    /// to the caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<CompilationUnit> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::CompilationUnitIt> impl_;
+    mutable std::unique_ptr<CompilationUnit> cached_;
   };
 
   /// Iterator over the source files (std::string)

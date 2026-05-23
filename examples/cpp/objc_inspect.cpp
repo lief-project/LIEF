@@ -36,10 +36,10 @@ int main(int argc, const char** argv) {
     return EXIT_FAILURE;
   }
 
-  for (const std::unique_ptr<LIEF::objc::Class>& clazz : metadata->classes()) {
-    log(LOG_LVL, "name={}", clazz->name());
-    for (const std::unique_ptr<LIEF::objc::Method>& meth : clazz->methods()) {
-      log(LOG_LVL, "  method.name={}", meth->name());
+  for (const LIEF::objc::Class& clazz : metadata->classes()) {
+    log(LOG_LVL, "name={}", clazz.name());
+    for (const LIEF::objc::Method& meth : clazz.methods()) {
+      log(LOG_LVL, "  method.name={}", meth.name());
     }
   }
 

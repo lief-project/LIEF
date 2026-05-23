@@ -41,10 +41,12 @@ class LIEF_API SubCache {
   /// SubCache Iterator
   class LIEF_API Iterator
     : public iterator_facade_base<Iterator, std::random_access_iterator_tag,
-                                  std::unique_ptr<SubCache>, std::ptrdiff_t,
-                                  SubCache*, std::unique_ptr<SubCache>> {
+                                  SubCache, std::ptrdiff_t, const SubCache*,
+                                  const SubCache&> {
     public:
     using implementation = details::SubCacheIt;
+
+    Iterator();
 
     Iterator(std::unique_ptr<details::SubCacheIt> impl);
     Iterator(const Iterator&);
@@ -67,10 +69,20 @@ class LIEF_API SubCache {
       return !(LHS == RHS);
     }
 
-    std::unique_ptr<SubCache> operator*() const;
+    const SubCache& operator*() const;
+
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    const SubCache* operator->() const;
+
+    /// Transfer ownership of the subcache at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    std::unique_ptr<SubCache> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::SubCacheIt> impl_;
+    mutable std::unique_ptr<SubCache> cached_;
   };
 
   public:

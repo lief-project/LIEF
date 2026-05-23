@@ -7,6 +7,8 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/make_iterator.h>
 
+#include "pyOwningIterator.hpp"
+
 namespace LIEF::pdb::py {
 template<>
 void create<pdb::CompilationUnit>(nb::module_& m) {
@@ -43,7 +45,7 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
     )
     .def_prop_ro("functions",
         [] (const pdb::CompilationUnit& self) {
-          auto functions = self.functions();
+          auto functions = LIEF::py::owning_range(self.functions());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<pdb::CompilationUnit>(), "functions_it", functions);
         },

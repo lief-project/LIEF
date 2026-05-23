@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_METHOD_H
 #define LIEF_PDB_TYPE_METHOD_H
 
+#include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
 #include <string>
@@ -35,59 +36,48 @@ class MethodIt;
 /// a ClassLike PDB type (Class, Structure, Union, Interface).
 class LIEF_API Method {
   public:
-  class LIEF_API Iterator {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::forward_iterator_tag, Method,
+                                  std::ptrdiff_t, const Method*, const Method&> {
     public:
-    using iterator_category = std::forward_iterator_tag;
-    using value_type = std::unique_ptr<Method>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = Method*;
-    using reference = Method&;
     using implementation = details::MethodIt;
+    using iterator_facade_base::operator++;
 
-    class LIEF_API PointerProxy {
-      // Inspired from LLVM's iterator_facade_base
-      friend class Iterator;
+    LIEF_API Iterator();
 
-      public:
-      pointer operator->() const {
-        return R.get();
-      }
+    LIEF_API Iterator(std::unique_ptr<details::MethodIt> impl);
 
-      private:
-      value_type R;
+    LIEF_API Iterator(const Iterator&);
+    LIEF_API Iterator& operator=(const Iterator&);
 
-      template<typename RefT>
-      PointerProxy(RefT&& R) :
-        R(std::forward<RefT>(R)) {
-      } // NOLINT(bugprone-forwarding-reference-overload)
-    };
-    Iterator(const Iterator&);
-    Iterator(Iterator&&) noexcept;
-    Iterator(std::unique_ptr<details::MethodIt> impl);
-    ~Iterator();
+    LIEF_API Iterator(Iterator&&) noexcept;
+    LIEF_API Iterator& operator=(Iterator&&) noexcept;
+
+    LIEF_API ~Iterator();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
 
-    friend LIEF_API bool operator!=(const Iterator& LHS, const Iterator& RHS) {
+    friend bool operator!=(const Iterator& LHS, const Iterator& RHS) {
       return !(LHS == RHS);
     }
 
-    Iterator& operator++();
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator++();
 
-    Iterator operator++(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    LIEF_API const Method& operator*() const;
 
-    std::unique_ptr<Method> operator*() const;
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const Method* operator->() const;
 
-    PointerProxy operator->() const {
-      return static_cast<const Iterator*>(this)->operator*();
-    }
+    /// Transfer ownership of the method at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<Method> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::MethodIt> impl_;
+    mutable std::unique_ptr<Method> cached_;
   };
 
   public:
