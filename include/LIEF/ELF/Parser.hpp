@@ -22,7 +22,6 @@
 
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/errors.hpp"
-#include "LIEF/ELF/enums.hpp"
 
 #include "LIEF/ELF/ParserConfig.hpp"
 

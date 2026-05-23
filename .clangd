@@ -60,9 +60,12 @@ CompileFlags:
   Remove: [-std=gnu++11]
   Add: [-std=gnu++20]
 
+---
 If:
   PathMatch:
     - include/LIEF/.*
+  PathExclude:
+    - api/rust/.*
 CompileFlags:
   Add: [-std=gnu++11]
   Remove: [-std=gnu++17]

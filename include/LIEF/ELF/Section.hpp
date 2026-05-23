@@ -59,6 +59,7 @@ class LIEF_API Section : public LIEF::Section {
 
   static constexpr uint32_t MAX_SECTION_SIZE = 2_GB;
 
+  // clang-format off
   enum class TYPE : uint64_t {
     SHT_NULL_ = 0,      /**< No associated section (inactive entry). */
     PROGBITS = 1,       /**< Program-defined contents. */
@@ -79,135 +80,125 @@ class LIEF_API Section : public LIEF::Section {
     SYMTAB_SHNDX = 18,  /**< Indices for SHN_XINDEX entries. */
     RELR = 19,          /**< Relocation entries; only offsets. */
 
-    ANDROID_REL = 0x60000001,    /**< Packed relocations (Android specific). */
-    ANDROID_RELA = 0x60000002,   /**< Packed relocations (Android specific). */
-    LLVM_ADDRSIG = 0x6fff4c03,   /**< This section is used to mark symbols as
+    ANDROID_REL  = 0x60000001, /**< Packed relocations (Android specific). */
+    ANDROID_RELA = 0x60000002, /**< Packed relocations (Android specific). */
+
+    LLVM_ADDRSIG = 0x6fff4c03, /**< This section is used to mark symbols as
                                     address-significant. */
-    ANDROID_RELR = 0x6fffff00,   /**< New relr relocations (Android specific). */
+
+    ANDROID_RELR   = 0x6fffff00, /**< New relr relocations (Android specific). */
     GNU_ATTRIBUTES = 0x6ffffff5, /**< Object attributes. */
-    GNU_HASH = 0x6ffffff6,       /**< GNU-style hash table. */
-    GNU_VERDEF = 0x6ffffffd,     /**< GNU version definitions. */
-    GNU_VERNEED = 0x6ffffffe,    /**< GNU version references. */
-    GNU_VERSYM = 0x6fffffff,     /**< GNU symbol versions table. */
+    GNU_HASH       = 0x6ffffff6, /**< GNU-style hash table. */
+    GNU_VERDEF     = 0x6ffffffd, /**< GNU version definitions. */
+    GNU_VERNEED    = 0x6ffffffe, /**< GNU version references. */
+    GNU_VERSYM     = 0x6fffffff, /**< GNU symbol versions table. */
 
-    _ID_SHIFT_ = 32,
-    _ARM_ID_ = 1LLU,
-    _HEX_ID_ = 2LLU,
+    _ID_SHIFT_  = 32,
+    _ARM_ID_    = 1LLU,
+    _HEX_ID_    = 2LLU,
     _X86_64_ID_ = 2LLU,
-    _MIPS_ID_ = 3LLU,
-    _RISCV_ID_ = 4LLU,
+    _MIPS_ID_   = 3LLU,
+    _RISCV_ID_  = 4LLU,
 
-    ARM_EXIDX =
-        0x70000001U + (_ARM_ID_ << _ID_SHIFT_), /**< Exception Index table */
-    ARM_PREEMPTMAP =
-        0x70000002U +
-        (_ARM_ID_ << _ID_SHIFT_), /**< BPABI DLL dynamic linking pre-emption map */
-    ARM_ATTRIBUTES =
-        0x70000003U +
-        (_ARM_ID_ << _ID_SHIFT_), /**< Object file compatibility attributes */
-    ARM_DEBUGOVERLAY = 0x70000004U + (_ARM_ID_ << _ID_SHIFT_),
+    ARM_EXIDX          = 0x70000001U + (_ARM_ID_ << _ID_SHIFT_), /**< Exception Index table */
+    ARM_PREEMPTMAP     = 0x70000002U + (_ARM_ID_ << _ID_SHIFT_), /**< BPABI DLL dynamic linking pre-emption map */
+    ARM_ATTRIBUTES     = 0x70000003U + (_ARM_ID_ << _ID_SHIFT_), /**< Object file compatibility attributes */
+    ARM_DEBUGOVERLAY   = 0x70000004U + (_ARM_ID_ << _ID_SHIFT_),
     ARM_OVERLAYSECTION = 0x70000005U + (_ARM_ID_ << _ID_SHIFT_),
 
-    HEX_ORDERED =
-        0x70000000 +
-        (_HEX_ID_ << _ID_SHIFT_), /**< Link editor is to sort the entries in this
-                                     section based on their sizes */
+    HEX_ORDERED = 0x70000000 + (_HEX_ID_ << _ID_SHIFT_), /**< Link editor is to sort the entries in this
+                                                              section based on their sizes */
 
     /* this section based on their sizes */
-    X86_64_UNWIND =
-        0x70000001 + (_X86_64_ID_ << _ID_SHIFT_), /**< Unwind information */
+    X86_64_UNWIND = 0x70000001 + (_X86_64_ID_ << _ID_SHIFT_), /**< Unwind information */
 
-    MIPS_LIBLIST = 0x70000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_MSYM = 0x70000001 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_CONFLICT = 0x70000002 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_GPTAB = 0x70000003 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_UCODE = 0x70000004 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_DEBUG = 0x70000005 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_REGINFO = 0x70000006 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_PACKAGE = 0x70000007 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_PACKSYM = 0x70000008 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_RELD = 0x70000009 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_IFACE = 0x7000000b + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_CONTENT = 0x7000000c + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_OPTIONS = 0x7000000d + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_SHDR = 0x70000010 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_FDESC = 0x70000011 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_EXTSYM = 0x70000012 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_DENSE = 0x70000013 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_PDESC = 0x70000014 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_LOCSYM = 0x70000015 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_AUXSYM = 0x70000016 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_OPTSYM = 0x70000017 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_LOCSTR = 0x70000018 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_LINE = 0x70000019 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_RFDESC = 0x7000001a + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_DELTASYM = 0x7000001b + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_DELTAINST = 0x7000001c + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_DELTACLASS = 0x7000001d + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_DWARF = 0x7000001e + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_DELTADECL = 0x7000001f + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_SYMBOL_LIB = 0x70000020 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_EVENTS = 0x70000021 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_TRANSLATE = 0x70000022 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_PIXIE = 0x70000023 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_XLATE = 0x70000024 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_XLATE_DEBUG = 0x70000025 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_WHIRL = 0x70000026 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_EH_REGION = 0x70000027 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_XLATE_OLD = 0x70000028 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_LIBLIST       = 0x70000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_MSYM          = 0x70000001 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_CONFLICT      = 0x70000002 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_GPTAB         = 0x70000003 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_UCODE         = 0x70000004 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_DEBUG         = 0x70000005 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_REGINFO       = 0x70000006 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_PACKAGE       = 0x70000007 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_PACKSYM       = 0x70000008 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_RELD          = 0x70000009 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_IFACE         = 0x7000000b + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_CONTENT       = 0x7000000c + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_OPTIONS       = 0x7000000d + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_SHDR          = 0x70000010 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_FDESC         = 0x70000011 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_EXTSYM        = 0x70000012 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_DENSE         = 0x70000013 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_PDESC         = 0x70000014 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_LOCSYM        = 0x70000015 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_AUXSYM        = 0x70000016 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_OPTSYM        = 0x70000017 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_LOCSTR        = 0x70000018 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_LINE          = 0x70000019 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_RFDESC        = 0x7000001a + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_DELTASYM      = 0x7000001b + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_DELTAINST     = 0x7000001c + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_DELTACLASS    = 0x7000001d + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_DWARF         = 0x7000001e + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_DELTADECL     = 0x7000001f + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_SYMBOL_LIB    = 0x70000020 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_EVENTS        = 0x70000021 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_TRANSLATE     = 0x70000022 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_PIXIE         = 0x70000023 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_XLATE         = 0x70000024 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_XLATE_DEBUG   = 0x70000025 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_WHIRL         = 0x70000026 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_EH_REGION     = 0x70000027 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_XLATE_OLD     = 0x70000028 + (_MIPS_ID_ << _ID_SHIFT_),
     MIPS_PDR_EXCEPTION = 0x70000029 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_ABIFLAGS = 0x7000002a + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_XHASH = 0x7000002b + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_ABIFLAGS      = 0x7000002a + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_XHASH         = 0x7000002b + (_MIPS_ID_ << _ID_SHIFT_),
 
     RISCV_ATTRIBUTES = 0x70000003 + (_RISCV_ID_ << _ID_SHIFT_),
   };
 
   enum class FLAGS : uint64_t {
-    NONE = 0x000000000,
-    WRITE = 0x000000001, /**< Section data should be writable during execution. */
-    ALLOC = 0x000000002, /**< Section occupies memory during program execution. */
-    EXECINSTR =
-        0x000000004,     /**< Section contains executable machine instructions. */
-    MERGE = 0x000000010, /**< The data in this section may be merged. */
-    STRINGS =
-        0x000000020, /**< The data in this section is null-terminated strings. */
-    INFO_LINK = 0x000000040, /**< A field in this section holds a section header
-                                table index. */
-    LINK_ORDER =
-        0x000000080, /**< Adds special ordering requirements for link editors. */
-    OS_NONCONFORMING = 0x000000100, /**< This section requires special OS-specific
-                                       processing to avoid incorrect behavior */
-    GROUP = 0x000000200, /**< This section is a member of a section group. */
-    TLS = 0x000000400,   /**< This section holds Thread-Local Storage. */
-    COMPRESSED = 0x000000800,
-    GNU_RETAIN = 0x000200000,
-    EXCLUDE = 0x080000000,
+    NONE             = 0x000000000,
+    WRITE            = 0x000000001, /**< Section data should be writable during execution. */
+    ALLOC            = 0x000000002, /**< Section occupies memory during program execution. */
+    EXECINSTR        = 0x000000004, /**< Section contains executable machine instructions. */
+    MERGE            = 0x000000010, /**< The data in this section may be merged. */
+    STRINGS          = 0x000000020, /**< The data in this section is null-terminated strings. */
+    INFO_LINK        = 0x000000040, /**< A field in this section holds a section header table index. */
+    LINK_ORDER       = 0x000000080, /**< Adds special ordering requirements for link editors. */
+    OS_NONCONFORMING = 0x000000100, /**< This section requires special OS-specific processing to avoid incorrect behavior */
+    GROUP            = 0x000000200, /**< This section is a member of a section group. */
+    TLS              = 0x000000400, /**< This section holds Thread-Local Storage. */
+    COMPRESSED       = 0x000000800,
+    GNU_RETAIN       = 0x000200000,
+    EXCLUDE          = 0x080000000,
 
-    _ID_SHIFT_ = 32,
-    _XCORE_ID_ = 1LLU,
-    _HEX_ID_ = 3LLU,
+    _ID_SHIFT_  = 32,
+    _XCORE_ID_  = 1LLU,
+    _HEX_ID_    = 3LLU,
     _X86_64_ID_ = 2LLU,
-    _MIPS_ID_ = 4LLU,
-    _ARM_ID_ = 5LLU,
+    _MIPS_ID_   = 4LLU,
+    _ARM_ID_    = 5LLU,
 
     XCORE_SHF_DP_SECTION = 0x010000000 + (_XCORE_ID_ << _ID_SHIFT_),
     XCORE_SHF_CP_SECTION = 0x020000000 + (_XCORE_ID_ << _ID_SHIFT_),
 
     X86_64_LARGE = 0x010000000 + (_X86_64_ID_ << _ID_SHIFT_),
 
-    HEX_GPREL = 0x010000000 + (_HEX_ID_ << _ID_SHIFT_),
+    HEX_GPREL    = 0x010000000 + (_HEX_ID_ << _ID_SHIFT_),
 
     MIPS_NODUPES = 0x001000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_NAMES = 0x002000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_LOCAL = 0x004000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_NAMES   = 0x002000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_LOCAL   = 0x004000000 + (_MIPS_ID_ << _ID_SHIFT_),
     MIPS_NOSTRIP = 0x008000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_GPREL = 0x010000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_MERGE = 0x020000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_ADDR = 0x040000000 + (_MIPS_ID_ << _ID_SHIFT_),
-    MIPS_STRING = 0x080000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_GPREL   = 0x010000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_MERGE   = 0x020000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_ADDR    = 0x040000000 + (_MIPS_ID_ << _ID_SHIFT_),
+    MIPS_STRING  = 0x080000000 + (_MIPS_ID_ << _ID_SHIFT_),
 
     ARM_PURECODE = 0x020000000 + (_ARM_ID_ << _ID_SHIFT_),
   };
+  // clang-format on
 
   static constexpr uint64_t FLAG_MASK =
       (uint64_t(1) << uint8_t(FLAGS::_ID_SHIFT_)) - 1;
