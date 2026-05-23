@@ -1774,45 +1774,45 @@ class LIEF_LOCAL ExeLayout : public Layout {
   sym_verdef_info_t verdef_info_;
 
   std::vector<uint8_t> raw_notes_;
-  bool relocate_notes_{false};
+  bool relocate_notes_ = false;
 
   std::vector<uint8_t> raw_dynstr_;
-  bool relocate_dynstr_{false};
+  bool relocate_dynstr_ = false;
 
-  bool relocate_shstrtab_{false};
+  bool relocate_shstrtab_ = false;
 
-  bool relocate_strtab_{false};
+  bool relocate_strtab_ = false;
 
   std::vector<uint8_t> raw_gnu_hash_;
-  bool relocate_gnu_hash_{false};
+  bool relocate_gnu_hash_ = false;
 
   std::vector<uint8_t> raw_relr_;
-  bool relocate_relr_{false};
+  bool relocate_relr_ = false;
 
   std::vector<uint8_t> raw_android_rela_;
-  bool relocate_android_rela_{false};
+  bool relocate_android_rela_ = false;
 
-  uint64_t sysv_size_{0};
+  uint64_t sysv_size_ = 0;
 
-  uint64_t dynamic_size_{0};
-  uint64_t dynsym_size_{0};
+  uint64_t dynamic_size_ = 0;
+  uint64_t dynsym_size_ = 0;
 
-  uint64_t pltgot_reloc_size_{0};
-  uint64_t dynamic_reloc_size_{0};
+  uint64_t pltgot_reloc_size_ = 0;
+  uint64_t dynamic_reloc_size_ = 0;
 
-  uint64_t sver_size_{0};
-  uint64_t sverd_size_{0};
-  uint64_t sverr_size_{0};
+  uint64_t sver_size_ = 0;
+  uint64_t sverd_size_ = 0;
+  uint64_t sverr_size_ = 0;
 
-  uint64_t preinit_size_{0};
-  uint64_t init_size_{0};
-  uint64_t fini_size_{0};
+  uint64_t preinit_size_ = 0;
+  uint64_t init_size_ = 0;
+  uint64_t fini_size_ = 0;
 
-  uint64_t interp_size_{0};
-  uint32_t nchain_{0};
-  uint64_t symtab_size_{0};
+  uint64_t interp_size_ = 0;
+  uint32_t nchain_ = 0;
+  uint64_t symtab_size_ = 0;
 
-  // uint64_t pltgot_reloc_size_{0};
+  // uint64_t pltgot_reloc_size_ = 0;
   std::unordered_map<uint64_t, Relocation*> relocations_addresses_;
 };
 }
