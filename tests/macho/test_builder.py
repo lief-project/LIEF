@@ -275,7 +275,9 @@ def test_extend_section_2(tmp_path: Path):
         section = lief.MachO.Section.create(f"__lief_{i}")
         assert section is not None
         section.alignment = 2  # 2^2 == 4 bytes
-        sections.append(original.add_section(text_segment, section))
+        added = original.add_section(text_segment, section)
+        assert added is not None
+        sections.append(added)
 
     for section in sections:
         assert original.extend_section(section, 1000)
