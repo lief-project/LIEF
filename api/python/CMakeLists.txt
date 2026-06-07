@@ -61,6 +61,8 @@ nanobind_add_module(
   pyLIEF
   ${NANOBIND_OPT}
 
+  NB_SUPPRESS_WARNINGS
+
   src/pyLIEF.cpp
 )
 
