@@ -31,6 +31,7 @@ class LIEF_API AArch64Feature : public NoteGnuProperty::Property {
     UNKNOWN = 0,
     BTI, ///< Support Branch Target Identification (BTI)
     PAC, ///< Support Pointer authentication (PAC)
+    GCS, ///< Guarded Control Stack
   };
 
   /// Return the list of the supported features

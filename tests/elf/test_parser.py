@@ -309,3 +309,20 @@ def test_i64_custom_types():
 def test_issue_1177():
     elf = parse_elf("ELF/main_issue_1177.bin")
     assert len(elf.dynamic_symbols) == 5
+
+
+def test_aarch64_attrs():
+    elf = parse_elf("ELF/hello_aarch64_attr")
+
+    section = elf.get_section(".ARM.attributes")
+    assert section is not None
+    assert section.type == lief.ELF.Section.TYPE.AARCH64_ATTRIBUTES
+
+    note = next(n for n in elf.notes if isinstance(n, lief.ELF.NoteGnuProperty))
+
+    feature = note.find(lief.ELF.NoteGnuProperty.Property.TYPE.AARCH64_FEATURES)
+    assert isinstance(feature, lief.ELF.AArch64Feature)
+    assert feature.features == [
+        lief.ELF.AArch64Feature.FEATURE.BTI,
+        lief.ELF.AArch64Feature.FEATURE.PAC,
+    ]

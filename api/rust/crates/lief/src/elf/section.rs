@@ -145,6 +145,14 @@ pub enum Type {
     MIPS_ABIFLAGS,
     /// RISC-V Attribute
     RISCV_ATTRIBUTES,
+    /// AArch64 build attributes
+    AARCH64_ATTRIBUTES,
+    /// AArch64 PAuth relocations
+    AARCH64_AUTH_RELR,
+    /// AArch64 memory tagging globals (static)
+    AARCH64_MEMTAG_GLOBALS_STATIC,
+    /// AArch64 memory tagging globals (dynamic)
+    AARCH64_MEMTAG_GLOBALS_DYNAMIC,
     UNKNOWN(u64),
 }
 
@@ -189,6 +197,10 @@ impl From<u64> for Type {
             0x37000000d => Type::MIPS_OPTIONS,
             0x37000002a => Type::MIPS_ABIFLAGS,
             0x470000003 => Type::RISCV_ATTRIBUTES,
+            0x570000003 => Type::AARCH64_ATTRIBUTES,
+            0x570000004 => Type::AARCH64_AUTH_RELR,
+            0x570000007 => Type::AARCH64_MEMTAG_GLOBALS_STATIC,
+            0x570000008 => Type::AARCH64_MEMTAG_GLOBALS_DYNAMIC,
             _ => Type::UNKNOWN(value),
         }
     }
@@ -234,6 +246,10 @@ impl From<Type> for u64 {
             Type::MIPS_OPTIONS => 0x37000000d,
             Type::MIPS_ABIFLAGS => 0x37000002a,
             Type::RISCV_ATTRIBUTES => 0x470000003,
+            Type::AARCH64_ATTRIBUTES => 0x570000003,
+            Type::AARCH64_AUTH_RELR => 0x570000004,
+            Type::AARCH64_MEMTAG_GLOBALS_STATIC => 0x570000007,
+            Type::AARCH64_MEMTAG_GLOBALS_DYNAMIC => 0x570000008,
             Type::UNKNOWN(value) => value,
         }
     }
@@ -269,6 +285,7 @@ bitflags! {
         const MIPS_ADDR = 0x440000000;
         const MIPS_STRING = 0x480000000;
         const ARM_PURECODE = 0x520000000;
+        const AARCH64_PURECODE = 0x620000000;
     }
 }
 

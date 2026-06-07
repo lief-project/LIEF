@@ -93,12 +93,13 @@ class LIEF_API Section : public LIEF::Section {
     GNU_VERNEED    = 0x6ffffffe, /**< GNU version references. */
     GNU_VERSYM     = 0x6fffffff, /**< GNU symbol versions table. */
 
-    _ID_SHIFT_  = 32,
-    _ARM_ID_    = 1LLU,
-    _HEX_ID_    = 2LLU,
-    _X86_64_ID_ = 2LLU,
-    _MIPS_ID_   = 3LLU,
-    _RISCV_ID_  = 4LLU,
+    _ID_SHIFT_   = 32,
+    _ARM_ID_     = 1LLU,
+    _HEX_ID_     = 2LLU,
+    _X86_64_ID_  = 2LLU,
+    _MIPS_ID_    = 3LLU,
+    _RISCV_ID_   = 4LLU,
+    _AARCH64_ID_ = 5LLU,
 
     ARM_EXIDX          = 0x70000001U + (_ARM_ID_ << _ID_SHIFT_), /**< Exception Index table */
     ARM_PREEMPTMAP     = 0x70000002U + (_ARM_ID_ << _ID_SHIFT_), /**< BPABI DLL dynamic linking pre-emption map */
@@ -155,6 +156,11 @@ class LIEF_API Section : public LIEF::Section {
     MIPS_XHASH         = 0x7000002b + (_MIPS_ID_ << _ID_SHIFT_),
 
     RISCV_ATTRIBUTES = 0x70000003 + (_RISCV_ID_ << _ID_SHIFT_),
+
+    AARCH64_ATTRIBUTES             = 0x70000003 + (_AARCH64_ID_ << _ID_SHIFT_),
+    AARCH64_AUTH_RELR              = 0x70000004 + (_AARCH64_ID_ << _ID_SHIFT_),
+    AARCH64_MEMTAG_GLOBALS_STATIC  = 0x70000007 + (_AARCH64_ID_ << _ID_SHIFT_),
+    AARCH64_MEMTAG_GLOBALS_DYNAMIC = 0x70000008 + (_AARCH64_ID_ << _ID_SHIFT_),
   };
 
   enum class FLAGS : uint64_t {
@@ -173,12 +179,13 @@ class LIEF_API Section : public LIEF::Section {
     GNU_RETAIN       = 0x000200000,
     EXCLUDE          = 0x080000000,
 
-    _ID_SHIFT_  = 32,
-    _XCORE_ID_  = 1LLU,
-    _HEX_ID_    = 3LLU,
-    _X86_64_ID_ = 2LLU,
-    _MIPS_ID_   = 4LLU,
-    _ARM_ID_    = 5LLU,
+    _ID_SHIFT_   = 32,
+    _XCORE_ID_   = 1LLU,
+    _HEX_ID_     = 3LLU,
+    _X86_64_ID_  = 2LLU,
+    _MIPS_ID_    = 4LLU,
+    _ARM_ID_     = 5LLU,
+    _AARCH64_ID_ = 6LLU,
 
     XCORE_SHF_DP_SECTION = 0x010000000 + (_XCORE_ID_ << _ID_SHIFT_),
     XCORE_SHF_CP_SECTION = 0x020000000 + (_XCORE_ID_ << _ID_SHIFT_),
@@ -197,6 +204,8 @@ class LIEF_API Section : public LIEF::Section {
     MIPS_STRING  = 0x080000000 + (_MIPS_ID_ << _ID_SHIFT_),
 
     ARM_PURECODE = 0x020000000 + (_ARM_ID_ << _ID_SHIFT_),
+
+    AARCH64_PURECODE = 0x020000000 + (_AARCH64_ID_ << _ID_SHIFT_),
   };
   // clang-format on
 

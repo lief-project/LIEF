@@ -69,6 +69,7 @@ static constexpr auto ARRAY_FLAGS = {
     Section::FLAGS::MIPS_ADDR,
     Section::FLAGS::MIPS_STRING,
     Section::FLAGS::ARM_PURECODE,
+    Section::FLAGS::AARCH64_PURECODE,
 };
 
 Section::TYPE Section::type_from(uint32_t value, ARCH arch) {
@@ -93,6 +94,10 @@ Section::TYPE Section::type_from(uint32_t value, ARCH arch) {
       case ARCH::RISCV:
         return TYPE(value +
                     (uint64_t(TYPE::_RISCV_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
+
+      case ARCH::AARCH64:
+        return TYPE(value +
+                    (uint64_t(TYPE::_AARCH64_ID_) << uint8_t(TYPE::_ID_SHIFT_)));
 
       default:
       {
@@ -362,6 +367,10 @@ bool Section::has(Section::FLAGS flag) const {
     return false;
   }
 
+  if (id == uint8_t(FLAGS::_AARCH64_ID_) && arch_ != ARCH::AARCH64) {
+    return false;
+  }
+
   return (flags_ & (static_cast<uint64_t>(flag) & FLAG_MASK)) != 0;
 }
 
@@ -506,6 +515,11 @@ const char* to_string(Section::TYPE e) {
       ENTRY(MIPS_XHASH),
 
       ENTRY(RISCV_ATTRIBUTES),
+
+      ENTRY(AARCH64_ATTRIBUTES),
+      ENTRY(AARCH64_AUTH_RELR),
+      ENTRY(AARCH64_MEMTAG_GLOBALS_STATIC),
+      ENTRY(AARCH64_MEMTAG_GLOBALS_DYNAMIC),
   };
 #undef ENTRY
 
@@ -546,6 +560,7 @@ const char* to_string(Section::FLAGS e) {
       ENTRY(MIPS_ADDR),
       ENTRY(MIPS_STRING),
       ENTRY(ARM_PURECODE),
+      ENTRY(AARCH64_PURECODE),
   };
 #undef ENTRY
 

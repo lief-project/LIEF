@@ -164,6 +164,7 @@ pub enum AArch64FeatureFlag {
     UNKNOWN,
     BTI,
     PAC,
+    GCS,
 }
 
 impl From<u64> for AArch64FeatureFlag {
@@ -172,6 +173,7 @@ impl From<u64> for AArch64FeatureFlag {
             0 => AArch64FeatureFlag::UNKNOWN,
             1 => AArch64FeatureFlag::BTI,
             2 => AArch64FeatureFlag::PAC,
+            3 => AArch64FeatureFlag::GCS,
             _ => AArch64FeatureFlag::UNKNOWN,
         }
     }
