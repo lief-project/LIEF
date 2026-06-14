@@ -63,9 +63,8 @@ class LIEF_LOCAL TrieNode {
 
   ~TrieNode() = default;
 
-  TrieNode& add_symbol(const ExportInfo& info, node_list_t& nodes);
-  TrieNode& add_ordered_nodes(const ExportInfo& info,
-                              std::vector<TrieNode*>& nodes);
+  node_list_t add_symbol(const ExportInfo& info);
+  std::vector<TrieNode*> add_ordered_nodes(const ExportInfo& info);
   bool update_offset(uint32_t& offset);
 
   TrieNode& write(vector_iostream& buffer);

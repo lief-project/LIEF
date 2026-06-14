@@ -143,11 +143,12 @@ ok_error_t BinaryParser::init_and_parse() {
 }
 
 
-ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
-                                           BinaryStream& stream, uint64_t start,
-                                           const std::string& prefix,
-                                           uint32_t depth, bool* invalid_names) {
+result<BinaryParser::exports_list_t>
+    BinaryParser::parse_export_trie(BinaryStream& stream, uint64_t start,
+                                    const std::string& prefix, uint32_t depth,
+                                    bool* invalid_names) {
   static constexpr auto MAX_DEPTH = 60;
+  exports_list_t exports;
 
   if (depth > MAX_DEPTH) {
     LIEF_WARN("Maximum recursion depth reached ({})", MAX_DEPTH);
@@ -337,11 +338,16 @@ ok_error_t BinaryParser::parse_export_trie(exports_list_t& exports,
 
     {
       ScopedStream scoped(stream, child_node_offet);
-      parse_export_trie(exports, *scoped, start, name, depth + 1, invalid_names);
+      if (auto res =
+              parse_export_trie(*scoped, start, name, depth + 1, invalid_names))
+      {
+        exports.insert(exports.end(), std::make_move_iterator(res->begin()),
+                       std::make_move_iterator(res->end()));
+      }
     }
   }
 
-  return ok();
+  return exports;
 }
 
 ok_error_t BinaryParser::parse_dyld_exports() {
@@ -380,8 +386,11 @@ ok_error_t BinaryParser::parse_dyld_exports() {
   SpanStream trie_stream(exports->content_);
 
   bool invalid_names = false;
-  parse_export_trie(exports->export_info_, trie_stream, offset, "",
-                    /*depth=*/0, &invalid_names);
+  if (auto res = parse_export_trie(trie_stream, offset, "",
+                                   /*depth=*/0, &invalid_names))
+  {
+    exports->export_info_ = std::move(*res);
+  }
   return ok();
 }
 
@@ -423,8 +432,11 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
   SpanStream trie_stream(dyldinfo->export_trie_);
 
   bool invalid_names = false;
-  parse_export_trie(dyldinfo->export_info_, trie_stream, offset, "",
-                    /*depth=*/0, &invalid_names);
+  if (auto exports = parse_export_trie(trie_stream, offset, "",
+                                       /*depth=*/0, &invalid_names))
+  {
+    dyldinfo->export_info_ = std::move(*exports);
+  }
   return ok();
 }
 

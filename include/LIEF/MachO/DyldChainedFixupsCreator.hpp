@@ -151,11 +151,10 @@ class LIEF_LOCAL DyldChainedFixupsCreator {
                                                            size_t imp_count);
   LIEF_LOCAL ok_error_t process_relocations(Binary& target,
                                             DYLD_CHAINED_PTR_FORMAT ptr_fmt);
-  LIEF_LOCAL ok_error_t
+  LIEF_LOCAL DyldChainedFixups::binding_info_t
       process_bindings(Binary& target, strong_map_t& strong_map,
                        std::unordered_map<std::string, size_t>& symbols_idx,
-                       DyldChainedFixups* cmd,
-                       DyldChainedFixups::binding_info_t& all_bindings);
+                       DyldChainedFixups* cmd);
 
   uint32_t fixups_version_ = 0;
   DYLD_CHAINED_FORMAT imports_format_;

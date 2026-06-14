@@ -289,10 +289,11 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   LIEF_LOCAL ok_error_t parse_dyldinfo_export();
   LIEF_LOCAL ok_error_t parse_dyld_exports();
 
-  LIEF_LOCAL ok_error_t parse_export_trie(exports_list_t& exports,
-                                          BinaryStream& stream, uint64_t start,
-                                          const std::string& prefix,
-                                          uint32_t depth, bool* invalid_names);
+  LIEF_LOCAL result<exports_list_t> parse_export_trie(BinaryStream& stream,
+                                                      uint64_t start,
+                                                      const std::string& prefix,
+                                                      uint32_t depth,
+                                                      bool* invalid_names);
 
   LIEF_LOCAL void copy_from(ChainedBindingInfo& to, ChainedBindingInfo& from);
 

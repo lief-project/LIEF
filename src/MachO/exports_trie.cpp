@@ -145,7 +145,9 @@ std::vector<uint8_t> create_trie(const exports_list_t& exports,
   TrieNode* start_ptr = start.get();
 
   for (const std::unique_ptr<ExportInfo>& info : exports) {
-    start_ptr->add_symbol(*info, nodes);
+    TrieNode::node_list_t sym_node = start_ptr->add_symbol(*info);
+    nodes.insert(nodes.end(), std::make_move_iterator(sym_node.begin()),
+                 std::make_move_iterator(sym_node.end()));
   }
 
   // Perform a poor topological sort to have parents before children in
@@ -153,7 +155,8 @@ std::vector<uint8_t> create_trie(const exports_list_t& exports,
   std::vector<TrieNode*> ordered_nodes;
   ordered_nodes.reserve(exports.size() * 2);
   for (const std::unique_ptr<ExportInfo>& info : exports) {
-    start_ptr->add_ordered_nodes(*info, ordered_nodes);
+    std::vector<TrieNode*> ord_nodes = start_ptr->add_ordered_nodes(*info);
+    ordered_nodes.insert(ordered_nodes.end(), ord_nodes.begin(), ord_nodes.end());
   }
 
   bool more = false;

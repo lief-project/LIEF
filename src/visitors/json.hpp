@@ -18,10 +18,18 @@
 
 #include "LIEF/Visitor.hpp"
 
+#if defined(__clang__)
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wunknown-warning-option"
+  #pragma clang diagnostic ignored "-Wlifetime-safety"
+#endif
 #ifndef LIEF_NLOHMANN_JSON_EXTERNAL
   #include "internal/nlohmann/json.hpp"
 #else
   #include <nlohmann/json.hpp>
+#endif
+#if defined(__clang__)
+  #pragma clang diagnostic pop
 #endif
 
 using json = nlohmann::json;
