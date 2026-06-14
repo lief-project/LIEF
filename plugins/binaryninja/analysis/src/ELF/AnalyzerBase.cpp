@@ -86,7 +86,7 @@ bool AnalyzerBase::apply_relocation(const Relocation& R) {
   //
   // However, this approach has a drawback: any subsequent (re)rebase operations
   // may not be consistent with the changes made.
-  assert(R.size() != -1);
+  assert(R.size() != static_cast<size_t>(-1));
   auto resolved = R.resolve(bv_.GetImageBase());
   if (!resolved) {
     return false;

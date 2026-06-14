@@ -164,16 +164,21 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
       }
 
       if (uint64_t width = bn_struct->GetWidth()) {
-        BN_DEBUG("{}: {} bytes", struct_name, bn_struct->GetWidth());
-        struct_type->set_size(bn_struct->GetWidth());
+        BN_DEBUG("{}: {} bytes", struct_name, width);
+        struct_type->set_size(width);
       }
 
-      LIEF::dwarf::editor::StructType* struct_type_ptr = struct_type.get();
-
+      LIEF::dwarf::editor::StructType* struct_type_ptr = nullptr;
       if (!struct_name.empty()) {
-        mapping_.insert({name_str, std::move(struct_type)});
+        auto inserted = mapping_.insert({name_str, std::move(struct_type)});
+        struct_type_ptr = static_cast<LIEF::dwarf::editor::StructType*>(
+            inserted.first->second.get()
+        );
       } else {
         anon_types_.push_back(std::move(struct_type));
+        struct_type_ptr = static_cast<LIEF::dwarf::editor::StructType*>(
+            anon_types_.back().get()
+        );
       }
 
       for (const bn::StructureMember& member : bn_struct->GetMembers()) {

@@ -115,7 +115,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
   std::vector<bn::Ref<bn::BasicBlock>> blocks = func.GetBasicBlocks();
 
   if (blocks.size() > 1) {
-    for (bn::Ref<bn::BasicBlock> BB : blocks) {
+    for (const bn::Ref<bn::BasicBlock>& BB : blocks) {
       std::unique_ptr<dw::Function::LexicalBlock> LB =
           dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
       if (LB == nullptr) {
@@ -154,7 +154,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
       }
     }
   } else if (blocks.size() == 1) {
-    bn::Ref<bn::BasicBlock> main_block = blocks[0];
+    const bn::Ref<bn::BasicBlock>& main_block = blocks[0];
     std::string comment = func.GetCommentForAddress(main_block->GetStart());
     if (!comment.empty()) {
       dw_func->add_description(comment);

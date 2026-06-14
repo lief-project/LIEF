@@ -29,11 +29,11 @@ namespace analysis_plugin::elf::analyzers {
 
 static constexpr auto ANDROID_JNI_TL = "aarch64/android-jni.bntl";
 
-bool should_change(Ref<Type> ty);
+bool should_change(const Ref<Type>& ty);
 bool should_change(const Confidence<Ref<Type>>& ty);
 
-bool should_change(Ref<Type> ty) {
-  std::string type_str = ty->GetString();
+bool should_change(const Ref<Type>& ty) {
+  const std::string type_str = ty->GetString();
   if (type_str == "jobject" || type_str == "jclass" || type_str == "JNIEnv") {
     return false;
   }
@@ -51,7 +51,6 @@ bool should_change(Ref<Type> ty) {
 }
 
 bool should_change(const Confidence<Ref<Type>>& ty) {
-  std::string type_str = ty->GetString();
   if (ty.GetConfidence() != BN_FULL_CONFIDENCE) {
     return true;
   }
@@ -69,7 +68,7 @@ static void process(FunctionParameter& original_param,
   }
 }
 
-bool AndroidJNI::can_run(BinaryNinja::BinaryView& bv, Binary& elf) {
+bool AndroidJNI::can_run(BinaryNinja::BinaryView& /*bv*/, Binary& elf) {
   return elf.is_targeting_android();
 }
 
@@ -97,7 +96,7 @@ void AndroidJNI::run() {
 
   Ref<TagType> jni_tag = get_or_create_tag(ANDROID_JNI_FUNC_TAG);
 
-  for (Ref<Function> F : bv_.GetAnalysisFunctionList()) {
+  for (const Ref<Function>& F : bv_.GetAnalysisFunctionList()) {
     if (F->GetSymbol()->GetRawName() == "JNI_OnLoad") {
       process_JNI_OnLoad(*F);
     }

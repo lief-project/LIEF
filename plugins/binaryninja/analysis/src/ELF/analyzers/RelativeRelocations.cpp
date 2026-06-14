@@ -25,7 +25,7 @@ using namespace BinaryNinja;
 
 namespace analysis_plugin::elf::analyzers {
 
-bool RelativeRelocations::can_run(BinaryNinja::BinaryView& bv, Binary& elf) {
+bool RelativeRelocations::can_run(BinaryNinja::BinaryView& /*bv*/, Binary& elf) {
   for (const DynamicEntry& DT : elf.dynamic_entries()) {
     switch (DT.tag()) {
       case DynamicEntry::TAG::RELR:

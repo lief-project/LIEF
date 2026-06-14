@@ -29,7 +29,8 @@ using namespace BinaryNinja;
 
 namespace analysis_plugin::elf::analyzers {
 
-bool AndroidPackedRelocations::can_run(BinaryNinja::BinaryView& bv, Binary& elf) {
+bool AndroidPackedRelocations::can_run(BinaryNinja::BinaryView& /*bv*/,
+                                       Binary& elf) {
   for (const DynamicEntry& DT : elf.dynamic_entries()) {
     switch (DT.tag()) {
       case DynamicEntry::TAG::ANDROID_REL:
@@ -74,7 +75,7 @@ void AndroidPackedRelocations::process_packed(binaryninja::BNStream& stream) {
     nb_relocs = *value;
   }
 
-  uint64_t r_offset = 0;
+  [[maybe_unused]] uint64_t r_offset = 0;
   {
     const uint64_t pos = stream.pos();
     size_t size = 0;
@@ -86,7 +87,7 @@ void AndroidPackedRelocations::process_packed(binaryninja::BNStream& stream) {
     r_offset = *value;
   }
 
-  uint64_t addend = 0;
+  [[maybe_unused]] uint64_t addend = 0;
   size_t leb128_size = 0;
   while (nb_relocs > 0) {
     auto nb_reloc_group_r = stream.read_sleb128(&leb128_size);

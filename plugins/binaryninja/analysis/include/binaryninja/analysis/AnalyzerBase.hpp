@@ -32,15 +32,18 @@ class AnalyzerBase {
 
   virtual ~AnalyzerBase() = default;
 
-  void define_type_at(uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
+  void define_type_at(uint64_t address,
+                      const BinaryNinja::Ref<BinaryNinja::Type>& type,
                       std::optional<std::string> name = std::nullopt,
                       bool force = false);
 
-  void define_type_at(uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
-                      force_callback_t force,
+  void define_type_at(uint64_t address,
+                      const BinaryNinja::Ref<BinaryNinja::Type>& type,
+                      const force_callback_t& force,
                       std::optional<std::string> name = std::nullopt);
 
-  void define_struct_at(uint64_t address, BinaryNinja::Ref<BinaryNinja::Type> type,
+  void define_struct_at(uint64_t address,
+                        const BinaryNinja::Ref<BinaryNinja::Type>& type,
                         std::optional<std::string> name = std::nullopt,
                         bool force = false);
 
@@ -48,7 +51,8 @@ class AnalyzerBase {
                         std::optional<std::string> name = std::nullopt,
                         bool force = false);
 
-  void define_array_at(uint64_t addr, BinaryNinja::Ref<BinaryNinja::Type> type,
+  void define_array_at(uint64_t addr,
+                       const BinaryNinja::Ref<BinaryNinja::Type>& type,
                        size_t count,
                        std::optional<std::string> name = std::nullopt,
                        bool force = false);
@@ -74,7 +78,7 @@ class AnalyzerBase {
   }
 
   void tag_once(BinaryNinja::Function& F,
-                BinaryNinja::Ref<BinaryNinja::TagType> type) {
+                const BinaryNinja::Ref<BinaryNinja::TagType>& type) {
     if (!F.GetTagReferencesOfType(type).empty()) {
       return;
     }

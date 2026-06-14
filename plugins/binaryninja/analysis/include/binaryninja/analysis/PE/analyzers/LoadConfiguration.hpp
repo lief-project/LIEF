@@ -36,7 +36,6 @@ class LoadConfiguration : public AnalyzerBase {
       process(const LIEF::PE::CHPEMetadataARM64& arm64);
 
   LIEF::PE::LoadConfiguration* load_config_ = nullptr;
-  LIEF::PE::CHPEMetadataARM64* arm64_metadata_ = nullptr;
 };
 
 }

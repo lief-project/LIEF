@@ -25,7 +25,7 @@ using namespace BinaryNinja;
 namespace analysis_plugin {
 
 void AnalyzerBase::define_type_at(uint64_t address,
-                                  BinaryNinja::Ref<BinaryNinja::Type> type,
+                                  const BinaryNinja::Ref<BinaryNinja::Type>& type,
                                   std::optional<std::string> name, bool force) {
   if (force) {
     bv_.UndefineDataVariable(address, /*blacklist=*/false);
@@ -48,8 +48,8 @@ void AnalyzerBase::define_type_at(uint64_t address,
 
 
 void AnalyzerBase::define_type_at(uint64_t address,
-                                  BinaryNinja::Ref<BinaryNinja::Type> type,
-                                  force_callback_t force,
+                                  const BinaryNinja::Ref<BinaryNinja::Type>& type,
+                                  const force_callback_t& force,
                                   std::optional<std::string> name) {
   if (auto var = get_defined_var(address)) {
     if (!force(*var)) {
@@ -67,7 +67,7 @@ void AnalyzerBase::define_type_at(uint64_t address,
   }
 }
 
-void AnalyzerBase::define_struct_at(uint64_t address, Ref<Type> type,
+void AnalyzerBase::define_struct_at(uint64_t address, const Ref<Type>& type,
                                     std::optional<std::string> name, bool force) {
   if (force) {
     bv_.UndefineDataVariable(address, /*blacklist=*/false);
@@ -98,7 +98,7 @@ std::optional<DataVariable> AnalyzerBase::get_defined_var(uint64_t addr) {
 }
 
 void AnalyzerBase::define_array_at(uint64_t addr,
-                                   BinaryNinja::Ref<BinaryNinja::Type> type,
+                                   const BinaryNinja::Ref<BinaryNinja::Type>& type,
                                    size_t count, std::optional<std::string> name,
                                    bool force) {
   if (count == 0) {
@@ -128,7 +128,7 @@ void AnalyzerBase::define_array_at(uint64_t addr,
 void AnalyzerBase::define_blob(uint64_t addr, size_t size,
                                std::optional<std::string> name, bool force) {
   auto u8 = Type::IntegerType(/*width=*/1, /*sign=*/false, "uint8_t");
-  return define_array_at(addr, u8, size, name, force);
+  return define_array_at(addr, u8, size, std::move(name), force);
 }
 
 void AnalyzerBase::define_struct_at(uint64_t address, const std::string& type,
@@ -138,7 +138,7 @@ void AnalyzerBase::define_struct_at(uint64_t address, const std::string& type,
     BN_ERR("Type '{}' not found", type);
     return;
   }
-  return define_struct_at(address, bn_type, name, force);
+  return define_struct_at(address, bn_type, std::move(name), force);
 }
 
 }

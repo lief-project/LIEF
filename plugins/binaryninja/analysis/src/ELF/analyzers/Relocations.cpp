@@ -27,7 +27,7 @@ using namespace BinaryNinja;
 
 namespace analysis_plugin::elf::analyzers {
 
-bool Relocations::can_run(BinaryNinja::BinaryView& bv, Binary& elf) {
+bool Relocations::can_run(BinaryNinja::BinaryView& /*bv*/, Binary& elf) {
   return !elf.relocations().empty();
 }
 
@@ -40,7 +40,7 @@ void Relocations::run() {
       continue;
     }
 
-    if (R.size() == -1) {
+    if (R.size() == static_cast<size_t>(-1)) {
       BN_WARN("Can't apply relocation '{}': Unknown size", to_string(R.type()));
       continue;
     }
