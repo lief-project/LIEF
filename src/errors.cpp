@@ -41,6 +41,7 @@ const char* to_string(lief_errors err) {
     case lief_errors::build_error: return "build_error";
     case lief_errors::data_too_large: return "data_too_large";
     case lief_errors::require_extended_version: return "require_extended_version";
+    case lief_errors::inconsistent: return "inconsistent";
     default: return "error";
   }
   return "error";

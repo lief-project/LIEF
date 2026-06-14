@@ -38,6 +38,7 @@ void init_errors(nb::module_& m) {
     .value("build_error",       lief_errors::build_error)
     .value("data_too_large",    lief_errors::data_too_large)
     .value("require_extended_version", lief_errors::require_extended_version)
+    .value("inconsistent", lief_errors::inconsistent)
   ;
 }
 }

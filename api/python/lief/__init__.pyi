@@ -160,6 +160,8 @@ class lief_errors(enum.Enum):
 
     require_extended_version = 14
 
+    inconsistent = 15
+
 @overload
 def hash(arg: Object, /) -> int: ... # type: ignore
 
