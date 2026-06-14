@@ -170,9 +170,8 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
 
       LIEF::dwarf::editor::StructType* struct_type_ptr = nullptr;
       if (!struct_name.empty()) {
-        auto inserted = mapping_.insert({name_str, std::move(struct_type)});
         struct_type_ptr = static_cast<LIEF::dwarf::editor::StructType*>(
-            inserted.first->second.get()
+            mapping_.insert({name_str, std::move(struct_type)}).first->second.get()
         );
       } else {
         anon_types_.push_back(std::move(struct_type));

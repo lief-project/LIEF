@@ -1,13 +1,22 @@
 cmake_minimum_required(VERSION 3.24 FATAL_ERROR)
 project(lief-binaryninja-plugins CXX)
 
+include(CMakeDependentOption)
+
 option(LIEF_BINARYNINJA_STATIC OFF)
+option(LIEF_BINARYNINJA_CLANG_TIDY "Enable clang-tidy checks" OFF)
+
+cmake_dependent_option(LIEF_BINARYNINJA_CLANG_TIDY_WARN_ERR
+  "Enable WarningsAsErrors when running clang-tidy" OFF
+  "LIEF_BINARYNINJA_CLANG_TIDY" OFF)
 
 include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+set(LIEF_BINARYNINJA_EXTRA_FLAGS)
 
 find_package(LIEF               REQUIRED)
 find_package(fmt                REQUIRED)
@@ -41,6 +50,25 @@ target_compile_definitions(lief-binaryninja-libraries PUBLIC
   BN_VERSION_MINOR=${BN_VERSION_MINOR}
   BN_VERSION_PATCH=${BN_VERSION_PATCH}
 )
+
+if (LIEF_BINARYNINJA_EXTRA_FLAGS)
+  target_compile_options(lief-binaryninja-libraries PUBLIC
+    ${LIEF_BINARYNINJA_EXTRA_FLAGS})
+endif()
+
+if (LIEF_BINARYNINJA_CLANG_TIDY)
+  find_program(CLANG_TIDY_EXE NAMES "clang-tidy" REQUIRED)
+  set(CLANG_TIDY_COMMAND
+    "${CLANG_TIDY_EXE}"
+    "--use-color"
+    "--config-file=${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy-core.yaml"
+  )
+  if (LIEF_BINARYNINJA_CLANG_TIDY_WARN_ERR)
+    list(APPEND CLANG_TIDY_COMMAND "--warnings-as-errors=*")
+  endif()
+
+  set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+endif()
 
 add_subdirectory(src)
 add_subdirectory(dwarf-export)

@@ -40,7 +40,7 @@ void Relocations::run() {
       continue;
     }
 
-    if (R.size() == static_cast<size_t>(-1)) {
+    if (R.size() == (size_t)-1) {
       BN_WARN("Can't apply relocation '{}': Unknown size", to_string(R.type()));
       continue;
     }
