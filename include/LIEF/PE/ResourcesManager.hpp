@@ -16,6 +16,7 @@
 #ifndef LIEF_PE_RESOURCES_MANAGER_H
 #define LIEF_PE_RESOURCES_MANAGER_H
 #include <ostream>
+#include <sstream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
