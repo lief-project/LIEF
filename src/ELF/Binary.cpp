@@ -1853,67 +1853,222 @@ void Binary::shift_segments(uint64_t from, uint64_t shift) {
   }
 }
 
+static void do_dynamic_entry_shift(uint64_t from, uint64_t shift, DynamicEntry &entry, Header::CLASS binary_type) {
+  switch (entry.tag()) {
+    // Address/Offset types
+    case DynamicEntry::TAG::PLTGOT:
+    case DynamicEntry::TAG::HASH:
+    case DynamicEntry::TAG::STRTAB:
+    case DynamicEntry::TAG::SYMTAB:
+    case DynamicEntry::TAG::RELA:
+    case DynamicEntry::TAG::INIT:
+    case DynamicEntry::TAG::FINI:
+    case DynamicEntry::TAG::REL:
+    case DynamicEntry::TAG::JMPREL:
+    case DynamicEntry::TAG::SYMTAB_SHNDX:
+    case DynamicEntry::TAG::RELR:
+    case DynamicEntry::TAG::GNU_HASH:
+    case DynamicEntry::TAG::TLSDESC_PLT:
+    case DynamicEntry::TAG::TLSDESC_GOT:
+    case DynamicEntry::TAG::VERSYM:
+    case DynamicEntry::TAG::VERDEF:
+    case DynamicEntry::TAG::VERNEED:
+    case DynamicEntry::TAG::ANDROID_REL_OFFSET:
+    case DynamicEntry::TAG::ANDROID_REL:
+    case DynamicEntry::TAG::ANDROID_RELA:
+    case DynamicEntry::TAG::ANDROID_RELR:
+    case DynamicEntry::TAG::MIPS_MSYM:
+    case DynamicEntry::TAG::MIPS_CONFLICT:
+    case DynamicEntry::TAG::MIPS_LIBLIST:
+    case DynamicEntry::TAG::MIPS_SYMBOL_LIB:
+    case DynamicEntry::TAG::MIPS_OPTIONS:
+    case DynamicEntry::TAG::MIPS_INTERFACE:
+    case DynamicEntry::TAG::MIPS_AUX_DYNAMIC:
+    case DynamicEntry::TAG::MIPS_PLTGOT:
+    {
+      if (entry.value() >= from) {
+        entry.value(entry.value() + shift);
+      }
+      return;
+    }
+
+    // Array of address/offset types
+    case DynamicEntry::TAG::INIT_ARRAY:
+    case DynamicEntry::TAG::FINI_ARRAY:
+    case DynamicEntry::TAG::PREINIT_ARRAY:
+    {
+      DynamicEntryArray::array_t& array =
+          entry.as<DynamicEntryArray>()->array();
+      for (uint64_t& address : array) {
+        if (address >= from) {
+          if ((binary_type == Header::CLASS::ELF32 &&
+               static_cast<int32_t>(address) > 0) ||
+              (binary_type == Header::CLASS::ELF64 &&
+               static_cast<int64_t>(address) > 0))
+          {
+            address += shift;
+          }
+        }
+      }
+
+      if (entry.value() >= from) {
+        entry.value(entry.value() + shift);
+      }
+      return;
+    }
+
+    // Plain/No value types
+    case DynamicEntry::TAG::UNKNOWN:
+    case DynamicEntry::TAG::DT_NULL_:
+    case DynamicEntry::TAG::NEEDED:
+    case DynamicEntry::TAG::PLTRELSZ:
+    case DynamicEntry::TAG::RELASZ:
+    case DynamicEntry::TAG::RELAENT:
+    case DynamicEntry::TAG::STRSZ:
+    case DynamicEntry::TAG::SYMENT:
+    case DynamicEntry::TAG::SONAME:
+    case DynamicEntry::TAG::RPATH:
+    case DynamicEntry::TAG::SYMBOLIC:
+    case DynamicEntry::TAG::RELSZ:
+    case DynamicEntry::TAG::RELENT:
+    case DynamicEntry::TAG::PLTREL:
+    case DynamicEntry::TAG::DEBUG_TAG:
+    case DynamicEntry::TAG::TEXTREL:
+    case DynamicEntry::TAG::BIND_NOW:
+    case DynamicEntry::TAG::INIT_ARRAYSZ:
+    case DynamicEntry::TAG::FINI_ARRAYSZ:
+    case DynamicEntry::TAG::RUNPATH:
+    case DynamicEntry::TAG::FLAGS:
+    case DynamicEntry::TAG::PREINIT_ARRAYSZ:
+    case DynamicEntry::TAG::RELRSZ:
+    case DynamicEntry::TAG::RELRENT:
+    case DynamicEntry::TAG::RELACOUNT:
+    case DynamicEntry::TAG::RELCOUNT:
+    case DynamicEntry::TAG::FLAGS_1:
+    case DynamicEntry::TAG::VERDEFNUM:
+    case DynamicEntry::TAG::VERNEEDNUM:
+    case DynamicEntry::TAG::AUXILIARY:
+    case DynamicEntry::TAG::FILTER:
+    case DynamicEntry::TAG::ANDROID_REL_SIZE:
+    case DynamicEntry::TAG::ANDROID_RELSZ:
+    case DynamicEntry::TAG::ANDROID_RELASZ:
+    case DynamicEntry::TAG::ANDROID_RELRSZ:
+    case DynamicEntry::TAG::ANDROID_RELRENT:
+    case DynamicEntry::TAG::ANDROID_RELRCOUNT:
+    case DynamicEntry::TAG::MIPS_RLD_VERSION:
+    case DynamicEntry::TAG::MIPS_TIME_STAMP:
+    case DynamicEntry::TAG::MIPS_ICHECKSUM:
+    case DynamicEntry::TAG::MIPS_IVERSION:
+    case DynamicEntry::TAG::MIPS_FLAGS:
+    case DynamicEntry::TAG::MIPS_BASE_ADDRESS:
+    case DynamicEntry::TAG::MIPS_LOCAL_GOTNO:
+    case DynamicEntry::TAG::MIPS_CONFLICTNO:
+    case DynamicEntry::TAG::MIPS_LIBLISTNO:
+    case DynamicEntry::TAG::MIPS_SYMTABNO:
+    case DynamicEntry::TAG::MIPS_UNREFEXTNO:
+    case DynamicEntry::TAG::MIPS_GOTSYM:
+    case DynamicEntry::TAG::MIPS_HIPAGENO:
+    case DynamicEntry::TAG::MIPS_DELTA_CLASS_NO:
+    case DynamicEntry::TAG::MIPS_DELTA_INSTANCE_NO:
+    case DynamicEntry::TAG::MIPS_DELTA_RELOC_NO:
+    case DynamicEntry::TAG::MIPS_DELTA_SYM_NO:
+    case DynamicEntry::TAG::MIPS_DELTA_CLASSSYM_NO:
+    case DynamicEntry::TAG::MIPS_CXX_FLAGS:
+    case DynamicEntry::TAG::MIPS_LOCALPAGE_GOTIDX:
+    case DynamicEntry::TAG::MIPS_LOCAL_GOTIDX:
+    case DynamicEntry::TAG::MIPS_HIDDEN_GOTIDX:
+    case DynamicEntry::TAG::MIPS_PROTECTED_GOTIDX:
+    case DynamicEntry::TAG::MIPS_INTERFACE_SIZE:
+    case DynamicEntry::TAG::MIPS_RLD_TEXT_RESOLVE_ADDR:
+    case DynamicEntry::TAG::MIPS_PERF_SUFFIX:
+    case DynamicEntry::TAG::MIPS_COMPACT_SIZE:
+    case DynamicEntry::TAG::MIPS_GP_VALUE:
+    {
+      // Explicitly annotate the entry types that don't need shifting. We want to warn if we miss something.
+      return;
+    }
+
+    // Not yet documented types
+    // If a type is here despite having a description then there is not enough clarity about whether we affect it.
+    // TODO: These should be reduced to zero by moving them to the correct category.
+    case DynamicEntry::TAG::MIPS_RLD_MAP: /**< Address of run time loader map, used for debugging. */
+    case DynamicEntry::TAG::MIPS_DELTA_CLASS: /**< Delta C++ class definition. */
+    case DynamicEntry::TAG::MIPS_DELTA_INSTANCE: /**< Delta C++ class instances. */
+    case DynamicEntry::TAG::MIPS_DELTA_RELOC: /**< Delta relocations. */
+    case DynamicEntry::TAG::MIPS_DELTA_SYM: /**< Delta symbols that Delta relocations refer to. */
+    case DynamicEntry::TAG::MIPS_DELTA_CLASSSYM: /**< Delta symbols that hold class declarations. */
+    case DynamicEntry::TAG::MIPS_PIXIE_INIT: /**< Pixie information (??? [sic]). */
+    case DynamicEntry::TAG::MIPS_DYNSTR_ALIGN: /**< Unknown. */
+    case DynamicEntry::TAG::MIPS_RWPLT:
+    case DynamicEntry::TAG::MIPS_RLD_MAP_REL:
+    case DynamicEntry::TAG::MIPS_XHASH:
+    case DynamicEntry::TAG::AARCH64_BTI_PLT:
+    case DynamicEntry::TAG::AARCH64_PAC_PLT:
+    case DynamicEntry::TAG::AARCH64_VARIANT_PCS:
+    case DynamicEntry::TAG::AARCH64_MEMTAG_MODE:
+    case DynamicEntry::TAG::AARCH64_MEMTAG_HEAP:
+    case DynamicEntry::TAG::AARCH64_MEMTAG_STACK:
+    case DynamicEntry::TAG::AARCH64_MEMTAG_GLOBALS:
+    case DynamicEntry::TAG::AARCH64_MEMTAG_GLOBALSSZ:
+    case DynamicEntry::TAG::HEXAGON_SYMSZ:
+    case DynamicEntry::TAG::HEXAGON_VER:
+    case DynamicEntry::TAG::HEXAGON_PLT:
+    case DynamicEntry::TAG::PPC_GOT:
+    case DynamicEntry::TAG::PPC_OPT:
+    case DynamicEntry::TAG::PPC64_GLINK:
+    case DynamicEntry::TAG::PPC64_OPT:
+    case DynamicEntry::TAG::RISCV_VARIANT_CC:
+    case DynamicEntry::TAG::X86_64_PLT:
+    case DynamicEntry::TAG::X86_64_PLTSZ:
+    case DynamicEntry::TAG::X86_64_PLTENT:
+    case DynamicEntry::TAG::IA_64_PLT_RESERVE:
+    case DynamicEntry::TAG::IA_64_VMS_SUBTYPE:
+    case DynamicEntry::TAG::IA_64_VMS_IMGIOCNT:
+    case DynamicEntry::TAG::IA_64_VMS_LNKFLAGS:
+    case DynamicEntry::TAG::IA_64_VMS_VIR_MEM_BLK_SIZ:
+    case DynamicEntry::TAG::IA_64_VMS_IDENT:
+    case DynamicEntry::TAG::IA_64_VMS_NEEDED_IDENT:
+    case DynamicEntry::TAG::IA_64_VMS_IMG_RELA_CNT:
+    case DynamicEntry::TAG::IA_64_VMS_SEG_RELA_CNT:
+    case DynamicEntry::TAG::IA_64_VMS_FIXUP_RELA_CNT:
+    case DynamicEntry::TAG::IA_64_VMS_FIXUP_NEEDED:
+    case DynamicEntry::TAG::IA_64_VMS_SYMVEC_CNT:
+    case DynamicEntry::TAG::IA_64_VMS_XLATED:
+    case DynamicEntry::TAG::IA_64_VMS_STACKSIZE:
+    case DynamicEntry::TAG::IA_64_VMS_UNWINDSZ:
+    case DynamicEntry::TAG::IA_64_VMS_UNWIND_CODSEG:
+    case DynamicEntry::TAG::IA_64_VMS_UNWIND_INFOSEG:
+    case DynamicEntry::TAG::IA_64_VMS_LINKTIME:
+    case DynamicEntry::TAG::IA_64_VMS_SEG_NO:
+    case DynamicEntry::TAG::IA_64_VMS_SYMVEC_OFFSET:
+    case DynamicEntry::TAG::IA_64_VMS_SYMVEC_SEG:
+    case DynamicEntry::TAG::IA_64_VMS_UNWIND_OFFSET:
+    case DynamicEntry::TAG::IA_64_VMS_UNWIND_SEG:
+    case DynamicEntry::TAG::IA_64_VMS_STRTAB_OFFSET:
+    case DynamicEntry::TAG::IA_64_VMS_SYSVER_OFFSET:
+    case DynamicEntry::TAG::IA_64_VMS_IMG_RELA_OFF:
+    case DynamicEntry::TAG::IA_64_VMS_SEG_RELA_OFF:
+    case DynamicEntry::TAG::IA_64_VMS_FIXUP_RELA_OFF:
+    case DynamicEntry::TAG::IA_64_VMS_PLTGOT_OFFSET:
+    case DynamicEntry::TAG::IA_64_VMS_PLTGOT_SEG:
+    case DynamicEntry::TAG::IA_64_VMS_FPMODE:
+    {
+      LIEF_WARN("Shifting behavior of dynamic entry {} not defined", to_string(entry.tag()));
+      return;
+    }
+  }
+
+  // The lack of a 'default' option in the above cases should also warn at build-time if this is reachable
+  // with a known enum value.
+  LIEF_WARN("Shifting behavior of dynamic entry {} not defined", to_string(entry.tag()));
+}
+
 void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("Shifting dynamic entries by {:#x} from {:#x}", shift, from);
 
   for (std::unique_ptr<DynamicEntry>& entry : dynamic_entries_) {
     LIEF_DEBUG("[BEFORE] {}", to_string(*entry));
-    switch (entry->tag()) {
-      case DynamicEntry::TAG::PLTGOT:
-      case DynamicEntry::TAG::HASH:
-      case DynamicEntry::TAG::GNU_HASH:
-      case DynamicEntry::TAG::STRTAB:
-      case DynamicEntry::TAG::SYMTAB:
-      case DynamicEntry::TAG::RELA:
-      case DynamicEntry::TAG::RELR:
-      case DynamicEntry::TAG::REL:
-      case DynamicEntry::TAG::JMPREL:
-      case DynamicEntry::TAG::INIT:
-      case DynamicEntry::TAG::FINI:
-      case DynamicEntry::TAG::VERSYM:
-      case DynamicEntry::TAG::VERDEF:
-      case DynamicEntry::TAG::VERNEED:
-      case DynamicEntry::TAG::TLSDESC_PLT:
-      case DynamicEntry::TAG::TLSDESC_GOT:
-      case DynamicEntry::TAG::ANDROID_REL:
-      case DynamicEntry::TAG::ANDROID_RELA:
-      case DynamicEntry::TAG::ANDROID_RELR:
-      {
-        if (entry->value() >= from) {
-          entry->value(entry->value() + shift);
-        }
-        break;
-      }
-
-      case DynamicEntry::TAG::INIT_ARRAY:
-      case DynamicEntry::TAG::FINI_ARRAY:
-      case DynamicEntry::TAG::PREINIT_ARRAY:
-      {
-        DynamicEntryArray::array_t& array =
-            entry->as<DynamicEntryArray>()->array();
-        for (uint64_t& address : array) {
-          if (address >= from) {
-            if ((type() == Header::CLASS::ELF32 &&
-                 static_cast<int32_t>(address) > 0) ||
-                (type() == Header::CLASS::ELF64 &&
-                 static_cast<int64_t>(address) > 0))
-            {
-              address += shift;
-            }
-          }
-        }
-
-        if (entry->value() >= from) {
-          entry->value(entry->value() + shift);
-        }
-        break;
-      }
-
-      default:
-      {
-        // LIEF_DEBUG("{} not supported", to_string(entry->tag()));
-      }
-    }
+    do_dynamic_entry_shift(from, shift, *entry, type());
     LIEF_DEBUG("[AFTER ] {}", to_string(*entry));
   }
 }
