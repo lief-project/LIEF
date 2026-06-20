@@ -80,10 +80,11 @@
 #endif
 
 
+// NOLINTNEXTLINE
 nb::module_* lief_mod = nullptr;
 
 namespace LIEF {
-struct DeclOpt;
+class DeclOpt;
 }
 
 namespace LIEF::py {
