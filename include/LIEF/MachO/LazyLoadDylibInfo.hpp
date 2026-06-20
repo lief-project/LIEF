@@ -89,7 +89,7 @@ class LIEF_API LazyLoadDylibInfo : public LoadCommand {
 
     /// Name of the bound symbol, resolved from ordinal() (empty if the ordinal
     /// is out of the symbols() range)
-    const std::string& symbol() const {
+    const std::string& symbol() const LIEF_LIFETIMEBOUND {
       return symbol_;
     }
 
@@ -152,16 +152,16 @@ class LIEF_API LazyLoadDylibInfo : public LoadCommand {
 
   /// Return the data slice in the `__LINKEDIT` segment referenced by
   /// data_offset and data_size.
-  span<const uint8_t> content() const {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return content_;
   }
 
-  span<uint8_t> content() {
+  span<uint8_t> content() LIEF_LIFETIMEBOUND {
     return content_;
   }
 
   /// Load path of the dylib to bind lazily
-  const std::string& load_path() const {
+  const std::string& load_path() const LIEF_LIFETIMEBOUND {
     return load_path_;
   }
 
