@@ -4223,7 +4223,15 @@ ok_error_t BinaryParser::post_process(FunctionVariantFixups& cmd) {
 
   SpanStream stream(cmd.content_);
   stream.set_endian_swap(stream_->should_swap());
-  // TODO
+  cmd.fixups_ = FunctionVariantFixups::parse_payload(stream);
+
+  // Resolve the segment referenced by each fixup
+  auto segments = binary_->segments();
+  for (FunctionVariantFixups::Fixup& fixup : cmd.fixups()) {
+    if (fixup.seg_index() < segments.size()) {
+      fixup.segment(segments[fixup.seg_index()]);
+    }
+  }
 
   return ok();
 }

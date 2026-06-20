@@ -52,7 +52,9 @@
 #include "logging.hpp"
 #include "Object.tcc"
 
+#include <algorithm>
 #include <string>
+#include <unordered_set>
 
 namespace LIEF::MachO {
 template<typename T, typename U>
@@ -121,6 +123,10 @@ class LayoutChecker {
 
   // From FunctionVariants::valid()
   bool check_function_variants();
+
+  // Consistency of LC_FUNCTION_VARIANT_FIXUPS (cf. dyld's interpretation of
+  // FunctionVariantFixups::InternalFixup)
+  bool check_function_variant_fixups();
 
   bool check_linkedit_end();
 
@@ -1037,6 +1043,10 @@ bool LayoutChecker::check() {
     return false;
   }
 
+  if (!check_function_variant_fixups()) {
+    return false;
+  }
+
   if (!check_section_contiguity()) {
     return false;
   }
@@ -1607,9 +1617,22 @@ bool LayoutChecker::check_chained_fixups() {
 
 bool LayoutChecker::check_function_variants() {
   using KIND = FunctionVariants::RuntimeTable::KIND;
+  using RuntimeTableEntry = FunctionVariants::RuntimeTableEntry;
   const FunctionVariants* variants = binary.function_variants();
   if (variants == nullptr) {
     return true;
+  }
+
+  const FunctionStarts* func_starts = binary.function_starts();
+  const uint64_t imagebase = binary.imagebase();
+
+  // Check that the impl for RuntimeTableEntry target a function that is
+  // listed in LC_FUNCTION_STARTS. This is pretty conservative and dyld could relax
+  // this condition but this can be used to identify malformed modifications.
+  std::unordered_set<uint64_t> starts;
+  if (func_starts != nullptr) {
+    const std::vector<uint64_t>& fn = func_starts->functions();
+    starts.insert(fn.begin(), fn.end());
   }
 
   for (const FunctionVariants::RuntimeTable& entry : variants->runtime_table()) {
@@ -1632,13 +1655,96 @@ bool LayoutChecker::check_function_variants() {
       );
     }
 
-    const FunctionVariants::RuntimeTableEntry& last = entries[entries.size() - 1];
+    const RuntimeTableEntry& last = entries[entries.size() - 1];
     if (last.flag_bit_nums()[0] != 0) {
       return error(
           "last entry in FunctionVariants::RuntimeTable entries is not 'default'"
       );
     }
+
+    if (func_starts == nullptr) {
+      continue;
+    }
+
+    for (const RuntimeTableEntry& impl_entry : entries) {
+      if (impl_entry.another_table()) {
+        continue;
+      }
+
+      const uint64_t va = imagebase + impl_entry.impl();
+      if (binary.segment_from_virtual_address(va) == nullptr) {
+        // tolerated
+        continue;
+      }
+
+      if (starts.find(impl_entry.impl()) == starts.end()) {
+        return error(
+            "FunctionVariants impl offset {:#x} (va: {:#x}) does not match any "
+            "LC_FUNCTION_STARTS entry",
+            impl_entry.impl(), va
+        );
+      }
+    }
   }
+  return true;
+}
+
+bool LayoutChecker::check_function_variant_fixups() {
+  const FunctionVariantFixups* fixups = binary.function_variant_fixups();
+  if (fixups == nullptr) {
+    return true;
+  }
+
+  // The payload is a bare array of fixed-size entries: a trailing partial
+  // entry would be silently dropped by dyld (it does size / sizeof(entry)).
+  if (fixups->data_size() % sizeof(details::function_variant_fixup_t) != 0) {
+    return error(
+        "LC_FUNCTION_VARIANT_FIXUPS payload size ({:#x}) is not a multiple of "
+        "the fixup entry size ({})",
+        fixups->data_size(), sizeof(details::function_variant_fixup_t)
+    );
+  }
+
+  auto segments = binary.segments();
+  const size_t nb_segments = segments.size();
+
+  // variant_index selects a FunctionVariants runtime table. dyld resolves a
+  // fixup as `image.segment(segIndex) + segOffset` pointing at table
+  // `#variantIndex`, so both indices must be in range.
+  const FunctionVariants* variants = binary.function_variants();
+
+  const size_t nb_tables =
+      variants == nullptr ? 0 : variants->runtime_table().size();
+
+  size_t idx = 0;
+  for (const FunctionVariantFixups::Fixup& fixup : fixups->fixups()) {
+    if (fixup.seg_index() >= nb_segments) {
+      return error(
+          "LC_FUNCTION_VARIANT_FIXUPS fixup #{} references segment #{} but the "
+          "binary only has {} segment(s)",
+          idx, fixup.seg_index(), nb_segments
+      );
+    }
+
+    const SegmentCommand& segment = segments[fixup.seg_index()];
+    if (fixup.seg_offset() + ptr_size() > segment.virtual_size()) {
+      return error(
+          "LC_FUNCTION_VARIANT_FIXUPS fixup #{} points outside of segment '{}' "
+          "(seg_offset={:#x}, vmsize={:#x})",
+          idx, segment.name(), fixup.seg_offset(), segment.virtual_size()
+      );
+    }
+
+    if (fixup.variant_index() >= nb_tables) {
+      return error(
+          "LC_FUNCTION_VARIANT_FIXUPS fixup #{} references function-variant "
+          "table #{} but the binary defines {} table(s)",
+          idx, fixup.variant_index(), nb_tables
+      );
+    }
+    ++idx;
+  }
+
   return true;
 }
 

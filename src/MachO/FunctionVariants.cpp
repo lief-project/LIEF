@@ -16,7 +16,6 @@
 #include <sstream>
 #include "spdlog/fmt/fmt.h"
 
-#include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/FunctionVariants.hpp"
@@ -29,12 +28,7 @@
 
 namespace LIEF::MachO {
 
-namespace details {
-struct runtime_table_entry_t {
-  uint32_t impl : 31, another_table : 1;
-  uint8_t flag_bit_nums[4];
-};
-}
+static_assert(sizeof(details::runtime_table_entry_t) == 8);
 
 using FLAGS = FunctionVariants::RuntimeTableEntry::FLAGS;
 using KIND = FunctionVariants::RuntimeTable::KIND;

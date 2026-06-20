@@ -281,6 +281,8 @@ pub use crate::macho::fat_binary::ffi::MachO_ParserConfig;
 pub use crate::macho::fileset::ffi::MachO_Fileset;
 pub use crate::macho::function_starts::ffi::MachO_FunctionStarts;
 pub use crate::macho::function_variant_fixups::ffi::MachO_FunctionVariantFixups;
+pub use crate::macho::function_variant_fixups::ffi::MachO_FunctionVariantFixups_Fixup;
+pub use crate::macho::function_variant_fixups::ffi::MachO_FunctionVariantFixups_it_fixups;
 pub use crate::macho::function_variants::ffi::MachO_FunctionVariants;
 pub use crate::macho::function_variants::ffi::MachO_FunctionVariants_RuntimeTable;
 pub use crate::macho::function_variants::ffi::MachO_FunctionVariants_RuntimeTableEntry;

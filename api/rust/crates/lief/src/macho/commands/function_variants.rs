@@ -311,6 +311,7 @@ pub enum Flag {
     SYSTEM_WIDE_LOCKDOWN,
     PER_PROCESS_DEFAULT,
     PER_PROCESS_TRANSLATED,
+    PER_PROCESS_MTE_ENABLED,
     PER_PROCESS_NO_OVERREAD,
     UNKNOWN(u32),
 }
@@ -387,6 +388,7 @@ impl From<u32> for Flag {
             0x00200003 => Flag::SYSTEM_WIDE_LOCKDOWN,
             0x00100000 => Flag::PER_PROCESS_DEFAULT,
             0x00100001 => Flag::PER_PROCESS_TRANSLATED,
+            0x00100002 => Flag::PER_PROCESS_MTE_ENABLED,
             0x00100003 => Flag::PER_PROCESS_NO_OVERREAD,
             _ => Flag::UNKNOWN(value),
         }
@@ -464,6 +466,7 @@ impl From<Flag> for u32 {
             Flag::SYSTEM_WIDE_LOCKDOWN => 0x00200003,
             Flag::PER_PROCESS_DEFAULT => 0x00100000,
             Flag::PER_PROCESS_TRANSLATED => 0x00100001,
+            Flag::PER_PROCESS_MTE_ENABLED => 0x00100002,
             Flag::PER_PROCESS_NO_OVERREAD => 0x00100003,
             Flag::UNKNOWN(value) => value,
         }

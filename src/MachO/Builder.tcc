@@ -1858,13 +1858,55 @@ ok_error_t Builder::build(FunctionVariants& func_variants) {
   details::linkedit_data_command raw_cmd{};
   raw_cmd.dataoff = linkedit_.size();
 
-  span<const uint8_t> sp = func_variants.content();
+  // Reconstruct the payload following this layout:
+  //
+  //   uint32_t  tableCount
+  //   uint32_t  tableOffsets[tableCount]   // payload-relative, points to 'kind'
+  //   <runtime tables>
+  //
+  // where each runtime table is:
+  //
+  //   uint32_t              kind
+  //   uint32_t              count
+  //   runtime_table_entry_t entries[count]  // 8 bytes each (2 * uint32_t)
+  auto runtime_tables = func_variants.runtime_table();
+  const size_t nb_tables = runtime_tables.size();
 
-  // TODO(romain): We need to reconstruct the data in depth
-  linkedit_.write(sp);
+  linkedit_.write((uint32_t)nb_tables);
 
-  raw_cmd.cmd = static_cast<uint32_t>(func_variants.command());
-  raw_cmd.cmdsize = static_cast<uint32_t>(func_variants.size());
+  // The tables are stored right after the (tableCount + tableOffsets[]) header.
+  size_t table_offset = sizeof(uint32_t) * (1 + nb_tables);
+  for (const FunctionVariants::RuntimeTable& table : runtime_tables) {
+    linkedit_.write((uint32_t)table_offset);
+    // Each table is a 'kind' + 'count' header followed by its entries.
+    table_offset +=
+        2 * sizeof(uint32_t) +
+        table.entries().size() * sizeof(details::runtime_table_entry_t);
+  }
+
+  for (const FunctionVariants::RuntimeTable& table : runtime_tables) {
+    (linkedit_)
+        .write((uint32_t)table.kind())
+        .write((uint32_t)table.entries().size());
+
+    for (const FunctionVariants::RuntimeTableEntry& entry : table.entries()) {
+      details::runtime_table_entry_t raw_entry{};
+      raw_entry.impl = entry.impl();
+      raw_entry.another_table = entry.another_table();
+
+      span<const uint8_t> flag_bit_nums = entry.flag_bit_nums();
+      std::copy(flag_bit_nums.begin(), flag_bit_nums.end(),
+                std::begin(raw_entry.flag_bit_nums));
+
+      linkedit_.write(raw_entry);
+    }
+  }
+
+  // The payload is padded to the natural pointer size (as emitted by the linker)
+  linkedit_.align(sizeof(typename T::uint));
+
+  raw_cmd.cmd = (uint32_t)func_variants.command();
+  raw_cmd.cmdsize = (uint32_t)func_variants.size();
   raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
   raw_cmd.dataoff += linkedit_offset_;
 
@@ -1887,8 +1929,18 @@ ok_error_t Builder::build(FunctionVariantFixups& func_variant_fixups) {
   details::linkedit_data_command raw_cmd{};
   raw_cmd.dataoff = linkedit_.size();
 
-  // TODO(romain): We need to reconstruct the data in depth
-  linkedit_.write(func_variant_fixups.content());
+  for (const FunctionVariantFixups::Fixup& fixup : func_variant_fixups.fixups()) {
+    details::function_variant_fixup_t raw_fixup{};
+    raw_fixup.seg_offset = fixup.seg_offset();
+    raw_fixup.seg_index =
+        fixup.segment() != nullptr ? fixup.segment()->index() : fixup.seg_index();
+    raw_fixup.variant_index = fixup.variant_index();
+    raw_fixup.pac_auth = fixup.pac_auth();
+    raw_fixup.pac_address = fixup.pac_address();
+    raw_fixup.pac_key = fixup.pac_key();
+    raw_fixup.pac_diversity = fixup.pac_diversity();
+    linkedit_.write(raw_fixup);
+  }
 
   linkedit_.align(sizeof(typename T::uint));
 

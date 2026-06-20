@@ -857,6 +857,19 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
     if (func_variants->data_offset() > from_offset) {
       func_variants->data_offset(func_variants->data_offset() + width);
     }
+    for (FunctionVariants::RuntimeTable& table : func_variants->runtime_table()) {
+      for (FunctionVariants::RuntimeTableEntry& entry : table.entries()) {
+        // impl() is an image-base relative offset (like LC_FUNCTION_STARTS).
+        // When another_table() is set it is an index into the runtime tables,
+        // not an address, and must be left untouched.
+        if (entry.another_table()) {
+          continue;
+        }
+        if ((__text_base_addr + entry.impl()) > virtual_address) {
+          entry.impl(entry.impl() + width);
+        }
+      }
+    }
   }
 
   if (FunctionVariantFixups* func_variant_fixups = function_variant_fixups()) {

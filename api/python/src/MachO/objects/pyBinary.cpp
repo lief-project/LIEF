@@ -482,11 +482,11 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def_prop_ro("has_function_variant_fixups",
-        &Binary::has_function_variants,
+        &Binary::has_function_variant_fixups,
         "``True`` if the binary has a ``LC_FUNCTION_VARIANT_FIXUPS`` command"_doc)
 
     .def_prop_ro("function_variant_fixups",
-        nb::overload_cast<>(&Binary::function_variants),
+        nb::overload_cast<>(&Binary::function_variant_fixups),
         "Return ``LC_FUNCTION_VARIANT_FIXUPS`` command"_doc,
         nb::rv_policy::reference_internal)
 
@@ -847,4 +847,3 @@ void create<Binary>(nb::module_& m) {
     LIEF_DEFAULT_STR(Binary);
 }
 }
-

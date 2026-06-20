@@ -76,14 +76,18 @@ void create<FunctionVariants>(nb::module_& m) {
   #undef FUNCTION_VARIANT_FLAG
 
   runtime_entry
-    .def_prop_ro("impl", &RuntimeTableEntry::impl,
+    .def_prop_rw("impl",
+      nb::overload_cast<>(&RuntimeTableEntry::impl, nb::const_),
+      nb::overload_cast<uint32_t>(&RuntimeTableEntry::impl),
       R"doc(
       The relative address of the implementation or an index if
       :attr:`~.another_table` is set.
       )doc"_doc
     )
 
-    .def_prop_ro("another_table", &RuntimeTableEntry::another_table,
+    .def_prop_rw("another_table",
+      nb::overload_cast<>(&RuntimeTableEntry::another_table, nb::const_),
+      nb::overload_cast<bool>(&RuntimeTableEntry::another_table),
       R"doc(
       Indicates whether :attr:`~.impl` refers to an entry in another runtime table,
       rather than a direct function implementation address.

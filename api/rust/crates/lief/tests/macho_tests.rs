@@ -162,6 +162,16 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
                 }
             }
 
+            Commands::FunctionVariantFixups(func) => {
+                println!("{func:?}");
+                for fixup in func.fixups() {
+                    println!("{fixup:?} {fixup}");
+                    if let Some(segment) = fixup.segment() {
+                        println!("  segment: {}", segment.name());
+                    }
+                }
+            }
+
             Commands::Fileset(fileset) => {
                 println!("{fileset:?}");
             }

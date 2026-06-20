@@ -1002,7 +1002,7 @@ class Binary(lief.Binary):
     def has_function_variant_fixups(self) -> bool: ...
 
     @property
-    def function_variant_fixups(self) -> FunctionVariants | None: ...
+    def function_variant_fixups(self) -> FunctionVariantFixups | None: ...
 
     def virtual_address_to_offset(self, virtual_address: int) -> Union[int, lief.lief_errors]: ...
 
@@ -2712,6 +2712,8 @@ class FunctionVariants(LoadCommand):
 
             PER_PROCESS_TRANSLATED = 1048577
 
+            PER_PROCESS_MTE_ENABLED = 1048578
+
             PER_PROCESS_NO_OVERREAD = 1048579
 
             SYSTEM_WIDE_DEFAULT = 2097152
@@ -2748,11 +2750,9 @@ class FunctionVariants(LoadCommand):
 
             UNKNOWN = 0
 
-        @property
-        def impl(self) -> int: ...
+        impl: int
 
-        @property
-        def another_table(self) -> bool: ...
+        another_table: bool
 
         @property
         def flag_bit_nums(self) -> memoryview: ...
@@ -2816,12 +2816,52 @@ class FunctionVariants(LoadCommand):
     def __str__(self) -> str: ...
 
 class FunctionVariantFixups(LoadCommand):
+    class Fixup:
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, seg_offset: int, seg_index: int, variant_index: int, pac_auth: bool, pac_address: bool, pac_key: int, pac_diversity: int) -> None: ...
+
+        seg_offset: int
+
+        seg_index: int
+
+        variant_index: int
+
+        pac_auth: bool
+
+        pac_address: bool
+
+        pac_key: int
+
+        pac_diversity: int
+
+        @property
+        def segment(self) -> SegmentCommand | None: ...
+
+        def __str__(self) -> str: ...
+
+    class it_fixups:
+        def __getitem__(self, arg: int, /) -> FunctionVariantFixups.Fixup: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> FunctionVariantFixups.it_fixups: ...
+
+        def __next__(self) -> FunctionVariantFixups.Fixup: ...
+
     data_offset: int
 
     data_size: int
 
     @property
     def content(self) -> memoryview: ...
+
+    @property
+    def fixups(self) -> FunctionVariantFixups.it_fixups: ...
+
+    def add(self, fixup: FunctionVariantFixups.Fixup) -> FunctionVariantFixups: ...
 
     def __str__(self) -> str: ...
 

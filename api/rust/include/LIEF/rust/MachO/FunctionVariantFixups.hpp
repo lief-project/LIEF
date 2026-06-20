@@ -17,11 +17,66 @@
 
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/MachO/SegmentCommand.hpp"
+
+#include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
+
+class MachO_FunctionVariantFixups_Fixup
+  : public Mirror<LIEF::MachO::FunctionVariantFixups::Fixup> {
+  public:
+  using lief_t = LIEF::MachO::FunctionVariantFixups::Fixup;
+  using Mirror::Mirror;
+
+  auto seg_offset() const {
+    return get().seg_offset();
+  }
+  auto seg_index() const {
+    return get().seg_index();
+  }
+  auto variant_index() const {
+    return get().variant_index();
+  }
+  auto pac_auth() const {
+    return get().pac_auth();
+  }
+  auto pac_address() const {
+    return get().pac_address();
+  }
+  auto pac_key() const {
+    return get().pac_key();
+  }
+  auto pac_diversity() const {
+    return get().pac_diversity();
+  }
+
+  auto segment() const {
+    return details::try_unique<MachO_SegmentCommand>(get().segment());
+  }
+
+  auto to_string() const {
+    return to_unique_string(get().to_string());
+  }
+};
 
 class MachO_FunctionVariantFixups : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::FunctionVariantFixups;
+
+  class it_fixups
+    : public Iterator<MachO_FunctionVariantFixups_Fixup, lief_t::it_const_fixups> {
+    public:
+    it_fixups(const MachO_FunctionVariantFixups::lief_t& src) :
+      Iterator(src.fixups()) {}
+    auto next() {
+      return Iterator::next();
+    }
+    auto size() const {
+      return Iterator::size();
+    }
+  };
+
   MachO_FunctionVariantFixups(const lief_t& base) :
     MachO_Command(base) {}
   uint32_t data_offset() const {
@@ -35,6 +90,10 @@ class MachO_FunctionVariantFixups : public MachO_Command {
     return make_span(impl().content());
   }
 
+  auto fixups() const {
+    return std::make_unique<it_fixups>(impl());
+  }
+
   static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
@@ -44,3 +103,6 @@ class MachO_FunctionVariantFixups : public MachO_Command {
     return as<lief_t>(this);
   }
 };
+
+using MachO_FunctionVariantFixups_it_fixups =
+    MachO_FunctionVariantFixups::it_fixups;

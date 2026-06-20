@@ -166,6 +166,12 @@
 :MachO:
 
   * Fix ``DyldInfo::show_bindings`` integer overflow (:issue:`1313`)
+  * Add support for editing the runtime tables of the ``LC_FUNCTION_VARIANTS``
+    command and committing the changes on write:
+    |lief-macho-function-variants-command|
+  * Add a structured parser, editing API and writer for the
+    ``LC_FUNCTION_VARIANT_FIXUPS`` command:
+    |lief-macho-function-variant-fixups-command|
 
 
 0.17.4 - February 21st, 2026
