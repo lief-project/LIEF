@@ -2586,19 +2586,24 @@ Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {
 ExportInfo* Binary::add_exported_function(uint64_t address,
                                           const std::string& name) {
   if (Symbol* symbol = add_local_symbol(address, name)) {
+    uint64_t trie_offset = address;
+    if (trie_offset >= imagebase()) {
+      trie_offset -= imagebase();
+    }
+
     if (DyldExportsTrie* exports = dyld_exports_trie()) {
-      auto export_info = std::make_unique<ExportInfo>(address, 0);
+      auto export_info = std::make_unique<ExportInfo>(trie_offset, 0);
       export_info->symbol_ = symbol;
-      export_info->address(address);
+      export_info->address(trie_offset);
       symbol->export_info_ = export_info.get();
 
       return exports->add(std::move(export_info));
     }
 
     if (DyldInfo* info = dyld_info()) {
-      auto export_info = std::make_unique<ExportInfo>(address, 0);
+      auto export_info = std::make_unique<ExportInfo>(trie_offset, 0);
       export_info->symbol_ = symbol;
-      export_info->address(address);
+      export_info->address(trie_offset);
       symbol->export_info_ = export_info.get();
 
       return info->add(std::move(export_info));

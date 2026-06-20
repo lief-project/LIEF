@@ -32,6 +32,7 @@
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
@@ -42,6 +43,7 @@
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "LIEF/MachO/ThreadLocalVariables.hpp"
@@ -119,6 +121,10 @@ class LayoutChecker {
   // Mirror ChainedFixups::valid
   bool check_chained_fixups();
 
+  // Mirror of mach_o::ExportsTrie::valid (dyld's mach_o/ExportsTrie.cpp)
+  // combined with the maxVmOffset computation from Image::validLinkedit.
+  bool check_exports_trie();
+
   // Check from PR #1136
   // See: https://github.com/lief-project/LIEF/pull/1136/files#r1882625692
   bool check_section_contiguity();
@@ -136,6 +142,9 @@ class LayoutChecker {
   bool check_linkedit_end();
 
   bool check_tls();
+
+  bool check_export(uint64_t imagebase, uint64_t max_vm_offset,
+                    const ExportInfo& info);
 
   size_t ptr_size() const {
     return binary.header().is_32bit() ? sizeof(uint32_t) : sizeof(uint64_t);
@@ -1044,6 +1053,10 @@ bool LayoutChecker::check() {
     return false;
   }
 
+  if (!check_exports_trie()) {
+    return false;
+  }
+
   if (!check_function_variants()) {
     return false;
   }
@@ -1633,6 +1646,75 @@ bool LayoutChecker::check_chained_fixups() {
         }
       } else {
         // TODO(romain): to implement
+      }
+    }
+  }
+
+  return true;
+}
+
+bool LayoutChecker::check_export(uint64_t imagebase, uint64_t max_vm_offset,
+                                 const ExportInfo& info) {
+  // skip other exports than regular and thread-local
+  if (info.has(ExportInfo::FLAGS::REEXPORT) ||
+      info.kind() == ExportInfo::KIND::ABSOLUTE_KIND)
+  {
+    return true;
+  }
+
+  uint64_t vm_offset = info.address();
+  if ((int64_t)vm_offset < 0) {
+    // Segments with an address lower than __TEXT
+    vm_offset = imagebase - vm_offset;
+  }
+
+  if (vm_offset > max_vm_offset) {
+    return error("vmOffset too large for {}",
+                 info.has_symbol() ? info.symbol()->name() : "<empty>");
+  }
+  return true;
+}
+
+
+bool LayoutChecker::check_exports_trie() {
+  const DyldInfo* dyld_info = binary.dyld_info();
+  const DyldExportsTrie* exports_trie = binary.dyld_exports_trie();
+
+  if (dyld_info == nullptr && exports_trie == nullptr) {
+    return true;
+  }
+
+  // maxVmOffset is computed in Image::validLinkedit as the highest
+  // `runtimeOffset + runtimeSize` over all the segments except __LINKEDIT, with a
+  // lowest value of 0x4000. __PAGEZERO is *not* excluded.
+  uint64_t max_vm_offset = 0x4000;
+  uint64_t text_vmaddr = 0;
+  for (const SegmentCommand& seg : binary.segments()) {
+    if (seg.name() == "__TEXT") {
+      text_vmaddr = seg.virtual_address();
+    }
+    if (seg.name() == "__LINKEDIT") {
+      continue;
+    }
+    const uint64_t runtime_offset = seg.virtual_address() - text_vmaddr;
+    max_vm_offset =
+        std::max<uint64_t>(max_vm_offset, runtime_offset + seg.virtual_size());
+  }
+
+  const uint64_t imagebase = binary.imagebase();
+
+  if (exports_trie != nullptr) {
+    for (const ExportInfo& info : exports_trie->exports()) {
+      if (!check_export(imagebase, max_vm_offset, info)) {
+        return false;
+      }
+    }
+  }
+
+  if (dyld_info != nullptr) {
+    for (const ExportInfo& info : dyld_info->exports()) {
+      if (!check_export(imagebase, max_vm_offset, info)) {
+        return false;
       }
     }
   }
