@@ -26,24 +26,28 @@ class LIEF_DeclOpt {
     return config_;
   }
 
-  auto set_indentation(uint32_t value) {
-    config_.indentation = value;
+  void set_indentation(uint32_t value) {
+    config_.indentation(value);
   }
 
-  auto set_is_cpp(bool value) {
-    config_.is_cpp = value;
+  void set_is_cpp(bool value) {
+    config_.is_cpp(value);
   }
 
-  auto set_show_extended_annotations(bool value) {
-    config_.show_extended_annotations = value;
+  void set_show_extended_annotations(bool value) {
+    config_.show_extended_annotations(value);
   }
 
-  auto set_include_types(bool value) {
-    config_.include_types = value;
+  void set_include_types(bool value) {
+    config_.include_types(value);
   }
 
-  auto set_desugar(bool value) {
-    config_.desugar = value;
+  void set_include_locals(bool value) {
+    config_.include_locals(value);
+  }
+
+  void set_desugar(bool value) {
+    config_.desugar(value);
   }
 
   private:

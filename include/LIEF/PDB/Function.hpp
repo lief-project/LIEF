@@ -21,6 +21,7 @@
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/debug_loc.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
 
 namespace LIEF {
 namespace pdb {
@@ -92,6 +93,9 @@ class LIEF_API Function {
 
   /// Original source code location
   debug_location_t debug_location() const;
+
+  /// Generate a C/C++ definition for this function
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   std::string to_string() const;
 

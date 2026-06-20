@@ -5,6 +5,7 @@ use std::marker::PhantomData;
 use crate::common::FromFFI;
 use crate::declare_fwd_iterator;
 use crate::DebugLocation;
+use crate::DeclOpt;
 
 pub struct Function<'a> {
     ptr: cxx::UniquePtr<ffi::PDB_Function>,
@@ -44,6 +45,16 @@ impl Function<'_> {
     /// Original source code location
     pub fn debug_location(&self) -> DebugLocation {
         DebugLocation::from_ffi(self.ptr.debug_location())
+    }
+
+    /// Generate a C/C++ definition for this function
+    pub fn to_decl(&self) -> String {
+        self.ptr.to_decl().to_string()
+    }
+
+    /// Same as [`Function::to_decl`] but with the given configuration
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(&opt.to_ffi()).to_string()
     }
 }
 

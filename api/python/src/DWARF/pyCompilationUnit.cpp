@@ -2,6 +2,7 @@
 #include "LIEF/DWARF/Function.hpp"
 #include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
 #include "DWARF/pyDwarf.hpp"
 #include "DWARF/pyTypes.hpp"
 
@@ -254,6 +255,11 @@ void create<dw::CompilationUnit>(nb::module_& m) {
             }
         )delim"_doc
     )
+
+    .def("to_decl", &dw::CompilationUnit::to_decl,
+         "Generates a C/C++ definition for the functions defined in this "
+         "compilation unit"_doc,
+         "opt"_a = DeclOpt())
   ;
 }
 

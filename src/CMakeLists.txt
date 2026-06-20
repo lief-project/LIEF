@@ -57,6 +57,7 @@ if(LIEF_ART)
 endif()
 
 if(NOT LIEF_DEBUG_INFO_SUPPORT)
+  target_sources(LIB_LIEF PRIVATE DebugDeclOpt.cpp)
   add_subdirectory(DWARF)
   add_subdirectory(PDB)
 endif()

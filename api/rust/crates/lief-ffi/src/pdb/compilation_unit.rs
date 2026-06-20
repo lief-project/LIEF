@@ -5,6 +5,7 @@ pub mod ffi {
 
         type PDB_BuildMetadata = crate::pdb::build_metadata::ffi::PDB_BuildMetadata;
         type PDB_Function = crate::pdb::function::ffi::PDB_Function;
+        type LIEF_DeclOpt = crate::debug_decl_opt::ffi::LIEF_DeclOpt;
 
         type PDB_CompilationUnit;
 
@@ -14,6 +15,9 @@ pub mod ffi {
         fn functions(self: &PDB_CompilationUnit) -> UniquePtr<PDB_CompilationUnit_it_functions>;
         fn build_metadata(self: &PDB_CompilationUnit) -> UniquePtr<PDB_BuildMetadata>;
         fn to_string(self: &PDB_CompilationUnit) -> UniquePtr<CxxString>;
+        fn to_decl(self: &PDB_CompilationUnit) -> UniquePtr<CxxString>;
+        fn to_decl_with_opt(self: &PDB_CompilationUnit, opt: &LIEF_DeclOpt)
+            -> UniquePtr<CxxString>;
 
         type PDB_CompilationUnit_it_functions;
 

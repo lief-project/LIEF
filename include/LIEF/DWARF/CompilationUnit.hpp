@@ -21,6 +21,7 @@
 #include "LIEF/visibility.h"
 #include "LIEF/range.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
 #include "LIEF/DWARF/Function.hpp"
 #include "LIEF/DWARF/Type.hpp"
 
@@ -261,6 +262,10 @@ class LIEF_API CompilationUnit {
   /// }
   /// ```
   vars_it variables() const;
+
+  /// Generate a C/C++ definition for the functions defined in this
+  /// compilation unit.
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   private:
   std::unique_ptr<details::CompilationUnit> impl_;

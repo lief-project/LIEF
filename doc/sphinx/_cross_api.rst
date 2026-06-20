@@ -75,6 +75,12 @@
     :py:meth:`lief.DebugInfo.find_function_address`
     :cpp:func:`LIEF::DebugInfo::find_function_address`
 
+.. |lief-declopt| lief-api:: lief.DeclOpt
+
+    :rust:struct:`lief::DeclOpt`
+    :py:class:`lief.DeclOpt`
+    :cpp:class:`LIEF::DeclOpt`
+
 .. DWARF =======================================================================
 
 .. |lief-dwarf-binary-debug-info| lief-api:: lief.Binary.debug_info()
@@ -95,6 +101,12 @@
     :rust:method:`lief::dwarf::Function::is_external [struct]`
     :py:attr:`lief.dwarf.Function.is_external`
     :cpp:func:`LIEF::dwarf::Function::is_external`
+
+.. |lief-dwarf-CompilationUnit| lief-api:: lief.dwarf.CompilationUnit
+
+    :rust:struct:`lief::dwarf::CompilationUnit`
+    :py:class:`lief.dwarf.CompilationUnit`
+    :cpp:class:`LIEF::dwarf::CompilationUnit`
 
 .. |lief-dwarf-cu-imported-functions| lief-api:: lief.dwarf.CompilationUnit.imported_functions()
 
@@ -199,6 +211,34 @@
     :cpp:func:`LIEF::dwarf::types::Enum::entries`
     :py:attr:`lief.dwarf.types.Enum.entries`
 
+.. |lief-dwarf-function-to_decl| lief-api:: lief.dwarf.Function.to_decl()
+
+    :rust:method:`lief::dwarf::Function::to_decl [struct]`
+    :rust:method:`lief::dwarf::Function::to_decl_with_opt [struct]`
+    :py:meth:`lief.dwarf.Function.to_decl`
+    :cpp:func:`LIEF::dwarf::Function::to_decl`
+
+.. |lief-dwarf-variable-to_decl| lief-api:: lief.dwarf.Variable.to_decl()
+
+    :rust:method:`lief::dwarf::Variable::to_decl [struct]`
+    :rust:method:`lief::dwarf::Variable::to_decl_with_opt [struct]`
+    :py:meth:`lief.dwarf.Variable.to_decl`
+    :cpp:func:`LIEF::dwarf::Variable::to_decl`
+
+.. |lief-dwarf-type-to_decl| lief-api:: lief.dwarf.Type.to_decl()
+
+    :rust:method:`lief::dwarf::Type::to_decl [enum]`
+    :rust:method:`lief::dwarf::Type::to_decl_with_opt [enum]`
+    :py:meth:`lief.dwarf.Type.to_decl`
+    :cpp:func:`LIEF::dwarf::Type::to_decl`
+
+.. |lief-dwarf-cu-to_decl| lief-api:: lief.dwarf.CompilationUnit.to_decl()
+
+    :rust:method:`lief::dwarf::CompilationUnit::to_decl [struct]`
+    :rust:method:`lief::dwarf::CompilationUnit::to_decl_with_opt [struct]`
+    :py:meth:`lief.dwarf.CompilationUnit.to_decl`
+    :cpp:func:`LIEF::dwarf::CompilationUnit::to_decl`
+
 .. PDB =========================================================================
 
 .. |lief-pdb-binary-debug-info| lief-api:: lief.Binary.debug_info()
@@ -224,6 +264,12 @@
     :rust:struct:`lief::pdb::BuildMetadata`
     :py:class:`lief.pdb.BuildMetadata`
     :cpp:class:`LIEF::pdb::BuildMetadata`
+
+.. |lief-pdb-CompilationUnit| lief-api:: lief.pdb.CompilationUnit
+
+    :rust:struct:`lief::pdb::CompilationUnit`
+    :py:class:`lief.pdb.CompilationUnit`
+    :cpp:class:`LIEF::pdb::CompilationUnit`
 
 .. |lief-pdb-compilationunit-buildmetadata| lief-api:: lief.pdb.CompilationUnit.build_metadata()
 
@@ -266,6 +312,33 @@
     :rust:struct:`lief::pdb::types::Method`
     :py:class:`lief.pdb.types.Method`
     :cpp:class:`LIEF::pdb::types::Method`
+
+.. |lief-pdb-type-to_decl| lief-api:: lief.pdb.Type.to_decl()
+
+    :rust:method:`lief::pdb::Type::to_decl [enum]`
+    :rust:method:`lief::pdb::Type::to_decl_with_opt [enum]`
+    :py:meth:`lief.pdb.Type.to_decl`
+    :cpp:func:`LIEF::pdb::Type::to_decl`
+
+.. |lief-pdb-Function| lief-api:: lief.pdb.Function
+
+    :rust:struct:`lief::pdb::Function`
+    :py:class:`lief.pdb.Function`
+    :cpp:class:`LIEF::pdb::Function`
+
+.. |lief-pdb-function-to_decl| lief-api:: lief.pdb.Function.to_decl()
+
+    :rust:method:`lief::pdb::Function::to_decl [struct]`
+    :rust:method:`lief::pdb::Function::to_decl_with_opt [struct]`
+    :py:meth:`lief.pdb.Function.to_decl`
+    :cpp:func:`LIEF::pdb::Function::to_decl`
+
+.. |lief-pdb-cu-to_decl| lief-api:: lief.pdb.CompilationUnit.to_decl()
+
+    :rust:method:`lief::pdb::CompilationUnit::to_decl [struct]`
+    :rust:method:`lief::pdb::CompilationUnit::to_decl_with_opt [struct]`
+    :py:meth:`lief.pdb.CompilationUnit.to_decl`
+    :cpp:func:`LIEF::pdb::CompilationUnit::to_decl`
 
 .. PE ==========================================================================
 

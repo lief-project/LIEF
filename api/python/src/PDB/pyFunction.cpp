@@ -1,5 +1,6 @@
 #include <sstream>
 #include "LIEF/PDB/Function.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
 #include "PDB/pyPDB.hpp"
 
 #include <nanobind/stl/unique_ptr.h>
@@ -27,6 +28,10 @@ void create<pdb::Function>(nb::module_& m) {
 
     .def_prop_ro("debug_location", &pdb::Function::debug_location,
                  "Original source code location."_doc)
+
+    .def("to_decl", &pdb::Function::to_decl,
+         "Generates a C/C++ definition for this function"_doc,
+         "opt"_a = DeclOpt())
 
   LIEF_DEFAULT_STR(Function);
 

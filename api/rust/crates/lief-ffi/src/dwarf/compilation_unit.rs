@@ -19,6 +19,7 @@ pub mod ffi {
         type DWARF_Type = crate::dwarf::type_::ffi::DWARF_Type;
         type DWARF_Variable = crate::dwarf::variable::ffi::DWARF_Variable;
         type DWARF_CompilationUnit_Language = crate::dwarf::compilation_unit::Language;
+        type LIEF_DeclOpt = crate::debug_decl_opt::ffi::LIEF_DeclOpt;
 
         type DWARF_CompilationUnit;
 
@@ -55,6 +56,11 @@ pub mod ffi {
             self: &DWARF_CompilationUnit,
             addr: u64,
         ) -> UniquePtr<DWARF_Variable>;
+        fn to_decl(self: &DWARF_CompilationUnit) -> UniquePtr<CxxString>;
+        fn to_decl_with_opt(
+            self: &DWARF_CompilationUnit,
+            opt: &LIEF_DeclOpt,
+        ) -> UniquePtr<CxxString>;
 
         type DWARF_CompilationUnit_it_functions;
 

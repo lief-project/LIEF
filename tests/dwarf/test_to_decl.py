@@ -85,3 +85,27 @@ def test_anonymous_enum():
         char __padding4__[4];
         Elf64_Addr r_ldbase;
     }""")
+
+
+def test_compilation_unit():
+    libdexprotector = lief.dwarf.load(
+        get_sample("private/DWARF/binaryninja/libdexprotector.so.dwarf")
+    )
+    assert libdexprotector is not None
+
+    cu = None
+    for unit in libdexprotector.compilation_units:
+        assert unit is not None
+        if "JNI_OnLoad" in unit.to_decl():
+            cu = unit
+            break
+
+    assert cu is not None
+    decl = cu.to_decl()
+    assert isinstance(decl, str)
+    assert "JNI_OnLoad" in decl
+
+    # The configuration object is accepted
+    config = lief.DeclOpt()
+    config.is_cpp = True
+    assert isinstance(cu.to_decl(config), str)

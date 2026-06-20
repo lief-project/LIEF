@@ -1,4 +1,4 @@
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 import enum
 import io
 import lief
@@ -832,7 +832,17 @@ class DeclOpt:
 
     include_types: bool
 
+    include_locals: bool
+
     desugar: bool
+
+    @property
+    def type_aliases(self) -> dict[str, str]: ...
+
+    @type_aliases.setter
+    def type_aliases(self, arg: Mapping[str, str], /) -> DeclOpt: ...
+
+    def add_type_alias(self, name: str, alias: str) -> DeclOpt: ...
 
 def is_pdb(file: Union[str | os.PathLike]) -> bool: ...
 

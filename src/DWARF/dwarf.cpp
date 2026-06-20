@@ -474,6 +474,10 @@ CompilationUnit::vars_it CompilationUnit::variables() const {
   return make_empty_iterator<Variable>();
 }
 
+std::string CompilationUnit::to_decl(const DeclOpt& /*opt*/) const {
+  return "";
+}
+
 CompilationUnit::Iterator::Iterator() :
   impl_(nullptr) {}
 

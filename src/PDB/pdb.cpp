@@ -206,6 +206,10 @@ std::string CompilationUnit::to_string() const {
   return "";
 }
 
+std::string CompilationUnit::to_decl(const DeclOpt& /*opt*/) const {
+  return "";
+}
+
 // ----------------------------------------------------------------------------
 // PDB/PublicSymbol.hpp
 // ----------------------------------------------------------------------------
@@ -346,6 +350,10 @@ debug_location_t Function::debug_location() const {
 }
 
 std::string Function::to_string() const {
+  return "";
+}
+
+std::string Function::to_decl(const DeclOpt& /*opt*/) const {
   return "";
 }
 

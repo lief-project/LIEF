@@ -20,6 +20,7 @@
 #include <ostream>
 
 #include "LIEF/iterators.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
 #include "LIEF/PDB/Function.hpp"
 
 #include "LIEF/visibility.h"
@@ -115,6 +116,10 @@ class LIEF_API CompilationUnit {
   /// Return build metadata such as the version of the compiler or
   /// the original source language of this compilation unit
   std::unique_ptr<BuildMetadata> build_metadata() const;
+
+  /// Generate a C/C++ definition for the functions defined in this
+  /// compilation unit.
+  std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   std::string to_string() const;
 

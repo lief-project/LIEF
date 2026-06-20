@@ -22,6 +22,7 @@
 #include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/range.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
 
 struct imported_t {};
 struct implemented_t {};
@@ -140,6 +141,14 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
 
   auto variables() const {
     return std::make_unique<it_variables>(get());
+  }
+
+  auto to_decl() const {
+    return to_unique_string(get().to_decl());
+  }
+
+  auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
+    return to_unique_string(get().to_decl(opt.conf()));
   }
 };
 

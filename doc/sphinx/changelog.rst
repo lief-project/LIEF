@@ -28,6 +28,28 @@
     - |lief-dwarf-lexical-block-description|
 
   * Enable the creation of nested |lief-dwarf-editor-Function-lexical-block|
+  * Add support for generating a C/C++ definition for a whole
+    |lief-dwarf-CompilationUnit| (|lief-dwarf-cu-to_decl|). The output of the
+    following ``to_decl()`` functions can now be configured through the new
+    |lief-declopt| structure:
+
+    - |lief-dwarf-function-to_decl|
+    - |lief-dwarf-variable-to_decl|
+    - |lief-dwarf-type-to_decl|
+    - |lief-dwarf-cu-to_decl|
+
+    .. code-block:: python
+
+      import lief
+
+      dbg = lief.dwarf.load("/bin/with_debug")
+
+      opt = lief.DeclOpt()
+      opt.is_cpp = True
+      opt.indentation = 4
+
+      for cu in dbg.compilation_units:
+          print(cu.to_decl(opt))
 
 :PDB:
 
@@ -36,6 +58,9 @@
   * Improve support and the API for ``LF_ARRAY``: |lief-pdb-types-Array|
   * Improve support and the API for *simple* types: |lief-pdb-types-Simple|
   * Improve support and the API for ``LF_ONEMETHOD``: |lief-pdb-types-Method|
+  * Add support for generating a C/C++ definition for a |lief-pdb-Function|
+    (|lief-pdb-function-to_decl|) and a |lief-pdb-CompilationUnit|
+    (|lief-pdb-cu-to_decl|), configurable with the new |lief-declopt| structure.
 
 :ELF:
 

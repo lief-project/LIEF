@@ -10,7 +10,7 @@ pub struct DeclOpt {
 
     /// Prefer C++ syntax over C syntax.
     ///
-    /// If true, the output will use C++ features (e.g., `bool` keyword)
+    /// If true, the output will use C++ features (e.g. `bool` keyword)
     pub is_cpp: bool,
 
     /// Enable extended comments and annotations.
@@ -26,9 +26,12 @@ pub struct DeclOpt {
     /// enums, unions).
     pub include_types: bool,
 
+    /// Emit a function body listing its local / stack variables
+    pub include_locals: bool,
+
     /// Resolve type aliases (sugar).
     ///
-    /// If true, `typedef`s and type aliases are replaced by their underlying
+    /// If true, typedef and type aliases are replaced by their underlying
     /// canonical types (e.g., `uint32_t` might become `unsigned int`).
     pub desugar: bool,
 }
@@ -40,6 +43,7 @@ impl Default for DeclOpt {
             is_cpp: false,
             show_extended_annotations: true,
             include_types: false,
+            include_locals: false,
             desugar: true,
         }
     }
@@ -50,6 +54,12 @@ impl DeclOpt {
     pub fn to_ffi(&self) -> cxx::UniquePtr<ffi::LIEF_DeclOpt> {
         let mut ptr = ffi::LIEF_DeclOpt::create();
         ptr.pin_mut().set_indentation(self.indentation);
+        ptr.pin_mut().set_is_cpp(self.is_cpp);
+        ptr.pin_mut()
+            .set_show_extended_annotations(self.show_extended_annotations);
+        ptr.pin_mut().set_include_types(self.include_types);
+        ptr.pin_mut().set_include_locals(self.include_locals);
+        ptr.pin_mut().set_desugar(self.desugar);
         ptr
     }
 }

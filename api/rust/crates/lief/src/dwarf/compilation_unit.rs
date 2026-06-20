@@ -6,6 +6,7 @@ use std::marker::PhantomData;
 
 use crate::common::{into_optional, into_ranges, FromFFI};
 use crate::declare_fwd_iterator;
+use crate::DeclOpt;
 use crate::Range;
 
 use super::{Function, Variable};
@@ -259,6 +260,17 @@ impl CompilationUnit<'_> {
     /// Try to find the variable at the given address
     pub fn variable_by_addr(&self, address: u64) -> Option<Variable<'_>> {
         into_optional(self.ptr.variable_by_address(address))
+    }
+
+    /// Generate a C/C++ definition for the functions defined in this
+    /// compilation unit.
+    pub fn to_decl(&self) -> String {
+        self.ptr.to_decl().to_string()
+    }
+
+    /// Same as [`CompilationUnit::to_decl`] but with the given configuration
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(&opt.to_ffi()).to_string()
     }
 }
 

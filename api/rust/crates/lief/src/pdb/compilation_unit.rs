@@ -6,6 +6,7 @@ use std::marker::PhantomData;
 
 use crate::common::{into_optional, FromFFI};
 use crate::declare_fwd_iterator;
+use crate::DeclOpt;
 
 use super::build_metadata::BuildMetadata;
 use super::function::Functions;
@@ -56,6 +57,17 @@ impl CompilationUnit<'_> {
     /// the original source language of this compilation unit
     pub fn build_metadata(&self) -> Option<BuildMetadata<'_>> {
         into_optional(self.ptr.build_metadata())
+    }
+
+    /// Generate a C/C++ definition for the functions defined in this
+    /// compilation unit.
+    pub fn to_decl(&self) -> String {
+        self.ptr.to_decl().to_string()
+    }
+
+    /// Same as [`CompilationUnit::to_decl`] but with the given configuration
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(&opt.to_ffi()).to_string()
     }
 }
 

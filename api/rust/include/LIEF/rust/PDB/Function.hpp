@@ -17,6 +17,7 @@
 #include "LIEF/rust/debug_location.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
 #include "LIEF/PDB/Function.hpp"
 
 class PDB_Function : private Mirror<LIEF::pdb::Function> {
@@ -42,5 +43,13 @@ class PDB_Function : private Mirror<LIEF::pdb::Function> {
 
   auto to_string() const {
     return to_unique_string(get().to_string());
+  }
+
+  auto to_decl() const {
+    return to_unique_string(get().to_decl());
+  }
+
+  auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
+    return to_unique_string(get().to_decl(opt.conf()));
   }
 };
