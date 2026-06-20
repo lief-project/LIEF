@@ -161,74 +161,6 @@ the PDB debug information:
             }
         }
 
-.. _extended-pdb-to-decl:
-
-Generating C/C++ Definitions
-****************************
-
-PDB types, functions and compilation units can be turned into C/C++ definitions
-using the ``to_decl()`` function:
-
-- |lief-pdb-type-to_decl|
-- |lief-pdb-function-to_decl|
-- |lief-pdb-cu-to_decl|
-
-The generated output can be configured with a |lief-declopt| structure:
-
-.. tabs::
-
-    .. tab:: :fa:`brands fa-python` Python
-
-      .. code-block:: python
-
-        opt = lief.DeclOpt()
-        opt.is_cpp = True
-
-        for ty in pdb.types:
-            print(ty.to_decl(opt))
-
-        for cu in pdb.compilation_units:
-            # Emit the definition of the functions of the compilation unit
-            print(cu.to_decl(opt))
-
-            for func in cu.functions:
-                print(func.to_decl(opt))
-
-    .. tab:: :fa:`regular fa-file-code` C++
-
-      .. code-block:: cpp
-
-        LIEF::DeclOpt opt;
-        opt.is_cpp(true);
-
-        for (std::unique_ptr<LIEF::pdb::Type> ty : pdb->types()) {
-          std::cout << ty->to_decl(opt) << '\n';
-        }
-
-        for (std::unique_ptr<LIEF::pdb::CompilationUnit> CU : pdb->compilation_units()) {
-          std::cout << CU->to_decl(opt) << '\n';
-          for (std::unique_ptr<LIEF::pdb::Function> func : CU->functions()) {
-            std::cout << func->to_decl(opt) << '\n';
-          }
-        }
-
-    .. tab:: :fa:`brands fa-rust` Rust
-
-      .. code-block:: rust
-
-        let opt = lief::DeclOpt { is_cpp: true, ..Default::default() };
-
-        for ty in pdb.types() {
-            println!("{}", ty.to_decl_with_opt(&opt));
-        }
-
-        for cu in pdb.compilation_units() {
-            println!("{}", cu.to_decl_with_opt(&opt));
-            for func in cu.functions() {
-                println!("{}", func.to_decl_with_opt(&opt));
-            }
-        }
-
 .. _extended-pdb-load-ext:
 
 You can also use the |lief-abstract-binary-load_debug_info| function to bind
@@ -319,6 +251,73 @@ defined in the debug file previously loaded:
             println!("{inst}");
         }
 
+.. _extended-pdb-to-decl:
+
+Generating C/C++ Definitions
+****************************
+
+PDB types, functions and compilation units can be turned into C/C++ definitions
+using the ``to_decl()`` function:
+
+- |lief-pdb-type-to_decl|
+- |lief-pdb-function-to_decl|
+- |lief-pdb-cu-to_decl|
+
+The generated output can be configured with a |lief-declopt| structure:
+
+.. tabs::
+
+    .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        opt = lief.DeclOpt()
+        opt.is_cpp = True
+
+        for ty in pdb.types:
+            print(ty.to_decl(opt))
+
+        for cu in pdb.compilation_units:
+            # Emit the definition of the functions of the compilation unit
+            print(cu.to_decl(opt))
+
+            for func in cu.functions:
+                print(func.to_decl(opt))
+
+    .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        LIEF::DeclOpt opt;
+        opt.is_cpp(true);
+
+        for (std::unique_ptr<LIEF::pdb::Type> ty : pdb->types()) {
+          std::cout << ty->to_decl(opt) << '\n';
+        }
+
+        for (std::unique_ptr<LIEF::pdb::CompilationUnit> CU : pdb->compilation_units()) {
+          std::cout << CU->to_decl(opt) << '\n';
+          for (std::unique_ptr<LIEF::pdb::Function> func : CU->functions()) {
+            std::cout << func->to_decl(opt) << '\n';
+          }
+        }
+
+    .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let opt = lief::DeclOpt { is_cpp: true, ..Default::default() };
+
+        for ty in pdb.types() {
+            println!("{}", ty.to_decl_with_opt(&opt));
+        }
+
+        for cu in pdb.compilation_units() {
+            println!("{}", cu.to_decl_with_opt(&opt));
+            for func in cu.functions() {
+                println!("{}", func.to_decl_with_opt(&opt));
+            }
+        }
 
 ----
 

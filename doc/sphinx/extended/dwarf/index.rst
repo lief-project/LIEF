@@ -183,76 +183,6 @@ debug information:
         dbg.variable_by_name("std::out_of_range::out_of_range(char const*)");
         dbg.variable_by_addr(0x137a70);
 
-
-.. _extended-dwarf-to-decl:
-
-Generating C/C++ Definitions
-****************************
-
-DWARF functions, variables, types and compilation units can be turned back into
-a C/C++ definition thanks to the ``to_decl()`` function:
-
-- |lief-dwarf-function-to_decl|
-- |lief-dwarf-variable-to_decl|
-- |lief-dwarf-type-to_decl|
-- |lief-dwarf-cu-to_decl|
-
-The generated output can be configured with a |lief-declopt| structure (e.g. to
-prefer C++ syntax or change the indentation):
-
-.. tabs::
-
-   .. tab:: :fa:`brands fa-python` Python
-
-      .. code-block:: python
-
-        import lief
-
-        dbg: lief.dwarf.DebugInfo = lief.dwarf.load("/bin/with_debug")
-
-        func = dbg.find_function("main")
-        print(func.to_decl())
-
-        opt = lief.DeclOpt()
-        opt.is_cpp = True
-        opt.indentation = 4
-
-        for cu in dbg.compilation_units:
-            # Emit the definition of the functions of the compilation unit
-            print(cu.to_decl(opt))
-
-   .. tab:: :fa:`regular fa-file-code` C++
-
-      .. code-block:: cpp
-
-        auto dbg = LIEF::dwarf::load("/bin/with_debug");
-
-        std::unique_ptr<LIEF::dwarf::Function> func = dbg->find_function("main");
-        std::cout << func->to_decl() << '\n';
-
-        LIEF::DeclOpt opt;
-        opt.is_cpp(true).indentation(4);
-
-        for (std::unique_ptr<LIEF::dwarf::CompilationUnit> CU : dbg->compilation_units()) {
-          std::cout << CU->to_decl(opt) << '\n';
-        }
-
-   .. tab:: :fa:`brands fa-rust` Rust
-
-      .. code-block:: rust
-
-        let dbg = lief::dwarf::load("/bin/with_debug").unwrap();
-
-        if let Some(func) = dbg.function_by_name("main") {
-            println!("{}", func.to_decl());
-        }
-
-        let opt = lief::DeclOpt { is_cpp: true, indentation: 4, ..Default::default() };
-        for cu in dbg.compilation_units() {
-            println!("{}", cu.to_decl_with_opt(&opt));
-        }
-
-
 .. _extended-dwarf-load-ext:
 
 In the case of an external DWARF file, you can bind this debug file to
@@ -344,6 +274,74 @@ Additionally, you may also want to explore the
 :ref:`BinaryNinja <plugins-binaryninja-dwarf>` and
 :ref:`Ghidra <plugins-ghidra-dwarf>` DWARF export plugins, which generate
 debug information based on the analyses performed by these frameworks.
+
+.. _extended-dwarf-to-decl:
+
+Generating C/C++ Definitions
+****************************
+
+DWARF functions, variables, types and compilation units can be turned back into
+a C/C++ definition thanks to the ``to_decl()`` function:
+
+- |lief-dwarf-function-to_decl|
+- |lief-dwarf-variable-to_decl|
+- |lief-dwarf-type-to_decl|
+- |lief-dwarf-cu-to_decl|
+
+The generated output can be configured with a |lief-declopt| structure (e.g. to
+prefer C++ syntax or change the indentation):
+
+.. tabs::
+
+   .. tab:: :fa:`brands fa-python` Python
+
+      .. code-block:: python
+
+        import lief
+
+        dbg: lief.dwarf.DebugInfo = lief.dwarf.load("/bin/with_debug")
+
+        func = dbg.find_function("main")
+        print(func.to_decl())
+
+        opt = lief.DeclOpt()
+        opt.is_cpp = True
+        opt.indentation = 4
+
+        for cu in dbg.compilation_units:
+            # Emit the definition of the functions of the compilation unit
+            print(cu.to_decl(opt))
+
+   .. tab:: :fa:`regular fa-file-code` C++
+
+      .. code-block:: cpp
+
+        auto dbg = LIEF::dwarf::load("/bin/with_debug");
+
+        std::unique_ptr<LIEF::dwarf::Function> func = dbg->find_function("main");
+        std::cout << func->to_decl() << '\n';
+
+        LIEF::DeclOpt opt;
+        opt.is_cpp(true).indentation(4);
+
+        for (std::unique_ptr<LIEF::dwarf::CompilationUnit> CU : dbg->compilation_units()) {
+          std::cout << CU->to_decl(opt) << '\n';
+        }
+
+   .. tab:: :fa:`brands fa-rust` Rust
+
+      .. code-block:: rust
+
+        let dbg = lief::dwarf::load("/bin/with_debug").unwrap();
+
+        if let Some(func) = dbg.function_by_name("main") {
+            println!("{}", func.to_decl());
+        }
+
+        let opt = lief::DeclOpt { is_cpp: true, indentation: 4, ..Default::default() };
+        for cu in dbg.compilation_units() {
+            println!("{}", cu.to_decl_with_opt(&opt));
+        }
 
 .. _extended-dwarf-editor:
 
