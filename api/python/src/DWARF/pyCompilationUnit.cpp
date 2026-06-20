@@ -256,10 +256,13 @@ void create<dw::CompilationUnit>(nb::module_& m) {
         )delim"_doc
     )
 
-    .def("to_decl", &dw::CompilationUnit::to_decl,
+    .def("to_decl",
+         [] (const dw::CompilationUnit& self, const DeclOpt* opt) {
+           return opt ? self.to_decl(*opt) : self.to_decl();
+         },
          "Generates a C/C++ definition for the functions defined in this "
          "compilation unit"_doc,
-         "opt"_a = DeclOpt())
+         "opt"_a.none() = nb::none())
   ;
 }
 

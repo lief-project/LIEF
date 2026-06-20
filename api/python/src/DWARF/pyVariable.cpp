@@ -92,9 +92,12 @@ void create<dw::Variable>(nb::module_& m) {
       )doc"_doc
     )
 
-    .def("to_decl", &dw::Variable::to_decl,
+    .def("to_decl",
+      [] (const dw::Variable& self, const DeclOpt* opt) {
+        return opt ? self.to_decl(*opt) : self.to_decl();
+      },
       "Generates a C/C++ definition for this variable"_doc,
-      "opt"_a = DeclOpt()
+      "opt"_a.none() = nb::none()
     )
   ;
 }

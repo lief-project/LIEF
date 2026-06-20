@@ -29,9 +29,12 @@ void create<pdb::Function>(nb::module_& m) {
     .def_prop_ro("debug_location", &pdb::Function::debug_location,
                  "Original source code location."_doc)
 
-    .def("to_decl", &pdb::Function::to_decl,
+    .def("to_decl",
+         [] (const pdb::Function& self, const DeclOpt* opt) {
+           return opt ? self.to_decl(*opt) : self.to_decl();
+         },
          "Generates a C/C++ definition for this function"_doc,
-         "opt"_a = DeclOpt())
+         "opt"_a.none() = nb::none())
 
   LIEF_DEFAULT_STR(Function);
 

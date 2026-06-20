@@ -59,10 +59,13 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
     .def_prop_ro("build_metadata", &CompilationUnit::build_metadata,
                  nb::rv_policy::take_ownership, nb::keep_alive<0, 1>())
 
-    .def("to_decl", &pdb::CompilationUnit::to_decl,
+    .def("to_decl",
+         [] (const pdb::CompilationUnit& self, const DeclOpt* opt) {
+           return opt ? self.to_decl(*opt) : self.to_decl();
+         },
          "Generates a C/C++ definition for the functions defined in this "
          "compilation unit"_doc,
-         "opt"_a = DeclOpt())
+         "opt"_a.none() = nb::none())
   LIEF_DEFAULT_STR(CompilationUnit);
 }
 
