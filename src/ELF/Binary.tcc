@@ -611,20 +611,28 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
   const uint64_t last_offset = last_offset_segments;
   const uint64_t last_offset_aligned =
       align_with_offset(last_offset, psize, in_page_offset);
-  if (base == 0) {
-    base = align(next_virtual_address(), new_segment->alignment());
-  }
   LIEF_DEBUG("Last offset: {:#010x}", last_offset_aligned);
   LIEF_DEBUG("Base:        {:#010x}", base);
 
-  uint64_t segmentsize = align(content.size(), 0x10);
+  auto segmentsize = align_up<uint64_t>(content.size(), 0x10);
 
   const uint64_t delta = last_offset_aligned + segmentsize - last_offset;
 
   shift_sections(last_offset, delta);
 
   new_segment->file_offset(last_offset_aligned);
-  new_segment->virtual_address(new_segment->file_offset() + base);
+  if (base == 0) {
+    const uint64_t alignment = new_segment->alignment();
+    const uint64_t next_va = next_virtual_address();
+    uint64_t virtual_address =
+        align_down(next_va, alignment) + new_segment->file_offset() % alignment;
+    if (virtual_address < next_va) {
+      virtual_address += alignment;
+    }
+    new_segment->virtual_address(virtual_address);
+  } else {
+    new_segment->virtual_address(new_segment->file_offset() + base);
+  }
   new_segment->physical_address(new_segment->virtual_address());
 
   new_segment->handler_size_ = content.size();
