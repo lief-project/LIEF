@@ -1048,7 +1048,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// `true` if the binary has a LoadCommand::TYPE::FILESET_ENTRY command
   bool has_filesets() const {
-    return filesets_.empty();
+    return !filesets_.empty();
   }
 
   /// Name associated with the `LC_FILESET_ENTRY` for this MachO.
