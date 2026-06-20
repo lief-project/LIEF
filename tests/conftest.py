@@ -44,6 +44,12 @@ def pytest_addoption(parser):
         help="Skip extended tests",
     )
 
+    parser.addoption(
+        "--only-extended",
+        action="store_true",
+        help="Only run the extended tests",
+    )
+
 
 def pytest_runtest_setup(item: pytest.Function):
     if item.get_closest_marker("slow") is not None:
@@ -67,3 +73,7 @@ def pytest_runtest_setup(item: pytest.Function):
     if item.get_closest_marker("lief_extended") is not None:
         if item.config.getoption("--skip-extended") or not lief.__extended__:
             pytest.skip("Skipping LIEF extended test")
+
+    if item.config.getoption("--only-extended") and lief.__extended__:
+        if item.get_closest_marker("lief_extended") is None:
+            pytest.skip("Skipping non extended tests")
