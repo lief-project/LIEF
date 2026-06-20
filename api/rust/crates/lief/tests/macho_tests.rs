@@ -58,6 +58,21 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
         format!("{note:?}");
     }
 
+    for info in macho.lazy_load_dylib_infos() {
+        format!("{info:?}");
+        format!("{}", info.load_path());
+        for fixup in info.fixups() {
+            format!("{fixup:?} {fixup}");
+            format!(
+                "{:#x} {} {} {}",
+                fixup.address(),
+                fixup.ordinal(),
+                fixup.symbol(),
+                fixup.is_auth()
+            );
+        }
+    }
+
     for section in macho.sections() {
         format!("{section:?}");
         format!("{:?}", section.segment());
@@ -169,6 +184,31 @@ fn explore_macho(_: &str, macho: &lief::macho::Binary) {
                     if let Some(segment) = fixup.segment() {
                         println!("  segment: {}", segment.name());
                     }
+                }
+            }
+
+            Commands::LazyLoadDylibInfo(info) => {
+                println!("{info:?}");
+                println!("load_path={}", info.load_path());
+                println!(
+                    "flags={:#x} may_be_missing={}",
+                    info.flags(),
+                    info.may_be_missing()
+                );
+                println!("pointer_format={:#x}", info.pointer_format());
+                println!("flag_image_offset={:#x}", info.flag_image_offset());
+                println!(
+                    "chain_start_image_offset={:#x}",
+                    info.chain_start_image_offset()
+                );
+                println!(
+                    "data_offset={:#x} data_size={:#x}",
+                    info.data_offset(),
+                    info.data_size()
+                );
+                let _ = info.content();
+                for sym in info.symbols() {
+                    println!("  symbol: {sym}");
                 }
             }
 
@@ -379,6 +419,7 @@ fn test_api() {
     test_with("binary.metallib");
     test_with("variants_alt.dylib");
     test_with_fullpath("CoreFoundation", "private/MachO/CoreFoundation");
+    test_with_fullpath("xpcproxy", "private/MachO/xpcproxy");
     test_with_fullpath(
         "kernelcache.release.iPhone17.5",
         "private/MachO/kernelcache.release.iPhone17.5",
@@ -445,5 +486,68 @@ fn test_mut_api() {
     for mut bin in fat.iter() {
         let tmpfile = tempfile::NamedTempFile::new().unwrap();
         bin.write_with_config(tmpfile.path(), Config::default());
+    }
+}
+
+#[test]
+fn test_lazy_load_dylib_info_mut() {
+    let path = utils::get_sample(Path::new("private/MachO/xpcproxy")).unwrap();
+    let Binary::MachO(fat) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting a MachO");
+    };
+
+    let tmpfile = tempfile::NamedTempFile::new().unwrap();
+    let mut cryptex_path_before = String::new();
+    let mut cryptex_content_before: Vec<u8> = Vec::new();
+    for mut bin in fat.iter() {
+        for (idx, info) in bin.lazy_load_dylib_infos().enumerate() {
+            if idx == 1 {
+                cryptex_path_before = info.load_path();
+                cryptex_content_before = info.content().to_vec();
+            }
+        }
+
+        for (idx, mut info) in bin.lazy_load_dylib_infos().enumerate() {
+            if idx == 0 {
+                info.set_load_path("/usr/lib/rust_relocated.dylib");
+                info.set_flags(0x2);
+                info.set_may_be_missing(true); // -> flags 0x3
+                info.set_pointer_format(2);
+                info.set_flag_image_offset(0x4242);
+                info.set_chain_start_image_offset(0); // disables the chain walk
+                info.set_symbols(&["_rust_sym_a", "_rust_sym_b"]);
+                info.add_symbol("_rust_sym_c");
+            }
+        }
+        bin.write(tmpfile.path());
+    }
+
+    let Binary::MachO(fat) = Binary::parse(tmpfile.path().to_str().unwrap()).unwrap() else {
+        panic!("Expecting a MachO");
+    };
+    for bin in fat.iter() {
+        let infos: Vec<_> = bin.lazy_load_dylib_infos().collect();
+        assert_eq!(infos.len(), 2);
+
+        let first = &infos[0];
+        assert_eq!(first.load_path(), "/usr/lib/rust_relocated.dylib");
+        assert_eq!(first.flags(), 0x3);
+        assert!(first.may_be_missing());
+        assert_eq!(first.pointer_format(), 2);
+        assert_eq!(first.flag_image_offset(), 0x4242);
+        assert_eq!(first.chain_start_image_offset(), 0);
+        assert_eq!(first.fixups().count(), 0);
+        assert_eq!(
+            first.symbols(),
+            vec![
+                "_rust_sym_a".to_string(),
+                "_rust_sym_b".to_string(),
+                "_rust_sym_c".to_string(),
+            ]
+        );
+
+        let second = &infos[1];
+        assert_eq!(second.load_path(), cryptex_path_before);
+        assert_eq!(second.content(), cryptex_content_before.as_slice());
     }
 }

@@ -33,6 +33,7 @@
 #include "LIEF/rust/MachO/FunctionStarts.hpp"
 #include "LIEF/rust/MachO/FunctionVariants.hpp"
 #include "LIEF/rust/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/rust/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/rust/MachO/Header.hpp"
 #include "LIEF/rust/MachO/LinkerOptHint.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
@@ -133,6 +134,20 @@ class MachO_Binary : public AbstractBinary {
       return Iterator::next();
     }
     auto size() const {
+      return Iterator::size();
+    }
+  };
+
+  class it_lazy_load_dylib_info
+    : public Iterator<MachO_LazyLoadDylibInfo,
+                      LIEF::MachO::Binary::it_const_lazy_load_dylib_info> {
+    public:
+    it_lazy_load_dylib_info(const MachO_Binary::lief_t& src) :
+      Iterator(src.lazy_load_dylib_infos()) {}
+    auto next() { // NOLINT
+      return Iterator::next();
+    }
+    auto size() const { // NOLINT
       return Iterator::size();
     }
   };
@@ -254,6 +269,9 @@ class MachO_Binary : public AbstractBinary {
   }
   auto libraries() const {
     return std::make_unique<it_libraries>(impl());
+  }
+  auto lazy_load_dylib_infos() const {
+    return std::make_unique<it_lazy_load_dylib_info>(impl());
   }
   auto relocations() const {
     return std::make_unique<it_relocations>(impl());
@@ -629,6 +647,7 @@ using MachO_Binary_it_symbols = MachO_Binary::it_symbols;
 using MachO_Binary_it_sections = MachO_Binary::it_sections;
 using MachO_Binary_it_segments = MachO_Binary::it_segments;
 using MachO_Binary_it_libraries = MachO_Binary::it_libraries;
+using MachO_Binary_it_lazy_load_dylib_info = MachO_Binary::it_lazy_load_dylib_info;
 using MachO_Binary_it_relocations = MachO_Binary::it_relocations;
 using MachO_Binary_it_rpaths = MachO_Binary::it_rpaths;
 using MachO_Binary_it_sub_clients = MachO_Binary::it_sub_clients;

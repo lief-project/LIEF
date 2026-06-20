@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <memory>
+#include <algorithm>
 
 #include "spdlog/fmt/fmt.h"
 #include "LIEF/Visitor.hpp"
@@ -117,7 +118,13 @@ void SegmentCommand::swap(SegmentCommand& other) noexcept {
 
 void SegmentCommand::content(SegmentCommand::content_t data) {
   update_data([data = std::move(data)](std::vector<uint8_t>& inner_data) mutable {
-    inner_data = std::move(data);
+    // If the size is the same, we avoid the std::move that would dangle every
+    // span/iterator referencing this segment
+    if (data.size() == inner_data.size()) {
+      std::copy(data.begin(), data.end(), inner_data.begin());
+    } else {
+      inner_data = std::move(data);
+    }
   });
 }
 

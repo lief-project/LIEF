@@ -38,6 +38,7 @@ target_sources(LIB_LIEF PRIVATE
   FunctionVariantFixups.cpp
   Header.cpp
   IndirectBindingInfo.cpp
+  LazyLoadDylibInfo.cpp
   LinkEdit.cpp
   LinkerOptHint.cpp
   LoadCommand.cpp

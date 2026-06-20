@@ -205,7 +205,7 @@ ok_error_t Builder::build_fat() {
     arch->offset = get_swapped_endian<uint32_t>(offset);
     arch->size = get_swapped_endian<uint32_t>(raw.size());
     raw_.seekp(offset);
-    raw_.write(std::move(raw));
+    raw_.write(raw);
   }
   return ok();
 }

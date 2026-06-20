@@ -44,6 +44,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/AtomInfo.hpp"
@@ -89,6 +90,7 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<Binary::it_sections>(bin, "it_sections");
   init_ref_iterator<Binary::it_segments>(bin, "it_segments");
   init_ref_iterator<Binary::it_libraries>(bin, "it_libraries");
+  init_ref_iterator<Binary::it_lazy_load_dylib_info>(bin, "it_lazy_load_dylib_info");
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
   init_ref_iterator<Binary::it_rpaths>(bin, "it_rpaths");
   init_ref_iterator<Binary::it_sub_clients>(bin, "it_sub_clients");
@@ -125,6 +127,11 @@ void create<Binary>(nb::module_& m) {
     .def_prop_ro("libraries",
         nb::overload_cast<>(&Binary::libraries),
         "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.DylibCommand) ""_doc,
+        nb::keep_alive<0, 1>())
+
+    .def_prop_ro("lazy_load_dylib_infos",
+        nb::overload_cast<>(&Binary::lazy_load_dylib_infos),
+        "Return an iterator over the binary's " RST_CLASS_REF(lief.MachO.LazyLoadDylibInfo) ""_doc,
         nb::keep_alive<0, 1>())
 
     .def_prop_ro("symbols",

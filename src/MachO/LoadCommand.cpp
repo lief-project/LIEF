@@ -153,6 +153,7 @@ const char* to_string(LoadCommand::TYPE e) {
       ENTRY(FUNCTION_VARIANTS),
       ENTRY(FUNCTION_VARIANT_FIXUPS),
       ENTRY(TARGET_TRIPLE),
+      ENTRY(LAZY_LOAD_DYLIB_INFO),
       ENTRY(LIEF_UNKNOWN),
   };
 #undef ENTRY

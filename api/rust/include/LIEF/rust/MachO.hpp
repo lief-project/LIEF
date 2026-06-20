@@ -33,6 +33,7 @@
 #include "LIEF/rust/MachO/FunctionVariantFixups.hpp"
 #include "LIEF/rust/MachO/Header.hpp"
 #include "LIEF/rust/MachO/IndirectBindingInfo.hpp"
+#include "LIEF/rust/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/Main.hpp"
 #include "LIEF/rust/MachO/NoteCommand.hpp"

@@ -18,6 +18,7 @@ pub mod fileset;
 pub mod function_variant_fixups;
 pub mod function_variants;
 pub mod functionstarts;
+pub mod lazy_load_dylib_info;
 pub mod linker_opt_hint;
 pub mod main_cmd;
 pub mod note;
@@ -69,6 +70,8 @@ pub use function_variant_fixups::FunctionVariantFixups;
 pub use function_variants::FunctionVariants;
 #[doc(inline)]
 pub use functionstarts::FunctionStarts;
+#[doc(inline)]
+pub use lazy_load_dylib_info::LazyLoadDylibInfo;
 #[doc(inline)]
 pub use linker_opt_hint::LinkerOptHint;
 #[doc(inline)]
@@ -165,6 +168,7 @@ pub enum LoadCommandTypes {
     FunctionVariants,
     FunctionVariantsFixups,
     TargetTriple,
+    LazyLoadDylibInfo,
 
     LiefUnknown,
     Unknown(u64),
@@ -228,6 +232,7 @@ impl LoadCommandTypes {
     const LC_FUNCTION_VARIANTS: u64 = 0x00000037;
     const LC_FUNCTION_VARIANT_FIXUPS: u64 = 0x00000038;
     const LC_TARGET_TRIPLE: u64 = 0x00000039;
+    const LC_LAZY_LOAD_DYLIB_INFO: u64 = 0x0000003A;
 
     const LIEF_UNKNOWN: u64 = 0xffee0001;
 }
@@ -297,6 +302,7 @@ impl From<u64> for LoadCommandTypes {
                 LoadCommandTypes::FunctionVariantsFixups
             }
             LoadCommandTypes::LC_TARGET_TRIPLE => LoadCommandTypes::TargetTriple,
+            LoadCommandTypes::LC_LAZY_LOAD_DYLIB_INFO => LoadCommandTypes::LazyLoadDylibInfo,
             LoadCommandTypes::LIEF_UNKNOWN => LoadCommandTypes::LiefUnknown,
             _ => LoadCommandTypes::Unknown(value),
         }
@@ -368,6 +374,7 @@ impl From<LoadCommandTypes> for u64 {
                 LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS
             }
             LoadCommandTypes::TargetTriple => LoadCommandTypes::LC_TARGET_TRIPLE,
+            LoadCommandTypes::LazyLoadDylibInfo => LoadCommandTypes::LC_LAZY_LOAD_DYLIB_INFO,
             LoadCommandTypes::LiefUnknown => LoadCommandTypes::LIEF_UNKNOWN,
             LoadCommandTypes::Unknown(value) => value,
         }
@@ -411,6 +418,7 @@ pub enum Commands<'a> {
     Note(Note<'a>),
     FunctionVariants(FunctionVariants<'a>),
     FunctionVariantFixups(FunctionVariantFixups<'a>),
+    LazyLoadDylibInfo(LazyLoadDylibInfo<'a>),
     Unknown(Unknown<'a>),
 }
 
@@ -650,6 +658,13 @@ impl FromFFI<ffi::MachO_Command> for Commands<'_> {
                     std::mem::transmute::<From, To>(ffi_entry)
                 };
                 Commands::FunctionVariantFixups(FunctionVariantFixups::from_ffi(raw))
+            } else if ffi::MachO_LazyLoadDylibInfo::classof(cmd_ref) {
+                let raw = {
+                    type From = cxx::UniquePtr<ffi::MachO_Command>;
+                    type To = cxx::UniquePtr<ffi::MachO_LazyLoadDylibInfo>;
+                    std::mem::transmute::<From, To>(ffi_entry)
+                };
+                Commands::LazyLoadDylibInfo(LazyLoadDylibInfo::from_ffi(raw))
             } else {
                 Commands::Generic(Generic::from_ffi(ffi_entry))
             }
@@ -738,6 +753,7 @@ impl Command for Commands<'_> {
             Commands::Note(cmd) => cmd.get_base(),
             Commands::FunctionVariants(cmd) => cmd.get_base(),
             Commands::FunctionVariantFixups(cmd) => cmd.get_base(),
+            Commands::LazyLoadDylibInfo(cmd) => cmd.get_base(),
             Commands::Fileset(cmd) => cmd.get_base(),
             Commands::Unknown(cmd) => cmd.get_base(),
         }

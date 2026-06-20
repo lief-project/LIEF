@@ -241,6 +241,7 @@ pub use crate::macho::binary::ffi::MachO_Binary;
 pub use crate::macho::binary::ffi::MachO_Binary_it_bindings_info;
 pub use crate::macho::binary::ffi::MachO_Binary_it_commands;
 pub use crate::macho::binary::ffi::MachO_Binary_it_fileset_binaries;
+pub use crate::macho::binary::ffi::MachO_Binary_it_lazy_load_dylib_info;
 pub use crate::macho::binary::ffi::MachO_Binary_it_libraries;
 pub use crate::macho::binary::ffi::MachO_Binary_it_notes;
 pub use crate::macho::binary::ffi::MachO_Binary_it_relocations;
@@ -290,6 +291,9 @@ pub use crate::macho::function_variants::ffi::MachO_FunctionVariants_RuntimeTabl
 pub use crate::macho::function_variants::ffi::MachO_FunctionVariants_it_runtime_table;
 pub use crate::macho::header::ffi::MachO_Header;
 pub use crate::macho::indirect_binding_info::ffi::MachO_IndirectBindingInfo;
+pub use crate::macho::lazy_load_dylib_info::ffi::MachO_LazyLoadDylibInfo;
+pub use crate::macho::lazy_load_dylib_info::ffi::MachO_LazyLoadDylibInfo_Fixup;
+pub use crate::macho::lazy_load_dylib_info::ffi::MachO_LazyLoadDylibInfo_it_fixups;
 pub use crate::macho::linker_opt_hint::ffi::MachO_LinkerOptHint;
 pub use crate::macho::load_command::ffi::MachO_Command;
 pub use crate::macho::main::ffi::MachO_Main;
@@ -1071,6 +1075,11 @@ impl AsRef<MachO_Command> for MachO_FunctionVariantFixups {
 impl AsRef<MachO_Command> for MachO_FunctionVariants {
     fn as_ref(&self) -> &MachO_Command {
         unsafe { &*(self as *const MachO_FunctionVariants as *const MachO_Command) }
+    }
+}
+impl AsRef<MachO_Command> for MachO_LazyLoadDylibInfo {
+    fn as_ref(&self) -> &MachO_Command {
+        unsafe { &*(self as *const MachO_LazyLoadDylibInfo as *const MachO_Command) }
     }
 }
 impl AsRef<MachO_BindingInfo> for MachO_IndirectBindingInfo {

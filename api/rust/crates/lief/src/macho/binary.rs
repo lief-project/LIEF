@@ -21,6 +21,7 @@ use super::commands::encryption_info::EncryptionInfo;
 use super::commands::function_variant_fixups::FunctionVariantFixups;
 use super::commands::function_variants::FunctionVariants;
 use super::commands::functionstarts::FunctionStarts;
+use super::commands::lazy_load_dylib_info::LazyLoadDylibInfo;
 use super::commands::linker_opt_hint::LinkerOptHint;
 use super::commands::main_cmd::Main;
 use super::commands::note::Note;
@@ -247,6 +248,11 @@ impl Binary {
     /// Return the `LC_FUNCTION_VARIANT_FIXUPS` command if present
     pub fn function_variant_fixups(&self) -> Option<FunctionVariantFixups<'_>> {
         into_optional(self.ptr.function_variant_fixups())
+    }
+
+    /// Return an iterator over the binary's `LC_LAZY_LOAD_DYLIB_INFO` commands
+    pub fn lazy_load_dylib_infos(&self) -> LazyLoadDylibInfos<'_> {
+        LazyLoadDylibInfos::new(self.ptr.lazy_load_dylib_infos())
     }
 
     /// Return the `LC_VERSION_MIN_MACOSX/VERSION_MIN_IPHONEOS` command if present
@@ -660,4 +666,12 @@ declare_iterator!(
     ffi::MachO_Binary,
     ffi::MachO_Binary,
     ffi::MachO_Binary_it_fileset_binaries
+);
+
+declare_iterator!(
+    LazyLoadDylibInfos,
+    LazyLoadDylibInfo<'a>,
+    ffi::MachO_LazyLoadDylibInfo,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_lazy_load_dylib_info
 );

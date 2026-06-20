@@ -50,6 +50,7 @@ class ExportInfo;
 class FunctionStarts;
 class FunctionVariants;
 class FunctionVariantFixups;
+class LazyLoadDylibInfo;
 class LinkerOptHint;
 class Parser;
 class Section;
@@ -281,6 +282,9 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 
   template<class MACHO_T>
   LIEF_LOCAL ok_error_t post_process(FunctionVariantFixups& cmd);
+
+  template<class MACHO_T>
+  LIEF_LOCAL ok_error_t post_process(LazyLoadDylibInfo& cmd);
 
   LIEF_LOCAL ok_error_t parse_overlay();
 

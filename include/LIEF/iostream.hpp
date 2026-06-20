@@ -63,7 +63,7 @@ class LIEF_API vector_iostream {
     return write(sp.data(), sp.size());
   }
 
-  vector_iostream& write(std::vector<uint8_t> s) {
+  vector_iostream& write(const std::vector<uint8_t>& s) {
     if (s.empty()) {
       return *this;
     }

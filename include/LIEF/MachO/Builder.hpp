@@ -44,6 +44,7 @@ class FatBinary;
 class FunctionStarts;
 class FunctionVariants;
 class FunctionVariantFixups;
+class LazyLoadDylibInfo;
 class LinkerOptHint;
 class LoadCommand;
 class MainCommand;
@@ -207,6 +208,9 @@ class LIEF_API Builder {
 
   template<class T>
   LIEF_LOCAL ok_error_t build(FunctionVariantFixups& func);
+
+  template<class T>
+  LIEF_LOCAL ok_error_t build(LazyLoadDylibInfo& cmd);
 
   template<typename T>
   LIEF_LOCAL ok_error_t build_segments();

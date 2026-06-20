@@ -1027,6 +1027,12 @@
     :py:class:`lief.MachO.FunctionVariantFixups`
     :cpp:class:`LIEF::MachO::FunctionVariantFixups`
 
+.. |lief-macho-lazy-load-dylib-info-command| lief-api:: lief.MachO.LazyLoadDylibInfo
+
+    :rust:struct:`lief::macho::commands::LazyLoadDylibInfo`
+    :py:class:`lief.MachO.LazyLoadDylibInfo`
+    :cpp:class:`LIEF::MachO::LazyLoadDylibInfo`
+
 .. dyld shared cache ===========================================================
 
 .. |lief-dsc-load| lief-api:: lief.dsc.load()

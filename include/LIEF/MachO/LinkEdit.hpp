@@ -16,6 +16,7 @@
 #ifndef LIEF_MACHO_LINK_EDIT_H
 #define LIEF_MACHO_LINK_EDIT_H
 #include <memory>
+#include <vector>
 
 #include "LIEF/visibility.h"
 
@@ -36,6 +37,7 @@ class DyldInfo;
 class FunctionStarts;
 class FunctionVariants;
 class FunctionVariantFixups;
+class LazyLoadDylibInfo;
 class LinkerOptHint;
 class SymbolCommand;
 class TwoLevelHints;
@@ -90,6 +92,7 @@ class LIEF_API LinkEdit : public SegmentCommand {
   AtomInfo* atom_info_ = nullptr;
   FunctionVariants* func_variants_ = nullptr;
   FunctionVariantFixups* func_variant_fixups_ = nullptr;
+  std::vector<LazyLoadDylibInfo*> lazy_load_dylibs_;
 };
 
 }

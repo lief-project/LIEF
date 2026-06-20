@@ -25,6 +25,7 @@ pub mod function_variant_fixups;
 pub mod function_variants;
 pub mod header;
 pub mod indirect_binding_info;
+pub mod lazy_load_dylib_info;
 pub mod linker_opt_hint;
 pub mod load_command;
 pub mod main;

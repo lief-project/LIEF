@@ -234,6 +234,18 @@ Function Variant Fixups
 
 ----------
 
+Lazy Load Dylib Info
+********************
+
+.. lief-inheritance:: lief._lief.MachO.LazyLoadDylibInfo
+  :top-classes: lief._lief.MachO.LoadCommand
+  :parts: 2
+
+
+.. autoclass:: lief.MachO.LazyLoadDylibInfo
+
+----------
+
 Source Version
 **************
 

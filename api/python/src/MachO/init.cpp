@@ -41,6 +41,7 @@
 #include <LIEF/MachO/FunctionStarts.hpp>
 #include <LIEF/MachO/FunctionVariants.hpp>
 #include <LIEF/MachO/FunctionVariantFixups.hpp>
+#include <LIEF/MachO/LazyLoadDylibInfo.hpp>
 #include <LIEF/MachO/AtomInfo.hpp>
 #include <LIEF/MachO/Header.hpp>
 #include <LIEF/MachO/IndirectBindingInfo.hpp>
@@ -112,6 +113,7 @@ void init_objects(nb::module_& m) {
   CREATE(FunctionStarts, m);
   CREATE(FunctionVariants, m);
   CREATE(FunctionVariantFixups, m);
+  CREATE(LazyLoadDylibInfo, m);
   CREATE(AtomInfo, m);
   CREATE(CodeSignature, m);
   CREATE(CodeSignatureDir, m);

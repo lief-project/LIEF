@@ -1135,7 +1135,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
     LIEF_INFO("New rebase opcodes exceed original size: {:#08x} -> {:#08x}",
               rebase_opcodes_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -1516,7 +1516,7 @@ DyldInfo&
     LIEF_INFO("New weak bind opcodes exceed original size: {:#08x} -> {:#08x}",
               weak_bind_opcodes_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -1578,7 +1578,7 @@ DyldInfo&
     LIEF_INFO("New lazy bind opcodes exceed original size: {:#08x} -> {:#08x}",
               lazy_bind_opcodes_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -1889,7 +1889,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(
     LIEF_INFO("New regular bind opcodes exceed original size: {:#08x} -> {:#08x}",
               bind_opcodes_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -2210,7 +2210,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(
         bind_opcodes_.size(), raw_output.size()
     );
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -2222,7 +2222,7 @@ DyldInfo& DyldInfo::update_export_trie(vector_iostream& stream) {
     LIEF_INFO("New export trie exceeds original size: {:#08x} -> {:#08x}",
               export_trie_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output));
+  stream.write(raw_output);
   return *this;
 }
 

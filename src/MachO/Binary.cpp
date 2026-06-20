@@ -44,6 +44,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
@@ -878,6 +879,32 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
     }
   }
 
+  for (LazyLoadDylibInfo& lazy : lazy_load_dylib_infos()) {
+    if (lazy.data_offset() > from_offset) {
+      lazy.data_offset(lazy.data_offset() + width);
+    }
+
+    if (lazy.chain_start_image_offset() != 0 &&
+        __text_base_addr + lazy.chain_start_image_offset() > virtual_address)
+    {
+      lazy.chain_start_image_offset(lazy.chain_start_image_offset() + width);
+    }
+
+    if (lazy.flag_image_offset() != 0 &&
+        __text_base_addr + lazy.flag_image_offset() > virtual_address)
+    {
+      lazy.flag_image_offset(lazy.flag_image_offset() + width);
+    }
+
+    // NOTE(romain): Updates on Fixup's address are currently NOT committed in
+    // the final binary (c.f. the associated TODO in the builder)
+    for (LazyLoadDylibInfo::Fixup& fixup : lazy.fixups()) {
+      if (fixup.address() > virtual_address) {
+        fixup.address(fixup.address() + width);
+      }
+    }
+  }
+
   for_commands<EncryptionInfo>([from_offset, width](EncryptionInfo& enc) {
     if (enc.crypt_offset() > from_offset) {
       enc.crypt_offset(enc.crypt_offset() + width);
@@ -1028,6 +1055,10 @@ LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
     libraries_.push_back(command->as<DylibCommand>());
   }
 
+  if (LazyLoadDylibInfo::classof(command.get())) {
+    lazy_load_dylib_infos_.push_back(command->as<LazyLoadDylibInfo>());
+  }
+
   if (SegmentCommand::classof(command.get())) {
     add_cached_segment(*command->as<SegmentCommand>());
   }
@@ -1035,7 +1066,7 @@ LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
 }
 
 LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
-  // If index is "too" large <=> push_back
+  // An out-of-bounds index is interpreted as a push_back
   if (index >= commands_.size()) {
     return add(command);
   }
@@ -1075,6 +1106,10 @@ LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
     libraries_.push_back(lib);
   }
 
+  if (auto* lazy = copy->cast<LazyLoadDylibInfo>()) {
+    lazy_load_dylib_infos_.push_back(lazy);
+  }
+
   if (auto* segment = copy->cast<SegmentCommand>()) {
     add_cached_segment(*segment);
   }
@@ -1103,6 +1138,14 @@ bool Binary::remove(const LoadCommand& command) {
                 lib->name());
     } else {
       libraries_.erase(it_cache);
+    }
+  }
+
+  if (cmd_rm->cast<LazyLoadDylibInfo>() != nullptr) {
+    auto it_cache = std::find(lazy_load_dylib_infos_.begin(),
+                              lazy_load_dylib_infos_.end(), cmd_rm);
+    if (it_cache != lazy_load_dylib_infos_.end()) {
+      lazy_load_dylib_infos_.erase(it_cache);
     }
   }
 

@@ -46,6 +46,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
@@ -193,6 +194,9 @@ ok_error_t BinaryParser::parse() {
   }
   if (FunctionVariantFixups* fixups = binary_->function_variant_fixups()) {
     post_process<MACHO_T>(*fixups);
+  }
+  for (LazyLoadDylibInfo& lazy : binary_->lazy_load_dylib_infos()) {
+    post_process<MACHO_T>(lazy);
   }
 
   if (binary_->dyld_info() == nullptr && binary_->dyld_chained_fixups() == nullptr)
@@ -1184,6 +1188,27 @@ ok_error_t BinaryParser::parse_load_commands() {
           break;
         }
         load_command = std::make_unique<FunctionVariantFixups>(*cmd);
+        break;
+      }
+
+      case LoadCommand::TYPE::LAZY_LOAD_DYLIB_INFO:
+      {
+        /*
+         * DO NOT FORGET TO UPDATE LazyLoadDylibInfo::classof
+         */
+        LIEF_DEBUG("[+] Parsing LC_LAZY_LOAD_DYLIB_INFO");
+        const auto cmd =
+            stream_->peek<details::linkedit_data_command>(loadcommands_offset);
+        if (!cmd) {
+          LIEF_ERR(
+              "Can't parse linkedit_data_command for LC_LAZY_LOAD_DYLIB_INFO"
+          );
+          break;
+        }
+        load_command = std::make_unique<LazyLoadDylibInfo>(*cmd);
+        binary_->lazy_load_dylib_infos_.push_back(
+            load_command->as<LazyLoadDylibInfo>()
+        );
         break;
       }
 
@@ -4233,6 +4258,67 @@ ok_error_t BinaryParser::post_process(FunctionVariantFixups& cmd) {
     }
   }
 
+  return ok();
+}
+
+template<class MACHO_T>
+ok_error_t BinaryParser::post_process(LazyLoadDylibInfo& cmd) {
+  LIEF_DEBUG("[^] Post processing LC_LAZY_LOAD_DYLIB_INFO");
+
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                                 binary_->get_segment("__LINKEDIT") :
+                                 binary_->segment_from_offset(cmd.data_offset());
+
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the "
+              "LC_LAZY_LOAD_DYLIB_INFO (offset={:#018x})",
+              cmd.data_offset());
+    return make_error_code(lief_errors::not_found);
+  }
+
+  span<uint8_t> content = linkedit->content();
+
+  const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
+  if (rel_offset > content.size() ||
+      (rel_offset + cmd.data_size()) > content.size())
+  {
+    LIEF_ERR("The LC_LAZY_LOAD_DYLIB_INFO is out of bounds of the segment '{}'",
+             linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  cmd.content_ = content.subspan(rel_offset, cmd.data_size());
+
+  if (LinkEdit::segmentof(*linkedit)) {
+    static_cast<LinkEdit*>(linkedit)->lazy_load_dylibs_.push_back(&cmd);
+  } else {
+    LIEF_WARN(
+        "Weird: LC_LAZY_LOAD_DYLIB_INFO is not in the __LINKEDIT segment ({})",
+        linkedit->name()
+    );
+  }
+
+  SpanStream stream(cmd.content_);
+  stream.set_endian_swap(stream_->should_swap());
+  cmd.parse_payload(stream);
+
+  const auto ptr_fmt = DYLD_CHAINED_PTR_FORMAT(cmd.pointer_format_);
+  const size_t ptr_sz = ChainedPointerAnalysis::ptr_size(ptr_fmt);
+  if (!config_.from_dyld_shared_cache && cmd.chain_start_image_offset() != 0 &&
+      (ptr_sz == sizeof(uint32_t) || ptr_sz == sizeof(uint64_t)))
+  {
+    const uint64_t chain_va =
+        binary_->imagebase() + cmd.chain_start_image_offset();
+    if (SegmentCommand* seg = binary_->segment_from_virtual_address(chain_va)) {
+      ok_error_t is_ok = cmd.walk_fixups(chain_va, *seg);
+      if (!is_ok) {
+        LIEF_WARN(
+            "Error while resolving the fixups for LC_LAZY_LOAD_DYLIB_INFO: {}",
+            cmd.load_path()
+        );
+      }
+    }
+  }
   return ok();
 }
 

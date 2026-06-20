@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cstddef>
 #include <spdlog/fmt/fmt.h>
 
 #include "MachO/Structures.hpp"
@@ -34,6 +35,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
@@ -127,6 +129,9 @@ class LayoutChecker {
   // Consistency of LC_FUNCTION_VARIANT_FIXUPS (cf. dyld's interpretation of
   // FunctionVariantFixups::InternalFixup)
   bool check_function_variant_fixups();
+
+  // Mirror of mach_o::LazyLoadDylib::valid() for LC_LAZY_LOAD_DYLIB_INFO
+  bool check_lazy_load_dylib_infos();
 
   bool check_linkedit_end();
 
@@ -1047,6 +1052,10 @@ bool LayoutChecker::check() {
     return false;
   }
 
+  if (!check_lazy_load_dylib_infos()) {
+    return false;
+  }
+
   if (!check_section_contiguity()) {
     return false;
   }
@@ -1194,6 +1203,23 @@ bool LayoutChecker::check() {
                    offset, spi->data_offset());
     }
     offset += spi->data_size();
+  }
+
+  for (const LoadCommand& cmd : binary.commands()) {
+    const auto* lazy = cmd.cast<LazyLoadDylibInfo>();
+    if (lazy == nullptr) {
+      continue;
+    }
+    if (lazy->data_offset() != 0) {
+      if (lazy->data_offset() != offset) {
+        return error(R"delim(
+        LC_LAZY_LOAD_DYLIB_INFO out of place in __LINKEDIT:
+          Expecting offset: {:#x} while it is {:#x}
+        )delim",
+                     offset, lazy->data_offset());
+      }
+    }
+    offset += lazy->data_size();
   }
 
   // Check consistency of Function starts
@@ -1743,6 +1769,113 @@ bool LayoutChecker::check_function_variant_fixups() {
       );
     }
     ++idx;
+  }
+
+  return true;
+}
+
+
+bool LayoutChecker::check_lazy_load_dylib_infos() {
+  // clang-format off
+  //
+  // NOTE(romain): this is a 1x1 copy of the definition in dyld (mach_o/LazyLoadDylib.h)
+  struct LazyLoadDylibLinkEdit
+  {
+      uint32_t    loadPathOffset;          // path of dylib to load
+      uint32_t    flagImageOffset;         // image offset to flags global
+      uint16_t    flags;                   // weak linked or not
+      uint16_t    pointerFormat;           // e.g. DYLD_CHAINED_PTR_ARM64E_USERLAND
+      uint32_t    chainStartImageOffset;   // image offset to fixup chain start
+      uint32_t    symbolsCount;            // how many symbol names to bind
+      uint32_t    symbolStringArrayOffset; // offset of each symbol name within blob
+      // room for future fields here
+      // path string
+      // symbols strings
+  };
+  static constexpr size_t HEADER_SIZE = sizeof(LazyLoadDylibLinkEdit);
+  static_assert(HEADER_SIZE == 24);
+  // clang-format on
+
+  // 0x4000 according to Image::validStructureLinkedit
+  uint64_t max_vm_offset = 0x4000;
+  const uint64_t imagebase = binary.imagebase();
+  for (const SegmentCommand& seg : binary.segments()) {
+    if (seg.name() == "__LINKEDIT" || seg.name() == "__PAGEZERO") {
+      continue;
+    }
+    const uint64_t runtime_off =
+        seg.virtual_address() >= imagebase ? seg.virtual_address() - imagebase : 0;
+    max_vm_offset =
+        std::max<uint64_t>(max_vm_offset, runtime_off + seg.virtual_size());
+  }
+
+  for (const LoadCommand& cmd : binary.commands()) {
+    const auto* lazy = cmd.cast<LazyLoadDylibInfo>();
+    if (lazy == nullptr) {
+      continue;
+    }
+
+    span<const uint8_t> content = lazy->content();
+    if (content.size() < HEADER_SIZE) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO payload size ({}) is too small "
+                   "(minimum is {})",
+                   content.size(), HEADER_SIZE);
+    }
+
+    SpanStream stream(content);
+    auto header = stream.peek<LazyLoadDylibLinkEdit>();
+    if (!header) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO failed to read the header");
+    }
+
+    // sanity check loadPathOffset and its string terminator
+    if (header->loadPathOffset > content.size()) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO loadPathOffset ({}) out of range "
+                   "(max {})",
+                   header->loadPathOffset, content.size());
+    }
+
+    const auto path_start = content.begin() + header->loadPathOffset;
+    if (std::find(path_start, content.end(), '\0') == content.end()) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO load path is not null terminated");
+    }
+
+    // Ensure that `flagImageOffset` targets a valid segment.
+    // NOTE(romain): should we check for RW- permission?
+    if (header->flagImageOffset > max_vm_offset) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO flagImageOffset ({:#x}) beyond max "
+                   "vm offset ({:#x})",
+                   header->flagImageOffset, max_vm_offset);
+    }
+
+    if (header->chainStartImageOffset > max_vm_offset) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO chainStartImageOffset ({:#x}) beyond "
+                   "max vm offset ({:#x})",
+                   header->chainStartImageOffset, max_vm_offset);
+    }
+
+    // sanity check the symbol string-offset array bounds
+    const bool overflow = greater_than_add_or_overflow<uint64_t>(
+        header->symbolStringArrayOffset,
+        (uint64_t)header->symbolsCount * sizeof(uint32_t), content.size()
+    );
+    if (overflow) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO symbolsCount ({}) too large to fit "
+                   "in payload (size {})",
+                   header->symbolsCount, content.size());
+    }
+
+    // sanity check each symbol string offset
+    for (uint32_t i = 0; i < header->symbolsCount; ++i) {
+      const uint64_t pos =
+          header->symbolStringArrayOffset + (uint64_t)i * sizeof(uint32_t);
+      auto sym_off = stream.peek<uint32_t>(pos);
+      if (!sym_off || *sym_off > content.size()) {
+        return error("LC_LAZY_LOAD_DYLIB_INFO symbolStringOffsets[{}] ({}) out "
+                     "of range (max {})",
+                     i, sym_off ? *sym_off : 0, content.size());
+      }
+    }
   }
 
   return true;

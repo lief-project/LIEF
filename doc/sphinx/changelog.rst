@@ -172,6 +172,8 @@
   * Add a structured parser, editing API and writer for the
     ``LC_FUNCTION_VARIANT_FIXUPS`` command:
     |lief-macho-function-variant-fixups-command|
+  * Add support for the ``LC_LAZY_LOAD_DYLIB_INFO`` command:
+    |lief-macho-lazy-load-dylib-info-command|
 
 
 0.17.4 - February 21st, 2026

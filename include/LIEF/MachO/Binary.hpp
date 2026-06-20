@@ -64,6 +64,7 @@ class ExportInfo;
 class FunctionStarts;
 class FunctionVariants;
 class FunctionVariantFixups;
+class LazyLoadDylibInfo;
 class Header;
 class IndirectBindingInfo;
 class LinkerOptHint;
@@ -166,6 +167,16 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Iterator that outputs const DylibCommand&
   using it_const_libraries = const_ref_iterator<const libraries_cache_t&>;
+
+  /// Internal container for storing Mach-O LazyLoadDylibInfo
+  using lazy_load_dylib_info_cache_t = std::vector<LazyLoadDylibInfo*>;
+
+  /// Iterator that outputs LazyLoadDylibInfo&
+  using it_lazy_load_dylib_info = ref_iterator<lazy_load_dylib_info_cache_t&>;
+
+  /// Iterator that outputs const LazyLoadDylibInfo&
+  using it_const_lazy_load_dylib_info =
+      const_ref_iterator<const lazy_load_dylib_info_cache_t&>;
 
   /// Internal container for storing Mach-O Fileset Binary
   using fileset_binaries_t = std::vector<std::unique_ptr<Binary>>;
@@ -310,6 +321,16 @@ class LIEF_API Binary : public LIEF::Binary {
 
   it_const_libraries libraries() const LIEF_LIFETIMEBOUND {
     return libraries_;
+  }
+
+  /// Return an iterator over the binary's LazyLoadDylibInfo commands
+  /// (`LC_LAZY_LOAD_DYLIB_INFO`)
+  it_lazy_load_dylib_info lazy_load_dylib_infos() LIEF_LIFETIMEBOUND {
+    return lazy_load_dylib_infos_;
+  }
+
+  it_const_lazy_load_dylib_info lazy_load_dylib_infos() const LIEF_LIFETIMEBOUND {
+    return lazy_load_dylib_infos_;
   }
 
   /// Return an iterator over the SegmentCommand
@@ -1169,6 +1190,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   // Same purpose as sections_cache_t
   libraries_cache_t libraries_;
+
+  // Cache of the LC_LAZY_LOAD_DYLIB_INFO commands
+  lazy_load_dylib_info_cache_t lazy_load_dylib_infos_;
 
   // The sections are owned by the SegmentCommand object.
   // This attribute is a cache to speed-up the iteration

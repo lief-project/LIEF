@@ -720,6 +720,15 @@ class Binary(lief.Binary):
 
         def __next__(self) -> DylibCommand: ...
 
+    class it_lazy_load_dylib_info:
+        def __getitem__(self, arg: int, /) -> LazyLoadDylibInfo: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> Binary.it_lazy_load_dylib_info: ...
+
+        def __next__(self) -> LazyLoadDylibInfo: ...
+
     class it_relocations:
         def __getitem__(self, arg: int, /) -> Relocation: ...
 
@@ -775,6 +784,9 @@ class Binary(lief.Binary):
 
     @property
     def libraries(self) -> Binary.it_libraries: ... # type: ignore
+
+    @property
+    def lazy_load_dylib_infos(self) -> Binary.it_lazy_load_dylib_info: ...
 
     @property
     def symbols(self) -> Binary.it_symbols: ... # type: ignore
@@ -1482,6 +1494,8 @@ class LoadCommand(lief.Object):
         FUNCTION_VARIANT_FIXUPS = 56
 
         TARGET_TRIPLE = 57
+
+        LAZY_LOAD_DYLIB_INFO = 58
 
         LIEF_UNKNOWN = 4293787649
 
@@ -2862,6 +2876,64 @@ class FunctionVariantFixups(LoadCommand):
     def fixups(self) -> FunctionVariantFixups.it_fixups: ...
 
     def add(self, fixup: FunctionVariantFixups.Fixup) -> FunctionVariantFixups: ...
+
+    def __str__(self) -> str: ...
+
+class LazyLoadDylibInfo(LoadCommand):
+    class Fixup:
+        address: int
+
+        @property
+        def ordinal(self) -> int: ...
+
+        @property
+        def symbol(self) -> str: ...
+
+        @property
+        def is_auth(self) -> bool: ...
+
+        def __str__(self) -> str: ...
+
+    class it_fixups:
+        def __getitem__(self, arg: int, /) -> LazyLoadDylibInfo.Fixup: ...
+
+        def __len__(self) -> int: ...
+
+        def __iter__(self) -> LazyLoadDylibInfo.it_fixups: ...
+
+        def __next__(self) -> LazyLoadDylibInfo.Fixup: ...
+
+    data_offset: int
+
+    data_size: int
+
+    @property
+    def content(self) -> memoryview: ...
+
+    load_path: str
+
+    flag_image_offset: int
+
+    flags: int
+
+    may_be_missing: bool
+
+    pointer_format: int
+
+    chain_start_image_offset: int
+
+    @property
+    def symbols(self) -> list[str]: ...
+
+    @symbols.setter
+    def symbols(self, arg: Sequence[str], /) -> LazyLoadDylibInfo: ...
+
+    def add_symbol(self, symbol: str) -> LazyLoadDylibInfo: ...
+
+    def clear_symbols(self) -> LazyLoadDylibInfo: ...
+
+    @property
+    def fixups(self) -> LazyLoadDylibInfo.it_fixups: ...
 
     def __str__(self) -> str: ...
 

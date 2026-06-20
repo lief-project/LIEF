@@ -38,6 +38,8 @@ pub mod ffi {
         type MachO_FunctionVariantFixups =
             crate::macho::function_variant_fixups::ffi::MachO_FunctionVariantFixups;
         type MachO_FunctionVariants = crate::macho::function_variants::ffi::MachO_FunctionVariants;
+        type MachO_LazyLoadDylibInfo =
+            crate::macho::lazy_load_dylib_info::ffi::MachO_LazyLoadDylibInfo;
         type MachO_Header = crate::macho::header::ffi::MachO_Header;
         type MachO_LinkerOptHint = crate::macho::linker_opt_hint::ffi::MachO_LinkerOptHint;
         type MachO_Main = crate::macho::main::ffi::MachO_Main;
@@ -73,6 +75,9 @@ pub mod ffi {
         fn sections(self: &MachO_Binary) -> UniquePtr<MachO_Binary_it_sections>;
         fn segments(self: &MachO_Binary) -> UniquePtr<MachO_Binary_it_segments>;
         fn libraries(self: &MachO_Binary) -> UniquePtr<MachO_Binary_it_libraries>;
+        fn lazy_load_dylib_infos(
+            self: &MachO_Binary,
+        ) -> UniquePtr<MachO_Binary_it_lazy_load_dylib_info>;
         fn relocations(self: &MachO_Binary) -> UniquePtr<MachO_Binary_it_relocations>;
         fn rpaths(self: &MachO_Binary) -> UniquePtr<MachO_Binary_it_rpaths>;
         fn bindings(self: &MachO_Binary) -> UniquePtr<MachO_Binary_it_bindings_info>;
@@ -215,6 +220,13 @@ pub mod ffi {
         fn next(self: Pin<&mut MachO_Binary_it_libraries>) -> UniquePtr<MachO_Dylib>;
         fn size(self: &MachO_Binary_it_libraries) -> u64;
 
+        type MachO_Binary_it_lazy_load_dylib_info;
+
+        fn next(
+            self: Pin<&mut MachO_Binary_it_lazy_load_dylib_info>,
+        ) -> UniquePtr<MachO_LazyLoadDylibInfo>;
+        fn size(self: &MachO_Binary_it_lazy_load_dylib_info) -> u64;
+
         type MachO_Binary_it_notes;
 
         fn next(self: Pin<&mut MachO_Binary_it_notes>) -> UniquePtr<MachO_NoteCommand>;
@@ -261,6 +273,7 @@ pub mod ffi {
     impl UniquePtr<MachO_Binary_it_commands> {}
     impl UniquePtr<MachO_Binary_it_fileset_binaries> {}
     impl UniquePtr<MachO_Binary_it_libraries> {}
+    impl UniquePtr<MachO_Binary_it_lazy_load_dylib_info> {}
     impl UniquePtr<MachO_Binary_it_notes> {}
     impl UniquePtr<MachO_Binary_it_relocations> {}
     impl UniquePtr<MachO_Binary_it_rpaths> {}

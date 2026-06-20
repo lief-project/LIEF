@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <cstring>
+#include <vector>
+
 #include "logging.hpp"
 #include "LIEF/utils.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
 #include "LIEF/MachO/DataInCode.hpp"
@@ -35,6 +41,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
@@ -135,6 +142,9 @@ ok_error_t Builder::build_linkedit() {
   }
   if (auto* split_info = binary_->segment_split_info()) {
     build<T>(*split_info);
+  }
+  for (LazyLoadDylibInfo& lazy : binary_->lazy_load_dylib_infos()) {
+    build<T>(lazy);
   }
   if (auto* fstart = binary_->function_starts()) {
     build<T>(*fstart);
@@ -830,7 +840,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
                symbol_command.symbol_offset(), symtab.symoff);
     LIEF_DEBUG("LC_SYMTAB.nb_symbols: {:#08x} -> {:#x}",
                symbol_command.numberof_symbols(), symtab.nsyms);
-    linkedit_.write(std::move(raw_nlist_table));
+    linkedit_.write(raw_nlist_table);
   }
   /*
    * Two Level Hints
@@ -888,7 +898,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
   LIEF_DEBUG("LC_SYMTAB.strtab.size:   {:#08x} -> {:#x}",
              symbol_command.strings_size(), symtab.strsize);
 
-  linkedit_.write(std::move(strtab));
+  linkedit_.write(strtab);
 
   symtab.cmd = static_cast<uint32_t>(symbol_command.command());
   symtab.cmdsize = static_cast<uint32_t>(symbol_command.size());
@@ -1639,7 +1649,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
   raw_cmd.datasize = lnk_data.size();
 
-  linkedit_.write(std::move(lnk_data.raw()));
+  linkedit_.write(lnk_data.raw());
 
   fixups.size_ = sizeof(details::linkedit_data_command);
   fixups.original_data_.clear();
@@ -1675,7 +1685,7 @@ ok_error_t Builder::build(DyldExportsTrie& exports) {
   raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
   raw_cmd.datasize = raw.size();
 
-  linkedit_.write(std::move(raw));
+  linkedit_.write(raw);
 
   exports.size_ = sizeof(details::linkedit_data_command);
   exports.original_data_.clear();
@@ -1962,6 +1972,39 @@ ok_error_t Builder::build(FunctionVariantFixups& func_variant_fixups) {
          sizeof(details::linkedit_data_command));
   return ok();
 }
+
+template<class T>
+ok_error_t Builder::build(LazyLoadDylibInfo& cmd) {
+  LIEF_DEBUG("Build '{}'", to_string(cmd.command()));
+
+  // TODO(romain): Currently, fixup addresses are not regenerated as fixup chains.
+  // This can cause an issue when a Binary::shift operation targets some of
+  // these fixup
+
+  details::linkedit_data_command raw_cmd{};
+  raw_cmd.dataoff = linkedit_.size();
+
+  cmd.serialize(linkedit_);
+  linkedit_.align(sizeof(typename T::uint));
+
+  raw_cmd.cmd = static_cast<uint32_t>(cmd.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(cmd.size());
+  raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
+  raw_cmd.dataoff += linkedit_offset_;
+
+  LIEF_DEBUG("LC_LAZY_LOAD_DYLIB_INFO.offset: {:#08x} -> {:#x}", cmd.data_offset(),
+             raw_cmd.dataoff);
+  LIEF_DEBUG("LC_LAZY_LOAD_DYLIB_INFO.size:   {:#08x} -> {:#x}", cmd.data_size(),
+             raw_cmd.datasize);
+
+  cmd.size_ = sizeof(details::linkedit_data_command);
+  cmd.original_data_.clear();
+  cmd.original_data_.resize(cmd.size_);
+  memcpy(cmd.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
+  return ok();
+}
+
 template<class MACHO_T>
 ok_error_t Builder::build_header() {
   using header_t = typename MACHO_T::header;
