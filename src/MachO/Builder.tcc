@@ -1213,7 +1213,6 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   // Write state
   std::move(state.begin(), state.end(), std::back_inserter(tc.original_data_));
 
-  tc.original_data_.push_back(0);
   tc.original_data_.insert(tc.original_data_.end(), padding, 0);
   return ok();
 }

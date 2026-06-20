@@ -55,6 +55,9 @@
   * Add |lief-macho-fatbinary-create| to create a FAT binary from
     a list of |lief-macho-binary| objects targeting different architectures
   * Add support for |lief-macho-threadlocalvariables|
+  * Fix an extra byte being written after the thread state of an
+    ``LC_UNIXTHREAD``/``LC_THREAD`` command, which shifted the following
+    load commands by one byte (:issue:`1344`)
 
 :PE:
 
