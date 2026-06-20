@@ -4,6 +4,9 @@ use super::Opcode;
 use crate::assembly;
 use crate::common::FromFFI;
 
+use crate::assembly::mips;
+use crate::declare_fwd_iterator;
+
 /// This structure represents a Mips instruction (including mips64, mips32)
 pub struct Instruction {
     ptr: cxx::UniquePtr<ffi::asm_mips_Instruction>,
@@ -27,4 +30,17 @@ impl Instruction {
     pub fn opcode(&self) -> Opcode {
         Opcode::from(self.ptr.opcode())
     }
+
+    /// Return an iterator over the [`mips::Operands`] operands
+    pub fn operands(&self) -> Operands<'_> {
+        Operands::new(self.ptr.operands())
+    }
 }
+
+declare_fwd_iterator!(
+    Operands,
+    mips::Operands,
+    ffi::asm_Instruction,
+    ffi::asm_mips_Operand,
+    ffi::asm_mips_Instruction_it_operands
+);

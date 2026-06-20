@@ -18,4 +18,5 @@
 #include <LIEF/asm/riscv/Instruction.hpp>
 #include <LIEF/asm/riscv/opcodes.hpp>
 #include <LIEF/asm/riscv/registers.hpp>
+#include <LIEF/asm/riscv/operands.hpp>
 #endif

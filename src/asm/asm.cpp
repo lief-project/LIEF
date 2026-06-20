@@ -39,16 +39,40 @@
 #include "LIEF/asm/arm/registers.hpp"
 
 #include "LIEF/asm/mips/Instruction.hpp"
+#include "LIEF/asm/mips/Operand.hpp"
 #include "LIEF/asm/mips/registers.hpp"
 
+#include "LIEF/asm/mips/operands/Immediate.hpp"
+#include "LIEF/asm/mips/operands/Register.hpp"
+#include "LIEF/asm/mips/operands/PCRelative.hpp"
+#include "LIEF/asm/mips/operands/Memory.hpp"
+
 #include "LIEF/asm/ebpf/Instruction.hpp"
+#include "LIEF/asm/ebpf/Operand.hpp"
 #include "LIEF/asm/ebpf/registers.hpp"
 
+#include "LIEF/asm/ebpf/operands/Immediate.hpp"
+#include "LIEF/asm/ebpf/operands/Register.hpp"
+#include "LIEF/asm/ebpf/operands/PCRelative.hpp"
+#include "LIEF/asm/ebpf/operands/Memory.hpp"
+
 #include "LIEF/asm/riscv/Instruction.hpp"
+#include "LIEF/asm/riscv/Operand.hpp"
 #include "LIEF/asm/riscv/registers.hpp"
 
+#include "LIEF/asm/riscv/operands/Immediate.hpp"
+#include "LIEF/asm/riscv/operands/Register.hpp"
+#include "LIEF/asm/riscv/operands/PCRelative.hpp"
+#include "LIEF/asm/riscv/operands/Memory.hpp"
+
 #include "LIEF/asm/powerpc/Instruction.hpp"
+#include "LIEF/asm/powerpc/Operand.hpp"
 #include "LIEF/asm/powerpc/registers.hpp"
+
+#include "LIEF/asm/powerpc/operands/Immediate.hpp"
+#include "LIEF/asm/powerpc/operands/Register.hpp"
+#include "LIEF/asm/powerpc/operands/PCRelative.hpp"
+#include "LIEF/asm/powerpc/operands/Memory.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 #if defined(LIEF_COFF_SUPPORT)
@@ -75,6 +99,26 @@ class OperandIt {};
 }
 
 namespace aarch64::details {
+class Operand {};
+class OperandIt {};
+}
+
+namespace mips::details {
+class Operand {};
+class OperandIt {};
+}
+
+namespace powerpc::details {
+class Operand {};
+class OperandIt {};
+}
+
+namespace ebpf::details {
+class Operand {};
+class OperandIt {};
+}
+
+namespace riscv::details {
 class Operand {};
 class OperandIt {};
 }
@@ -395,6 +439,10 @@ mips::OPCODE mips::Instruction::opcode() const {
   return mips::OPCODE::INSTRUCTION_LIST_END;
 }
 
+mips::Instruction::operands_it mips::Instruction::operands() const {
+  return make_empty_iterator<mips::Operand>();
+}
+
 bool mips::Instruction::classof(const assembly::Instruction*) {
   return false;
 }
@@ -408,6 +456,10 @@ const char* mips::get_register_name(REG) {
 // ----------------------------------------------------------------------------
 ebpf::OPCODE ebpf::Instruction::opcode() const {
   return ebpf::OPCODE::INSTRUCTION_LIST_END;
+}
+
+ebpf::Instruction::operands_it ebpf::Instruction::operands() const {
+  return make_empty_iterator<ebpf::Operand>();
 }
 
 bool ebpf::Instruction::classof(const assembly::Instruction*) {
@@ -425,6 +477,10 @@ riscv::OPCODE riscv::Instruction::opcode() const {
   return riscv::OPCODE::INSTRUCTION_LIST_END;
 }
 
+riscv::Instruction::operands_it riscv::Instruction::operands() const {
+  return make_empty_iterator<riscv::Operand>();
+}
+
 bool riscv::Instruction::classof(const assembly::Instruction*) {
   return false;
 }
@@ -433,11 +489,19 @@ const char* riscv::get_register_name(REG) {
   return "";
 }
 
+const char* riscv::get_register_name(SYSREG) {
+  return "";
+}
+
 // ----------------------------------------------------------------------------
 // asm/powerpc/Instruction.hpp
 // ----------------------------------------------------------------------------
 powerpc::OPCODE powerpc::Instruction::opcode() const {
   return powerpc::OPCODE::INSTRUCTION_LIST_END;
+}
+
+powerpc::Instruction::operands_it powerpc::Instruction::operands() const {
+  return make_empty_iterator<powerpc::Operand>();
 }
 
 bool powerpc::Instruction::classof(const assembly::Instruction*) {
@@ -677,6 +741,440 @@ bool aarch64::operands::Immediate::classof(const Operand*) {
 }
 
 int64_t aarch64::operands::Immediate::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/mips/Operand.hpp
+// ----------------------------------------------------------------------------
+mips::Operand::Iterator::Iterator() :
+  impl_(nullptr) {}
+
+mips::Operand::Iterator::Iterator(std::unique_ptr<details::OperandIt>) :
+  impl_(nullptr) {}
+
+mips::Operand::Iterator::Iterator(const Iterator&) :
+  impl_(nullptr) {}
+
+mips::Operand::Iterator& mips::Operand::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+mips::Operand::Iterator::Iterator(Iterator&&) noexcept = default;
+mips::Operand::Iterator&
+    mips::Operand::Iterator::operator=(Iterator&&) noexcept = default;
+
+mips::Operand::Iterator& mips::Operand::Iterator::operator++() {
+  return *this;
+}
+
+void mips::Operand::Iterator::load() const {}
+
+const mips::Operand& mips::Operand::Iterator::operator*() const {
+  return *cached_;
+}
+
+const mips::Operand* mips::Operand::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<mips::Operand> mips::Operand::Iterator::yield() {
+  return nullptr;
+}
+
+namespace mips {
+bool operator==(const mips::Operand::Iterator&, const mips::Operand::Iterator&) {
+  return true;
+}
+}
+
+mips::Operand::Iterator::~Iterator() = default;
+
+mips::Operand::~Operand() = default;
+mips::Operand::Operand(std::unique_ptr<details::Operand> /*impl*/) :
+  impl_(nullptr) {}
+
+std::string mips::Operand::to_string() const {
+  return "";
+}
+
+std::unique_ptr<mips::Operand>
+    mips::Operand::create(std::unique_ptr<details::Operand> /*impl*/) {
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+// asm/mips/Memory.hpp
+// ----------------------------------------------------------------------------
+bool mips::operands::Memory::classof(const Operand*) {
+  return false;
+}
+
+mips::REG mips::operands::Memory::base() const {
+  return REG::NoRegister;
+}
+
+mips::operands::Memory::offset_t mips::operands::Memory::offset() const {
+  return {};
+}
+
+// ----------------------------------------------------------------------------
+// asm/mips/PCRelative.hpp
+// ----------------------------------------------------------------------------
+bool mips::operands::PCRelative::classof(const Operand*) {
+  return false;
+}
+
+int64_t mips::operands::PCRelative::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/mips/Register.hpp
+// ----------------------------------------------------------------------------
+bool mips::operands::Register::classof(const Operand*) {
+  return false;
+}
+
+mips::REG mips::operands::Register::value() const {
+  return REG::NoRegister;
+}
+
+// ----------------------------------------------------------------------------
+// asm/mips/Immediate.hpp
+// ----------------------------------------------------------------------------
+bool mips::operands::Immediate::classof(const Operand*) {
+  return false;
+}
+
+int64_t mips::operands::Immediate::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/powerpc/Operand.hpp
+// ----------------------------------------------------------------------------
+powerpc::Operand::Iterator::Iterator() :
+  impl_(nullptr) {}
+
+powerpc::Operand::Iterator::Iterator(std::unique_ptr<details::OperandIt>) :
+  impl_(nullptr) {}
+
+powerpc::Operand::Iterator::Iterator(const Iterator&) :
+  impl_(nullptr) {}
+
+powerpc::Operand::Iterator&
+    powerpc::Operand::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+powerpc::Operand::Iterator::Iterator(Iterator&&) noexcept = default;
+powerpc::Operand::Iterator&
+    powerpc::Operand::Iterator::operator=(Iterator&&) noexcept = default;
+
+powerpc::Operand::Iterator& powerpc::Operand::Iterator::operator++() {
+  return *this;
+}
+
+void powerpc::Operand::Iterator::load() const {}
+
+const powerpc::Operand& powerpc::Operand::Iterator::operator*() const {
+  return *cached_;
+}
+
+const powerpc::Operand* powerpc::Operand::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<powerpc::Operand> powerpc::Operand::Iterator::yield() {
+  return nullptr;
+}
+
+namespace powerpc {
+bool operator==(const powerpc::Operand::Iterator&,
+                const powerpc::Operand::Iterator&) {
+  return true;
+}
+}
+
+powerpc::Operand::Iterator::~Iterator() = default;
+
+powerpc::Operand::~Operand() = default;
+powerpc::Operand::Operand(std::unique_ptr<details::Operand> /*impl*/) :
+  impl_(nullptr) {}
+
+std::string powerpc::Operand::to_string() const {
+  return "";
+}
+
+std::unique_ptr<powerpc::Operand>
+    powerpc::Operand::create(std::unique_ptr<details::Operand> /*impl*/) {
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+// asm/powerpc/Memory.hpp
+// ----------------------------------------------------------------------------
+bool powerpc::operands::Memory::classof(const Operand*) {
+  return false;
+}
+
+powerpc::REG powerpc::operands::Memory::base() const {
+  return REG::NoRegister;
+}
+
+powerpc::operands::Memory::offset_t powerpc::operands::Memory::offset() const {
+  return {};
+}
+
+bool powerpc::operands::Memory::has_index() const {
+  return false;
+}
+
+// ----------------------------------------------------------------------------
+// asm/powerpc/PCRelative.hpp
+// ----------------------------------------------------------------------------
+bool powerpc::operands::PCRelative::classof(const Operand*) {
+  return false;
+}
+
+int64_t powerpc::operands::PCRelative::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/powerpc/Register.hpp
+// ----------------------------------------------------------------------------
+bool powerpc::operands::Register::classof(const Operand*) {
+  return false;
+}
+
+powerpc::REG powerpc::operands::Register::value() const {
+  return REG::NoRegister;
+}
+
+// ----------------------------------------------------------------------------
+// asm/powerpc/Immediate.hpp
+// ----------------------------------------------------------------------------
+bool powerpc::operands::Immediate::classof(const Operand*) {
+  return false;
+}
+
+int64_t powerpc::operands::Immediate::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/ebpf/Operand.hpp
+// ----------------------------------------------------------------------------
+ebpf::Operand::Iterator::Iterator() :
+  impl_(nullptr) {}
+
+ebpf::Operand::Iterator::Iterator(std::unique_ptr<details::OperandIt>) :
+  impl_(nullptr) {}
+
+ebpf::Operand::Iterator::Iterator(const Iterator&) :
+  impl_(nullptr) {}
+
+ebpf::Operand::Iterator& ebpf::Operand::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+ebpf::Operand::Iterator::Iterator(Iterator&&) noexcept = default;
+ebpf::Operand::Iterator&
+    ebpf::Operand::Iterator::operator=(Iterator&&) noexcept = default;
+
+ebpf::Operand::Iterator& ebpf::Operand::Iterator::operator++() {
+  return *this;
+}
+
+void ebpf::Operand::Iterator::load() const {}
+
+const ebpf::Operand& ebpf::Operand::Iterator::operator*() const {
+  return *cached_;
+}
+
+const ebpf::Operand* ebpf::Operand::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<ebpf::Operand> ebpf::Operand::Iterator::yield() {
+  return nullptr;
+}
+
+namespace ebpf {
+bool operator==(const ebpf::Operand::Iterator&, const ebpf::Operand::Iterator&) {
+  return true;
+}
+}
+
+ebpf::Operand::Iterator::~Iterator() = default;
+
+ebpf::Operand::~Operand() = default;
+ebpf::Operand::Operand(std::unique_ptr<details::Operand> /*impl*/) :
+  impl_(nullptr) {}
+
+std::string ebpf::Operand::to_string() const {
+  return "";
+}
+
+std::unique_ptr<ebpf::Operand>
+    ebpf::Operand::create(std::unique_ptr<details::Operand> /*impl*/) {
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+// asm/ebpf/Memory.hpp
+// ----------------------------------------------------------------------------
+bool ebpf::operands::Memory::classof(const Operand*) {
+  return false;
+}
+
+ebpf::REG ebpf::operands::Memory::base() const {
+  return REG::NoRegister;
+}
+
+int64_t ebpf::operands::Memory::displacement() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/ebpf/PCRelative.hpp
+// ----------------------------------------------------------------------------
+bool ebpf::operands::PCRelative::classof(const Operand*) {
+  return false;
+}
+
+int64_t ebpf::operands::PCRelative::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/ebpf/Register.hpp
+// ----------------------------------------------------------------------------
+bool ebpf::operands::Register::classof(const Operand*) {
+  return false;
+}
+
+ebpf::REG ebpf::operands::Register::value() const {
+  return REG::NoRegister;
+}
+
+// ----------------------------------------------------------------------------
+// asm/ebpf/Immediate.hpp
+// ----------------------------------------------------------------------------
+bool ebpf::operands::Immediate::classof(const Operand*) {
+  return false;
+}
+
+int64_t ebpf::operands::Immediate::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/riscv/Operand.hpp
+// ----------------------------------------------------------------------------
+riscv::Operand::Iterator::Iterator() :
+  impl_(nullptr) {}
+
+riscv::Operand::Iterator::Iterator(std::unique_ptr<details::OperandIt>) :
+  impl_(nullptr) {}
+
+riscv::Operand::Iterator::Iterator(const Iterator&) :
+  impl_(nullptr) {}
+
+riscv::Operand::Iterator& riscv::Operand::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+riscv::Operand::Iterator::Iterator(Iterator&&) noexcept = default;
+riscv::Operand::Iterator&
+    riscv::Operand::Iterator::operator=(Iterator&&) noexcept = default;
+
+riscv::Operand::Iterator& riscv::Operand::Iterator::operator++() {
+  return *this;
+}
+
+void riscv::Operand::Iterator::load() const {}
+
+const riscv::Operand& riscv::Operand::Iterator::operator*() const {
+  return *cached_;
+}
+
+const riscv::Operand* riscv::Operand::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<riscv::Operand> riscv::Operand::Iterator::yield() {
+  return nullptr;
+}
+
+namespace riscv {
+bool operator==(const riscv::Operand::Iterator&, const riscv::Operand::Iterator&) {
+  return true;
+}
+}
+
+riscv::Operand::Iterator::~Iterator() = default;
+
+riscv::Operand::~Operand() = default;
+riscv::Operand::Operand(std::unique_ptr<details::Operand> /*impl*/) :
+  impl_(nullptr) {}
+
+std::string riscv::Operand::to_string() const {
+  return "";
+}
+
+std::unique_ptr<riscv::Operand>
+    riscv::Operand::create(std::unique_ptr<details::Operand> /*impl*/) {
+  return nullptr;
+}
+
+// ----------------------------------------------------------------------------
+// asm/riscv/Memory.hpp
+// ----------------------------------------------------------------------------
+bool riscv::operands::Memory::classof(const Operand*) {
+  return false;
+}
+
+riscv::REG riscv::operands::Memory::base() const {
+  return REG::NoRegister;
+}
+
+int64_t riscv::operands::Memory::displacement() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/riscv/PCRelative.hpp
+// ----------------------------------------------------------------------------
+bool riscv::operands::PCRelative::classof(const Operand*) {
+  return false;
+}
+
+int64_t riscv::operands::PCRelative::value() const {
+  return 0;
+}
+
+// ----------------------------------------------------------------------------
+// asm/riscv/Register.hpp
+// ----------------------------------------------------------------------------
+bool riscv::operands::Register::classof(const Operand*) {
+  return false;
+}
+
+riscv::operands::Register::reg_t riscv::operands::Register::value() const {
+  return {};
+}
+
+// ----------------------------------------------------------------------------
+// asm/riscv/Immediate.hpp
+// ----------------------------------------------------------------------------
+bool riscv::operands::Immediate::classof(const Operand*) {
+  return false;
+}
+
+int64_t riscv::operands::Immediate::value() const {
   return 0;
 }
 

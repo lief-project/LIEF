@@ -58,6 +58,14 @@
   * Fix an extra byte being written after the thread state of an
     ``LC_UNIXTHREAD``/``LC_THREAD`` command, which shifted the following
     load commands by one byte (:issue:`1344`)
+  * Add support for editing the runtime tables of the ``LC_FUNCTION_VARIANTS``
+    command and committing the changes on write:
+    |lief-macho-function-variants-command|
+  * Add a structured parser, editing API and writer for the
+    ``LC_FUNCTION_VARIANT_FIXUPS`` command:
+    |lief-macho-function-variant-fixups-command|
+  * Add support for the ``LC_LAZY_LOAD_DYLIB_INFO`` command:
+    |lief-macho-lazy-load-dylib-info-command|
 
 :PE:
 
@@ -68,6 +76,17 @@
   * Add support for adding an |lief-pe-import| at a specific position:
     |lief-pe-binary-add-import| (:pr:`1298`)
   * Improve support for EFI binaries, such as ``bzImage`` (:pr:`1293`)
+
+:Assembly:
+
+  * Add support for iterating over the operands of MIPS, PowerPC, eBPF and
+    RISC-V instructions (``Register``, ``Immediate``, ``Memory`` and
+    ``PCRelative``):
+
+    - |lief-assembly-mips-Instruction-operands|
+    - |lief-assembly-powerpc-Instruction-operands|
+    - |lief-assembly-ebpf-Instruction-operands|
+    - |lief-assembly-riscv-Instruction-operands|
 
 :Rust:
 
@@ -169,15 +188,6 @@
 :MachO:
 
   * Fix ``DyldInfo::show_bindings`` integer overflow (:issue:`1313`)
-  * Add support for editing the runtime tables of the ``LC_FUNCTION_VARIANTS``
-    command and committing the changes on write:
-    |lief-macho-function-variants-command|
-  * Add a structured parser, editing API and writer for the
-    ``LC_FUNCTION_VARIANT_FIXUPS`` command:
-    |lief-macho-function-variant-fixups-command|
-  * Add support for the ``LC_LAZY_LOAD_DYLIB_INFO`` command:
-    |lief-macho-lazy-load-dylib-info-command|
-
 
 0.17.4 - February 21st, 2026
 ----------------------------

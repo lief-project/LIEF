@@ -1235,3 +1235,27 @@
     :py:func:`lief.ELF.check_layout`
     :cpp:func:`LIEF::ELF::check_layout`
     :rust:func:`lief::elf::check_layout`
+
+.. |lief-assembly-mips-Instruction-operands| lief-api:: lief.assembly.mips.Instruction.operands()
+
+    :rust:method:`lief::assembly::mips::Instruction::operands [struct]`
+    :py:attr:`lief.assembly.mips.Instruction.operands`
+    :cpp:func:`LIEF::assembly::mips::Instruction::operands`
+
+.. |lief-assembly-powerpc-Instruction-operands| lief-api:: lief.assembly.powerpc.Instruction.operands()
+
+    :rust:method:`lief::assembly::powerpc::Instruction::operands [struct]`
+    :py:attr:`lief.assembly.powerpc.Instruction.operands`
+    :cpp:func:`LIEF::assembly::powerpc::Instruction::operands`
+
+.. |lief-assembly-ebpf-Instruction-operands| lief-api:: lief.assembly.ebpf.Instruction.operands()
+
+    :rust:method:`lief::assembly::ebpf::Instruction::operands [struct]`
+    :py:attr:`lief.assembly.ebpf.Instruction.operands`
+    :cpp:func:`LIEF::assembly::ebpf::Instruction::operands`
+
+.. |lief-assembly-riscv-Instruction-operands| lief-api:: lief.assembly.riscv.Instruction.operands()
+
+    :rust:method:`lief::assembly::riscv::Instruction::operands [struct]`
+    :py:attr:`lief.assembly.riscv.Instruction.operands`
+    :cpp:func:`LIEF::assembly::riscv::Instruction::operands`

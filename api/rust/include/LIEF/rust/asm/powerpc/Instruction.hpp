@@ -16,14 +16,35 @@
 #include <LIEF/asm/powerpc/Instruction.hpp>
 
 #include "LIEF/rust/asm/Instruction.hpp"
+#include "LIEF/rust/asm/powerpc/Operand.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/Iterator.hpp"
 
 class asm_powerpc_Instruction : public asm_Instruction {
   public:
   using lief_t = LIEF::assembly::powerpc::Instruction;
 
+  class it_operands
+    : public ForwardIterator<asm_powerpc_Operand,
+                             LIEF::assembly::powerpc::Operand::Iterator> {
+    public:
+    it_operands(const asm_powerpc_Instruction::lief_t& src) :
+      ForwardIterator(src.operands()) {}
+
+    auto next() {
+      return ForwardIterator::next();
+    }
+    auto size() const {
+      return ForwardIterator::size();
+    }
+  };
+
   uint64_t opcode() const {
     return to_int(impl().opcode());
+  }
+
+  auto operands() const {
+    return std::make_unique<it_operands>(impl());
   }
 
   static auto classof(const asm_Instruction& inst) {
@@ -35,3 +56,5 @@ class asm_powerpc_Instruction : public asm_Instruction {
     return as<lief_t>(this);
   }
 };
+
+using asm_powerpc_Instruction_it_operands = asm_powerpc_Instruction::it_operands;

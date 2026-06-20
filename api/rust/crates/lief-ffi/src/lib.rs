@@ -31,10 +31,34 @@ pub use crate::asm::aarch64::operands::register::ffi::asm_aarch64_operands_Regis
 pub use crate::asm::arm::instruction::ffi::asm_arm_Instruction;
 pub use crate::asm::config::AssemblerConfig_r;
 pub use crate::asm::ebpf::instruction::ffi::asm_ebpf_Instruction;
+pub use crate::asm::ebpf::instruction::ffi::asm_ebpf_Instruction_it_operands;
+pub use crate::asm::ebpf::operand::ffi::asm_ebpf_Operand;
+pub use crate::asm::ebpf::operands::immediate::ffi::asm_ebpf_operands_Immediate;
+pub use crate::asm::ebpf::operands::memory::ffi::asm_ebpf_operands_Memory;
+pub use crate::asm::ebpf::operands::pc_relative::ffi::asm_ebpf_operands_PCRelative;
+pub use crate::asm::ebpf::operands::register::ffi::asm_ebpf_operands_Register;
 pub use crate::asm::instruction::ffi::asm_Instruction;
 pub use crate::asm::mips::instruction::ffi::asm_mips_Instruction;
+pub use crate::asm::mips::instruction::ffi::asm_mips_Instruction_it_operands;
+pub use crate::asm::mips::operand::ffi::asm_mips_Operand;
+pub use crate::asm::mips::operands::immediate::ffi::asm_mips_operands_Immediate;
+pub use crate::asm::mips::operands::memory::ffi::asm_mips_operands_Memory;
+pub use crate::asm::mips::operands::pc_relative::ffi::asm_mips_operands_PCRelative;
+pub use crate::asm::mips::operands::register::ffi::asm_mips_operands_Register;
 pub use crate::asm::powerpc::instruction::ffi::asm_powerpc_Instruction;
+pub use crate::asm::powerpc::instruction::ffi::asm_powerpc_Instruction_it_operands;
+pub use crate::asm::powerpc::operand::ffi::asm_powerpc_Operand;
+pub use crate::asm::powerpc::operands::immediate::ffi::asm_powerpc_operands_Immediate;
+pub use crate::asm::powerpc::operands::memory::ffi::asm_powerpc_operands_Memory;
+pub use crate::asm::powerpc::operands::pc_relative::ffi::asm_powerpc_operands_PCRelative;
+pub use crate::asm::powerpc::operands::register::ffi::asm_powerpc_operands_Register;
 pub use crate::asm::riscv::instruction::ffi::asm_riscv_Instruction;
+pub use crate::asm::riscv::instruction::ffi::asm_riscv_Instruction_it_operands;
+pub use crate::asm::riscv::operand::ffi::asm_riscv_Operand;
+pub use crate::asm::riscv::operands::immediate::ffi::asm_riscv_operands_Immediate;
+pub use crate::asm::riscv::operands::memory::ffi::asm_riscv_operands_Memory;
+pub use crate::asm::riscv::operands::pc_relative::ffi::asm_riscv_operands_PCRelative;
+pub use crate::asm::riscv::operands::register::ffi::asm_riscv_operands_Register;
 pub use crate::asm::x86::instruction::ffi::asm_x86_Instruction;
 pub use crate::asm::x86::instruction::ffi::asm_x86_Instruction_it_operands;
 pub use crate::asm::x86::operand::ffi::asm_x86_Operand;
@@ -1530,6 +1554,86 @@ impl AsRef<asm_Instruction> for asm_riscv_Instruction {
 impl AsRef<asm_Instruction> for asm_x86_Instruction {
     fn as_ref(&self) -> &asm_Instruction {
         unsafe { &*(self as *const asm_x86_Instruction as *const asm_Instruction) }
+    }
+}
+impl AsRef<asm_mips_Operand> for asm_mips_operands_Immediate {
+    fn as_ref(&self) -> &asm_mips_Operand {
+        unsafe { &*(self as *const asm_mips_operands_Immediate as *const asm_mips_Operand) }
+    }
+}
+impl AsRef<asm_mips_Operand> for asm_mips_operands_Memory {
+    fn as_ref(&self) -> &asm_mips_Operand {
+        unsafe { &*(self as *const asm_mips_operands_Memory as *const asm_mips_Operand) }
+    }
+}
+impl AsRef<asm_mips_Operand> for asm_mips_operands_PCRelative {
+    fn as_ref(&self) -> &asm_mips_Operand {
+        unsafe { &*(self as *const asm_mips_operands_PCRelative as *const asm_mips_Operand) }
+    }
+}
+impl AsRef<asm_mips_Operand> for asm_mips_operands_Register {
+    fn as_ref(&self) -> &asm_mips_Operand {
+        unsafe { &*(self as *const asm_mips_operands_Register as *const asm_mips_Operand) }
+    }
+}
+impl AsRef<asm_powerpc_Operand> for asm_powerpc_operands_Immediate {
+    fn as_ref(&self) -> &asm_powerpc_Operand {
+        unsafe { &*(self as *const asm_powerpc_operands_Immediate as *const asm_powerpc_Operand) }
+    }
+}
+impl AsRef<asm_powerpc_Operand> for asm_powerpc_operands_Memory {
+    fn as_ref(&self) -> &asm_powerpc_Operand {
+        unsafe { &*(self as *const asm_powerpc_operands_Memory as *const asm_powerpc_Operand) }
+    }
+}
+impl AsRef<asm_powerpc_Operand> for asm_powerpc_operands_PCRelative {
+    fn as_ref(&self) -> &asm_powerpc_Operand {
+        unsafe { &*(self as *const asm_powerpc_operands_PCRelative as *const asm_powerpc_Operand) }
+    }
+}
+impl AsRef<asm_powerpc_Operand> for asm_powerpc_operands_Register {
+    fn as_ref(&self) -> &asm_powerpc_Operand {
+        unsafe { &*(self as *const asm_powerpc_operands_Register as *const asm_powerpc_Operand) }
+    }
+}
+impl AsRef<asm_ebpf_Operand> for asm_ebpf_operands_Immediate {
+    fn as_ref(&self) -> &asm_ebpf_Operand {
+        unsafe { &*(self as *const asm_ebpf_operands_Immediate as *const asm_ebpf_Operand) }
+    }
+}
+impl AsRef<asm_ebpf_Operand> for asm_ebpf_operands_Memory {
+    fn as_ref(&self) -> &asm_ebpf_Operand {
+        unsafe { &*(self as *const asm_ebpf_operands_Memory as *const asm_ebpf_Operand) }
+    }
+}
+impl AsRef<asm_ebpf_Operand> for asm_ebpf_operands_PCRelative {
+    fn as_ref(&self) -> &asm_ebpf_Operand {
+        unsafe { &*(self as *const asm_ebpf_operands_PCRelative as *const asm_ebpf_Operand) }
+    }
+}
+impl AsRef<asm_ebpf_Operand> for asm_ebpf_operands_Register {
+    fn as_ref(&self) -> &asm_ebpf_Operand {
+        unsafe { &*(self as *const asm_ebpf_operands_Register as *const asm_ebpf_Operand) }
+    }
+}
+impl AsRef<asm_riscv_Operand> for asm_riscv_operands_Immediate {
+    fn as_ref(&self) -> &asm_riscv_Operand {
+        unsafe { &*(self as *const asm_riscv_operands_Immediate as *const asm_riscv_Operand) }
+    }
+}
+impl AsRef<asm_riscv_Operand> for asm_riscv_operands_Memory {
+    fn as_ref(&self) -> &asm_riscv_Operand {
+        unsafe { &*(self as *const asm_riscv_operands_Memory as *const asm_riscv_Operand) }
+    }
+}
+impl AsRef<asm_riscv_Operand> for asm_riscv_operands_PCRelative {
+    fn as_ref(&self) -> &asm_riscv_Operand {
+        unsafe { &*(self as *const asm_riscv_operands_PCRelative as *const asm_riscv_Operand) }
+    }
+}
+impl AsRef<asm_riscv_Operand> for asm_riscv_operands_Register {
+    fn as_ref(&self) -> &asm_riscv_Operand {
+        unsafe { &*(self as *const asm_riscv_operands_Register as *const asm_riscv_Operand) }
     }
 }
 impl AsRef<asm_x86_Operand> for asm_x86_operands_Immediate {

@@ -4,6 +4,9 @@ use super::Opcode;
 use crate::assembly;
 use crate::common::FromFFI;
 
+use crate::assembly::riscv;
+use crate::declare_fwd_iterator;
+
 /// This structure represents a RISC-V (32 or 64 bit) instruction
 pub struct Instruction {
     ptr: cxx::UniquePtr<ffi::asm_riscv_Instruction>,
@@ -27,4 +30,17 @@ impl Instruction {
     pub fn opcode(&self) -> Opcode {
         Opcode::from(self.ptr.opcode())
     }
+
+    /// Return an iterator over the [`riscv::Operands`] operands
+    pub fn operands(&self) -> Operands<'_> {
+        Operands::new(self.ptr.operands())
+    }
 }
+
+declare_fwd_iterator!(
+    Operands,
+    riscv::Operands,
+    ffi::asm_Instruction,
+    ffi::asm_riscv_Operand,
+    ffi::asm_riscv_Instruction_it_operands
+);
