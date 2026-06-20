@@ -124,26 +124,29 @@ std::string Section::to_string() const {
 
   if (const String* coff_str = coff_string()) {
     os << fmt::format("{:{}} {} ({}, {})\n", "Name:", WIDTH, name(),
-                 fmt::join(fullname_hex, " "), coff_str->str());
+                      fmt::join(fullname_hex, " "), coff_str->str());
   } else {
     os << fmt::format("{:{}} {} ({})\n", "Name:", WIDTH, name(),
-                 fmt::join(fullname_hex, " "));
+                      fmt::join(fullname_hex, " "));
   }
 
   os << fmt::format("{:{}} {:#x}\n", "Virtual Size", WIDTH, virtual_size())
      << fmt::format("{:{}} {:#x}\n", "Virtual Address", WIDTH, virtual_address())
      << fmt::format("{:{}} {:#x}\n", "Size of raw data", WIDTH, sizeof_raw_data())
-     << fmt::format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH, pointerto_raw_data())
+     << fmt::format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH,
+                    pointerto_raw_data())
      << fmt::format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
-               pointerto_raw_data(), pointerto_raw_data() + sizeof_raw_data())
+                    pointerto_raw_data(), pointerto_raw_data() + sizeof_raw_data())
      << fmt::format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH,
-               pointerto_relocation())
+                    pointerto_relocation())
      << fmt::format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH,
-               pointerto_line_numbers())
+                    pointerto_line_numbers())
      << fmt::format("{:{}} {:#x}\n", "Number of relocations", WIDTH,
-               numberof_relocations())
-     << fmt::format("{:{}} {:#x}\n", "Number of lines", WIDTH, numberof_line_numbers())
-     << fmt::format("{:{}} {}", "Characteristics", WIDTH, fmt::join(list_str, ", "));
+                    numberof_relocations())
+     << fmt::format("{:{}} {:#x}\n", "Number of lines", WIDTH,
+                    numberof_line_numbers())
+     << fmt::format("{:{}} {}", "Characteristics", WIDTH,
+                    fmt::join(list_str, ", "));
 
   return os.str();
 }

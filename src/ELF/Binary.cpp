@@ -1853,7 +1853,9 @@ void Binary::shift_segments(uint64_t from, uint64_t shift) {
   }
 }
 
-static void do_dynamic_entry_shift(uint64_t from, uint64_t shift, DynamicEntry &entry, Header::CLASS binary_type) {
+static void do_dynamic_entry_shift(uint64_t from, uint64_t shift,
+                                   DynamicEntry& entry,
+                                   Header::CLASS binary_type) {
   switch (entry.tag()) {
     // Address/Offset types
     case DynamicEntry::TAG::PLTGOT:
@@ -1897,8 +1899,7 @@ static void do_dynamic_entry_shift(uint64_t from, uint64_t shift, DynamicEntry &
     case DynamicEntry::TAG::FINI_ARRAY:
     case DynamicEntry::TAG::PREINIT_ARRAY:
     {
-      DynamicEntryArray::array_t& array =
-          entry.as<DynamicEntryArray>()->array();
+      DynamicEntryArray::array_t& array = entry.as<DynamicEntryArray>()->array();
       for (uint64_t& address : array) {
         if (address >= from) {
           if ((binary_type == Header::CLASS::ELF32 &&
@@ -1984,19 +1985,25 @@ static void do_dynamic_entry_shift(uint64_t from, uint64_t shift, DynamicEntry &
     case DynamicEntry::TAG::MIPS_COMPACT_SIZE:
     case DynamicEntry::TAG::MIPS_GP_VALUE:
     {
-      // Explicitly annotate the entry types that don't need shifting. We want to warn if we miss something.
+      // Explicitly annotate the entry types that don't need shifting. We want to
+      // warn if we miss something.
       return;
     }
 
     // Not yet documented types
-    // If a type is here despite having a description then there is not enough clarity about whether we affect it.
-    // TODO: These should be reduced to zero by moving them to the correct category.
-    case DynamicEntry::TAG::MIPS_RLD_MAP: /**< Address of run time loader map, used for debugging. */
+    // If a type is here despite having a description then there is not enough
+    // clarity about whether we affect it.
+    // TODO: These should be reduced to zero by moving them to the correct
+    // category.
+    case DynamicEntry::TAG::MIPS_RLD_MAP: /**< Address of run time loader map, used
+                                             for debugging. */
     case DynamicEntry::TAG::MIPS_DELTA_CLASS: /**< Delta C++ class definition. */
     case DynamicEntry::TAG::MIPS_DELTA_INSTANCE: /**< Delta C++ class instances. */
-    case DynamicEntry::TAG::MIPS_DELTA_RELOC: /**< Delta relocations. */
-    case DynamicEntry::TAG::MIPS_DELTA_SYM: /**< Delta symbols that Delta relocations refer to. */
-    case DynamicEntry::TAG::MIPS_DELTA_CLASSSYM: /**< Delta symbols that hold class declarations. */
+    case DynamicEntry::TAG::MIPS_DELTA_RELOC:    /**< Delta relocations. */
+    case DynamicEntry::TAG::MIPS_DELTA_SYM:      /**< Delta symbols that Delta
+                                                    relocations refer to. */
+    case DynamicEntry::TAG::MIPS_DELTA_CLASSSYM: /**< Delta symbols that hold class
+                                                    declarations. */
     case DynamicEntry::TAG::MIPS_PIXIE_INIT: /**< Pixie information (??? [sic]). */
     case DynamicEntry::TAG::MIPS_DYNSTR_ALIGN: /**< Unknown. */
     case DynamicEntry::TAG::MIPS_RWPLT:
@@ -2053,14 +2060,16 @@ static void do_dynamic_entry_shift(uint64_t from, uint64_t shift, DynamicEntry &
     case DynamicEntry::TAG::IA_64_VMS_PLTGOT_SEG:
     case DynamicEntry::TAG::IA_64_VMS_FPMODE:
     {
-      LIEF_WARN("Shifting behavior of dynamic entry {} not defined", to_string(entry.tag()));
+      LIEF_WARN("Shifting behavior of dynamic entry {} not defined",
+                to_string(entry.tag()));
       return;
     }
   }
 
-  // The lack of a 'default' option in the above cases should also warn at build-time if this is reachable
-  // with a known enum value.
-  LIEF_WARN("Shifting behavior of dynamic entry {} not defined", to_string(entry.tag()));
+  // The lack of a 'default' option in the above cases should also warn at
+  // build-time if this is reachable with a known enum value.
+  LIEF_WARN("Shifting behavior of dynamic entry {} not defined",
+            to_string(entry.tag()));
 }
 
 void Binary::shift_dynamic_entries(uint64_t from, uint64_t shift) {

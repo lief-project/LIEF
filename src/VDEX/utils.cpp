@@ -89,7 +89,7 @@ LIEF::Android::ANDROID_VERSIONS android_version(vdex_version_t version) {
           {6, LIEF::Android::ANDROID_VERSIONS::VERSION_800},
           {10, LIEF::Android::ANDROID_VERSIONS::VERSION_810},
 
-      };
+  };
   auto it = oat2android.lower_bound(version);
   return it == oat2android.end() ?
              LIEF::Android::ANDROID_VERSIONS::VERSION_UNKNOWN :
