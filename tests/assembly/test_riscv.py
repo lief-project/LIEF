@@ -13,7 +13,7 @@ def test_riscv64():
 
     assert instructions[8] is not None
     assert instructions[8].address == 0x80000020
-    assert instructions[8].to_string() == "0x80000020: li a7, -1"
+    assert instructions[8].to_string() == "0x80000020: li a7, -0x1"
     assert instructions[8].mnemonic == "c.li"
     assert isinstance(instructions[8], lief.assembly.riscv.Instruction)
     assert instructions[8].opcode == lief.assembly.riscv.OPCODE.C_LI
@@ -33,7 +33,7 @@ def test_riscv32():
     instructions = list(elf.disassemble(0x0001E810, end - start))
     assert len(instructions) == 8
     assert instructions[0] is not None
-    assert instructions[0].to_string() == "0x01e810: auipc t3, 1086"
+    assert instructions[0].to_string() == "0x01e810: auipc t3, 0x43e"
     assert instructions[3] is not None
     assert instructions[3].to_string() == "0x01e81c: nop"
     assert instructions[6] is not None
@@ -45,8 +45,8 @@ def test_riscv32():
 
     assert len(instructions) == 18
     assert instructions[0] is not None
-    assert instructions[0].to_string() == "0x06be40: addi sp, sp, -16"
+    assert instructions[0].to_string() == "0x06be40: addi sp, sp, -0x10"
     assert instructions[1] is not None
-    assert instructions[1].to_string() == "0x06be42: sw s0, 8(sp)"
+    assert instructions[1].to_string() == "0x06be42: sw s0, 0x8(sp)"
     assert instructions[2] is not None
-    assert instructions[2].to_string() == "0x06be44: sw s1, 4(sp)"
+    assert instructions[2].to_string() == "0x06be44: sw s1, 0x4(sp)"

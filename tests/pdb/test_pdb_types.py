@@ -33,13 +33,10 @@ def test_lief():
     assert ty_pointer is not None
     assert isinstance(ty_pointer, lief.pdb.types.Pointer)
     assert ty_pointer.kind == lief.pdb.Type.KIND.POINTER
-    assert (
-        ty_pointer.to_decl()
-        == "const class std::basic_string<char,std::char_traits<char>,std::allocator<char> > *"
-    )
+    assert ty_pointer.to_decl() == "const class std::string &"
     assert (
         ty_pointer.name
-        == "std::basic_string<char,std::char_traits<char>,std::allocator<char> > *"
+        == "std::basic_string<char,std::char_traits<char>,std::allocator<char> > &"
     )
     assert ty_pointer.size == 8
 
@@ -52,10 +49,7 @@ def test_lief():
     assert isinstance(ty_function, lief.pdb.types.Function)
     assert ty_function.kind == lief.pdb.Type.KIND.FUNCTION
 
-    assert (
-        ty_function.to_decl()
-        == "class std::basic_string<char,std::char_traits<char>,std::allocator<char> > (const class std::basic_string<char,std::char_traits<char>,std::allocator<char> > *)"
-    )
+    assert ty_function.to_decl() == "class std::string (const class std::string &)"
     assert ty_function.name is None
     assert ty_function.size is None
 
@@ -129,23 +123,23 @@ def test_lief():
     class LIEF::ELF::Binary {
         enum LIEF::ELF::ELF_CLASS type_;
         class LIEF::ELF::Header header_;
-        class std::vector<std::unique_ptr<LIEF::ELF::Section,std::default_delete<LIEF::ELF::Section> >,std::allocator<std::unique_ptr<LIEF::ELF::Section,std::default_delete<LIEF::ELF::Section> > > > sections_;
-        class std::vector<std::unique_ptr<LIEF::ELF::Segment,std::default_delete<LIEF::ELF::Segment> >,std::allocator<std::unique_ptr<LIEF::ELF::Segment,std::default_delete<LIEF::ELF::Segment> > > > segments_;
-        class std::vector<std::unique_ptr<LIEF::ELF::DynamicEntry,std::default_delete<LIEF::ELF::DynamicEntry> >,std::allocator<std::unique_ptr<LIEF::ELF::DynamicEntry,std::default_delete<LIEF::ELF::DynamicEntry> > > > dynamic_entries_;
-        class std::vector<std::unique_ptr<LIEF::ELF::Symbol,std::default_delete<LIEF::ELF::Symbol> >,std::allocator<std::unique_ptr<LIEF::ELF::Symbol,std::default_delete<LIEF::ELF::Symbol> > > > dynamic_symbols_;
-        class std::vector<std::unique_ptr<LIEF::ELF::Symbol,std::default_delete<LIEF::ELF::Symbol> >,std::allocator<std::unique_ptr<LIEF::ELF::Symbol,std::default_delete<LIEF::ELF::Symbol> > > > static_symbols_;
-        class std::vector<std::unique_ptr<LIEF::ELF::Relocation,std::default_delete<LIEF::ELF::Relocation> >,std::allocator<std::unique_ptr<LIEF::ELF::Relocation,std::default_delete<LIEF::ELF::Relocation> > > > relocations_;
-        class std::vector<std::unique_ptr<LIEF::ELF::SymbolVersion,std::default_delete<LIEF::ELF::SymbolVersion> >,std::allocator<std::unique_ptr<LIEF::ELF::SymbolVersion,std::default_delete<LIEF::ELF::SymbolVersion> > > > symbol_version_table_;
-        class std::vector<std::unique_ptr<LIEF::ELF::SymbolVersionRequirement,std::default_delete<LIEF::ELF::SymbolVersionRequirement> >,std::allocator<std::unique_ptr<LIEF::ELF::SymbolVersionRequirement,std::default_delete<LIEF::ELF::SymbolVersionRequirement> > > > symbol_version_requirements_;
-        class std::vector<std::unique_ptr<LIEF::ELF::SymbolVersionDefinition,std::default_delete<LIEF::ELF::SymbolVersionDefinition> >,std::allocator<std::unique_ptr<LIEF::ELF::SymbolVersionDefinition,std::default_delete<LIEF::ELF::SymbolVersionDefinition> > > > symbol_version_definition_;
-        class std::vector<std::unique_ptr<LIEF::ELF::Note,std::default_delete<LIEF::ELF::Note> >,std::allocator<std::unique_ptr<LIEF::ELF::Note,std::default_delete<LIEF::ELF::Note> > > > notes_;
-        class std::unique_ptr<LIEF::ELF::GnuHash,std::default_delete<LIEF::ELF::GnuHash> > gnu_hash_;
-        class std::unique_ptr<LIEF::ELF::SysvHash,std::default_delete<LIEF::ELF::SysvHash> > sysv_hash_;
-        class std::unique_ptr<LIEF::ELF::DataHandler::Handler,std::default_delete<LIEF::ELF::DataHandler::Handler> > datahandler_;
+        class std::vector<std::unique_ptr<LIEF::ELF::Section>> sections_;
+        class std::vector<std::unique_ptr<LIEF::ELF::Segment>> segments_;
+        class std::vector<std::unique_ptr<LIEF::ELF::DynamicEntry>> dynamic_entries_;
+        class std::vector<std::unique_ptr<LIEF::ELF::Symbol>> dynamic_symbols_;
+        class std::vector<std::unique_ptr<LIEF::ELF::Symbol>> static_symbols_;
+        class std::vector<std::unique_ptr<LIEF::ELF::Relocation>> relocations_;
+        class std::vector<std::unique_ptr<LIEF::ELF::SymbolVersion>> symbol_version_table_;
+        class std::vector<std::unique_ptr<LIEF::ELF::SymbolVersionRequirement>> symbol_version_requirements_;
+        class std::vector<std::unique_ptr<LIEF::ELF::SymbolVersionDefinition>> symbol_version_definition_;
+        class std::vector<std::unique_ptr<LIEF::ELF::Note>> notes_;
+        class std::unique_ptr<LIEF::ELF::GnuHash> gnu_hash_;
+        class std::unique_ptr<LIEF::ELF::SysvHash> sysv_hash_;
+        class std::unique_ptr<LIEF::ELF::DataHandler::Handler> datahandler_;
         struct LIEF::ELF::Binary::phdr_relocation_info_t phdr_reloc_info_;
-        class std::basic_string<char,std::char_traits<char>,std::allocator<char> > interpreter_;
-        class std::vector<unsigned char,std::allocator<unsigned char> > overlay_;
-        class std::unique_ptr<LIEF::ELF::sizing_info_t,std::default_delete<LIEF::ELF::sizing_info_t> > sizing_info_;
+        class std::string interpreter_;
+        class std::vector<unsigned char> overlay_;
+        class std::unique_ptr<LIEF::ELF::sizing_info_t> sizing_info_;
     }""")
 
     attrs = list(elf_bin.attributes)

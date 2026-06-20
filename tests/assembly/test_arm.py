@@ -16,7 +16,7 @@ def test_arm_thumb():
         instructions[0].to_string() == "0x468b700: push.w {r4, r5, r6, r7, r8, r9, lr}"
     )
     assert instructions[1] is not None
-    assert instructions[1].to_string() == "0x468b704: sub sp, #76"
+    assert instructions[1].to_string() == "0x468b704: sub sp, #0x4c"
     assert instructions[8] is not None
     assert instructions[8].to_string() == "0x468b712: strd r0, r0, [sp, #64]"
 

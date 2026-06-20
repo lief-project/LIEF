@@ -59,7 +59,7 @@ def test_disassembler():
     assert _si0.to_string() == "0x25cd2c0e0: adrp x16, #-3525632000"
     _si1 = stub_insts[1]
     assert _si1 is not None
-    assert _si1.to_string() == "0x25cd2c0e4: add x16, x16, #3028"
+    assert _si1.to_string() == "0x25cd2c0e4: add x16, x16, #0xbd4"
     _si2 = stub_insts[2]
     assert _si2 is not None
     assert _si2.to_string() == "0x25cd2c0e8: br x16"

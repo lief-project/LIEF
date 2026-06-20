@@ -12,7 +12,7 @@ def test_mipsr3000():
     assert len(instructions) == 113411
 
     assert instructions[0] is not None
-    assert instructions[0].to_string() == "0x403664: lui $gp, 9"
+    assert instructions[0].to_string() == "0x403664: lui $gp, 0x9"
     assert instructions[113272] is not None
     assert instructions[113272].to_string() == "0x472044: mflo $10"
 

@@ -55,12 +55,12 @@ def test_pe_arm64():
     assert len(instructions) == 6245
 
     assert instructions[0] is not None
-    assert instructions[0].to_string() == "0x140001000: str x19, [sp, #-16]!"
+    assert instructions[0].to_string() == "0x140001000: str x19, [sp, #-0x10]!"
     assert isinstance(instructions[0], lief.assembly.aarch64.Instruction)
     assert instructions[0].opcode == lief.assembly.aarch64.OPCODE.STRXpre
 
     assert instructions[4796] is not None
-    assert instructions[4796].to_string() == "0x140005af0: ldr x30, [sp, #16]"
+    assert instructions[4796].to_string() == "0x140005af0: ldr x30, [sp, #0x10]"
     assert isinstance(instructions[4796], lief.assembly.aarch64.Instruction)
     assert instructions[4796].opcode == lief.assembly.aarch64.OPCODE.LDRXui
 
@@ -75,7 +75,7 @@ def test_elf_arm64():
     assert instructions[0] is not None
     assert instructions[0].to_string() == "0x000000: bti c"
     assert instructions[10] is not None
-    assert instructions[10].to_string() == "0x000028: add sp, sp, #16"
+    assert instructions[10].to_string() == "0x000028: add sp, sp, #0x10"
     assert instructions[11] is not None
     assert instructions[11].to_string() == "0x00002c: ret"
 
@@ -198,8 +198,8 @@ def test_asm_context():
     assert insts[0] is not None
     assert insts[0].to_string() == "0x000e80: adrp x0, #4096"
     assert insts[1] is not None
-    assert insts[1].to_string() == "0x000e84: add x0, x0, #1280"
+    assert insts[1].to_string() == "0x000e84: add x0, x0, #0x500"
     assert insts[2] is not None
     assert insts[2].to_string() == "0x000e88: br x0"
     assert insts[3] is not None
-    assert insts[3].to_string() == "0x000e8c: bl #1652"
+    assert insts[3].to_string() == "0x000e8c: bl #0x674"
