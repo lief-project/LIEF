@@ -20,6 +20,8 @@
 
 #include "logging.hpp"
 
+#include "LIEF/Abstract/Header.hpp"
+
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
@@ -51,12 +53,39 @@ ok_error_t Builder::build() {
   return binary_->is64_ ? build<details::MachO64>() : build<details::MachO32>();
 }
 
+bool Builder::should_swap() const {
+  if (binary_ == nullptr) {
+    return false;
+  }
+  switch (binary_->get_abstract_header().endianness()) {
+#ifdef __BYTE_ORDER__
+  #if defined(__ORDER_LITTLE_ENDIAN__) &&                                         \
+      (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+    case LIEF::Header::ENDIANNESS::BIG:
+  #elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+    case LIEF::Header::ENDIANNESS::LITTLE:
+  #endif
+      return true;
+#else
+    // If there is no __BYTE_ORDER__ (e.g. MSVC), assume little-endian
+    case LIEF::Header::ENDIANNESS::BIG: return true;
+#endif // __BYTE_ORDER__
+    default:
+      // we're good (or don't know what to do), consider bytes are in the
+      // expected order
+      return false;
+  }
+}
+
 template<typename T>
 ok_error_t Builder::build() {
   if (binaries_.size() > 1) {
     LIEF_ERR("More than one binary");
     return make_error_code(lief_errors::build_error);
   }
+
+  raw_.set_endian_swap(should_swap());
+  linkedit_.set_endian_swap(should_swap());
 
   // Check if we need to extend some commands
   {
@@ -293,6 +322,8 @@ ok_error_t Builder::build_uuid() {
               to_string(uuid_cmd->command()));
     return make_error_code(lief_errors::build_error);
   }
+
+  swap_endian_if_needed(raw_cmd);
 
   std::copy(reinterpret_cast<const uint8_t*>(&raw_cmd),
             reinterpret_cast<const uint8_t*>(&raw_cmd) +

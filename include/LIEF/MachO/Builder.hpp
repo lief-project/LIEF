@@ -97,6 +97,15 @@ class LIEF_API Builder {
   private:
   LIEF_LOCAL ok_error_t build();
 
+  LIEF_LOCAL bool should_swap() const;
+
+  template<class T>
+  LIEF_LOCAL void swap_endian_if_needed(T& s) const {
+    if (should_swap()) {
+      LIEF::swap_endian(&s);
+    }
+  }
+
   LIEF_LOCAL const std::vector<uint8_t>& get_build();
   LIEF_LOCAL ok_error_t write(const std::string& filename) const;
   LIEF_LOCAL ok_error_t write(std::ostream& os) const;

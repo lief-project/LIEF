@@ -75,6 +75,7 @@
 
 :Mach-O:
 
+  * Add support for writing big-endian Mach-O binaries (:issue:`1236`)
   * Introduce an API for selecting a specific Mach-O binary by architecture
     from a FAT binary (:pr:`1283`)
   * Add |lief-macho-fatbinary-create| to create a FAT binary from

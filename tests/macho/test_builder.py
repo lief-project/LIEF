@@ -908,3 +908,20 @@ def test_issue_1236(tmp_path: Path):
 
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
+
+
+@pytest.mark.private
+def test_ppc_issue_1236(tmp_path: Path):
+    macho = parse_macho("private/MachO/curl_ppc").at(0)
+    assert macho is not None
+
+    checked, err = lief.MachO.check_layout(macho)
+    assert checked, err
+
+    output = tmp_path / "out.macho"
+    macho.write(output)
+    new = lief.MachO.parse(output)
+    assert new is not None
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
