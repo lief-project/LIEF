@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_POINTER_H
 #define LIEF_PDB_TYPE_POINTER_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
 
@@ -36,7 +37,7 @@ class LIEF_API Pointer : public Type {
   }
 
   /// The underlying type pointed by this pointer
-  std::unique_ptr<Type> underlying_type() const;
+  std::unique_ptr<Type> underlying_type() const LIEF_LIFETIMEBOUND;
 
   ~Pointer() override;
 };

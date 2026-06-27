@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_DSC_SUBCACHE_H
 #define LIEF_DSC_SUBCACHE_H
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/DyldSharedCache/uuid.hpp"
@@ -69,10 +70,10 @@ class LIEF_API SubCache {
       return !(LHS == RHS);
     }
 
-    const SubCache& operator*() const;
+    const SubCache& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    const SubCache* operator->() const;
+    const SubCache* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the subcache at the current position to the
     /// caller. Returns `nullptr` if the iterator is past-the-end.
@@ -100,7 +101,7 @@ class LIEF_API SubCache {
   std::string suffix() const;
 
   /// The associated DyldSharedCache object for this subcache
-  std::unique_ptr<const DyldSharedCache> cache() const;
+  std::unique_ptr<const DyldSharedCache> cache() const LIEF_LIFETIMEBOUND;
 
   friend LIEF_API std::ostream& operator<<(std::ostream& os,
                                            const SubCache& subcache);

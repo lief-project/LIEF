@@ -69,10 +69,10 @@ class LIEF_API Dylib {
       return !(LHS == RHS);
     }
 
-    const Dylib& operator*() const;
+    const Dylib& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    const Dylib* operator->() const;
+    const Dylib* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the dylib at the current position to the
     /// caller. Returns `nullptr` if the iterator is past-the-end.

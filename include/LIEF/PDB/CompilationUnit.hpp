@@ -69,10 +69,10 @@ class LIEF_API CompilationUnit {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator--();
 
-    LIEF_API const CompilationUnit& operator*() const;
+    LIEF_API const CompilationUnit& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const CompilationUnit* operator->() const;
+    LIEF_API const CompilationUnit* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the compilation unit at the current position
     /// to the caller. Returns `nullptr` if the iterator is past-the-end.
@@ -106,16 +106,16 @@ class LIEF_API CompilationUnit {
 
   /// Iterator over the sources files that compose this compilation unit.
   /// These files also include **headers** (`.h, .hpp`, ...).
-  sources_iterator sources() const;
+  sources_iterator sources() const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the function defined in this compilation unit.
   /// If the PDB does not contain or has an empty DBI stream, it returns
   /// an empty iterator.
-  function_iterator functions() const;
+  function_iterator functions() const LIEF_LIFETIMEBOUND;
 
   /// Return build metadata such as the version of the compiler or
   /// the original source language of this compilation unit
-  std::unique_ptr<BuildMetadata> build_metadata() const;
+  std::unique_ptr<BuildMetadata> build_metadata() const LIEF_LIFETIMEBOUND;
 
   /// Generate a C/C++ definition for the functions defined in this
   /// compilation unit.

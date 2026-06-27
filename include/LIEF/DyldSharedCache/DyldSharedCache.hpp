@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_DSC_DYLD_SHARED_CACHE_H
 #define LIEF_DSC_DYLD_SHARED_CACHE_H
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/DyldSharedCache/Dylib.hpp"
@@ -204,11 +205,11 @@ class LIEF_API DyldSharedCache {
   ///   std::unique_ptr<DyldSharedCache> impl = subcaches[i]->cache();
   /// }
   /// ```
-  subcache_iterator subcaches() const;
+  subcache_iterator subcaches() const LIEF_LIFETIMEBOUND;
 
   /// Disassemble instructions at the provided virtual address.
   /// This function returns an iterator over assembly::Instruction.
-  instructions_iterator disassemble(uint64_t va) const;
+  instructions_iterator disassemble(uint64_t va) const LIEF_LIFETIMEBOUND;
 
   /// Return the content at the specified virtual address
   std::vector<uint8_t> get_content_from_va(uint64_t va, uint64_t size) const;
@@ -218,12 +219,12 @@ class LIEF_API DyldSharedCache {
       cache_for_address(uint64_t va) const LIEF_LIFETIMEBOUND;
 
   /// Return the principal dyld shared cache in the case of multiple subcaches
-  std::unique_ptr<DyldSharedCache> main_cache() const;
+  std::unique_ptr<DyldSharedCache> main_cache() const LIEF_LIFETIMEBOUND;
 
   /// Try to find the DyldSharedCache associated with the filename given
   /// in the first parameter.
   std::unique_ptr<DyldSharedCache>
-      find_subcache(const std::string& filename) const;
+      find_subcache(const std::string& filename) const LIEF_LIFETIMEBOUND;
 
   /// Convert the given virtual address into an offset.
   ///
@@ -233,10 +234,10 @@ class LIEF_API DyldSharedCache {
   result<uint64_t> va_to_offset(uint64_t va) const;
 
   /// Return the stream associated with this dyld shared cache
-  FileStream& stream() const;
+  FileStream& stream() const LIEF_LIFETIMEBOUND;
 
   /// Return the stream associated with this dyld shared cache
-  FileStream& stream();
+  FileStream& stream() LIEF_LIFETIMEBOUND;
 
   /// When enabled, this function allows to record and to keep in *cache*,
   /// dyld shared cache information that are costly to access.

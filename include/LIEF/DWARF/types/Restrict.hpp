@@ -15,6 +15,7 @@
 #ifndef LIEF_DWARF_RESTRICT_H
 #define LIEF_DWARF_RESTRICT_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/DWARF/Type.hpp"
 
@@ -42,13 +43,13 @@ class LIEF_API Restrict : public Type {
   }
 
   /// The underlying type referenced by this restrict-type.
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
-  const Type* operator->() const {
+  const Type* operator->() const LIEF_LIFETIMEBOUND {
     return underlying_.get();
   }
 
-  const Type* operator*() const {
+  const Type* operator*() const LIEF_LIFETIMEBOUND {
     return underlying_.get();
   }
 

@@ -17,6 +17,7 @@
 
 #include <memory>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
@@ -96,10 +97,10 @@ class LIEF_API Type {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator--();
 
-    LIEF_API const Type& operator*() const;
+    LIEF_API const Type& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const Type* operator->() const;
+    LIEF_API const Type* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the type at the current position to the
     /// caller. Returns `nullptr` if the iterator is past-the-end.
@@ -188,7 +189,8 @@ class LIEF_API Type {
     return nullptr;
   }
 
-  static std::unique_ptr<Type> create(std::unique_ptr<details::Type> impl);
+  static std::unique_ptr<Type>
+      create(std::unique_ptr<details::Type> impl LIEF_LIFETIMEBOUND);
 
   protected:
   LIEF::details::canbe_unique<details::Type> impl_;

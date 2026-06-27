@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/range.hpp"
 #include "LIEF/iterators.hpp"
@@ -68,10 +69,10 @@ class LIEF_API CompilationUnit {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator--();
 
-    LIEF_API const CompilationUnit& operator*() const;
+    LIEF_API const CompilationUnit& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const CompilationUnit* operator->() const;
+    LIEF_API const CompilationUnit* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the compilation unit at the current position
     /// to the caller. Returns `nullptr` if the iterator is past-the-end.
@@ -190,16 +191,18 @@ class LIEF_API CompilationUnit {
   /// Try to find the function whose name is given in parameter.
   ///
   /// The provided name can be demangled
-  std::unique_ptr<Function> find_function(const std::string& name) const;
+  std::unique_ptr<Function>
+      find_function(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the function at the given address
-  std::unique_ptr<Function> find_function(uint64_t addr) const;
+  std::unique_ptr<Function> find_function(uint64_t addr) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the Variable at the given address
-  std::unique_ptr<Variable> find_variable(uint64_t addr) const;
+  std::unique_ptr<Variable> find_variable(uint64_t addr) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the Variable with the given name
-  std::unique_ptr<Variable> find_variable(const std::string& name) const;
+  std::unique_ptr<Variable>
+      find_variable(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the functions implemented in this compilation
   /// unit.
@@ -223,7 +226,7 @@ class LIEF_API CompilationUnit {
   /// The iterator will only return **one function** for `main` since
   /// `get_secret_env` is inlined and thus, its implementation is located in
   /// `main`.
-  functions_it functions() const;
+  functions_it functions() const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the functions **imported** in this compilation
   /// unit **but not** implemented.
@@ -242,12 +245,11 @@ class LIEF_API CompilationUnit {
   /// the iterator. On the other hand, `main()` is implemented in this
   /// compilation unit so it is not returned by imported_function() but
   /// functions().
-  functions_it imported_functions() const;
+  functions_it imported_functions() const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the different types defined in this
   /// compilation unit.
-  types_it types() const;
-
+  types_it types() const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over all the variables defined in this compilation
   /// unit:
@@ -261,7 +263,7 @@ class LIEF_API CompilationUnit {
   ///   return C;
   /// }
   /// ```
-  vars_it variables() const;
+  vars_it variables() const LIEF_LIFETIMEBOUND;
 
   /// Generate a C/C++ definition for the functions defined in this
   /// compilation unit.

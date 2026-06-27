@@ -19,6 +19,7 @@
 
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/debug_loc.hpp"
 #include "LIEF/DWARF/Type.hpp"
@@ -68,10 +69,10 @@ class LIEF_API Variable {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator--();
 
-    LIEF_API const Variable& operator*() const;
+    LIEF_API const Variable& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const Variable* operator->() const;
+    LIEF_API const Variable* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the variable at the current position to the
     /// caller. Returns `nullptr` if the iterator is past-the-end.
@@ -121,10 +122,10 @@ class LIEF_API Variable {
   debug_location_t debug_location() const;
 
   /// Return the type of this variable
-  std::unique_ptr<Type> type() const;
+  std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;
 
   /// Return the scope in which this variable is defined
-  std::unique_ptr<Scope> scope() const;
+  std::unique_ptr<Scope> scope() const LIEF_LIFETIMEBOUND;
 
   /// Description (`DW_AT_description`) of the variable or an empty string
   std::string description() const;

@@ -18,6 +18,7 @@
 #include <string>
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/debug_loc.hpp"
@@ -61,10 +62,10 @@ class LIEF_API Function {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator++();
 
-    LIEF_API const Function& operator*() const;
+    LIEF_API const Function& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const Function* operator->() const;
+    LIEF_API const Function* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the function at the current position to the
     /// caller. Returns `nullptr` if the iterator is past-the-end.

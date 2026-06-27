@@ -16,6 +16,7 @@
 #define LIEF_DWARF_TYPE_CONST_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
 
 namespace LIEF {
@@ -42,13 +43,13 @@ class LIEF_API Const : public Type {
   }
 
   /// The underlying type being const-ed
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
-  const Type* operator->() const {
+  const Type* operator->() const LIEF_LIFETIMEBOUND {
     return underlying_type();
   }
 
-  const Type& operator*() const {
+  const Type& operator*() const LIEF_LIFETIMEBOUND {
     return *underlying_type();
   }
 

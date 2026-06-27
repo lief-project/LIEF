@@ -16,6 +16,7 @@
 #define LIEF_DWARF_TYPE_STRUCTURE_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/Function.hpp"
 
@@ -77,7 +78,7 @@ class LIEF_API ClassLike : public Type {
     result<uint64_t> bit_size() const;
 
     /// Type of the current member
-    std::unique_ptr<Type> type() const;
+    std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;
 
     bool is_external() const;
 
@@ -104,13 +105,13 @@ class LIEF_API ClassLike : public Type {
   }
 
   /// Return the list of all the attributes defined in this class-like type
-  std::vector<Member> members() const;
+  std::vector<Member> members() const LIEF_LIFETIMEBOUND;
 
   /// Try to find the attribute at the given offset
-  std::unique_ptr<Member> find_member(uint64_t offset) const;
+  std::unique_ptr<Member> find_member(uint64_t offset) const LIEF_LIFETIMEBOUND;
 
   /// Iterator over the functions defined by the class-like.
-  functions_it functions() const;
+  functions_it functions() const LIEF_LIFETIMEBOUND;
 
   ~ClassLike() override;
 };

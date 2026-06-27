@@ -16,6 +16,7 @@
 #define LIEF_DWARF_TEMPLATE_ALIAS_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
 
 namespace LIEF {
@@ -42,18 +43,18 @@ class LIEF_API TemplateAlias : public Type {
   using parameters_t = std::vector<std::unique_ptr<Parameter>>;
 
   /// The underlying type aliased by this type.
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
-  const Type* operator->() const {
+  const Type* operator->() const LIEF_LIFETIMEBOUND {
     return underlying_type();
   }
 
-  const Type& operator*() const {
+  const Type& operator*() const LIEF_LIFETIMEBOUND {
     return *underlying_type();
   }
 
   /// Parameters associated with the underlying template
-  parameters_t parameters() const;
+  parameters_t parameters() const LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::TEMPLATE_ALIAS;

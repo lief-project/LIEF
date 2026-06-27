@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_ATTRIBUTE_H
 #define LIEF_PDB_TYPE_ATTRIBUTE_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
@@ -64,10 +65,10 @@ class LIEF_API Attribute {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator++();
 
-    LIEF_API const Attribute& operator*() const;
+    LIEF_API const Attribute& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const Attribute* operator->() const;
+    LIEF_API const Attribute* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the attribute at the current position to the
     /// caller. Returns `nullptr` if the iterator is past-the-end.
@@ -87,7 +88,7 @@ class LIEF_API Attribute {
   std::string name() const;
 
   /// Type of this attribute
-  std::unique_ptr<Type> type() const;
+  std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;
 
   /// Offset of this attribute in the aggregate
   uint64_t field_offset() const;

@@ -16,6 +16,7 @@
 #define LIEF_DWARF_SUBROUTINE_TYPE_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
 
 namespace LIEF {
@@ -43,10 +44,10 @@ class LIEF_API Subroutine : public Type {
 
   /// Return the dwarf::Type associated with the **return type** of this
   /// function
-  std::unique_ptr<Type> return_type() const;
+  std::unique_ptr<Type> return_type() const LIEF_LIFETIMEBOUND;
 
   /// Parameters of this subroutine
-  parameters_t parameters() const;
+  parameters_t parameters() const LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::SUBROUTINE;

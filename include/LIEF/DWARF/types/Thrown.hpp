@@ -16,6 +16,7 @@
 #define LIEF_DWARF_THROWN_TYPE_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
 
 namespace LIEF {
@@ -40,13 +41,13 @@ class LIEF_API Thrown : public Type {
   Thrown& operator=(Thrown&&) noexcept = default;
 
   /// The underlying type being thrown
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
-  const Type* operator->() const {
+  const Type* operator->() const LIEF_LIFETIMEBOUND {
     return underlying_type();
   }
 
-  const Type& operator*() const {
+  const Type& operator*() const LIEF_LIFETIMEBOUND {
     return *underlying_type();
   }
 

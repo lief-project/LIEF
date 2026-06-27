@@ -19,6 +19,7 @@
 #include <string>
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/editor/Type.hpp"
 
 namespace LIEF {
@@ -64,15 +65,16 @@ class LIEF_API StructType : public Type {
   /// type.
   ///
   /// This function defines the `DW_AT_byte_size` attribute
-  StructType& set_size(uint64_t size);
+  StructType& set_size(uint64_t size) LIEF_LIFETIMEBOUND;
 
   /// Adds a member to the current struct-like
   std::unique_ptr<Member> add_member(const std::string& name, const Type& type,
-                                     int64_t offset = -1);
+                                     int64_t offset = -1) LIEF_LIFETIMEBOUND;
 
   /// Adds a bitfield member to the current structure.
   std::unique_ptr<Member> add_bitfield(const std::string& name, const Type& type,
-                                       uint64_t bitsize, int64_t bitoffset = -1);
+                                       uint64_t bitsize,
+                                       int64_t bitoffset = -1) LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type);
 

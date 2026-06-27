@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_DWARF_EDITOR_FUNCTION_TYPE_H
 #define LIEF_DWARF_EDITOR_FUNCTION_TYPE_H
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/DWARF/editor/Type.hpp"
 
@@ -47,10 +48,10 @@ class LIEF_API FunctionType : public Type {
   };
 
   /// Set the return type of this function
-  FunctionType& set_return_type(const Type& type);
+  FunctionType& set_return_type(const Type& type) LIEF_LIFETIMEBOUND;
 
   /// Add a parameter
-  std::unique_ptr<Parameter> add_parameter(const Type& type);
+  std::unique_ptr<Parameter> add_parameter(const Type& type) LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type);
 

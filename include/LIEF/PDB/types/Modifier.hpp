@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_MODIFIER_H
 #define LIEF_PDB_TYPE_MODIFIER_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
 
@@ -36,7 +37,7 @@ class LIEF_API Modifier : public Type {
   }
 
   /// Underlying type targeted by this modifier
-  std::unique_ptr<Type> underlying_type() const;
+  std::unique_ptr<Type> underlying_type() const LIEF_LIFETIMEBOUND;
 
   ~Modifier() override;
 };

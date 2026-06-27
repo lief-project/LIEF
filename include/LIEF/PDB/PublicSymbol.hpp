@@ -19,6 +19,7 @@
 #include <string>
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
@@ -63,10 +64,10 @@ class LIEF_API PublicSymbol {
       return !(LHS == RHS);
     }
 
-    LIEF_API const PublicSymbol& operator*() const;
+    LIEF_API const PublicSymbol& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const PublicSymbol* operator->() const;
+    LIEF_API const PublicSymbol* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the public symbol at the current position to
     /// the caller. Returns `nullptr` if the iterator is past-the-end.

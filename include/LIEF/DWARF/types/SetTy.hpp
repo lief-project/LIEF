@@ -16,6 +16,7 @@
 #define LIEF_DWARF_SET_TYPE_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
 
 namespace LIEF {
@@ -42,13 +43,13 @@ class LIEF_API SetTy : public Type {
   }
 
   /// The underlying type referenced by this set-type.
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
-  const Type* operator->() const {
+  const Type* operator->() const LIEF_LIFETIMEBOUND {
     return underlying_.get();
   }
 
-  const Type* operator*() const {
+  const Type* operator*() const LIEF_LIFETIMEBOUND {
     return underlying_.get();
   }
 

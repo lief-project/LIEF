@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_FUNCTION_H
 #define LIEF_PDB_TYPE_FUNCTION_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
 
@@ -33,10 +34,10 @@ class LIEF_API Function : public Type {
   using parameters_t = std::vector<std::unique_ptr<Type>>;
 
   /// Type returned by the function
-  std::unique_ptr<Type> return_type() const;
+  std::unique_ptr<Type> return_type() const LIEF_LIFETIMEBOUND;
 
   /// Types of the function's parameters
-  parameters_t parameters() const;
+  parameters_t parameters() const LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::FUNCTION;

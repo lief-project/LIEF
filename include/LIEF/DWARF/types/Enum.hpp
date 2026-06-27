@@ -15,6 +15,7 @@
 #ifndef LIEF_DWARF_TYPE_ENUM_H
 #define LIEF_DWARF_TYPE_ENUM_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/optional.hpp"
 #include "LIEF/DWARF/Type.hpp"
@@ -66,13 +67,13 @@ class LIEF_API Enum : public Type {
   };
 
   /// Return the different entries associated with this enum
-  std::vector<Entry> entries() const;
+  std::vector<Entry> entries() const LIEF_LIFETIMEBOUND;
 
   /// The underlying type that is used to encode this enum
   const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
   /// Try to find the enum matching the given value
-  optional<Entry> find_entry(int64_t value) const;
+  optional<Entry> find_entry(int64_t value) const LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ENUM;

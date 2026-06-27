@@ -15,6 +15,7 @@
 #ifndef LIEF_DWARF_TYPE_POINTER_TO_MEMBER_H
 #define LIEF_DWARF_TYPE_POINTER_TO_MEMBER_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/DWARF/Type.hpp"
 
@@ -42,18 +43,18 @@ class LIEF_API PointerToMember : public Type {
   }
 
   /// The type of the member referenced by this pointer
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
-  const Type* operator->() const {
+  const Type* operator->() const LIEF_LIFETIMEBOUND {
     return underlying_.get();
   }
 
-  const Type* operator*() const {
+  const Type* operator*() const LIEF_LIFETIMEBOUND {
     return underlying_.get();
   }
 
   /// The type that embeds this member
-  std::unique_ptr<Type> containing_type() const;
+  std::unique_ptr<Type> containing_type() const LIEF_LIFETIMEBOUND;
 
   ~PointerToMember() override;
 

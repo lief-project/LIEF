@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_CLASS_H
 #define LIEF_PDB_TYPE_CLASS_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
 #include "LIEF/PDB/types/Attribute.hpp"
@@ -47,10 +48,10 @@ class LIEF_API ClassLike : public Type {
   std::string unique_name() const;
 
   /// Iterator over the different attributes defined in this class-like type
-  attributes_iterator attributes() const;
+  attributes_iterator attributes() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over the different methods implemented in this class-type type
-  methods_iterator methods() const;
+  methods_iterator methods() const LIEF_LIFETIMEBOUND;
 
   template<class T>
   static bool classof(

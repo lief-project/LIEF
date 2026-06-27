@@ -15,6 +15,7 @@
 #ifndef LIEF_DWARF_LEXICAL_BLOCK_H
 #define LIEF_DWARF_LEXICAL_BLOCK_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/optional.hpp"
@@ -67,10 +68,10 @@ class LIEF_API LexicalBlock {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator--();
 
-    LIEF_API const LexicalBlock& operator*() const;
+    LIEF_API const LexicalBlock& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const LexicalBlock* operator->() const;
+    LIEF_API const LexicalBlock* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the lexical block at the current position
     /// to the caller. Returns `nullptr` if the iterator is past-the-end.
@@ -99,7 +100,7 @@ class LIEF_API LexicalBlock {
   std::string description() const;
 
   /// Return an iterator over the sub-LexicalBlock owned by this block.
-  sub_blocks_it sub_blocks() const;
+  sub_blocks_it sub_blocks() const LIEF_LIFETIMEBOUND;
 
   /// Return the start address of this block
   optional<uint64_t> addr() const;

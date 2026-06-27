@@ -21,6 +21,8 @@
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/compiler_attributes.hpp"
+
 #include "LIEF/range.hpp"
 #include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/Type.hpp"
@@ -75,10 +77,10 @@ class LIEF_API Function {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator--();
 
-    LIEF_API const Function& operator*() const;
+    LIEF_API const Function& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const Function* operator->() const;
+    LIEF_API const Function* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the function at the current position to the
     /// caller. Returns `nullptr` if the iterator is past-the-end.
@@ -117,7 +119,7 @@ class LIEF_API Function {
   /// Return an iterator of variables (`DW_TAG_variable`) defined within the
   /// scope of this function. This includes regular stack-based variables as
   /// well as static ones.
-  vars_it variables() const;
+  vars_it variables() const LIEF_LIFETIMEBOUND;
 
   /// Whether this function is created by the compiler and not
   /// present in the original source code
@@ -138,10 +140,10 @@ class LIEF_API Function {
 
   /// Return the dwarf::Type associated with the **return type** of this
   /// function
-  std::unique_ptr<Type> type() const;
+  std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;
 
   /// Return the function's parameters (including any template parameter)
-  parameters_t parameters() const;
+  parameters_t parameters() const LIEF_LIFETIMEBOUND;
 
   /// List of exceptions (types) that can be thrown by the function.
   ///
@@ -155,17 +157,17 @@ class LIEF_API Function {
   ///
   /// thrown_types() returns one element associated with the Type:
   /// `StatisticsError`.
-  thrown_types_t thrown_types() const;
+  thrown_types_t thrown_types() const LIEF_LIFETIMEBOUND;
 
   /// Return the scope in which this function is defined
-  std::unique_ptr<Scope> scope() const;
+  std::unique_ptr<Scope> scope() const LIEF_LIFETIMEBOUND;
 
   /// Disassemble the current function by returning an iterator over
   /// the assembly::Instruction
-  instructions_it instructions() const;
+  instructions_it instructions() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over the LexicalBlock owned by this function
-  lexical_blocks_it lexical_blocks() const;
+  lexical_blocks_it lexical_blocks() const LIEF_LIFETIMEBOUND;
 
   /// Description (`DW_AT_description`) of this function or an empty string
   std::string description() const;
