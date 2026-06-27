@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_UNKNOWN_H
 #define LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_UNKNOWN_H
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/span.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
 
@@ -50,11 +51,11 @@ class LIEF_API DynamicFixupUnknown : public DynamicFixup {
   }
 
   /// Raw fixups
-  span<const uint8_t> payload() const {
+  span<const uint8_t> payload() const LIEF_LIFETIMEBOUND {
     return payload_;
   }
 
-  span<uint8_t> payload() {
+  span<uint8_t> payload() LIEF_LIFETIMEBOUND {
     return payload_;
   }
 

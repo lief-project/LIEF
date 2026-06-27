@@ -19,6 +19,7 @@
 #include <vector>
 #include <memory>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
@@ -964,7 +965,7 @@ class LIEF_API Binary : public LIEF::Binary {
   span<const uint8_t> get_content_from_virtual_address(
       uint64_t virtual_address, uint64_t size,
       Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO
-  ) const override;
+  ) const LIEF_LIFETIMEBOUND override;
 
   /// Method associated with the visitor pattern.
   void accept(LIEF::Visitor& visitor) const override;
@@ -1007,7 +1008,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Overlay data (if any)
-  span<const uint8_t> overlay() const {
+  span<const uint8_t> overlay() const LIEF_LIFETIMEBOUND {
     return overlay_;
   }
 

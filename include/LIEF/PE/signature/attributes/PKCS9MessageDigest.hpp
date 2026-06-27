@@ -16,6 +16,7 @@
 #ifndef LIEF_PE_ATTRIBUTES_PKCS9_MESSAGE_DIGEST_H
 #define LIEF_PE_ATTRIBUTES_PKCS9_MESSAGE_DIGEST_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/span.hpp"
@@ -64,7 +65,7 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
   }
 
   /// Message digeset as a blob of bytes as described in the RFC
-  span<const uint8_t> digest() const {
+  span<const uint8_t> digest() const LIEF_LIFETIMEBOUND {
     return digest_;
   }
 

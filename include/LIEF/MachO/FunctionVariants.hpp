@@ -18,6 +18,7 @@
 #include <vector>
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
@@ -151,7 +152,7 @@ class LIEF_API FunctionVariants : public LoadCommand {
     }
 
     /// The `flagBitNums` value as a slice of bytes
-    span<const uint8_t> flag_bit_nums() const {
+    span<const uint8_t> flag_bit_nums() const LIEF_LIFETIMEBOUND {
       return flag_bit_nums_;
     }
 
@@ -308,11 +309,11 @@ class LIEF_API FunctionVariants : public LoadCommand {
 
   /// Return the data slice in the `__LINKEDIT` segment referenced by
   /// data_offset and data_size;
-  span<const uint8_t> content() const {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return content_;
   }
 
-  span<uint8_t> content() {
+  span<uint8_t> content() LIEF_LIFETIMEBOUND {
     return content_;
   }
 

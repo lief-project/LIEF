@@ -20,6 +20,7 @@
 #include <memory>
 #include <unordered_map>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
@@ -232,7 +233,7 @@ class LIEF_API Binary : public Object {
   /// Return the content located at the given virtual address
   virtual span<const uint8_t> get_content_from_virtual_address(
       uint64_t virtual_address, uint64_t size, VA_TYPES addr_type = VA_TYPES::AUTO
-  ) const = 0;
+  ) const LIEF_LIFETIMEBOUND = 0;
 
   /// Get the integer value at the given virtual address
   template<class T>

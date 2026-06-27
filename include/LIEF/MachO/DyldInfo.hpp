@@ -21,6 +21,7 @@
 #include <ostream>
 #include <memory>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -202,10 +203,10 @@ class LIEF_API DyldInfo : public LoadCommand {
   }
 
   /// Return Rebase's opcodes as raw data
-  span<const uint8_t> rebase_opcodes() const {
+  span<const uint8_t> rebase_opcodes() const LIEF_LIFETIMEBOUND {
     return rebase_opcodes_;
   }
-  span<uint8_t> rebase_opcodes() {
+  span<uint8_t> rebase_opcodes() LIEF_LIFETIMEBOUND {
     return rebase_opcodes_;
   }
 
@@ -234,10 +235,10 @@ class LIEF_API DyldInfo : public LoadCommand {
   }
 
   /// Return Binding's opcodes as raw data
-  span<const uint8_t> bind_opcodes() const {
+  span<const uint8_t> bind_opcodes() const LIEF_LIFETIMEBOUND {
     return bind_opcodes_;
   }
-  span<uint8_t> bind_opcodes() {
+  span<uint8_t> bind_opcodes() LIEF_LIFETIMEBOUND {
     return bind_opcodes_;
   }
 
@@ -269,10 +270,10 @@ class LIEF_API DyldInfo : public LoadCommand {
   }
 
   /// Return **Weak** Binding's opcodes as raw data
-  span<const uint8_t> weak_bind_opcodes() const {
+  span<const uint8_t> weak_bind_opcodes() const LIEF_LIFETIMEBOUND {
     return weak_bind_opcodes_;
   }
-  span<uint8_t> weak_bind_opcodes() {
+  span<uint8_t> weak_bind_opcodes() LIEF_LIFETIMEBOUND {
     return weak_bind_opcodes_;
   }
 

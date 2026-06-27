@@ -19,6 +19,7 @@
 #include <climits>
 #include <vector>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 
@@ -113,7 +114,7 @@ class LIEF_API ResourceIcon : public Object {
   }
 
   /// Pixels of the image (as bytes)
-  span<const uint8_t> pixels() const {
+  span<const uint8_t> pixels() const LIEF_LIFETIMEBOUND {
     return pixels_;
   }
 

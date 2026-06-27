@@ -22,6 +22,7 @@
 #include <memory>
 
 #include "LIEF/utils.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Abstract/Section.hpp"
 
@@ -238,7 +239,7 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   /// Section's content
-  span<const uint8_t> content() const override;
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND override;
 
   /// Set section content
   void content(const std::vector<uint8_t>& data) override;
@@ -390,7 +391,7 @@ class LIEF_API Section : public LIEF::Section {
   template<class T>
   LIEF_LOCAL Section(const T& header, ARCH arch);
 
-  LIEF_LOCAL span<uint8_t> writable_content();
+  LIEF_LOCAL span<uint8_t> writable_content() LIEF_LIFETIMEBOUND;
   ARCH arch_ = ARCH::NONE;
   TYPE type_ = TYPE::SHT_NULL_;
   uint64_t flags_ = 0;

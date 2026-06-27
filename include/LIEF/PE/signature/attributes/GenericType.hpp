@@ -18,6 +18,7 @@
 #include <memory>
 #include <vector>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
@@ -53,7 +54,7 @@ class LIEF_API GenericType : public Attribute {
   }
 
   /// Original DER blob of the attribute
-  span<const uint8_t> raw_content() const {
+  span<const uint8_t> raw_content() const LIEF_LIFETIMEBOUND {
     return raw_;
   }
 

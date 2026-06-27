@@ -29,6 +29,7 @@
 #include "LIEF/MachO/Stub.hpp"
 #include "LIEF/MachO/Builder.hpp"
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
 
@@ -672,7 +673,7 @@ class LIEF_API Binary : public LIEF::Binary {
   span<const uint8_t> get_content_from_virtual_address(
       uint64_t virtual_address, uint64_t size,
       Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO
-  ) const override;
+  ) const LIEF_LIFETIMEBOUND override;
 
   /// The binary entrypoint
   uint64_t entrypoint() const override;
@@ -1121,7 +1122,7 @@ class LIEF_API Binary : public LIEF::Binary {
     return bin->format() == Binary::FORMATS::MACHO;
   }
 
-  span<const uint8_t> overlay() const {
+  span<const uint8_t> overlay() const LIEF_LIFETIMEBOUND {
     return overlay_;
   }
 

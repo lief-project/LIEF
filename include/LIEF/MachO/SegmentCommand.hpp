@@ -23,6 +23,7 @@
 
 #include "LIEF/enums.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/iterators.hpp"
@@ -194,11 +195,11 @@ class LIEF_API SegmentCommand : public LoadCommand {
   Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND;
 
   /// The raw content of this segment
-  span<const uint8_t> content() const {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return data_;
   }
 
-  span<uint8_t> content() {
+  span<uint8_t> content() LIEF_LIFETIMEBOUND {
     return data_;
   }
 

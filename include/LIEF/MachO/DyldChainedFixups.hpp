@@ -18,6 +18,7 @@
 #include <memory>
 #include "LIEF/span.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/DyldChainedFormat.hpp"
@@ -155,7 +156,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   }
 
   /// Return the raw content of the command
-  span<const uint8_t> payload() const {
+  span<const uint8_t> payload() const LIEF_LIFETIMEBOUND {
     return content_;
   }
 

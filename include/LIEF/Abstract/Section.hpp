@@ -22,6 +22,7 @@
 
 #include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -51,7 +52,7 @@ class LIEF_API Section : public Object {
   }
 
   /// Section's content
-  virtual span<const uint8_t> content() const {
+  virtual span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return {};
   }
 

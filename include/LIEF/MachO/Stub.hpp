@@ -129,7 +129,7 @@ class LIEF_API Stub {
     raw_(std::move(raw)) {}
 
   /// The (raw) instructions of this entry as a slice of bytes
-  span<const uint8_t> raw() const {
+  span<const uint8_t> raw() const LIEF_LIFETIMEBOUND {
     return raw_;
   }
 

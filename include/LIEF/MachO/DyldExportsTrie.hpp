@@ -19,6 +19,7 @@
 #include <string>
 #include "LIEF/span.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -84,7 +85,7 @@ class LIEF_API DyldExportsTrie : public LoadCommand {
     data_size_ = size;
   }
 
-  span<const uint8_t> content() const {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return content_;
   }
 

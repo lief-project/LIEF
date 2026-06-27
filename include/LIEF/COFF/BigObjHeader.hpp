@@ -20,6 +20,7 @@
 
 #include "LIEF/COFF/Header.hpp"
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -56,7 +57,7 @@ class LIEF_API BigObjHeader : public Header {
 
   /// Originally named `ClassID`, this uuid should match:
   /// `{D1BAA1C7-BAEE-4ba9-AF20-FAF66AA4DCB8}`
-  span<const uint8_t> uuid() const {
+  span<const uint8_t> uuid() const LIEF_LIFETIMEBOUND {
     return uuid_;
   }
 

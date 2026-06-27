@@ -22,6 +22,7 @@
 #include <memory>
 
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
@@ -210,7 +211,7 @@ class LIEF_API Segment : public Object {
   }
 
   /// The raw data associated with this segment.
-  span<const uint8_t> content() const;
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND;
 
   /// Check if the current segment has the given flag
   bool has(FLAGS flag) const {
@@ -316,7 +317,7 @@ class LIEF_API Segment : public Object {
                      Header::OS_ABI os = Header::OS_ABI::SYSTEMV);
 
   LIEF_LOCAL uint64_t handler_size() const;
-  span<uint8_t> writable_content();
+  span<uint8_t> writable_content() LIEF_LIFETIMEBOUND;
 
   TYPE type_ = TYPE::PT_NULL_;
   ARCH arch_ = ARCH::NONE;

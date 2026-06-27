@@ -17,6 +17,7 @@
 #define LIEF_MACHO_NOTE_COMMAND_H
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -55,11 +56,11 @@ class LIEF_API NoteCommand : public LoadCommand {
   }
 
   /// Owner of the note (e.g. `AIR_METALLIB`)
-  span<const char> owner() const {
+  span<const char> owner() const LIEF_LIFETIMEBOUND {
     return owner_;
   }
 
-  span<char> owner() {
+  span<char> owner() LIEF_LIFETIMEBOUND {
     return owner_;
   }
 

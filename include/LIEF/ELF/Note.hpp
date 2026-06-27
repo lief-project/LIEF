@@ -21,6 +21,7 @@
 #include <memory>
 
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
@@ -212,11 +213,11 @@ class LIEF_API Note : public Object {
   }
 
   /// Return the description associated with the note
-  span<const uint8_t> description() const {
+  span<const uint8_t> description() const LIEF_LIFETIMEBOUND {
     return description_;
   }
 
-  span<uint8_t> description() {
+  span<uint8_t> description() LIEF_LIFETIMEBOUND {
     return description_;
   }
 

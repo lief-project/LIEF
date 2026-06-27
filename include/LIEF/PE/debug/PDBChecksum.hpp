@@ -17,6 +17,7 @@
 #define LIEF_PE_PDBCHECKSUM_H
 #include <vector>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PE/debug/Debug.hpp"
 
@@ -57,11 +58,11 @@ class LIEF_API PDBChecksum : public Debug {
   }
 
   /// Hash of the PDB content
-  span<const uint8_t> hash() const {
+  span<const uint8_t> hash() const LIEF_LIFETIMEBOUND {
     return hash_;
   }
 
-  span<uint8_t> hash() {
+  span<uint8_t> hash() LIEF_LIFETIMEBOUND {
     return hash_;
   }
 
