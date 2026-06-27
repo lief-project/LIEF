@@ -2,6 +2,7 @@ import struct
 from pathlib import Path
 
 import lief
+import pytest
 from utils import check_layout, get_sample, parse_macho
 
 
@@ -86,6 +87,7 @@ def _check_xpcproxy_infos(macho: lief.MachO.Binary, *, original: bool):
     assert cryptex.data_offset == xpc_support.data_offset + xpc_support.data_size
 
 
+@pytest.mark.private
 def test_lazy_load_dylib_info(tmp_path: Path):
     bin_path = Path(get_sample("private/MachO/xpcproxy"))
     macho = parse_macho(bin_path).at(0)
@@ -112,6 +114,7 @@ def test_lazy_load_dylib_info(tmp_path: Path):
     assert rebuilt == original
 
 
+@pytest.mark.private
 def test_lazy_load_dylib_info_shift(tmp_path: Path):
     bin_path = Path(get_sample("private/MachO/xpcproxy"))
     macho = parse_macho(bin_path).at(0)
@@ -148,6 +151,7 @@ def test_lazy_load_dylib_info_shift(tmp_path: Path):
         assert info.data_offset == off + shift
 
 
+@pytest.mark.private
 def test_lazy_load_dylib_info_modify(tmp_path: Path):
     bin_path = Path(get_sample("private/MachO/xpcproxy"))
     macho = parse_macho(bin_path).at(0)
@@ -201,6 +205,7 @@ def test_lazy_load_dylib_info_modify(tmp_path: Path):
     assert new_xpc.flags == 0
 
 
+@pytest.mark.private
 def test_lazy_load_dylib_info_modify_offsets(tmp_path: Path):
     bin_path = Path(get_sample("private/MachO/xpcproxy"))
     macho = parse_macho(bin_path).at(0)
@@ -225,6 +230,7 @@ def test_lazy_load_dylib_info_modify_offsets(tmp_path: Path):
     assert len(list(new_xpc.fixups)) == 0
 
 
+@pytest.mark.private
 def test_lazy_load_dylib_info_layout_check(tmp_path: Path):
     bin_path = Path(get_sample("private/MachO/xpcproxy"))
     macho = parse_macho(bin_path).at(0)
