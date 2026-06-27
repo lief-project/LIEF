@@ -81,14 +81,11 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
     dw::Type& type = types_.add_type(api_compat::get_type(p.type));
     std::unique_ptr<dw::Function::Parameter> P =
         dw_func->add_parameter(name, type);
-    if (!p.defaultLocation) {
-      if (p.location.type == BNVariableSourceType::RegisterVariableSourceType) {
-        int64_t reg = p.location.storage;
-        if (bn::Ref<bn::Platform> platform = func.GetPlatform()) {
-          std::string reg_name = platform->GetArchitecture()->GetRegisterName(reg);
-          if (!reg_name.empty()) {
-            P->assign_register(reg_name);
-          }
+    if (std::optional<int64_t> reg = api_compat::get_parameter_register(p, i)) {
+      if (bn::Ref<bn::Platform> platform = func.GetPlatform()) {
+        std::string reg_name = platform->GetArchitecture()->GetRegisterName(*reg);
+        if (!reg_name.empty()) {
+          P->assign_register(reg_name);
         }
       }
     }

@@ -1,4 +1,8 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
+#include <optional>
+
 #include "binaryninja/binaryninjaapi.h"
 
 
@@ -13,6 +17,14 @@
   #define BN_FRAGMENT_TYPE_CLASS_SUPPORT 1
 #else
   #define BN_FRAGMENT_TYPE_CLASS_SUPPORT 0
+#endif
+
+// FunctionParameter switched from a flat `Variable location` to a `ValueLocation
+// location` in BinaryNinja 5.4
+#if BN_VERSION_MAJOR >= 5 && BN_VERSION_MINOR >= 4
+  #define BN_VALUE_LOCATION_SUPPORT 1
+#else
+  #define BN_VALUE_LOCATION_SUPPORT 0
 #endif
 
 
@@ -33,6 +45,29 @@ inline bool as_bool(const bn::Ref<bn::Type>& arg) {
 
 inline bool as_bool(const bn::Confidence<bn::Ref<bn::Type>>& arg) {
   return as_bool(arg.GetValue());
+}
+
+inline std::optional<int64_t>
+    get_parameter_register(const bn::FunctionParameter& param, size_t idx) {
+#if BN_VALUE_LOCATION_SUPPORT
+  if (param.locationSource == BNValueLocationSource::DefaultLocationSource) {
+    return std::nullopt;
+  }
+  std::optional<bn::Variable> var = param.location.GetVariableForParameter(idx);
+  if (!var || var->type != BNVariableSourceType::RegisterVariableSourceType) {
+    return std::nullopt;
+  }
+  return var->storage;
+#else
+  (void)idx;
+  if (param.defaultLocation) {
+    return std::nullopt;
+  }
+  if (param.location.type != BNVariableSourceType::RegisterVariableSourceType) {
+    return std::nullopt;
+  }
+  return param.location.storage;
+#endif
 }
 
 
