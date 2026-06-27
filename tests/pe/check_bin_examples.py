@@ -1,7 +1,8 @@
 from pathlib import Path
 from subprocess import check_call
 
-from utils import lief_build_dir, lief_samples_dir
+import pytest
+from utils import is_github_ci, lief_build_dir, lief_samples_dir
 
 SAMPLE = lief_samples_dir() / "PE" / "PE32_x86_library_kernel32.dll"
 
@@ -27,6 +28,7 @@ def test_pe_builder(tmp_path: Path) -> None:
     check_call([target, SAMPLE, out])
 
 
+@pytest.mark.skipif(is_github_ci(), reason="Does not work on GHA")
 def test_pe_authenticode_check() -> None:
     sample = (
         lief_samples_dir()
