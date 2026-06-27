@@ -28,7 +28,7 @@ bitflags! {
 }
 
 /// This trait is shared by all [`Instructions`] supported by LIEF
-pub trait Instruction {
+pub trait Instruction: std::fmt::Display {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::asm_Instruction;
 
@@ -52,12 +52,8 @@ pub trait Instruction {
         self.as_generic().mnemonic().to_string()
     }
 
-    /// Representation of the current instruction in a pretty assembly way
-    fn to_string(&self) -> String {
-        self.as_generic().to_string().to_string()
-    }
-
-    /// Same as [`Instruction::to_string`] but without the address as prefix
+    /// Same as the [`Display`](std::fmt::Display) representation (i.e.
+    /// [`ToString::to_string`]) but without the address as prefix
     fn to_string_no_address(&self) -> String {
         self.as_generic().to_string_no_address().to_string()
     }
@@ -270,6 +266,12 @@ impl Instruction for Instructions {
     }
 }
 
+impl std::fmt::Display for Instructions {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.as_generic().to_string())
+    }
+}
+
 /// Generic Instruction
 pub struct Generic {
     ptr: cxx::UniquePtr<ffi::asm_Instruction>,
@@ -285,5 +287,11 @@ impl Instruction for Generic {
     #[doc(hidden)]
     fn as_generic(&self) -> &ffi::asm_Instruction {
         self.ptr.as_ref().unwrap()
+    }
+}
+
+impl std::fmt::Display for Generic {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.as_generic().to_string())
     }
 }

@@ -25,6 +25,12 @@ impl assembly::Instruction for Instruction {
     }
 }
 
+impl std::fmt::Display for Instruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", assembly::Instruction::as_generic(self).to_string())
+    }
+}
+
 impl Instruction {
     /// The instruction opcode as defined in LLVM
     pub fn opcode(&self) -> Opcode {

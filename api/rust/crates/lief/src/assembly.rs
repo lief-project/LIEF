@@ -8,7 +8,7 @@
 //! ```
 //! fn disassemble(target: &dyn lief::generic::Binary) {
 //!     for inst in target.disassemble_symbol("_entrypoint") {
-//!         println!("{}", inst.to_string());
+//!         println!("{}", inst);
 //!     }
 //! }
 //! ```
