@@ -350,15 +350,25 @@ void Parser::parse_header_keys() {
   }
 
   for (HEADER_KEYS key : header_keys_list) {
-    std::string key_str = std::string{'\0'} + Header::key_to_string(key);
+    const std::string key_str = std::string{'\0'} + Header::key_to_string(key);
 
-    size_t pos = key_values.find(key_str);
-
-    if (pos != std::string::npos) {
-      std::string value =
-          std::string{key_values.data() + pos + key_str.size() + 1};
-      oat.header_.dex2oat_context_.emplace(key, value);
+    const size_t pos = key_values.find(key_str);
+    if (pos == std::string::npos) {
+      continue;
     }
+
+    const size_t value_start = pos + key_str.size() + 1;
+    if (value_start > key_values.size()) {
+      continue;
+    }
+
+    const size_t value_end = key_values.find('\0', value_start);
+
+    std::string value =
+        value_end == std::string::npos ?
+            key_values.substr(value_start) :
+            key_values.substr(value_start, value_end - value_start);
+    oat.header_.dex2oat_context_.emplace(key, std::move(value));
   }
 }
 
