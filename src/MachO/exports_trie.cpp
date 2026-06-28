@@ -17,6 +17,9 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 
+#include <algorithm>
+#include <unordered_set>
+
 #include <spdlog/fmt/fmt.h>
 
 #include "logging.hpp"
@@ -26,10 +29,16 @@
 
 
 namespace LIEF::MachO {
-void show_trie(std::ostream& output, std::string output_prefix,
-               BinaryStream& stream, uint64_t start, uint64_t end,
-               const std::string& prefix) {
 
+void show_trie_impl(std::ostream& output, std::string output_prefix,
+                    BinaryStream& stream, uint64_t start, uint64_t end,
+                    const std::string& prefix,
+                    std::unordered_set<uint64_t>& visited, size_t depth) {
+  constexpr size_t MAX_TRIE_DEPTH = 60;
+
+  if (depth > MAX_TRIE_DEPTH) {
+    return;
+  }
 
   if (stream.pos() >= end) {
     return;
@@ -39,17 +48,19 @@ void show_trie(std::ostream& output, std::string output_prefix,
     return;
   }
 
-  uint8_t terminal_size = 0;
-  if (auto res = stream.read<uint8_t>()) {
-    terminal_size = *res;
-  } else {
+  if (!visited.insert(stream.pos()).second) {
+    return;
+  }
+
+  auto terminal_size = stream.read<uint8_t>();
+  if (!terminal_size) {
     LIEF_ERR("Failed to read terminal size");
     return;
   }
 
-  uint64_t children_offset = stream.pos() + terminal_size;
+  uint64_t children_offset = stream.pos() + *terminal_size;
 
-  if (terminal_size != 0) {
+  if (*terminal_size != 0) {
     auto flags =
         stream.read_uleb128().map([](uint64_t v) { return (ExportInfo::FLAGS)v; });
     if (!flags) {
@@ -115,8 +126,15 @@ void show_trie(std::ostream& output, std::string output_prefix,
     return;
   }
 
+  if (stream.pos() >= end) {
+    return;
+  }
+
+  const uint64_t remaining = end - stream.pos();
+  const uint64_t children = std::min<uint64_t>(*nb_children, remaining);
+
   output_prefix += "    ";
-  for (size_t i = 0; i < *nb_children; ++i) {
+  for (uint64_t i = 0; i < children; ++i) {
     auto suffix = stream.read_string();
     if (!suffix) {
       break;
@@ -128,11 +146,24 @@ void show_trie(std::ostream& output, std::string output_prefix,
       break;
     }
 
+    if (*child_node_offet >= end - start) {
+      break;
+    }
+
     output << fmt::format("{}{}@off.{:#x}\n", output_prefix, name, stream.pos());
 
     ScopedStream scope(stream, start + *child_node_offet);
-    show_trie(output, output_prefix, *scope, start, end, name);
+    show_trie_impl(output, output_prefix, *scope, start, end, name, visited,
+                   depth + 1);
   }
+}
+
+void show_trie(std::ostream& output, std::string output_prefix,
+               BinaryStream& stream, uint64_t start, uint64_t end,
+               const std::string& prefix) {
+  std::unordered_set<uint64_t> visited;
+  show_trie_impl(output, std::move(output_prefix), stream, start, end, prefix,
+                 visited, /*depth=*/0);
 }
 
 std::vector<uint8_t> create_trie(const exports_list_t& exports,
