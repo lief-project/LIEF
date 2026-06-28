@@ -16,6 +16,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <unordered_set>
 
 #include "logging.hpp"
 
@@ -2975,9 +2976,15 @@ ok_error_t BinaryParser::walk_chain(
     SegmentCommand& segment, uint64_t chain_address, uint64_t chain_offset,
     const details::dyld_chained_starts_in_segment& seg_info
 ) {
+  std::unordered_set<uint64_t> visited;
   bool stop = false;
   bool chain_end = false;
   while (!stop && !chain_end) {
+    if (!visited.insert(chain_offset).second) {
+      LIEF_WARN("Cycle detected in the chained fixup at offset: {:#x}",
+                chain_offset);
+      return make_error_code(lief_errors::corrupted);
+    }
     if (!process_fixup<MACHO_T>(segment, chain_address, chain_offset, seg_info)) {
       LIEF_WARN("Error while processing the chain at offset: {:#x}", chain_offset);
       return make_error_code(lief_errors::parsing_error);
@@ -3081,6 +3088,9 @@ result<uint64_t> BinaryParser::next_chain(
       while (chain.rebase.bind == 0 &&
              chain.rebase.target > seg_info.max_valid_pointer)
       {
+        if (chain.rebase.next == 0) {
+          return CHAIN_END;
+        }
         const uint32_t delta = chain.rebase.next * stride;
         chain_offset += delta;
         chain_address += delta;
