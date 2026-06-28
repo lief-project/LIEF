@@ -1,5 +1,6 @@
 import ctypes
 import random
+import struct
 import zipfile
 from hashlib import md5
 from pathlib import Path
@@ -1091,3 +1092,30 @@ def test_infinite_recursion():
     """Bug found with Codex 5.3"""
     pe = lief.PE.parse(get_sample("PE/pe_deep_rsrc.bin"))
     assert pe is not None
+
+
+def test_truncated_resource_directory():
+    # Claims two ID entries while only a single entry actually fits in the buffer.
+    table = struct.pack(
+        "<IIHHHH",
+        0,  # Characteristics
+        0,  # TimeDateStamp
+        0,  # MajorVersion
+        0,  # MinorVersion
+        0,  # NumberOfNameEntries
+        2,  # NumberOfIDEntries  <-- advertises two entries
+    )
+
+    # Single self-referential sub-directory entry pointing back to the root table.
+    entry = struct.pack(
+        "<II",
+        0,           # NameID.IntegerID
+        0x80000000,  # RVA: high bit set -> sub-directory at offset 0 (the root)
+    )  # fmt: off
+
+    raw = table + entry
+
+    node = lief.PE.ResourceNode.parse(raw, 0)
+    assert isinstance(node, lief.PE.ResourceDirectory)
+    assert node.numberof_id_entries == 2
+    assert len(node.childs) == 0
