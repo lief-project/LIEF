@@ -81,7 +81,12 @@ void Parser::parse_binary<details::OAT64_t>() {
     span<const uint8_t> raw_oatexec =
         oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
-    uint32_t padding = exec_start_ - (data_address_ + data_size_);
+    auto gap = oat_data_exec_gap();
+    if (!gap) {
+      LIEF_WARN("Corrupted OAT layout: inconsistent oatdata/oatexec ranges");
+      return;
+    }
+    const uint64_t padding = *gap;
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
@@ -125,7 +130,12 @@ void Parser::parse_binary<details::OAT79_t>() {
     span<const uint8_t> raw_oatexec =
         oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
-    uint32_t padding = exec_start_ - (data_address_ + data_size_);
+    auto gap = oat_data_exec_gap();
+    if (!gap) {
+      LIEF_WARN("Corrupted OAT layout: inconsistent oatdata/oatexec ranges");
+      return;
+    }
+    const uint64_t padding = *gap;
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
@@ -170,7 +180,12 @@ void Parser::parse_binary<details::OAT88_t>() {
     span<const uint8_t> raw_oatexec =
         oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
-    uint32_t padding = exec_start_ - (data_address_ + data_size_);
+    auto gap = oat_data_exec_gap();
+    if (!gap) {
+      LIEF_WARN("Corrupted OAT layout: inconsistent oatdata/oatexec ranges");
+      return;
+    }
+    const uint64_t padding = *gap;
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
@@ -215,7 +230,12 @@ void Parser::parse_binary<details::OAT124_t>() {
     span<const uint8_t> raw_oatexec =
         oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
-    uint32_t padding = exec_start_ - (data_address_ + data_size_);
+    auto gap = oat_data_exec_gap();
+    if (!gap) {
+      LIEF_WARN("Corrupted OAT layout: inconsistent oatdata/oatexec ranges");
+      return;
+    }
+    const uint64_t padding = *gap;
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
@@ -260,7 +280,12 @@ void Parser::parse_binary<details::OAT131_t>() {
     span<const uint8_t> raw_oatexec =
         oat.get_content_from_virtual_address(oat_exec->value(), oat_exec->size());
 
-    uint32_t padding = exec_start_ - (data_address_ + data_size_);
+    auto gap = oat_data_exec_gap();
+    if (!gap) {
+      LIEF_WARN("Corrupted OAT layout: inconsistent oatdata/oatexec ranges");
+      return;
+    }
+    const uint64_t padding = *gap;
 
     raw_oat.reserve(raw_oat.size() + oat_exec->size() + padding);
     raw_oat.insert(raw_oat.end(), padding, 0);
