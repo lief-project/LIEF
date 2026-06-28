@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <cctype>
 #include <string>
 #include "OAT/Structures.hpp"
 #include "LIEF/OAT/utils.hpp"
@@ -88,8 +90,17 @@ oat_version_t version(const ELF::Binary& elf) {
     if (header.size() != sizeof(details::oat_version)) {
       return 0;
     }
-    return std::stoul(std::string(reinterpret_cast<const char*>(header.data()),
-                                  3));
+
+    const auto* digits = reinterpret_cast<const char*>(header.data());
+    const bool all_digits = std::all_of(digits, digits + 3, [](unsigned char c) {
+      return std::isdigit(c) != 0;
+    });
+    if (!all_digits) {
+      return 0;
+    }
+
+    return static_cast<oat_version_t>((digits[0] - '0') * 100 +
+                                      (digits[1] - '0') * 10 + (digits[2] - '0'));
   }
   return 0;
 }
