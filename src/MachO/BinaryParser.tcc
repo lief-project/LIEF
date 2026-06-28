@@ -75,6 +75,7 @@
 #include "MachO/Structures.hpp"
 #include "MachO/ChainedFixup.hpp"
 #include "MachO/ChainedBindingInfoList.hpp"
+#include "MachO/dyld_opcodes.hpp"
 
 #include "Object.tcc"
 
@@ -1502,7 +1503,11 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
       case DyldInfo::REBASE_OPCODES::DO_REBASE_IMM_TIMES:
       {
         for (size_t i = 0; i < imm; ++i) {
-          do_rebase<MACHO_T>(type, segment_index, segment_offset, &segments);
+          if (is_err(do_rebase<MACHO_T>(type, segment_index, segment_offset,
+                                        &segments)))
+          {
+            break;
+          }
           segment_offset += sizeof(pint_t);
           if (current_segment == nullptr) {
             LIEF_WARN(
@@ -1524,7 +1529,8 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
           LIEF_ERR("REBASE_OPCODE_DO_REBASE_ULEB_TIMES: Can't read uleb128 count");
           break;
         }
-        count = *uleb128_val;
+        count = safe_dyld_opcode_count<uint32_t>(current_segment, segment_offset,
+                                                 sizeof(pint_t), *uleb128_val);
         for (size_t i = 0; i < count; ++i) {
           if (current_segment == nullptr) {
             LIEF_WARN(
@@ -1537,7 +1543,11 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
             );
           }
 
-          do_rebase<MACHO_T>(type, segment_index, segment_offset, &segments);
+          if (is_err(do_rebase<MACHO_T>(type, segment_index, segment_offset,
+                                        &segments)))
+          {
+            break;
+          }
           segment_offset += sizeof(pint_t);
         }
         break;
@@ -1589,6 +1599,8 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
         // Skip
         skip = *uleb128_val;
 
+        count = safe_dyld_opcode_count<uint32_t>(current_segment, segment_offset,
+                                                 sizeof(pint_t), count);
 
         for (size_t i = 0; i < count; ++i) {
           if (current_segment == nullptr) {
@@ -1599,7 +1611,11 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
                       "offset ({:#x} > {:#x})",
                       segment_offset, current_segment->file_size());
           }
-          do_rebase<MACHO_T>(type, segment_index, segment_offset, &segments);
+          if (is_err(do_rebase<MACHO_T>(type, segment_index, segment_offset,
+                                        &segments)))
+          {
+            break;
+          }
           segment_offset += skip + sizeof(pint_t);
         }
 
@@ -1863,10 +1879,20 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
         }
         skip = *val;
 
+        {
+          const SegmentCommand* current_segment =
+              segment_idx < segments.size() ? &segments[segment_idx] : nullptr;
+          count = safe_dyld_opcode_count<uint32_t>(current_segment, segment_offset,
+                                                   sizeof(pint_t), count);
+        }
         for (size_t i = 0; i < count; ++i) {
-          do_bind<MACHO_T>(DyldBindingInfo::CLASS::STANDARD, type, segment_idx,
-                           segment_offset, symbol_name, library_ordinal, addend,
-                           is_weak_import, false, &segments, start_offset);
+          if (is_err(do_bind<MACHO_T>(DyldBindingInfo::CLASS::STANDARD, type,
+                                      segment_idx, segment_offset, symbol_name,
+                                      library_ordinal, addend, is_weak_import,
+                                      false, &segments, start_offset)))
+          {
+            break;
+          }
           start_offset = stream_->pos() - offset + 1;
           segment_offset += skip + sizeof(pint_t);
         }
@@ -2192,10 +2218,21 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
         }
         skip = *val;
 
+        {
+          const SegmentCommand* current_segment =
+              segment_idx < segments.size() ? &segments[segment_idx] : nullptr;
+          count = safe_dyld_opcode_count<uint32_t>(current_segment, segment_offset,
+                                                   sizeof(pint_t), count);
+        }
         for (size_t i = 0; i < count; ++i) {
-          do_bind<MACHO_T>(DyldBindingInfo::CLASS::WEAK, type, segment_idx,
-                           segment_offset, symbol_name, 0, addend, is_weak_import,
-                           is_non_weak_definition, &segments, start_offset);
+          if (is_err(do_bind<MACHO_T>(DyldBindingInfo::CLASS::WEAK, type,
+                                      segment_idx, segment_offset, symbol_name, 0,
+                                      addend, is_weak_import,
+                                      is_non_weak_definition, &segments,
+                                      start_offset)))
+          {
+            break;
+          }
           start_offset = stream_->pos() - offset + 1;
           segment_offset += skip + sizeof(pint_t);
         }

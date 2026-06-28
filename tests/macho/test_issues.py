@@ -1,3 +1,4 @@
+import struct
 from pathlib import Path
 
 import lief
@@ -139,3 +140,19 @@ def test_1344(tmp_path: Path):
     for cmd in new.commands:
         off += cmd.size
     assert off == new.header.sizeof_cmds + header_size
+
+
+@pytest.mark.private
+def test_large_dyld_rebase_count():
+    target = parse_macho("private/MachO/issue_rebase_count.macho").at(0)
+    assert target is not None
+
+    dyld_info = target.dyld_info
+    assert dyld_info is not None
+
+    relocations = list(target.relocations)
+    assert len(relocations) < 0x1000
+
+    # The display walker must stay bounded as well (no multi-GB string).
+    opcodes_repr = dyld_info.show_rebases_opcodes
+    assert opcodes_repr.count("rebase(") < 0x1000

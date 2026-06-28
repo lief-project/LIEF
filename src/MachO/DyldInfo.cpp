@@ -38,6 +38,7 @@
 
 #include "MachO/exports_trie.hpp"
 #include "MachO/Structures.hpp"
+#include "MachO/dyld_opcodes.hpp"
 
 #include "Object.tcc"
 
@@ -242,6 +243,11 @@ std::string DyldInfo::show_rebases_opcodes() const {
           break;
         }
 
+        count = safe_dyld_opcode_count<uint32_t>(segment_index < segments.size() ?
+                                                     &segments[segment_index] :
+                                                     nullptr,
+                                                 segment_offset, pint_v, count);
+
         output << "[" << to_string(opcode) << "]" << '\n';
 
         output << fmt::format("{}for i in range({}):\n", tab,
@@ -313,6 +319,11 @@ std::string DyldInfo::show_rebases_opcodes() const {
                    "REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB skip");
           break;
         }
+
+        count = safe_dyld_opcode_count<uint32_t>(segment_index < segments.size() ?
+                                                     &segments[segment_index] :
+                                                     nullptr,
+                                                 segment_offset, pint_v, count);
 
         output << fmt::format("{}for i in range({}):\n", tab,
                               static_cast<uint32_t>(count));
@@ -657,6 +668,11 @@ void DyldInfo::show_bindings(std::ostream& output,
           );
           break;
         }
+
+        count = safe_dyld_opcode_count<uint32_t>(segment_idx < segments.size() ?
+                                                     &segments[segment_idx] :
+                                                     nullptr,
+                                                 segment_offset, pint_v, count);
 
         output << tab
                << fmt::format("for i in range({}):\n",
