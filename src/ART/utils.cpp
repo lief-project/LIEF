@@ -44,8 +44,8 @@ inline art_version_t version(BinaryStream& stream) {
   stream.increment_pos(sizeof(details::art_magic));
   if (auto ver_res = stream.peek<version_t>()) {
     const auto version = *ver_res;
-    return static_cast<art_version_t>(
-        parse_android_version(version.data(), version.size()));
+    return static_cast<art_version_t>(parse_android_version(version.data(),
+                                                            version.size()));
   }
   return 0;
 }

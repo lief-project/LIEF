@@ -25,7 +25,8 @@ template<class T>
 Header::Header(const T* header) :
   magic_{},
   version_{static_cast<vdex_version_t>(parse_android_version(
-      reinterpret_cast<const char*>(header->version), sizeof(header->version)))},
+      reinterpret_cast<const char*>(header->version), sizeof(header->version)
+  ))},
   nb_dex_files_{header->number_of_dex_files},
   dex_size_{header->dex_size},
   verifier_deps_size_{header->verifier_deps_size},
