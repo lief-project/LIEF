@@ -112,7 +112,18 @@ void Parser::parse_strings() {
     }
   }
 
-  file_->strings_.reserve(strings_location.second);
+  const uint64_t nb_strings = strings_location.second;
+  const uint64_t table_offset = strings_location.first;
+  const uint64_t stream_size = stream_->size();
+
+  if (table_offset >= stream_size) {
+    LIEF_WARN("DEX string-id table offset ({:#x}) is out of bounds", table_offset);
+    return;
+  }
+
+  const uint64_t max_entries = (stream_size - table_offset) / sizeof(uint32_t);
+  file_->strings_.reserve(nb_strings < max_entries ? nb_strings : max_entries);
+
   for (size_t i = 0; i < strings_location.second; ++i) {
     auto string_offset =
         stream_->peek<uint32_t>(strings_location.first + i * sizeof(uint32_t));
