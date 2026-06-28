@@ -16,13 +16,16 @@
 #include <string>
 #include "LIEF/VDEX/Header.hpp"
 
+#include "internal_utils.hpp"
+
 
 namespace LIEF::VDEX {
 
 template<class T>
 Header::Header(const T* header) :
   magic_{},
-  version_{0},
+  version_{static_cast<vdex_version_t>(parse_android_version(
+      reinterpret_cast<const char*>(header->version), sizeof(header->version)))},
   nb_dex_files_{header->number_of_dex_files},
   dex_size_{header->dex_size},
   verifier_deps_size_{header->verifier_deps_size},
@@ -30,10 +33,6 @@ Header::Header(const T* header) :
 
   std::copy(std::begin(header->magic), std::end(header->magic),
             std::begin(magic_));
-
-  version_ = static_cast<vdex_version_t>(std::stoi(std::string{
-      reinterpret_cast<const char*>(header->version), sizeof(header->version)
-  }));
 }
 
 

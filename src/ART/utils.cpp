@@ -20,6 +20,8 @@
 #include "LIEF/ART/utils.hpp"
 #include "ART/Structures.hpp"
 
+#include "internal_utils.hpp"
+
 
 namespace LIEF::ART {
 
@@ -42,14 +44,8 @@ inline art_version_t version(BinaryStream& stream) {
   stream.increment_pos(sizeof(details::art_magic));
   if (auto ver_res = stream.peek<version_t>()) {
     const auto version = *ver_res;
-    const bool are_digits =
-        std::all_of(version.begin(), version.end(),
-                    [](char c) { return c == 0 || ::isdigit(c); });
-    if (!are_digits) {
-      return 0;
-    }
-    std::string version_str(version.begin(), version.end());
-    return static_cast<art_version_t>(std::stoul(version_str));
+    return static_cast<art_version_t>(
+        parse_android_version(version.data(), version.size()));
   }
   return 0;
 }

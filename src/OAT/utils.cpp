@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-#include <cctype>
 #include <string>
 #include "OAT/Structures.hpp"
 #include "LIEF/OAT/utils.hpp"
@@ -24,6 +22,8 @@
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/utils.hpp"
 #include "frozen.hpp"
+
+#include "internal_utils.hpp"
 
 
 namespace LIEF::OAT {
@@ -91,16 +91,8 @@ oat_version_t version(const ELF::Binary& elf) {
       return 0;
     }
 
-    const auto* digits = reinterpret_cast<const char*>(header.data());
-    const bool all_digits = std::all_of(digits, digits + 3, [](unsigned char c) {
-      return std::isdigit(c) != 0;
-    });
-    if (!all_digits) {
-      return 0;
-    }
-
-    return static_cast<oat_version_t>((digits[0] - '0') * 100 +
-                                      (digits[1] - '0') * 10 + (digits[2] - '0'));
+    return static_cast<oat_version_t>(parse_android_version(
+        reinterpret_cast<const char*>(header.data()), header.size()));
   }
   return 0;
 }
