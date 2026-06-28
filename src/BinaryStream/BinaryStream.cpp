@@ -64,21 +64,40 @@ result<int64_t> BinaryStream::read_dwarf_encoded(uint8_t encoding) const {
   }
 }
 
+// A 64-bit integer is encoded on at most 10 LEB128 bytes
+static constexpr unsigned LEB128_MAX_BYTES = 10;
+
 result<uint64_t> BinaryStream::read_uleb128(size_t* size) const {
   uint64_t value = 0;
   unsigned shift = 0;
+  unsigned count = 0;
   result<uint8_t> byte_read = 0;
 
   const uint64_t opos = pos();
 
   do {
+    if (count == LEB128_MAX_BYTES) {
+      return make_error_code(lief_errors::corrupted);
+    }
+
     byte_read = read<uint8_t>();
     if (!byte_read) {
       return make_error_code(lief_errors::read_error);
     }
-    value += static_cast<uint64_t>(*byte_read & 0x7f) << shift;
-    shift += 7;
-  } while (byte_read && *byte_read >= 128);
+    ++count;
+
+    const uint64_t slice = *byte_read & 0x7f;
+
+    if (shift < 64u) {
+      if ((slice << shift >> shift) != slice) {
+        return make_error_code(lief_errors::corrupted);
+      }
+      value |= slice << shift;
+      shift += 7;
+    } else if (slice != 0) {
+      return make_error_code(lief_errors::corrupted);
+    }
+  } while (*byte_read >= 128);
 
   if (size != nullptr) {
     *size = pos() - opos;
@@ -90,28 +109,40 @@ result<uint64_t> BinaryStream::read_uleb128(size_t* size) const {
 result<uint64_t> BinaryStream::read_sleb128(size_t* size) const {
   int64_t value = 0;
   unsigned shift = 0;
+  unsigned count = 0;
   result<uint8_t> byte_read = 0;
   const uint64_t opos = pos();
+
   do {
+    if (count == LEB128_MAX_BYTES) {
+      return make_error_code(lief_errors::corrupted);
+    }
+
     byte_read = read<uint8_t>();
     if (!byte_read) {
       return make_error_code(lief_errors::read_error);
     }
-    value += static_cast<int64_t>(*byte_read & 0x7f) << shift;
-    shift += 7;
-  } while (byte_read && *byte_read >= 128);
+    ++count;
 
+    const uint64_t slice = *byte_read & 0x7f;
 
-  // Sign extend
-  if ((*byte_read & 0x40) != 0) {
-    value |= -1llu << shift;
+    if (shift < 64u) {
+      value |= (int64_t)(slice << shift);
+      shift += 7;
+    } else if (slice != ((value < 0) ? 0x7fu : 0x00u)) {
+      return make_error_code(lief_errors::corrupted);
+    }
+  } while (*byte_read >= 128);
+
+  if (shift < 64u && (*byte_read & 0x40) != 0) {
+    value |= (int64_t)-1llu << shift;
   }
 
   if (size != nullptr) {
     *size = pos() - opos;
   }
 
-  return value;
+  return (uint64_t)value;
 }
 
 result<std::string> BinaryStream::read_string(size_t maxsize) const {
