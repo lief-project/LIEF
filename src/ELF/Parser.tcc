@@ -1042,12 +1042,24 @@ ok_error_t Parser::parse_packed_relocations(uint64_t offset, uint64_t size) {
     LIEF_ERR("Invalid Android packed relocation header");
     return make_error_code(lief_errors::read_error);
   }
-  ScopedStream rel_stream(*stream_, offset);
 
-  const auto H0 = stream_->read<char>().value_or(0);
-  const auto H1 = stream_->read<char>().value_or(0);
-  const auto H2 = stream_->read<char>().value_or(0);
-  const auto H3 = stream_->read<char>().value_or(0);
+  if (offset >= stream_->size()) {
+    LIEF_ERR("Android packed relocations: offset is out of range");
+    return make_error_code(lief_errors::read_error);
+  }
+  size = std::min<uint64_t>(size, stream_->size() - offset);
+  const auto* raw = stream_->peek_array<uint8_t>(offset, size);
+  if (raw == nullptr) {
+    LIEF_ERR("Can't read the Android packed relocation table");
+    return make_error_code(lief_errors::read_error);
+  }
+  SpanStream table_stream(raw, size);
+  ScopedStream rel_stream(table_stream);
+
+  const auto H0 = rel_stream->read<char>().value_or(0);
+  const auto H1 = rel_stream->read<char>().value_or(0);
+  const auto H2 = rel_stream->read<char>().value_or(0);
+  const auto H3 = rel_stream->read<char>().value_or(0);
 
   LIEF_DEBUG("Header: {} {} {} {}", H0, H1, H2, H3);
 
@@ -1076,6 +1088,13 @@ ok_error_t Parser::parse_packed_relocations(uint64_t offset, uint64_t size) {
   const ARCH arch = binary_->header().machine_type();
 
   LIEF_DEBUG("Nb relocs: {}", nb_relocs);
+
+  if (nb_relocs > NB_MAX_RELOCATIONS) {
+    LIEF_WARN("Android packed relocations: the number of relocations ({}) "
+              "exceeds the limit ({}). The table is likely corrupted",
+              nb_relocs, NB_MAX_RELOCATIONS);
+    return make_error_code(lief_errors::corrupted);
+  }
 
   while (nb_relocs > 0) {
     auto nb_reloc_group_r = rel_stream->read_sleb128();

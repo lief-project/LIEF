@@ -1,8 +1,10 @@
+import subprocess
+import sys
 from pathlib import Path
 
 import lief
 import pytest
-from utils import check_layout, get_sample
+from utils import check_layout, get_sample, parse_elf
 
 
 @pytest.mark.slow
@@ -180,3 +182,33 @@ def test_chrome_armv7(tmp_path: Path):
     assert mod_packed_relocs[513896].symbol is not None
     assert mod_packed_relocs[513896].symbol.name == "ioctl"
     assert mod_packed_relocs[513896].type == lief.ELF.Relocation.TYPE.ARM_ABS32
+
+
+def _address_space_limiter():
+    try:
+        import resource
+    except ImportError:
+        return None
+
+    def _limit():
+        # Limit the memory size to 2 GiB
+        cap = 2 * 1024 * 1024 * 1024
+        resource.setrlimit(resource.RLIMIT_AS, (cap, cap))
+
+    return _limit
+
+
+@pytest.mark.private
+@pytest.mark.linux
+def test_large_packed_relocations():
+    sample = Path(get_sample("private/ELF/large_packed_reloc.elf"))
+
+    subprocess.check_call(
+        [sys.executable, "-c", f'import lief; lief.parse(r"{sample}")'],
+        timeout=30.0,
+        preexec_fn=_address_space_limiter(),
+    )
+
+    parsed = parse_elf(sample)
+    packed = [r for r in parsed.dynamic_relocations if r.is_android_packed]
+    assert len(packed) == 0
