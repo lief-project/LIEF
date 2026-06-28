@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
 #include <sstream>
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
@@ -68,6 +69,10 @@ template<class PE_T>
 std::unique_ptr<EnclaveConfiguration>
     EnclaveConfiguration::parse(Parser& ctx, BinaryStream& stream) {
   using ptr_t = typename PE_T::uint;
+
+  static constexpr uint32_t ENCLAVE_IMPORT_SIZE = 0x50;
+  static constexpr uint32_t ENCLAVE_IMPORT_MAX_SIZE = 0x1000;
+
   auto config = std::make_unique<EnclaveConfiguration>();
   auto Size = stream.read<uint32_t>();
   if (!Size) {
@@ -161,18 +166,28 @@ std::unique_ptr<EnclaveConfiguration>
       .nb_threads(*NumberOfThreads)
       .enclave_flags(*EnclaveFlags);
 
-  if (*ImportEntrySize == 0 || *NumberOfImports == 0) {
+  if (*NumberOfImports == 0) {
     return config;
   }
 
-  if (*ImportEntrySize > 0x1000) {
+  if (*ImportEntrySize < ENCLAVE_IMPORT_SIZE ||
+      *ImportEntrySize > ENCLAVE_IMPORT_MAX_SIZE)
+  {
     return config;
   }
 
-  uint32_t base_offset = ctx.bin().rva_to_offset(*ImportList);
+  const uint64_t base_offset = ctx.bin().rva_to_offset(*ImportList);
+  const uint64_t stream_size = ctx.stream().size();
 
-  for (size_t i = 0; i < *NumberOfImports; ++i) {
-    uint32_t offset = base_offset + i * (*ImportEntrySize);
+  if (base_offset >= stream_size) {
+    return config;
+  }
+
+  const uint64_t max_imports = (stream_size - base_offset) / *ImportEntrySize;
+  const uint64_t nb_imports = std::min<uint64_t>(*NumberOfImports, max_imports);
+
+  for (size_t i = 0; i < nb_imports; ++i) {
+    const uint64_t offset = base_offset + i * (uint64_t)*ImportEntrySize;
     ScopedStream scope(ctx.stream(), offset);
     auto import = EnclaveImport::parse(ctx, *scope);
     if (!import) {
