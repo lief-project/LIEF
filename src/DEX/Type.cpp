@@ -107,6 +107,11 @@ Type& Type::underlying_array_type() {
 
 
 void Type::parse(const std::string& type) {
+  if (type.empty()) {
+    type_ = Type::TYPES::UNKNOWN;
+    return;
+  }
+
   const char t = type[0];
   switch (t) {
     case 'V':
