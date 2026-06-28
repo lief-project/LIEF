@@ -13,6 +13,7 @@ pub mod ffi {
         fn set_include_types(self: Pin<&mut LIEF_DeclOpt>, value: bool);
         fn set_include_locals(self: Pin<&mut LIEF_DeclOpt>, value: bool);
         fn set_desugar(self: Pin<&mut LIEF_DeclOpt>, value: bool);
+        fn set_show_field_offsets(self: Pin<&mut LIEF_DeclOpt>, value: bool);
     }
     impl UniquePtr<LIEF_DeclOpt> {}
 }

@@ -50,6 +50,10 @@ class LIEF_DeclOpt {
     config_.desugar(value);
   }
 
+  void set_show_field_offsets(bool value) {
+    config_.show_field_offsets(value);
+  }
+
   private:
   LIEF::DeclOpt config_;
 };

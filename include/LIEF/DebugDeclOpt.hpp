@@ -86,6 +86,19 @@ class LIEF_API DeclOpt {
   bool desugar() const;
   DeclOpt& desugar(bool value) LIEF_LIFETIMEBOUND;
 
+  /// Show the relative offset of each field/attribute in structures.
+  ///
+  /// If true, every member of a structure is prefixed with its byte offset,
+  ///
+  /// ```cpp
+  /// struct Foo {
+  ///   /* 0x00 */ int A;
+  ///   /* 0x04 */ int B;
+  /// };
+  /// ```
+  bool show_field_offsets() const;
+  DeclOpt& show_field_offsets(bool value) LIEF_LIFETIMEBOUND;
+
   /// Mapping of type names to user-friendly aliases
   const type_aliases_t& type_aliases() const;
   DeclOpt& type_aliases(type_aliases_t aliases) LIEF_LIFETIMEBOUND;

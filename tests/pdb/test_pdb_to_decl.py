@@ -16,6 +16,7 @@ def test_declopt():
     assert opt.include_types is False
     assert opt.include_locals is False
     assert opt.desugar is True
+    assert opt.show_field_offsets is False
     assert dict(opt.type_aliases) == {}
 
     # Setters round-trip (pimpl)
@@ -25,6 +26,7 @@ def test_declopt():
     opt.include_types = True
     opt.include_locals = True
     opt.desugar = False
+    opt.show_field_offsets = True
     opt.add_type_alias("std::__cxx11::basic_string", "std::string")
 
     assert opt.indentation == 4
@@ -33,6 +35,7 @@ def test_declopt():
     assert opt.include_types is True
     assert opt.include_locals is True
     assert opt.desugar is False
+    assert opt.show_field_offsets is True
     assert dict(opt.type_aliases) == {"std::__cxx11::basic_string": "std::string"}
 
 

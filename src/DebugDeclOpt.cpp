@@ -72,6 +72,13 @@ DeclOpt& DeclOpt::desugar(bool) {
   return *this;
 }
 
+bool DeclOpt::show_field_offsets() const {
+  return false;
+}
+DeclOpt& DeclOpt::show_field_offsets(bool) {
+  return *this;
+}
+
 const DeclOpt::type_aliases_t& DeclOpt::type_aliases() const {
   static const type_aliases_t empty;
   return empty;

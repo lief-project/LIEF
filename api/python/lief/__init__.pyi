@@ -836,6 +836,8 @@ class DeclOpt:
 
     desugar: bool
 
+    show_field_offsets: bool
+
     @property
     def type_aliases(self) -> dict[str, str]: ...
 

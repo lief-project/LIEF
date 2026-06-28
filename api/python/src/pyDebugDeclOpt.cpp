@@ -99,6 +99,18 @@ void create<DeclOpt>(nb::module_& m) {
       nb::rv_policy::reference_internal
     )
 
+    .def_prop_rw("show_field_offsets",
+      nb::overload_cast<>(&DeclOpt::show_field_offsets, nb::const_),
+      nb::overload_cast<bool>(&DeclOpt::show_field_offsets),
+      R"doc(
+      Show the relative offset of each field/attribute in structures.
+
+      If true, every member of a structure is prefixed with its byte offset
+      (e.g. ``/* 0x04 */``).
+      )doc"_doc,
+      nb::rv_policy::reference_internal
+    )
+
     .def_prop_rw("type_aliases",
       nb::overload_cast<>(&DeclOpt::type_aliases, nb::const_),
       nb::overload_cast<DeclOpt::type_aliases_t>(&DeclOpt::type_aliases),

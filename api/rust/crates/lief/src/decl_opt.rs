@@ -34,6 +34,11 @@ pub struct DeclOpt {
     /// If true, typedef and type aliases are replaced by their underlying
     /// canonical types (e.g., `uint32_t` might become `unsigned int`).
     pub desugar: bool,
+
+    /// Show the relative offset of each field/attribute in structures.
+    ///
+    /// If true, every member of a structure is prefixed with its byte offset (e.g. `/* 0x04 */`).
+    pub show_field_offsets: bool,
 }
 
 impl Default for DeclOpt {
@@ -45,6 +50,7 @@ impl Default for DeclOpt {
             include_types: false,
             include_locals: false,
             desugar: true,
+            show_field_offsets: false,
         }
     }
 }
@@ -60,6 +66,8 @@ impl DeclOpt {
         ptr.pin_mut().set_include_types(self.include_types);
         ptr.pin_mut().set_include_locals(self.include_locals);
         ptr.pin_mut().set_desugar(self.desugar);
+        ptr.pin_mut()
+            .set_show_field_offsets(self.show_field_offsets);
         ptr
     }
 }
