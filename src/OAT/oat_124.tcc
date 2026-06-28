@@ -47,7 +47,12 @@ void Parser::parse_dex_files<details::OAT124_t>() {
   LIEF_DEBUG("OAT DEX files offset: {:#x}", dexfiles_offset);
 
   std::vector<uint32_t> classes_offsets_offset;
-  classes_offsets_offset.reserve(nb_dex_files);
+  if (dexfiles_offset < stream_->size()) {
+    const uint64_t max_records =
+        (stream_->size() - dexfiles_offset) / sizeof(uint32_t);
+    auto reserve = std::min<size_t>(nb_dex_files, max_records);
+    classes_offsets_offset.reserve(reserve);
+  }
 
   stream_->setpos(dexfiles_offset);
   for (size_t i = 0; i < nb_dex_files; ++i) {
@@ -111,7 +116,15 @@ void Parser::parse_dex_files<details::OAT124_t>() {
       const uint32_t nb_classes = dexfiles[i].header().nb_classes();
 
       uint32_t classes_offset = classes_offsets_offset[i];
-      oat_dex_file->classes_offsets_.reserve(nb_classes);
+      const uint64_t stream_size = stream_->size();
+
+      if (classes_offset < stream_size) {
+        const uint64_t max_offsets =
+            (stream_size - classes_offset) / sizeof(uint32_t);
+        auto reserve = std::min<size_t>(nb_classes, max_offsets);
+        oat_dex_file->classes_offsets_.reserve(reserve);
+      }
+
       for (size_t cls_idx = 0; cls_idx < nb_classes; ++cls_idx) {
         if (auto res = stream_->peek<uint32_t>(classes_offset +
                                                cls_idx * sizeof(uint32_t)))
