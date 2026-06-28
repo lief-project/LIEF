@@ -3,12 +3,17 @@ set(LIEF_CPP_EXAMPLES
   disassembler.cpp
   abstract_reader.cpp
   benchmark.cpp
-  dwarf_inspect.cpp
-  pdb_inspect.cpp
-  objc_inspect.cpp
-  dyld_shared_cache_reader.cpp
-  dwarf_editor.cpp
 )
+
+if (LIEF_ELF AND LIEF_PE AND LIEF_MACHO)
+  list(APPEND LIEF_CPP_EXAMPLES
+    dwarf_inspect.cpp
+    pdb_inspect.cpp
+    objc_inspect.cpp
+    dyld_shared_cache_reader.cpp
+    dwarf_editor.cpp
+  )
+endif()
 
 if (LIEF_ELF)
   list(APPEND LIEF_CPP_EXAMPLES
