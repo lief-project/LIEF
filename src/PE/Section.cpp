@@ -137,38 +137,38 @@ std::ostream& operator<<(std::ostream& os, const Section& section) {
   fullname_hex.reserve(section.name().size());
   std::transform(section.fullname().begin(), section.fullname().end(),
                  std::back_inserter(fullname_hex),
-                 [](const char c) { return format("{:02x}", c); });
+                 [](const char c) { return fmt::format("{:02x}", c); });
 
   if (const COFF::String* coff_str = section.coff_string()) {
-    os << format("{:{}} {} ({}, {})\n", "Name:", WIDTH, section.name(),
-                 join(fullname_hex, " "), coff_str->str());
+    os << fmt::format("{:{}} {} ({}, {})\n", "Name:", WIDTH, section.name(),
+                 fmt::join(fullname_hex, " "), coff_str->str());
   } else {
-    os << format("{:{}} {} ({})\n", "Name:", WIDTH, section.name(),
-                 join(fullname_hex, " "));
+    os << fmt::format("{:{}} {} ({})\n", "Name:", WIDTH, section.name(),
+                 fmt::join(fullname_hex, " "));
   }
 
-  os << format("{:{}} {:#x}\n", "Virtual Size", WIDTH, section.virtual_size())
-     << format("{:{}} {:#x}\n", "Virtual Address", WIDTH,
+  os << fmt::format("{:{}} {:#x}\n", "Virtual Size", WIDTH, section.virtual_size())
+     << fmt::format("{:{}} {:#x}\n", "Virtual Address", WIDTH,
                section.virtual_address())
-     << format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
+     << fmt::format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
                section.virtual_address(),
                section.virtual_address() + section.virtual_size())
-     << format("{:{}} {:#x}\n", "Size of raw data", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Size of raw data", WIDTH,
                section.sizeof_raw_data())
-     << format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Pointer to raw data", WIDTH,
                section.pointerto_raw_data())
-     << format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
+     << fmt::format("{:{}} [{:#010x}, {:#010x}]\n", "Range", WIDTH,
                section.pointerto_raw_data(),
                section.pointerto_raw_data() + section.sizeof_raw_data())
-     << format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Pointer to relocations", WIDTH,
                section.pointerto_relocation())
-     << format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Pointer to line numbers", WIDTH,
                section.pointerto_line_numbers())
-     << format("{:{}} {:#x}\n", "Number of relocations", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Number of relocations", WIDTH,
                section.numberof_relocations())
-     << format("{:{}} {:#x}\n", "Number of lines", WIDTH,
+     << fmt::format("{:{}} {:#x}\n", "Number of lines", WIDTH,
                section.numberof_line_numbers())
-     << format("{:{}} {}", "Characteristics", WIDTH, join(list_str, ", "));
+     << fmt::format("{:{}} {}", "Characteristics", WIDTH, fmt::join(list_str, ", "));
   return os;
 }
 
