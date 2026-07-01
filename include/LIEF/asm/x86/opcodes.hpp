@@ -17,6 +17,17 @@
 
 /* Generated from LLVM: 22.1.6 */
 
+// FreeBSD's <sys/param.h> defines FSCALE as a macro. This generated opcode
+// list also has an FSCALE enumerator, so keep the macro out of the enum body
+// without permanently changing the includer's macro state.
+#if defined(FSCALE)
+  #if defined(_MSC_VER) || defined(__clang__) || defined(__GNUC__)
+    #pragma push_macro("FSCALE")
+    #define LIEF_ASM_X86_RESTORE_FSCALE
+  #endif
+  #undef FSCALE
+#endif
+
 namespace LIEF {
 namespace assembly {
 namespace x86 {
@@ -22321,4 +22332,9 @@ enum class OPCODE {
 }
 }
 }
+#if defined(LIEF_ASM_X86_RESTORE_FSCALE)
+  #pragma pop_macro("FSCALE")
+  #undef LIEF_ASM_X86_RESTORE_FSCALE
+#endif
+
 #endif
