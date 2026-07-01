@@ -87,16 +87,21 @@ std::string Symbol::demangled_name() const {
   } else {
 #if defined(__unix__)
     int status = 0;
-    const std::string& name = this->name().c_str();
+    const std::string& name = this->name();
+    if (name.rfind("_Z", 0) != 0) {
+      return name;
+    }
+
     char* demangled_name =
         abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
 
-    if (status == 0) {
+    if (status == 0 && demangled_name != nullptr) {
       std::string realname = demangled_name;
       free(demangled_name); // NOLINT(cppcoreguidelines-no-malloc)
       return realname;
     }
 
+    free(demangled_name); // NOLINT(cppcoreguidelines-no-malloc)
     return name;
 #else
     return "";
