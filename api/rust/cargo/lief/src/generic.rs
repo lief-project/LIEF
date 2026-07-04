@@ -292,6 +292,23 @@ pub trait Binary {
         self.as_generic().page_size()
     }
 
+    /// Patch the content at virtual address address with patch_value.
+    fn patch_address(&mut self, address: u64, patch_value: &[u8]) {
+        unsafe {
+            self.as_pin_mut_generic()
+                .patch_address_bytes(address,
+                    patch_value.as_ptr(),
+                    patch_value.len());
+        }
+    }
+
+    /// Patch the address with the given value.
+    /// You must specify a valid size, MAX: size_of::<usize>()
+    fn patch_address_with_value(&mut self, address: u64, patch_value: u64, size: usize) {
+        self.as_pin_mut_generic()
+            .patch_address_value(address, patch_value, size);
+    }
+
     /// Convert the given offset into a virtual address.
     ///
     /// If the `slide` parameter is provided (non-zero), it will be used as the base address

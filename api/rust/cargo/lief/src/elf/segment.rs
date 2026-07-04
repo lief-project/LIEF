@@ -310,8 +310,8 @@ impl Segment<'_> {
     }
 
     /// Fill the content of this segment with the value provided in parameter
-    pub fn fill(&mut self, value: u8) {
-        self.ptr.pin_mut().fill(value as i8)
+    pub fn fill(&mut self, value: i8) {
+        self.ptr.pin_mut().fill(value)
     }
 }
 
