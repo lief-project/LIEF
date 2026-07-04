@@ -18,6 +18,7 @@
 #include "LIEF/rust/PDB/CompilationUnit.hpp"
 #include "LIEF/rust/PDB/PublicSymbol.hpp"
 #include "LIEF/rust/PDB/Type.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 #include "LIEF/PDB/DebugInfo.hpp"
 #include "LIEF/PDB/CompilationUnit.hpp"
@@ -68,8 +69,7 @@ class PDB_DebugInfo : public AbstracDebugInfo {
   PDB_DebugInfo(std::unique_ptr<lief_t> bin) :
     AbstracDebugInfo(std::move(bin)) {}
 
-  static auto
-      from_file(std::string file) { // NOLINT(performance-unnecessary-value-param)
+  static auto from_file(const std::string& file) {
     return details::try_unique<PDB_DebugInfo>(
         LIEF::pdb::DebugInfo::from_file(file)
     );
@@ -79,7 +79,7 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     return impl().age();
   }
   auto guid() const {
-    return impl().guid();
+    return to_unique_string(impl().guid());
   }
 
   auto compilation_units() const {
@@ -94,35 +94,23 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     return std::make_unique<it_types>(impl());
   }
 
-  auto public_symbol_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PDB_PublicSymbol>(
-        impl().find_public_symbol(name)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto public_symbol_by_name(const std::string& name) const {
+    return details::try_unique<PDB_PublicSymbol>(impl().find_public_symbol(name));
   }
 
-  auto find_type(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PDB_Type>(
-        impl().find_type(name)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto find_type(const std::string& name) const {
+    return details::try_unique<PDB_Type>(impl().find_type(name));
   }
 
-  auto find_type_by_index(
-      uint32_t index
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<PDB_Type>(
-        impl().find_type(index)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto find_type_by_index(uint32_t index) const {
+    return details::try_unique<PDB_Type>(impl().find_type(index));
   }
 
-  std::string to_string() const {
-    return impl().to_string();
+  auto to_string() const {
+    return to_unique_string(impl().to_string());
   }
 
-  static bool classof(const AbstracDebugInfo& reloc) {
+  static auto classof(const AbstracDebugInfo& reloc) {
     return lief_t::classof(
         static_cast<const AbstracDebugInfo::lief_t*>(&reloc.get())
     );
@@ -133,3 +121,7 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     return as<lief_t>(this);
   }
 };
+
+using PDB_DebugInfo_it_compilation_units = PDB_DebugInfo::it_compilation_units;
+using PDB_DebugInfo_it_public_symbols = PDB_DebugInfo::it_public_symbols;
+using PDB_DebugInfo_it_types = PDB_DebugInfo::it_types;

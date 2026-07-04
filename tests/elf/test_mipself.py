@@ -47,6 +47,6 @@ def test_mipsel():
         inst = list(elf.disassemble("onload"))
         assert len(inst) == 191
         assert inst[0] is not None
-        assert inst[0].to_string() == "0x000fa4: lui $gp, 2"
+        assert inst[0].to_string() == "0x000fa4: lui $gp, 0x2"
         assert inst[190] is not None
         assert inst[190].to_string() == "0x00129c: nop"

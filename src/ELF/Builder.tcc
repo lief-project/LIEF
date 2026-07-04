@@ -933,7 +933,7 @@ ok_error_t Builder::build_segments() {
   LIEF_DEBUG("Write segments header {:#012x} -> {:#012x}", segment_header_offset,
              segment_header_offset + pheaders.size());
   ios_.seekp(segment_header_offset);
-  ios_.write(std::move(pheaders.raw()));
+  ios_.write(pheaders.raw());
   return ok();
 }
 

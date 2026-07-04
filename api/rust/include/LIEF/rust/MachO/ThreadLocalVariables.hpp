@@ -66,15 +66,15 @@ class MachO_ThreadLocalVariables : public MachO_Section {
     return std::make_unique<it_thunks>(impl());
   }
 
-  std::unique_ptr<MachO_ThreadLocalVariables_Thunk> get_thunk(uint64_t idx) const {
+  auto get_thunk(uint64_t idx) const {
     return details::try_unique<MachO_ThreadLocalVariables_Thunk>(impl().get(idx));
   }
 
-  void set_thunk(uint64_t idx, uint64_t func, uint64_t key, uint64_t offset) {
+  auto set_thunk(uint64_t idx, uint64_t func, uint64_t key, uint64_t offset) {
     impl().set(idx, lief_t::Thunk{func, key, offset});
   }
 
-  static bool classof(const MachO_Section& sec) {
+  static auto classof(const MachO_Section& sec) {
     return lief_t::classof(&as<LIEF::MachO::Section>(&sec));
   }
 
@@ -86,3 +86,5 @@ class MachO_ThreadLocalVariables : public MachO_Section {
     return as<lief_t>(this);
   }
 };
+
+using MachO_ThreadLocalVariables_it_thunks = MachO_ThreadLocalVariables::it_thunks;

@@ -1,0 +1,205 @@
+//! # LIEF
+//!
+//! ![LIEF Design](https://raw.githubusercontent.com/lief-project/LIEF/main/.github/images/architecture.png)
+//!
+//! This package provides Rust bindings for [LIEF](https://lief.re). It exposes most of the
+//! LIEF API to **read** these formats:
+//! - ELF
+//! - PE
+//! - Mach-O
+//!
+//! The bindings require at least Rust version **1.85.0** with the 2024 edition and support:
+//! - Windows x86-64 (support `/MT` and `/MD` linking)
+//! - Linux x86-64/aarch64/musl (Ubuntu 19.10, Almalinux 8, Debian 10, Fedora 29)
+//! - macOS (`x86-64` and `aarch64` with at least OSX Big Sur: 11.0)
+//! - iOS (`aarch64`)
+//!
+//! ## Getting Started
+//!
+//! ```toml
+//! [package]
+//! name    = "my-awesome-project"
+//! version = "0.0.1"
+//! edition = "2024"
+//!
+//! [dependencies]
+//! # For nightly
+//! lief = { git = "https://github.com/lief-project/LIEF", branch = "main" }
+//! # For releases
+//! lief = 1.0.0
+//! ```
+//!
+//! ```rust
+//! fn main() {
+//!    let path = std::env::args().last().unwrap();
+//!    let mut file = std::fs::File::open(path).expect("Can't open the file");
+//!    match lief::Binary::from(&mut file) {
+//!        Some(lief::Binary::ELF(elf)) => {
+//!            // Process ELF file
+//!        },
+//!        Some(lief::Binary::PE(pe)) => {
+//!            // Process PE file
+//!        },
+//!        Some(lief::Binary::MachO(macho)) => {
+//!            // Process Mach-O file (including FatMachO)
+//!        },
+//!        Some(lief::Binary::COFF(coff)) => {
+//!            // Process coff file
+//!        },
+//!        None => {
+//!            // Parsing error
+//!        }
+//!    }
+//!    return;
+//! }
+//! ```
+//!
+//! Note that the [`generic`] module implements the different traits shared by different structure
+//! of executable formats (symbols, relocations, ...)
+//!
+//! ## Additional Information
+//!
+//! For more details about the install procedure and the configuration, please check:
+//! <https://lief.re/doc/latest/api/rust/index.html>
+
+#![doc(html_no_source)]
+
+pub mod elf;
+
+/// Executable formats generic traits (LIEF's abstract layer)
+pub mod generic;
+
+pub mod macho;
+
+pub mod pe;
+
+pub mod coff;
+
+pub mod pdb;
+
+pub mod dwarf;
+
+pub mod objc;
+
+pub mod dsc;
+
+pub mod debug_info;
+
+pub mod assembly;
+mod range;
+
+/// Module for LIEF's error
+pub mod error;
+
+pub mod logging;
+
+mod binary;
+mod common;
+
+mod debug_location;
+
+mod decl_opt;
+
+#[doc(inline)]
+pub use binary::Binary;
+
+#[doc(inline)]
+pub use generic::{Function, Relocation};
+
+#[doc(inline)]
+pub use error::Error;
+
+#[doc(inline)]
+pub use debug_info::DebugInfo;
+
+#[doc(inline)]
+pub use range::Range;
+
+#[doc(inline)]
+pub use debug_location::DebugLocation;
+
+#[doc(inline)]
+pub use decl_opt::DeclOpt;
+
+pub struct Version {
+    pub major: u64,
+    pub minor: u64,
+    pub patch: u64,
+    pub id: u64,
+}
+
+impl std::fmt::Display for Version {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "{}.{}.{}.{}",
+            self.major, self.minor, self.patch, self.id
+        )
+    }
+}
+
+/// Whether it is an extended version of LIEF
+pub fn is_extended() -> bool {
+    lief_ffi::is_extended()
+}
+
+/// Return details about the extended version
+pub fn extended_version_info() -> String {
+    lief_ffi::extended_version_info().to_string()
+}
+
+/// Return the extended version
+pub fn extended_version() -> Version {
+    let ffi_version = lief_ffi::extended_version();
+    Version {
+        major: ffi_version.major,
+        minor: ffi_version.minor,
+        patch: ffi_version.patch,
+        id: ffi_version.id,
+    }
+}
+
+/// Return the current version
+pub fn version() -> Version {
+    let ffi_version = lief_ffi::version();
+    Version {
+        major: ffi_version.major,
+        minor: ffi_version.minor,
+        patch: ffi_version.patch,
+        id: ffi_version.id,
+    }
+}
+
+/// Try to demangle the given input.
+///
+/// This function requires the extended version of LIEF
+pub fn demangle(mangled: &str) -> Result<String, Error> {
+    cxx::let_cxx_string!(__cxx_mangled = mangled);
+    let mut err: u32 = 0;
+    let value = lief_ffi::demangle(&__cxx_mangled, std::pin::Pin::new(&mut err));
+    if err > 0 {
+        return Err(Error::from(err));
+    }
+    Ok(value.to_string())
+}
+
+/// Hexdump the provided buffer.
+///
+/// For instance:
+///
+/// ```text
+/// +---------------------------------------------------------------------+
+/// | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
+/// | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
+/// | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
+/// | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
+/// +---------------------------------------------------------------------+
+/// ```
+pub fn dump(buffer: &[u8]) -> String {
+    unsafe { lief_ffi::dump(buffer.as_ptr(), buffer.len()).to_string() }
+}
+
+/// Same as [`dump`] but with a limit on the number of bytes to dump
+pub fn dump_with_limit(buffer: &[u8], limit: u64) -> String {
+    unsafe { lief_ffi::dump_with_limit(buffer.as_ptr(), buffer.len(), limit).to_string() }
+}

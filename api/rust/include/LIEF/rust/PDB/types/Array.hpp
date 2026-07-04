@@ -32,7 +32,7 @@ class PDB_types_Array : public PDB_Type {
     return details::try_unique<PDB_Type>(impl().index_type());
   }
 
-  static bool classof(const PDB_Type& type) {
+  static auto classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
 

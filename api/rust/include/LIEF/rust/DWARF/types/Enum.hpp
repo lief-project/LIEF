@@ -17,6 +17,7 @@
 #include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/optional.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class DWARF_types_Enum_Entry : public Mirror<LIEF::dwarf::types::Enum::Entry> {
   public:
@@ -24,7 +25,7 @@ class DWARF_types_Enum_Entry : public Mirror<LIEF::dwarf::types::Enum::Entry> {
   using lief_t = LIEF::dwarf::types::Enum::Entry;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
 
   int64_t value(uint32_t& is_set) const {
@@ -69,7 +70,7 @@ class DWARF_types_Enum : public DWARF_Type {
     return nullptr;
   }
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 
@@ -78,3 +79,5 @@ class DWARF_types_Enum : public DWARF_Type {
     return as<lief_t>(this);
   }
 };
+
+using DWARF_types_Enum_it_entries = DWARF_types_Enum::it_entries;

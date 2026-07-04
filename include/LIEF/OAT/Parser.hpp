@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_OAT_PARSER_H
 #define LIEF_OAT_PARSER_H
+#include <cstdint>
 #include <memory>
 
+#include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/ELF/Parser.hpp"
 
@@ -84,6 +86,8 @@ class LIEF_API Parser : public ELF::Parser {
                          const DEX::Class& dex_class);
 
   void init();
+
+  result<uint64_t> oat_data_exec_gap() const;
 
   std::unique_ptr<LIEF::VDEX::File> vdex_file_;
 

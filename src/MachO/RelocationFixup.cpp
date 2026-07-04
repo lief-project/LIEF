@@ -89,7 +89,7 @@ RelocationFixup& RelocationFixup::operator=(const RelocationFixup& other) {
       auth_segmented_rebase_ =
           new details::dyld_chained_ptr_arm64e_auth_segmented_rebase{
               *other.auth_segmented_rebase_
-          };
+      };
       break;
     case REBASE_TYPES::UNKNOWN:
     {
@@ -129,7 +129,7 @@ RelocationFixup::RelocationFixup(const RelocationFixup& other) :
       auth_segmented_rebase_ =
           new details::dyld_chained_ptr_arm64e_auth_segmented_rebase{
               *other.auth_segmented_rebase_
-          };
+      };
       break;
     case REBASE_TYPES::UNKNOWN:
     {

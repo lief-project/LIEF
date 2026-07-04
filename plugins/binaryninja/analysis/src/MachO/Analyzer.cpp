@@ -69,8 +69,6 @@ Analyzer::Analyzer(std::unique_ptr<LIEF::MachO::Binary> impl,
   macho_(std::move(impl)) {}
 
 std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
-  static const MachO::ParserConfig CONFIG = MachO::ParserConfig::deep();
-
   std::string original_file = bv.GetFile()->GetOriginalFilename();
 
   std::unique_ptr<LIEF::MachO::FatBinary> fat =

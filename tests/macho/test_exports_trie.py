@@ -88,3 +88,19 @@ def test_issue_1262():
     dyld_trie = macho.dyld_exports_trie
     assert dyld_trie is not None
     assert len(dyld_trie.exports) == 312478
+
+
+@pytest.mark.private
+def test_show_export_trie_cycle():
+    cyclic_trie = parse_macho("private/MachO/issue_cyclic_trie.macho").at(0)
+    assert cyclic_trie is not None
+    ptrie = cast(
+        lief.MachO.DyldExportsTrie,
+        cyclic_trie.get(lief.MachO.LoadCommand.TYPE.DYLD_EXPORTS_TRIE),
+    )
+    assert ptrie is not None
+
+    output = ptrie.show_export_trie()
+    assert isinstance(output, str)
+    assert output.count("@off.") <= 4
+    assert "A@off." in output

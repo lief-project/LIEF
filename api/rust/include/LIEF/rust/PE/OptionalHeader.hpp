@@ -92,7 +92,7 @@ class PE_OptionalHeader : private Mirror<LIEF::PE::OptionalHeader> {
     return get().checksum();
   }
   auto subsystem() const {
-    return to_int(get().subsystem());
+    return as_u64(get().subsystem());
   }
   auto dll_characteristics() const {
     return get().dll_characteristics();
@@ -116,19 +116,19 @@ class PE_OptionalHeader : private Mirror<LIEF::PE::OptionalHeader> {
     return get().numberof_rva_and_size();
   }
 
-  void set_addressof_entrypoint(uint32_t value) {
+  auto set_addressof_entrypoint(uint32_t value) {
     get().addressof_entrypoint(value);
   }
 
-  void set_imagebase(uint64_t value) {
+  auto set_imagebase(uint64_t value) {
     get().imagebase(value);
   }
 
-  void add_dll_characteristic(uint32_t value) {
+  auto add_dll_characteristic(uint32_t value) {
     get().add(LIEF::PE::OptionalHeader::DLL_CHARACTERISTICS(value));
   }
 
-  void remove_dll_characteristic(uint32_t value) {
+  auto remove_dll_characteristic(uint32_t value) {
     get().remove(LIEF::PE::OptionalHeader::DLL_CHARACTERISTICS(value));
   }
 };

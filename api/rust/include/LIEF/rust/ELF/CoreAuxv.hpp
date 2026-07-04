@@ -24,17 +24,17 @@ class ELF_CoreAuxv : public ELF_Note {
 
   auto values() const {
     auto vals = impl().values();
-    std::vector<uint64_t> result;
-    result.reserve(vals.size() * 2);
+    auto result = make_unique_vector<uint64_t>();
+    result->reserve(vals.size() * 2);
 
     for (const auto& [k, v] : vals) {
-      result.push_back((uint64_t)k);
-      result.push_back(v);
+      result->push_back((uint64_t)k);
+      result->push_back(v);
     }
     return result;
   }
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 

@@ -97,6 +97,7 @@ void create<LoadCommand>(nb::module_& m) {
     .value(PY_ENUM(LoadCommand::TYPE::FUNCTION_VARIANTS))
     .value(PY_ENUM(LoadCommand::TYPE::FUNCTION_VARIANT_FIXUPS))
     .value(PY_ENUM(LoadCommand::TYPE::TARGET_TRIPLE))
+    .value(PY_ENUM(LoadCommand::TYPE::LAZY_LOAD_DYLIB_INFO))
     .value(PY_ENUM(LoadCommand::TYPE::LIEF_UNKNOWN))
   #undef PY_ENUM
   ;

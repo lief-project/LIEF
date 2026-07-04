@@ -1,0 +1,20 @@
+[package]
+name        = "lief-build"
+description = "Build helper for the Rust bindings of LIEF"
+edition.workspace      = true
+version.workspace      = true
+authors.workspace      = true
+license.workspace      = true
+rust-version.workspace = true
+
+[dependencies]
+miette      = { workspace = true }
+reqwest     = { workspace = true }
+zip         = { workspace = true }
+git-version = { workspace = true }
+semver      = { workspace = true }
+
+[features]
+default    = ["rustls-tls"]
+rustls-tls = ["reqwest/rustls"]
+native-tls = ["reqwest/native-tls"]

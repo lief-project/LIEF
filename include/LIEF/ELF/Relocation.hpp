@@ -48,36 +48,51 @@ class LIEF_API Relocation : public LIEF::Relocation {
   /// loader.
   enum class PURPOSE {
     NONE = 0,
-    PLTGOT = 1,  ///< The relocation is associated with the PLT/GOT resolution
-    DYNAMIC = 2, ///< The relocation is used for regular data/code relocation
-    OBJECT = 3,  ///< The relocation is used in an object file
+    /// The relocation is associated with the PLT/GOT resolution
+    PLTGOT,
+
+    /// The relocation is used for regular data/code relocation
+    DYNAMIC,
+
+    /// The relocation is used in an object file
+    OBJECT,
   };
 
   enum class ENCODING {
     UNKNOWN = 0,
-    REL,          ///< The relocation is using the regular Elf_Rel structure
-    RELA,         ///< The relocation is using the regular Elf_Rela structure
-    RELR,         ///< The relocation is using the relative relocation format
-    ANDROID_SLEB, ///< The relocation is using the packed Android-SLEB128 format
+
+    /// The relocation is using the regular Elf_Rel structure
+    REL,
+
+    /// The relocation is using the regular Elf_Rela structure
+    RELA,
+
+    /// The relocation is using the relative relocation format
+    RELR,
+
+    /// The relocation is using the packed Android-SLEB128 format
+    ANDROID_SLEB,
   };
 
   static constexpr uint64_t R_BIT = 27;
   static constexpr uint64_t R_MASK = (uint64_t(1) << R_BIT) - 1;
 
-  static constexpr uint64_t R_X64 = uint64_t(1) << R_BIT;
-  static constexpr uint64_t R_AARCH64 = uint64_t(2) << R_BIT;
-  static constexpr uint64_t R_ARM = uint64_t(3) << R_BIT;
-  static constexpr uint64_t R_HEXAGON = uint64_t(4) << R_BIT;
-  static constexpr uint64_t R_X86 = uint64_t(5) << R_BIT;
-  static constexpr uint64_t R_LARCH = uint64_t(6) << R_BIT;
-  static constexpr uint64_t R_MIPS = uint64_t(7) << R_BIT;
-  static constexpr uint64_t R_PPC = uint64_t(8) << R_BIT;
-  static constexpr uint64_t R_PPC64 = uint64_t(9) << R_BIT;
-  static constexpr uint64_t R_SPARC = uint64_t(10) << R_BIT;
-  static constexpr uint64_t R_SYSZ = uint64_t(11) << R_BIT;
-  static constexpr uint64_t R_RISCV = uint64_t(12) << R_BIT;
-  static constexpr uint64_t R_BPF = uint64_t(13) << R_BIT;
-  static constexpr uint64_t R_SH4 = uint64_t(14) << R_BIT;
+  // clang-format off
+  static constexpr uint64_t R_X64     = uint64_t(1)  << R_BIT;
+  static constexpr uint64_t R_AARCH64 = uint64_t(2)  << R_BIT;
+  static constexpr uint64_t R_ARM     = uint64_t(3)  << R_BIT;
+  static constexpr uint64_t R_HEXAGON = uint64_t(4)  << R_BIT;
+  static constexpr uint64_t R_X86     = uint64_t(5)  << R_BIT;
+  static constexpr uint64_t R_LARCH   = uint64_t(6)  << R_BIT;
+  static constexpr uint64_t R_MIPS    = uint64_t(7)  << R_BIT;
+  static constexpr uint64_t R_PPC     = uint64_t(8)  << R_BIT;
+  static constexpr uint64_t R_PPC64   = uint64_t(9)  << R_BIT;
+  static constexpr uint64_t R_SPARC   = uint64_t(10) << R_BIT;
+  static constexpr uint64_t R_SYSZ    = uint64_t(11) << R_BIT;
+  static constexpr uint64_t R_RISCV   = uint64_t(12) << R_BIT;
+  static constexpr uint64_t R_BPF     = uint64_t(13) << R_BIT;
+  static constexpr uint64_t R_SH4     = uint64_t(14) << R_BIT;
+  // clang-format on
 
   /// The different types of the relocation
   enum class TYPE : uint32_t {
@@ -149,9 +164,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
   Relocation(uint64_t address, TYPE type, ENCODING enc);
 
   Relocation() = default;
-  Relocation(ARCH arch) {
-    architecture_ = arch;
-  }
+  Relocation(ARCH arch) :
+    architecture_(arch) {}
 
   ~Relocation() override = default;
 

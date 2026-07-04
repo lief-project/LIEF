@@ -17,6 +17,7 @@
 #define LIEF_PE_SIGNATURE_H
 
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -91,19 +92,21 @@ class LIEF_API Signature : public Object {
   ///
   /// See Signature::check and LIEF::PE::Binary::verify_signature
   enum class VERIFICATION_CHECKS : uint32_t {
-    DEFAULT = 1 << 0, /**< Default behavior that tries to follow the Microsoft
-                         verification process as close as possible */
-    HASH_ONLY =
-        1 << 1, /**< Only check that Binary::authentihash matches
-                   ContentInfo::digest regardless of the signature's validity */
-    LIFETIME_SIGNING =
-        1
-        << 2,                /**< Same semantic as
-                                [WTD_LIFETIME_SIGNING_FLAG](https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG)
-                              */
-    SKIP_CERT_TIME = 1 << 3, /**< Skip the verification of the certificates time
-                                validities so that even though a certificate
-                                expired, it returns VERIFICATION_FLAGS::OK */
+    /// Default behavior that tries to follow the Microsoft verification process
+    /// as close as possible
+    DEFAULT = 1 << 0,
+
+    /// Only check that Binary::authentihash matches ContentInfo::digest
+    /// regardless of the signature's validity
+    HASH_ONLY = 1 << 1,
+
+    /// Same semantic as
+    /// [WTD_LIFETIME_SIGNING_FLAG](https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG)
+    LIFETIME_SIGNING = 1 << 2,
+
+    /// Skip the verification of the certificates time validities so that even
+    /// though a certificate expired, it returns VERIFICATION_FLAGS::OK
+    SKIP_CERT_TIME = 1 << 3,
   };
 
   Signature();
@@ -150,7 +153,7 @@ class LIEF_API Signature : public Object {
   }
 
   /// Return the raw original PKCS7 signature
-  span<const uint8_t> raw_der() const {
+  span<const uint8_t> raw_der() const LIEF_LIFETIMEBOUND {
     return original_raw_signature_;
   }
 

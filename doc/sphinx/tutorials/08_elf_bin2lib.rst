@@ -143,7 +143,8 @@ Now that we have identified the address, we can export it as a named function:
 
 .. code-block:: python
 
-  >>> crackme101.add_exported_function(0x72A, "check_found")
+  >>> addr = crackme101.get_function_address("check_found") # 0x72A
+  >>> crackme101.add_exported_function(addr, "check_found")
   >>> crackme101.write("libcrackme101.so")
 
 And that's all!

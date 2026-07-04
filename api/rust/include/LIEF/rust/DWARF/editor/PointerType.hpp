@@ -25,7 +25,7 @@ class DWARF_editor_PointerType : public DWARF_editor_Type {
     return details::try_unique<DWARF_editor_PointerType>(get().pointer_to());
   }
 
-  static bool classof(const DWARF_editor_Type& type) {
+  static auto classof(const DWARF_editor_Type& type) {
     return lief_t::classof(&type.get());
   }
 

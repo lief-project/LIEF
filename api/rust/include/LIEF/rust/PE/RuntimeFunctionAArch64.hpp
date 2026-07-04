@@ -33,13 +33,13 @@ class PE_RuntimeFunctionAArch64 : public PE_ExceptionInfo {
     return impl().length();
   }
   auto flag() const {
-    return to_int(impl().flag());
+    return as_u32(impl().flag());
   }
   auto rva_end() const {
     return impl().rva_end();
   }
 
-  static bool classof(const PE_ExceptionInfo& entry) {
+  static auto classof(const PE_ExceptionInfo& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -69,7 +69,7 @@ class PE_unwind_aarch64_PackedFunction : public PE_RuntimeFunctionAArch64 {
     return impl().CR();
   }
 
-  static bool classof(const PE_RuntimeFunctionAArch64& entry) {
+  static auto classof(const PE_RuntimeFunctionAArch64& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -150,7 +150,7 @@ class PE_unwind_aarch64_UnpackedFunction : public PE_RuntimeFunctionAArch64 {
     return std::make_unique<it_const_epilog_scopes>(impl());
   }
 
-  static bool classof(const PE_RuntimeFunctionAArch64& entry) {
+  static auto classof(const PE_RuntimeFunctionAArch64& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -159,3 +159,6 @@ class PE_unwind_aarch64_UnpackedFunction : public PE_RuntimeFunctionAArch64 {
     return as<lief_t>(this);
   }
 };
+
+using PE_unwind_aarch64_UnpackedFunction_it_const_epilog_scopes =
+    PE_unwind_aarch64_UnpackedFunction::it_const_epilog_scopes;

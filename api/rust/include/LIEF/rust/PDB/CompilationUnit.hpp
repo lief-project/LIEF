@@ -18,6 +18,8 @@
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/PDB/Function.hpp"
 #include "LIEF/rust/PDB/BuildMetadata.hpp"
+#include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
 #include "LIEF/PDB/CompilationUnit.hpp"
 
 class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
@@ -31,16 +33,8 @@ class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
     public:
     it_sources(const PDB_CompilationUnit::lief_t& src) :
       ForwardIterator(src.sources()) {}
-    std::string next() {
-      auto next_string = ForwardIterator::next();
-      if (next_string == nullptr) {
-        // Not ideal but autocxx is not able to deal with
-        // std::unique_ptr<std::string>:
-        // "Type std::unique_ptr was parameterized over something complex which we
-        // don't yet support"
-        return "[LIEF_STOP]";
-      }
-      return *next_string;
+    auto next() {
+      return ForwardIterator::next();
     }
     auto size() const {
       return ForwardIterator::size();
@@ -61,10 +55,10 @@ class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
   };
 
   auto module_name() const {
-    return get().module_name();
+    return to_unique_string(get().module_name());
   }
   auto object_filename() const {
-    return get().object_filename();
+    return to_unique_string(get().object_filename());
   }
 
   auto sources() const {
@@ -80,6 +74,17 @@ class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
   }
 
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
+  }
+
+  auto to_decl() const {
+    return to_unique_string(get().to_decl());
+  }
+
+  auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
+    return to_unique_string(get().to_decl(opt.conf()));
   }
 };
+
+using PDB_CompilationUnit_it_sources = PDB_CompilationUnit::it_sources;
+using PDB_CompilationUnit_it_functions = PDB_CompilationUnit::it_functions;

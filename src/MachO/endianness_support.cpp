@@ -353,6 +353,15 @@ void swap_endian<MachO::details::data_in_code_entry>(
 }
 
 template<>
+void swap_endian<MachO::details::note_command>(MachO::details::note_command* hdr) {
+  swap_endian(&hdr->cmd);
+  swap_endian(&hdr->cmdsize);
+  // hdr->data_owner is a raw char array: skip byte-swapped.
+  swap_endian(&hdr->offset);
+  swap_endian(&hdr->size);
+}
+
+template<>
 void swap_endian<MachO::details::source_version_command>(
     MachO::details::source_version_command* hdr
 ) {

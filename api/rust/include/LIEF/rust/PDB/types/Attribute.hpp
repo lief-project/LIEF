@@ -14,6 +14,7 @@
  */
 #pragma once
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PDB/types/Attribute.hpp"
 #include "LIEF/rust/PDB/Type.hpp"
 
@@ -23,7 +24,7 @@ class PDB_types_Attribute : private Mirror<LIEF::pdb::types::Attribute> {
   using lief_t = LIEF::pdb::types::Attribute;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto field_offset() const {
     return get().field_offset();

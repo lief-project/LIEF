@@ -18,6 +18,7 @@
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/rust/PE/ExportEntry.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 #include <memory>
 
@@ -78,31 +79,31 @@ class PE_Export : public Mirror<LIEF::PE::Export> {
     return get().ord_addr_table_rva();
   }
 
-  std::string name() const {
-    return get().name();
+  auto name() const {
+    return to_unique_string(get().name());
   }
 
   auto entries() const {
     return std::make_unique<it_entries>(get());
   }
 
-  void set_export_flags(uint32_t flags) {
+  auto set_export_flags(uint32_t flags) {
     get().export_flags(flags);
   }
-  void set_timestamp(uint32_t ts) {
+  auto set_timestamp(uint32_t ts) {
     get().timestamp(ts);
   }
-  void set_major_version(uint32_t version) {
+  auto set_major_version(uint32_t version) {
     get().major_version(version);
   }
-  void set_minor_version(uint32_t version) {
+  auto set_minor_version(uint32_t version) {
     get().minor_version(version);
   }
-  void set_name(std::string name) {
-    get().name(std::move(name));
+  auto set_name(const std::string& name) {
+    get().name(name);
   }
 
-  auto entry_by_name(std::string name) const {
+  auto entry_by_name(const std::string& name) const {
     return details::try_unique<PE_ExportEntry>(get().find_entry(name));
   }
 
@@ -120,7 +121,7 @@ class PE_Export : public Mirror<LIEF::PE::Export> {
     );
   }
 
-  auto add_entry_by_name(std::string name, uint32_t rva) {
+  auto add_entry_by_name(const std::string& name, uint32_t rva) {
     return std::make_unique<PE_ExportEntry>(get().add_entry(name, rva));
   }
 
@@ -132,7 +133,9 @@ class PE_Export : public Mirror<LIEF::PE::Export> {
     return get().remove_entry(rva);
   }
 
-  auto remove_entry_by_name(std::string name) {
+  auto remove_entry_by_name(const std::string& name) {
     return get().remove_entry(name);
   }
 };
+
+using PE_Export_it_entries = PE_Export::it_entries;

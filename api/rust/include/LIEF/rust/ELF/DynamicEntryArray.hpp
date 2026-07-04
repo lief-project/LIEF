@@ -20,11 +20,11 @@ class ELF_DynamicEntryArray : public ELF_DynamicEntry {
   public:
   using lief_t = LIEF::ELF::DynamicEntryArray;
 
-  std::vector<uint64_t> array() const {
-    return impl().array();
+  auto array() const {
+    return make_unique_vector<uint64_t>(impl().array());
   }
 
-  static bool classof(const ELF_DynamicEntry& entry) {
+  static auto classof(const ELF_DynamicEntry& entry) {
     return lief_t::classof(&entry.get());
   }
 

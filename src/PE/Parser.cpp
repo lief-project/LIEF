@@ -859,6 +859,9 @@ std::unique_ptr<Debug> Parser::parse_pogo(const details::pe_debug& debug_info,
   switch (signature) {
     case Pogo::SIGNATURES::ZERO: // zero-signature may contain valid entries
     case Pogo::SIGNATURES::LCTG:
+    case Pogo::SIGNATURES::SPGO:
+    case Pogo::SIGNATURES::PGI:
+    case Pogo::SIGNATURES::PGU:
     {
       while (stream) {
         auto raw = stream.read<details::pe_pogo>();
@@ -881,7 +884,7 @@ std::unique_ptr<Debug> Parser::parse_pogo(const details::pe_debug& debug_info,
     case Pogo::SIGNATURES::UNKNOWN:
     default:
     {
-      LIEF_INFO("POGO signature {:#x} not yet implemented", *res_sig);
+      LIEF_WARN("POGO signature {:#x} not yet implemented", *res_sig);
     }
   }
   return pogo;

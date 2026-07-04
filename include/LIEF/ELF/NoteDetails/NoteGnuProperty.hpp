@@ -33,17 +33,33 @@ class LIEF_API NoteGnuProperty : public Note {
   /// `NT_GNU_PROPERTY_TYPE_0` note
   class LIEF_API Property {
     public:
+    Property() = delete;
+
     /// LIEF's mirror types of the original `GNU_PROPERTY_` values
     enum class TYPE {
       UNKNOWN = 0,
-      GENERIC,          ///< Property that doesn't have a special implementation
-      AARCH64_FEATURES, ///< Mirror of `GNU_PROPERTY_AARCH64_FEATURE_1_AND`
-      AARCH64_PAUTH,    ///< Mirror of `GNU_PROPERTY_AARCH64_FEATURE_PAUTH`
-      STACK_SIZE,       ///< Mirror of `GNU_PROPERTY_STACK_SIZE`
-      NO_COPY_ON_PROTECTED, ///< Mirror of `GNU_PROPERTY_NO_COPY_ON_PROTECTED`
-      X86_ISA,              ///< Mirror of `GNU_PROPERTY_X86_ISA_1_*` and
-                            ///< `GNU_PROPERTY_X86_COMPAT_*`
-      X86_FEATURE,          ///< Mirror of `GNU_PROPERTY_X86_FEATURE_*`
+
+      /// Property that doesn't have a special implementation
+      GENERIC,
+
+      /// Mirror of `GNU_PROPERTY_AARCH64_FEATURE_1_AND`
+      AARCH64_FEATURES,
+
+      /// Mirror of `GNU_PROPERTY_AARCH64_FEATURE_PAUTH`
+      AARCH64_PAUTH,
+
+      /// Mirror of `GNU_PROPERTY_STACK_SIZE`
+      STACK_SIZE,
+
+      /// Mirror of `GNU_PROPERTY_NO_COPY_ON_PROTECTED`
+      NO_COPY_ON_PROTECTED,
+
+      /// Mirror of `GNU_PROPERTY_X86_ISA_1_*` and `GNU_PROPERTY_X86_COMPAT_*`
+      X86_ISA,
+
+      ///< Mirror of `GNU_PROPERTY_X86_FEATURE_*`
+      X86_FEATURE,
+
       NEEDED,
     };
 
@@ -63,7 +79,6 @@ class LIEF_API NoteGnuProperty : public Note {
     }
 
     protected:
-    Property() = delete;
     Property(TYPE type) :
       type_(type) {}
     TYPE type_ = TYPE::UNKNOWN;

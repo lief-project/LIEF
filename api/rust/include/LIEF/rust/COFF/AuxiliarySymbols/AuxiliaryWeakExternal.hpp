@@ -36,7 +36,7 @@ class COFF_AuxiliaryWeakExternal : public COFF_AuxiliarySymbol {
     return make_span(impl().padding());
   }
 
-  static bool classof(const COFF_AuxiliarySymbol& entry) {
+  static auto classof(const COFF_AuxiliarySymbol& entry) {
     return lief_t::classof(&entry.get());
   }
 

@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <cstring>
+#include <vector>
+
 #include "logging.hpp"
 #include "LIEF/utils.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
 #include "LIEF/MachO/DataInCode.hpp"
@@ -35,6 +41,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
@@ -136,6 +143,9 @@ ok_error_t Builder::build_linkedit() {
   if (auto* split_info = binary_->segment_split_info()) {
     build<T>(*split_info);
   }
+  for (LazyLoadDylibInfo& lazy : binary_->lazy_load_dylib_infos()) {
+    build<T>(lazy);
+  }
   if (auto* fstart = binary_->function_starts()) {
     build<T>(*fstart);
   }
@@ -218,6 +228,7 @@ ok_error_t Builder::build_segments() {
     }
 
     segment.original_data_.clear();
+    swap_endian_if_needed(segment_header);
     std::move(reinterpret_cast<uint8_t*>(&segment_header),
               reinterpret_cast<uint8_t*>(&segment_header) + sizeof(segment_t),
               std::back_inserter(segment.original_data_));
@@ -263,6 +274,7 @@ ok_error_t Builder::build_segments() {
             static_cast<uint32_t>(section.reserved3());
       }
 
+      swap_endian_if_needed(header);
       std::move(reinterpret_cast<uint8_t*>(&header),
                 reinterpret_cast<uint8_t*>(&header) + sizeof(section_t),
                 std::back_inserter(segment.original_data_));
@@ -306,6 +318,7 @@ ok_error_t Builder::build(DylibCommand& library) {
   library.original_data_.clear();
 
   // Write Header
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(library.original_data_));
@@ -347,6 +360,7 @@ ok_error_t Builder::build(DylinkerCommand& linker) {
   linker.original_data_.clear();
 
   // Write Header
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(linker.original_data_));
@@ -381,6 +395,7 @@ ok_error_t Builder::build(VersionMin& version_min) {
 
   version_min.size_ = sizeof(details::version_min_command);
   version_min.original_data_.clear();
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) +
                 sizeof(details::version_min_command),
@@ -410,6 +425,7 @@ ok_error_t Builder::build(SourceVersion& source_version) {
 
   source_version.size_ = sizeof(details::source_version_command);
   source_version.original_data_.clear();
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) +
                 sizeof(details::source_version_command),
@@ -451,6 +467,7 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
   rpath_cmd.original_data_.clear();
 
   // Write Header
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(rpath_cmd.original_data_));
@@ -486,6 +503,7 @@ ok_error_t Builder::build(Routine& routine) {
 
   routine.size_ = sizeof(routine_t);
   routine.original_data_.clear();
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(routine_t),
             std::back_inserter(routine.original_data_));
@@ -508,6 +526,7 @@ ok_error_t Builder::build(MainCommand& main_cmd) {
 
   main_cmd.size_ = sizeof(details::entry_point_command);
   main_cmd.original_data_.clear();
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) +
                 sizeof(details::entry_point_command),
@@ -534,6 +553,7 @@ ok_error_t Builder::build(NoteCommand& note) {
 
   std::fill(note.original_data_.begin(), note.original_data_.end(), 0);
 
+  swap_endian_if_needed(raw_cmd);
   std::copy(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             reinterpret_cast<uint8_t*>(note.original_data_.data()));
@@ -621,6 +641,7 @@ ok_error_t Builder::build(DyldInfo& dyld_info) {
   dyld_info.size_ = sizeof(details::dyld_info_command);
   dyld_info.original_data_.clear();
   dyld_info.original_data_.resize(dyld_info.size_);
+  swap_endian_if_needed(raw_cmd);
   memcpy(dyld_info.original_data_.data(), &raw_cmd,
          sizeof(details::dyld_info_command));
   return ok();
@@ -655,6 +676,7 @@ ok_error_t Builder::build(FunctionStarts& function_starts) {
   function_starts.size_ = sizeof(details::linkedit_data_command);
   function_starts.original_data_.clear();
   function_starts.original_data_.resize(function_starts.size_);
+  swap_endian_if_needed(raw_cmd);
   memcpy(function_starts.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -770,6 +792,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
     const size_t nb_symbols = local_syms.size() + ext_syms.size() +
                               undef_syms.size() + other_syms.size();
     vector_iostream nlist_table;
+    nlist_table.set_endian_swap(should_swap());
     nlist_table.reserve(nb_symbols * sizeof(nlist_t));
 
     size_t isym = 0;
@@ -830,7 +853,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
                symbol_command.symbol_offset(), symtab.symoff);
     LIEF_DEBUG("LC_SYMTAB.nb_symbols: {:#08x} -> {:#x}",
                symbol_command.numberof_symbols(), symtab.nsyms);
-    linkedit_.write(std::move(raw_nlist_table));
+    linkedit_.write(raw_nlist_table);
   }
   /*
    * Two Level Hints
@@ -888,7 +911,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
   LIEF_DEBUG("LC_SYMTAB.strtab.size:   {:#08x} -> {:#x}",
              symbol_command.strings_size(), symtab.strsize);
 
-  linkedit_.write(std::move(strtab));
+  linkedit_.write(strtab);
 
   symtab.cmd = static_cast<uint32_t>(symbol_command.command());
   symtab.cmdsize = static_cast<uint32_t>(symbol_command.size());
@@ -896,6 +919,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
   symbol_command.original_data_.clear();
   symbol_command.original_data_.resize(sizeof(details::symtab_command));
 
+  swap_endian_if_needed(symtab);
   std::memcpy(symbol_command.original_data_.data(), &symtab,
               sizeof(details::symtab_command));
 
@@ -943,6 +967,7 @@ ok_error_t Builder::build(DynamicSymbolCommand& symbol_command) {
 
   symbol_command.original_data_.clear();
   symbol_command.original_data_.resize(sizeof(details::dysymtab_command));
+  swap_endian_if_needed(rawcmd);
   memcpy(symbol_command.original_data_.data(), &rawcmd,
          sizeof(details::dysymtab_command));
   return ok();
@@ -979,6 +1004,7 @@ ok_error_t Builder::build(DataInCode& datacode) {
   datacode.original_data_.clear();
   datacode.original_data_.resize(datacode.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(datacode.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -1012,6 +1038,7 @@ ok_error_t Builder::build(CodeSignature& code_signature) {
   code_signature.original_data_.clear();
   code_signature.original_data_.resize(code_signature.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(code_signature.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -1041,6 +1068,7 @@ ok_error_t Builder::build(SegmentSplitInfo& ssi) {
   ssi.original_data_.clear();
   ssi.original_data_.resize(ssi.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(ssi.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
 
@@ -1074,6 +1102,7 @@ ok_error_t Builder::build(SubFramework& sf) {
   sf.original_data_.clear();
 
   // Write Header
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(sf.original_data_));
@@ -1112,6 +1141,7 @@ ok_error_t Builder::build(SubClient& sc) {
   sc.original_data_.clear();
 
   // Write Header
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(sc.original_data_));
@@ -1149,6 +1179,7 @@ ok_error_t Builder::build(DyldEnvironment& de) {
   de.original_data_.clear();
 
   // Write Header
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(de.original_data_));
@@ -1196,6 +1227,7 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   tc.original_data_.clear();
 
   // Write Header
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(tc.original_data_));
@@ -1203,7 +1235,6 @@ ok_error_t Builder::build(ThreadCommand& tc) {
   // Write state
   std::move(state.begin(), state.end(), std::back_inserter(tc.original_data_));
 
-  tc.original_data_.push_back(0);
   tc.original_data_.insert(tc.original_data_.end(), padding, 0);
   return ok();
 }
@@ -1220,6 +1251,7 @@ ok_error_t Builder::build(EncryptionInfo& info) {
 
   std::fill(info.original_data_.begin(), info.original_data_.end(), 0);
 
+  swap_endian_if_needed(raw_cmd);
   std::copy(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             reinterpret_cast<uint8_t*>(info.original_data_.data()));
@@ -1639,12 +1671,13 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
   raw_cmd.datasize = lnk_data.size();
 
-  linkedit_.write(std::move(lnk_data.raw()));
+  linkedit_.write(lnk_data.raw());
 
   fixups.size_ = sizeof(details::linkedit_data_command);
   fixups.original_data_.clear();
   fixups.original_data_.resize(fixups.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(fixups.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -1675,12 +1708,13 @@ ok_error_t Builder::build(DyldExportsTrie& exports) {
   raw_cmd.dataoff = linkedit_offset_ + linkedit_.size();
   raw_cmd.datasize = raw.size();
 
-  linkedit_.write(std::move(raw));
+  linkedit_.write(raw);
 
   exports.size_ = sizeof(details::linkedit_data_command);
   exports.original_data_.clear();
   exports.original_data_.resize(exports.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(exports.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -1724,12 +1758,14 @@ ok_error_t Builder::build(BuildVersion& bv) {
     tools_array[i].tool = static_cast<uint32_t>(tools[i].tool());
     tools_array[i].version =
         static_cast<uint32_t>(version[0] << 16 | version[1] << 8 | version[2]);
+    swap_endian_if_needed(tools_array[i]);
   }
 
   bv.size_ = size_needed;
   bv.original_data_.clear();
 
   // Write Header
+  swap_endian_if_needed(raw_cmd);
   std::move(reinterpret_cast<uint8_t*>(&raw_cmd),
             reinterpret_cast<uint8_t*>(&raw_cmd) + sizeof(raw_cmd),
             std::back_inserter(bv.original_data_));
@@ -1763,6 +1799,7 @@ ok_error_t Builder::build(CodeSignatureDir& sig) {
   sig.original_data_.clear();
   sig.original_data_.resize(sig.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(sig.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -1790,6 +1827,7 @@ ok_error_t Builder::build(LinkerOptHint& opt) {
   opt.original_data_.clear();
   opt.original_data_.resize(opt.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(opt.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -1817,6 +1855,7 @@ ok_error_t Builder::build(AtomInfo& atom) {
   atom.original_data_.clear();
   atom.original_data_.resize(atom.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(atom.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -1824,7 +1863,7 @@ ok_error_t Builder::build(AtomInfo& atom) {
 
 template<class T>
 ok_error_t Builder::build(TwoLevelHints& two) {
-  return make_error_code(lief_errors::not_implemented);
+  LIEF_DEBUG("Build '{}'", to_string(two.command()));
   details::twolevel_hints_command raw_cmd{};
   const auto it_hints = two.hints();
 
@@ -1843,12 +1882,13 @@ ok_error_t Builder::build(TwoLevelHints& two) {
     linkedit_.write(value);
   }
 
-  two.size_ = sizeof(details::linkedit_data_command);
+  two.size_ = sizeof(details::twolevel_hints_command);
   two.original_data_.clear();
   two.original_data_.resize(two.size_);
 
+  swap_endian_if_needed(raw_cmd);
   memcpy(two.original_data_.data(), &raw_cmd,
-         sizeof(details::linkedit_data_command));
+         sizeof(details::twolevel_hints_command));
   return ok();
 }
 
@@ -1858,13 +1898,55 @@ ok_error_t Builder::build(FunctionVariants& func_variants) {
   details::linkedit_data_command raw_cmd{};
   raw_cmd.dataoff = linkedit_.size();
 
-  span<const uint8_t> sp = func_variants.content();
+  // Reconstruct the payload following this layout:
+  //
+  //   uint32_t  tableCount
+  //   uint32_t  tableOffsets[tableCount]   // payload-relative, points to 'kind'
+  //   <runtime tables>
+  //
+  // where each runtime table is:
+  //
+  //   uint32_t              kind
+  //   uint32_t              count
+  //   runtime_table_entry_t entries[count]  // 8 bytes each (2 * uint32_t)
+  auto runtime_tables = func_variants.runtime_table();
+  const size_t nb_tables = runtime_tables.size();
 
-  // TODO(romain): We need to reconstruct the data in depth
-  linkedit_.write(sp);
+  linkedit_.write((uint32_t)nb_tables);
 
-  raw_cmd.cmd = static_cast<uint32_t>(func_variants.command());
-  raw_cmd.cmdsize = static_cast<uint32_t>(func_variants.size());
+  // The tables are stored right after the (tableCount + tableOffsets[]) header.
+  size_t table_offset = sizeof(uint32_t) * (1 + nb_tables);
+  for (const FunctionVariants::RuntimeTable& table : runtime_tables) {
+    linkedit_.write((uint32_t)table_offset);
+    // Each table is a 'kind' + 'count' header followed by its entries.
+    table_offset +=
+        2 * sizeof(uint32_t) +
+        table.entries().size() * sizeof(details::runtime_table_entry_t);
+  }
+
+  for (const FunctionVariants::RuntimeTable& table : runtime_tables) {
+    (linkedit_)
+        .write((uint32_t)table.kind())
+        .write((uint32_t)table.entries().size());
+
+    for (const FunctionVariants::RuntimeTableEntry& entry : table.entries()) {
+      details::runtime_table_entry_t raw_entry{};
+      raw_entry.impl = entry.impl();
+      raw_entry.another_table = entry.another_table();
+
+      span<const uint8_t> flag_bit_nums = entry.flag_bit_nums();
+      std::copy(flag_bit_nums.begin(), flag_bit_nums.end(),
+                std::begin(raw_entry.flag_bit_nums));
+
+      linkedit_.write(raw_entry);
+    }
+  }
+
+  // The payload is padded to the natural pointer size (as emitted by the linker)
+  linkedit_.align(sizeof(typename T::uint));
+
+  raw_cmd.cmd = (uint32_t)func_variants.command();
+  raw_cmd.cmdsize = (uint32_t)func_variants.size();
   raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
   raw_cmd.dataoff += linkedit_offset_;
 
@@ -1876,6 +1958,7 @@ ok_error_t Builder::build(FunctionVariants& func_variants) {
   func_variants.size_ = sizeof(details::linkedit_data_command);
   func_variants.original_data_.clear();
   func_variants.original_data_.resize(func_variants.size_);
+  swap_endian_if_needed(raw_cmd);
   memcpy(func_variants.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
@@ -1887,8 +1970,18 @@ ok_error_t Builder::build(FunctionVariantFixups& func_variant_fixups) {
   details::linkedit_data_command raw_cmd{};
   raw_cmd.dataoff = linkedit_.size();
 
-  // TODO(romain): We need to reconstruct the data in depth
-  linkedit_.write(func_variant_fixups.content());
+  for (const FunctionVariantFixups::Fixup& fixup : func_variant_fixups.fixups()) {
+    details::function_variant_fixup_t raw_fixup{};
+    raw_fixup.seg_offset = fixup.seg_offset();
+    raw_fixup.seg_index =
+        fixup.segment() != nullptr ? fixup.segment()->index() : fixup.seg_index();
+    raw_fixup.variant_index = fixup.variant_index();
+    raw_fixup.pac_auth = fixup.pac_auth();
+    raw_fixup.pac_address = fixup.pac_address();
+    raw_fixup.pac_key = fixup.pac_key();
+    raw_fixup.pac_diversity = fixup.pac_diversity();
+    linkedit_.write(raw_fixup);
+  }
 
   linkedit_.align(sizeof(typename T::uint));
 
@@ -1906,10 +1999,45 @@ ok_error_t Builder::build(FunctionVariantFixups& func_variant_fixups) {
   func_variant_fixups.size_ = sizeof(details::linkedit_data_command);
   func_variant_fixups.original_data_.clear();
   func_variant_fixups.original_data_.resize(func_variant_fixups.size_);
+  swap_endian_if_needed(raw_cmd);
   memcpy(func_variant_fixups.original_data_.data(), &raw_cmd,
          sizeof(details::linkedit_data_command));
   return ok();
 }
+
+template<class T>
+ok_error_t Builder::build(LazyLoadDylibInfo& cmd) {
+  LIEF_DEBUG("Build '{}'", to_string(cmd.command()));
+
+  // TODO(romain): Currently, fixup addresses are not regenerated as fixup chains.
+  // This can cause an issue when a Binary::shift operation targets some of
+  // these fixup
+
+  details::linkedit_data_command raw_cmd{};
+  raw_cmd.dataoff = linkedit_.size();
+
+  cmd.serialize(linkedit_);
+  linkedit_.align(sizeof(typename T::uint));
+
+  raw_cmd.cmd = static_cast<uint32_t>(cmd.command());
+  raw_cmd.cmdsize = static_cast<uint32_t>(cmd.size());
+  raw_cmd.datasize = linkedit_.size() - raw_cmd.dataoff;
+  raw_cmd.dataoff += linkedit_offset_;
+
+  LIEF_DEBUG("LC_LAZY_LOAD_DYLIB_INFO.offset: {:#08x} -> {:#x}", cmd.data_offset(),
+             raw_cmd.dataoff);
+  LIEF_DEBUG("LC_LAZY_LOAD_DYLIB_INFO.size:   {:#08x} -> {:#x}", cmd.data_size(),
+             raw_cmd.datasize);
+
+  cmd.size_ = sizeof(details::linkedit_data_command);
+  cmd.original_data_.clear();
+  cmd.original_data_.resize(cmd.size_);
+  swap_endian_if_needed(raw_cmd);
+  memcpy(cmd.original_data_.data(), &raw_cmd,
+         sizeof(details::linkedit_data_command));
+  return ok();
+}
+
 template<class MACHO_T>
 ok_error_t Builder::build_header() {
   using header_t = typename MACHO_T::header;

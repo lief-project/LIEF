@@ -85,3 +85,48 @@ def test_anonymous_enum():
         char __padding4__[4];
         Elf64_Addr r_ldbase;
     }""")
+
+
+def test_compilation_unit():
+    libdexprotector = lief.dwarf.load(
+        get_sample("private/DWARF/binaryninja/libdexprotector.so.dwarf")
+    )
+    assert libdexprotector is not None
+
+    cu = None
+    for unit in libdexprotector.compilation_units:
+        assert unit is not None
+        if "JNI_OnLoad" in unit.to_decl():
+            cu = unit
+            break
+
+    assert cu is not None
+    decl = cu.to_decl()
+    assert isinstance(decl, str)
+    assert "JNI_OnLoad" in decl
+
+    # The configuration object is accepted
+    config = lief.DeclOpt()
+    config.is_cpp = True
+    assert isinstance(cu.to_decl(config), str)
+
+
+def test_show_field_offsets():
+    libdexprotector = lief.dwarf.load(
+        get_sample("private/DWARF/binaryninja/libdexprotector.so.dwarf")
+    )
+    assert libdexprotector is not None
+    r_debug = libdexprotector.find_type("r_debug_t")
+    assert r_debug is not None
+
+    opt = lief.DeclOpt()
+    assert opt.show_field_offsets is False
+    assert "/* 0x" not in r_debug.to_decl(opt)
+
+    opt.show_field_offsets = True
+    decorated = r_debug.to_decl(opt)
+    assert "/* 0x00 */ int r_version;" in decorated
+    assert "/* 0x08 */ struct link_map *r_map;" in decorated
+    assert "/* 0x20 */ Elf64_Addr r_ldbase;" in decorated
+    # The offset is emitted for every member which includes paddings
+    assert decorated.count("/* 0x") >= 5

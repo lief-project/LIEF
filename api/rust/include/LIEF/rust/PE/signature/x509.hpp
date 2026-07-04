@@ -28,39 +28,39 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
   uint32_t version() const {
     return get().version();
   }
-  std::vector<uint8_t> serial_number() const {
-    return get().serial_number();
+  auto serial_number() const {
+    return make_unique_vector<uint8_t>(get().serial_number());
   }
 
-  std::string signature_algorithm() const {
-    return get().signature_algorithm();
+  auto signature_algorithm() const {
+    return to_unique_string(get().signature_algorithm());
   }
-  std::vector<uint64_t> valid_from() const {
-    return details::make_vector(get().valid_from());
-  }
-
-  std::vector<uint64_t> valid_to() const {
-    return details::make_vector(get().valid_to());
+  auto valid_from() const {
+    return make_unique_vector<uint64_t>(details::make_vector(get().valid_from()));
   }
 
-  std::string issuer() const {
-    return get().issuer();
-  }
-  std::string subject() const {
-    return get().subject();
-  }
-  std::vector<uint8_t> raw() const {
-    return get().raw();
+  auto valid_to() const {
+    return make_unique_vector<uint64_t>(details::make_vector(get().valid_to()));
   }
 
-  uint32_t key_type() const {
-    return to_int(get().key_type());
+  auto issuer() const {
+    return to_unique_string(get().issuer());
   }
-  bool is_ca() const {
+  auto subject() const {
+    return to_unique_string(get().subject());
+  }
+  auto raw() const {
+    return make_unique_vector<uint8_t>(get().raw());
+  }
+
+  auto key_type() const {
+    return as_u32(get().key_type());
+  }
+  auto is_ca() const {
     return get().is_ca();
   }
-  std::vector<uint8_t> signature() const {
-    return get().signature();
+  auto signature() const {
+    return make_unique_vector<uint8_t>(get().signature());
   }
 
   auto rsa_info() const {
@@ -69,26 +69,28 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
 
   auto check_signature(const uint8_t* hash, size_t hsize, const uint8_t* signature,
                        size_t sigsiz, uint32_t algo) const {
-    return get().check_signature({hash, hash + hsize},
-                                 {signature, signature + sigsiz},
-                                 LIEF::PE::ALGORITHMS(algo));
+    return as_u32(get().check_signature({hash, hash + hsize},
+                                        {signature, signature + sigsiz},
+                                        LIEF::PE::ALGORITHMS(algo)));
   }
 
   auto verify(const PE_x509& ca) const {
-    return to_int(get().verify(ca.get()));
+    return as_u32(get().verify(ca.get()));
   }
 
   auto key_usage() const {
-    std::vector<uint32_t> result;
+    auto result = make_unique_vector<uint32_t>();
     for (LIEF::PE::x509::KEY_USAGE ku : get().key_usage()) {
-      result.push_back(to_int(ku));
+      result->push_back(to_int(ku));
     }
     return result;
   }
   auto ext_key_usage() const {
-    return get().ext_key_usage();
+    auto v = get().ext_key_usage();
+    return make_unique_vector<std::string>(v.begin(), v.end());
   }
   auto certificate_policies() const {
-    return get().certificate_policies();
+    auto v = get().certificate_policies();
+    return make_unique_vector<std::string>(v.begin(), v.end());
   }
 };

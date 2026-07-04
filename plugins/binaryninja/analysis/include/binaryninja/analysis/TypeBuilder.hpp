@@ -92,7 +92,7 @@ class TypeBuilder {
   }
 
   BinaryNinja::Ref<BinaryNinja::Type>
-      make_pointer(BinaryNinja::Ref<BinaryNinja::Type> type,
+      make_pointer(const BinaryNinja::Ref<BinaryNinja::Type>& type,
                    BinaryNinja::Architecture* arch = nullptr) {
     BinaryNinja::Architecture* target_arch = arch;
     if (target_arch == nullptr) {
@@ -103,7 +103,7 @@ class TypeBuilder {
 
 
   BinaryNinja::Ref<BinaryNinja::Type>
-      make_const_pointer(BinaryNinja::Ref<BinaryNinja::Type> type,
+      make_const_pointer(const BinaryNinja::Ref<BinaryNinja::Type>& type,
                          BinaryNinja::Architecture* arch = nullptr) {
     BinaryNinja::Architecture* target_arch = arch;
     if (target_arch == nullptr) {
@@ -143,8 +143,8 @@ class TypeBuilder {
   }
 
   BinaryNinja::Ref<BinaryNinja::Type>
-      make_function(BinaryNinja::Ref<BinaryNinja::Type> ret,
-                    std::vector<BinaryNinja::Ref<BinaryNinja::Type>> args,
+      make_function(const BinaryNinja::Ref<BinaryNinja::Type>& ret,
+                    const std::vector<BinaryNinja::Ref<BinaryNinja::Type>>& args,
                     BinaryNinja::Architecture* arch = nullptr) {
     using namespace BinaryNinja;
 
@@ -156,15 +156,14 @@ class TypeBuilder {
     assert(target_arch != nullptr);
     std::vector<FunctionParameter> params;
     std::transform(args.begin(), args.end(), std::back_inserter(params),
-                   [](Ref<Type> type) {
+                   [](const Ref<Type>& type) {
                      return FunctionParameter(/*name=*/"", type);
                    });
 
     Confidence<Ref<CallingConvention>> CC =
         bv_.GetDefaultPlatform()->GetDefaultCallingConvention();
 
-    return Type::PointerType(target_arch,
-                             Type::FunctionType(ret, CC, std::move(params)));
+    return Type::PointerType(target_arch, Type::FunctionType(ret, CC, params));
   }
 
   virtual std::string default_type_src() const {
@@ -176,7 +175,7 @@ class TypeBuilder {
   virtual BinaryNinja::Ref<BinaryNinja::Type> get(const std::string& name);
 
   template<class T>
-  BinaryNinja::Ref<T> get_as(BinaryNinja::Ref<BinaryNinja::Type> type) {
+  BinaryNinja::Ref<T> get_as(const BinaryNinja::Ref<BinaryNinja::Type>& type) {
     if constexpr (std::is_same_v<T, BinaryNinja::Structure>) {
       if (auto U = type->GetStructure()) {
         return U;

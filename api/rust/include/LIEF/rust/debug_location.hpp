@@ -23,7 +23,7 @@ class DebugLocation {
     file_(std::move(file)) {}
 
   auto file() const {
-    return file_;
+    return std::make_unique<std::string>(file_);
   }
   auto line() const {
     return line_;

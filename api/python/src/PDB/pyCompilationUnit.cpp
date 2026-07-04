@@ -1,11 +1,14 @@
 #include <sstream>
 #include "LIEF/PDB/CompilationUnit.hpp"
 #include "LIEF/PDB/BuildMetadata.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
 #include "PDB/pyPDB.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/make_iterator.h>
+
+#include "pyOwningIterator.hpp"
 
 namespace LIEF::pdb::py {
 template<>
@@ -43,7 +46,7 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
     )
     .def_prop_ro("functions",
         [] (const pdb::CompilationUnit& self) {
-          auto functions = self.functions();
+          auto functions = LIEF::py::owning_range(self.functions());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<pdb::CompilationUnit>(), "functions_it", functions);
         },
@@ -55,6 +58,14 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
     )
     .def_prop_ro("build_metadata", &CompilationUnit::build_metadata,
                  nb::rv_policy::take_ownership, nb::keep_alive<0, 1>())
+
+    .def("to_decl",
+         [] (const pdb::CompilationUnit& self, const DeclOpt* opt) {
+           return opt ? self.to_decl(*opt) : self.to_decl();
+         },
+         "Generates a C/C++ definition for the functions defined in this "
+         "compilation unit"_doc,
+         "opt"_a.none() = nb::none())
   LIEF_DEFAULT_STR(CompilationUnit);
 }
 

@@ -18,4 +18,5 @@
 #include <LIEF/asm/powerpc/Instruction.hpp>
 #include <LIEF/asm/powerpc/opcodes.hpp>
 #include <LIEF/asm/powerpc/registers.hpp>
+#include <LIEF/asm/powerpc/operands.hpp>
 #endif

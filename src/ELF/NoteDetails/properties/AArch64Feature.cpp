@@ -27,6 +27,7 @@ namespace LIEF::ELF {
 std::unique_ptr<AArch64Feature> AArch64Feature::create(BinaryStream& stream) {
   static constexpr auto GNU_PROPERTY_AARCH64_FEATURE_1_BTI = 1U << 0;
   static constexpr auto GNU_PROPERTY_AARCH64_FEATURE_1_PAC = 1U << 1;
+  static constexpr auto GNU_PROPERTY_AARCH64_FEATURE_1_GCS = 1U << 2;
 
   uint32_t bitmask = stream.read<uint32_t>().value_or(0);
 
@@ -42,6 +43,9 @@ std::unique_ptr<AArch64Feature> AArch64Feature::create(BinaryStream& stream) {
       case GNU_PROPERTY_AARCH64_FEATURE_1_PAC:
         features.push_back(FEATURE::PAC);
         break;
+      case GNU_PROPERTY_AARCH64_FEATURE_1_GCS:
+        features.push_back(FEATURE::GCS);
+        break;
       default: features.push_back(FEATURE::UNKNOWN); break;
     }
   }
@@ -55,6 +59,7 @@ const char* to_string(AArch64Feature::FEATURE type) {
       ENTRY(UNKNOWN),
       ENTRY(BTI),
       ENTRY(PAC),
+      ENTRY(GCS),
   };
 #undef ENTRY
 

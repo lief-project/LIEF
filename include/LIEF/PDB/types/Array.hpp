@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_ARRAY_H
 #define LIEF_PDB_TYPE_ARRAY_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
 
@@ -25,16 +26,20 @@ namespace types {
 /// This class represents a `LF_ARRAY` PDB type
 class LIEF_API Array : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Array(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   /// The number of elements in this array
   size_t numberof_elements() const;
 
   /// Type of the elements
-  std::unique_ptr<Type> element_type() const;
+  std::unique_ptr<Type> element_type() const LIEF_LIFETIMEBOUND;
 
   /// Type of the index
-  std::unique_ptr<Type> index_type() const;
+  std::unique_ptr<Type> index_type() const LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ARRAY;

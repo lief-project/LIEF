@@ -18,4 +18,5 @@
 #include <LIEF/asm/ebpf/Instruction.hpp>
 #include <LIEF/asm/ebpf/opcodes.hpp>
 #include <LIEF/asm/ebpf/registers.hpp>
+#include <LIEF/asm/ebpf/operands.hpp>
 #endif

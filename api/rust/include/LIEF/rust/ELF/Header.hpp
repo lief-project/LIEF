@@ -25,25 +25,25 @@ class ELF_Header : public Mirror<LIEF::ELF::Header> {
     return get().entrypoint();
   }
   auto file_type() const {
-    return to_int(get().file_type());
+    return as_u32(get().file_type());
   }
   auto machine_type() const {
-    return to_int(get().machine_type());
+    return as_u32(get().machine_type());
   }
   auto object_file_version() const {
-    return to_int(get().object_file_version());
+    return as_u32(get().object_file_version());
   }
   auto identity_class() const {
-    return to_int(get().identity_class());
+    return as_u32(get().identity_class());
   }
   auto identity_os_abi() const {
-    return to_int(get().identity_os_abi());
+    return as_u32(get().identity_os_abi());
   }
   auto identity_version() const {
-    return to_int(get().identity_version());
+    return as_u32(get().identity_version());
   }
   auto identity_data() const {
-    return to_int(get().identity_data());
+    return as_u32(get().identity_data());
   }
   uint32_t identity_abi_version() const {
     return get().identity_abi_version();
@@ -76,7 +76,7 @@ class ELF_Header : public Mirror<LIEF::ELF::Header> {
     return get().section_name_table_idx();
   }
 
-  void set_osabi(uint32_t value) {
+  auto set_osabi(uint32_t value) {
     get().identity_os_abi((LIEF::ELF::Header::OS_ABI)value);
   }
 };

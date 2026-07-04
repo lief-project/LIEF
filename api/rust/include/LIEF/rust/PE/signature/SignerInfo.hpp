@@ -57,27 +57,25 @@ class PE_SignerInfo : private Mirror<LIEF::PE::SignerInfo> {
   uint32_t version() const {
     return get().version();
   }
-  std::string issuer() const {
-    return get().issuer();
+  auto issuer() const {
+    return to_unique_string(get().issuer());
   }
-  uint32_t digest_algorithm() const {
-    return to_int(get().digest_algorithm());
+  auto digest_algorithm() const {
+    return as_u32(get().digest_algorithm());
   }
-  uint32_t encryption_algorithm() const {
-    return to_int(get().encryption_algorithm());
+  auto encryption_algorithm() const {
+    return as_u32(get().encryption_algorithm());
   }
   Span serial_number() const {
     return make_span(get().serial_number());
   }
 
-  std::vector<uint8_t> encrypted_digest() const {
-    return get().encrypted_digest();
+  auto encrypted_digest() const {
+    return make_unique_vector<uint8_t>(get().encrypted_digest());
   }
 
   auto cert() const {
-    return details::try_unique<PE_x509>(
-        get().cert()
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<PE_x509>(get().cert());
   }
 
   auto authenticated_attributes() const {
@@ -110,3 +108,8 @@ class PE_SignerInfo : private Mirror<LIEF::PE::SignerInfo> {
     );
   }
 };
+
+using PE_SignerInfo_it_authenticated_attributes =
+    PE_SignerInfo::it_authenticated_attributes;
+using PE_SignerInfo_it_unauthenticated_attributes =
+    PE_SignerInfo::it_unauthenticated_attributes;

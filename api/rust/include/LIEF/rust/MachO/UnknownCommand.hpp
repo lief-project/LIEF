@@ -28,7 +28,7 @@ class MachO_UnknownCommand : public MachO_Command {
     return impl().original_command();
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

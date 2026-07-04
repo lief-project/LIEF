@@ -16,6 +16,7 @@
 #define LIEF_DWARF_PARAMETER_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 
 #include <memory>
 #include <string>
@@ -92,11 +93,11 @@ class LIEF_API Parameter {
   std::string name() const;
 
   /// Type of this parameter
-  std::unique_ptr<Type> type() const;
+  std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;
 
   /// Location of this parameter. For instance it can be a specific register
   /// that is not following the calling convention.
-  std::unique_ptr<Location> location() const;
+  std::unique_ptr<Location> location() const LIEF_LIFETIMEBOUND;
 
   template<class T>
   const T* as() const {

@@ -205,7 +205,7 @@ def test_DW_TAG_reference_type():
 
     assert ref.underlying_type is not None
     assert ref.underlying_type.name == "int"
-    assert ref.to_decl() == "int &&"
+    assert ref.to_decl() == "int &"
 
 
 def test_DW_TAG_atomic_type():
@@ -226,7 +226,7 @@ def test_DW_TAG_atomic_type():
 
     assert atomic.underlying_type is not None
     assert atomic.underlying_type.name == "int"
-    assert atomic.to_decl() == "<unknown type>"
+    assert atomic.to_decl() == "_Atomic(int)"
 
 
 def test_DW_TAG_template_alias():
@@ -239,7 +239,10 @@ def test_DW_TAG_template_alias():
     assert V is not None
 
     template_alias = cast(lief.dwarf.types.TemplateAlias, V.type)
-    assert template_alias.to_decl() == "<unknown type>"
+    assert template_alias.to_decl() == dedent("""\
+    struct X<int, 5> {
+        int m1;
+    }""")
     assert isinstance(template_alias, lief.dwarf.types.TemplateAlias)
 
     assert template_alias.name == "A"
@@ -322,7 +325,7 @@ def test_DW_TAG_rvalue_reference_type():
     assert param_1_type is not None
     rval_ref = cast(lief.dwarf.types.RValueReference, param_1_type)
     assert isinstance(rval_ref, lief.dwarf.types.RValueReference)
-    assert rval_ref.to_decl() == "<unknown type>"
+    assert rval_ref.to_decl() == "class deleted &&"
     assert rval_ref.underlying_type is not None
     assert rval_ref.underlying_type.name == "deleted"
 

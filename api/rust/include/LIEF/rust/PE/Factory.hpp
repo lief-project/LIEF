@@ -30,14 +30,13 @@ class PE_Factory {
 
   auto add_section(const PE_Section& section) {
     factory_->add_section(section.impl());
-    return this;
   }
 
-  void set_arch(uint32_t arch) {
+  auto set_arch(uint32_t arch) {
     factory_->set_arch(LIEF::PE::Header::MACHINE_TYPES(arch));
   }
 
-  void set_entrypoint(uint64_t ep) {
+  auto set_entrypoint(uint64_t ep) {
     factory_->set_entrypoint(ep);
   }
 

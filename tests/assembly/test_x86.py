@@ -79,7 +79,7 @@ def test_macho_x86():
     assert instructions[0] is not None
     assert instructions[0].to_string() == "0x001141: push ebp"
     assert instructions[9] is not None
-    assert instructions[9].to_string() == "0x00115a: inc dword ptr [esi + 20669]"
+    assert instructions[9].to_string() == "0x00115a: inc dword ptr [esi + 0x50bd]"
 
 
 def test_macho_x86_64():
@@ -97,7 +97,7 @@ def test_macho_x86_64():
     assert instructions[0] is not None
     assert instructions[0].to_string() == "0x001108: push rbp"
     assert instructions[23] is not None
-    assert instructions[23].to_string() == "0x001154: dec dword ptr [rip + 21174]"
+    assert instructions[23].to_string() == "0x001154: dec dword ptr [rip + 0x52b6]"
 
 
 def test_x86_operands():

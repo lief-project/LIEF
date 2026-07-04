@@ -17,6 +17,8 @@
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 
+using LIEF_ELF_DynamicEntry = LIEF::ELF::DynamicEntry;
+
 class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry> {
   friend class ELF_DynamicEntryRpath;
   friend class ELF_DynamicEntryArray;
@@ -34,7 +36,7 @@ class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry> {
   }
 
   auto tag() const {
-    return to_int(get().tag());
+    return as_u64(get().tag());
   }
   auto value() const {
     return get().value();
@@ -44,11 +46,11 @@ class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry> {
     get().value(value);
   }
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 
-  const void* raw_ptr() const {
+  const auto* raw_ptr() const {
     return &get();
   }
 };

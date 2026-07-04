@@ -1,4 +1,4 @@
-#include <cxxgen.h>
+#include "asm/config.hpp"
 
 #include "LIEF/rust/asm/AssemblerConfig.hpp"
 

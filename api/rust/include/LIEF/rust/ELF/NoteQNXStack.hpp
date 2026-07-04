@@ -34,7 +34,7 @@ class ELF_QNXStack : public ELF_Note {
     return impl().is_executable();
   }
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 

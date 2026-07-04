@@ -31,7 +31,8 @@ using namespace BinaryNinja;
 
 namespace analysis_plugin::pe::analyzers {
 
-bool RuntimeFunctions::can_run(BinaryNinja::BinaryView& bv, LIEF::PE::Binary& pe) {
+bool RuntimeFunctions::can_run(BinaryNinja::BinaryView& /*bv*/,
+                               LIEF::PE::Binary& pe) {
   return !pe.exceptions().empty();
 }
 
@@ -58,7 +59,7 @@ void RuntimeFunctions::process(const LIEF::PE::RuntimeFunctionAArch64& arm64) {
   if (auto rva = pe_.offset_to_virtual_address(arm64.offset())) {
     uint64_t addr = translate_addr(get_va(*rva));
 
-    if (const auto* packed = arm64.as<PE::unwind_aarch64::PackedFunction>()) {
+    if (arm64.as<PE::unwind_aarch64::PackedFunction>() != nullptr) {
       // Packed version
       define_struct_at(
           addr, type_builder_.get_or_create("IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY"),

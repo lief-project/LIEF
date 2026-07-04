@@ -21,6 +21,7 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
+#include <utility>
 
 #include "LIEF/endianness_support.hpp"
 #include "LIEF/errors.hpp"
@@ -94,11 +95,15 @@ class LIEF_API BinaryStream {
     if (!read_ok) {
       return make_error_code(lief_errors::read_error);
     }
-    container.resize(size);
-    if (peek_in(container.data(), offset, size, virtual_address)) {
-      return ok();
+
+    if (container.size() < size) {
+      std::vector<uint8_t> buffer(size);
+      const ok_error_t res = peek_in(buffer.data(), offset, size, virtual_address);
+      container = std::move(buffer);
+      return res;
     }
-    return make_error_code(lief_errors::read_error);
+
+    return peek_in(container.data(), offset, size, virtual_address);
   }
 
   virtual ok_error_t read_data(std::vector<uint8_t>& container, uint64_t size) {
@@ -150,15 +155,18 @@ class LIEF_API BinaryStream {
       return make_error_code(lief_errors::read_error);
     }
 
-    container.resize(count);
+    ok_error_t res = make_error_code(lief_errors::inconsistent);
 
-    if (!peek_in(container.data(), pos(), size)) {
-      setpos(current_p);
-      return make_error_code(lief_errors::read_error);
+    if (container.size() < count) {
+      std::vector<T> buffer(count);
+      res = peek_in(buffer.data(), pos(), size);
+      container = std::move(buffer);
+    } else {
+      res = peek_in(container.data(), pos(), size);
     }
 
     setpos(current_p);
-    return ok();
+    return res;
   }
 
   void setpos(size_t pos) const {

@@ -26,7 +26,11 @@ namespace types {
 /// also named *simple* types in the PDB format.
 class LIEF_API Simple : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Simple(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   /// Identifier of the primitive type.
   ///

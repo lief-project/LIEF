@@ -1,4 +1,4 @@
-/* Copyright 2017 - 2026 R. Thomas
+/* Copyright 2017 - 2026 R. Thomasliefuthp
  * Copyright 2017 - 2026 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,6 +50,12 @@ inline uint64_t align_down(uint64_t value, uint64_t align_on) {
 inline uint64_t align_with_offset(uint64_t value, uint64_t align_on,
                                   uint64_t offset) {
   return align(value - offset, align_on) + offset;
+}
+
+// Align up with alignment being a power of 2
+template<class T>
+constexpr T align_up(T value, T alignment) noexcept {
+  return (value + (alignment - 1)) & ~(alignment - 1);
 }
 
 template<typename T>

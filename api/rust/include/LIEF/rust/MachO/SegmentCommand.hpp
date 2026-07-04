@@ -18,6 +18,7 @@
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/Section.hpp"
 #include "LIEF/rust/MachO/Relocation.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_SegmentCommand : public MachO_Command {
   using lief_t = LIEF::MachO::SegmentCommand;
@@ -54,8 +55,8 @@ class MachO_SegmentCommand : public MachO_Command {
   MachO_SegmentCommand(const lief_t& base) :
     MachO_Command(base) {}
 
-  std::string name() const {
-    return impl().name();
+  auto name() const {
+    return to_unique_string(impl().name());
   }
   uint64_t virtual_address() const {
     return impl().virtual_address();
@@ -96,11 +97,11 @@ class MachO_SegmentCommand : public MachO_Command {
     return impl().index();
   }
 
-  auto get_section(std::string name) const {
+  auto get_section(const std::string& name) const {
     return details::try_unique<MachO_Section>(impl().get_section(name));
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
@@ -109,3 +110,6 @@ class MachO_SegmentCommand : public MachO_Command {
     return as<lief_t>(this);
   }
 };
+
+using MachO_SegmentCommand_it_relocations = MachO_SegmentCommand::it_relocations;
+using MachO_SegmentCommand_it_sections = MachO_SegmentCommand::it_sections;

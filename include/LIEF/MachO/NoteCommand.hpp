@@ -15,8 +15,11 @@
  */
 #ifndef LIEF_MACHO_NOTE_COMMAND_H
 #define LIEF_MACHO_NOTE_COMMAND_H
+#include <algorithm>
 #include <ostream>
+#include <string>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -55,17 +58,18 @@ class LIEF_API NoteCommand : public LoadCommand {
   }
 
   /// Owner of the note (e.g. `AIR_METALLIB`)
-  span<const char> owner() const {
+  span<const char> owner() const LIEF_LIFETIMEBOUND {
     return owner_;
   }
 
-  span<char> owner() {
+  span<char> owner() LIEF_LIFETIMEBOUND {
     return owner_;
   }
 
   /// Owner as a zero-terminated string
   std::string owner_str() const {
-    return std::string(owner_.data(), owner_.size()).c_str();
+    const auto end = std::find(owner_.begin(), owner_.end(), '\0');
+    return {owner_.begin(), end};
   }
 
   void note_offset(uint64_t offset) {

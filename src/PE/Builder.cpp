@@ -610,6 +610,9 @@ ok_error_t build_pogo(const Pogo& pgo, vector_iostream& ios) {
     default: return make_error_code(lief_errors::not_supported);
     case Pogo::SIGNATURES::ZERO:
     case Pogo::SIGNATURES::LCTG:
+    case Pogo::SIGNATURES::SPGO:
+    case Pogo::SIGNATURES::PGI:
+    case Pogo::SIGNATURES::PGU:
     {
       ios.write<uint32_t>((uint32_t)pgo.signature());
       for (const PogoEntry& entry : pgo.entries()) {

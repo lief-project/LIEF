@@ -37,67 +37,52 @@ class ClassIt;
 /// This class represents an Objective-C class (`@interface`)
 class LIEF_API Class {
   public:
-  class LIEF_API Iterator {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::bidirectional_iterator_tag, Class,
+                                  std::ptrdiff_t, const Class*, const Class&> {
     public:
-    using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = std::unique_ptr<Class>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = Class*;
-    using reference = std::unique_ptr<Class>&;
     using implementation = details::ClassIt;
+    using iterator_facade_base::operator++;
+    using iterator_facade_base::operator--;
 
-    class LIEF_API PointerProxy {
-      // Inspired from LLVM's iterator_facade_base
-      friend class Iterator;
+    LIEF_API Iterator();
 
-      public:
-      pointer operator->() const {
-        return R.get();
-      }
+    LIEF_API Iterator(std::unique_ptr<details::ClassIt> impl);
 
-      private:
-      value_type R;
+    LIEF_API Iterator(const Iterator&);
+    LIEF_API Iterator& operator=(const Iterator&);
 
-      template<typename RefT>
-      PointerProxy(RefT&& R) :
-        R(std::forward<RefT>(R)) {
-      } // NOLINT(bugprone-forwarding-reference-overload)
-    };
+    LIEF_API Iterator(Iterator&&) noexcept;
+    LIEF_API Iterator& operator=(Iterator&&) noexcept;
 
-    Iterator(const Iterator&);
-    Iterator(Iterator&&) noexcept;
-    Iterator(std::unique_ptr<details::ClassIt> impl);
-    ~Iterator();
+    LIEF_API ~Iterator();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
 
-    friend LIEF_API bool operator!=(const Iterator& LHS, const Iterator& RHS) {
+    friend bool operator!=(const Iterator& LHS, const Iterator& RHS) {
       return !(LHS == RHS);
     }
 
-    Iterator& operator++();
-    Iterator& operator--();
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator++();
 
-    Iterator operator--(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      --*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator--();
 
-    Iterator operator++(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    LIEF_API const Class& operator*() const;
 
-    std::unique_ptr<Class> operator*() const;
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const Class* operator->() const;
 
-    PointerProxy operator->() const {
-      return static_cast<const Iterator*>(this)->operator*();
-    }
+    /// Transfer ownership of the class at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<Class> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::ClassIt> impl_;
+    mutable std::unique_ptr<Class> cached_;
   };
 
   public:

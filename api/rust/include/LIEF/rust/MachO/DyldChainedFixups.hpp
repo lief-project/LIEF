@@ -19,6 +19,7 @@
 #include "LIEF/rust/MachO/ChainedBindingInfo.hpp"
 
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_DyldChainedFixups : public MachO_Command {
   public:
@@ -64,7 +65,7 @@ class MachO_DyldChainedFixups : public MachO_Command {
     return impl().symbols_format();
   }
   auto imports_format() const {
-    return to_int(impl().imports_format());
+    return as_u32(impl().imports_format());
   }
 
   auto bindings() const {
@@ -75,7 +76,7 @@ class MachO_DyldChainedFixups : public MachO_Command {
     return make_span(impl().payload());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
@@ -84,3 +85,5 @@ class MachO_DyldChainedFixups : public MachO_Command {
     return as<lief_t>(this);
   }
 };
+
+using MachO_DyldChainedFixups_it_bindings = MachO_DyldChainedFixups::it_bindings;

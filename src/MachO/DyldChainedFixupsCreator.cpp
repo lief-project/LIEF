@@ -180,11 +180,13 @@ ok_error_t DyldChainedFixupsCreator::process_relocations(
   return ok();
 }
 
-ok_error_t DyldChainedFixupsCreator::process_bindings(
+DyldChainedFixups::binding_info_t DyldChainedFixupsCreator::process_bindings(
     Binary& target, strong_map_t& strong_map,
-    std::unordered_map<std::string, size_t>& symbols_idx, DyldChainedFixups* cmd,
-    DyldChainedFixups::binding_info_t& all_bindings
+    std::unordered_map<std::string, size_t>& symbols_idx, DyldChainedFixups* cmd
 ) {
+  DyldChainedFixups::binding_info_t bindings;
+  bindings.reserve(bindings_.size());
+
   for (const binding_info_t& info : bindings_) {
     const Symbol* sym = find_symbol(target, info.symbol);
 
@@ -233,9 +235,9 @@ ok_error_t DyldChainedFixupsCreator::process_bindings(
       cmd->internal_bindings_.push_back(std::move(binding_list));
     }
 
-    all_bindings.push_back(std::move(binding));
+    bindings.push_back(std::move(binding));
   }
-  return ok();
+  return bindings;
 }
 
 DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
@@ -248,15 +250,11 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
   cmd->symbols_format_ = /* uncompressed */ 0;
   cmd->imports_format_ = DYLD_CHAINED_FORMAT::IMPORT;
 
-  DyldChainedFixups::binding_info_t all_bindings;
-  all_bindings.reserve(bindings_.size());
-
   std::unordered_map<std::string, size_t> symbols_idx;
   strong_map_t strong_map;
-  if (!process_bindings(target, strong_map, symbols_idx, cmd.get(), all_bindings))
-  {
-    return nullptr;
-  }
+
+  cmd->all_bindings_ =
+      process_bindings(target, strong_map, symbols_idx, cmd.get());
 
   const size_t import_count = cmd->internal_bindings_.size();
   const DYLD_CHAINED_PTR_FORMAT import_ptr_fmt =
@@ -392,7 +390,6 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
     cmd->chained_starts_in_segment_.push_back(info);
   }
 
-  cmd->all_bindings_ = std::move(all_bindings);
   LoadCommand* added = target.add(std::move(cmd));
   if (added == nullptr) {
     return nullptr;

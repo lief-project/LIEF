@@ -78,18 +78,14 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     }
   };
 
-  static auto
-      from_path(std::string file,
-                std::string arch) { // NOLINT(performance-unnecessary-value-param)
+  static auto from_path(const std::string& file, const std::string& arch) {
     return details::try_unique<dsc_DyldSharedCache>(
         LIEF::dsc::DyldSharedCache::from_path(file, arch)
     );
   }
 
-  static auto
-      from_files(const char* ptr,
-                 size_t size) { // NOLINT(performance-unnecessary-value-param)
-    const auto* files = (const char**)ptr;
+  static auto from_files(const char* ptr, size_t size) {
+    const auto* files = (const char* const*)ptr;
     std::vector<std::string> files_vec;
     files_vec.reserve(size);
     for (size_t i = 0; i < size; ++i) {
@@ -111,26 +107,26 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
   }
 
   auto filename() const {
-    return get().filename();
+    return to_unique_string(get().filename());
   }
   auto version() const {
-    return to_int(get().version());
+    return as_u32(get().version());
   }
   auto filepath() const {
-    return get().filepath();
+    return to_unique_string(get().filepath());
   }
   auto load_address() const {
     return get().load_address();
   }
 
   auto arch_name() const {
-    return get().arch_name();
+    return to_unique_string(get().arch_name());
   }
   auto platform() const {
-    return to_int(get().platform());
+    return as_u32(get().platform());
   }
   auto arch() const {
-    return to_int(get().arch());
+    return as_u32(get().arch());
   }
   auto has_subcaches() const {
     return get().has_subcaches();
@@ -140,15 +136,15 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     return details::try_unique<dsc_Dylib>(get().find_lib_from_va(va));
   }
 
-  auto find_lib_from_path(std::string path) const {
+  auto find_lib_from_path(const std::string& path) const {
     return details::try_unique<dsc_Dylib>(get().find_lib_from_path(path));
   }
 
-  auto find_lib_from_name(std::string name) const {
+  auto find_lib_from_name(const std::string& name) const {
     return details::try_unique<dsc_Dylib>(get().find_lib_from_name(name));
   }
 
-  auto enable_caching(std::string dir) const {
+  auto enable_caching(const std::string& dir) const {
     get().enable_caching(dir);
   }
   auto flush_cache() const {
@@ -167,7 +163,7 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     return details::try_unique<dsc_DyldSharedCache>(get().main_cache());
   }
 
-  auto find_subcache(std::string filename) const {
+  auto find_subcache(const std::string& filename) const {
     return details::try_unique<dsc_DyldSharedCache>(get().find_subcache(filename));
   }
 
@@ -176,6 +172,11 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
   }
 
   auto get_content_from_va(uint64_t va, uint64_t size) const {
-    return get().get_content_from_va(va, size);
+    return make_unique_vector<uint8_t>(get().get_content_from_va(va, size));
   }
 };
+
+using dsc_DyldSharedCache_it_libraries = dsc_DyldSharedCache::it_libraries;
+using dsc_DyldSharedCache_it_mapping_info = dsc_DyldSharedCache::it_mapping_info;
+using dsc_DyldSharedCache_it_subcaches = dsc_DyldSharedCache::it_subcaches;
+using dsc_DyldSharedCache_it_instructions = dsc_DyldSharedCache::it_instructions;

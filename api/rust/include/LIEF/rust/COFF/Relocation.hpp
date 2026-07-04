@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 #pragma once
-#include <cstdint>
 
 #include "LIEF/COFF/Relocation.hpp"
 #include "LIEF/rust/COFF/Symbol.hpp"
 #include "LIEF/rust/Abstract/Relocation.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class COFF_Section;
 
@@ -45,7 +45,7 @@ class COFF_Relocation : public AbstractRelocation {
   }
 
   auto to_string() const {
-    return impl().to_string();
+    return to_unique_string(impl().to_string());
   }
 
   private:

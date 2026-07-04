@@ -190,6 +190,14 @@ Function Variant Fixups
 
 ----------
 
+Lazy Load Dylib Info
+********************
+
+.. doxygenclass:: LIEF::MachO::LazyLoadDylibInfo
+   :project: lief
+
+----------
+
 Source Version
 **************
 

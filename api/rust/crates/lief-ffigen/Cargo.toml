@@ -1,0 +1,16 @@
+[package]
+name        = "lief-ffigen"
+description = "Generate FFI bindings for LIEF"
+edition.workspace      = true
+version.workspace      = true
+authors.workspace      = true
+license.workspace      = true
+rust-version.workspace = true
+
+[dependencies]
+cxx-gen     = { workspace = true }
+serde       = { workspace = true }
+thiserror   = { workspace = true }
+proc-macro2 = { workspace = true }
+miette      = { workspace = true }
+clap        = { workspace = true }

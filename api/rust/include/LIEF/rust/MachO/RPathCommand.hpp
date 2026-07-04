@@ -17,6 +17,7 @@
 
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_RPathCommand : public MachO_Command {
   public:
@@ -26,24 +27,22 @@ class MachO_RPathCommand : public MachO_Command {
   MachO_RPathCommand(std::unique_ptr<lief_t> impl) :
     MachO_Command(std::move(impl)) {}
 
-  static auto create(std::string path) {
-    return std::make_unique<MachO_RPathCommand>(
-        std::make_unique<lief_t>(std::move(path))
-    );
+  static auto create(const std::string& path) {
+    return std::make_unique<MachO_RPathCommand>(std::make_unique<lief_t>(path));
   }
 
-  std::string path() const {
-    return impl().path();
+  auto path() const {
+    return to_unique_string(impl().path());
   }
   auto path_offset() const {
     return impl().path_offset();
   }
 
-  void set_path(std::string path) {
-    impl().path(std::move(path));
+  auto set_path(const std::string& path) {
+    impl().path(path);
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

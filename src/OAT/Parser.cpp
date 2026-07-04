@@ -100,6 +100,22 @@ Parser::Parser(const std::string& file) {
 }
 
 
+result<uint64_t> Parser::oat_data_exec_gap() const {
+  static constexpr uint64_t MAX_GAP = 64_MB;
+
+  const uint64_t data_end = data_address_ + data_size_;
+  if (data_end < data_address_ || exec_start_ < data_end) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  const uint64_t gap = exec_start_ - data_end;
+  if (gap > MAX_GAP) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  return gap;
+}
+
 bool Parser::has_vdex() const {
   return vdex_file_ != nullptr;
 }

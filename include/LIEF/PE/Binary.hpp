@@ -31,6 +31,7 @@
 
 #include "LIEF/Abstract/Binary.hpp"
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -566,11 +567,11 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Return the DOS stub content
-  span<const uint8_t> dos_stub() const {
+  span<const uint8_t> dos_stub() const LIEF_LIFETIMEBOUND {
     return dos_stub_;
   }
 
-  span<uint8_t> dos_stub() {
+  span<uint8_t> dos_stub() LIEF_LIFETIMEBOUND {
     return dos_stub_;
   }
 
@@ -735,7 +736,7 @@ class LIEF_API Binary : public LIEF::Binary {
   span<const uint8_t> get_content_from_virtual_address(
       uint64_t virtual_address, uint64_t size,
       Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO
-  ) const override;
+  ) const LIEF_LIFETIMEBOUND override;
 
   /// Return the binary's entrypoint (it is the same value as
   /// OptionalHeader::addressof_entrypoint)

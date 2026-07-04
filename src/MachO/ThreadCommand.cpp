@@ -15,11 +15,27 @@
  */
 #include "logging.hpp"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/endianness_support.hpp"
 
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "MachO/Structures.hpp"
 
 namespace LIEF::MachO {
+
+template<class T>
+inline T from_big_endian(T value) {
+#ifdef __BYTE_ORDER__
+  #if defined(__ORDER_LITTLE_ENDIAN__) &&                                         \
+      (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+  return get_swapped_endian<T>(value);
+  #else
+  return value;
+  #endif
+#else
+  // No __BYTE_ORDER__ (e.g. MSVC): assume a little-endian host.
+  return get_swapped_endian<T>(value);
+#endif
+}
 
 ThreadCommand::ThreadCommand(const details::thread_command& cmd,
                              Header::CPU_TYPE arch) :
@@ -86,8 +102,9 @@ uint64_t ThreadCommand::pc() const {
       if (state_.size() < sizeof(details::ppc_thread_state_t)) {
         return entry;
       }
-      entry = reinterpret_cast<const details::ppc_thread_state_t*>(state_.data())
-                  ->srr0;
+      entry = from_big_endian(
+          reinterpret_cast<const details::ppc_thread_state_t*>(state_.data())->srr0
+      );
       break;
     }
 
@@ -96,8 +113,10 @@ uint64_t ThreadCommand::pc() const {
       if (state_.size() < sizeof(details::ppc_thread_state64_t)) {
         return entry;
       }
-      entry = reinterpret_cast<const details::ppc_thread_state64_t*>(state_.data())
-                  ->srr0;
+      entry = from_big_endian(
+          reinterpret_cast<const details::ppc_thread_state64_t*>(state_.data())
+              ->srr0
+      );
       break;
     }
 

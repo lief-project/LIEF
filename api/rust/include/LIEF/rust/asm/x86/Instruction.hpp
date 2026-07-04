@@ -47,7 +47,7 @@ class asm_x86_Instruction : public asm_Instruction {
     return std::make_unique<it_operands>(impl());
   }
 
-  static bool classof(const asm_Instruction& inst) {
+  static auto classof(const asm_Instruction& inst) {
     return lief_t::classof(&inst.get());
   }
 
@@ -56,3 +56,5 @@ class asm_x86_Instruction : public asm_Instruction {
     return as<lief_t>(this);
   }
 };
+
+using asm_x86_Instruction_it_operands = asm_x86_Instruction::it_operands;

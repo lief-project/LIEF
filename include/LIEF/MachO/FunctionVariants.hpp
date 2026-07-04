@@ -18,6 +18,7 @@
 #include <vector>
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
@@ -34,7 +35,16 @@ class LinkEdit;
 
 namespace details {
 struct linkedit_data_command;
-struct runtime_table_entry_t;
+
+// clang-format off
+// On-disk entry of a `LC_FUNCTION_VARIANTS` runtime table
+struct runtime_table_entry_t {
+  uint32_t impl          : 31,
+           another_table : 1;
+  uint8_t flag_bit_nums[4];
+};
+// clang-format on
+
 }
 
 /// Class representing the `LC_FUNCTION_VARIANTS` load command.
@@ -64,6 +74,9 @@ class LIEF_API FunctionVariants : public LoadCommand {
   /// This class exposes information about a given implementation.
   class LIEF_API RuntimeTableEntry {
     public:
+    /// The implementation address/index is encoded on 31 bits
+    static constexpr uint32_t MAX_IMPL = (uint32_t(1) << 31) - 1;
+
     static constexpr uint32_t F_BIT = 20;
     static constexpr uint32_t F_MASK = (uint32_t(1) << F_BIT) - 1;
 
@@ -118,14 +131,28 @@ class LIEF_API FunctionVariants : public LoadCommand {
       return impl_;
     }
 
+    /// Set the relative address of the implementation (or the index of the
+    /// target entry when another_table() is set).
+    ///
+    /// \note The value is stored on 31 bits, so the most significant bit is
+    ///       silently dropped.
+    void impl(uint32_t value) {
+      impl_ = value & MAX_IMPL;
+    }
+
     /// Indicates whether impl() refers to an entry in another runtime table,
     /// rather than a direct function implementation address.
     bool another_table() const {
       return another_table_;
     }
 
+    /// Set whether impl() refers to an entry in another runtime table.
+    void another_table(bool value) {
+      another_table_ = value;
+    }
+
     /// The `flagBitNums` value as a slice of bytes
-    span<const uint8_t> flag_bit_nums() const {
+    span<const uint8_t> flag_bit_nums() const LIEF_LIFETIMEBOUND {
       return flag_bit_nums_;
     }
 
@@ -148,7 +175,7 @@ class LIEF_API FunctionVariants : public LoadCommand {
     }
 
     private:
-    bool another_table_;
+    bool another_table_ = false;
     uint32_t impl_ = 0;
     std::array<uint8_t, 4> flag_bit_nums_ = {};
     std::vector<FLAGS> flags_;
@@ -282,11 +309,11 @@ class LIEF_API FunctionVariants : public LoadCommand {
 
   /// Return the data slice in the `__LINKEDIT` segment referenced by
   /// data_offset and data_size;
-  span<const uint8_t> content() const {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return content_;
   }
 
-  span<uint8_t> content() {
+  span<uint8_t> content() LIEF_LIFETIMEBOUND {
     return content_;
   }
 
@@ -298,6 +325,12 @@ class LIEF_API FunctionVariants : public LoadCommand {
 
   it_const_runtime_table runtime_table() const LIEF_LIFETIMEBOUND {
     return runtime_table_;
+  }
+
+  /// Append a new RuntimeTable and return a reference to the inserted table
+  RuntimeTable& add(RuntimeTable table) LIEF_LIFETIMEBOUND {
+    runtime_table_.push_back(std::move(table));
+    return runtime_table_.back();
   }
 
   ~FunctionVariants() override = default;

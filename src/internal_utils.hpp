@@ -223,6 +223,20 @@ inline bool is_digit(const char* str) {
   return true;
 }
 
+inline uint32_t parse_android_version(const char* field, size_t size) {
+  if (size < 4) {
+    return 0;
+  }
+  if (!is_digit(field[0]) || !is_digit(field[1]) || !is_digit(field[2]) ||
+      field[3] != '\0')
+  {
+    return 0;
+  }
+  return static_cast<uint32_t>(field[0] - '0') * 100 +
+         static_cast<uint32_t>(field[1] - '0') * 10 +
+         static_cast<uint32_t>(field[2] - '0');
+}
+
 std::string ts_to_str(uint64_t timestamp);
 
 template<size_t N>

@@ -18,6 +18,7 @@
 
 #include <memory>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 
@@ -80,7 +81,7 @@ class LIEF_API AuxiliaryCLRToken : public AuxiliarySymbol {
   }
 
   /// Reserved (padding) values. Should be 0
-  span<const uint8_t> rgb_reserved() const {
+  span<const uint8_t> rgb_reserved() const LIEF_LIFETIMEBOUND {
     return rgb_reserved_;
   }
 

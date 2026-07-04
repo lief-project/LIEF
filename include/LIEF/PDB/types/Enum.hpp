@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_ENUM_H
 #define LIEF_PDB_TYPE_ENUM_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
 
@@ -29,13 +30,17 @@ class EnumEntry;
 /// This class represents a `LF_ENUM` PDB type
 class LIEF_API Enum : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Enum(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   /// This class represents an enum entry which is essentially
   /// composed of a name and its value (integer).
   class LIEF_API Entry {
     public:
-    Entry(std::unique_ptr<details::EnumEntry> impl);
+    Entry(std::unique_ptr<details::EnumEntry> impl LIEF_LIFETIMEBOUND);
     Entry(Entry&& other) noexcept;
     Entry& operator=(Entry&& other) noexcept;
 
@@ -55,13 +60,13 @@ class LIEF_API Enum : public Type {
   std::string unique_name() const;
 
   /// Return the different entries associated with this enum
-  std::vector<Entry> entries() const;
+  std::vector<Entry> entries() const LIEF_LIFETIMEBOUND;
 
   /// The underlying type that is used to encode this enum
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
   /// Try to find the enum matching the given value
-  optional<Entry> find_entry(int64_t value) const;
+  optional<Entry> find_entry(int64_t value) const LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ENUM;

@@ -90,7 +90,11 @@ class BuildConfig(BaseModel):
 
         if self.lief_install_dir is not None:
             lief_cmake_dir = Path(self.lief_install_dir) / "lib" / "cmake" / "LIEF"
-            lief_dir = lief_cmake_dir.expanduser().resolve().absolute()
+            lief_dir = lief_cmake_dir.expanduser().resolve()
+
+            if not lief_dir.is_dir():
+                raise RuntimeError(f"Invalid install dir: {lief_cmake_dir}")
+
             out.extend(
                 (
                     "-DLIEF_PY_LIEF_EXT=on",

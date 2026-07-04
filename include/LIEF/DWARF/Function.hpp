@@ -21,6 +21,8 @@
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/compiler_attributes.hpp"
+
 #include "LIEF/range.hpp"
 #include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/Type.hpp"
@@ -42,67 +44,53 @@ class FunctionIt;
 /// `DW_TAG_subprogram` or `DW_TAG_inlined_subroutine`.
 class LIEF_API Function {
   public:
-  class LIEF_API Iterator {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::bidirectional_iterator_tag,
+                                  Function, std::ptrdiff_t, const Function*,
+                                  const Function&> {
     public:
-    using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = std::unique_ptr<Function>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = Function*;
-    using reference = std::unique_ptr<Function>&;
     using implementation = details::FunctionIt;
+    using iterator_facade_base::operator++;
+    using iterator_facade_base::operator--;
 
-    class LIEF_API PointerProxy {
-      // Inspired from LLVM's iterator_facade_base
-      friend class Iterator;
+    LIEF_API Iterator();
 
-      public:
-      pointer operator->() const {
-        return R.get();
-      }
+    LIEF_API Iterator(std::unique_ptr<details::FunctionIt> impl);
 
-      private:
-      value_type R;
+    LIEF_API Iterator(const Iterator&);
+    LIEF_API Iterator& operator=(const Iterator&);
 
-      template<typename RefT>
-      PointerProxy(RefT&& R) :
-        R(std::forward<RefT>(R)) {
-      } // NOLINT(bugprone-forwarding-reference-overload)
-    };
+    LIEF_API Iterator(Iterator&&) noexcept;
+    LIEF_API Iterator& operator=(Iterator&&) noexcept;
 
-    Iterator(const Iterator&);
-    Iterator(Iterator&&) noexcept;
-    Iterator(std::unique_ptr<details::FunctionIt> impl);
-    ~Iterator();
+    LIEF_API ~Iterator();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
 
-    friend LIEF_API bool operator!=(const Iterator& LHS, const Iterator& RHS) {
+    friend bool operator!=(const Iterator& LHS, const Iterator& RHS) {
       return !(LHS == RHS);
     }
 
-    Iterator& operator++();
-    Iterator& operator--();
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator++();
 
-    Iterator operator--(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      --*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator--();
 
-    Iterator operator++(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    LIEF_API const Function& operator*() const LIEF_LIFETIMEBOUND;
 
-    std::unique_ptr<Function> operator*() const;
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const Function* operator->() const LIEF_LIFETIMEBOUND;
 
-    PointerProxy operator->() const {
-      return static_cast<const Iterator*>(this)->operator*();
-    }
+    /// Transfer ownership of the function at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<Function> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::FunctionIt> impl_;
+    mutable std::unique_ptr<Function> cached_;
   };
 
   /// Iterator over the variables defined in the scope of this function
@@ -131,7 +119,7 @@ class LIEF_API Function {
   /// Return an iterator of variables (`DW_TAG_variable`) defined within the
   /// scope of this function. This includes regular stack-based variables as
   /// well as static ones.
-  vars_it variables() const;
+  vars_it variables() const LIEF_LIFETIMEBOUND;
 
   /// Whether this function is created by the compiler and not
   /// present in the original source code
@@ -152,10 +140,10 @@ class LIEF_API Function {
 
   /// Return the dwarf::Type associated with the **return type** of this
   /// function
-  std::unique_ptr<Type> type() const;
+  std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;
 
   /// Return the function's parameters (including any template parameter)
-  parameters_t parameters() const;
+  parameters_t parameters() const LIEF_LIFETIMEBOUND;
 
   /// List of exceptions (types) that can be thrown by the function.
   ///
@@ -169,17 +157,17 @@ class LIEF_API Function {
   ///
   /// thrown_types() returns one element associated with the Type:
   /// `StatisticsError`.
-  thrown_types_t thrown_types() const;
+  thrown_types_t thrown_types() const LIEF_LIFETIMEBOUND;
 
   /// Return the scope in which this function is defined
-  std::unique_ptr<Scope> scope() const;
+  std::unique_ptr<Scope> scope() const LIEF_LIFETIMEBOUND;
 
   /// Disassemble the current function by returning an iterator over
   /// the assembly::Instruction
-  instructions_it instructions() const;
+  instructions_it instructions() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over the LexicalBlock owned by this function
-  lexical_blocks_it lexical_blocks() const;
+  lexical_blocks_it lexical_blocks() const LIEF_LIFETIMEBOUND;
 
   /// Description (`DW_AT_description`) of this function or an empty string
   std::string description() const;

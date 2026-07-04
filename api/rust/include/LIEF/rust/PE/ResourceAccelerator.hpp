@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 #pragma once
-#include <cstdint>
 #include <string>
 
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_ResourceAccelerator : private Mirror<LIEF::PE::ResourceAccelerator> {
   public:
@@ -37,7 +37,7 @@ class PE_ResourceAccelerator : private Mirror<LIEF::PE::ResourceAccelerator> {
     return get().padding();
   }
 
-  std::string ansi_str() const {
-    return get().ansi_str();
+  auto ansi_str() const {
+    return to_unique_string(get().ansi_str());
   }
 };

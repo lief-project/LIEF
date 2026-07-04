@@ -16,6 +16,7 @@
 #define LIEF_DWARF_THROWN_TYPE_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
 
 namespace LIEF {
@@ -27,16 +28,26 @@ namespace types {
 /// This class represents a `DW_TAG_thrown_type`
 class LIEF_API Thrown : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Thrown(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Thrown(const Thrown&) = delete;
+  Thrown& operator=(const Thrown&) = delete;
+
+  Thrown(Thrown&&) noexcept = default;
+  Thrown& operator=(Thrown&&) noexcept = default;
 
   /// The underlying type being thrown
-  const Type* underlying_type() const;
+  const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
-  const Type* operator->() const {
+  const Type* operator->() const LIEF_LIFETIMEBOUND {
     return underlying_type();
   }
 
-  const Type& operator*() const {
+  const Type& operator*() const LIEF_LIFETIMEBOUND {
     return *underlying_type();
   }
 

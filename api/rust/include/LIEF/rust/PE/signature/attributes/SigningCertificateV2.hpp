@@ -22,7 +22,7 @@ class PE_SigningCertificateV2 : public PE_Attribute {
   PE_SigningCertificateV2(const lief_t& base) :
     PE_Attribute(base) {}
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 

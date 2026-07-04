@@ -27,7 +27,7 @@ fn main() {
         Some(Binary::ELF(elf)) => {
             explore_elf(&elf);
         }
-        Some(Binary::PE(pe)) => {}
+        Some(Binary::PE(_)) => {}
         _ => {}
     }
     return;

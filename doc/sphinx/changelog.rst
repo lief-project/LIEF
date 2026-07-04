@@ -28,6 +28,28 @@
     - |lief-dwarf-lexical-block-description|
 
   * Enable the creation of nested |lief-dwarf-editor-Function-lexical-block|
+  * Add support for generating a C/C++ definition for a whole
+    |lief-dwarf-CompilationUnit| (|lief-dwarf-cu-to_decl|). The output of the
+    following ``to_decl()`` functions can now be configured through the new
+    |lief-declopt| structure:
+
+    - |lief-dwarf-function-to_decl|
+    - |lief-dwarf-variable-to_decl|
+    - |lief-dwarf-type-to_decl|
+    - |lief-dwarf-cu-to_decl|
+
+    .. code-block:: python
+
+      import lief
+
+      dbg = lief.dwarf.load("/bin/with_debug")
+
+      opt = lief.DeclOpt()
+      opt.is_cpp = True
+      opt.indentation = 4
+
+      for cu in dbg.compilation_units:
+          print(cu.to_decl(opt))
 
 :PDB:
 
@@ -36,6 +58,9 @@
   * Improve support and the API for ``LF_ARRAY``: |lief-pdb-types-Array|
   * Improve support and the API for *simple* types: |lief-pdb-types-Simple|
   * Improve support and the API for ``LF_ONEMETHOD``: |lief-pdb-types-Method|
+  * Add support for generating a C/C++ definition for a |lief-pdb-Function|
+    (|lief-pdb-function-to_decl|) and a |lief-pdb-CompilationUnit|
+    (|lief-pdb-cu-to_decl|), configurable with the new |lief-declopt| structure.
 
 :ELF:
 
@@ -50,11 +75,23 @@
 
 :Mach-O:
 
+  * Add support for writing big-endian Mach-O binaries (:issue:`1236`)
   * Introduce an API for selecting a specific Mach-O binary by architecture
     from a FAT binary (:pr:`1283`)
   * Add |lief-macho-fatbinary-create| to create a FAT binary from
     a list of |lief-macho-binary| objects targeting different architectures
   * Add support for |lief-macho-threadlocalvariables|
+  * Fix an extra byte being written after the thread state of an
+    ``LC_UNIXTHREAD``/``LC_THREAD`` command, which shifted the following
+    load commands by one byte (:issue:`1344`)
+  * Add support for editing the runtime tables of the ``LC_FUNCTION_VARIANTS``
+    command and committing the changes on write:
+    |lief-macho-function-variants-command|
+  * Add a structured parser, editing API and writer for the
+    ``LC_FUNCTION_VARIANT_FIXUPS`` command:
+    |lief-macho-function-variant-fixups-command|
+  * Add support for the ``LC_LAZY_LOAD_DYLIB_INFO`` command:
+    |lief-macho-lazy-load-dylib-info-command|
 
 :PE:
 
@@ -66,9 +103,31 @@
     |lief-pe-binary-add-import| (:pr:`1298`)
   * Improve support for EFI binaries, such as ``bzImage`` (:pr:`1293`)
 
+:Assembly:
+
+  * Add support for iterating over the operands of MIPS, PowerPC, eBPF and
+    RISC-V instructions (``Register``, ``Immediate``, ``Memory`` and
+    ``PCRelative``):
+
+    - |lief-assembly-mips-Instruction-operands|
+    - |lief-assembly-powerpc-Instruction-operands|
+    - |lief-assembly-ebpf-Instruction-operands|
+    - |lief-assembly-riscv-Instruction-operands|
+
 :Rust:
 
-  * Add support for the ``aarch64-linux-android/x86_64-linux-android`` targets
+  .. warning::
+
+    The Minimum Supported Rust Version (MSRV) is now ``1.85.0`` (previously
+    ``1.74.0``).
+
+  * The Rust FFI no longer relies on ``autocxx`` and ``bindgen``. It is now
+    built on top of plain ``cxx``, which simplifies the bindings and reduces
+    the iteration time
+  * The Rust bindings directory has been renamed from ``api/rust/cargo/`` to
+    ``api/rust/crates/``
+  * Add support for the ``aarch64-linux-android`` and ``x86_64-linux-android``
+    targets
 
 :C++:
 
@@ -104,6 +163,10 @@
 :Extended:
 
   * Use LLVM ``22.x``
+  * Add support to directly download a package from the **History**:
+
+  .. image:: ./_static/lief-extended-history-link.webp
+    :scale: 50 %
 
 :Python:
 
@@ -151,7 +214,6 @@
 :MachO:
 
   * Fix ``DyldInfo::show_bindings`` integer overflow (:issue:`1313`)
-
 
 0.17.4 - February 21st, 2026
 ----------------------------

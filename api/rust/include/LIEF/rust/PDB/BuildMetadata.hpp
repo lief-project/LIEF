@@ -38,36 +38,40 @@ class PDB_BuildMetadata : private Mirror<LIEF::pdb::BuildMetadata> {
   using lief_t = LIEF::pdb::BuildMetadata;
 
   auto frontend_version() const {
-    return details::to_vector(get().frontend_version());
+    return make_unique_vector<uint16_t>(
+        details::to_vector(get().frontend_version())
+    );
   }
 
   auto backend_version() const {
-    return details::to_vector(get().backend_version());
+    return make_unique_vector<uint16_t>(
+        details::to_vector(get().backend_version())
+    );
   }
 
-  std::string version() const {
-    return get().version();
+  auto version() const {
+    return to_unique_string(get().version());
   }
 
   auto language() const {
-    return to_int(get().language());
+    return as_u8(get().language());
   }
   auto target_cpu() const {
-    return to_int(get().target_cpu());
+    return as_u16(get().target_cpu());
   }
 
   auto env() const {
-    return get().env();
+    return make_unique_vector<std::string>(get().env());
   }
 
   auto build_info() const {
     if (auto opt = get().build_info()) {
-      return details::to_vector(std::move(*opt));
+      return make_unique_vector<std::string>(details::to_vector(std::move(*opt)));
     }
-    return std::vector<std::string>{};
+    return make_unique_vector<std::string>();
   }
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };

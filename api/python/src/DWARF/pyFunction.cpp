@@ -12,6 +12,8 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
 
+#include "pyOwningIterator.hpp"
+
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::Function>(nb::module_& m) {
@@ -50,7 +52,7 @@ void create<dw::Function>(nb::module_& m) {
 
     .def_prop_ro("variables",
         [] (dw::Function& self) {
-          auto vars = self.variables();
+          auto vars = LIEF::py::owning_range(self.variables());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<dw::Function>(), "variables_it", vars);
         }, nb::keep_alive<0, 1>(),
@@ -130,7 +132,7 @@ void create<dw::Function>(nb::module_& m) {
     )
     .def_prop_ro("instructions",
       [] (dw::Function& self) {
-        auto insts = self.instructions();
+        auto insts = LIEF::py::owning_range(self.instructions());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<dw::Function>(), "instructions_it", insts);
       }, nb::keep_alive<0, 1>(),
@@ -142,7 +144,7 @@ void create<dw::Function>(nb::module_& m) {
 
     .def_prop_ro("lexical_blocks",
       [] (dw::Function& self) {
-        auto lexical_blocks = self.lexical_blocks();
+        auto lexical_blocks = LIEF::py::owning_range(self.lexical_blocks());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<dw::Function>(), "lexical_blocks_it", lexical_blocks);
       }, nb::keep_alive<0, 1>(),
@@ -155,9 +157,12 @@ void create<dw::Function>(nb::module_& m) {
       "Description (``DW_AT_description``) of this function or an empty string"_doc
     )
 
-    .def("to_decl", &dw::Function::to_decl,
+    .def("to_decl",
+      [] (const dw::Function& self, const DeclOpt* opt) {
+        return opt ? self.to_decl(*opt) : self.to_decl();
+      },
       "Generates a C/C++ definition for this function"_doc,
-      "opt"_a = DeclOpt()
+      "opt"_a.none() = nb::none()
     )
   ;
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
 #include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
 
@@ -10,10 +11,10 @@ class PE_PKCS9SigningTime : public PE_Attribute {
     PE_Attribute(base) {}
 
   auto time() const {
-    return details::make_vector(impl().time());
+    return make_unique_vector<uint64_t>(details::make_vector(impl().time()));
   }
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 

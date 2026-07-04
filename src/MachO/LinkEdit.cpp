@@ -26,6 +26,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
@@ -264,6 +265,14 @@ void LinkEdit::update_data(const update_fnc_t& f) {
                 name_);
     }
   }
+
+  for (LazyLoadDylibInfo* lazy : lazy_load_dylibs_) {
+    if (!update_span(lazy->content_, original_data_addr, original_data_end, data_))
+    {
+      LIEF_WARN("Failed to re-span the LC_LAZY_LOAD_DYLIB_INFO in segment {}",
+                name_);
+    }
+  }
 }
 
 void LinkEdit::update_data(const update_fnc_ws_t& f, size_t where, size_t size) {
@@ -409,6 +418,14 @@ void LinkEdit::update_data(const update_fnc_ws_t& f, size_t where, size_t size) 
                      original_data_end, data_))
     {
       LIEF_WARN("Failed to re-span the LC_FUNCTION_VARIANT_FIXUPS in segment {}",
+                name_);
+    }
+  }
+
+  for (LazyLoadDylibInfo* lazy : lazy_load_dylibs_) {
+    if (!update_span(lazy->content_, original_data_addr, original_data_end, data_))
+    {
+      LIEF_WARN("Failed to re-span the LC_LAZY_LOAD_DYLIB_INFO in segment {}",
                 name_);
     }
   }

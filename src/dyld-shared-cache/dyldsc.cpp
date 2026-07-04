@@ -187,6 +187,7 @@ void DyldSharedCache::flush_cache() const {}
 // ----------------------------------------------------------------------------
 // DyldSharedCache/Dylib.hpp
 // ----------------------------------------------------------------------------
+Dylib::Iterator::Iterator() = default;
 
 Dylib::Dylib::extract_opt_t::extract_opt_t() = default;
 
@@ -224,7 +225,17 @@ bool operator==(const Dylib::Iterator&, const Dylib::Iterator&) {
   return false;
 }
 
-std::unique_ptr<Dylib> Dylib::Iterator::operator*() const {
+void Dylib::Iterator::load() const {}
+
+const Dylib& Dylib::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Dylib* Dylib::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Dylib> Dylib::Iterator::yield() {
   return nullptr;
 }
 
@@ -261,6 +272,8 @@ uint64_t Dylib::padding() const {
 // ----------------------------------------------------------------------------
 // DyldSharedCache/MappingInfo.hpp
 // ----------------------------------------------------------------------------
+MappingInfo::Iterator::Iterator() = default;
+
 MappingInfo::Iterator::Iterator(std::unique_ptr<details::MappingInfoIt>) {}
 
 MappingInfo::Iterator::Iterator(MappingInfo::Iterator&&) noexcept {}
@@ -297,7 +310,17 @@ bool operator==(const MappingInfo::Iterator&, const MappingInfo::Iterator&) {
   return false;
 }
 
-std::unique_ptr<MappingInfo> MappingInfo::Iterator::operator*() const {
+void MappingInfo::Iterator::load() const {}
+
+const MappingInfo& MappingInfo::Iterator::operator*() const {
+  return *cached_;
+}
+
+const MappingInfo* MappingInfo::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<MappingInfo> MappingInfo::Iterator::yield() {
   return nullptr;
 }
 
@@ -328,6 +351,8 @@ uint32_t MappingInfo::init_prot() const {
 // ----------------------------------------------------------------------------
 // DyldSharedCache/SubCache.hpp
 // ----------------------------------------------------------------------------
+SubCache::Iterator::Iterator() = default;
+
 SubCache::Iterator::Iterator(std::unique_ptr<details::SubCacheIt>) {}
 
 SubCache::Iterator::Iterator(SubCache::Iterator&&) noexcept {}
@@ -362,7 +387,17 @@ bool operator==(const SubCache::Iterator&, const SubCache::Iterator&) {
   return false;
 }
 
-std::unique_ptr<SubCache> SubCache::Iterator::operator*() const {
+void SubCache::Iterator::load() const {}
+
+const SubCache& SubCache::Iterator::operator*() const {
+  return *cached_;
+}
+
+const SubCache* SubCache::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<SubCache> SubCache::Iterator::yield() {
   return nullptr;
 }
 

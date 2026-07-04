@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// NOLINTBEGIN
 #include "LIEF/ObjC/Metadata.hpp"
 #include "LIEF/ObjC/Class.hpp"
 #include "LIEF/MachO/Binary.hpp"
@@ -82,14 +83,21 @@ Metadata::~Metadata() = default;
 // ----------------------------------------------------------------------------
 // ObjC/Class.hpp
 // ----------------------------------------------------------------------------
+Class::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Class::Iterator::Iterator(std::unique_ptr<details::ClassIt>) :
   impl_(nullptr) {}
 
 Class::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Class::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Class::Iterator& Class::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Class::Iterator::Iterator(Iterator&&) noexcept = default;
+Class::Iterator& Class::Iterator::operator=(Iterator&&) noexcept = default;
 
 Class::Iterator::~Iterator() = default;
 
@@ -98,6 +106,7 @@ bool operator==(const Class::Iterator&, const Class::Iterator&) {
 }
 
 Class::Iterator& Class::Iterator::operator++() {
+  cached_.reset();
   return *this;
 }
 
@@ -105,7 +114,17 @@ Class::Iterator& Class::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<Class> Class::Iterator::operator*() const {
+void Class::Iterator::load() const {}
+
+const Class& Class::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Class* Class::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Class> Class::Iterator::yield() {
   return nullptr;
 }
 
@@ -154,14 +173,21 @@ Class::~Class() = default;
 // ----------------------------------------------------------------------------
 // ObjC/Protocol.hpp
 // ----------------------------------------------------------------------------
+Protocol::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Protocol::Iterator::Iterator(std::unique_ptr<details::ProtocolIt>) :
   impl_(nullptr) {}
 
 Protocol::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Protocol::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Protocol::Iterator& Protocol::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Protocol::Iterator::Iterator(Iterator&&) noexcept = default;
+Protocol::Iterator& Protocol::Iterator::operator=(Iterator&&) noexcept = default;
 
 Protocol::Iterator::~Iterator() = default;
 
@@ -177,7 +203,17 @@ Protocol::Iterator& Protocol::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<Protocol> Protocol::Iterator::operator*() const {
+void Protocol::Iterator::load() const {}
+
+const Protocol& Protocol::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Protocol* Protocol::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Protocol> Protocol::Iterator::yield() {
   return nullptr;
 }
 
@@ -209,14 +245,21 @@ Protocol::properties_it Protocol::properties() const {
 // ----------------------------------------------------------------------------
 // ObjC/Property.hpp
 // ----------------------------------------------------------------------------
+Property::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Property::Iterator::Iterator(std::unique_ptr<details::PropertyIt>) :
   impl_(nullptr) {}
 
 Property::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Property::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Property::Iterator& Property::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Property::Iterator::Iterator(Iterator&&) noexcept = default;
+Property::Iterator& Property::Iterator::operator=(Iterator&&) noexcept = default;
 
 Property::Iterator::~Iterator() = default;
 
@@ -232,7 +275,17 @@ Property::Iterator& Property::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<Property> Property::Iterator::operator*() const {
+void Property::Iterator::load() const {}
+
+const Property& Property::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Property* Property::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Property> Property::Iterator::yield() {
   return nullptr;
 }
 
@@ -253,14 +306,21 @@ std::string Property::attribute() const {
 // ----------------------------------------------------------------------------
 // ObjC/Method.hpp
 // ----------------------------------------------------------------------------
+Method::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 Method::Iterator::Iterator(std::unique_ptr<details::MethodIt>) :
   impl_(nullptr) {}
 
 Method::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-Method::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+Method::Iterator& Method::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+Method::Iterator::Iterator(Iterator&&) noexcept = default;
+Method::Iterator& Method::Iterator::operator=(Iterator&&) noexcept = default;
 
 Method::Iterator::~Iterator() = default;
 
@@ -276,7 +336,17 @@ Method::Iterator& Method::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<Method> Method::Iterator::operator*() const {
+void Method::Iterator::load() const {}
+
+const Method& Method::Iterator::operator*() const {
+  return *cached_;
+}
+
+const Method* Method::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<Method> Method::Iterator::yield() {
   return nullptr;
 }
 
@@ -304,14 +374,21 @@ bool Method::is_instance() const {
 // ----------------------------------------------------------------------------
 // ObjC/IVar.hpp
 // ----------------------------------------------------------------------------
+IVar::Iterator::Iterator() :
+  impl_(nullptr) {}
+
 IVar::Iterator::Iterator(std::unique_ptr<details::IVarIt>) :
   impl_(nullptr) {}
 
 IVar::Iterator::Iterator(const Iterator&) :
   impl_(nullptr) {}
 
-IVar::Iterator::Iterator(Iterator&&) noexcept :
-  impl_(nullptr) {}
+IVar::Iterator& IVar::Iterator::operator=(const Iterator&) {
+  return *this;
+}
+
+IVar::Iterator::Iterator(Iterator&&) noexcept = default;
+IVar::Iterator& IVar::Iterator::operator=(Iterator&&) noexcept = default;
 
 IVar::Iterator::~Iterator() = default;
 
@@ -327,7 +404,17 @@ IVar::Iterator& IVar::Iterator::operator--() {
   return *this;
 }
 
-std::unique_ptr<IVar> IVar::Iterator::operator*() const {
+void IVar::Iterator::load() const {}
+
+const IVar& IVar::Iterator::operator*() const {
+  return *cached_;
+}
+
+const IVar* IVar::Iterator::operator->() const {
+  return nullptr;
+}
+
+std::unique_ptr<IVar> IVar::Iterator::yield() {
   return nullptr;
 }
 
@@ -345,3 +432,4 @@ std::string IVar::mangled_type() const {
 }
 
 }
+// NOLINTEND

@@ -18,4 +18,5 @@
 #include <LIEF/asm/mips/Instruction.hpp>
 #include <LIEF/asm/mips/opcodes.hpp>
 #include <LIEF/asm/mips/registers.hpp>
+#include <LIEF/asm/mips/operands.hpp>
 #endif

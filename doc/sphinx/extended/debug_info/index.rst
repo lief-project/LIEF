@@ -22,7 +22,7 @@ debug_location_t
 DeclOpt
 *******
 
-.. doxygenstruct:: LIEF::DeclOpt
+.. doxygenclass:: LIEF::DeclOpt
 
 ----
 

@@ -26,6 +26,7 @@
 #include "LIEF/rust/debug_location.hpp"
 #include "LIEF/rust/error.hpp"
 #include "LIEF/rust/asm/Instruction.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   public:
@@ -102,10 +103,10 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   };
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto linkage_name() const {
-    return get().linkage_name();
+    return to_unique_string(get().linkage_name());
   }
 
   auto variables() const {
@@ -127,7 +128,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     return get().size();
   }
   auto ranges() const {
-    return details::make_range(get().ranges());
+    return make_unique_vector<Range>(details::make_range(get().ranges()));
   }
   auto debug_location() const {
     return details::make_location(get().debug_location());
@@ -161,7 +162,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   }
 
   auto description() const {
-    return get().description();
+    return to_unique_string(get().description());
   }
 
   auto lexical_blocks() const {
@@ -169,10 +170,16 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   }
 
   auto to_decl() const {
-    return get().to_decl();
+    return to_unique_string(get().to_decl());
   }
 
   auto to_decl_with_opt(const LIEF_DeclOpt& opt) const {
-    return get().to_decl(opt.conf());
+    return to_unique_string(get().to_decl(opt.conf()));
   }
 };
+
+using DWARF_Function_it_variables = DWARF_Function::it_variables;
+using DWARF_Function_it_parameters = DWARF_Function::it_parameters;
+using DWARF_Function_it_thrown_types = DWARF_Function::it_thrown_types;
+using DWARF_Function_it_instructions = DWARF_Function::it_instructions;
+using DWARF_Function_it_lexical_blocks = DWARF_Function::it_lexical_blocks;

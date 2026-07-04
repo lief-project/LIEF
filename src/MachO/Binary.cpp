@@ -44,6 +44,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
@@ -857,11 +858,50 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
     if (func_variants->data_offset() > from_offset) {
       func_variants->data_offset(func_variants->data_offset() + width);
     }
+    for (FunctionVariants::RuntimeTable& table : func_variants->runtime_table()) {
+      for (FunctionVariants::RuntimeTableEntry& entry : table.entries()) {
+        // impl() is an image-base relative offset (like LC_FUNCTION_STARTS).
+        // When another_table() is set it is an index into the runtime tables,
+        // not an address, and must be left untouched.
+        if (entry.another_table()) {
+          continue;
+        }
+        if ((__text_base_addr + entry.impl()) > virtual_address) {
+          entry.impl(entry.impl() + width);
+        }
+      }
+    }
   }
 
   if (FunctionVariantFixups* func_variant_fixups = function_variant_fixups()) {
     if (func_variant_fixups->data_offset() > from_offset) {
       func_variant_fixups->data_offset(func_variant_fixups->data_offset() + width);
+    }
+  }
+
+  for (LazyLoadDylibInfo& lazy : lazy_load_dylib_infos()) {
+    if (lazy.data_offset() > from_offset) {
+      lazy.data_offset(lazy.data_offset() + width);
+    }
+
+    if (lazy.chain_start_image_offset() != 0 &&
+        __text_base_addr + lazy.chain_start_image_offset() > virtual_address)
+    {
+      lazy.chain_start_image_offset(lazy.chain_start_image_offset() + width);
+    }
+
+    if (lazy.flag_image_offset() != 0 &&
+        __text_base_addr + lazy.flag_image_offset() > virtual_address)
+    {
+      lazy.flag_image_offset(lazy.flag_image_offset() + width);
+    }
+
+    // NOTE(romain): Updates on Fixup's address are currently NOT committed in
+    // the final binary (c.f. the associated TODO in the builder)
+    for (LazyLoadDylibInfo::Fixup& fixup : lazy.fixups()) {
+      if (fixup.address() > virtual_address) {
+        fixup.address(fixup.address() + width);
+      }
     }
   }
 
@@ -1015,6 +1055,10 @@ LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
     libraries_.push_back(command->as<DylibCommand>());
   }
 
+  if (LazyLoadDylibInfo::classof(command.get())) {
+    lazy_load_dylib_infos_.push_back(command->as<LazyLoadDylibInfo>());
+  }
+
   if (SegmentCommand::classof(command.get())) {
     add_cached_segment(*command->as<SegmentCommand>());
   }
@@ -1022,7 +1066,7 @@ LoadCommand* Binary::add(std::unique_ptr<LoadCommand> command) {
 }
 
 LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
-  // If index is "too" large <=> push_back
+  // An out-of-bounds index is interpreted as a push_back
   if (index >= commands_.size()) {
     return add(command);
   }
@@ -1062,6 +1106,10 @@ LoadCommand* Binary::add(const LoadCommand& command, size_t index) {
     libraries_.push_back(lib);
   }
 
+  if (auto* lazy = copy->cast<LazyLoadDylibInfo>()) {
+    lazy_load_dylib_infos_.push_back(lazy);
+  }
+
   if (auto* segment = copy->cast<SegmentCommand>()) {
     add_cached_segment(*segment);
   }
@@ -1090,6 +1138,14 @@ bool Binary::remove(const LoadCommand& command) {
                 lib->name());
     } else {
       libraries_.erase(it_cache);
+    }
+  }
+
+  if (cmd_rm->cast<LazyLoadDylibInfo>() != nullptr) {
+    auto it_cache = std::find(lazy_load_dylib_infos_.begin(),
+                              lazy_load_dylib_infos_.end(), cmd_rm);
+    if (it_cache != lazy_load_dylib_infos_.end()) {
+      lazy_load_dylib_infos_.erase(it_cache);
     }
   }
 
@@ -2530,19 +2586,24 @@ Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {
 ExportInfo* Binary::add_exported_function(uint64_t address,
                                           const std::string& name) {
   if (Symbol* symbol = add_local_symbol(address, name)) {
+    uint64_t trie_offset = address;
+    if (trie_offset >= imagebase()) {
+      trie_offset -= imagebase();
+    }
+
     if (DyldExportsTrie* exports = dyld_exports_trie()) {
-      auto export_info = std::make_unique<ExportInfo>(address, 0);
+      auto export_info = std::make_unique<ExportInfo>(trie_offset, 0);
       export_info->symbol_ = symbol;
-      export_info->address(address);
+      export_info->address(trie_offset);
       symbol->export_info_ = export_info.get();
 
       return exports->add(std::move(export_info));
     }
 
     if (DyldInfo* info = dyld_info()) {
-      auto export_info = std::make_unique<ExportInfo>(address, 0);
+      auto export_info = std::make_unique<ExportInfo>(trie_offset, 0);
       export_info->symbol_ = symbol;
-      export_info->address(address);
+      export_info->address(trie_offset);
       symbol->export_info_ = export_info.get();
 
       return info->add(std::move(export_info));

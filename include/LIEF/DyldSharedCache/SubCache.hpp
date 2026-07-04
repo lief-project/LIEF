@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_DSC_SUBCACHE_H
 #define LIEF_DSC_SUBCACHE_H
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/DyldSharedCache/uuid.hpp"
@@ -41,10 +42,12 @@ class LIEF_API SubCache {
   /// SubCache Iterator
   class LIEF_API Iterator
     : public iterator_facade_base<Iterator, std::random_access_iterator_tag,
-                                  std::unique_ptr<SubCache>, std::ptrdiff_t,
-                                  SubCache*, std::unique_ptr<SubCache>> {
+                                  SubCache, std::ptrdiff_t, const SubCache*,
+                                  const SubCache&> {
     public:
     using implementation = details::SubCacheIt;
+
+    Iterator();
 
     Iterator(std::unique_ptr<details::SubCacheIt> impl);
     Iterator(const Iterator&);
@@ -67,10 +70,20 @@ class LIEF_API SubCache {
       return !(LHS == RHS);
     }
 
-    std::unique_ptr<SubCache> operator*() const;
+    const SubCache& operator*() const LIEF_LIFETIMEBOUND;
+
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    const SubCache* operator->() const LIEF_LIFETIMEBOUND;
+
+    /// Transfer ownership of the subcache at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    std::unique_ptr<SubCache> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::SubCacheIt> impl_;
+    mutable std::unique_ptr<SubCache> cached_;
   };
 
   public:
@@ -88,7 +101,7 @@ class LIEF_API SubCache {
   std::string suffix() const;
 
   /// The associated DyldSharedCache object for this subcache
-  std::unique_ptr<const DyldSharedCache> cache() const;
+  std::unique_ptr<const DyldSharedCache> cache() const LIEF_LIFETIMEBOUND;
 
   friend LIEF_API std::ostream& operator<<(std::ostream& os,
                                            const SubCache& subcache);

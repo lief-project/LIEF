@@ -19,7 +19,7 @@ using namespace BinaryNinja;
 
 namespace analysis_plugin {
 
-Ref<Type> TypeBuilder::get_or_create(const std::string& name) {
+Ref<Type> TypeBuilder::get_or_create(const std::string& /*name*/) {
   return nullptr;
 }
 

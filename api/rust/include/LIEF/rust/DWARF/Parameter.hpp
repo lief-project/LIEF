@@ -16,6 +16,7 @@
 #include "LIEF/DWARF/Parameter.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class DWARF_Parameter_Location : public Mirror<LIEF::dwarf::Parameter::Location> {
   public:
@@ -37,7 +38,7 @@ class DWARF_Parameter_RegisterLocation
     return impl().id;
   }
 
-  static bool classof(const DWARF_Parameter_Location& loc) {
+  static auto classof(const DWARF_Parameter_Location& loc) {
     return lief_t::classof(&loc.get());
   }
 
@@ -53,13 +54,11 @@ class DWARF_Parameter : public Mirror<LIEF::dwarf::Parameter> {
   using lief_t = LIEF::dwarf::Parameter;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
 
   auto get_type() const {
-    return details::try_unique<DWARF_Type>(
-        get().type()
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Type>(get().type());
   }
 
   auto location() const {
@@ -71,7 +70,7 @@ class DWARF_parameters_Formal : public DWARF_Parameter {
   public:
   using lief_t = LIEF::dwarf::parameters::Formal;
 
-  static bool classof(const DWARF_Parameter& type) {
+  static auto classof(const DWARF_Parameter& type) {
     return lief_t::classof(&type.get());
   }
 
@@ -85,7 +84,7 @@ class DWARF_parameters_TemplateValue : public DWARF_Parameter {
   public:
   using lief_t = LIEF::dwarf::parameters::TemplateValue;
 
-  static bool classof(const DWARF_Parameter& type) {
+  static auto classof(const DWARF_Parameter& type) {
     return lief_t::classof(&type.get());
   }
 
@@ -99,7 +98,7 @@ class DWARF_parameters_TemplateType : public DWARF_Parameter {
   public:
   using lief_t = LIEF::dwarf::parameters::TemplateType;
 
-  static bool classof(const DWARF_Parameter& type) {
+  static auto classof(const DWARF_Parameter& type) {
     return lief_t::classof(&type.get());
   }
 

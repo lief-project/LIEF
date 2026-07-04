@@ -350,49 +350,55 @@ size_t switch_array_size(const uint8_t* ptr, const uint8_t* end) {
     return SIZE_MAX;
   }
 
+  const size_t remaining = static_cast<size_t>(end - ptr);
   const auto opcode = static_cast<OPCODES>(*ptr);
   const auto ident =
       static_cast<SWITCH_ARRAY_IDENT>(static_cast<uint16_t>(ptr[1] << 8) | opcode);
-  const uint8_t* ptr_struct = ptr;
-  size_t size = 0;
 
   switch (ident) {
     case SWITCH_ARRAY_IDENT::IDENT_PACKED_SWITCH:
     {
-      size_t nb_elements =
-          reinterpret_cast<const packed_switch*>(ptr_struct)->size;
-      size += sizeof(packed_switch);
-      size += nb_elements * sizeof(uint32_t);
-      return size;
+      if (remaining < sizeof(packed_switch)) {
+        return SIZE_MAX;
+      }
+      const size_t nb_elements = reinterpret_cast<const packed_switch*>(ptr)->size;
+      return sizeof(packed_switch) + nb_elements * sizeof(uint32_t);
     }
     case SWITCH_ARRAY_IDENT::IDENT_SPARSE_SWITCH:
     {
-      size_t nb_elements =
-          reinterpret_cast<const sparse_switch*>(ptr_struct)->size;
-      size += sizeof(sparse_switch);
-      size += 2 * nb_elements * sizeof(uint32_t);
-      return size;
+      if (remaining < sizeof(sparse_switch)) {
+        return SIZE_MAX;
+      }
+      const size_t nb_elements = reinterpret_cast<const sparse_switch*>(ptr)->size;
+      return sizeof(sparse_switch) + 2 * nb_elements * sizeof(uint32_t);
     }
     case SWITCH_ARRAY_IDENT::IDENT_FILL_ARRAY:
     {
-      size_t nb_elements =
-          reinterpret_cast<const fill_array_data*>(ptr_struct)->size;
-      size_t width =
-          reinterpret_cast<const fill_array_data*>(ptr_struct)->element_width;
-      size_t data_size = nb_elements * width;
-      data_size += data_size % 2;
+      if (remaining < sizeof(fill_array_data)) {
+        return SIZE_MAX;
+      }
+      const auto* fill = reinterpret_cast<const fill_array_data*>(ptr);
+      const size_t nb_elements = fill->size;
+      const size_t width = fill->element_width;
 
-      size += sizeof(fill_array_data);
-      size += data_size;
-      return size;
+      if (width != 0 && nb_elements > SIZE_MAX / width) {
+        return SIZE_MAX;
+      }
+      size_t data_size = nb_elements * width;
+      if (data_size > SIZE_MAX - (data_size % 2)) {
+        return SIZE_MAX;
+      }
+      data_size += data_size % 2;
+      if (data_size > SIZE_MAX - sizeof(fill_array_data)) {
+        return SIZE_MAX;
+      }
+      return sizeof(fill_array_data) + data_size;
     }
     default:
     {
       return SIZE_MAX;
     }
   }
-
-  return size;
 }
 
 }

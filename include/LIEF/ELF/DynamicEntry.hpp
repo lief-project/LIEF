@@ -36,14 +36,15 @@ struct Elf32_Dyn;
 /// segment
 class LIEF_API DynamicEntry : public Object {
   public:
-  static constexpr uint64_t MIPS_DISC = 0x100000000;
+  // clang-format off
+  static constexpr uint64_t MIPS_DISC    = 0x100000000;
   static constexpr uint64_t AARCH64_DISC = 0x200000000;
   static constexpr uint64_t HEXAGON_DISC = 0x300000000;
-  static constexpr uint64_t PPC_DISC = 0x400000000;
-  static constexpr uint64_t PPC64_DISC = 0x500000000;
-  static constexpr uint64_t RISCV_DISC = 0x600000000;
-  static constexpr uint64_t X86_64_DISC = 0x700000000;
-  static constexpr uint64_t IA_64_DISC = 0x800000000;
+  static constexpr uint64_t PPC_DISC     = 0x400000000;
+  static constexpr uint64_t PPC64_DISC   = 0x500000000;
+  static constexpr uint64_t RISCV_DISC   = 0x600000000;
+  static constexpr uint64_t X86_64_DISC  = 0x700000000;
+  static constexpr uint64_t IA_64_DISC   = 0x800000000;
 
   enum class TAG : uint64_t {
     UNKNOWN = uint64_t(-1),
@@ -86,153 +87,94 @@ class LIEF_API DynamicEntry : public Object {
     RELRENT = 37,         /**< Size of one RELR relative relocation */
 
     // GNU Extensions
-    GNU_HASH = 0x6FFFFEF5,    /**< Reference to the GNU hash table. */
-    TLSDESC_PLT = 0x6FFFFEF6, /**< Location of PLT entry for TLS descriptor
-                                 resolver calls. */
-    TLSDESC_GOT = 0x6FFFFEF7, /**< Location of GOT entry for TLS descriptor
-                                 resolver PLT entry. */
-    RELACOUNT = 0x6FFFFFF9,   /**< ELF32_Rela count. */
-    RELCOUNT = 0x6FFFFFFA,    /**< ELF32_Rel count. */
-    FLAGS_1 = 0x6FFFFFFB,     /**< Flags_1. */
-    VERSYM = 0x6FFFFFF0,      /**< The address of .gnu.version section. */
-    VERDEF = 0x6FFFFFFC,      /**< The address of the version definition table. */
-    VERDEFNUM = 0x6FFFFFFD,   /**< The number of entries in DT_VERDEF. */
-    VERNEED = 0x6FFFFFFE,     /**< The address of the version Dependency table. */
-    VERNEEDNUM = 0x6FFFFFFF,  /**< The number of entries in DT_VERNEED. */
+    GNU_HASH    = 0x6FFFFEF5, /**< Reference to the GNU hash table. */
+    TLSDESC_PLT = 0x6FFFFEF6, /**< Location of PLT entry for TLS descriptor resolver calls. */
+    TLSDESC_GOT = 0x6FFFFEF7, /**< Location of GOT entry for TLS descriptor resolver PLT entry. */
+    RELACOUNT   = 0x6FFFFFF9, /**< ELF32_Rela count. */
+    RELCOUNT    = 0x6FFFFFFA, /**< ELF32_Rel count. */
+    FLAGS_1     = 0x6FFFFFFB, /**< Flags_1. */
+    VERSYM      = 0x6FFFFFF0, /**< The address of .gnu.version section. */
+    VERDEF      = 0x6FFFFFFC, /**< The address of the version definition table. */
+    VERDEFNUM   = 0x6FFFFFFD, /**< The number of entries in DT_VERDEF. */
+    VERNEED     = 0x6FFFFFFE, /**< The address of the version Dependency table. */
+    VERNEEDNUM  = 0x6FFFFFFF, /**< The number of entries in DT_VERNEED. */
 
     AUXILIARY = 0x7ffffffd, /**< Shared object to load before self */
-    FILTER = 0x7fffffff,    /**< Shared object to filter from */
+    FILTER    = 0x7fffffff, /**< Shared object to filter from */
 
     // Android Extensions
-    ANDROID_REL_OFFSET = 0x6000000D, /**< The offset of packed relocation data
-                                        (older version < M) (Android specific). */
-    ANDROID_REL_SIZE = 0x6000000E, /**< The size of packed relocation data in bytes
-                                      (older version < M) (Android specific). */
-    ANDROID_REL = 0x6000000F,    /**< The offset of packed relocation data (Android
-                                    specific). */
-    ANDROID_RELSZ = 0x60000010,  /**< The size of packed relocation data in bytes
-                                    (Android specific). */
-    ANDROID_RELA = 0x60000011,   /**< The offset of packed relocation data (Android
-                                    specific). */
-    ANDROID_RELASZ = 0x60000012, /**< The size of packed relocation data in bytes
-                                    (Android specific). */
-    ANDROID_RELR = 0x6FFFE000, /**< The offset of new relr relocation data (Android
-                                  specific). */
-    ANDROID_RELRSZ = 0x6FFFE001, /**< The size of new relr relocation data in bytes
-                                    (Android specific). */
-    ANDROID_RELRENT = 0x6FFFE003,   /**< The size of a new relr relocation entry
-                                       (Android specific). */
-    ANDROID_RELRCOUNT = 0x6FFFE005, /**< Specifies the relative count of new relr
-                                       relocation entries (Android specific). */
+    ANDROID_REL_OFFSET = 0x6000000D, /**< The offset of packed relocation data (older version < M) (Android specific). */
+    ANDROID_REL_SIZE   = 0x6000000E, /**< The size of packed relocation data in bytes (older version < M) (Android specific). */
+    ANDROID_REL        = 0x6000000F, /**< The offset of packed relocation data (Android specific). */
+    ANDROID_RELSZ      = 0x60000010, /**< The size of packed relocation data in bytes (Android specific). */
+    ANDROID_RELA       = 0x60000011, /**< The offset of packed relocation data (Android specific). */
+    ANDROID_RELASZ     = 0x60000012, /**< The size of packed relocation data in bytes (Android specific). */
+    ANDROID_RELR       = 0x6FFFE000, /**< The offset of new relr relocation data (Android specific). */
+    ANDROID_RELRSZ     = 0x6FFFE001, /**< The size of new relr relocation data in bytes (Android specific). */
+    ANDROID_RELRENT    = 0x6FFFE003, /**< The size of a new relr relocation entry (Android specific). */
+    ANDROID_RELRCOUNT  = 0x6FFFE005, /**< Specifies the relative count of new relr relocation entries (Android specific). */
 
     /* Mips specific dynamic table entry tags. */
-    MIPS_RLD_VERSION =
-        MIPS_DISC +
-        0x70000001, /**< 32 bit version number for runtime linker interface. */
-    MIPS_TIME_STAMP = MIPS_DISC + 0x70000002, /**< Time stamp. */
-    MIPS_ICHECKSUM =
-        MIPS_DISC +
-        0x70000003, /**< Checksum of external strings and common sizes. */
-    MIPS_IVERSION =
-        MIPS_DISC + 0x70000004, /**< Index of version string in string table. */
-    MIPS_FLAGS = MIPS_DISC + 0x70000005, /**< 32 bits of flags. */
-    MIPS_BASE_ADDRESS =
-        MIPS_DISC + 0x70000006,             /**< Base address of the segment. */
-    MIPS_MSYM = MIPS_DISC + 0x70000007,     /**< Address of .msym section. */
-    MIPS_CONFLICT = MIPS_DISC + 0x70000008, /**< Address of .conflict section. */
-    MIPS_LIBLIST = MIPS_DISC + 0x70000009,  /**< Address of .liblist section. */
-    MIPS_LOCAL_GOTNO =
-        MIPS_DISC +
-        0x7000000a, /**< Number of local global offset table entries. */
-    MIPS_CONFLICTNO =
-        MIPS_DISC + 0x7000000b, /**< Number of entries in the .conflict section. */
-    MIPS_LIBLISTNO =
-        MIPS_DISC + 0x70000010, /**< Number of entries in the .liblist section. */
-    MIPS_SYMTABNO =
-        MIPS_DISC + 0x70000011, /**< Number of entries in the .dynsym section. */
-    MIPS_UNREFEXTNO = MIPS_DISC + 0x70000012, /**< Index of first external dynamic
-                                                 symbol not referenced locally. */
-    MIPS_GOTSYM =
-        MIPS_DISC +
-        0x70000013, /**< Index of first dynamic symbol in global offset table. */
-    MIPS_HIPAGENO =
-        MIPS_DISC +
-        0x70000014, /**< Number of page table entries in global offset table. */
-    MIPS_RLD_MAP =
-        MIPS_DISC +
-        0x70000016, /**< Address of run time loader map, used for debugging. */
-    MIPS_DELTA_CLASS = MIPS_DISC + 0x70000017, /**< Delta C++ class definition. */
-    MIPS_DELTA_CLASS_NO =
-        MIPS_DISC + 0x70000018, /**< Number of entries in DT_MIPS_DELTA_CLASS. */
-    MIPS_DELTA_INSTANCE =
-        MIPS_DISC + 0x70000019, /**< Delta C++ class instances. */
-    MIPS_DELTA_INSTANCE_NO =
-        MIPS_DISC +
-        0x7000001A, /**< Number of entries in DT_MIPS_DELTA_INSTANCE. */
-    MIPS_DELTA_RELOC = MIPS_DISC + 0x7000001B, /**< Delta relocations. */
-    MIPS_DELTA_RELOC_NO =
-        MIPS_DISC + 0x7000001C, /**< Number of entries in DT_MIPS_DELTA_RELOC. */
-    MIPS_DELTA_SYM =
-        MIPS_DISC +
-        0x7000001D, /**< Delta symbols that Delta relocations refer to. */
-    MIPS_DELTA_SYM_NO =
-        MIPS_DISC + 0x7000001E, /**< Number of entries in DT_MIPS_DELTA_SYM. */
-    MIPS_DELTA_CLASSSYM =
-        MIPS_DISC + 0x70000020, /**< Delta symbols that hold class declarations. */
-    MIPS_DELTA_CLASSSYM_NO =
-        MIPS_DISC +
-        0x70000021, /**< Number of entries in DT_MIPS_DELTA_CLASSSYM. */
-    MIPS_CXX_FLAGS =
-        MIPS_DISC +
-        0x70000022, /**< Flags indicating information about C++ flavor. */
-    MIPS_PIXIE_INIT = MIPS_DISC + 0x70000023, /**< Pixie information. */
-    MIPS_SYMBOL_LIB = MIPS_DISC + 0x70000024, /**< Address of .MIPS.symlib */
-    MIPS_LOCALPAGE_GOTIDX =
-        MIPS_DISC +
-        0x70000025, /**< The GOT index of the first PTE for a segment */
-    MIPS_LOCAL_GOTIDX =
-        MIPS_DISC +
-        0x70000026, /**< The GOT index of the first PTE for a local symbol */
-    MIPS_HIDDEN_GOTIDX =
-        MIPS_DISC +
-        0x70000027, /**< The GOT index of the first PTE for a hidden symbol */
-    MIPS_PROTECTED_GOTIDX =
-        MIPS_DISC +
-        0x70000028, /**< The GOT index of the first PTE for a protected symbol */
-    MIPS_OPTIONS = MIPS_DISC + 0x70000029,      /**< Address of `.MIPS.options'. */
-    MIPS_INTERFACE = MIPS_DISC + 0x7000002A,    /**< Address of `.interface'. */
-    MIPS_DYNSTR_ALIGN = MIPS_DISC + 0x7000002B, /**< Unknown. */
-    MIPS_INTERFACE_SIZE =
-        MIPS_DISC + 0x7000002C, /**< Size of the .interface section. */
-    MIPS_RLD_TEXT_RESOLVE_ADDR =
-        MIPS_DISC +
-        0x7000002D, /**< Size of rld_text_resolve function stored in the GOT. */
-    MIPS_PERF_SUFFIX =
-        MIPS_DISC + 0x7000002E, /**< Default suffix of DSO to be added by rld on
-                                   dlopen() calls. */
-    MIPS_COMPACT_SIZE =
-        MIPS_DISC + 0x7000002F, /**< Size of compact relocation section (O32). */
-    MIPS_GP_VALUE = MIPS_DISC + 0x70000030, /**< GP value for auxiliary GOTs. */
-    MIPS_AUX_DYNAMIC =
-        MIPS_DISC + 0x70000031, /**< Address of auxiliary .dynamic. */
-    MIPS_PLTGOT =
-        MIPS_DISC + 0x70000032, /**< Address of the base of the PLTGOT. */
-    MIPS_RWPLT = MIPS_DISC + 0x70000034,
-    MIPS_RLD_MAP_REL = MIPS_DISC + 0x70000035,
-    MIPS_XHASH = MIPS_DISC + 0x70000036,
+    MIPS_RLD_VERSION           = MIPS_DISC + 0x70000001, /**< 32 bit version number for runtime linker interface. */
+    MIPS_TIME_STAMP            = MIPS_DISC + 0x70000002, /**< Time stamp. */
+    MIPS_ICHECKSUM             = MIPS_DISC + 0x70000003, /**< Checksum of external strings and common sizes. */
+    MIPS_IVERSION              = MIPS_DISC + 0x70000004, /**< Index of version string in string table. */
+    MIPS_FLAGS                 = MIPS_DISC + 0x70000005, /**< 32 bits of flags. */
+    MIPS_BASE_ADDRESS          = MIPS_DISC + 0x70000006, /**< Base address of the segment. */
+    MIPS_MSYM                  = MIPS_DISC + 0x70000007, /**< Address of .msym section. */
+    MIPS_CONFLICT              = MIPS_DISC + 0x70000008, /**< Address of .conflict section. */
+    MIPS_LIBLIST               = MIPS_DISC + 0x70000009, /**< Address of .liblist section. */
+    MIPS_LOCAL_GOTNO           = MIPS_DISC + 0x7000000a, /**< Number of local global offset table entries. */
+    MIPS_CONFLICTNO            = MIPS_DISC + 0x7000000b, /**< Number of entries in the .conflict section. */
+    MIPS_LIBLISTNO             = MIPS_DISC + 0x70000010, /**< Number of entries in the .liblist section. */
+    MIPS_SYMTABNO              = MIPS_DISC + 0x70000011, /**< Number of entries in the .dynsym section. */
+    MIPS_UNREFEXTNO            = MIPS_DISC + 0x70000012, /**< Index of first external dynamic symbol not referenced locally. */
+    MIPS_GOTSYM                = MIPS_DISC + 0x70000013, /**< Index of first dynamic symbol in global offset table. */
+    MIPS_HIPAGENO              = MIPS_DISC + 0x70000014, /**< Number of page table entries in global offset table. */
+    MIPS_RLD_MAP               = MIPS_DISC + 0x70000016, /**< Address of run time loader map, used for debugging. */
+    MIPS_DELTA_CLASS           = MIPS_DISC + 0x70000017, /**< Delta C++ class definition. */
+    MIPS_DELTA_CLASS_NO        = MIPS_DISC + 0x70000018, /**< Number of entries in DT_MIPS_DELTA_CLASS. */
+    MIPS_DELTA_INSTANCE        = MIPS_DISC + 0x70000019, /**< Delta C++ class instances. */
+    MIPS_DELTA_INSTANCE_NO     = MIPS_DISC + 0x7000001A, /**< Number of entries in DT_MIPS_DELTA_INSTANCE. */
+    MIPS_DELTA_RELOC           = MIPS_DISC + 0x7000001B, /**< Delta relocations. */
+    MIPS_DELTA_RELOC_NO        = MIPS_DISC + 0x7000001C, /**< Number of entries in DT_MIPS_DELTA_RELOC. */
+    MIPS_DELTA_SYM             = MIPS_DISC + 0x7000001D, /**< Delta symbols that Delta relocations refer to. */
+    MIPS_DELTA_SYM_NO          = MIPS_DISC + 0x7000001E, /**< Number of entries in DT_MIPS_DELTA_SYM. */
+    MIPS_DELTA_CLASSSYM        = MIPS_DISC + 0x70000020, /**< Delta symbols that hold class declarations. */
+    MIPS_DELTA_CLASSSYM_NO     = MIPS_DISC + 0x70000021, /**< Number of entries in DT_MIPS_DELTA_CLASSSYM. */
+    MIPS_CXX_FLAGS             = MIPS_DISC + 0x70000022, /**< Flags indicating information about C++ flavor. */
+    MIPS_PIXIE_INIT            = MIPS_DISC + 0x70000023, /**< Pixie information. */
+    MIPS_SYMBOL_LIB            = MIPS_DISC + 0x70000024, /**< Address of .MIPS.symlib */
+    MIPS_LOCALPAGE_GOTIDX      = MIPS_DISC + 0x70000025, /**< The GOT index of the first PTE for a segment */
+    MIPS_LOCAL_GOTIDX          = MIPS_DISC + 0x70000026, /**< The GOT index of the first PTE for a local symbol */
+    MIPS_HIDDEN_GOTIDX         = MIPS_DISC + 0x70000027, /**< The GOT index of the first PTE for a hidden symbol */
+    MIPS_PROTECTED_GOTIDX      = MIPS_DISC + 0x70000028, /**< The GOT index of the first PTE for a protected symbol */
+    MIPS_OPTIONS               = MIPS_DISC + 0x70000029, /**< Address of `.MIPS.options'. */
+    MIPS_INTERFACE             = MIPS_DISC + 0x7000002A, /**< Address of `.interface'. */
+    MIPS_DYNSTR_ALIGN          = MIPS_DISC + 0x7000002B, /**< Unknown. */
+    MIPS_INTERFACE_SIZE        = MIPS_DISC + 0x7000002C, /**< Size of the .interface section. */
+    MIPS_RLD_TEXT_RESOLVE_ADDR = MIPS_DISC + 0x7000002D, /**< Size of rld_text_resolve function stored in the GOT. */
+    MIPS_PERF_SUFFIX           = MIPS_DISC + 0x7000002E, /**< Default suffix of DSO to be added by rld on dlopen() calls. */
+    MIPS_COMPACT_SIZE          = MIPS_DISC + 0x7000002F, /**< Size of compact relocation section (O32). */
+    MIPS_GP_VALUE              = MIPS_DISC + 0x70000030, /**< GP value for auxiliary GOTs. */
+    MIPS_AUX_DYNAMIC           = MIPS_DISC + 0x70000031, /**< Address of auxiliary .dynamic. */
+    MIPS_PLTGOT                = MIPS_DISC + 0x70000032, /**< Address of the base of the PLTGOT. */
+    MIPS_RWPLT                 = MIPS_DISC + 0x70000034,
+    MIPS_RLD_MAP_REL           = MIPS_DISC + 0x70000035,
+    MIPS_XHASH                 = MIPS_DISC + 0x70000036,
 
-    AARCH64_BTI_PLT = AARCH64_DISC + 0x70000001,
-    AARCH64_PAC_PLT = AARCH64_DISC + 0x70000003,
-    AARCH64_VARIANT_PCS = AARCH64_DISC + 0x70000005,
-    AARCH64_MEMTAG_MODE = AARCH64_DISC + 0x70000009,
-    AARCH64_MEMTAG_HEAP = AARCH64_DISC + 0x7000000b,
-    AARCH64_MEMTAG_STACK = AARCH64_DISC + 0x7000000c,
-    AARCH64_MEMTAG_GLOBALS = AARCH64_DISC + 0x7000000d,
+    AARCH64_BTI_PLT          = AARCH64_DISC + 0x70000001,
+    AARCH64_PAC_PLT          = AARCH64_DISC + 0x70000003,
+    AARCH64_VARIANT_PCS      = AARCH64_DISC + 0x70000005,
+    AARCH64_MEMTAG_MODE      = AARCH64_DISC + 0x70000009,
+    AARCH64_MEMTAG_HEAP      = AARCH64_DISC + 0x7000000b,
+    AARCH64_MEMTAG_STACK     = AARCH64_DISC + 0x7000000c,
+    AARCH64_MEMTAG_GLOBALS   = AARCH64_DISC + 0x7000000d,
     AARCH64_MEMTAG_GLOBALSSZ = AARCH64_DISC + 0x7000000f,
 
     HEXAGON_SYMSZ = HEXAGON_DISC + 0x70000000,
-    HEXAGON_VER = HEXAGON_DISC + 0x70000001,
-    HEXAGON_PLT = HEXAGON_DISC + 0x70000002,
+    HEXAGON_VER   = HEXAGON_DISC + 0x70000001,
+    HEXAGON_PLT   = HEXAGON_DISC + 0x70000002,
 
     PPC_GOT = PPC_DISC + 0x70000000,
     PPC_OPT = PPC_DISC + 0x70000001,
@@ -242,42 +184,43 @@ class LIEF_API DynamicEntry : public Object {
 
     RISCV_VARIANT_CC = RISCV_DISC + 0x70000003,
 
-    X86_64_PLT = X86_64_DISC + 0x70000000,
-    X86_64_PLTSZ = X86_64_DISC + 0x70000001,
+    X86_64_PLT    = X86_64_DISC + 0x70000000,
+    X86_64_PLTSZ  = X86_64_DISC + 0x70000001,
     X86_64_PLTENT = X86_64_DISC + 0x70000003,
 
-    IA_64_PLT_RESERVE = IA_64_DISC + (0x70000000 + 0),
-    IA_64_VMS_SUBTYPE = IA_64_DISC + (0x60000000 + 0),
-    IA_64_VMS_IMGIOCNT = IA_64_DISC + (0x60000000 + 2),
-    IA_64_VMS_LNKFLAGS = IA_64_DISC + (0x60000000 + 8),
+    IA_64_PLT_RESERVE         = IA_64_DISC + (0x70000000 + 0),
+    IA_64_VMS_SUBTYPE         = IA_64_DISC + (0x60000000 + 0),
+    IA_64_VMS_IMGIOCNT        = IA_64_DISC + (0x60000000 + 2),
+    IA_64_VMS_LNKFLAGS        = IA_64_DISC + (0x60000000 + 8),
     IA_64_VMS_VIR_MEM_BLK_SIZ = IA_64_DISC + (0x60000000 + 10),
-    IA_64_VMS_IDENT = IA_64_DISC + (0x60000000 + 12),
-    IA_64_VMS_NEEDED_IDENT = IA_64_DISC + (0x60000000 + 16),
-    IA_64_VMS_IMG_RELA_CNT = IA_64_DISC + (0x60000000 + 18),
-    IA_64_VMS_SEG_RELA_CNT = IA_64_DISC + (0x60000000 + 20),
-    IA_64_VMS_FIXUP_RELA_CNT = IA_64_DISC + (0x60000000 + 22),
-    IA_64_VMS_FIXUP_NEEDED = IA_64_DISC + (0x60000000 + 24),
-    IA_64_VMS_SYMVEC_CNT = IA_64_DISC + (0x60000000 + 26),
-    IA_64_VMS_XLATED = IA_64_DISC + (0x60000000 + 30),
-    IA_64_VMS_STACKSIZE = IA_64_DISC + (0x60000000 + 32),
-    IA_64_VMS_UNWINDSZ = IA_64_DISC + (0x60000000 + 34),
-    IA_64_VMS_UNWIND_CODSEG = IA_64_DISC + (0x60000000 + 36),
-    IA_64_VMS_UNWIND_INFOSEG = IA_64_DISC + (0x60000000 + 38),
-    IA_64_VMS_LINKTIME = IA_64_DISC + (0x60000000 + 40),
-    IA_64_VMS_SEG_NO = IA_64_DISC + (0x60000000 + 42),
-    IA_64_VMS_SYMVEC_OFFSET = IA_64_DISC + (0x60000000 + 44),
-    IA_64_VMS_SYMVEC_SEG = IA_64_DISC + (0x60000000 + 46),
-    IA_64_VMS_UNWIND_OFFSET = IA_64_DISC + (0x60000000 + 48),
-    IA_64_VMS_UNWIND_SEG = IA_64_DISC + (0x60000000 + 50),
-    IA_64_VMS_STRTAB_OFFSET = IA_64_DISC + (0x60000000 + 52),
-    IA_64_VMS_SYSVER_OFFSET = IA_64_DISC + (0x60000000 + 54),
-    IA_64_VMS_IMG_RELA_OFF = IA_64_DISC + (0x60000000 + 56),
-    IA_64_VMS_SEG_RELA_OFF = IA_64_DISC + (0x60000000 + 58),
-    IA_64_VMS_FIXUP_RELA_OFF = IA_64_DISC + (0x60000000 + 60),
-    IA_64_VMS_PLTGOT_OFFSET = IA_64_DISC + (0x60000000 + 62),
-    IA_64_VMS_PLTGOT_SEG = IA_64_DISC + (0x60000000 + 64),
-    IA_64_VMS_FPMODE = IA_64_DISC + (0x60000000 + 66),
+    IA_64_VMS_IDENT           = IA_64_DISC + (0x60000000 + 12),
+    IA_64_VMS_NEEDED_IDENT    = IA_64_DISC + (0x60000000 + 16),
+    IA_64_VMS_IMG_RELA_CNT    = IA_64_DISC + (0x60000000 + 18),
+    IA_64_VMS_SEG_RELA_CNT    = IA_64_DISC + (0x60000000 + 20),
+    IA_64_VMS_FIXUP_RELA_CNT  = IA_64_DISC + (0x60000000 + 22),
+    IA_64_VMS_FIXUP_NEEDED    = IA_64_DISC + (0x60000000 + 24),
+    IA_64_VMS_SYMVEC_CNT      = IA_64_DISC + (0x60000000 + 26),
+    IA_64_VMS_XLATED          = IA_64_DISC + (0x60000000 + 30),
+    IA_64_VMS_STACKSIZE       = IA_64_DISC + (0x60000000 + 32),
+    IA_64_VMS_UNWINDSZ        = IA_64_DISC + (0x60000000 + 34),
+    IA_64_VMS_UNWIND_CODSEG   = IA_64_DISC + (0x60000000 + 36),
+    IA_64_VMS_UNWIND_INFOSEG  = IA_64_DISC + (0x60000000 + 38),
+    IA_64_VMS_LINKTIME        = IA_64_DISC + (0x60000000 + 40),
+    IA_64_VMS_SEG_NO          = IA_64_DISC + (0x60000000 + 42),
+    IA_64_VMS_SYMVEC_OFFSET   = IA_64_DISC + (0x60000000 + 44),
+    IA_64_VMS_SYMVEC_SEG      = IA_64_DISC + (0x60000000 + 46),
+    IA_64_VMS_UNWIND_OFFSET   = IA_64_DISC + (0x60000000 + 48),
+    IA_64_VMS_UNWIND_SEG      = IA_64_DISC + (0x60000000 + 50),
+    IA_64_VMS_STRTAB_OFFSET   = IA_64_DISC + (0x60000000 + 52),
+    IA_64_VMS_SYSVER_OFFSET   = IA_64_DISC + (0x60000000 + 54),
+    IA_64_VMS_IMG_RELA_OFF    = IA_64_DISC + (0x60000000 + 56),
+    IA_64_VMS_SEG_RELA_OFF    = IA_64_DISC + (0x60000000 + 58),
+    IA_64_VMS_FIXUP_RELA_OFF  = IA_64_DISC + (0x60000000 + 60),
+    IA_64_VMS_PLTGOT_OFFSET   = IA_64_DISC + (0x60000000 + 62),
+    IA_64_VMS_PLTGOT_SEG      = IA_64_DISC + (0x60000000 + 64),
+    IA_64_VMS_FPMODE          = IA_64_DISC + (0x60000000 + 66),
   };
+  // clang-format on
 
   static TAG from_value(uint64_t value, ARCH arch);
   static uint64_t to_value(TAG tag);

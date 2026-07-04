@@ -20,6 +20,7 @@
 
 #include "LIEF/rust/PE/LoadConfiguration/DynamicRelocation/DynamicFixup.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_DynamicRelocation : public Mirror<LIEF::PE::DynamicRelocation> {
   public:
@@ -37,8 +38,8 @@ class PE_DynamicRelocation : public Mirror<LIEF::PE::DynamicRelocation> {
     return details::try_unique<PE_DynamicFixup>(get().fixups());
   }
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -46,7 +47,7 @@ class PE_DynamicRelocationV1 : public PE_DynamicRelocation {
   public:
   using lief_t = LIEF::PE::DynamicRelocationV1;
 
-  static bool classof(const PE_DynamicRelocation& entry) {
+  static auto classof(const PE_DynamicRelocation& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -60,7 +61,7 @@ class PE_DynamicRelocationV2 : public PE_DynamicRelocation {
   public:
   using lief_t = LIEF::PE::DynamicRelocationV2;
 
-  static bool classof(const PE_DynamicRelocation& entry) {
+  static auto classof(const PE_DynamicRelocation& entry) {
     return lief_t::classof(&entry.get());
   }
 

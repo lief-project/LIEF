@@ -38,7 +38,7 @@ class DWARF_types_TemplateAlias : public DWARF_Type {
 
   using lief_t = LIEF::dwarf::types::TemplateAlias;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 
@@ -57,3 +57,6 @@ class DWARF_types_TemplateAlias : public DWARF_Type {
     return as<lief_t>(this);
   }
 };
+
+using DWARF_types_TemplateAlias_it_parameters =
+    DWARF_types_TemplateAlias::it_parameters;

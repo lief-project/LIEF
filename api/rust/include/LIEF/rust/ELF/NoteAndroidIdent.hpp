@@ -26,15 +26,15 @@ class ELF_AndroidIdent : public ELF_Note {
     return impl().sdk_version();
   }
 
-  std::string ndk_version() const {
-    return impl().ndk_version();
+  auto ndk_version() const {
+    return to_unique_string(impl().ndk_version());
   }
 
-  std::string ndk_build_number() const {
-    return impl().ndk_build_number();
+  auto ndk_build_number() const {
+    return to_unique_string(impl().ndk_build_number());
   }
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 

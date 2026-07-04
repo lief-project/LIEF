@@ -29,6 +29,7 @@
 #include "LIEF/MachO/Stub.hpp"
 #include "LIEF/MachO/Builder.hpp"
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
 
@@ -64,6 +65,7 @@ class ExportInfo;
 class FunctionStarts;
 class FunctionVariants;
 class FunctionVariantFixups;
+class LazyLoadDylibInfo;
 class Header;
 class IndirectBindingInfo;
 class LinkerOptHint;
@@ -166,6 +168,16 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Iterator that outputs const DylibCommand&
   using it_const_libraries = const_ref_iterator<const libraries_cache_t&>;
+
+  /// Internal container for storing Mach-O LazyLoadDylibInfo
+  using lazy_load_dylib_info_cache_t = std::vector<LazyLoadDylibInfo*>;
+
+  /// Iterator that outputs LazyLoadDylibInfo&
+  using it_lazy_load_dylib_info = ref_iterator<lazy_load_dylib_info_cache_t&>;
+
+  /// Iterator that outputs const LazyLoadDylibInfo&
+  using it_const_lazy_load_dylib_info =
+      const_ref_iterator<const lazy_load_dylib_info_cache_t&>;
 
   /// Internal container for storing Mach-O Fileset Binary
   using fileset_binaries_t = std::vector<std::unique_ptr<Binary>>;
@@ -310,6 +322,16 @@ class LIEF_API Binary : public LIEF::Binary {
 
   it_const_libraries libraries() const LIEF_LIFETIMEBOUND {
     return libraries_;
+  }
+
+  /// Return an iterator over the binary's LazyLoadDylibInfo commands
+  /// (`LC_LAZY_LOAD_DYLIB_INFO`)
+  it_lazy_load_dylib_info lazy_load_dylib_infos() LIEF_LIFETIMEBOUND {
+    return lazy_load_dylib_infos_;
+  }
+
+  it_const_lazy_load_dylib_info lazy_load_dylib_infos() const LIEF_LIFETIMEBOUND {
+    return lazy_load_dylib_infos_;
   }
 
   /// Return an iterator over the SegmentCommand
@@ -651,7 +673,7 @@ class LIEF_API Binary : public LIEF::Binary {
   span<const uint8_t> get_content_from_virtual_address(
       uint64_t virtual_address, uint64_t size,
       Binary::VA_TYPES addr_type = Binary::VA_TYPES::AUTO
-  ) const override;
+  ) const LIEF_LIFETIMEBOUND override;
 
   /// The binary entrypoint
   uint64_t entrypoint() const override;
@@ -1048,7 +1070,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// `true` if the binary has a LoadCommand::TYPE::FILESET_ENTRY command
   bool has_filesets() const {
-    return filesets_.empty();
+    return !filesets_.empty();
   }
 
   /// Name associated with the `LC_FILESET_ENTRY` for this MachO.
@@ -1100,7 +1122,7 @@ class LIEF_API Binary : public LIEF::Binary {
     return bin->format() == Binary::FORMATS::MACHO;
   }
 
-  span<const uint8_t> overlay() const {
+  span<const uint8_t> overlay() const LIEF_LIFETIMEBOUND {
     return overlay_;
   }
 
@@ -1169,6 +1191,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   // Same purpose as sections_cache_t
   libraries_cache_t libraries_;
+
+  // Cache of the LC_LAZY_LOAD_DYLIB_INFO commands
+  lazy_load_dylib_info_cache_t lazy_load_dylib_infos_;
 
   // The sections are owned by the SegmentCommand object.
   // This attribute is a cache to speed-up the iteration

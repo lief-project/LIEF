@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cstddef>
 #include <spdlog/fmt/fmt.h>
 
 #include "MachO/Structures.hpp"
@@ -31,15 +32,18 @@
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "LIEF/MachO/ThreadLocalVariables.hpp"
@@ -52,7 +56,9 @@
 #include "logging.hpp"
 #include "Object.tcc"
 
+#include <algorithm>
 #include <string>
+#include <unordered_set>
 
 namespace LIEF::MachO {
 template<typename T, typename U>
@@ -115,6 +121,10 @@ class LayoutChecker {
   // Mirror ChainedFixups::valid
   bool check_chained_fixups();
 
+  // Mirror of mach_o::ExportsTrie::valid (dyld's mach_o/ExportsTrie.cpp)
+  // combined with the maxVmOffset computation from Image::validLinkedit.
+  bool check_exports_trie();
+
   // Check from PR #1136
   // See: https://github.com/lief-project/LIEF/pull/1136/files#r1882625692
   bool check_section_contiguity();
@@ -122,9 +132,19 @@ class LayoutChecker {
   // From FunctionVariants::valid()
   bool check_function_variants();
 
+  // Consistency of LC_FUNCTION_VARIANT_FIXUPS (cf. dyld's interpretation of
+  // FunctionVariantFixups::InternalFixup)
+  bool check_function_variant_fixups();
+
+  // Mirror of mach_o::LazyLoadDylib::valid() for LC_LAZY_LOAD_DYLIB_INFO
+  bool check_lazy_load_dylib_infos();
+
   bool check_linkedit_end();
 
   bool check_tls();
+
+  bool check_export(uint64_t imagebase, uint64_t max_vm_offset,
+                    const ExportInfo& info);
 
   size_t ptr_size() const {
     return binary.header().is_32bit() ? sizeof(uint32_t) : sizeof(uint64_t);
@@ -1033,7 +1053,19 @@ bool LayoutChecker::check() {
     return false;
   }
 
+  if (!check_exports_trie()) {
+    return false;
+  }
+
   if (!check_function_variants()) {
+    return false;
+  }
+
+  if (!check_function_variant_fixups()) {
+    return false;
+  }
+
+  if (!check_lazy_load_dylib_infos()) {
     return false;
   }
 
@@ -1184,6 +1216,23 @@ bool LayoutChecker::check() {
                    offset, spi->data_offset());
     }
     offset += spi->data_size();
+  }
+
+  for (const LoadCommand& cmd : binary.commands()) {
+    const auto* lazy = cmd.cast<LazyLoadDylibInfo>();
+    if (lazy == nullptr) {
+      continue;
+    }
+    if (lazy->data_offset() != 0) {
+      if (lazy->data_offset() != offset) {
+        return error(R"delim(
+        LC_LAZY_LOAD_DYLIB_INFO out of place in __LINKEDIT:
+          Expecting offset: {:#x} while it is {:#x}
+        )delim",
+                     offset, lazy->data_offset());
+      }
+    }
+    offset += lazy->data_size();
   }
 
   // Check consistency of Function starts
@@ -1604,12 +1653,94 @@ bool LayoutChecker::check_chained_fixups() {
   return true;
 }
 
+bool LayoutChecker::check_export(uint64_t imagebase, uint64_t max_vm_offset,
+                                 const ExportInfo& info) {
+  // skip other exports than regular and thread-local
+  if (info.has(ExportInfo::FLAGS::REEXPORT) ||
+      info.kind() == ExportInfo::KIND::ABSOLUTE_KIND)
+  {
+    return true;
+  }
+
+  uint64_t vm_offset = info.address();
+  if ((int64_t)vm_offset < 0) {
+    // Segments with an address lower than __TEXT
+    vm_offset = imagebase - vm_offset;
+  }
+
+  if (vm_offset > max_vm_offset) {
+    return error("vmOffset too large for {}",
+                 info.has_symbol() ? info.symbol()->name() : "<empty>");
+  }
+  return true;
+}
+
+
+bool LayoutChecker::check_exports_trie() {
+  const DyldInfo* dyld_info = binary.dyld_info();
+  const DyldExportsTrie* exports_trie = binary.dyld_exports_trie();
+
+  if (dyld_info == nullptr && exports_trie == nullptr) {
+    return true;
+  }
+
+  // maxVmOffset is computed in Image::validLinkedit as the highest
+  // `runtimeOffset + runtimeSize` over all the segments except __LINKEDIT, with a
+  // lowest value of 0x4000. __PAGEZERO is *not* excluded.
+  uint64_t max_vm_offset = 0x4000;
+  uint64_t text_vmaddr = 0;
+  for (const SegmentCommand& seg : binary.segments()) {
+    if (seg.name() == "__TEXT") {
+      text_vmaddr = seg.virtual_address();
+    }
+    if (seg.name() == "__LINKEDIT") {
+      continue;
+    }
+    const uint64_t runtime_offset = seg.virtual_address() - text_vmaddr;
+    max_vm_offset =
+        std::max<uint64_t>(max_vm_offset, runtime_offset + seg.virtual_size());
+  }
+
+  const uint64_t imagebase = binary.imagebase();
+
+  if (exports_trie != nullptr) {
+    for (const ExportInfo& info : exports_trie->exports()) {
+      if (!check_export(imagebase, max_vm_offset, info)) {
+        return false;
+      }
+    }
+  }
+
+  if (dyld_info != nullptr) {
+    for (const ExportInfo& info : dyld_info->exports()) {
+      if (!check_export(imagebase, max_vm_offset, info)) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 
 bool LayoutChecker::check_function_variants() {
   using KIND = FunctionVariants::RuntimeTable::KIND;
+  using RuntimeTableEntry = FunctionVariants::RuntimeTableEntry;
   const FunctionVariants* variants = binary.function_variants();
   if (variants == nullptr) {
     return true;
+  }
+
+  const FunctionStarts* func_starts = binary.function_starts();
+  const uint64_t imagebase = binary.imagebase();
+
+  // Check that the impl for RuntimeTableEntry target a function that is
+  // listed in LC_FUNCTION_STARTS. This is pretty conservative and dyld could relax
+  // this condition but this can be used to identify malformed modifications.
+  std::unordered_set<uint64_t> starts;
+  if (func_starts != nullptr) {
+    const std::vector<uint64_t>& fn = func_starts->functions();
+    starts.insert(fn.begin(), fn.end());
   }
 
   for (const FunctionVariants::RuntimeTable& entry : variants->runtime_table()) {
@@ -1632,13 +1763,203 @@ bool LayoutChecker::check_function_variants() {
       );
     }
 
-    const FunctionVariants::RuntimeTableEntry& last = entries[entries.size() - 1];
+    const RuntimeTableEntry& last = entries[entries.size() - 1];
     if (last.flag_bit_nums()[0] != 0) {
       return error(
           "last entry in FunctionVariants::RuntimeTable entries is not 'default'"
       );
     }
+
+    if (func_starts == nullptr) {
+      continue;
+    }
+
+    for (const RuntimeTableEntry& impl_entry : entries) {
+      if (impl_entry.another_table()) {
+        continue;
+      }
+
+      const uint64_t va = imagebase + impl_entry.impl();
+      if (binary.segment_from_virtual_address(va) == nullptr) {
+        // tolerated
+        continue;
+      }
+
+      if (starts.find(impl_entry.impl()) == starts.end()) {
+        return error(
+            "FunctionVariants impl offset {:#x} (va: {:#x}) does not match any "
+            "LC_FUNCTION_STARTS entry",
+            impl_entry.impl(), va
+        );
+      }
+    }
   }
+  return true;
+}
+
+bool LayoutChecker::check_function_variant_fixups() {
+  const FunctionVariantFixups* fixups = binary.function_variant_fixups();
+  if (fixups == nullptr) {
+    return true;
+  }
+
+  // The payload is a bare array of fixed-size entries: a trailing partial
+  // entry would be silently dropped by dyld (it does size / sizeof(entry)).
+  if (fixups->data_size() % sizeof(details::function_variant_fixup_t) != 0) {
+    return error(
+        "LC_FUNCTION_VARIANT_FIXUPS payload size ({:#x}) is not a multiple of "
+        "the fixup entry size ({})",
+        fixups->data_size(), sizeof(details::function_variant_fixup_t)
+    );
+  }
+
+  auto segments = binary.segments();
+  const size_t nb_segments = segments.size();
+
+  // variant_index selects a FunctionVariants runtime table. dyld resolves a
+  // fixup as `image.segment(segIndex) + segOffset` pointing at table
+  // `#variantIndex`, so both indices must be in range.
+  const FunctionVariants* variants = binary.function_variants();
+
+  const size_t nb_tables =
+      variants == nullptr ? 0 : variants->runtime_table().size();
+
+  size_t idx = 0;
+  for (const FunctionVariantFixups::Fixup& fixup : fixups->fixups()) {
+    if (fixup.seg_index() >= nb_segments) {
+      return error(
+          "LC_FUNCTION_VARIANT_FIXUPS fixup #{} references segment #{} but the "
+          "binary only has {} segment(s)",
+          idx, fixup.seg_index(), nb_segments
+      );
+    }
+
+    const SegmentCommand& segment = segments[fixup.seg_index()];
+    if (fixup.seg_offset() + ptr_size() > segment.virtual_size()) {
+      return error(
+          "LC_FUNCTION_VARIANT_FIXUPS fixup #{} points outside of segment '{}' "
+          "(seg_offset={:#x}, vmsize={:#x})",
+          idx, segment.name(), fixup.seg_offset(), segment.virtual_size()
+      );
+    }
+
+    if (fixup.variant_index() >= nb_tables) {
+      return error(
+          "LC_FUNCTION_VARIANT_FIXUPS fixup #{} references function-variant "
+          "table #{} but the binary defines {} table(s)",
+          idx, fixup.variant_index(), nb_tables
+      );
+    }
+    ++idx;
+  }
+
+  return true;
+}
+
+
+bool LayoutChecker::check_lazy_load_dylib_infos() {
+  // clang-format off
+  //
+  // NOTE(romain): this is a 1x1 copy of the definition in dyld (mach_o/LazyLoadDylib.h)
+  struct LazyLoadDylibLinkEdit
+  {
+      uint32_t    loadPathOffset;          // path of dylib to load
+      uint32_t    flagImageOffset;         // image offset to flags global
+      uint16_t    flags;                   // weak linked or not
+      uint16_t    pointerFormat;           // e.g. DYLD_CHAINED_PTR_ARM64E_USERLAND
+      uint32_t    chainStartImageOffset;   // image offset to fixup chain start
+      uint32_t    symbolsCount;            // how many symbol names to bind
+      uint32_t    symbolStringArrayOffset; // offset of each symbol name within blob
+      // room for future fields here
+      // path string
+      // symbols strings
+  };
+  static constexpr size_t HEADER_SIZE = sizeof(LazyLoadDylibLinkEdit);
+  static_assert(HEADER_SIZE == 24);
+  // clang-format on
+
+  // 0x4000 according to Image::validStructureLinkedit
+  uint64_t max_vm_offset = 0x4000;
+  const uint64_t imagebase = binary.imagebase();
+  for (const SegmentCommand& seg : binary.segments()) {
+    if (seg.name() == "__LINKEDIT" || seg.name() == "__PAGEZERO") {
+      continue;
+    }
+    const uint64_t runtime_off =
+        seg.virtual_address() >= imagebase ? seg.virtual_address() - imagebase : 0;
+    max_vm_offset =
+        std::max<uint64_t>(max_vm_offset, runtime_off + seg.virtual_size());
+  }
+
+  for (const LoadCommand& cmd : binary.commands()) {
+    const auto* lazy = cmd.cast<LazyLoadDylibInfo>();
+    if (lazy == nullptr) {
+      continue;
+    }
+
+    span<const uint8_t> content = lazy->content();
+    if (content.size() < HEADER_SIZE) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO payload size ({}) is too small "
+                   "(minimum is {})",
+                   content.size(), HEADER_SIZE);
+    }
+
+    SpanStream stream(content);
+    auto header = stream.peek<LazyLoadDylibLinkEdit>();
+    if (!header) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO failed to read the header");
+    }
+
+    // sanity check loadPathOffset and its string terminator
+    if (header->loadPathOffset > content.size()) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO loadPathOffset ({}) out of range "
+                   "(max {})",
+                   header->loadPathOffset, content.size());
+    }
+
+    const auto path_start = content.begin() + header->loadPathOffset;
+    if (std::find(path_start, content.end(), '\0') == content.end()) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO load path is not null terminated");
+    }
+
+    // Ensure that `flagImageOffset` targets a valid segment.
+    // NOTE(romain): should we check for RW- permission?
+    if (header->flagImageOffset > max_vm_offset) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO flagImageOffset ({:#x}) beyond max "
+                   "vm offset ({:#x})",
+                   header->flagImageOffset, max_vm_offset);
+    }
+
+    if (header->chainStartImageOffset > max_vm_offset) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO chainStartImageOffset ({:#x}) beyond "
+                   "max vm offset ({:#x})",
+                   header->chainStartImageOffset, max_vm_offset);
+    }
+
+    // sanity check the symbol string-offset array bounds
+    const bool overflow = greater_than_add_or_overflow<uint64_t>(
+        header->symbolStringArrayOffset,
+        (uint64_t)header->symbolsCount * sizeof(uint32_t), content.size()
+    );
+    if (overflow) {
+      return error("LC_LAZY_LOAD_DYLIB_INFO symbolsCount ({}) too large to fit "
+                   "in payload (size {})",
+                   header->symbolsCount, content.size());
+    }
+
+    // sanity check each symbol string offset
+    for (uint32_t i = 0; i < header->symbolsCount; ++i) {
+      const uint64_t pos =
+          header->symbolStringArrayOffset + (uint64_t)i * sizeof(uint32_t);
+      auto sym_off = stream.peek<uint32_t>(pos);
+      if (!sym_off || *sym_off > content.size()) {
+        return error("LC_LAZY_LOAD_DYLIB_INFO symbolStringOffsets[{}] ({}) out "
+                     "of range (max {})",
+                     i, sym_off ? *sym_off : 0, content.size());
+      }
+    }
+  }
+
   return true;
 }
 

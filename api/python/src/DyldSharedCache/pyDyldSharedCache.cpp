@@ -14,6 +14,8 @@
 #include "pyutils.hpp"
 #include "pyErr.hpp"
 
+#include "pyOwningIterator.hpp"
+
 namespace LIEF::dsc::py {
 template<>
 void create<dsc::DyldSharedCache>(nb::module_& m) {
@@ -157,7 +159,7 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
     )
     .def_prop_ro("libraries",
         [] (const DyldSharedCache& self) {
-          auto libraries = self.libraries();
+          auto libraries = LIEF::py::owning_random_access_range(self.libraries());
           return nb::make_random_access_iterator(nb::type<DyldSharedCache>(), "dylib_iterator", libraries);
         }, nb::keep_alive<0, 1>(),
         R"doc(
@@ -167,7 +169,7 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
 
     .def_prop_ro("mapping_info",
         [] (const DyldSharedCache& self) {
-          auto mapping = self.mapping_info();
+          auto mapping = LIEF::py::owning_random_access_range(self.mapping_info());
           return nb::make_random_access_iterator(nb::type<DyldSharedCache>(), "mapping_info_iterator", mapping);
         }, nb::keep_alive<0, 1>(),
         R"doc(
@@ -177,7 +179,7 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
 
     .def_prop_ro("subcaches",
         [] (const DyldSharedCache& self) {
-          auto subcaches = self.subcaches();
+          auto subcaches = LIEF::py::owning_random_access_range(self.subcaches());
           return nb::make_random_access_iterator(nb::type<DyldSharedCache>(), "subcache_iterator", subcaches);
         }, nb::keep_alive<0, 1>(),
         R"doc(
@@ -231,7 +233,7 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
 
     .def("disassemble",
         [] (const DyldSharedCache& self, uint64_t addr) {
-          auto insts = self.disassemble(addr);
+          auto insts = LIEF::py::owning_range(self.disassemble(addr));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<DyldSharedCache>(), "instructions_iterator", insts
           );

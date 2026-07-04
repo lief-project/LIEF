@@ -38,6 +38,7 @@
 
 #include "MachO/exports_trie.hpp"
 #include "MachO/Structures.hpp"
+#include "MachO/dyld_opcodes.hpp"
 
 #include "Object.tcc"
 
@@ -242,6 +243,11 @@ std::string DyldInfo::show_rebases_opcodes() const {
           break;
         }
 
+        count = safe_dyld_opcode_count<uint32_t>(segment_index < segments.size() ?
+                                                     &segments[segment_index] :
+                                                     nullptr,
+                                                 segment_offset, pint_v, count);
+
         output << "[" << to_string(opcode) << "]" << '\n';
 
         output << fmt::format("{}for i in range({}):\n", tab,
@@ -313,6 +319,11 @@ std::string DyldInfo::show_rebases_opcodes() const {
                    "REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB skip");
           break;
         }
+
+        count = safe_dyld_opcode_count<uint32_t>(segment_index < segments.size() ?
+                                                     &segments[segment_index] :
+                                                     nullptr,
+                                                 segment_offset, pint_v, count);
 
         output << fmt::format("{}for i in range({}):\n", tab,
                               static_cast<uint32_t>(count));
@@ -657,6 +668,11 @@ void DyldInfo::show_bindings(std::ostream& output,
           );
           break;
         }
+
+        count = safe_dyld_opcode_count<uint32_t>(segment_idx < segments.size() ?
+                                                     &segments[segment_idx] :
+                                                     nullptr,
+                                                 segment_offset, pint_v, count);
 
         output << tab
                << fmt::format("for i in range({}):\n",
@@ -1135,7 +1151,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
     LIEF_INFO("New rebase opcodes exceed original size: {:#08x} -> {:#08x}",
               rebase_opcodes_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -1516,7 +1532,7 @@ DyldInfo&
     LIEF_INFO("New weak bind opcodes exceed original size: {:#08x} -> {:#08x}",
               weak_bind_opcodes_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -1578,7 +1594,7 @@ DyldInfo&
     LIEF_INFO("New lazy bind opcodes exceed original size: {:#08x} -> {:#08x}",
               lazy_bind_opcodes_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -1889,7 +1905,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(
     LIEF_INFO("New regular bind opcodes exceed original size: {:#08x} -> {:#08x}",
               bind_opcodes_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -2210,7 +2226,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(
         bind_opcodes_.size(), raw_output.size()
     );
   }
-  stream.write(std::move(raw_output.raw()));
+  stream.write(raw_output.raw());
   return *this;
 }
 
@@ -2222,7 +2238,7 @@ DyldInfo& DyldInfo::update_export_trie(vector_iostream& stream) {
     LIEF_INFO("New export trie exceeds original size: {:#08x} -> {:#08x}",
               export_trie_.size(), raw_output.size());
   }
-  stream.write(std::move(raw_output));
+  stream.write(raw_output);
   return *this;
 }
 

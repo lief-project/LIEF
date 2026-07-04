@@ -24,8 +24,8 @@ class AbstractSection : public Mirror<LIEF::Section> {
   public:
   using Mirror::Mirror;
 
-  std::string name() const {
-    return get().name();
+  auto name() const {
+    return to_unique_string(get().name());
   }
   uint64_t size() const {
     return get().size();
@@ -40,15 +40,15 @@ class AbstractSection : public Mirror<LIEF::Section> {
     return make_span(get().content());
   }
 
-  void set_name(std::string name) {
-    get().name(std::move(name));
+  auto set_name(const std::string& name) {
+    get().name(name);
   }
 
-  void set_content(const uint8_t* buffer, size_t size) {
+  auto set_content(const uint8_t* buffer, size_t size) {
     get().content({buffer, buffer + size});
   }
 
-  void set_size(uint64_t size) {
+  auto set_size(uint64_t size) {
     get().size(size);
   }
 };

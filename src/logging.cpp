@@ -98,22 +98,9 @@ Logger& Logger::instance(const char* name) {
     }
   }
 
-  if (instances.empty()) {
-    std::atexit([] {
-      std::scoped_lock lock(Mutex);
-      for (const auto& [name, instance] : instances) {
-        delete instance;
-      }
-      instances.clear();
-    });
-  }
-
-  auto* impl = new Logger(default_logger(/*name=*/name));
-  {
-    std::scoped_lock lock(Mutex);
-    instances.insert({name, impl});
-  }
-  return *impl;
+  std::unique_ptr<Logger> impl{new Logger(default_logger(/*name=*/name))};
+  std::scoped_lock lock(Mutex);
+  return *instances.insert({name, std::move(impl)}).first->second;
 }
 
 void Logger::reset() {

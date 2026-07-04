@@ -18,6 +18,7 @@
 #include <string>
 #include <cstdint>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -59,7 +60,8 @@ class LIEF_API Editor {
   static std::unique_ptr<Editor> create(FORMAT fmt, ARCH arch);
 
   /// Create a new compilation unit
-  std::unique_ptr<editor::CompilationUnit> create_compilation_unit();
+  std::unique_ptr<editor::CompilationUnit>
+      create_compilation_unit() LIEF_LIFETIMEBOUND;
 
   /// Write the DWARF file to the specified output
   void write(const std::string& output);

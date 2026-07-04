@@ -23,22 +23,22 @@ class PE_SpcIndirectData : public PE_ContentInfo_Content {
   using lief_t = LIEF::PE::SpcIndirectData;
 
   auto digest_algorithm() const {
-    return to_int(impl().digest_algorithm());
+    return as_u32(impl().digest_algorithm());
   }
 
   auto digest() const {
     return make_span(impl().digest());
   }
 
-  std::string file() const {
-    return impl().file();
+  auto file() const {
+    return to_unique_string(impl().file());
   }
 
-  std::string url() const {
-    return impl().url();
+  auto url() const {
+    return to_unique_string(impl().url());
   }
 
-  static bool classof(const PE_ContentInfo_Content& info) {
+  static auto classof(const PE_ContentInfo_Content& info) {
     return lief_t::classof(&info.get());
   }
 

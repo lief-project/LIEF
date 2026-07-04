@@ -20,6 +20,7 @@
 #include "LIEF/COFF/BigObjHeader.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class COFF_Header : public Mirror<LIEF::COFF::Header> {
   public:
@@ -27,7 +28,7 @@ class COFF_Header : public Mirror<LIEF::COFF::Header> {
   using Mirror::Mirror;
 
   auto machine() const {
-    return to_int(get().machine());
+    return as_u32(get().machine());
   }
 
   auto nb_sections() const {
@@ -44,7 +45,7 @@ class COFF_Header : public Mirror<LIEF::COFF::Header> {
   }
 
   auto to_string() const {
-    return get().to_string();
+    return to_unique_string(get().to_string());
   }
 };
 
@@ -60,7 +61,7 @@ class COFF_RegularHeader : public COFF_Header {
     return impl().characteristics();
   }
 
-  static bool classof(const COFF_Header& hdr) {
+  static auto classof(const COFF_Header& hdr) {
     return lief_t::classof(&hdr.get());
   }
 
@@ -98,7 +99,7 @@ class COFF_BigObjHeader : public COFF_Header {
     return impl().metadata_offset();
   }
 
-  static bool classof(const COFF_Header& hdr) {
+  static auto classof(const COFF_Header& hdr) {
     return lief_t::classof(&hdr.get());
   }
 

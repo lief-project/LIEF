@@ -364,8 +364,17 @@ void Parser::parse_quickening_info<details::VDEX10>() {
 
         // Skip packed-switch, sparse-switch, fill-array instructions
         if (DEX::is_switch_array(inst_ptr, inst_end)) {
-          inst_ptr += DEX::switch_array_size(inst_ptr, inst_end);
+          const size_t payload_size = DEX::switch_array_size(inst_ptr, inst_end);
+          if (!DEX::valid_inst_size(inst_ptr, inst_end, payload_size)) {
+            break;
+          }
+          inst_ptr += payload_size;
           continue;
+        }
+
+        const size_t inst_size = DEX::inst_size_from_opcode(opcode);
+        if (!DEX::valid_inst_size(inst_ptr, inst_end, inst_size)) {
+          break;
         }
 
         switch (opcode) {
@@ -408,7 +417,7 @@ void Parser::parse_quickening_info<details::VDEX10>() {
           {
           }
         }
-        inst_ptr += DEX::inst_size_from_opcode(opcode);
+        inst_ptr += inst_size;
       }
     }
   }

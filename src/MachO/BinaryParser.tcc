@@ -16,6 +16,7 @@
 
 #include <cstddef>
 #include <memory>
+#include <unordered_set>
 
 #include "logging.hpp"
 
@@ -46,6 +47,7 @@
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
@@ -74,6 +76,7 @@
 #include "MachO/Structures.hpp"
 #include "MachO/ChainedFixup.hpp"
 #include "MachO/ChainedBindingInfoList.hpp"
+#include "MachO/dyld_opcodes.hpp"
 
 #include "Object.tcc"
 
@@ -193,6 +196,9 @@ ok_error_t BinaryParser::parse() {
   }
   if (FunctionVariantFixups* fixups = binary_->function_variant_fixups()) {
     post_process<MACHO_T>(*fixups);
+  }
+  for (LazyLoadDylibInfo& lazy : binary_->lazy_load_dylib_infos()) {
+    post_process<MACHO_T>(lazy);
   }
 
   if (binary_->dyld_info() == nullptr && binary_->dyld_chained_fixups() == nullptr)
@@ -1187,6 +1193,27 @@ ok_error_t BinaryParser::parse_load_commands() {
         break;
       }
 
+      case LoadCommand::TYPE::LAZY_LOAD_DYLIB_INFO:
+      {
+        /*
+         * DO NOT FORGET TO UPDATE LazyLoadDylibInfo::classof
+         */
+        LIEF_DEBUG("[+] Parsing LC_LAZY_LOAD_DYLIB_INFO");
+        const auto cmd =
+            stream_->peek<details::linkedit_data_command>(loadcommands_offset);
+        if (!cmd) {
+          LIEF_ERR(
+              "Can't parse linkedit_data_command for LC_LAZY_LOAD_DYLIB_INFO"
+          );
+          break;
+        }
+        load_command = std::make_unique<LazyLoadDylibInfo>(*cmd);
+        binary_->lazy_load_dylib_infos_.push_back(
+            load_command->as<LazyLoadDylibInfo>()
+        );
+        break;
+      }
+
       default:
       {
         if (not_parsed.insert(cmd_type).second) {
@@ -1477,7 +1504,11 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
       case DyldInfo::REBASE_OPCODES::DO_REBASE_IMM_TIMES:
       {
         for (size_t i = 0; i < imm; ++i) {
-          do_rebase<MACHO_T>(type, segment_index, segment_offset, &segments);
+          if (is_err(do_rebase<MACHO_T>(type, segment_index, segment_offset,
+                                        &segments)))
+          {
+            break;
+          }
           segment_offset += sizeof(pint_t);
           if (current_segment == nullptr) {
             LIEF_WARN(
@@ -1499,7 +1530,8 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
           LIEF_ERR("REBASE_OPCODE_DO_REBASE_ULEB_TIMES: Can't read uleb128 count");
           break;
         }
-        count = *uleb128_val;
+        count = safe_dyld_opcode_count<uint32_t>(current_segment, segment_offset,
+                                                 sizeof(pint_t), *uleb128_val);
         for (size_t i = 0; i < count; ++i) {
           if (current_segment == nullptr) {
             LIEF_WARN(
@@ -1512,7 +1544,11 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
             );
           }
 
-          do_rebase<MACHO_T>(type, segment_index, segment_offset, &segments);
+          if (is_err(do_rebase<MACHO_T>(type, segment_index, segment_offset,
+                                        &segments)))
+          {
+            break;
+          }
           segment_offset += sizeof(pint_t);
         }
         break;
@@ -1564,6 +1600,8 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
         // Skip
         skip = *uleb128_val;
 
+        count = safe_dyld_opcode_count<uint32_t>(current_segment, segment_offset,
+                                                 sizeof(pint_t), count);
 
         for (size_t i = 0; i < count; ++i) {
           if (current_segment == nullptr) {
@@ -1574,7 +1612,11 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
                       "offset ({:#x} > {:#x})",
                       segment_offset, current_segment->file_size());
           }
-          do_rebase<MACHO_T>(type, segment_index, segment_offset, &segments);
+          if (is_err(do_rebase<MACHO_T>(type, segment_index, segment_offset,
+                                        &segments)))
+          {
+            break;
+          }
           segment_offset += skip + sizeof(pint_t);
         }
 
@@ -1838,10 +1880,20 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
         }
         skip = *val;
 
+        {
+          const SegmentCommand* current_segment =
+              segment_idx < segments.size() ? &segments[segment_idx] : nullptr;
+          count = safe_dyld_opcode_count<uint32_t>(current_segment, segment_offset,
+                                                   sizeof(pint_t), count);
+        }
         for (size_t i = 0; i < count; ++i) {
-          do_bind<MACHO_T>(DyldBindingInfo::CLASS::STANDARD, type, segment_idx,
-                           segment_offset, symbol_name, library_ordinal, addend,
-                           is_weak_import, false, &segments, start_offset);
+          if (is_err(do_bind<MACHO_T>(DyldBindingInfo::CLASS::STANDARD, type,
+                                      segment_idx, segment_offset, symbol_name,
+                                      library_ordinal, addend, is_weak_import,
+                                      false, &segments, start_offset)))
+          {
+            break;
+          }
           start_offset = stream_->pos() - offset + 1;
           segment_offset += skip + sizeof(pint_t);
         }
@@ -2167,10 +2219,21 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
         }
         skip = *val;
 
+        {
+          const SegmentCommand* current_segment =
+              segment_idx < segments.size() ? &segments[segment_idx] : nullptr;
+          count = safe_dyld_opcode_count<uint32_t>(current_segment, segment_offset,
+                                                   sizeof(pint_t), count);
+        }
         for (size_t i = 0; i < count; ++i) {
-          do_bind<MACHO_T>(DyldBindingInfo::CLASS::WEAK, type, segment_idx,
-                           segment_offset, symbol_name, 0, addend, is_weak_import,
-                           is_non_weak_definition, &segments, start_offset);
+          if (is_err(do_bind<MACHO_T>(DyldBindingInfo::CLASS::WEAK, type,
+                                      segment_idx, segment_offset, symbol_name, 0,
+                                      addend, is_weak_import,
+                                      is_non_weak_definition, &segments,
+                                      start_offset)))
+          {
+            break;
+          }
           start_offset = stream_->pos() - offset + 1;
           segment_offset += skip + sizeof(pint_t);
         }
@@ -2913,9 +2976,15 @@ ok_error_t BinaryParser::walk_chain(
     SegmentCommand& segment, uint64_t chain_address, uint64_t chain_offset,
     const details::dyld_chained_starts_in_segment& seg_info
 ) {
+  std::unordered_set<uint64_t> visited;
   bool stop = false;
   bool chain_end = false;
   while (!stop && !chain_end) {
+    if (!visited.insert(chain_offset).second) {
+      LIEF_WARN("Cycle detected in the chained fixup at offset: {:#x}",
+                chain_offset);
+      return make_error_code(lief_errors::corrupted);
+    }
     if (!process_fixup<MACHO_T>(segment, chain_address, chain_offset, seg_info)) {
       LIEF_WARN("Error while processing the chain at offset: {:#x}", chain_offset);
       return make_error_code(lief_errors::parsing_error);
@@ -3019,6 +3088,9 @@ result<uint64_t> BinaryParser::next_chain(
       while (chain.rebase.bind == 0 &&
              chain.rebase.target > seg_info.max_valid_pointer)
       {
+        if (chain.rebase.next == 0) {
+          return CHAIN_END;
+        }
         const uint32_t delta = chain.rebase.next * stride;
         chain_offset += delta;
         chain_address += delta;
@@ -4223,8 +4295,77 @@ ok_error_t BinaryParser::post_process(FunctionVariantFixups& cmd) {
 
   SpanStream stream(cmd.content_);
   stream.set_endian_swap(stream_->should_swap());
-  // TODO
+  cmd.fixups_ = FunctionVariantFixups::parse_payload(stream);
 
+  // Resolve the segment referenced by each fixup
+  auto segments = binary_->segments();
+  for (FunctionVariantFixups::Fixup& fixup : cmd.fixups()) {
+    if (fixup.seg_index() < segments.size()) {
+      fixup.segment(segments[fixup.seg_index()]);
+    }
+  }
+
+  return ok();
+}
+
+template<class MACHO_T>
+ok_error_t BinaryParser::post_process(LazyLoadDylibInfo& cmd) {
+  LIEF_DEBUG("[^] Post processing LC_LAZY_LOAD_DYLIB_INFO");
+
+  SegmentCommand* linkedit = config_.from_dyld_shared_cache ?
+                                 binary_->get_segment("__LINKEDIT") :
+                                 binary_->segment_from_offset(cmd.data_offset());
+
+  if (linkedit == nullptr) {
+    LIEF_WARN("Can't find the segment that contains the "
+              "LC_LAZY_LOAD_DYLIB_INFO (offset={:#018x})",
+              cmd.data_offset());
+    return make_error_code(lief_errors::not_found);
+  }
+
+  span<uint8_t> content = linkedit->content();
+
+  const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
+  if (rel_offset > content.size() ||
+      (rel_offset + cmd.data_size()) > content.size())
+  {
+    LIEF_ERR("The LC_LAZY_LOAD_DYLIB_INFO is out of bounds of the segment '{}'",
+             linkedit->name());
+    return make_error_code(lief_errors::read_out_of_bound);
+  }
+
+  cmd.content_ = content.subspan(rel_offset, cmd.data_size());
+
+  if (LinkEdit::segmentof(*linkedit)) {
+    static_cast<LinkEdit*>(linkedit)->lazy_load_dylibs_.push_back(&cmd);
+  } else {
+    LIEF_WARN(
+        "Weird: LC_LAZY_LOAD_DYLIB_INFO is not in the __LINKEDIT segment ({})",
+        linkedit->name()
+    );
+  }
+
+  SpanStream stream(cmd.content_);
+  stream.set_endian_swap(stream_->should_swap());
+  cmd.parse_payload(stream);
+
+  const auto ptr_fmt = DYLD_CHAINED_PTR_FORMAT(cmd.pointer_format_);
+  const size_t ptr_sz = ChainedPointerAnalysis::ptr_size(ptr_fmt);
+  if (!config_.from_dyld_shared_cache && cmd.chain_start_image_offset() != 0 &&
+      (ptr_sz == sizeof(uint32_t) || ptr_sz == sizeof(uint64_t)))
+  {
+    const uint64_t chain_va =
+        binary_->imagebase() + cmd.chain_start_image_offset();
+    if (SegmentCommand* seg = binary_->segment_from_virtual_address(chain_va)) {
+      ok_error_t is_ok = cmd.walk_fixups(chain_va, *seg);
+      if (!is_ok) {
+        LIEF_WARN(
+            "Error while resolving the fixups for LC_LAZY_LOAD_DYLIB_INFO: {}",
+            cmd.load_path()
+        );
+      }
+    }
+  }
   return ok();
 }
 

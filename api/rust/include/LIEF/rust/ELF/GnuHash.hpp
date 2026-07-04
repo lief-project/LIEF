@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class ELF_GnuHash : private Mirror<LIEF::ELF::GnuHash> {
   public:
@@ -34,13 +35,13 @@ class ELF_GnuHash : private Mirror<LIEF::ELF::GnuHash> {
     return get().maskwords();
   }
 
-  std::vector<uint64_t> bloom_filters() const {
-    return get().bloom_filters();
+  auto bloom_filters() const {
+    return make_unique_vector<uint64_t>(get().bloom_filters());
   }
-  std::vector<uint32_t> buckets() const {
-    return get().buckets();
+  auto buckets() const {
+    return make_unique_vector<uint32_t>(get().buckets());
   }
-  std::vector<uint32_t> hash_values() const {
-    return get().hash_values();
+  auto hash_values() const {
+    return make_unique_vector<uint32_t>(get().hash_values());
   }
 };

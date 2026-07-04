@@ -17,6 +17,7 @@
 #define LIEF_MACHO_ATOM_INFO_COMMAND_H
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/span.hpp"
@@ -64,11 +65,11 @@ class LIEF_API AtomInfo : public LoadCommand {
     data_size_ = size;
   }
 
-  span<const uint8_t> content() const {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return content_;
   }
 
-  span<uint8_t> content() {
+  span<uint8_t> content() LIEF_LIFETIMEBOUND {
     return content_;
   }
 

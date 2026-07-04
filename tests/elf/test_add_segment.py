@@ -14,6 +14,7 @@ from utils import (
     is_aarch64,
     is_linux,
     is_x86_64,
+    parse_elf,
 )
 
 CWD = Path(__file__).parent
@@ -230,3 +231,50 @@ def test_add_segment_alignment_dyn(tmp_path: Path):
     dyn_elf.write(out)
 
     check_layout(out)
+
+
+@pytest.mark.parametrize(
+    "sample",
+    [
+        Path("ELF/ld-linux-x86-64.so.2"),
+        Path("ELF/ELF64_AARCH64_piebinary_toybox.pie"),
+    ],
+)
+def test_issue_1333(tmp_path: Path, sample: Path):
+    """See discussion in issue #1333"""
+    elf = parse_elf(sample)
+
+    page = elf.page_size
+    next_va_before = elf.next_virtual_address
+
+    segment = lief.ELF.Segment()
+    segment.type = lief.ELF.Segment.TYPE.LOAD
+    segment.alignment = page
+    segment.content = [0xCC] * 0x40
+
+    new_segment = elf.add(segment)
+    assert new_segment is not None
+
+    off = new_segment.file_offset
+    va = new_segment.virtual_address
+    alignment = new_segment.alignment
+    match sample.name:
+        case "ld-linux-x86-64.so.2":
+            assert va == 0x35000
+
+        case "ELF64_AARCH64_piebinary_toybox.pie":
+            assert va == 0x5D000
+
+    assert alignment == page
+    assert va >= next_va_before
+    assert va % alignment == off % alignment
+
+    out = tmp_path / sample.name
+    elf.write(out)
+    check_layout(out)
+
+    new = lief.ELF.parse(out)
+    assert new is not None
+    new_seg = new.segment_from_offset(off)
+    assert new_seg is not None
+    assert new_seg.virtual_address == va

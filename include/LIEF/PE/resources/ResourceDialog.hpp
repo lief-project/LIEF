@@ -16,6 +16,7 @@
 #ifndef LIEF_PE_RESOURCE_DIALOG_H
 #define LIEF_PE_RESOURCE_DIALOG_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/enums.hpp"
@@ -308,11 +309,11 @@ class LIEF_API ResourceDialog : public Object {
     }
 
     /// Creation data that is passed to the control's window procedure
-    span<const uint8_t> creation_data() const {
+    span<const uint8_t> creation_data() const LIEF_LIFETIMEBOUND {
       return creation_data_;
     }
 
-    span<uint8_t> creation_data() {
+    span<uint8_t> creation_data() LIEF_LIFETIMEBOUND {
       return creation_data_;
     }
 

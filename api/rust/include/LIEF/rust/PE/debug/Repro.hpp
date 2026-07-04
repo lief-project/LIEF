@@ -30,7 +30,7 @@ class PE_Repro : public PE_Debug {
     return make_span(impl().hash());
   }
 
-  static bool classof(const PE_Debug& entry) {
+  static auto classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 

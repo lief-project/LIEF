@@ -8,6 +8,8 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
+#include "pyOwningIterator.hpp"
+
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::LexicalBlock>(nb::module_& m) {
@@ -28,7 +30,7 @@ void create<dw::LexicalBlock>(nb::module_& m) {
 
   .def_prop_ro("sub_blocks",
       [] (dw::LexicalBlock& self) {
-        auto sub_blocks = self.sub_blocks();
+        auto sub_blocks = LIEF::py::owning_range(self.sub_blocks());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<dw::LexicalBlock>(), "sub_blocks_it", sub_blocks);
       }, nb::keep_alive<0, 1>(),

@@ -23,7 +23,7 @@ class COFF_AuxiliarybfAndefSymbol : public COFF_AuxiliarySymbol {
   COFF_AuxiliarybfAndefSymbol(const lief_t& obj) :
     COFF_AuxiliarySymbol(obj) {}
 
-  static bool classof(const COFF_AuxiliarySymbol& entry) {
+  static auto classof(const COFF_AuxiliarySymbol& entry) {
     return lief_t::classof(&entry.get());
   }
 

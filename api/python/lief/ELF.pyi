@@ -1330,6 +1330,8 @@ class Section(lief.Section):
 
         ARM_PURECODE = 22011707392
 
+        AARCH64_PURECODE = 26306674688
+
     class TYPE(enum.Enum):
         @staticmethod
         def from_value(arg: int, /) -> Section.TYPE: ...
@@ -1491,6 +1493,14 @@ class Section(lief.Section):
         MIPS_XHASH = 14763950123
 
         RISCV_ATTRIBUTES = 19058917379
+
+        AARCH64_ATTRIBUTES = 23353884675
+
+        AARCH64_AUTH_RELR = 23353884676
+
+        AARCH64_MEMTAG_GLOBALS_STATIC = 23353884679
+
+        AARCH64_MEMTAG_GLOBALS_DYNAMIC = 23353884680
 
     def as_frame(self) -> Section: ...
 
@@ -5140,6 +5150,8 @@ class AArch64Feature(NoteGnuProperty.Property):
         BTI = 1
 
         PAC = 2
+
+        GCS = 3
 
 class AArch64PAuth(NoteGnuProperty.Property):
     @property

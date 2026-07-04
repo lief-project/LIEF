@@ -16,17 +16,18 @@
 #pragma once
 #include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_SubFramework : public MachO_Command {
   public:
   using lief_t = LIEF::MachO::SubFramework;
   MachO_SubFramework(const lief_t& base) :
     MachO_Command(base) {}
-  std::string umbrella() const {
-    return impl().umbrella();
+  auto umbrella() const {
+    return to_unique_string(impl().umbrella());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

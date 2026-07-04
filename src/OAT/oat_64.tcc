@@ -81,7 +81,16 @@ void Parser::parse_dex_files<details::OAT64_t>() {
 
     const auto dex_hdr = *res_dex_hdr;
 
-    dex_file->classes_offsets_.reserve(dex_hdr.class_defs_size);
+    const uint64_t stream_size = stream_->size();
+    const uint64_t pos = stream_->pos();
+    if (pos < stream_size) {
+      const uint64_t max_offsets = (stream_size - pos) / sizeof(uint32_t);
+
+      const uint64_t nb_class_defs = dex_hdr.class_defs_size;
+      auto reserve = std::min<size_t>(nb_class_defs, max_offsets);
+      dex_file->classes_offsets_.reserve(reserve);
+    }
+
     for (size_t cls_idx = 0; cls_idx < dex_hdr.class_defs_size; ++cls_idx) {
       if (auto res = stream_->read<uint32_t>()) {
         dex_file->classes_offsets_.push_back(*res);

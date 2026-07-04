@@ -20,6 +20,7 @@
 #include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/optional.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_RuntimeFunctionX64_unwind_info_t;
 
@@ -47,7 +48,7 @@ class PE_RuntimeFunctionX64 : public PE_ExceptionInfo {
     );
   }
 
-  static bool classof(const PE_ExceptionInfo& entry) {
+  static auto classof(const PE_ExceptionInfo& entry) {
     return lief_t::classof(&entry.get());
   }
 
@@ -119,7 +120,10 @@ class PE_RuntimeFunctionX64_unwind_info_t
     return details::try_unique<PE_RuntimeFunctionX64>(get().chained);
   }
 
-  std::string to_string() const {
-    return get().to_string();
+  auto to_string() const {
+    return to_unique_string(get().to_string());
   }
 };
+
+using PE_RuntimeFunctionX64_unwind_info_t_it_opcodes =
+    PE_RuntimeFunctionX64_unwind_info_t::it_opcodes;

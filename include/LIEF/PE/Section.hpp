@@ -21,6 +21,7 @@
 #include <memory>
 
 #include "LIEF/iostream.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/enums.hpp"
@@ -119,12 +120,12 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   /// The actual content of the section
-  span<const uint8_t> content() const override {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND override {
     return content_;
   }
 
   /// Content of the section's padding area
-  span<const uint8_t> padding() const {
+  span<const uint8_t> padding() const LIEF_LIFETIMEBOUND {
     return padding_;
   }
 
@@ -256,7 +257,7 @@ class LIEF_API Section : public LIEF::Section {
     return vector_iostream(content_);
   }
 
-  span<uint8_t> writable_content() {
+  span<uint8_t> writable_content() LIEF_LIFETIMEBOUND {
     return content_;
   }
 

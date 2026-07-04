@@ -39,7 +39,7 @@ class asm_x86_operands_Memory : public asm_x86_Operand {
     return impl().displacement();
   }
 
-  static bool classof(const asm_x86_Operand& inst) {
+  static auto classof(const asm_x86_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 

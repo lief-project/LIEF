@@ -102,8 +102,17 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
 
       // Skip packed-switch, sparse-switch, fill-array instructions
       if (is_switch_array(inst_ptr, inst_end)) {
-        inst_ptr += switch_array_size(inst_ptr, inst_end);
+        const size_t payload_size = switch_array_size(inst_ptr, inst_end);
+        if (!valid_inst_size(inst_ptr, inst_end, payload_size)) {
+          break;
+        }
+        inst_ptr += payload_size;
         continue;
+      }
+
+      const size_t inst_size = inst_size_from_opcode(opcode);
+      if (!valid_inst_size(inst_ptr, inst_end, inst_size)) {
+        break;
       }
 
       switch (opcode) {
@@ -371,7 +380,7 @@ std::vector<uint8_t> File::raw(bool deoptimize) const {
         {
         }
       }
-      inst_ptr += inst_size_from_opcode(opcode);
+      inst_ptr += inst_size;
     }
   }
 

@@ -19,6 +19,7 @@
 #include <cstdint>
 
 #include "LIEF/span.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
@@ -67,11 +68,11 @@ class LIEF_API CodeSignature : public LoadCommand {
     data_size_ = size;
   }
 
-  span<uint8_t> content() {
+  span<uint8_t> content() LIEF_LIFETIMEBOUND {
     return content_;
   }
 
-  span<const uint8_t> content() const {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return content_;
   }
 

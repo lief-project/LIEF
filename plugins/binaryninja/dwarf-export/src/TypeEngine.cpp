@@ -164,16 +164,20 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
       }
 
       if (uint64_t width = bn_struct->GetWidth()) {
-        BN_DEBUG("{}: {} bytes", struct_name, bn_struct->GetWidth());
-        struct_type->set_size(bn_struct->GetWidth());
+        BN_DEBUG("{}: {} bytes", struct_name, width);
+        struct_type->set_size(width);
       }
 
-      LIEF::dwarf::editor::StructType* struct_type_ptr = struct_type.get();
-
+      LIEF::dwarf::editor::StructType* struct_type_ptr = nullptr;
       if (!struct_name.empty()) {
-        mapping_.insert({name_str, std::move(struct_type)});
+        struct_type_ptr = static_cast<LIEF::dwarf::editor::StructType*>(
+            mapping_.insert({name_str, std::move(struct_type)}).first->second.get()
+        );
       } else {
         anon_types_.push_back(std::move(struct_type));
+        struct_type_ptr = static_cast<LIEF::dwarf::editor::StructType*>(
+            anon_types_.back().get()
+        );
       }
 
       for (const bn::StructureMember& member : bn_struct->GetMembers()) {
@@ -353,6 +357,16 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
       return *mapping_.insert({name_str, unit_.create_generic_type(name_str)})
                   .first->second;
     }
+
+#if BN_FRAGMENT_TYPE_CLASS_SUPPORT
+    case FragmentTypeClass:
+    {
+      BN_ERR("Not supported: FragmentTypeClass");
+      // Fallback to a 'void'
+      std::unique_ptr<dw::editor::Type> void_ty = unit_.create_void_type();
+      return *mapping_.insert({name_str, std::move(void_ty)}).first->second;
+    }
+#endif
   }
 }
 

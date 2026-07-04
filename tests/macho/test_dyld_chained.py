@@ -1,8 +1,10 @@
 import subprocess
+import sys
 from pathlib import Path
 from typing import cast
 
 import lief
+import pytest
 from utils import chmod_exe, get_sample, is_apple_m1, parse_macho, sign
 
 
@@ -442,3 +444,18 @@ def test_with_imagebase():
     assert bindings[1].symbol is not None
     assert bindings[1].symbol.name == "_dlopen"
     assert bindings[1].address == 0x24150F778
+
+
+@pytest.mark.private
+def test_chained_fixup_issue_ptr32():
+    sample_path = get_sample("private/MachO/dyld_ptr32_chain_loop.macho")
+    subprocess.check_call(
+        [sys.executable, "-c", f'import lief; lief.parse(r"{sample_path}")'],
+        timeout=30.0,
+    )
+
+    parsed = lief.MachO.parse(sample_path)
+    assert parsed is not None
+    rebuilt = parsed.at(0)
+    assert rebuilt is not None
+    assert rebuilt.dyld_chained_fixups is not None

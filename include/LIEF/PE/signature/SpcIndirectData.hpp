@@ -20,6 +20,7 @@
 #include <vector>
 #include <cstdint>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -52,7 +53,7 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
   /// PE's authentihash
   ///
   /// @see LIEF::PE::Binary::authentihash
-  span<const uint8_t> digest() const {
+  span<const uint8_t> digest() const LIEF_LIFETIMEBOUND {
     return digest_;
   }
 

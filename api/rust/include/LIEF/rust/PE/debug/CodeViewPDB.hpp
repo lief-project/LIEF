@@ -15,6 +15,7 @@
 #pragma once
 
 #include "LIEF/rust/PE/debug/CodeView.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
 
 class PE_CodeViewPDB : public PE_CodeView {
@@ -31,9 +32,9 @@ class PE_CodeViewPDB : public PE_CodeView {
     );
   }
 
-  static auto create_with_filename(std::string filename) {
+  static auto create_with_filename(const std::string& filename) {
     return std::make_unique<PE_CodeViewPDB>(
-        std::make_unique<LIEF::PE::CodeViewPDB>(std::move(filename))
+        std::make_unique<LIEF::PE::CodeViewPDB>(filename)
     );
   }
 
@@ -41,34 +42,34 @@ class PE_CodeViewPDB : public PE_CodeView {
     return impl().age();
   }
 
-  std::string guid() const {
-    return impl().guid();
+  auto guid() const {
+    return to_unique_string(impl().guid());
   }
 
-  std::string filename() const {
-    return impl().filename();
+  auto filename() const {
+    return to_unique_string(impl().filename());
   }
 
   auto signature() const {
-    return details::make_vector(impl().signature());
+    return make_unique_vector<uint64_t>(details::make_vector(impl().signature()));
   }
 
-  void set_filename(std::string filename) {
-    impl().filename(std::move(filename));
+  auto set_filename(const std::string& filename) {
+    impl().filename(filename);
   }
 
-  void set_age(uint32_t age) {
+  auto set_age(uint32_t age) {
     impl().age(age);
   }
 
-  void set_signature(const uint8_t* array, size_t size) {
+  auto set_signature(const uint8_t* array, size_t size) {
     assert(sizeof(LIEF::PE::CodeViewPDB::signature_t) == size);
     LIEF::PE::CodeViewPDB::signature_t sig;
     std::copy(array, array + size, sig.begin());
     impl().signature(sig);
   }
 
-  static bool classof(const PE_Debug& entry) {
+  static auto classof(const PE_Debug& entry) {
     return lief_t::classof(&entry.get());
   }
 

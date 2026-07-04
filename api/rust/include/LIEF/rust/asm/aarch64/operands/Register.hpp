@@ -20,8 +20,8 @@
 
 class asm_aarch64_operands_Register_reg_t {
   public:
-  uint64_t reg;
-  uint32_t enum_type;
+  uint64_t reg = 0;
+  uint32_t enum_type = 0;
 };
 
 class asm_aarch64_operands_Register : public asm_aarch64_Operand {
@@ -36,7 +36,7 @@ class asm_aarch64_operands_Register : public asm_aarch64_Operand {
     };
   }
 
-  static bool classof(const asm_aarch64_Operand& inst) {
+  static auto classof(const asm_aarch64_Operand& inst) {
     return lief_t::classof(&inst.get());
   }
 

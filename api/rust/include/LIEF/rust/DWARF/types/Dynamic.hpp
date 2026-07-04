@@ -20,7 +20,7 @@ class DWARF_types_Dynamic : public DWARF_Type {
   public:
   using lief_t = LIEF::dwarf::types::Dynamic;
 
-  static bool classof(const DWARF_Type& type) {
+  static auto classof(const DWARF_Type& type) {
     return lief_t::classof(&type.get());
   }
 

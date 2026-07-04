@@ -64,7 +64,7 @@ namespace LIEF::logging {
 class Logger {
   public:
   static constexpr auto DEFAULT_NAME = "LIEF";
-  using instances_t = std::unordered_map<std::string, Logger*>;
+  using instances_t = std::unordered_map<std::string, std::unique_ptr<Logger>>;
   Logger(const Logger&) = delete;
   Logger& operator=(const Logger&) = delete;
 

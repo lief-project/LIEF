@@ -34,7 +34,7 @@ class MachO_EncryptionInfo : public MachO_Command {
     return impl().crypt_id();
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

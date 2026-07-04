@@ -1,0 +1,105 @@
+use lief_ffi as ffi;
+
+use super::{DeclOpt, IVar, Method, Property, Protocol};
+use crate::common::{into_optional, FromFFI};
+use crate::declare_fwd_iterator;
+use std::marker::PhantomData;
+
+/// This class represents an Objective-C class (`@interface`)
+pub struct Class<'a> {
+    ptr: cxx::UniquePtr<ffi::ObjC_Class>,
+    _owner: PhantomData<&'a ()>,
+}
+
+impl FromFFI<ffi::ObjC_Class> for Class<'_> {
+    fn from_ffi(info: cxx::UniquePtr<ffi::ObjC_Class>) -> Self {
+        Self {
+            ptr: info,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl Class<'_> {
+    /// Name of the class
+    pub fn name(&self) -> String {
+        self.ptr.name().to_string()
+    }
+
+    /// Demangled name of the class
+    pub fn demangled_name(&self) -> String {
+        self.ptr.demangled_name().to_string()
+    }
+
+    /// Parent class in case of inheritance
+    pub fn super_class(&self) -> Option<Class<'_>> {
+        into_optional(self.ptr.super_class())
+    }
+
+    pub fn is_meta(&self) -> bool {
+        self.ptr.is_meta()
+    }
+
+    /// Iterator over the different [`Method`] defined by this class
+    pub fn methods(&self) -> Methods<'_> {
+        Methods::new(self.ptr.methods())
+    }
+
+    /// Iterator over the different [`Protocol`] implemented by this class
+    pub fn protocols(&self) -> Protocols<'_> {
+        Protocols::new(self.ptr.protocols())
+    }
+
+    /// Iterator over the [`Property`] of this class
+    pub fn properties(&self) -> Properties<'_> {
+        Properties::new(self.ptr.properties())
+    }
+
+    /// Iterator over the different instance variables ([`IVar`]) defined in this class
+    pub fn ivars(&self) -> IVars<'_> {
+        IVars::new(self.ptr.ivars())
+    }
+
+    /// Generate a header-like string for this specific class
+    pub fn to_decl(&self) -> String {
+        self.ptr.to_decl().to_string()
+    }
+
+    /// Same behavior as [`Class::to_decl`] but with an additional
+    /// [`DeclOpt`] parameter to customize the output
+    pub fn to_decl_with_opt(&self, opt: &DeclOpt) -> String {
+        self.ptr.to_decl_with_opt(&opt.to_ffi()).to_string()
+    }
+}
+
+declare_fwd_iterator!(
+    Methods,
+    Method<'a>,
+    ffi::ObjC_Method,
+    ffi::ObjC_Class,
+    ffi::ObjC_Class_it_methods
+);
+
+declare_fwd_iterator!(
+    Protocols,
+    Protocol<'a>,
+    ffi::ObjC_Protocol,
+    ffi::ObjC_Class,
+    ffi::ObjC_Class_it_protocols
+);
+
+declare_fwd_iterator!(
+    Properties,
+    Property<'a>,
+    ffi::ObjC_Property,
+    ffi::ObjC_Class,
+    ffi::ObjC_Class_it_properties
+);
+
+declare_fwd_iterator!(
+    IVars,
+    IVar<'a>,
+    ffi::ObjC_IVar,
+    ffi::ObjC_Class,
+    ffi::ObjC_Class_it_ivars
+);

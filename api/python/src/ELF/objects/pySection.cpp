@@ -73,6 +73,7 @@ void create<Section>(nb::module_& m) {
     ENTRY(MIPS_ADDR)
     ENTRY(MIPS_STRING)
     ENTRY(ARM_PURECODE)
+    ENTRY(AARCH64_PURECODE)
   ;
   #undef ENTRY
 
@@ -158,6 +159,11 @@ void create<Section>(nb::module_& m) {
     ENTRY(MIPS_XHASH)
 
     ENTRY(RISCV_ATTRIBUTES)
+
+    ENTRY(AARCH64_ATTRIBUTES)
+    ENTRY(AARCH64_AUTH_RELR)
+    ENTRY(AARCH64_MEMTAG_GLOBALS_STATIC)
+    ENTRY(AARCH64_MEMTAG_GLOBALS_DYNAMIC)
   ;
   #undef ENTRY
 

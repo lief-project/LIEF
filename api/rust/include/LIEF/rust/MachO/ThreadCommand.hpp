@@ -16,6 +16,7 @@
 #pragma once
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class MachO_ThreadCommand : public MachO_Command {
   public:
@@ -39,7 +40,7 @@ class MachO_ThreadCommand : public MachO_Command {
     return make_span(impl().state());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

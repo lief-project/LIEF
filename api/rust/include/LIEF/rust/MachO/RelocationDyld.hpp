@@ -23,7 +23,7 @@ class MachO_RelocationDyld : public MachO_Relocation {
   MachO_RelocationDyld(const lief_t& base) :
     MachO_Relocation(base) {}
 
-  static bool classof(const MachO_Relocation& reloc) {
+  static auto classof(const MachO_Relocation& reloc) {
     return lief_t::classof(
         *static_cast<const MachO_Relocation::lief_t*>(&reloc.get())
     );

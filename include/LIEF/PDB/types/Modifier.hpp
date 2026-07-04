@@ -15,6 +15,7 @@
 #ifndef LIEF_PDB_TYPE_MODIFIER_H
 #define LIEF_PDB_TYPE_MODIFIER_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
 
@@ -25,14 +26,18 @@ namespace types {
 /// This class represents a `LF_MODIFIER` PDB type
 class LIEF_API Modifier : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Modifier(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::MODIFIER;
   }
 
   /// Underlying type targeted by this modifier
-  std::unique_ptr<Type> underlying_type() const;
+  std::unique_ptr<Type> underlying_type() const LIEF_LIFETIMEBOUND;
 
   ~Modifier() override;
 };

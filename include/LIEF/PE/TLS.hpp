@@ -21,6 +21,7 @@
 
 #include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -112,7 +113,7 @@ class LIEF_API TLS : public Object {
   }
 
   /// The initial content used to initialize TLS data.
-  span<const uint8_t> data_template() const {
+  span<const uint8_t> data_template() const LIEF_LIFETIMEBOUND {
     return data_template_;
   }
 

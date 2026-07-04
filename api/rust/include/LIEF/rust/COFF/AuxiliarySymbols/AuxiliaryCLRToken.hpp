@@ -17,6 +17,7 @@
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryCLRToken.hpp"
 #include "LIEF/rust/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/rust/COFF/Symbol.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class COFF_AuxiliaryCLRToken : public COFF_AuxiliarySymbol {
   public:
@@ -44,7 +45,7 @@ class COFF_AuxiliaryCLRToken : public COFF_AuxiliarySymbol {
     return make_span(impl().rgb_reserved());
   }
 
-  static bool classof(const COFF_AuxiliarySymbol& entry) {
+  static auto classof(const COFF_AuxiliarySymbol& entry) {
     return lief_t::classof(&entry.get());
   }
 

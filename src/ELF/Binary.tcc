@@ -520,6 +520,12 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
   const uint64_t last_offset_aligned = align(last_offset, psize);
   new_segment->file_offset(last_offset_aligned);
 
+  init_alignment(*this, *new_segment, this->ptr_size());
+
+  if (base == 0) {
+    base = align(next_virtual_address(), new_segment->alignment());
+  }
+
   if (segment.virtual_address() == 0) {
     new_segment->virtual_address(base + last_offset_aligned);
   }
@@ -532,9 +538,6 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
   new_segment->handler_size_ = content.size();
   new_segment->physical_size(segmentsize);
   new_segment->virtual_size(segmentsize);
-
-
-  init_alignment(*this, *new_segment, this->ptr_size());
 
   new_segment->datahandler_ = datahandler_.get();
 
@@ -608,20 +611,28 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
   const uint64_t last_offset = last_offset_segments;
   const uint64_t last_offset_aligned =
       align_with_offset(last_offset, psize, in_page_offset);
-  if (base == 0) {
-    base = align(next_virtual_address(), new_segment->alignment());
-  }
   LIEF_DEBUG("Last offset: {:#010x}", last_offset_aligned);
   LIEF_DEBUG("Base:        {:#010x}", base);
 
-  uint64_t segmentsize = align(content.size(), 0x10);
+  auto segmentsize = align_up<uint64_t>(content.size(), 0x10);
 
   const uint64_t delta = last_offset_aligned + segmentsize - last_offset;
 
   shift_sections(last_offset, delta);
 
   new_segment->file_offset(last_offset_aligned);
-  new_segment->virtual_address(new_segment->file_offset() + base);
+  if (base == 0) {
+    const uint64_t alignment = new_segment->alignment();
+    const uint64_t next_va = next_virtual_address();
+    uint64_t virtual_address =
+        align_down(next_va, alignment) + new_segment->file_offset() % alignment;
+    if (virtual_address < next_va) {
+      virtual_address += alignment;
+    }
+    new_segment->virtual_address(virtual_address);
+  } else {
+    new_segment->virtual_address(new_segment->file_offset() + base);
+  }
   new_segment->physical_address(new_segment->virtual_address());
 
   new_segment->handler_size_ = content.size();
@@ -635,8 +646,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
                                         ptr_size));
   }
 
-  auto alloc =
-      datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
+  auto alloc = datahandler_->make_hole(last_offset, delta);
 
   if (!alloc) {
     LIEF_ERR("Allocation failed");

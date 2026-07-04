@@ -27,8 +27,8 @@ int main(int argc, const char** argv) {
     return EXIT_FAILURE;
   }
 
-  for (std::unique_ptr<LIEF::dsc::Dylib> lib : dyld_cache->libraries()) {
-    log(LOG_LVL, "{}: {}", std::to_string(lib->address()), lib->path());
+  for (const LIEF::dsc::Dylib& lib : dyld_cache->libraries()) {
+    log(LOG_LVL, "{}: {}", std::to_string(lib.address()), lib.path());
   }
 
   return EXIT_SUCCESS;

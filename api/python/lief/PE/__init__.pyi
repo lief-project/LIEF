@@ -1473,6 +1473,12 @@ class Pogo(Debug):
 
         PGI = 1346849024
 
+        PGO = 1346850560
+
+        PGU = 1346852096
+
+        SPGO = 1397770063
+
     @property
     def entries(self) -> Pogo.it_entries: ...
 

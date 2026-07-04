@@ -6,6 +6,8 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/make_iterator.h>
 
+#include "pyOwningIterator.hpp"
+
 
 namespace LIEF::objc::py {
 template<>
@@ -29,7 +31,7 @@ void create<objc::Metadata>(nb::module_& m) {
     )
     .def_prop_ro("classes",
         [] (objc::Metadata& self) {
-          auto classes = self.classes();
+          auto classes = LIEF::py::owning_range(self.classes());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<objc::Metadata>(), "classes_it", classes
           );
@@ -40,7 +42,7 @@ void create<objc::Metadata>(nb::module_& m) {
     )
     .def_prop_ro("protocols",
         [] (objc::Metadata& self) {
-          auto protocols = self.protocols();
+          auto protocols = LIEF::py::owning_range(self.protocols());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
             nb::type<objc::Metadata>(), "protocols_it", protocols
           );

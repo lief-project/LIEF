@@ -16,6 +16,7 @@
 #define LIEF_DWARF_TYPE_STRUCTURE_H
 
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/Function.hpp"
 
@@ -31,7 +32,11 @@ class Member;
 /// `DW_TAG_class_type`, `DW_TAG_union_type`.
 class LIEF_API ClassLike : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  ClassLike(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   /// This represents a class/struct/union attribute
   class LIEF_API Member {
@@ -39,6 +44,9 @@ class LIEF_API ClassLike : public Type {
     Member(std::unique_ptr<details::Member> impl);
     Member(Member&& other) noexcept;
     Member& operator=(Member&& other) noexcept;
+
+    Member(const Member&) = delete;
+    Member& operator=(const Member&) = delete;
 
     /// Name of the member
     std::string name() const;
@@ -70,7 +78,7 @@ class LIEF_API ClassLike : public Type {
     result<uint64_t> bit_size() const;
 
     /// Type of the current member
-    std::unique_ptr<Type> type() const;
+    std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;
 
     bool is_external() const;
 
@@ -82,6 +90,12 @@ class LIEF_API ClassLike : public Type {
     std::unique_ptr<details::Member> impl_;
   };
 
+  ClassLike(const ClassLike&) = delete;
+  ClassLike& operator=(const ClassLike&) = delete;
+
+  ClassLike(ClassLike&&) noexcept = default;
+  ClassLike& operator=(ClassLike&&) noexcept = default;
+
   using functions_it = iterator_range<Function::Iterator>;
 
   static bool classof(const Type* type) {
@@ -91,13 +105,13 @@ class LIEF_API ClassLike : public Type {
   }
 
   /// Return the list of all the attributes defined in this class-like type
-  std::vector<Member> members() const;
+  std::vector<Member> members() const LIEF_LIFETIMEBOUND;
 
   /// Try to find the attribute at the given offset
-  std::unique_ptr<Member> find_member(uint64_t offset) const;
+  std::unique_ptr<Member> find_member(uint64_t offset) const LIEF_LIFETIMEBOUND;
 
   /// Iterator over the functions defined by the class-like.
-  functions_it functions() const;
+  functions_it functions() const LIEF_LIFETIMEBOUND;
 
   ~ClassLike() override;
 };
@@ -105,7 +119,17 @@ class LIEF_API ClassLike : public Type {
 /// This class represents a DWARF `struct` type (`DW_TAG_structure_type`)
 class LIEF_API Structure : public ClassLike {
   public:
-  using ClassLike::ClassLike;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+  Structure(Args&&... args) :
+    ClassLike(std::forward<Args>(args)...) {}
+
+  Structure(const Structure&) = delete;
+  Structure& operator=(const Structure&) = delete;
+
+  Structure(Structure&&) noexcept = default;
+  Structure& operator=(Structure&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::STRUCT;
@@ -117,7 +141,17 @@ class LIEF_API Structure : public ClassLike {
 /// This class represents a DWARF `class` type (`DW_TAG_class_type`)
 class LIEF_API Class : public ClassLike {
   public:
-  using ClassLike::ClassLike;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+  Class(Args&&... args) :
+    ClassLike(std::forward<Args>(args)...) {}
+
+  Class(const Class&) = delete;
+  Class& operator=(const Class&) = delete;
+
+  Class(Class&&) noexcept = default;
+  Class& operator=(Class&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::CLASS;
@@ -129,7 +163,17 @@ class LIEF_API Class : public ClassLike {
 /// This class represents a DWARF `union` type (`DW_TAG_union_type`)
 class LIEF_API Union : public ClassLike {
   public:
-  using ClassLike::ClassLike;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+  Union(Args&&... args) :
+    ClassLike(std::forward<Args>(args)...) {}
+
+  Union(const Union&) = delete;
+  Union& operator=(const Union&) = delete;
+
+  Union(Union&&) noexcept = default;
+  Union& operator=(Union&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::UNION;
@@ -141,7 +185,17 @@ class LIEF_API Union : public ClassLike {
 /// This class represents a DWARF `packed` type (`DW_TAG_packed_type`)
 class LIEF_API Packed : public ClassLike {
   public:
-  using ClassLike::ClassLike;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+  Packed(Args&&... args) :
+    ClassLike(std::forward<Args>(args)...) {}
+
+  Packed(const Packed&) = delete;
+  Packed& operator=(const Packed&) = delete;
+
+  Packed(Packed&&) noexcept = default;
+  Packed& operator=(Packed&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::PACKED;

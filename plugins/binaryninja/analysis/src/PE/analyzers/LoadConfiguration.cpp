@@ -26,7 +26,7 @@ using namespace BinaryNinja;
 
 namespace analysis_plugin::pe::analyzers {
 
-bool LoadConfiguration::can_run(BinaryNinja::BinaryView& bv,
+bool LoadConfiguration::can_run(BinaryNinja::BinaryView& /*bv*/,
                                 LIEF::PE::Binary& pe) {
   return pe.load_configuration() != nullptr;
 }

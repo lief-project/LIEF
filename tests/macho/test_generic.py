@@ -702,6 +702,30 @@ def test_note_command_str(tmp_path: Path):
     assert len(output) > 0
 
 
+@pytest.mark.private
+def test_note_command_unterminated_owner(tmp_path: Path):
+    macho = parse_macho("private/MachO/unterminated_note.macho").at(0)
+    assert macho is not None
+
+    note = macho[lief.MachO.LoadCommand.TYPE.NOTE]
+    assert isinstance(note, lief.MachO.NoteCommand)
+
+    assert note.owner_str == "ABCDEFGHIJKLMNOP"
+    assert len(note.owner_str) == 16
+    assert "ABCDEFGHIJKLMNOP" in str(note)
+
+    out = tmp_path / "out.bin"
+    macho.write(out)
+
+    rmacho = parse_macho(out).at(0)
+    assert rmacho is not None
+
+    rnote = rmacho[lief.MachO.LoadCommand.TYPE.NOTE]
+    assert isinstance(rnote, lief.MachO.NoteCommand)
+    assert rnote.owner_str == "ABCDEFGHIJKLMNOP"
+    assert len(rnote.owner_str) == 16
+
+
 def test_load_command_str():
     macho = parse_macho("MachO/MachO64_x86-64_binary_all.bin").at(0)
     assert macho is not None

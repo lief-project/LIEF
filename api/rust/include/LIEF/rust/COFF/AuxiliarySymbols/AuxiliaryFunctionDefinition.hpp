@@ -39,7 +39,7 @@ class COFF_AuxiliaryFunctionDefinition : public COFF_AuxiliarySymbol {
     return impl().padding();
   }
 
-  static bool classof(const COFF_AuxiliarySymbol& entry) {
+  static auto classof(const COFF_AuxiliarySymbol& entry) {
     return lief_t::classof(&entry.get());
   }
 

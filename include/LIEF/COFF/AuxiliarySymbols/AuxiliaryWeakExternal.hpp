@@ -19,6 +19,7 @@
 #include <memory>
 #include <cassert>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 
@@ -89,7 +90,7 @@ class LIEF_API AuxiliaryWeakExternal : public AuxiliarySymbol {
     return (CHARACTERISTICS)characteristics_;
   }
 
-  span<const uint8_t> padding() const {
+  span<const uint8_t> padding() const LIEF_LIFETIMEBOUND {
     return padding_;
   }
 

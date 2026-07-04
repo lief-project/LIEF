@@ -54,7 +54,7 @@ class PE_ResourceDirectory : public PE_ResourceNode {
     return impl().numberof_id_entries();
   }
 
-  static bool classof(const PE_ResourceNode& node) {
+  static auto classof(const PE_ResourceNode& node) {
     return lief_t::classof(&node.get());
   }
 

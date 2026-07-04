@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -102,6 +103,7 @@ class LIEF_API LoadCommand : public Object {
     FUNCTION_VARIANTS = 0x00000037u,
     FUNCTION_VARIANT_FIXUPS = 0x00000038u,
     TARGET_TRIPLE = 0x00000039u,
+    LAZY_LOAD_DYLIB_INFO = 0x0000003Au,
 
     LIEF_UNKNOWN = 0xffee0001u,
   };
@@ -135,7 +137,7 @@ class LIEF_API LoadCommand : public Object {
   }
 
   /// Raw command
-  span<const uint8_t> data() const {
+  span<const uint8_t> data() const LIEF_LIFETIMEBOUND {
     return original_data_;
   }
 

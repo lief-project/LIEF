@@ -275,7 +275,9 @@ def test_extend_section_2(tmp_path: Path):
         section = lief.MachO.Section.create(f"__lief_{i}")
         assert section is not None
         section.alignment = 2  # 2^2 == 4 bytes
-        sections.append(original.add_section(text_segment, section))
+        added = original.add_section(text_segment, section)
+        assert added is not None
+        sections.append(added)
 
     for section in sections:
         assert original.extend_section(section, 1000)
@@ -531,6 +533,27 @@ def test_objc_arm64(tmp_path: Path):
         assert re.search(r"Printing Process Completed", stdout) is not None
 
 
+def test_check_layout_export_trie_offset(tmp_path: Path):
+    original = parse_macho("MachO/test_objc_arm64.macho").at(0)
+    assert original is not None
+    output = tmp_path / "test_objc_arm64.macho"
+
+    info = original.add_exported_function(original.imagebase + 8, "_foooo_1")
+    assert info is not None
+
+    # Force the malformed encoding: store the absolute address instead of the
+    # image offset that the trie expects.
+    info.address = original.imagebase + 8
+
+    original.write(output)
+    new = parse_macho(output).at(0)
+    assert new is not None
+
+    checked, err = lief.MachO.check_layout(new)
+    assert not checked
+    assert "vmOffset too large for _foooo_1" in err
+
+
 def test_objc_x86_64(tmp_path: Path):
     bin_path = pathlib.Path(get_sample("MachO/test_objc_x86_64.macho"))
     fat = lief.MachO.parse(bin_path)
@@ -637,7 +660,7 @@ def test_break(tmp_path: Path):
     def process_local_symbol(target: lief.MachO.Binary, sym: lief.MachO.Symbol):
         original_name = sym.name
         assert isinstance(original_name, str)
-        name = list(sym.name)
+        name = list(str(c) for c in sym.name)
         random.shuffle(name)
         sym.name = "_" + "".join(name)
         sym.raw_type = 0xF
@@ -877,6 +900,23 @@ def test_issue_1236(tmp_path: Path):
     for cmd in macho.commands:
         if isinstance(cmd, lief.MachO.DylibCommand):
             cmd.name = "/Users/random" + cmd.name
+
+    output = tmp_path / "out.macho"
+    macho.write(output)
+    new = lief.MachO.parse(output)
+    assert new is not None
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
+
+
+@pytest.mark.private
+def test_ppc_issue_1236(tmp_path: Path):
+    macho = parse_macho("private/MachO/curl_ppc").at(0)
+    assert macho is not None
+
+    checked, err = lief.MachO.check_layout(macho)
+    assert checked, err
 
     output = tmp_path / "out.macho"
     macho.write(output)

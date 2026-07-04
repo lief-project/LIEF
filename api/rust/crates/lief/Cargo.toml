@@ -1,0 +1,32 @@
+[package]
+name                  = "lief"
+description           = "Official Rust bindings for LIEF"
+documentation         = "https://lief.re/doc/stable/rust/lief/"
+edition.workspace     = true
+version.workspace     = true
+authors.workspace     = true
+license.workspace     = true
+readme.workspace      = true
+homepage.workspace    = true
+keywords.workspace    = true
+repository.workspace  = true
+categories.workspace  = true
+rust-version.workspace = true
+
+[lib]
+doctest = false
+
+[dependencies]
+cxx        = { workspace = true }
+bitflags   = { workspace = true }
+num-traits = { workspace = true }
+num-derive = { workspace = true }
+num-bigint = { workspace = true }
+lief-ffi   = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+
+[features]
+default = ["rustls-tls"]
+rustls-tls = ["lief-ffi/rustls-tls"]

@@ -20,6 +20,7 @@
 #include <memory>
 #include <vector>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -37,7 +38,6 @@ class LIEF_API AuxiliarySymbol {
   public:
   AuxiliarySymbol() = default;
   AuxiliarySymbol(std::vector<uint8_t> payload) :
-    type_(TYPE::UNKNOWN),
     payload_(std::move(payload)) {}
   AuxiliarySymbol(const AuxiliarySymbol&) = default;
   AuxiliarySymbol& operator=(const AuxiliarySymbol&) = default;
@@ -78,11 +78,11 @@ class LIEF_API AuxiliarySymbol {
   }
 
   /// For unknown type **only**, return the raw representation of this symbol
-  span<const uint8_t> payload() const {
+  span<const uint8_t> payload() const LIEF_LIFETIMEBOUND {
     return payload_;
   }
 
-  span<uint8_t> payload() {
+  span<uint8_t> payload() LIEF_LIFETIMEBOUND {
     return payload_;
   }
 

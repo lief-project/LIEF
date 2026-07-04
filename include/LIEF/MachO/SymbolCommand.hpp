@@ -17,6 +17,7 @@
 #define LIEF_MACHO_SYMBOL_COMMAND_H
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -82,19 +83,19 @@ class LIEF_API SymbolCommand : public LoadCommand {
     strings_size_ = size;
   }
 
-  span<const uint8_t> symbol_table() const {
+  span<const uint8_t> symbol_table() const LIEF_LIFETIMEBOUND {
     return symbol_table_;
   }
 
-  span<uint8_t> symbol_table() {
+  span<uint8_t> symbol_table() LIEF_LIFETIMEBOUND {
     return symbol_table_;
   }
 
-  span<const uint8_t> string_table() const {
+  span<const uint8_t> string_table() const LIEF_LIFETIMEBOUND {
     return string_table_;
   }
 
-  span<uint8_t> string_table() {
+  span<uint8_t> string_table() LIEF_LIFETIMEBOUND {
     return string_table_;
   }
 

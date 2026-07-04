@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_string_type`
 class LIEF_API StringTy : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  StringTy(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  StringTy(const StringTy&) = delete;
+  StringTy& operator=(const StringTy&) = delete;
+
+  StringTy(StringTy&&) noexcept = default;
+  StringTy& operator=(StringTy&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::STRING;

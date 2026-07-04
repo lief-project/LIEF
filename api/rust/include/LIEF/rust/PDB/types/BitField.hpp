@@ -20,7 +20,7 @@ class PDB_types_BitField : public PDB_Type {
   public:
   using lief_t = LIEF::pdb::types::BitField;
 
-  static bool classof(const PDB_Type& type) {
+  static auto classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
 

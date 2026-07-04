@@ -25,7 +25,17 @@ namespace types {
 /// This class represents a `DW_TAG_coarray_type`
 class LIEF_API Coarray : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  Coarray(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
+
+  Coarray(const Coarray&) = delete;
+  Coarray& operator=(const Coarray&) = delete;
+
+  Coarray(Coarray&&) noexcept = default;
+  Coarray& operator=(Coarray&&) noexcept = default;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::COARRAY;

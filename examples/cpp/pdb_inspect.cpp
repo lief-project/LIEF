@@ -26,28 +26,28 @@ int main(int argc, const char** argv) {
 
   log(LEVEL::INFO, "age={}, guid={}", std::to_string(pdb->age()), pdb->guid());
 
-  for (std::unique_ptr<LIEF::pdb::PublicSymbol> symbol : pdb->public_symbols()) {
-    log(LEVEL::INFO, "name={}, section={}, RVA={}", symbol->name(),
-        symbol->section_name(), std::to_string(symbol->RVA()));
+  for (const LIEF::pdb::PublicSymbol& symbol : pdb->public_symbols()) {
+    log(LEVEL::INFO, "name={}, section={}, RVA={}", symbol.name(),
+        symbol.section_name(), std::to_string(symbol.RVA()));
   }
 
-  for (std::unique_ptr<LIEF::pdb::Type> ty : pdb->types()) {
-    if (LIEF::pdb::types::Class::classof(ty.get())) {
-      auto* clazz = ty->as<LIEF::pdb::types::Class>();
+  for (const LIEF::pdb::Type& ty : pdb->types()) {
+    if (LIEF::pdb::types::Class::classof(&ty)) {
+      const auto* clazz = ty.as<LIEF::pdb::types::Class>();
       log(LEVEL::INFO, "Class[name]={}", *clazz->name());
     }
   }
 
-  for (std::unique_ptr<LIEF::pdb::CompilationUnit> CU : pdb->compilation_units()) {
-    log(LEVEL::INFO, "module={}", CU->module_name());
-    for (const std::string& src : CU->sources()) {
+  for (const LIEF::pdb::CompilationUnit& CU : pdb->compilation_units()) {
+    log(LEVEL::INFO, "module={}", CU.module_name());
+    for (const std::string& src : CU.sources()) {
       log(LEVEL::INFO, "  - {}", src);
     }
 
-    for (std::unique_ptr<LIEF::pdb::Function> func : CU->functions()) {
-      log(LEVEL::INFO, "name={}, section={}, RVA={}, code size={}", func->name(),
-          func->section_name(), std::to_string(func->RVA()),
-          std::to_string(func->code_size()));
+    for (const LIEF::pdb::Function& func : CU.functions()) {
+      log(LEVEL::INFO, "name={}, section={}, RVA={}, code size={}", func.name(),
+          func.section_name(), std::to_string(func.RVA()),
+          std::to_string(func.code_size()));
     }
   }
 

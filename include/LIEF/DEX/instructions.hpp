@@ -18,6 +18,7 @@
 #include "LIEF/visibility.h"
 #include "LIEF/types.hpp"
 #include <cstddef>
+#include <cstdint>
 
 namespace LIEF {
 namespace DEX {
@@ -348,6 +349,10 @@ LIEF_API size_t inst_size_from_opcode(OPCODES op);
 LIEF_API bool is_switch_array(const uint8_t* ptr, const uint8_t* end);
 
 LIEF_API size_t switch_array_size(const uint8_t* ptr, const uint8_t* end);
+
+inline bool valid_inst_size(const uint8_t* ptr, const uint8_t* end, size_t size) {
+  return size != 0 && size != SIZE_MAX && (size_t)(end - ptr) >= size;
+}
 
 } // Namespace LIEF
 } // Namespace DEX

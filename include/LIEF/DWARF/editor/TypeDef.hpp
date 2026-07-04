@@ -25,7 +25,11 @@ namespace editor {
 /// This class represents a typedef (`DW_TAG_typedef`).
 class LIEF_API TypeDef : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  TypeDef(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   static bool classof(const Type* type);
 

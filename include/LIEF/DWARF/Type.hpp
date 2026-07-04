@@ -17,6 +17,8 @@
 
 #include <memory>
 
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/debug_loc.hpp"
@@ -64,67 +66,61 @@ class TypeIt;
 /// - `DW_TAG_volatile_type`
 class LIEF_API Type {
   public:
-  class LIEF_API Iterator {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::bidirectional_iterator_tag, Type,
+                                  std::ptrdiff_t, const Type*, const Type&> {
     public:
-    using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = std::unique_ptr<Type>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = Type*;
-    using reference = std::unique_ptr<Type>&;
     using implementation = details::TypeIt;
+    using iterator_facade_base::operator++;
+    using iterator_facade_base::operator--;
 
-    class LIEF_API PointerProxy {
-      // Inspired from LLVM's iterator_facade_base
-      friend class Iterator;
+    LIEF_API Iterator();
 
-      public:
-      pointer operator->() const {
-        return R.get();
-      }
+    LIEF_API Iterator(std::unique_ptr<details::TypeIt> impl);
 
-      private:
-      value_type R;
+    LIEF_API Iterator(const Iterator&);
+    LIEF_API Iterator& operator=(const Iterator&);
 
-      template<typename RefT>
-      PointerProxy(RefT&& R) :
-        R(std::forward<RefT>(R)) {
-      } // NOLINT(bugprone-forwarding-reference-overload)
-    };
+    LIEF_API Iterator(Iterator&&) noexcept;
+    LIEF_API Iterator& operator=(Iterator&&) noexcept;
 
-    Iterator(const Iterator&);
-    Iterator(Iterator&&) noexcept;
-    Iterator(std::unique_ptr<details::TypeIt> impl);
-    ~Iterator();
+    LIEF_API ~Iterator();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
-    friend LIEF_API bool operator!=(const Iterator& LHS, const Iterator& RHS) {
+    friend bool operator!=(const Iterator& LHS, const Iterator& RHS) {
       return !(LHS == RHS);
     }
 
-    Iterator& operator++();
-    Iterator& operator--();
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator++();
 
-    Iterator operator--(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      --*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator--();
 
-    Iterator operator++(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    LIEF_API const Type& operator*() const LIEF_LIFETIMEBOUND;
 
-    std::unique_ptr<Type> operator*() const;
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const Type* operator->() const LIEF_LIFETIMEBOUND;
 
-    PointerProxy operator->() const {
-      return static_cast<const Iterator*>(this)->operator*();
-    }
+    /// Transfer ownership of the type at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<Type> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::TypeIt> impl_;
+    mutable std::unique_ptr<Type> cached_;
   };
+
+  LIEF_LOCAL Type(std::unique_ptr<details::Type> impl);
+  LIEF_LOCAL Type(details::Type& impl);
+
+  Type(const Type&) = delete;
+  Type& operator=(const Type&) = delete;
+
+  Type(Type&&) noexcept;
+  Type& operator=(Type&&) noexcept;
 
   virtual ~Type();
 
@@ -193,12 +189,10 @@ class LIEF_API Type {
     return nullptr;
   }
 
-  static std::unique_ptr<Type> create(std::unique_ptr<details::Type> impl);
+  static std::unique_ptr<Type>
+      create(std::unique_ptr<details::Type> impl LIEF_LIFETIMEBOUND);
 
   protected:
-  Type(std::unique_ptr<details::Type> impl);
-  Type(details::Type& impl);
-
   LIEF::details::canbe_unique<details::Type> impl_;
 };
 

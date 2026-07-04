@@ -98,7 +98,7 @@ class MachO_DynamicSymbolCommand : public MachO_Command {
     return std::make_unique<it_indirect_symbols>(impl());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
@@ -107,3 +107,6 @@ class MachO_DynamicSymbolCommand : public MachO_Command {
     return as<lief_t>(this);
   }
 };
+
+using MachO_DynamicSymbolCommand_it_indirect_symbols =
+    MachO_DynamicSymbolCommand::it_indirect_symbols;

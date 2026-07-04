@@ -112,19 +112,16 @@ std::unique_ptr<ResourceNode> TreeParser::parse_resource_node(
   // Iterate over the children
   for (size_t idx = 0; idx < (numberof_name_entries + numberof_ID_entries); ++idx)
   {
-    uint32_t data_rva = entries_array->RVA;
-    uint32_t id = entries_array->NameID.IntegerID;
-
-    directory_array_offset += sizeof(details::pe_resource_directory_entries);
-    auto next_entries_array = stream_.peek<details::pe_resource_directory_entries>(
+    auto entry = stream_.peek<details::pe_resource_directory_entries>(
         directory_array_offset
     );
-
-    if (!entries_array) {
+    if (!entry) {
       break;
     }
+    directory_array_offset += sizeof(details::pe_resource_directory_entries);
 
-    entries_array = next_entries_array;
+    uint32_t data_rva = entry->RVA;
+    uint32_t id = entry->NameID.IntegerID;
 
     result<std::u16string> name;
 

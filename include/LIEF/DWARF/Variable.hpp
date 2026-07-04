@@ -17,7 +17,9 @@
 
 #include <memory>
 
+#include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/debug_loc.hpp"
 #include "LIEF/DWARF/Type.hpp"
@@ -35,66 +37,52 @@ class VariableIt;
 /// dwarf::Function or a dwarf::CompilationUnit
 class LIEF_API Variable {
   public:
-  class LIEF_API Iterator {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::bidirectional_iterator_tag,
+                                  Variable, std::ptrdiff_t, const Variable*,
+                                  const Variable&> {
     public:
-    using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = std::unique_ptr<Variable>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = Variable*;
-    using reference = std::unique_ptr<Variable>&;
     using implementation = details::VariableIt;
+    using iterator_facade_base::operator++;
+    using iterator_facade_base::operator--;
 
-    class LIEF_API PointerProxy {
-      // Inspired from LLVM's iterator_facade_base
-      friend class Iterator;
+    LIEF_API Iterator();
 
-      public:
-      pointer operator->() const {
-        return R.get();
-      }
+    LIEF_API Iterator(std::unique_ptr<details::VariableIt> impl);
 
-      private:
-      value_type R;
+    LIEF_API Iterator(const Iterator&);
+    LIEF_API Iterator& operator=(const Iterator&);
 
-      template<typename RefT>
-      PointerProxy(RefT&& R) :
-        R(std::forward<RefT>(R)) {
-      } // NOLINT(bugprone-forwarding-reference-overload)
-    };
+    LIEF_API Iterator(Iterator&&) noexcept;
+    LIEF_API Iterator& operator=(Iterator&&) noexcept;
 
-    Iterator(const Iterator&);
-    Iterator(Iterator&&) noexcept;
-    Iterator(std::unique_ptr<details::VariableIt> impl);
-    ~Iterator();
+    LIEF_API ~Iterator();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
-    friend LIEF_API bool operator!=(const Iterator& LHS, const Iterator& RHS) {
+    friend bool operator!=(const Iterator& LHS, const Iterator& RHS) {
       return !(LHS == RHS);
     }
 
-    Iterator& operator++();
-    Iterator& operator--();
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator++();
 
-    Iterator operator--(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      --*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator--();
 
-    Iterator operator++(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    LIEF_API const Variable& operator*() const LIEF_LIFETIMEBOUND;
 
-    std::unique_ptr<Variable> operator*() const;
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const Variable* operator->() const LIEF_LIFETIMEBOUND;
 
-    PointerProxy operator->() const {
-      return static_cast<const Iterator*>(this)->operator*();
-    }
+    /// Transfer ownership of the variable at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<Variable> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::VariableIt> impl_;
+    mutable std::unique_ptr<Variable> cached_;
   };
 
   Variable(std::unique_ptr<details::Variable> impl);
@@ -134,10 +122,10 @@ class LIEF_API Variable {
   debug_location_t debug_location() const;
 
   /// Return the type of this variable
-  std::unique_ptr<Type> type() const;
+  std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;
 
   /// Return the scope in which this variable is defined
-  std::unique_ptr<Scope> scope() const;
+  std::unique_ptr<Scope> scope() const LIEF_LIFETIMEBOUND;
 
   /// Description (`DW_AT_description`) of the variable or an empty string
   std::string description() const;

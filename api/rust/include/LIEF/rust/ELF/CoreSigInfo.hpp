@@ -37,7 +37,7 @@ class ELF_CoreSigInfo : public ELF_Note {
     return details::make_error(impl().sigerrno(), err);
   }
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 

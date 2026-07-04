@@ -38,7 +38,10 @@ void create<Pogo>(nb::module_& m) {
     .value(PY_ENUM(Pogo::SIGNATURES::UNKNOWN))
     .value(PY_ENUM(Pogo::SIGNATURES::ZERO))
     .value(PY_ENUM(Pogo::SIGNATURES::LCTG))
-    .value(PY_ENUM(Pogo::SIGNATURES::PGI));
+    .value(PY_ENUM(Pogo::SIGNATURES::PGI))
+    .value(PY_ENUM(Pogo::SIGNATURES::PGO))
+    .value(PY_ENUM(Pogo::SIGNATURES::PGU))
+    .value(PY_ENUM(Pogo::SIGNATURES::SPGO));
 
   pogo
     .def(nb::init<>())

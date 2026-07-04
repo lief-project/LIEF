@@ -31,8 +31,8 @@ class ELF_CoreFile_entry : public Mirror<LIEF::ELF::CoreFile::entry_t> {
   auto file_ofs() const {
     return get().file_ofs;
   }
-  std::string path() const {
-    return get().path;
+  auto path() const {
+    return to_unique_string(get().path);
   }
 };
 
@@ -64,7 +64,7 @@ class ELF_CoreFile : public ELF_Note {
     return std::make_unique<it_files>(impl());
   }
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 
@@ -73,3 +73,5 @@ class ELF_CoreFile : public ELF_Note {
     return as<lief_t>(this);
   }
 };
+
+using ELF_CoreFile_it_files = ELF_CoreFile::it_files;

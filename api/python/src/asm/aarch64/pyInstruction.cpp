@@ -1,5 +1,6 @@
 #include "LIEF/asm/aarch64/Instruction.hpp"
 #include "LIEF/asm/aarch64/Operand.hpp"
+#include "pyOwningIterator.hpp"
 
 #include <nanobind/make_iterator.h>
 
@@ -21,7 +22,7 @@ void create<aarch64::Instruction>(nb::module_& m) {
       R"doc(The instruction opcode as defined in LLVM)doc"_doc
     )
     .def_prop_ro("operands", [] (const aarch64::Instruction& self) {
-        auto ops = self.operands();
+        auto ops = LIEF::py::owning_range(self.operands());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
           nb::type<aarch64::Instruction>(), "operands_it", ops
         );

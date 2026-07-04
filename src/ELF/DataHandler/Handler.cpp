@@ -58,8 +58,12 @@ std::unique_ptr<Handler>
   if (auto* vs = stream->cast<VectorStream>()) {
     hdl->data_ = std::move(vs->move_content());
     const uint64_t pos = vs->pos();
-    stream.reset(new DataHandlerStream{hdl->data_});
-    stream->setpos(pos);
+    // Build the replacement stream in a local, position it, then move it into
+    // the reference parameter. Mutating `stream` (reset/assign) and then
+    // dereferencing it trips Clang's strict lifetime-safety analysis.
+    auto new_stream = std::make_unique<DataHandlerStream>(hdl->data_);
+    new_stream->setpos(pos);
+    stream = std::move(new_stream);
     return hdl;
   }
 
@@ -71,8 +75,9 @@ std::unique_ptr<Handler>
   if (auto* fs = stream->cast<FileStream>()) {
     hdl->data_ = fs->content();
     const uint64_t pos = fs->pos();
-    stream.reset(new DataHandlerStream{hdl->data_});
-    stream->setpos(pos);
+    auto new_stream = std::make_unique<DataHandlerStream>(hdl->data_);
+    new_stream->setpos(pos);
+    stream = std::move(new_stream);
     return hdl;
   }
 

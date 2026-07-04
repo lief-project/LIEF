@@ -35,67 +35,53 @@ class ProtocolIt;
 /// This class represents an Objective-C `@protocol`
 class LIEF_API Protocol {
   public:
-  class LIEF_API Iterator {
+  class Iterator final
+    : public iterator_facade_base<Iterator, std::bidirectional_iterator_tag,
+                                  Protocol, std::ptrdiff_t, const Protocol*,
+                                  const Protocol&> {
     public:
-    using iterator_category = std::bidirectional_iterator_tag;
-    using value_type = std::unique_ptr<Protocol>;
-    using difference_type = std::ptrdiff_t;
-    using pointer = Protocol*;
-    using reference = std::unique_ptr<Protocol>&;
     using implementation = details::ProtocolIt;
+    using iterator_facade_base::operator++;
+    using iterator_facade_base::operator--;
 
-    class LIEF_API PointerProxy {
-      // Inspired from LLVM's iterator_facade_base
-      friend class Iterator;
+    LIEF_API Iterator();
 
-      public:
-      pointer operator->() const {
-        return R.get();
-      }
+    LIEF_API Iterator(std::unique_ptr<details::ProtocolIt> impl);
 
-      private:
-      value_type R;
+    LIEF_API Iterator(const Iterator&);
+    LIEF_API Iterator& operator=(const Iterator&);
 
-      template<typename RefT>
-      PointerProxy(RefT&& R) :
-        R(std::forward<RefT>(R)) {
-      } // NOLINT(bugprone-forwarding-reference-overload)
-    };
+    LIEF_API Iterator(Iterator&&) noexcept;
+    LIEF_API Iterator& operator=(Iterator&&) noexcept;
 
-    Iterator(const Iterator&);
-    Iterator(Iterator&&) noexcept;
-    Iterator(std::unique_ptr<details::ProtocolIt> impl);
-    ~Iterator();
+    LIEF_API ~Iterator();
 
     friend LIEF_API bool operator==(const Iterator& LHS, const Iterator& RHS);
 
-    friend LIEF_API bool operator!=(const Iterator& LHS, const Iterator& RHS) {
+    friend bool operator!=(const Iterator& LHS, const Iterator& RHS) {
       return !(LHS == RHS);
     }
 
-    Iterator& operator++();
-    Iterator& operator--();
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator++();
 
-    Iterator operator--(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      --*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API Iterator& operator--();
 
-    Iterator operator++(int) {
-      Iterator tmp = *static_cast<Iterator*>(this);
-      ++*static_cast<Iterator*>(this);
-      return tmp;
-    }
+    LIEF_API const Protocol& operator*() const;
 
-    std::unique_ptr<Protocol> operator*() const;
+    // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
+    LIEF_API const Protocol* operator->() const;
 
-    PointerProxy operator->() const {
-      return static_cast<const Iterator*>(this)->operator*();
-    }
+    /// Transfer ownership of the protocol at the current position to the
+    /// caller. Returns `nullptr` if the iterator is past-the-end.
+    LIEF_API std::unique_ptr<Protocol> yield();
 
     private:
+    void load() const;
+
     std::unique_ptr<details::ProtocolIt> impl_;
+    mutable std::unique_ptr<Protocol> cached_;
   };
 
   public:

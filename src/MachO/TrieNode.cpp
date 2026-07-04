@@ -28,11 +28,11 @@ namespace LIEF::MachO {
 
 // Mainly inspired from LLVM:
 // lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp
-TrieNode& TrieNode::add_symbol(const ExportInfo& info,
-                               TrieNode::node_list_t& nodes) {
+TrieNode::node_list_t TrieNode::add_symbol(const ExportInfo& info) {
+  node_list_t nodes;
   if (!info.has_symbol()) {
     LIEF_ERR("Missing symbol in trie node");
-    return *this;
+    return nodes;
   }
   const Symbol& sym = *info.symbol();
   std::string partial_str = sym.name().substr(cummulative_string_.size());
@@ -42,8 +42,10 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info,
     std::string edge_string = edge->substr;
 
     if (partial_str.find(edge_string) == 0) {
-      edge->child->add_symbol(info, nodes);
-      return *this;
+      node_list_t subnodes = edge->child->add_symbol(info);
+      nodes.insert(nodes.end(), std::make_move_iterator(subnodes.begin()),
+                   std::make_move_iterator(subnodes.end()));
+      return nodes;
     }
 
     for (int n = edge_string.size() - 1; n > 0; --n) {
@@ -67,10 +69,11 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info,
 
         std::unique_ptr<TrieEdge> bc_edge = TrieEdge::create(bc_edge_str, c_node);
         b_new_node->children_.push_back(std::move(bc_edge));
-        b_new_node->add_symbol(info, nodes);
-
+        node_list_t subnodes = b_new_node->add_symbol(info);
+        nodes.insert(nodes.end(), std::make_move_iterator(subnodes.begin()),
+                     std::make_move_iterator(subnodes.end()));
         nodes.push_back(std::move(b_new_node));
-        return *this;
+        return nodes;
       }
     }
   }
@@ -101,15 +104,15 @@ TrieNode& TrieNode::add_symbol(const ExportInfo& info,
 
   children_.push_back(std::move(new_edge));
   nodes.push_back(std::move(new_node));
-  return *this;
+  return nodes;
 }
 
 
 // Mainly inspired from LLVM:
 // lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp - addOrderedNodes
 // Add info in nodes making sure every parent node is inserted before
-TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info,
-                                      std::vector<TrieNode*>& nodes) {
+std::vector<TrieNode*> TrieNode::add_ordered_nodes(const ExportInfo& info) {
+  std::vector<TrieNode*> nodes;
   if (!ordered_) {
     nodes.push_back(this);
     ordered_ = true;
@@ -117,7 +120,7 @@ TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info,
 
   if (!info.has_symbol()) {
     LIEF_ERR("Missing symbol for add_ordered_nodes");
-    return *this;
+    return nodes;
   }
 
   std::string partial_str =
@@ -126,11 +129,12 @@ TrieNode& TrieNode::add_ordered_nodes(const ExportInfo& info,
     std::string edge_string = edge->substr;
 
     if (partial_str.find(edge_string) == 0) {
-      edge->child->add_ordered_nodes(info, nodes);
-      return *this;
+      std::vector<TrieNode*> subnodes = edge->child->add_ordered_nodes(info);
+      nodes.insert(nodes.end(), subnodes.begin(), subnodes.end());
+      return nodes;
     }
   }
-  return *this;
+  return nodes;
 }
 
 

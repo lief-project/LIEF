@@ -1,0 +1,334 @@
+use bitflags::bitflags;
+use lief_ffi as ffi;
+use std::fmt;
+use std::marker::PhantomData;
+
+use crate::common::FromFFI;
+use crate::{declare_iterator, to_slice};
+
+#[allow(non_camel_case_types)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub enum Type {
+    /// Unused segment
+    PT_NULL,
+    /// Loadable segment
+    LOAD,
+    /// Dynamic linking information.
+    DYNAMIC,
+    /// Interpreter pathname.
+    INTERP,
+    /// Auxiliary information.
+    NOTE,
+    /// Reserved
+    SHLIB,
+    /// The program header table itself.
+    PHDR,
+    /// The thread-local storage template.
+    TLS,
+    GNU_EH_FRAME,
+    /// Indicates stack executability
+    GNU_STACK,
+    /// GNU property
+    GNU_PROPERTY,
+    /// Read-only after relocation.
+    GNU_RELRO,
+    PAX_FLAGS,
+    /// Platform architecture compatibility info
+    ARM_ARCHEXT,
+    ARM_EXIDX,
+    ARM_UNWIND,
+    AARCH64_MEMTAG_MTE,
+    /// Register usage information
+    MIPS_REGINFO,
+    /// Runtime procedure table.
+    MIPS_RTPROC,
+    /// Options segment.
+    MIPS_OPTIONS,
+    /// Abiflags segment.
+    MIPS_ABIFLAGS,
+    RISCV_ATTRIBUTES,
+    IA_64_EXT,
+    IA_64_UNWIND,
+    HP_TLS,
+    HP_CORE_NONE,
+    HP_CORE_VERSION,
+    HP_CORE_KERNEL,
+    HP_CORE_COMM,
+    HP_CORE_PROC,
+    HP_CORE_LOADABLE,
+    HP_CORE_STACK,
+    HP_CORE_SHM,
+    HP_CORE_MMF,
+    HP_PARALLEL,
+    HP_FASTBIND,
+    HP_OPT_ANNOT,
+    HP_HSL_ANNOT,
+    HP_STACK,
+    HP_CORE_UTSNAME,
+    UNKNOWN(u64),
+}
+
+impl From<u64> for Type {
+    fn from(value: u64) -> Self {
+        match value {
+            0x00000000 => Type::PT_NULL,
+            0x00000001 => Type::LOAD,
+            0x00000002 => Type::DYNAMIC,
+            0x00000003 => Type::INTERP,
+            0x00000004 => Type::NOTE,
+            0x00000005 => Type::SHLIB,
+            0x00000006 => Type::PHDR,
+            0x00000007 => Type::TLS,
+            0x6474e550 => Type::GNU_EH_FRAME,
+            0x6474e551 => Type::GNU_STACK,
+            0x6474e553 => Type::GNU_PROPERTY,
+            0x6474e552 => Type::GNU_RELRO,
+            0x65041580 => Type::PAX_FLAGS,
+            0x270000000 => Type::ARM_ARCHEXT,
+            0x270000001 => Type::ARM_EXIDX,
+            0x470000002 => Type::AARCH64_MEMTAG_MTE,
+            0x670000000 => Type::MIPS_REGINFO,
+            0x670000001 => Type::MIPS_RTPROC,
+            0x670000002 => Type::MIPS_OPTIONS,
+            0x670000003 => Type::MIPS_ABIFLAGS,
+            0x870000003 => Type::RISCV_ATTRIBUTES,
+            0xa70000000 => Type::IA_64_EXT,
+            0xa70000001 => Type::IA_64_UNWIND,
+            0x20000060000000 => Type::HP_TLS,
+            0x20000060000001 => Type::HP_CORE_NONE,
+            0x20000060000002 => Type::HP_CORE_VERSION,
+            0x20000060000003 => Type::HP_CORE_KERNEL,
+            0x20000060000004 => Type::HP_CORE_COMM,
+            0x20000060000005 => Type::HP_CORE_PROC,
+            0x20000060000006 => Type::HP_CORE_LOADABLE,
+            0x20000060000007 => Type::HP_CORE_STACK,
+            0x20000060000008 => Type::HP_CORE_SHM,
+            0x20000060000009 => Type::HP_CORE_MMF,
+            0x20000060000010 => Type::HP_PARALLEL,
+            0x20000060000011 => Type::HP_FASTBIND,
+            0x20000060000012 => Type::HP_OPT_ANNOT,
+            0x20000060000013 => Type::HP_HSL_ANNOT,
+            0x20000060000014 => Type::HP_STACK,
+            0x20000060000015 => Type::HP_CORE_UTSNAME,
+            _ => Type::UNKNOWN(value),
+        }
+    }
+}
+impl From<Type> for u64 {
+    fn from(value: Type) -> u64 {
+        match value {
+            Type::PT_NULL => 0x00000000,
+            Type::LOAD => 0x00000001,
+            Type::DYNAMIC => 0x00000002,
+            Type::INTERP => 0x00000003,
+            Type::NOTE => 0x00000004,
+            Type::SHLIB => 0x00000005,
+            Type::PHDR => 0x00000006,
+            Type::TLS => 0x00000007,
+            Type::GNU_EH_FRAME => 0x6474e550,
+            Type::GNU_STACK => 0x6474e551,
+            Type::GNU_PROPERTY => 0x6474e553,
+            Type::GNU_RELRO => 0x6474e552,
+            Type::PAX_FLAGS => 0x65041580,
+            Type::ARM_ARCHEXT => 0x270000000,
+            Type::ARM_EXIDX => 0x270000001,
+            Type::ARM_UNWIND => 0x270000001,
+            Type::AARCH64_MEMTAG_MTE => 0x470000002,
+            Type::MIPS_REGINFO => 0x670000000,
+            Type::MIPS_RTPROC => 0x670000001,
+            Type::MIPS_OPTIONS => 0x670000002,
+            Type::MIPS_ABIFLAGS => 0x670000003,
+            Type::RISCV_ATTRIBUTES => 0x870000003,
+            Type::IA_64_EXT => 0xa70000000,
+            Type::IA_64_UNWIND => 0xa70000001,
+            Type::HP_TLS => 0x20000060000000,
+            Type::HP_CORE_NONE => 0x20000060000001,
+            Type::HP_CORE_VERSION => 0x20000060000002,
+            Type::HP_CORE_KERNEL => 0x20000060000003,
+            Type::HP_CORE_COMM => 0x20000060000004,
+            Type::HP_CORE_PROC => 0x20000060000005,
+            Type::HP_CORE_LOADABLE => 0x20000060000006,
+            Type::HP_CORE_STACK => 0x20000060000007,
+            Type::HP_CORE_SHM => 0x20000060000008,
+            Type::HP_CORE_MMF => 0x20000060000009,
+            Type::HP_PARALLEL => 0x20000060000010,
+            Type::HP_FASTBIND => 0x20000060000011,
+            Type::HP_OPT_ANNOT => 0x20000060000012,
+            Type::HP_HSL_ANNOT => 0x20000060000013,
+            Type::HP_STACK => 0x20000060000014,
+            Type::HP_CORE_UTSNAME => 0x20000060000015,
+            Type::UNKNOWN(value) => value,
+        }
+    }
+}
+
+bitflags! {
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    pub struct Flags: u32 {
+        const NONE = 0x0;
+        const X = 0x1;
+        const W = 0x2;
+        const R = 0x4;
+    }
+}
+
+impl Flags {
+    pub fn from_value(value: u32) -> Self {
+        Flags::from_bits_truncate(value)
+    }
+
+    pub fn to_value(&self) -> u32 {
+        self.bits()
+    }
+}
+
+/// Structure which represents an ELF segment
+pub struct Segment<'a> {
+    pub(super) ptr: cxx::UniquePtr<ffi::ELF_Segment>,
+    _owner: PhantomData<&'a ffi::ELF_Binary>,
+}
+
+impl fmt::Debug for Segment<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Segment")
+            .field("p_type", &self.p_type())
+            .field("flags", &self.flags())
+            .field("file_offset", &self.file_offset())
+            .field("virtual_address", &self.virtual_address())
+            .field("physical_address", &self.physical_address())
+            .field("physical_size", &self.physical_size())
+            .field("virtual_size", &self.virtual_size())
+            .field("alignment", &self.alignment())
+            .finish()
+    }
+}
+
+impl FromFFI<ffi::ELF_Segment> for Segment<'_> {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::ELF_Segment>) -> Self {
+        Segment {
+            ptr,
+            _owner: PhantomData,
+        }
+    }
+}
+
+impl Segment<'_> {
+    /// Create a new segment
+    pub fn new() -> Segment<'static> {
+        Segment::from_ffi(lief_ffi::ELF_Segment::create())
+    }
+
+    /// Content of the segment as a slice of bytes
+    pub fn content(&self) -> &[u8] {
+        to_slice!(self.ptr.content());
+    }
+
+    /// The segment's type (LOAD, DYNAMIC, ...)
+    pub fn p_type(&self) -> Type {
+        Type::from(self.ptr.stype())
+    }
+
+    /// The flag permissions associated with this segment
+    pub fn flags(&self) -> u32 {
+        self.ptr.flags()
+    }
+
+    /// The file offset of the data associated with this segment
+    pub fn file_offset(&self) -> u64 {
+        self.ptr.file_offset()
+    }
+
+    /// The virtual address of the segment.
+    pub fn virtual_address(&self) -> u64 {
+        self.ptr.virtual_address()
+    }
+    /// The physical address of the segment.
+    /// This value is not really relevant on systems like Linux or Android.
+    /// On the other hand, Qualcomm trustlets might use this value.
+    ///
+    /// Usually this value matches [`Segment::virtual_address`]
+    pub fn physical_address(&self) -> u64 {
+        self.ptr.physical_address()
+    }
+
+    /// The **file** size of the data associated with this segment
+    pub fn physical_size(&self) -> u64 {
+        self.ptr.physical_size()
+    }
+
+    /// The in-memory size of this segment.
+    /// Usually, if the `.bss` segment is wrapped by this segment
+    /// then, virtual_size is larger than physical_size
+    pub fn virtual_size(&self) -> u64 {
+        self.ptr.virtual_size()
+    }
+
+    /// The offset alignment of the segment
+    pub fn alignment(&self) -> u64 {
+        self.ptr.alignment()
+    }
+
+    pub fn set_type(&mut self, ty: Type) {
+        self.ptr.pin_mut().set_type(ty.into());
+    }
+
+    pub fn set_flags(&mut self, flags: Flags) {
+        self.ptr.pin_mut().set_flags(flags.to_value())
+    }
+
+    pub fn set_file_offset(&mut self, offset: u64) {
+        self.ptr.pin_mut().set_file_offset(offset);
+    }
+
+    pub fn set_virtual_address(&mut self, va: u64) {
+        self.ptr.pin_mut().set_virtual_address(va);
+    }
+
+    pub fn set_physical_address(&mut self, addr: u64) {
+        self.ptr.pin_mut().set_physical_address(addr);
+    }
+
+    pub fn set_virtual_size(&mut self, vsize: u64) {
+        self.ptr.pin_mut().set_virtual_size(vsize);
+    }
+
+    pub fn set_alignment(&mut self, alignment: u64) {
+        self.ptr.pin_mut().set_alignment(alignment);
+    }
+
+    pub fn set_content(&mut self, content: &[u8]) {
+        unsafe {
+            self.ptr
+                .pin_mut()
+                .set_content(content.as_ptr(), content.len().try_into().unwrap());
+        }
+    }
+
+    /// Clear the content of this segment
+    pub fn clear(&mut self) {
+        self.ptr.pin_mut().clear()
+    }
+
+    /// Fill the content of this segment with the value provided in parameter
+    pub fn fill(&mut self, value: u8) {
+        // Note(romain): This is on purpose to fix issues with AArch64 architecture
+        #[allow(clippy::useless_conversion)]
+        {
+            self.ptr.pin_mut().fill((value as i8).try_into().unwrap())
+        }
+    }
+}
+
+impl fmt::Display for Segment<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.ptr.to_string())
+    }
+}
+
+declare_iterator!(
+    Segments,
+    Segment<'a>,
+    ffi::ELF_Segment,
+    ffi::ELF_Binary,
+    ffi::ELF_Binary_it_segments
+);

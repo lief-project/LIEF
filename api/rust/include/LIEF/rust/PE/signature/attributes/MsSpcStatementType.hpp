@@ -1,6 +1,7 @@
 #pragma once
 #include "LIEF/PE/signature/attributes/MsSpcStatementType.hpp"
 #include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_MsSpcStatementType : public PE_Attribute {
   using lief_t = LIEF::PE::MsSpcStatementType;
@@ -9,11 +10,11 @@ class PE_MsSpcStatementType : public PE_Attribute {
   PE_MsSpcStatementType(const lief_t& base) :
     PE_Attribute(base) {}
 
-  std::string oid() const {
-    return impl().oid();
+  auto oid() const {
+    return to_unique_string(impl().oid());
   }
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 

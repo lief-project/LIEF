@@ -30,27 +30,27 @@ class MachO_ParserConfig {
     return config_;
   }
 
-  void set_parse_dyld_exports(bool value) {
+  auto set_parse_dyld_exports(bool value) {
     config_.parse_dyld_exports = value;
   }
 
-  void set_parse_dyld_bindings(bool value) {
+  auto set_parse_dyld_bindings(bool value) {
     config_.parse_dyld_bindings = value;
   }
 
-  void set_parse_dyld_rebases(bool value) {
+  auto set_parse_dyld_rebases(bool value) {
     config_.parse_dyld_rebases = value;
   }
 
-  void set_parse_overlay(bool value) {
+  auto set_parse_overlay(bool value) {
     config_.parse_overlay = value;
   }
 
-  void set_fix_from_memory(bool value) {
+  auto set_fix_from_memory(bool value) {
     config_.fix_from_memory = value;
   }
 
-  void set_from_dyld_shared_cache(bool value) {
+  auto set_from_dyld_shared_cache(bool value) {
     config_.from_dyld_shared_cache = value;
   }
 
@@ -61,13 +61,12 @@ class MachO_ParserConfig {
 class MachO_FatBinary : public Mirror<LIEF::MachO::FatBinary> {
   public:
   using Mirror::Mirror;
-  static auto parse(std::string path) {
+  static auto parse(const std::string& path) {
     return details::try_unique<MachO_FatBinary>(LIEF::MachO::Parser::parse(path));
   }
 
-  static auto parse_with_config(
-      std::string path, const MachO_ParserConfig& config
-  ) { // NOLINT(performance-unnecessary-value-param)
+  static auto parse_with_config(const std::string& path,
+                                const MachO_ParserConfig& config) {
     return details::try_unique<MachO_FatBinary>(
         LIEF::MachO::Parser::parse(path, config.conf())
     );
@@ -91,7 +90,7 @@ class MachO_FatBinary : public Mirror<LIEF::MachO::FatBinary> {
     return nullptr;
   }
 
-  void write(std::string output) {
+  auto write(const std::string& output) {
     impl().write(output);
   }
 

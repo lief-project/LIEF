@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/DyldSharedCache/SubCache.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class dsc_DyldSharedCache;
 
@@ -27,10 +28,10 @@ class dsc_SubCache : private Mirror<LIEF::dsc::SubCache> {
     return get().vm_offset();
   }
   auto suffix() const {
-    return get().suffix();
+    return to_unique_string(get().suffix());
   }
   auto uuid() const {
-    return details::make_vector(get().uuid());
+    return make_unique_vector<uint64_t>(details::make_vector(get().uuid()));
   }
   LIEF_API std::unique_ptr<dsc_DyldSharedCache> cache() const;
 };

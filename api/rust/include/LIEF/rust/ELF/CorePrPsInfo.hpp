@@ -25,7 +25,7 @@ class ELF_CorePrPsInfo : public ELF_Note {
 
   // TODO(romain): CorePrPsInfo::info
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 

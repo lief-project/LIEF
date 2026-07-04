@@ -29,7 +29,7 @@ class DWARF_Editor : public Mirror<LIEF::dwarf::Editor> {
     );
   }
 
-  auto write(std::string output) {
+  auto write(const std::string& output) {
     get().write(output);
   }
 

@@ -33,11 +33,11 @@ class DWARF_editor_Function_Parameter
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::Function::Parameter;
 
-  void assign_register_by_name(std::string name) {
+  auto assign_register_by_name(const std::string& name) {
     get().assign_register(name);
   }
 
-  void assign_register_by_id(uint64_t id) {
+  auto assign_register_by_id(uint64_t id) {
     get().assign_register(id);
   }
 };
@@ -69,11 +69,11 @@ class DWARF_editor_Function_LexicalBlock
     );
   }
 
-  auto add_name(std::string name) {
+  auto add_name(const std::string& name) {
     get().add_name(name);
   }
 
-  auto add_description(std::string name) {
+  auto add_description(const std::string& name) {
     get().add_description(name);
   }
 };
@@ -103,7 +103,7 @@ class DWARF_editor_Function : public Mirror<LIEF::dwarf::editor::Function> {
                    [](const DWARF_editor_Function_Range& R) {
                      return lief_t::range_t{R.start, R.end};
                    });
-    return conv_ranges;
+    get().set_ranges(std::move(conv_ranges));
   }
   auto set_external() {
     get().set_external();
@@ -113,13 +113,13 @@ class DWARF_editor_Function : public Mirror<LIEF::dwarf::editor::Function> {
     get().set_return_type(ty.get());
   }
 
-  auto add_parameter(std::string name, const DWARF_editor_Type& ty) {
+  auto add_parameter(const std::string& name, const DWARF_editor_Type& ty) {
     return details::try_unique<DWARF_editor_Function_Parameter>(
         get().add_parameter(name, ty.get())
     );
   }
 
-  auto create_stack_variable(std::string name) {
+  auto create_stack_variable(const std::string& name) {
     return details::try_unique<DWARF_editor_Variable>(
         get().create_stack_variable(name)
     );
@@ -131,13 +131,13 @@ class DWARF_editor_Function : public Mirror<LIEF::dwarf::editor::Function> {
     );
   }
 
-  auto add_label(uint64_t addr, std::string label) {
+  auto add_label(uint64_t addr, const std::string& label) {
     return details::try_unique<DWARF_editor_Function_Label>(
         get().add_label(addr, label)
     );
   }
 
-  auto add_description(std::string desc) {
+  auto add_description(const std::string& desc) {
     get().add_description(desc);
   }
 };

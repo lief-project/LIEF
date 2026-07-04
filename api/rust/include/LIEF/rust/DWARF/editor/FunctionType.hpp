@@ -39,7 +39,7 @@ class DWARF_editor_FunctionType : public DWARF_editor_Type {
     );
   }
 
-  static bool classof(const DWARF_editor_Type& type) {
+  static auto classof(const DWARF_editor_Type& type) {
     return lief_t::classof(&type.get());
   }
 

@@ -14,6 +14,7 @@
  */
 #pragma once
 #include "LIEF/rust/ELF/Note.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 
 class ELF_NoteAbi : public ELF_Note {
@@ -23,17 +24,17 @@ class ELF_NoteAbi : public ELF_Note {
     ELF_Note(static_cast<const ELF_Note::lief_t&>(impl)) {}
 
   auto abi() const {
-    return to_int(impl().abi().value_or(lief_t::ABI::LINUX));
+    return as_u32(impl().abi().value_or(lief_t::ABI::LINUX));
   }
 
-  std::vector<uint64_t> version() const {
+  auto version() const {
     if (auto res = impl().version()) {
       return to_vector(*res);
     }
-    return {};
+    return make_unique_vector<uint64_t>();
   }
 
-  static bool classof(const ELF_Note& note) {
+  static auto classof(const ELF_Note& note) {
     return lief_t::classof(&note.get());
   }
 

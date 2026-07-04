@@ -17,6 +17,7 @@
 
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 #include "LIEF/rust/ObjC/Method.hpp"
 #include "LIEF/rust/ObjC/DeclOpt.hpp"
@@ -67,7 +68,7 @@ class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
   };
 
   auto mangled_name() const {
-    return get().mangled_name();
+    return to_unique_string(get().mangled_name());
   }
 
   auto optional_methods() const {
@@ -83,10 +84,14 @@ class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
   }
 
   auto to_decl() const {
-    return get().to_decl();
+    return to_unique_string(get().to_decl());
   }
 
-  auto to_decl_with_opt(ObjC_DeclOpt opt) const {
-    return get().to_decl(from_rust_declopt(opt));
+  auto to_decl_with_opt(const ObjC_DeclOpt& opt) const {
+    return to_unique_string(get().to_decl(from_rust_declopt(opt)));
   }
 };
+
+using ObjC_Protocol_it_opt_methods = ObjC_Protocol::it_opt_methods;
+using ObjC_Protocol_it_req_methods = ObjC_Protocol::it_req_methods;
+using ObjC_Protocol_it_properties = ObjC_Protocol::it_properties;

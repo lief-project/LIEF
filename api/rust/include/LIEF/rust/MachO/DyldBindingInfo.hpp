@@ -29,14 +29,14 @@ class MachO_DyldBindingInfo : public MachO_BindingInfo {
   auto binding_type() const {
     return to_int(impl().binding_type());
   }
-  bool is_non_weak_definition() const {
+  auto is_non_weak_definition() const {
     return impl().is_non_weak_definition();
   }
   uint64_t original_offset() const {
     return impl().original_offset();
   }
 
-  static bool classof(const MachO_BindingInfo& binding) {
+  static auto classof(const MachO_BindingInfo& binding) {
     return lief_t::classof(&binding.get());
   }
 

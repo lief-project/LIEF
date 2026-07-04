@@ -27,6 +27,7 @@ target_sources(pyLIEF PRIVATE
   pyFunctionVariantFixups.cpp
   pyHeader.cpp
   pyIndirectBindingInfo.cpp
+  pyLazyLoadDylibInfo.cpp
   pyLinkerOptHint.cpp
   pyLoadCommand.cpp
   pyMainCommand.cpp

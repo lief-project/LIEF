@@ -231,6 +231,104 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     }
   }
 
+  SECTION("BinaryStream.ULEB128") {
+    // Largest valid value: UINT64_MAX encoded on the maximum of 10 bytes.
+    {
+      std::vector<uint8_t> buffer = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                                     0xFF, 0xFF, 0xFF, 0xFF, 0x01};
+      SpanStream ss(buffer);
+      size_t sz = 0;
+      auto val = ss.read_uleb128(&sz);
+      REQUIRE(val);
+      CHECK(*val == std::numeric_limits<uint64_t>::max());
+      CHECK(sz == 10);
+    }
+
+    // Overflow
+    {
+      std::vector<uint8_t> buffer = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                                     0xFF, 0xFF, 0xFF, 0xFF, 0x02};
+      SpanStream ss(buffer);
+      auto val = ss.read_uleb128();
+      REQUIRE(!val);
+      CHECK(val.error() == lief_errors::corrupted);
+    }
+
+    // Non-canonical
+    {
+      std::vector<uint8_t> buffer(10, 0x80);
+      SpanStream ss(buffer);
+      auto val = ss.read_uleb128();
+      REQUIRE(!val);
+      CHECK(val.error() == lief_errors::corrupted);
+    }
+
+    // Truncated stream.
+    {
+      std::vector<uint8_t> buffer = {0x80};
+      SpanStream ss(buffer);
+      auto val = ss.read_uleb128();
+      REQUIRE(!val);
+      CHECK(val.error() == lief_errors::read_error);
+    }
+
+    // Smallest non-canonical overflow.
+    {
+      std::vector<uint8_t> buffer = {0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+                                     0x80, 0x80, 0x80, 0x80, 0x80, 0x00};
+      SpanStream ss(buffer);
+      auto val = ss.read_uleb128();
+      REQUIRE(!val);
+      CHECK(val.error() == lief_errors::corrupted);
+    }
+  }
+
+  SECTION("BinaryStream.SLEB128") {
+    {
+      std::vector<uint8_t> buffer = {0x80, 0x80, 0x80, 0x80, 0x80,
+                                     0x80, 0x80, 0x80, 0x80, 0x7F};
+      SpanStream ss(buffer);
+      size_t sz = 0;
+      auto val = ss.read_sleb128(&sz);
+      REQUIRE(val);
+      CHECK(static_cast<int64_t>(*val) == std::numeric_limits<int64_t>::min());
+      CHECK(sz == 10);
+    }
+
+    {
+      std::vector<uint8_t> buffer = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                                     0xFF, 0xFF, 0xFF, 0xFF, 0x00};
+      SpanStream ss(buffer);
+      auto val = ss.read_sleb128();
+      REQUIRE(val);
+      CHECK(static_cast<int64_t>(*val) == std::numeric_limits<int64_t>::max());
+    }
+
+    {
+      std::vector<uint8_t> buffer = {0x7F};
+      SpanStream ss(buffer);
+      auto val = ss.read_sleb128();
+      REQUIRE(val);
+      CHECK(static_cast<int64_t>(*val) == -1);
+    }
+
+    {
+      std::vector<uint8_t> buffer(10, 0x80);
+      SpanStream ss(buffer);
+      auto val = ss.read_sleb128();
+      REQUIRE(!val);
+      CHECK(val.error() == lief_errors::corrupted);
+    }
+
+    {
+      std::vector<uint8_t> buffer = {0x80};
+      SpanStream ss(buffer);
+      auto val = ss.read_sleb128();
+      REQUIRE(!val);
+      CHECK(val.error() == lief_errors::read_error);
+    }
+  }
+
   SECTION("MemoryStream-read-error") {
     std::vector<uint8_t> buffer = {0x00, 0x10, 0x23, 0x40};
     const auto buffer_addr = reinterpret_cast<uintptr_t>(buffer.data());

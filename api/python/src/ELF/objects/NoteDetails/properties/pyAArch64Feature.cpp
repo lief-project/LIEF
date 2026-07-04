@@ -44,6 +44,7 @@ void create<AArch64Feature>(nb::module_& m) {
     ENTRY(UNKNOWN, "")
     ENTRY(BTI, "Support Branch Target Identification (BTI)")
     ENTRY(PAC, "Support Pointer authentication (PAC)")
+    ENTRY(GCS, "Support Guarded Control Stack (GCS)")
   ;
 # undef ENTRY
 }

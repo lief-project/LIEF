@@ -18,6 +18,7 @@
 #include "LIEF/rust/MachO/BuildToolVersion.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_BuildVersion : public MachO_Command {
   public:
@@ -41,19 +42,19 @@ class MachO_BuildVersion : public MachO_Command {
     MachO_Command(base) {}
 
   auto sdk() const {
-    return details::make_vector(impl().sdk());
+    return make_unique_vector<uint64_t>(details::make_vector(impl().sdk()));
   }
   auto minos() const {
-    return details::make_vector(impl().minos());
+    return make_unique_vector<uint64_t>(details::make_vector(impl().minos()));
   }
   auto platform() const {
-    return to_int(impl().platform());
+    return as_u32(impl().platform());
   }
   auto tools() const {
     return std::make_unique<it_tools>(impl());
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 
@@ -62,3 +63,5 @@ class MachO_BuildVersion : public MachO_Command {
     return as<lief_t>(this);
   }
 };
+
+using MachO_BuildVersion_it_tools = MachO_BuildVersion::it_tools;

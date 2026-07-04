@@ -1,0 +1,677 @@
+use num_traits::{cast, Num};
+use std::mem::size_of;
+use std::path::Path;
+use std::pin::Pin;
+
+use super::binding_info::BindingInfo;
+use super::builder::Config;
+use super::commands::atom_info::AtomInfo;
+use super::commands::build_version::{BuildVersion, Platform};
+use super::commands::code_signature::CodeSignature;
+use super::commands::code_signature_dir::CodeSignatureDir;
+use super::commands::data_in_code::DataInCode;
+use super::commands::dyld_chained_fixups::DyldChainedFixups;
+use super::commands::dyld_environment::DyldEnvironment;
+use super::commands::dyld_export_trie::DyldExportsTrie;
+use super::commands::dyldinfo::DyldInfo;
+use super::commands::dylib::Libraries;
+use super::commands::dylinker::Dylinker;
+use super::commands::dynamic_symbol_command::DynamicSymbolCommand;
+use super::commands::encryption_info::EncryptionInfo;
+use super::commands::function_variant_fixups::FunctionVariantFixups;
+use super::commands::function_variants::FunctionVariants;
+use super::commands::functionstarts::FunctionStarts;
+use super::commands::lazy_load_dylib_info::LazyLoadDylibInfo;
+use super::commands::linker_opt_hint::LinkerOptHint;
+use super::commands::main_cmd::Main;
+use super::commands::note::Note;
+use super::commands::routine::Routine;
+use super::commands::rpath::RPath;
+use super::commands::rpath::RPaths;
+use super::commands::segment::{Segment, Segments};
+use super::commands::segment_split_info::SegmentSplitInfo;
+use super::commands::source_version::SourceVersion;
+use super::commands::sub_client::SubClients;
+use super::commands::sub_framework::SubFramework;
+use super::commands::symbol_command::SymbolCommand;
+use super::commands::thread_command::ThreadCommand;
+use super::commands::two_level_hints::TwoLevelHints;
+use super::commands::uuid::UUID;
+use super::commands::version_min::VersionMin;
+use super::commands::{Command, Commands, CommandsIter, Dylib, LoadCommandTypes};
+use super::export_info::ExportInfo;
+use super::header::Header;
+use super::relocation::Relocations;
+use super::section::{Section, Sections};
+use super::stub::Stub;
+use super::symbol::{Symbol, Symbols};
+use crate::Error;
+use lief_ffi as ffi;
+
+use crate::common::{into_optional, AsFFI, FromFFI};
+use crate::objc::Metadata;
+use crate::{declare_fwd_iterator, declare_iterator, generic, to_conv_result, to_result, to_slice};
+
+/// This is the main interface to read and write Mach-O binary attributes.
+///
+/// Note that this structure implements the [`generic::Binary`] trait from which other generic
+/// functions are exposed
+pub struct Binary {
+    ptr: cxx::UniquePtr<ffi::MachO_Binary>,
+}
+
+impl std::fmt::Debug for Binary {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Binary").finish()
+    }
+}
+
+impl FromFFI<ffi::MachO_Binary> for Binary {
+    fn from_ffi(ptr: cxx::UniquePtr<ffi::MachO_Binary>) -> Self {
+        Binary { ptr }
+    }
+}
+
+impl Binary {
+    /// Return the main Mach-O header
+    pub fn header(&self) -> Header<'_> {
+        Header::from_ffi(self.ptr.header())
+    }
+
+    /// Return an iterator over the different [`crate::macho::Commands`] used by the
+    /// Mach-O binary
+    pub fn commands(&self) -> CommandsIter<'_> {
+        CommandsIter::new(self.ptr.commands())
+    }
+
+    /// Return an iterator over the different [`crate::macho::Section`] of the binary
+    pub fn sections(&self) -> Sections<'_> {
+        Sections::new(self.ptr.sections())
+    }
+
+    /// Return an iterator over the different [`crate::macho::commands::Segment`] (`LC_SEGMENT/LC_SIGNATURE`)
+    /// of the binary.
+    pub fn segments(&self) -> Segments<'_> {
+        Segments::new(self.ptr.segments())
+    }
+
+    /// Return an iterator over the [`crate::macho::commands::Dylib`] used by this binary
+    pub fn libraries(&self) -> Libraries<'_> {
+        Libraries::new(self.ptr.libraries())
+    }
+
+    /// Return an iterator over the different [`crate::macho::Relocation`] of this binary
+    pub fn relocations(&self) -> Relocations<'_> {
+        Relocations::new(self.ptr.relocations())
+    }
+
+    /// Return an iterator over the different [`crate::macho::commands::RPath`] of this binary
+    pub fn rpaths(&self) -> RPaths<'_> {
+        RPaths::new(self.ptr.rpaths())
+    }
+
+    /// Return an iterator over the different [`crate::macho::Symbol`] of this binary
+    pub fn symbols(&self) -> Symbols<'_> {
+        Symbols::new(self.ptr.symbols())
+    }
+
+    /// Return the `LC_DYLD_INFO/LC_DYLD_INFO_ONLY` command if present
+    pub fn dyld_info(&self) -> Option<DyldInfo<'_>> {
+        into_optional(self.ptr.dyld_info())
+    }
+
+    /// Return the `LC_UUID` command if present
+    pub fn uuid(&self) -> Option<UUID<'_>> {
+        into_optional(self.ptr.uuid())
+    }
+
+    /// Return the `LC_MAIN` command if present
+    pub fn main_command(&self) -> Option<Main<'_>> {
+        into_optional(self.ptr.main_command())
+    }
+
+    /// Return the `LC_LOAD_DYLINKER/LC_ID_DYLINKER` command if present
+    pub fn dylinker(&self) -> Option<Dylinker<'_>> {
+        into_optional(self.ptr.dylinker())
+    }
+
+    /// Return the `LC_FUNCTION_STARTS` command if present
+    pub fn function_starts(&self) -> Option<FunctionStarts<'_>> {
+        into_optional(self.ptr.function_starts())
+    }
+
+    /// Return the `LC_SOURCE_VERSION` command if present
+    pub fn source_version(&self) -> Option<SourceVersion<'_>> {
+        into_optional(self.ptr.source_version())
+    }
+
+    /// Return the `LC_THREAD/LC_UNIXTHREAD` command if present
+    pub fn thread_command(&self) -> Option<ThreadCommand<'_>> {
+        into_optional(self.ptr.thread_command())
+    }
+
+    /// Return the `LC_RPATH` command if present
+    pub fn rpath(&self) -> Option<RPath<'_>> {
+        into_optional(self.ptr.rpath())
+    }
+
+    /// Return the `LC_ROUTINE/LC_ROUTINE64` command if present
+    pub fn routine(&self) -> Option<Routine<'_>> {
+        into_optional(self.ptr.routine_command())
+    }
+
+    /// Return the `LC_SYMTAB` command if present
+    pub fn symbol_command(&self) -> Option<SymbolCommand<'_>> {
+        into_optional(self.ptr.symbol_command())
+    }
+
+    /// Return the `LC_DYSYMTAB` command if present
+    pub fn dynamic_symbol(&self) -> Option<DynamicSymbolCommand<'_>> {
+        into_optional(self.ptr.dynamic_symbol_command())
+    }
+
+    /// Return the `LC_CODE_SIGNATURE` command if present
+    pub fn code_signature(&self) -> Option<CodeSignature<'_>> {
+        into_optional(self.ptr.code_signature())
+    }
+
+    /// Return the `LC_DYLIB_CODE_SIGN_DRS` command if present
+    pub fn code_signature_dir(&self) -> Option<CodeSignatureDir<'_>> {
+        into_optional(self.ptr.code_signature_dir())
+    }
+
+    /// Return the `LC_DATA_IN_CODE` command if present
+    pub fn data_in_code(&self) -> Option<DataInCode<'_>> {
+        into_optional(self.ptr.data_in_code())
+    }
+
+    /// Return the `LC_SEGMENT_SPLIT_INFO` command if present
+    pub fn segment_split_info(&self) -> Option<SegmentSplitInfo<'_>> {
+        into_optional(self.ptr.segment_split_info())
+    }
+
+    /// Return the `LC_ENCRYPTION_INFO/LC_ENCRYPTION_INFO_64` command if present
+    pub fn encryption_info(&self) -> Option<EncryptionInfo<'_>> {
+        into_optional(self.ptr.encryption_info())
+    }
+
+    /// Return the `LC_SUB_FRAMEWORK` command if present
+    pub fn sub_framework(&self) -> Option<SubFramework<'_>> {
+        into_optional(self.ptr.sub_framework())
+    }
+
+    /// Return the `LC_SUBCLIENT` command if present
+    pub fn subclients(&self) -> SubClients<'_> {
+        SubClients::new(self.ptr.subclients())
+    }
+
+    /// Return the `LC_DYLD_ENVIRONMENT` command if present
+    pub fn dyld_environment(&self) -> Option<DyldEnvironment<'_>> {
+        into_optional(self.ptr.dyld_environment())
+    }
+
+    /// Return the `LC_BUILD_VERSION` command if present
+    pub fn build_version(&self) -> Option<BuildVersion<'_>> {
+        into_optional(self.ptr.build_version())
+    }
+
+    /// Return the `LC_DYLD_CHAINED_FIXUPS` command if present
+    pub fn dyld_chained_fixups(&self) -> Option<DyldChainedFixups<'_>> {
+        into_optional(self.ptr.dyld_chained_fixups())
+    }
+
+    /// Return the `LC_DYLD_EXPORTS_TRIE` command if present
+    pub fn dyld_exports_trie(&self) -> Option<DyldExportsTrie<'_>> {
+        into_optional(self.ptr.dyld_exports_trie())
+    }
+
+    /// Return the `LC_TWOLEVEL_HINTS` command if present
+    pub fn two_level_hints(&self) -> Option<TwoLevelHints<'_>> {
+        into_optional(self.ptr.two_level_hints())
+    }
+
+    /// Return the `LC_LINKER_OPTIMIZATION_HINT` command if present
+    pub fn linker_opt_hint(&self) -> Option<LinkerOptHint<'_>> {
+        into_optional(self.ptr.linker_opt_hint())
+    }
+
+    /// Return the `LC_ATOM_INFO` command if present
+    pub fn atom_info(&self) -> Option<AtomInfo<'_>> {
+        into_optional(self.ptr.atom_info())
+    }
+
+    /// Return the `LC_FUNCTION_VARIANTS` command if present
+    pub fn function_variants(&self) -> Option<FunctionVariants<'_>> {
+        into_optional(self.ptr.function_variants())
+    }
+
+    /// Return the `LC_FUNCTION_VARIANT_FIXUPS` command if present
+    pub fn function_variant_fixups(&self) -> Option<FunctionVariantFixups<'_>> {
+        into_optional(self.ptr.function_variant_fixups())
+    }
+
+    /// Return an iterator over the binary's `LC_LAZY_LOAD_DYLIB_INFO` commands
+    pub fn lazy_load_dylib_infos(&self) -> LazyLoadDylibInfos<'_> {
+        LazyLoadDylibInfos::new(self.ptr.lazy_load_dylib_infos())
+    }
+
+    /// Return the `LC_VERSION_MIN_MACOSX/VERSION_MIN_IPHONEOS` command if present
+    pub fn version_min(&self) -> Option<VersionMin<'_>> {
+        into_optional(self.ptr.version_min())
+    }
+
+    /// Check if the binary is supporting ARM64 pointer authentication (arm64e)
+    pub fn support_arm64_ptr_auth(&self) -> bool {
+        self.ptr.support_arm64_ptr_auth()
+    }
+
+    /// Return an iterator over the bindings located in [`DyldInfo`] or [`DyldChainedFixups`]
+    pub fn bindings(&self) -> BindingsInfo<'_> {
+        BindingsInfo::new(self.ptr.bindings())
+    }
+
+    /// Return an iterator over the symbol stubs.
+    ///
+    /// These stubs are involved when calling an **imported** function and are
+    /// similar to the ELF's plt/got mechanism.
+    ///
+    /// There are located in sections like: `__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4`
+    pub fn symbol_stubs(&self) -> Stubs<'_> {
+        Stubs::new(self.ptr.symbol_stubs())
+    }
+
+    /// Return Objective-C metadata if present
+    pub fn objc_metadata(&self) -> Option<Metadata<'_>> {
+        into_optional(self.ptr.objc_metadata())
+    }
+
+    /// Return the platform for which this Mach-O has been compiled
+    pub fn platform(&self) -> Platform {
+        Platform::from(self.ptr.platform())
+    }
+
+    /// True if this binary targets iOS
+    pub fn is_ios(&self) -> bool {
+        self.ptr.is_ios()
+    }
+
+    /// True if this binary targets macOS
+    pub fn is_macos(&self) -> bool {
+        self.ptr.is_macos()
+    }
+
+    /// Try to find the library with the given library name.
+    ///
+    /// This function tries to match the fullpath of the DylibCommand or the
+    /// library name suffix.
+    pub fn find_library(&self, name: &str) -> Option<Dylib<'_>> {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        into_optional(self.ptr.find_library(&__cxx_s))
+    }
+
+    /// Get the integer value at the given virtual address
+    pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
+    where
+        T: Num + cast::FromPrimitive + cast::ToPrimitive,
+    {
+        // Can't be in the generic trait because of:
+        //   > for a trait to be "object safe" it needs to allow building a vtable to allow the call
+        //   > to be resolvable dynamically; for more information visit
+        //   > https://doc.rust-lang.org/reference/items/traits.html#object-safety
+        if size_of::<T>() == size_of::<u8>() {
+            to_conv_result!(
+                ffi::AbstractBinary::get_u8,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| {
+                    T::from_u8(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
+                },
+                addr
+            );
+        }
+
+        if size_of::<T>() == size_of::<u16>() {
+            to_conv_result!(
+                ffi::AbstractBinary::get_u16,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| {
+                    T::from_u16(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
+                },
+                addr
+            );
+        }
+
+        if size_of::<T>() == size_of::<u32>() {
+            to_conv_result!(
+                ffi::AbstractBinary::get_u32,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| {
+                    T::from_u32(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
+                },
+                addr
+            );
+        }
+
+        if size_of::<T>() == size_of::<u64>() {
+            to_conv_result!(
+                ffi::AbstractBinary::get_u64,
+                self.ptr.as_ref().unwrap().as_ref(),
+                |value| {
+                    T::from_u64(value).unwrap_or_else(|| panic!("Can't cast value: {value}"))
+                },
+                addr
+            );
+        }
+
+        Err(Error::NotSupported)
+    }
+
+    /// Write back the current MachO binary into the file specified in parameter
+    pub fn write<P: AsRef<Path>>(&mut self, output: P) {
+        cxx::let_cxx_string!(__cxx_s = output.as_ref().to_str().unwrap());
+        self.ptr.as_mut().unwrap().write(&__cxx_s);
+    }
+
+    /// Write back the current MachO binary into the file specified in parameter with the
+    /// configuration provided in the second parameter.
+    pub fn write_with_config<P: AsRef<Path>>(&mut self, output: P, config: Config) {
+        cxx::let_cxx_string!(__cxx_out = output.as_ref().to_str().unwrap());
+        let cfg = config.to_ffi();
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .write_with_config(&__cxx_out, &cfg);
+    }
+
+    /// Insert a new command
+    pub fn add_command(&mut self, command: impl Command) -> Option<Commands<'_>> {
+        into_optional(self.ptr.as_mut().unwrap().add_command(command.get_base()))
+    }
+
+    /// Insert a new shared library through a `LC_LOAD_DYLIB` command
+    pub fn add_library<'a>(&'a mut self, libname: &str) -> Dylib<'a> {
+        cxx::let_cxx_string!(__cxx_s = libname);
+        Dylib::from_ffi(self.ptr.as_mut().unwrap().add_library(&__cxx_s))
+    }
+
+    /// Remove all commands that have the given type
+    pub fn remove_commands_by_type(&mut self, ty: LoadCommandTypes) -> bool {
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .remove_commands_by_type(ty.into())
+    }
+
+    pub fn functions(&self) -> generic::Functions<'_> {
+        generic::Functions::new(self.ptr.functions())
+    }
+
+    /// Return an iterator over the `LC_NOTE` commands
+    pub fn notes(&self) -> Notes<'_> {
+        Notes::new(self.ptr.notes())
+    }
+
+    /// Name associated with the `LC_FILESET_ENTRY` for this MachO.
+    /// For instance: `com.apple.kec.corecrypto`
+    pub fn fileset_name(&self) -> String {
+        self.ptr.fileset_name().to_string()
+    }
+
+    /// Original address associated with the `LC_FILESET_ENTRY` for this MachO.
+    pub fn fileset_addr(&self) -> u64 {
+        self.ptr.fileset_addr()
+    }
+
+    /// Return an iterator over the [`Binary`] associated with the `LC_FILESET_ENTRY` commands
+    pub fn filesets(&self) -> FilesetBinaries<'_> {
+        FilesetBinaries::new(self.ptr.filesets())
+    }
+
+    /// Convert the given virtual address into an offset
+    pub fn virtual_address_to_offset(&self, address: u64) -> Result<u64, Error> {
+        to_result!(ffi::MachO_Binary::virtual_address_to_offset, &self, address);
+    }
+    /// Return the [`Segment`] associated with the given offset
+    pub fn segment_from_offset(&self, offset: u64) -> Option<Segment<'_>> {
+        into_optional(self.ptr.segment_from_offset(offset))
+    }
+
+    /// Return the [`Segment`] associated with the given virtual address
+    pub fn segment_from_virtual_address(&self, va: u64) -> Option<Segment<'_>> {
+        into_optional(self.ptr.segment_from_virtual_address(va))
+    }
+
+    /// Return the [`Section`] associated with the given virtual address
+    pub fn section_from_virtual_address(&self, va: u64) -> Option<Section<'_>> {
+        into_optional(self.ptr.section_from_virtual_address(va))
+    }
+
+    /// Return the [`Segment`] matching the given name
+    pub fn get_segment(&self, name: String) -> Option<Segment<'_>> {
+        cxx::let_cxx_string!(__cxx_s = name);
+        into_optional(self.ptr.get_segment(&__cxx_s))
+    }
+
+    /// Return the [`Section`] embedded in the given segment's name
+    pub fn get_section(&self, segment_name: String, section_name: String) -> Option<Section<'_>> {
+        cxx::let_cxx_string!(seg = segment_name);
+        cxx::let_cxx_string!(sec = section_name);
+        into_optional(self.ptr.get_section(&seg, &sec))
+    }
+
+    /// Return the offset of this binary in the FAT binary
+    pub fn fat_offset(&self) -> u64 {
+        self.ptr.fat_offset()
+    }
+
+    /// Return the overlay data (if any)
+    pub fn overlay(&self) -> &[u8] {
+        to_slice!(self.ptr.overlay());
+    }
+
+    /// Return the TLV initial content range
+    pub fn tlv_initial_content_range(&self) -> crate::Range {
+        crate::Range::from_ffi(&self.ptr.tlv_initial_content_range())
+    }
+
+    /// Check if the given address is valid for this binary
+    pub fn is_valid_addr(&self, address: u64) -> bool {
+        self.ptr.is_valid_addr(address)
+    }
+
+    /// Check if the binary contains a symbol with the given name
+    pub fn has_symbol(&self, name: &str) -> bool {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        self.ptr.has_symbol(&__cxx_s)
+    }
+
+    /// Return the symbol with the given name (if any)
+    pub fn get_symbol(&self, name: &str) -> Option<Symbol<'_>> {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        into_optional(self.ptr.get_symbol(&__cxx_s))
+    }
+
+    /// Check if the binary contains a section with the given name
+    pub fn has_section(&self, name: &str) -> bool {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        self.ptr.has_section(&__cxx_s)
+    }
+
+    /// Return the [`Section`] associated with the given offset
+    pub fn section_from_offset(&self, offset: u64) -> Option<Section<'_>> {
+        into_optional(self.ptr.section_from_offset(offset))
+    }
+
+    /// Check if the binary contains a segment with the given name
+    pub fn has_segment(&self, name: &str) -> bool {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        self.ptr.has_segment(&__cxx_s)
+    }
+
+    /// Check if the binary has a command with the given type
+    pub fn has_command_type(&self, ty: LoadCommandTypes) -> bool {
+        self.ptr.has_command_type(ty.into())
+    }
+
+    /// Get a command with the given type
+    pub fn get_command_type(&self, ty: LoadCommandTypes) -> Option<Commands<'_>> {
+        into_optional(self.ptr.get_command_type(ty.into()))
+    }
+
+    /// Remove the command at the given index
+    pub fn remove_command(&mut self, index: u32) -> bool {
+        self.ptr.as_mut().unwrap().remove_command(index)
+    }
+
+    /// Remove a section by name
+    pub fn remove_section(&mut self, name: &str, clear: bool) {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        self.ptr.as_mut().unwrap().remove_section(&__cxx_s, clear);
+    }
+
+    /// Remove a section by segment name and section name
+    pub fn remove_section_from_segment(&mut self, segname: &str, secname: &str, clear: bool) {
+        cxx::let_cxx_string!(seg = segname);
+        cxx::let_cxx_string!(sec = secname);
+        self.ptr
+            .as_mut()
+            .unwrap()
+            .remove_section_seg(&seg, &sec, clear);
+    }
+
+    /// Remove the `LC_CODE_SIGNATURE` command
+    pub fn remove_signature(&mut self) -> bool {
+        self.ptr.as_mut().unwrap().remove_signature()
+    }
+
+    /// Remove a symbol by name
+    pub fn remove_symbol(&mut self, name: &str) -> bool {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        self.ptr.as_mut().unwrap().remove_symbol(&__cxx_s)
+    }
+
+    /// Check if the given symbol can be safely removed
+    pub fn can_remove(&self, sym: &Symbol<'_>) -> bool {
+        self.ptr.can_remove(sym.as_ffi())
+    }
+
+    /// Check if the symbol with the given name can be safely removed
+    pub fn can_remove_symbol(&self, name: &str) -> bool {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        self.ptr.can_remove_symbol(&__cxx_s)
+    }
+
+    /// Unexport the symbol with the given name
+    pub fn unexport_name(&mut self, name: &str) -> bool {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        self.ptr.as_mut().unwrap().unexport_name(&__cxx_s)
+    }
+
+    /// Unexport the given symbol
+    pub fn unexport_symbol(&mut self, sym: &super::Symbol<'_>) -> bool {
+        self.ptr.as_mut().unwrap().unexport_symbol(sym.as_ffi())
+    }
+
+    /// Add a new exported function
+    pub fn add_exported_function(&mut self, address: u64, name: &str) -> Option<ExportInfo<'_>> {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        into_optional(
+            self.ptr
+                .as_mut()
+                .unwrap()
+                .add_exported_function(address, &__cxx_s),
+        )
+    }
+
+    /// Add a new local symbol
+    pub fn add_local_symbol(&mut self, address: u64, name: &str) -> Option<Symbol<'_>> {
+        cxx::let_cxx_string!(__cxx_s = name.to_string());
+        into_optional(
+            self.ptr
+                .as_mut()
+                .unwrap()
+                .add_local_symbol(address, &__cxx_s),
+        )
+    }
+
+    /// Shift the content of the binary
+    pub fn shift(&mut self, value: u64) -> Result<(), Error> {
+        to_conv_result!(ffi::MachO_Binary::shift, self.ptr.pin_mut(), |_| (), value);
+    }
+
+    /// Shift the __LINKEDIT segment
+    pub fn shift_linkedit(&mut self, width: u64) -> Result<(), Error> {
+        to_conv_result!(
+            ffi::MachO_Binary::shift_linkedit,
+            self.ptr.pin_mut(),
+            |_| (),
+            width
+        );
+    }
+}
+
+impl AsFFI<ffi::MachO_Binary> for Binary {
+    fn as_ffi(&self) -> &ffi::MachO_Binary {
+        self.ptr.as_ref().unwrap()
+    }
+
+    fn as_mut_ffi(&mut self) -> std::pin::Pin<&mut ffi::MachO_Binary> {
+        self.ptr.pin_mut()
+    }
+}
+
+impl generic::Binary for Binary {
+    fn as_generic(&self) -> &ffi::AbstractBinary {
+        self.ptr.as_ref().unwrap().as_ref()
+    }
+
+    fn as_pin_mut_generic(&mut self) -> Pin<&mut ffi::AbstractBinary> {
+        unsafe {
+            Pin::new_unchecked({
+                (self.ptr.as_ref().unwrap().as_ref() as *const ffi::AbstractBinary
+                    as *mut ffi::AbstractBinary)
+                    .as_mut()
+                    .unwrap()
+            })
+        }
+    }
+}
+
+declare_fwd_iterator!(
+    BindingsInfo,
+    BindingInfo<'a>,
+    ffi::MachO_BindingInfo,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_bindings_info
+);
+
+declare_iterator!(
+    Stubs,
+    Stub<'a>,
+    ffi::MachO_Stub,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_stubs
+);
+
+declare_iterator!(
+    Notes,
+    Note<'a>,
+    ffi::MachO_NoteCommand,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_notes
+);
+
+declare_iterator!(
+    FilesetBinaries,
+    Binary,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_fileset_binaries
+);
+
+declare_iterator!(
+    LazyLoadDylibInfos,
+    LazyLoadDylibInfo<'a>,
+    ffi::MachO_LazyLoadDylibInfo,
+    ffi::MachO_Binary,
+    ffi::MachO_Binary_it_lazy_load_dylib_info
+);

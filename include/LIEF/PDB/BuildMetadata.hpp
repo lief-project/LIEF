@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_PDB_BUILD_METADATA_H
 #define LIEF_PDB_BUILD_METADATA_H
+#include <vector>
 #include <memory>
 #include <ostream>
 

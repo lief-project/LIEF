@@ -18,6 +18,7 @@
 
 #include "LIEF/MachO/FunctionStarts.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class MachO_FunctionStarts : public MachO_Command {
   public:
@@ -30,19 +31,19 @@ class MachO_FunctionStarts : public MachO_Command {
   uint32_t data_size() const {
     return impl().data_size();
   }
-  std::vector<uint64_t> functions() const {
-    return impl().functions();
+  auto functions() const {
+    return make_unique_vector<uint64_t>(impl().functions());
   }
 
   auto content() const {
     return make_span(impl().content());
   }
 
-  void add_function(uint64_t address) {
+  auto add_function(uint64_t address) {
     impl().add_function(address);
   }
 
-  static bool classof(const MachO_Command& cmd) {
+  static auto classof(const MachO_Command& cmd) {
     return lief_t::classof(&cmd.get());
   }
 

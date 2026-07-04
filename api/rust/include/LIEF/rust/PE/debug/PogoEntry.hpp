@@ -17,6 +17,7 @@
 
 #include "LIEF/PE/debug/PogoEntry.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_PogoEntry : private Mirror<LIEF::PE::PogoEntry> {
   public:
@@ -29,7 +30,7 @@ class PE_PogoEntry : private Mirror<LIEF::PE::PogoEntry> {
   uint32_t size() const {
     return get().size();
   }
-  std::string name() const {
-    return get().name();
+  auto name() const {
+    return to_unique_string(get().name());
   }
 };

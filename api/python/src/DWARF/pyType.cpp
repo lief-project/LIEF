@@ -153,9 +153,12 @@ void create<dw::Type>(nb::module_& m) {
       )doc"_doc
     )
 
-    .def("to_decl", &dw::Type::to_decl,
+    .def("to_decl",
+      [] (const dw::Type& self, const DeclOpt* opt) {
+        return opt ? self.to_decl(*opt) : self.to_decl();
+      },
       "Generates a C/C++ definition for this type"_doc,
-      "opt"_a = DeclOpt()
+      "opt"_a.none() = nb::none()
     );
   ;
 

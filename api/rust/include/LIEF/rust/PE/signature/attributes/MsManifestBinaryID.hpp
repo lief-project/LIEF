@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
 #include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_MsManifestBinaryID : public PE_Attribute {
   public:
@@ -22,12 +23,12 @@ class PE_MsManifestBinaryID : public PE_Attribute {
   PE_MsManifestBinaryID(const lief_t& base) :
     PE_Attribute(base) {}
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 
   auto manifest_id() const {
-    return impl().manifest_id();
+    return to_unique_string(impl().manifest_id());
   }
 
   private:

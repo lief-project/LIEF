@@ -15,6 +15,7 @@
 #pragma once
 #include <LIEF/Abstract/Symbol.hpp>
 #include <LIEF/rust/Mirror.hpp>
+#include <LIEF/rust/helpers.hpp>
 
 #include <string>
 
@@ -22,8 +23,8 @@ class AbstractSymbol : public Mirror<LIEF::Symbol> {
   public:
   using Mirror::Mirror;
 
-  std::string name() const {
-    return get().name();
+  auto name() const {
+    return to_unique_string(get().name());
   }
   auto size() const {
     return get().size();
@@ -32,15 +33,15 @@ class AbstractSymbol : public Mirror<LIEF::Symbol> {
     return get().value();
   }
 
-  void set_name(std::string name) {
-    get().name(std::move(name));
+  auto set_name(const std::string& name) {
+    get().name(name);
   }
 
-  void set_value(uint64_t value) {
+  auto set_value(uint64_t value) {
     get().value(value);
   }
 
-  void set_size(uint64_t sz) {
+  auto set_size(uint64_t sz) {
     get().size(sz);
   }
 };

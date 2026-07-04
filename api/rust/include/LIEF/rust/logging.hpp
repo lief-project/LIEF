@@ -20,28 +20,28 @@
 
 class LIEF_Logging {
   public:
-  static void disable() {
+  static auto disable() {
     LIEF::logging::disable();
   }
-  static void reset() {
+  static auto reset() {
     LIEF::logging::reset();
   }
-  static void enable() {
+  static auto enable() {
     LIEF::logging::enable();
   }
-  static void set_level(uint32_t lvl) {
+  static auto set_level(uint32_t lvl) {
     LIEF::logging::set_level(LIEF::logging::LEVEL(lvl));
   }
-  static void set_path(std::string path) { // NOLINT
+  static auto set_path(const std::string& path) {
     LIEF::logging::set_path(path);
   }
 
-  static void log(uint32_t lvl, std::string msg) { // NOLINT
+  static auto log(uint32_t lvl, const std::string& msg) {
     LIEF::logging::log(LIEF::logging::LEVEL(lvl), msg);
   }
 
   static auto get_level() {
-    return to_int(LIEF::logging::get_level());
+    return as_u32(LIEF::logging::get_level());
   }
 };
 
@@ -55,11 +55,11 @@ class LIEF_Logging_Scoped {
     return std::unique_ptr<LIEF_Logging_Scoped>(new LIEF_Logging_Scoped(lvl));
   }
 
-  void set_level(uint32_t lvl) const {
+  auto set_level(uint32_t lvl) const {
     scoped_.set_level(LIEF::logging::LEVEL(lvl));
   }
 
-  void reset() {
+  auto reset() {
     scoped_.reset();
   }
 

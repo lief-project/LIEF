@@ -41,8 +41,7 @@ class DWARF_DebugInfo : public AbstracDebugInfo {
   DWARF_DebugInfo(std::unique_ptr<lief_t> bin) :
     AbstracDebugInfo(std::move(bin)) {}
 
-  static auto
-      from_file(std::string file) { // NOLINT(performance-unnecessary-value-param)
+  static auto from_file(const std::string& file) {
     return details::try_unique<DWARF_DebugInfo>(
         LIEF::dwarf::DebugInfo::from_file(file)
     );
@@ -52,43 +51,27 @@ class DWARF_DebugInfo : public AbstracDebugInfo {
     return std::make_unique<it_compilation_units>(impl());
   }
 
-  auto function_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Function>(
-        impl().find_function(name)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto function_by_name(const std::string& name) const {
+    return details::try_unique<DWARF_Function>(impl().find_function(name));
   }
 
   auto function_by_addr(uint64_t addr) const {
-    return details::try_unique<DWARF_Function>(
-        impl().find_function(addr)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Function>(impl().find_function(addr));
   }
 
-  auto variable_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Variable>(
-        impl().find_variable(name)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto variable_by_name(const std::string& name) const {
+    return details::try_unique<DWARF_Variable>(impl().find_variable(name));
   }
 
   auto variable_by_addr(uint64_t addr) const {
-    return details::try_unique<DWARF_Variable>(
-        impl().find_variable(addr)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+    return details::try_unique<DWARF_Variable>(impl().find_variable(addr));
   }
 
-  auto type_by_name(
-      std::string name
-  ) const { // NOLINT(performance-unnecessary-value-param)
-    return details::try_unique<DWARF_Type>(
-        impl().find_type(name)
-    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  auto type_by_name(const std::string& name) const {
+    return details::try_unique<DWARF_Type>(impl().find_type(name));
   }
 
-  static bool classof(const AbstracDebugInfo& reloc) {
+  static auto classof(const AbstracDebugInfo& reloc) {
     return lief_t::classof(
         static_cast<const AbstracDebugInfo::lief_t*>(&reloc.get())
     );
@@ -99,3 +82,5 @@ class DWARF_DebugInfo : public AbstracDebugInfo {
     return as<lief_t>(this);
   }
 };
+
+using DWARF_DebugInfo_it_compilation_units = DWARF_DebugInfo::it_compilation_units;

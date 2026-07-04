@@ -296,14 +296,14 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
           {"shlwapi.dll", &shlwapi_dll_lookup},
           {"gdi32.dll", &gdi32_dll_lookup},
           {"shell32.dll", &shell32_dll_lookup},
-      };
+  };
 
   static const std::unordered_map<std::string, const char* (*)(uint32_t)>
       imphashstd_ordinals_library_tables = {
           {"ws2_32.dll", &ws2_32_dll_lookup},
           {"wsock32.dll", &ws2_32_dll_lookup},
           {"oleaut32.dll", &oleaut32_dll_lookup},
-      };
+  };
 
   using ordinal_resolver_t = const char* (*)(uint32_t);
 

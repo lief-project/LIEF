@@ -109,3 +109,49 @@ def test_zero_div():
     """Bug found with Codex 5.3"""
     macho = lief.MachO.parse(get_sample("MachO/stub_div0.bin"))
     assert macho is not None
+
+
+def test_1344(tmp_path: Path):
+    sample = (
+        "MachO/"
+        "42d4f6b799d5d3ff88c50d4c6966773d269d19793226724b5e893212091bf737"
+        "_dyld.macho"
+    )
+    target = parse_macho(sample).at(0)
+    assert target is not None
+
+    thread = target.thread_command
+    assert thread is not None
+
+    commands = target.commands
+
+    out = tmp_path / "issue_1344.macho"
+    target.write(out)
+
+    fat = lief.MachO.parse(out)
+    assert fat is not None
+    new = fat.at(0)
+    assert new is not None
+    assert [c.command for c in new.commands] == [c.command for c in commands]
+
+    header_size = 28  # sizeof(Header)
+    off = header_size
+    for cmd in new.commands:
+        off += cmd.size
+    assert off == new.header.sizeof_cmds + header_size
+
+
+@pytest.mark.private
+def test_large_dyld_rebase_count():
+    target = parse_macho("private/MachO/issue_rebase_count.macho").at(0)
+    assert target is not None
+
+    dyld_info = target.dyld_info
+    assert dyld_info is not None
+
+    relocations = list(target.relocations)
+    assert len(relocations) < 0x1000
+
+    # The display walker must stay bounded as well (no multi-GB string).
+    opcodes_repr = dyld_info.show_rebases_opcodes
+    assert opcodes_repr.count("rebase(") < 0x1000

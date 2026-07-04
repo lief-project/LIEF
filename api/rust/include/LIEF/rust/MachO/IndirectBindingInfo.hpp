@@ -22,7 +22,7 @@ class MachO_IndirectBindingInfo : public MachO_BindingInfo {
   MachO_IndirectBindingInfo(const lief_t& base) :
     MachO_BindingInfo(base) {}
 
-  static bool classof(const MachO_BindingInfo& binding) {
+  static auto classof(const MachO_BindingInfo& binding) {
     return lief_t::classof(&binding.get());
   }
 

@@ -21,6 +21,7 @@
 #include <ostream>
 #include <memory>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Section.hpp"
@@ -166,9 +167,9 @@ class LIEF_API Section : public LIEF::Section {
     return std::unique_ptr<Section>(new Section(*this));
   }
 
-  span<const uint8_t> content() const override;
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND override;
 
-  span<uint8_t> content() {
+  span<uint8_t> content() LIEF_LIFETIMEBOUND {
     return as_writable(static_cast<const Section*>(this)->content());
   }
 

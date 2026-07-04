@@ -18,6 +18,7 @@
 #include <string>
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/Abstract/DebugInfo.hpp"
 
@@ -61,19 +62,20 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
 
   /// Iterator over the CompilationUnit from the PDB's DBI stream.
   /// CompilationUnit are also named "Module" in the PDB's official documentation
-  compilation_units_it compilation_units() const;
+  compilation_units_it compilation_units() const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the public symbol stream
-  public_symbols_it public_symbols() const;
+  public_symbols_it public_symbols() const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the different types registered in this PDB.
-  types_it types() const;
+  types_it types() const LIEF_LIFETIMEBOUND;
 
   /// Find the type with the given name
-  std::unique_ptr<Type> find_type(const std::string& name) const;
+  std::unique_ptr<Type>
+      find_type(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Find the type at the given index
-  std::unique_ptr<Type> find_type(uint32_t index) const;
+  std::unique_ptr<Type> find_type(uint32_t index) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the PublicSymbol from the given name (based on the public symbol
   /// stream)
@@ -86,7 +88,8 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   ///   // FOUND!
   /// }
   /// ```
-  std::unique_ptr<PublicSymbol> find_public_symbol(const std::string& name) const;
+  std::unique_ptr<PublicSymbol>
+      find_public_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Attempt to resolve the address of the function specified by `name`.
   optional<uint64_t> find_function_address(const std::string& name) const override;

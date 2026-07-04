@@ -26,7 +26,11 @@ namespace editor {
 /// This class represents a primitive type like `int, char`.
 class LIEF_API BaseType : public Type {
   public:
-  using Type::Type;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+  BaseType(Args&&... args) :
+    Type(std::forward<Args>(args)...) {}
 
   enum class ENCODING : uint32_t {
     NONE = 0,

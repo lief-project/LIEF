@@ -181,7 +181,7 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
   }
 
   auto seh_functions() const {
-    return get().seh_functions();
+    return make_unique_vector<uint32_t>(get().seh_functions());
   }
 
   uint64_t guard_cf_check_function_pointer(uint32_t& is_set) const {
@@ -353,207 +353,218 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
     return details::make_optional(get().uma_function_pointers(), is_set);
   }
 
-  void set_characteristics(uint32_t characteristics) {
+  auto set_characteristics(uint32_t characteristics) {
     get().characteristics(characteristics);
   }
 
-  void set_size(uint32_t value) {
+  auto set_size(uint32_t value) {
     get().size(value);
   }
 
-  void set_timedatestamp(uint32_t timedatestamp) {
+  auto set_timedatestamp(uint32_t timedatestamp) {
     get().timedatestamp(timedatestamp);
   }
 
-  void set_major_version(uint16_t major_version) {
+  auto set_major_version(uint16_t major_version) {
     get().major_version(major_version);
   }
 
-  void set_minor_version(uint16_t minor_version) {
+  auto set_minor_version(uint16_t minor_version) {
     get().minor_version(minor_version);
   }
 
-  void set_global_flags_clear(uint32_t global_flags_clear) {
+  auto set_global_flags_clear(uint32_t global_flags_clear) {
     get().global_flags_clear(global_flags_clear);
   }
 
-  void set_global_flags_set(uint32_t global_flags_set) {
+  auto set_global_flags_set(uint32_t global_flags_set) {
     get().global_flags_set(global_flags_set);
   }
 
-  void set_critical_section_default_timeout(uint32_t val) {
+  auto set_critical_section_default_timeout(uint32_t val) {
     get().critical_section_default_timeout(val);
   }
 
-  void set_decommit_free_block_threshold(uint64_t val) {
+  auto set_decommit_free_block_threshold(uint64_t val) {
     get().decommit_free_block_threshold(val);
   }
 
-  void set_decommit_total_free_threshold(uint64_t val) {
+  auto set_decommit_total_free_threshold(uint64_t val) {
     get().decommit_total_free_threshold(val);
   }
 
-  void set_lock_prefix_table(uint64_t val) {
+  auto set_lock_prefix_table(uint64_t val) {
     get().lock_prefix_table(val);
   }
 
-  void set_maximum_allocation_size(uint64_t val) {
+  auto set_maximum_allocation_size(uint64_t val) {
     get().maximum_allocation_size(val);
   }
 
-  void set_virtual_memory_threshold(uint64_t val) {
+  auto set_virtual_memory_threshold(uint64_t val) {
     get().virtual_memory_threshold(val);
   }
 
-  void set_process_affinity_mask(uint64_t val) {
+  auto set_process_affinity_mask(uint64_t val) {
     get().process_affinity_mask(val);
   }
 
-  void set_process_heap_flags(uint32_t val) {
+  auto set_process_heap_flags(uint32_t val) {
     get().process_heap_flags(val);
   }
 
-  void set_csd_version(uint16_t val) {
+  auto set_csd_version(uint16_t val) {
     get().csd_version(val);
   }
 
-  void set_reserved1(uint16_t val) {
+  auto set_reserved1(uint16_t val) {
     get().reserved1(val);
   }
 
-  void set_dependent_load_flags(uint16_t val) {
+  auto set_dependent_load_flags(uint16_t val) {
     get().dependent_load_flags(val);
   }
 
-  void set_editlist(uint32_t val) {
+  auto set_editlist(uint32_t val) {
     get().editlist(val);
   }
 
-  void set_security_cookie(uint64_t val) {
+  auto set_security_cookie(uint64_t val) {
     get().security_cookie(val);
   }
 
-  void set_se_handler_table(uint64_t val) {
+  auto set_se_handler_table(uint64_t val) {
     get().se_handler_table(val);
   }
 
-  void set_se_handler_count(uint64_t val) {
+  auto set_se_handler_count(uint64_t val) {
     get().se_handler_count(val);
   }
 
-  void set_guard_cf_check_function_pointer(uint64_t val) {
+  auto set_guard_cf_check_function_pointer(uint64_t val) {
     get().guard_cf_check_function_pointer(val);
   }
 
-  void set_guard_cf_dispatch_function_pointer(uint64_t val) {
+  auto set_guard_cf_dispatch_function_pointer(uint64_t val) {
     get().guard_cf_dispatch_function_pointer(val);
   }
 
-  void set_guard_cf_function_table(uint64_t val) {
+  auto set_guard_cf_function_table(uint64_t val) {
     get().guard_cf_function_table(val);
   }
 
-  void set_guard_cf_function_count(uint64_t val) {
+  auto set_guard_cf_function_count(uint64_t val) {
     get().guard_cf_function_count(val);
   }
 
-  void set_guard_flags(uint32_t flags) {
+  auto set_guard_flags(uint32_t flags) {
     get().guard_flags(flags);
   }
 
-  void set_guard_address_taken_iat_entry_table(uint64_t value) {
+  auto set_guard_address_taken_iat_entry_table(uint64_t value) {
     get().guard_address_taken_iat_entry_table(value);
   }
 
-  void set_guard_address_taken_iat_entry_count(uint64_t value) {
+  auto set_guard_address_taken_iat_entry_count(uint64_t value) {
     get().guard_address_taken_iat_entry_count(value);
   }
 
-  void set_guard_long_jump_target_table(uint64_t value) {
+  auto set_guard_long_jump_target_table(uint64_t value) {
     get().guard_long_jump_target_table(value);
   }
 
-  void set_guard_long_jump_target_count(uint64_t value) {
+  auto set_guard_long_jump_target_count(uint64_t value) {
     get().guard_long_jump_target_count(value);
   }
 
-  void set_dynamic_value_reloc_table(uint64_t value) {
+  auto set_dynamic_value_reloc_table(uint64_t value) {
     get().dynamic_value_reloc_table(value);
   }
 
-  void set_hybrid_metadata_pointer(uint64_t value) {
+  auto set_hybrid_metadata_pointer(uint64_t value) {
     get().hybrid_metadata_pointer(value);
   }
 
-  void set_guard_rf_failure_routine(uint64_t value) {
+  auto set_guard_rf_failure_routine(uint64_t value) {
     get().guard_rf_failure_routine(value);
   }
 
-  void set_guard_rf_failure_routine_function_pointer(uint64_t value) {
+  auto set_guard_rf_failure_routine_function_pointer(uint64_t value) {
     get().guard_rf_failure_routine_function_pointer(value);
   }
 
-  void set_dynamic_value_reloctable_offset(uint32_t value) {
+  auto set_dynamic_value_reloctable_offset(uint32_t value) {
     get().dynamic_value_reloctable_offset(value);
   }
 
-  void set_dynamic_value_reloctable_section(uint16_t value) {
+  auto set_dynamic_value_reloctable_section(uint16_t value) {
     get().dynamic_value_reloctable_section(value);
   }
 
-  void set_reserved2(uint16_t value) {
+  auto set_reserved2(uint16_t value) {
     get().reserved2(value);
   }
 
-  void set_guard_rf_verify_stackpointer_function_pointer(uint64_t value) {
+  auto set_guard_rf_verify_stackpointer_function_pointer(uint64_t value) {
     get().guard_rf_verify_stackpointer_function_pointer(value);
   }
 
-  void set_hotpatch_table_offset(uint32_t value) {
+  auto set_hotpatch_table_offset(uint32_t value) {
     get().hotpatch_table_offset(value);
   }
 
-  void set_reserved3(uint32_t value) {
+  auto set_reserved3(uint32_t value) {
     get().reserved3(value);
   }
 
-  void set_enclave_configuration_ptr(uint64_t value) {
+  auto set_enclave_configuration_ptr(uint64_t value) {
     get().enclave_configuration_ptr(value);
   }
 
-  void set_volatile_metadata_pointer(uint64_t value) {
+  auto set_volatile_metadata_pointer(uint64_t value) {
     get().volatile_metadata_pointer(value);
   }
 
-  void set_guard_eh_continuation_table(uint64_t value) {
+  auto set_guard_eh_continuation_table(uint64_t value) {
     get().guard_eh_continuation_table(value);
   }
 
-  void set_guard_eh_continuation_count(uint64_t value) {
+  auto set_guard_eh_continuation_count(uint64_t value) {
     get().guard_eh_continuation_count(value);
   }
 
-  void set_guard_xfg_check_function_pointer(uint64_t value) {
+  auto set_guard_xfg_check_function_pointer(uint64_t value) {
     get().guard_xfg_check_function_pointer(value);
   }
 
-  void set_guard_xfg_dispatch_function_pointer(uint64_t value) {
+  auto set_guard_xfg_dispatch_function_pointer(uint64_t value) {
     get().guard_xfg_dispatch_function_pointer(value);
   }
 
-  void set_guard_xfg_table_dispatch_function_pointer(uint64_t value) {
+  auto set_guard_xfg_table_dispatch_function_pointer(uint64_t value) {
     get().guard_xfg_table_dispatch_function_pointer(value);
   }
 
-  void set_cast_guard_os_determined_failure_mode(uint64_t value) {
+  auto set_cast_guard_os_determined_failure_mode(uint64_t value) {
     get().cast_guard_os_determined_failure_mode(value);
   }
 
-  void set_guard_memcpy_function_pointer(uint64_t value) {
+  auto set_guard_memcpy_function_pointer(uint64_t value) {
     get().guard_memcpy_function_pointer(value);
   }
 
-  void set_uma_function_pointers(uint64_t value) {
+  auto set_uma_function_pointers(uint64_t value) {
     get().uma_function_pointers(value);
   }
 };
+
+using PE_LoadConfiguration_it_guard_cf_functions =
+    PE_LoadConfiguration::it_guard_cf_functions;
+using PE_LoadConfiguration_it_guard_address_taken_iat_entries =
+    PE_LoadConfiguration::it_guard_address_taken_iat_entries;
+using PE_LoadConfiguration_it_guard_long_jump_targets =
+    PE_LoadConfiguration::it_guard_long_jump_targets;
+using PE_LoadConfiguration_it_guard_eh_continuation =
+    PE_LoadConfiguration::it_guard_eh_continuation;
+using PE_LoadConfiguration_it_dynamic_relocations =
+    PE_LoadConfiguration::it_dynamic_relocations;

@@ -16,17 +16,18 @@
 #include "LIEF/DyldSharedCache/Dylib.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/MachO/Binary.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class dsc_Dylib_extract_opt {
   public:
-  bool pack;
-  bool fix_branches;
-  bool fix_memory;
-  bool fix_relocations;
-  bool fix_objc;
+  bool pack = true;
+  bool fix_branches = false;
+  bool fix_memory = false;
+  bool fix_relocations = false;
+  bool fix_objc = false;
 
-  bool create_dyld_chained_fixup_cmd;
-  bool create_dyld_chained_fixup_cmd_set;
+  bool create_dyld_chained_fixup_cmd = false;
+  bool create_dyld_chained_fixup_cmd_set = false;
 };
 
 inline LIEF::dsc::Dylib::extract_opt_t
@@ -50,7 +51,7 @@ class dsc_Dylib : private Mirror<LIEF::dsc::Dylib> {
   using Mirror::Mirror;
 
   auto path() const {
-    return get().path();
+    return to_unique_string(get().path());
   }
   auto address() const {
     return get().address();
@@ -65,7 +66,7 @@ class dsc_Dylib : private Mirror<LIEF::dsc::Dylib> {
     return get().padding();
   }
 
-  auto get_macho(dsc_Dylib_extract_opt opt) const {
+  auto get_macho(const dsc_Dylib_extract_opt& opt) const {
     return details::try_unique<MachO_Binary>(get().get(from_rust(opt)));
   }
 };

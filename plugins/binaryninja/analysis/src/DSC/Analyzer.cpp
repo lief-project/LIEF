@@ -21,7 +21,7 @@
 using namespace LIEF;
 
 namespace analysis_plugin::dsc {
-std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& bv) {
+std::unique_ptr<Analyzer> Analyzer::from_bv(BinaryNinja::BinaryView& /*bv*/) {
   return nullptr;
 }
 

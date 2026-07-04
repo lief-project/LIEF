@@ -28,14 +28,14 @@ class MachO_Relocation : public AbstractRelocation {
   MachO_Relocation(const lief_t& reloc) :
     AbstractRelocation(reloc) {}
 
-  bool is_pc_relative() const {
+  auto is_pc_relative() const {
     return impl().is_pc_relative();
   }
   auto architecture() const {
-    return to_int(impl().architecture());
+    return as_u32(impl().architecture());
   }
   auto origin() const {
-    return to_int(impl().origin());
+    return as_u32(impl().origin());
   }
 
   auto symbol() const {

@@ -16,6 +16,7 @@
 #ifndef LIEF_PE_GENERIC_CONTENT_H
 #define LIEF_PE_GENERIC_CONTENT_H
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
 
@@ -40,11 +41,11 @@ class LIEF_API GenericContent : public ContentInfo::Content {
     return oid_;
   }
 
-  span<const uint8_t> raw() const {
+  span<const uint8_t> raw() const LIEF_LIFETIMEBOUND {
     return raw_;
   }
 
-  span<uint8_t> raw() {
+  span<uint8_t> raw() LIEF_LIFETIMEBOUND {
     return raw_;
   }
 

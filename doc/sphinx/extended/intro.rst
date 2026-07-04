@@ -64,6 +64,13 @@ To access the extended version, you must **oauth-login** with **GitHub** here: |
 Once logged in, you can download the package of your choice
 (e.g., LIEF Extended - Python 3.10 for macOS arm64).
 
+
+.. admonition:: Email
+  :class: warning
+
+  If you don't receive the download email, you can download the package directly
+  from your **History** section.
+
 Versioning
 **********
 
@@ -153,8 +160,6 @@ environment variable to the extracted path:
 .. code-block:: console
 
   $ tar xzvf LIEF-extended-rust-0.16.0.2378-Linux-x86_64.tar.gz
-    LIEF-extended-rust-0.16.0.2378-Linux-x86_64/rs/
-    LIEF-extended-rust-0.16.0.2378-Linux-x86_64/rs/autocxx-autocxx_ffi-gen.rs
     LIEF-extended-rust-0.16.0.2378-Linux-x86_64/lib/
     LIEF-extended-rust-0.16.0.2378-Linux-x86_64/lib/libLIEF.so
     LIEF-extended-rust-0.16.0.2378-Linux-x86_64/lib/liblief-sys.a

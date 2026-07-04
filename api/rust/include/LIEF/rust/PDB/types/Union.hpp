@@ -20,7 +20,7 @@ class PDB_types_Union : public PDB_types_ClassLike {
   public:
   using lief_t = LIEF::pdb::types::Union;
 
-  static bool classof(const PDB_Type& type) {
+  static auto classof(const PDB_Type& type) {
     return lief_t::classof(&type.get());
   }
 

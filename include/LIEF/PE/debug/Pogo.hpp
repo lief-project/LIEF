@@ -15,7 +15,6 @@
  */
 #ifndef LIEF_PE_POGO_H
 #define LIEF_PE_POGO_H
-#include <ostream>
 
 #include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
@@ -45,6 +44,9 @@ class LIEF_API Pogo : public Debug {
     ZERO = 0x00000000,
     LCTG = 0x4C544347, // LCTG
     PGI = 0x50474900,  // PGI\0
+    PGO = 0x50474F00,  // PGI\0
+    PGU = 0x50475500,  // PGU\0
+    SPGO = 0x5350474f, // SPGO
   };
 
   Pogo() {

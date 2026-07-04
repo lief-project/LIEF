@@ -52,11 +52,11 @@ class ELF_Symbol : public AbstractSymbol {
   }
 
   auto demangled_name() const {
-    return impl().demangled_name();
+    return to_unique_string(impl().demangled_name());
   }
 
-  std::string to_string() const {
-    return details::to_string(impl());
+  auto to_string() const {
+    return to_unique_string(details::to_string(impl()));
   }
 
   private:

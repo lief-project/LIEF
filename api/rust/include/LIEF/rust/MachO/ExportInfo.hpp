@@ -39,7 +39,7 @@ class MachO_ExportInfo : private Mirror<LIEF::MachO::ExportInfo> {
     return get().other();
   }
   auto kind() const {
-    return to_int(get().kind());
+    return as_u64(get().kind());
   }
 
   auto symbol() const {

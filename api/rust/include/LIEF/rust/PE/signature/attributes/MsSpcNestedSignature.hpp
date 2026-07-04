@@ -13,7 +13,7 @@ class PE_MsSpcNestedSignature : public PE_Attribute {
     return std::make_unique<PE_Signature>(impl().sig());
   }
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 

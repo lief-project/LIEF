@@ -81,14 +81,11 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
     dw::Type& type = types_.add_type(api_compat::get_type(p.type));
     std::unique_ptr<dw::Function::Parameter> P =
         dw_func->add_parameter(name, type);
-    if (!p.defaultLocation) {
-      if (p.location.type == BNVariableSourceType::RegisterVariableSourceType) {
-        int64_t reg = p.location.storage;
-        if (bn::Ref<bn::Platform> platform = func.GetPlatform()) {
-          std::string reg_name = platform->GetArchitecture()->GetRegisterName(reg);
-          if (!reg_name.empty()) {
-            P->assign_register(reg_name);
-          }
+    if (std::optional<int64_t> reg = api_compat::get_parameter_register(p, i)) {
+      if (bn::Ref<bn::Platform> platform = func.GetPlatform()) {
+        std::string reg_name = platform->GetArchitecture()->GetRegisterName(*reg);
+        if (!reg_name.empty()) {
+          P->assign_register(reg_name);
         }
       }
     }
@@ -115,7 +112,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
   std::vector<bn::Ref<bn::BasicBlock>> blocks = func.GetBasicBlocks();
 
   if (blocks.size() > 1) {
-    for (bn::Ref<bn::BasicBlock> BB : blocks) {
+    for (const bn::Ref<bn::BasicBlock>& BB : blocks) {
       std::unique_ptr<dw::Function::LexicalBlock> LB =
           dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
       if (LB == nullptr) {
@@ -154,7 +151,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
       }
     }
   } else if (blocks.size() == 1) {
-    bn::Ref<bn::BasicBlock> main_block = blocks[0];
+    const bn::Ref<bn::BasicBlock>& main_block = blocks[0];
     std::string comment = func.GetCommentForAddress(main_block->GetStart());
     if (!comment.empty()) {
       dw_func->add_description(comment);

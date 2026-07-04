@@ -16,6 +16,7 @@
 #include <cstdint>
 
 #include "LIEF/rust/Abstract/Symbol.hpp"
+#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 
 class PE_ExportEntry : public AbstractSymbol {
@@ -30,10 +31,8 @@ class PE_ExportEntry : public AbstractSymbol {
     return std::make_unique<PE_ExportEntry>(std::make_unique<lief_t>());
   }
 
-  static auto create_with_name(std::string name, uint32_t addr) {
-    return std::make_unique<PE_ExportEntry>(
-        std::make_unique<lief_t>(std::move(name), addr)
-    );
+  static auto create_with_name(const std::string& name, uint32_t addr) {
+    return std::make_unique<PE_ExportEntry>(std::make_unique<lief_t>(name, addr));
   }
 
   auto ordinal() const {
@@ -53,21 +52,21 @@ class PE_ExportEntry : public AbstractSymbol {
   }
 
   auto fwd_library() const {
-    return impl().forward_information().library;
+    return to_unique_string(impl().forward_information().library);
   }
   auto fwd_function() const {
-    return impl().forward_information().function;
+    return to_unique_string(impl().forward_information().function);
   }
 
-  void set_ordinal(uint16_t ordinal) {
+  auto set_ordinal(uint16_t ordinal) {
     impl().ordinal(ordinal);
   }
-  void set_address(uint32_t addr) {
+  auto set_address(uint32_t addr) {
     impl().address(addr);
   }
 
   auto demangled_name() const {
-    return impl().demangled_name();
+    return to_unique_string(impl().demangled_name());
   }
 
   private:

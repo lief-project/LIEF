@@ -22,15 +22,15 @@ class ELF_DynamicEntryLibrary : public ELF_DynamicEntry {
   ELF_DynamicEntryLibrary(const lief_t& impl) :
     ELF_DynamicEntry(static_cast<const LIEF::ELF::DynamicEntry&>(impl)) {}
 
-  std::string name() const {
-    return impl().name();
+  auto name() const {
+    return to_unique_string(impl().name());
   }
 
-  void set_name(std::string name) {
-    impl().name(std::move(name));
+  auto set_name(const std::string& name) {
+    impl().name(name);
   }
 
-  static bool classof(const ELF_DynamicEntry& entry) {
+  static auto classof(const ELF_DynamicEntry& entry) {
     return lief_t::classof(&entry.get());
   }
 

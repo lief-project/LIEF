@@ -1,6 +1,6 @@
 use lief::assembly::Instruction;
 /// This example shows how to disassemble an ELF/PE/Mach-O binary using LIEF's extended API
-use std::process::{self, ExitCode};
+use std::process::ExitCode;
 
 fn disassemble(target: &dyn lief::generic::Binary, address: u64) -> ExitCode {
     for inst in target.disassemble_address(address) {
@@ -23,7 +23,7 @@ fn main() -> ExitCode {
     let path = &args[1];
     let addr_str = &args[2];
 
-    let mut addr: u64 = 0;
+    let addr;
     if addr_str.starts_with("0x") {
         addr = u64::from_str_radix(addr_str.trim_start_matches("0x"), 16).unwrap();
     } else {

@@ -25,11 +25,11 @@ class ELF_Note : public Mirror<LIEF::ELF::Note> {
 
   friend class ELF_Binary;
 
-  std::string name() const {
-    return get().name();
+  auto name() const {
+    return to_unique_string(get().name());
   }
-  uint32_t get_type() const {
-    return to_int(get().type());
+  auto get_type() const {
+    return as_u32(get().type());
   }
   uint32_t original_type() const {
     return get().original_type();

@@ -57,3 +57,6 @@ class ELF_SymbolVersionDefinition
     return std::make_unique<it_auxiliary_symbols>(get());
   }
 };
+
+using ELF_SymbolVersionDefinition_it_auxiliary_symbols =
+    ELF_SymbolVersionDefinition::it_auxiliary_symbols;

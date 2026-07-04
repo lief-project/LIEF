@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/ObjC/Property.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class ObjC_Property : private Mirror<LIEF::objc::Property> {
   public:
@@ -22,9 +23,9 @@ class ObjC_Property : private Mirror<LIEF::objc::Property> {
   using Mirror::Mirror;
 
   auto name() const {
-    return get().name();
+    return to_unique_string(get().name());
   }
   auto attribute() const {
-    return get().attribute();
+    return to_unique_string(get().attribute());
   }
 };

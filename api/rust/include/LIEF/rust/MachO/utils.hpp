@@ -21,25 +21,25 @@
 
 class MachO_Utils {
   public:
-  static bool is_macho(std::string file) {
+  static auto is_macho(const std::string& file) {
     return LIEF::MachO::is_macho(file);
   }
 
-  static bool is_fat(std::string file) {
+  static auto is_fat(const std::string& file) {
     return LIEF::MachO::is_fat(file);
   }
 
-  static bool is_64(std::string file) {
+  static auto is_64(const std::string& file) {
     return LIEF::MachO::is_64(file);
   }
 
-  static bool check_layout(const MachO_Binary& bin, std::string* error) {
+  static auto check_layout(const MachO_Binary& bin, std::string* error) {
     return LIEF::MachO::check_layout(
         static_cast<const LIEF::MachO::Binary&>(bin.get()), error
     );
   }
 
-  static bool check_layout_fat(const MachO_FatBinary& bin, std::string* error) {
+  static auto check_layout_fat(const MachO_FatBinary& bin, std::string* error) {
     return LIEF::MachO::check_layout(
         static_cast<const LIEF::MachO::FatBinary&>(bin.get()), error
     );

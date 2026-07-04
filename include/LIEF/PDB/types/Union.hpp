@@ -25,7 +25,11 @@ namespace types {
 /// This class represents a `LF_UNION` PDB type
 class LIEF_API Union : public ClassLike {
   public:
-  using ClassLike::ClassLike;
+  template<typename... Args,
+           typename = typename std::
+               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+  Union(Args&&... args) :
+    ClassLike(std::forward<Args>(args)...) {}
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::UNION;

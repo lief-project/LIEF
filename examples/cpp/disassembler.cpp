@@ -29,10 +29,8 @@ int main(int argc, const char** argv) {
     addr = std::strtoull(add_str.c_str(), /*__endptr=*/nullptr, 10);
   }
 
-  for (std::unique_ptr<LIEF::assembly::Instruction> inst :
-       target->disassemble(addr))
-  {
-    info("{}", inst->to_string());
+  for (const LIEF::assembly::Instruction& inst : target->disassemble(addr)) {
+    info("{}", inst.to_string());
   }
 
   return EXIT_SUCCESS;

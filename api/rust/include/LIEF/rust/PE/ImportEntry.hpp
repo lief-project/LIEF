@@ -16,6 +16,7 @@
 
 #include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/rust/Abstract/Symbol.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_ImportEntry : public AbstractSymbol {
   public:
@@ -23,7 +24,7 @@ class PE_ImportEntry : public AbstractSymbol {
   PE_ImportEntry(const lief_t& info) :
     AbstractSymbol(info) {}
 
-  bool is_ordinal() const {
+  auto is_ordinal() const {
     return impl().is_ordinal();
   }
   uint16_t ordinal() const {
@@ -49,13 +50,13 @@ class PE_ImportEntry : public AbstractSymbol {
   }
 
   auto demangled_name() const {
-    return impl().demangled_name();
+    return to_unique_string(impl().demangled_name());
   }
 
-  void set_iat_value(uint64_t value) {
+  auto set_iat_value(uint64_t value) {
     impl().iat_value(value);
   }
-  void set_ilt_value(uint64_t value) {
+  auto set_ilt_value(uint64_t value) {
     impl().ilt_value(value);
   }
 

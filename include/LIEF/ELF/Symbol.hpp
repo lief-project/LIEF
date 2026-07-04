@@ -39,8 +39,8 @@ class LIEF_API Symbol : public LIEF::Symbol {
   public:
   enum class BINDING {
     LOCAL = 0,       ///< Local symbol
-    GLOBAL = 1,      ///< Global symbol
-    WEAK = 2,        ///< Weak symbol
+    GLOBAL,          ///< Global symbol
+    WEAK,            ///< Weak symbol
     GNU_UNIQUE = 10, ///< Unique symbol
   };
 
@@ -48,22 +48,22 @@ class LIEF_API Symbol : public LIEF::Symbol {
   /// specs
   enum class TYPE {
     NOTYPE = 0,     ///< Symbol's type is not specified
-    OBJECT = 1,     ///< Symbol is a data object (variable, array, etc.)
-    FUNC = 2,       ///< Symbol is executable code (function, etc.)
-    SECTION = 3,    ///< Symbol refers to a section
-    FILE = 4,       ///< Local, absolute symbol that refers to a file
-    COMMON = 5,     ///< An uninitialized common block
-    TLS = 6,        ///< Thread local data object
+    OBJECT,         ///< Symbol is a data object (variable, array, etc.)
+    FUNC,           ///< Symbol is executable code (function, etc.)
+    SECTION,        ///< Symbol refers to a section
+    FILE,           ///< Local, absolute symbol that refers to a file
+    COMMON,         ///< An uninitialized common block
+    TLS,            ///< Thread local data object
     GNU_IFUNC = 10, ///< GNU indirect function
   };
 
   /// Visibility of the symbol. This enum matches the `STV_xxx` values of the
   /// official ELF specs
   enum class VISIBILITY {
-    DEFAULT = 0,   ///< Visibility is specified by binding type
-    INTERNAL = 1,  ///< Defined by processor supplements
-    HIDDEN = 2,    ///< Not visible to other components
-    PROTECTED = 3, ///< Visible in other components but not preemptable
+    DEFAULT = 0, ///< Visibility is specified by binding type
+    INTERNAL,    ///< Defined by processor supplements
+    HIDDEN,      ///< Not visible to other components
+    PROTECTED,   ///< Visible in other components but not preemptable
   };
 
   /// Special section indices

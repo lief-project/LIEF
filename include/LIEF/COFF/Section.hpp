@@ -19,6 +19,7 @@
 #include <memory>
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/PE/Section.hpp"
@@ -87,7 +88,7 @@ class LIEF_API Section : public LIEF::Section {
   }
 
   /// Content wrapped by this section
-  span<const uint8_t> content() const override {
+  span<const uint8_t> content() const LIEF_LIFETIMEBOUND override {
     return content_;
   }
 

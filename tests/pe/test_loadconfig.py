@@ -546,6 +546,33 @@ def test_enclave_config():
     """)
 
 
+@pytest.mark.private
+def test_enclave_malformed_imports_1():
+    pe = parse_pe("private/PE/pe_import_enclave_1.dll")
+
+    lc = pe.load_configuration
+    assert lc is not None
+
+    config = lc.enclave_config
+    assert config is not None
+
+    assert len(config.imports) == 0
+
+
+@pytest.mark.private
+def test_enclave_malformed_imports_2():
+    pe = parse_pe("private/PE/pe_import_enclave_2.dll")
+
+    lc = pe.load_configuration
+    assert lc is not None
+
+    config = lc.enclave_config
+    assert config is not None
+
+    assert len(config.imports) == 234
+    assert 0 < len(config.imports) < 0xFFFFFFFF
+
+
 def test_volatile_metadata():
     input_path = Path(get_sample("PE/LIEF-win64.dll"))
     pe = lief.PE.parse(input_path)

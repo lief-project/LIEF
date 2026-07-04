@@ -2,6 +2,7 @@
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
 #include "Attribute.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_GenericType : public PE_Attribute {
   public:
@@ -10,13 +11,13 @@ class PE_GenericType : public PE_Attribute {
     PE_Attribute(base) {}
 
   auto oid() const {
-    return impl().oid();
+    return to_unique_string(impl().oid());
   }
   auto raw_content() const {
     return make_span(impl().raw_content());
   }
 
-  static bool classof(const PE_Attribute& attr) {
+  static auto classof(const PE_Attribute& attr) {
     return lief_t::classof(&attr.get());
   }
 
