@@ -20,10 +20,8 @@ classifiers = [
 ]
 dynamic = ["version", "readme"]
 
-[tool.scikit-build]
-experimental = true
-metadata.version.provider = "dynamic_provider"
-metadata.readme.provider = "dynamic_provider"
+[[tool.dynamic-metadata]]
+provider = {path = "backend", module = "dynamic_provider"}
 
 [project.urls]
 homepage = "https://lief-project.github.io/"
