@@ -14,20 +14,23 @@ const GIT_VERSION: &str = git_version!(
 const GH_URL: &str = "https://github.com/lief-project/LIEF/releases/download";
 const DEFAULT_S3_URL: &str = "https://lief-rs.s3.fr-par.scw.cloud";
 
-const SUPPORTED_TARGETS: &[&str; 13] = &[
+const SUPPORTED_TARGETS: &[&str; 16] = &[
     "aarch64-apple-darwin",
     "aarch64-apple-ios",
+    "aarch64-linux-android",
     "aarch64-pc-windows-msvc",
     "aarch64-unknown-linux-gnu",
     "aarch64-unknown-linux-musl",
+    "armv7-linux-androideabi",
+    "i686-unknown-linux-gnu",
     "i686-unknown-linux-musl",
+    "riscv64a23-unknown-linux-gnu",
+    "riscv64gc-unknown-linux-musl",
     "x86_64-apple-darwin",
+    "x86_64-linux-android",
     "x86_64-pc-windows-msvc",
     "x86_64-unknown-linux-gnu",
-    "i686-unknown-linux-gnu",
     "x86_64-unknown-linux-musl",
-    "aarch64-linux-android",
-    "x86_64-linux-android",
 ];
 
 fn get_s3_url() -> String {
