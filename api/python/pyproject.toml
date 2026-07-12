@@ -20,6 +20,9 @@ classifiers = [
 ]
 dynamic = ["version", "readme"]
 
+[tool.scikit-build]
+cmake.version = ">=3.24"
+
 [[tool.dynamic-metadata]]
 provider = {path = "backend", module = "dynamic_provider"}
 
