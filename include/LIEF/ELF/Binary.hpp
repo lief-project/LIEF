@@ -1295,6 +1295,7 @@ class LIEF_API Binary : public LIEF::Binary {
   LIEF_LOCAL std::string shstrtab_name() const;
   LIEF_LOCAL Section* add_frame_section(const Section& sec) LIEF_LIFETIMEBOUND;
   LIEF_LOCAL Section* add_section(std::unique_ptr<Section> sec) LIEF_LIFETIMEBOUND;
+  LIEF_LOCAL Section* append_section(std::unique_ptr<Section> sec) LIEF_LIFETIMEBOUND;
 
   LIEF_LOCAL LIEF::Binary::functions_t tor_functions(DynamicEntry::TAG tag) const;
 

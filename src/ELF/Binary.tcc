@@ -809,6 +809,14 @@ Section* Binary::add_section</*loaded=*/true>(const Section& section,
   segment_added->sections_.push_back(new_section.get());
 
   header().numberof_sections(header().numberof_sections() + 1);
+
+  // A loaded ET_EXEC section inherits the offset of a segment appended at the
+  // current file end. The generic add_section() search would therefore return
+  // sections_.end(), so append directly.
+  if (header().file_type() == Header::FILE_TYPE::EXEC) {
+    return append_section(std::move(new_section));
+  }
+
   return add_section(std::move(new_section));
 }
 

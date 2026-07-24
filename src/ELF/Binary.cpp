@@ -3598,6 +3598,14 @@ bool Binary::is_targeting_android() const {
   return false;
 }
 
+Section* Binary::append_section(std::unique_ptr<Section> sec) {
+  Section* sec_ptr = sec.get();
+
+  sections_.emplace_back(std::move(sec));
+
+  publish_layout(*sec_ptr);
+  return sec_ptr;
+}
 
 Section* Binary::add_section(std::unique_ptr<Section> sec) {
   Section* sec_ptr = sec.get();
