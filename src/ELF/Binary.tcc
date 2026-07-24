@@ -522,11 +522,11 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
 
   init_alignment(*this, *new_segment, this->ptr_size());
 
-  if (base == 0) {
-    base = align(next_virtual_address(), new_segment->alignment());
-  }
-
   if (segment.virtual_address() == 0) {
+    if (base == 0) {
+      base = align(next_virtual_address(), new_segment->alignment());
+    }
+
     new_segment->virtual_address(base + last_offset_aligned);
   }
 
