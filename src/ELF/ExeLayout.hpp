@@ -967,14 +967,14 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
       // Remove the current .shstrtab section
       Header& hdr = binary_->header();
-      if (hdr.section_name_table_idx() >= binary_->sections_.size()) {
+      const size_t shstr_idx = hdr.section_name_table_idx();
+      if (shstr_idx >= binary_->sections_.size()) {
         LIEF_ERR("Section names table index out of range");
         return make_error_code(lief_errors::file_format_error);
       }
-      std::unique_ptr<Section>& string_names_section =
-          binary_->sections_[hdr.section_name_table_idx()];
+
       std::string sec_name = binary_->shstrtab_name();
-      binary_->remove(*string_names_section, /* clear */ true);
+      binary_->remove_section_at(shstr_idx, /*clear=*/true);
       Section sec_str_section(sec_name, Section::TYPE::STRTAB);
       sec_str_section.content(std::vector<uint8_t>(raw_shstrtab_.size()));
       Section* sec = binary_->add(sec_str_section, /*loaded=*/false,
@@ -1624,7 +1624,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         LIEF_DEBUG("Removing the old section: {} {:#x} (size: {:#x})",
                    strtab_section_->name(), strtab_section_->file_offset(),
                    strtab_section_->size());
-        binary_->remove(*strtab_section_, /* clear */ true);
+        binary_->remove_section_by_ptr(strtab_section_, /*clear=*/true);
       }
       Section strtab{".strtab", Section::TYPE::STRTAB};
       strtab.content(raw_strtab_);
@@ -1678,7 +1678,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
         LIEF_DEBUG("Removing the old section: {} {:#x} (size: {:#x})",
                    it_sec_symtab->name(), it_sec_symtab->file_offset(),
                    it_sec_symtab->size());
-        binary_->remove(*it_sec_symtab, /* clear */ true);
+        Section* old_symtab = &*it_sec_symtab;
+        binary_->remove_section_by_ptr(old_symtab, /*clear=*/true);
         if (pos < strtab_idx) {
           --strtab_idx;
         }

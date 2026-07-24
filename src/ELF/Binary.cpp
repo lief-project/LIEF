@@ -180,15 +180,24 @@ void Binary::remove(const Section& section, bool clear) {
     return;
   }
 
-  size_t idx = std::distance(sections_.begin(), it_section);
+  remove_section_at(
+    static_cast<size_t>(std::distance(sections_.begin(), it_section)),
+    clear);
+}
 
-  Section* s = it_section->get();
+void Binary::remove_section_at(size_t idx, bool clear) {
+  if (idx >= sections_.size()) {
+    LIEF_WARN("Section index {} is out of range", idx);
+    return;
+  }
+
+  Section* s = sections_[idx].get();
 
   // Remove from segments:
   for (std::unique_ptr<Segment>& segment : segments_) {
     auto& sections = segment->sections_;
-    sections.erase(std::remove_if(sections.begin(), sections.end(),
-                                  [&s](const Section* sec) { return *sec == *s; }),
+
+    sections.erase(std::remove(sections.begin(), sections.end(), s),
                    sections.end());
   }
 
@@ -219,7 +228,28 @@ void Binary::remove(const Section& section, bool clear) {
     header().section_name_table_idx(header().section_name_table_idx() - 1);
   }
 
-  sections_.erase(it_section);
+  sections_.erase(sections_.begin() + static_cast<std::ptrdiff_t>(idx));
+}
+
+void Binary::remove_section_by_ptr(Section* section, bool clear) {
+  if (section == nullptr) {
+    return;
+  }
+
+  const auto it = std::find_if(
+    sections_.begin(), sections_.end(),
+    [section](const std::unique_ptr<Section>& candidate) {
+      return candidate.get() == section;
+    }
+  );
+
+  if (it == sections_.end()) {
+    LIEF_WARN("Section pointer is not owned by this binary");
+    return;
+  }
+
+  remove_section_at(static_cast<size_t>(std::distance(sections_.begin(), it)),
+                    clear);
 }
 
 void Binary::remove(const Note& note) {

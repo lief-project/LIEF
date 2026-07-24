@@ -211,6 +211,10 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Iterator which outputs const Section& object
   using it_const_sections = const_ref_iterator<const sections_t&, const Section*>;
 
+  private:
+  void remove_section_by_ptr(Section* section, bool clear);
+  void remove_section_at(size_t index, bool clear);
+
   public:
   /**
    * This enum describes the different ways to relocate the segments table.
