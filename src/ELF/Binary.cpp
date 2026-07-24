@@ -3606,6 +3606,7 @@ Section* Binary::add_section(std::unique_ptr<Section> sec) {
       std::find_if(sections_.begin(), sections_.end(),
                    [sec_ptr](const std::unique_ptr<Section>& S) {
                      return S->type() != Section::TYPE::NOBITS &&
+                            !S->is_frame() &&
                             S->file_offset() > sec_ptr->file_offset();
                    });
 
