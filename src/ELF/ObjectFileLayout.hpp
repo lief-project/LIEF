@@ -93,8 +93,13 @@ class LIEF_LOCAL ObjectFileLayout : public Layout {
 
       DataHandler::Node new_node{last_offset_sections, needed_size,
                                  DataHandler::Node::SECTION};
-      binary_->datahandler_->add(new_node);
       binary_->datahandler_->make_hole(last_offset_sections, needed_size);
+
+      sec.release_node();
+      sec.bind_node(
+        *binary_->datahandler_,
+        binary_->datahandler_->add(new_node)
+      );
 
       sec.offset(last_offset_sections);
       sec.size(needed_size);

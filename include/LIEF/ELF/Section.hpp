@@ -35,6 +35,7 @@ namespace ELF {
 
 namespace DataHandler {
 class Handler;
+class Node;
 }
 
 class Segment;
@@ -225,7 +226,7 @@ class LIEF_API Section : public LIEF::Section {
     type_{type} {}
 
   Section() = default;
-  ~Section() override = default;
+  ~Section() override;
 
   Section& operator=(Section other) {
     swap(other);
@@ -392,6 +393,16 @@ class LIEF_API Section : public LIEF::Section {
   LIEF_LOCAL Section(const T& header, ARCH arch);
 
   LIEF_LOCAL span<uint8_t> writable_content() LIEF_LIFETIMEBOUND;
+
+  LIEF_LOCAL void bind_node(DataHandler::Handler& handler,
+                            DataHandler::Node& node);
+
+  LIEF_LOCAL void release_node() noexcept;
+  LIEF_LOCAL void rebind_node_owner() noexcept;
+
+  static void invalidate_node_owner(void* owner,
+                                    DataHandler::Node& node) noexcept;
+
   ARCH arch_ = ARCH::NONE;
   TYPE type_ = TYPE::SHT_NULL_;
   uint64_t flags_ = 0;
@@ -402,7 +413,15 @@ class LIEF_API Section : public LIEF::Section {
   uint64_t entry_size_ = 0;
   segments_t segments_;
   bool is_frame_ = false;
+
+  /**
+   * Handler exclusively owns node_. The node stores a non-owning pointer to
+   * this section and clears both backreferences before it is destroyed.
+   * Copies are detached.
+   */
   DataHandler::Handler* datahandler_ = nullptr;
+  DataHandler::Node* node_ = nullptr;
+
   std::vector<uint8_t> content_c_;
 };
 

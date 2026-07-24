@@ -104,7 +104,15 @@ Segment::Segment(const T& header, ARCH arch, Header::OS_ABI os) :
 template Segment::Segment(const details::Elf32_Phdr& header, ARCH, Header::OS_ABI);
 template Segment::Segment(const details::Elf64_Phdr& header, ARCH, Header::OS_ABI);
 
-void Segment::swap(Segment& other) {
+Segment::~Segment() {
+  release_node();
+}
+
+Segment::Segment(Segment&& other) noexcept {
+  swap(other);
+}
+
+void Segment::swap(Segment& other) noexcept {
   std::swap(type_, other.type_);
   std::swap(arch_, other.arch_);
   std::swap(flags_, other.flags_);
@@ -117,7 +125,67 @@ void Segment::swap(Segment& other) {
   std::swap(handler_size_, other.handler_size_);
   std::swap(sections_, other.sections_);
   std::swap(datahandler_, other.datahandler_);
+  std::swap(node_, other.node_);
   std::swap(content_c_, other.content_c_);
+
+  rebind_node_owner();
+  other.rebind_node_owner();
+}
+
+void Segment::invalidate_node_owner(void* owner,
+                                    DataHandler::Node& node) noexcept {
+  assert(owner != nullptr);
+
+  Segment& segment = *static_cast<Segment*>(owner);
+
+  assert(segment.node_ == &node);
+  (void)node;
+
+  segment.node_ = nullptr;
+  segment.datahandler_ = nullptr;
+}
+
+void Segment::bind_node(DataHandler::Handler& handler,
+                        DataHandler::Node& node) {
+  assert(node.type() == DataHandler::Node::SEGMENT);
+  assert(node_ == nullptr);
+  assert(datahandler_ == nullptr || datahandler_ == &handler);
+  assert(!node.has_owner());
+
+  datahandler_ = &handler;
+  node_ = &node;
+
+  node.bind_owner(this, &Segment::invalidate_node_owner);
+
+  assert(handler.owns(node));
+}
+
+void Segment::release_node() noexcept {
+  if (node_ == nullptr) {
+    return;
+  }
+
+  assert(datahandler_ != nullptr);
+
+  DataHandler::Handler* handler = datahandler_;
+  DataHandler::Node* node = node_;
+
+  assert(handler->owns(*node));
+
+  const bool removed = handler->remove(*node);
+  assert(removed);
+  if (!removed) {
+    std::abort();
+  }
+
+  assert(node_ == nullptr);
+  assert(datahandler_ == nullptr);
+}
+
+void Segment::rebind_node_owner() noexcept {
+  if (node_ != nullptr) {
+    node_->rebind_owner(this);
+  }
 }
 
 Segment& Segment::operator=(Segment other) {
@@ -150,13 +218,11 @@ span<const uint8_t> Segment::content() const {
     return content_c_;
   }
 
-  auto res =
-      datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
-  if (!res) {
+  if (node_ == nullptr) {
     LIEF_ERR("Node not found, segment content inaccessible");
     return {};
   }
-  DataHandler::Node& node = res.value();
+  const DataHandler::Node& node = *node_;
 
   // Create a span based on our values
   const std::vector<uint8_t>& binary_content = datahandler_->content();
@@ -178,6 +244,7 @@ span<const uint8_t> Segment::content() const {
     if ((node.offset() + handler_size()) <= size) {
       return {ptr, static_cast<size_t>(handler_size())};
     }
+
     LIEF_ERR("Failed to access segment content {}:{:#x}", to_string(type()),
              virtual_address());
     return {};
@@ -190,14 +257,11 @@ size_t Segment::get_content_size() const {
   if (datahandler_ == nullptr) {
     return content_c_.size();
   }
-  auto res =
-      datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
-  if (!res) {
+  if (node_ == nullptr) {
     LIEF_ERR("Node not found");
     return 0;
   }
-  DataHandler::Node& node = res.value();
-  return node.size();
+  return node_->size();
 }
 
 template<typename T>
@@ -208,15 +272,13 @@ T Segment::get_content_value(size_t offset) const {
                virtual_address());
     memcpy(&ret, content_c_.data() + offset, sizeof(T));
   } else {
-    auto res = datahandler_->get(file_offset(), handler_size(),
-                                 DataHandler::Node::SEGMENT);
-    if (!res) {
+    if (node_ == nullptr) {
       LIEF_ERR("Node not found for this segment");
       memset(&ret, 0, sizeof(T));
       return ret;
     }
     const std::vector<uint8_t>& binary_content = datahandler_->content();
-    DataHandler::Node& node = res.value();
+    const DataHandler::Node& node = *node_;
     memcpy(&ret, binary_content.data() + node.offset() + offset, sizeof(T));
   }
   return ret;
@@ -242,13 +304,11 @@ void Segment::set_content_value(size_t offset, T value) {
     }
     memcpy(content_c_.data() + offset, &value, sizeof(T));
   } else {
-    auto res = datahandler_->get(file_offset(), handler_size(),
-                                 DataHandler::Node::SEGMENT);
-    if (!res) {
+    if (node_ == nullptr) {
       LIEF_ERR("Node not found for this segment, content cannot be updated");
       return;
     }
-    DataHandler::Node& node = res.value();
+    DataHandler::Node& node = *node_;
     std::vector<uint8_t>& binary_content = datahandler_->content();
 
     if (offset + sizeof(T) > binary_content.size()) {
@@ -292,24 +352,19 @@ void Segment::remove(Segment::FLAGS flag) {
 
 void Segment::file_offset(uint64_t file_offset) {
   if (datahandler_ != nullptr) {
-    auto res = datahandler_->get(this->file_offset(), handler_size(),
-                                 DataHandler::Node::SEGMENT);
-    if (res) {
-      res->get().offset(file_offset);
-    } else {
+    if (node_ == nullptr) {
       LIEF_ERR("Node not found, file offset cannot be updated");
       return;
     }
+    node_->offset(file_offset);
   }
   file_offset_ = file_offset;
 }
 
 void Segment::physical_size(uint64_t physical_size) {
   if (datahandler_ != nullptr) {
-    auto node = datahandler_->get(file_offset(), handler_size(),
-                                  DataHandler::Node::SEGMENT);
-    if (node) {
-      node->get().size(physical_size);
+    if (node_ != nullptr) {
+      node_->size(physical_size);
       handler_size_ = physical_size;
     } else {
       LIEF_ERR("Node not found, physical size cannot be updated");
@@ -332,13 +387,11 @@ void Segment::content(std::vector<uint8_t> content) {
       to_string(type()), virtual_address(), file_offset(), content.size()
   );
 
-  auto res =
-      datahandler_->get(file_offset(), handler_size(), DataHandler::Node::SEGMENT);
-  if (!res) {
+  if (node_ == nullptr) {
     LIEF_ERR("Node not found for content update");
     return;
   }
-  DataHandler::Node& node = res.value();
+  DataHandler::Node& node = *node_;
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
   datahandler_->reserve(node.offset(), content.size());

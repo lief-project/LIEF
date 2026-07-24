@@ -539,16 +539,15 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
   new_segment->physical_size(segmentsize);
   new_segment->virtual_size(segmentsize);
 
-  new_segment->datahandler_ = datahandler_.get();
-
   DataHandler::Node new_node{new_segment->file_offset(),
                              new_segment->physical_size(),
                              DataHandler::Node::SEGMENT};
-  datahandler_->add(new_node);
+  new_segment->bind_node(*datahandler_, datahandler_->add(new_node));
   auto alloc =
       datahandler_->make_hole(last_offset_aligned, new_segment->physical_size());
   if (!alloc) {
     LIEF_ERR("Allocation failed");
+    new_segment->release_node();
     return nullptr;
   }
   new_segment->content(content);
@@ -594,12 +593,11 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
   std::vector<uint8_t> content = as_vector(segment.content());
 
   auto new_segment = std::make_unique<Segment>(segment);
-  new_segment->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{new_segment->file_offset(),
                              new_segment->physical_size(),
                              DataHandler::Node::SEGMENT};
-  datahandler_->add(new_node);
+  new_segment->bind_node(*datahandler_, datahandler_->add(new_node));
 
   init_alignment(*this, *new_segment, ptr_size);
 
@@ -650,6 +648,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
 
   if (!alloc) {
     LIEF_ERR("Allocation failed");
+    new_segment->release_node();
     return nullptr;
   }
 
@@ -794,11 +793,10 @@ Section* Binary::add_section</*loaded=*/true>(const Section& section,
              segment_added->virtual_address());
 
   auto new_section = std::make_unique<Section>(section);
-  new_section->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{new_section->file_offset(), new_section->size(),
                              DataHandler::Node::SECTION};
-  datahandler_->add(new_node);
+  new_section->bind_node(*datahandler_, datahandler_->add(new_node));
 
   new_section->virtual_address(segment_added->virtual_address());
   new_section->size(segment_added->physical_size());
@@ -817,11 +815,10 @@ template<>
 Section* Binary::add_section</*loaded=*/false>(const Section& section,
                                                SEC_INSERT_POS pos) {
   auto new_section = std::make_unique<Section>(section);
-  new_section->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{new_section->file_offset(), new_section->size(),
                              DataHandler::Node::SECTION};
-  datahandler_->add(new_node);
+  new_section->bind_node(*datahandler_, datahandler_->add(new_node));
 
   const uint64_t last_offset_sections = last_offset_section();
   const uint64_t last_offset_segments = last_offset_segment();
@@ -841,6 +838,7 @@ Section* Binary::add_section</*loaded=*/false>(const Section& section,
   auto alloc = datahandler_->make_hole(last_offset, section.size());
   if (!alloc) {
     LIEF_ERR("Allocation failed");
+    new_section->release_node();
     return nullptr;
   }
 

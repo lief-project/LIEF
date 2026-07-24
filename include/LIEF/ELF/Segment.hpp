@@ -38,6 +38,7 @@ class SpanStream;
 namespace ELF {
 namespace DataHandler {
 class Handler;
+class Node;
 }
 
 class Parser;
@@ -142,15 +143,14 @@ class LIEF_API Segment : public Object {
 
   Segment() = default;
 
-  ~Segment() override = default;
+  ~Segment() override;
 
   Segment& operator=(Segment other);
   Segment(const Segment& other);
 
-  Segment& operator=(Segment&&) = default;
-  Segment(Segment&&) = default;
+  Segment(Segment&& other) noexcept;
 
-  void swap(Segment& other);
+  void swap(Segment& other) noexcept;
 
   bool is_load() const {
     return type() == TYPE::LOAD;
@@ -319,6 +319,15 @@ class LIEF_API Segment : public Object {
   LIEF_LOCAL uint64_t handler_size() const;
   span<uint8_t> writable_content() LIEF_LIFETIMEBOUND;
 
+  LIEF_LOCAL void bind_node(DataHandler::Handler& handler,
+                            DataHandler::Node& node);
+
+  LIEF_LOCAL void release_node() noexcept;
+  LIEF_LOCAL void rebind_node_owner() noexcept;
+
+  static void invalidate_node_owner(void* owner,
+                                    DataHandler::Node& node) noexcept;
+
   TYPE type_ = TYPE::PT_NULL_;
   ARCH arch_ = ARCH::NONE;
   uint32_t flags_ = 0;
@@ -330,7 +339,15 @@ class LIEF_API Segment : public Object {
   uint64_t alignment_ = 0;
   uint64_t handler_size_ = 0;
   sections_t sections_;
+
+  /**
+   * Handler exclusively owns node_. The node stores a non-owning pointer to
+   * this segment and clears both backreferences before it is destroyed.
+   * Copies are detached.
+   */
   DataHandler::Handler* datahandler_ = nullptr;
+  DataHandler::Node* node_ = nullptr;
+
   std::vector<uint8_t> content_c_;
 };
 

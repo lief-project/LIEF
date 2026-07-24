@@ -32,8 +32,6 @@ namespace ELF::DataHandler {
 
 class LIEF_API Handler {
   public:
-  template<class T>
-  using ref_t = std::reference_wrapper<T>;
 
   static constexpr size_t MAX_SIZE = 4_GB;
   Handler(std::vector<uint8_t> content) :
@@ -46,8 +44,10 @@ class LIEF_API Handler {
   Handler& operator=(const Handler&) = delete;
   Handler(const Handler&) = delete;
 
-  Handler& operator=(Handler&&) noexcept = default;
-  Handler(Handler&&) noexcept = default;
+  // Moving a Handler would invalidate handler pointers stored by attached
+  // sections and segments
+  Handler& operator=(Handler&&) noexcept = delete;
+  Handler(Handler&&) noexcept = delete;
 
   const std::vector<uint8_t>& content() const {
     return data_;
@@ -61,9 +61,11 @@ class LIEF_API Handler {
 
   bool has(uint64_t offset, uint64_t size, Node::Type type);
 
-  result<ref_t<Node>> get(uint64_t offset, uint64_t size, Node::Type type);
+  bool owns(const Node& node) const noexcept;
 
   Node& create(uint64_t offset, uint64_t size, Node::Type type);
+
+  bool remove(Node& node) noexcept;
 
   void remove(uint64_t offset, uint64_t size, Node::Type type);
 

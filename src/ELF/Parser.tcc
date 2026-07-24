@@ -853,7 +853,14 @@ ok_error_t Parser::parse_sections() {
 
     if (section->size() == 0 && section->file_offset() > 0 && access_content) {
       // Even if the size is 0, it is worth creating the node
-      handler.create(section->file_offset(), 0, DataHandler::Node::SECTION);
+      section->bind_node(
+        handler,
+        handler.create(
+          section->file_offset(),
+          0,
+          DataHandler::Node::SECTION
+        )
+      );
     }
 
     // Only if it contains data (with bits)
@@ -872,14 +879,21 @@ ok_error_t Parser::parse_sections() {
         read_size = Section::MAX_SECTION_SIZE;
       }
 
-      handler.create(section->file_offset(), read_size,
-                     DataHandler::Node::SECTION);
+      section->bind_node(
+        handler,
+        handler.create(
+          section->file_offset(),
+          read_size,
+          DataHandler::Node::SECTION
+        )
+      );
 
       const Elf_Off offset_to_content = section->file_offset();
       auto alloc =
           binary_->datahandler_->reserve(section->file_offset(), read_size);
       if (!alloc) {
         LIEF_ERR("Can't allocate memory");
+        section->release_node();
         break;
       }
 
@@ -986,8 +1000,15 @@ ok_error_t Parser::parse_segments() {
         read_size = stream_->size();
       }
 
-      segment->datahandler_->create(segment->file_offset(), read_size,
-                                    DataHandler::Node::SEGMENT);
+      segment->bind_node(
+        *segment->datahandler_,
+        segment->datahandler_->create(
+          segment->file_offset(),
+          read_size,
+          DataHandler::Node::SEGMENT
+        )
+      );
+
       segment->handler_size_ = read_size;
 
       const bool corrupted_offset =
@@ -1000,6 +1021,7 @@ ok_error_t Parser::parse_segments() {
             binary_->datahandler_->reserve(segment->file_offset(), read_size);
         if (!alloc) {
           LIEF_ERR("Can't allocate memory");
+          segment->release_node();
           break;
         }
         /* The DataHandlerStream interface references ELF data that are
@@ -1029,9 +1051,15 @@ ok_error_t Parser::parse_segments() {
       }
     } else {
       segment->handler_size_ = segment->physical_size();
-      segment->datahandler_->create(segment->file_offset(),
-                                    segment->physical_size(),
-                                    DataHandler::Node::SEGMENT);
+
+      segment->bind_node(
+        *segment->datahandler_,
+        segment->datahandler_->create(
+          segment->file_offset(),
+          segment->physical_size(),
+          DataHandler::Node::SEGMENT
+        )
+      );
     }
 
     for (std::unique_ptr<Section>& section : binary_->sections_) {

@@ -111,19 +111,27 @@ bool Handler::has(uint64_t offset, uint64_t size, Node::Type type) {
   return it_node != nodes_.end();
 }
 
-result<Handler::ref_t<Node>> Handler::get(uint64_t offset, uint64_t size,
-                                          Node::Type type) {
-  Node tmp{offset, size, type};
+bool Handler::owns(const Node& node) const noexcept {
+  return std::any_of(
+    nodes_.begin(), nodes_.end(),
+    [&node](const std::unique_ptr<Node>& candidate) {
+      return candidate.get() == &node;
+    }
+  );
+}
 
+bool Handler::remove(Node& node) noexcept {
   const auto it_node = std::find_if(nodes_.begin(), nodes_.end(),
-                                    [&tmp](const std::unique_ptr<Node>& node) {
-                                      return tmp == *node;
+                                    [&node](const std::unique_ptr<Node>& cand) {
+                                      return cand.get() == &node;
                                     });
 
   if (it_node == nodes_.end()) {
-    return make_error_code(lief_errors::not_found);
+    return false;
   }
-  return **it_node;
+
+  nodes_.erase(it_node);
+  return true;
 }
 
 

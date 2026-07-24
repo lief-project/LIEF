@@ -128,6 +128,10 @@ Section::Section(const T& header, ARCH arch) :
 template Section::Section(const details::Elf32_Shdr& header, ARCH);
 template Section::Section(const details::Elf64_Shdr& header, ARCH);
 
+Section::~Section() {
+  release_node();
+}
+
 Section::Section(const Section& other) :
   LIEF::Section{other},
   arch_{other.arch_},
@@ -158,7 +162,67 @@ void Section::swap(Section& other) noexcept {
   std::swap(segments_, other.segments_);
   std::swap(is_frame_, other.is_frame_);
   std::swap(datahandler_, other.datahandler_);
+  std::swap(node_, other.node_);
   std::swap(content_c_, other.content_c_);
+
+  rebind_node_owner();
+  other.rebind_node_owner();
+}
+
+void Section::invalidate_node_owner(void* owner,
+                                    DataHandler::Node& node) noexcept {
+  assert(owner != nullptr);
+
+  Section& section = *static_cast<Section*>(owner);
+
+  assert(section.node_ == &node);
+  (void)node;
+
+  section.node_ = nullptr;
+  section.datahandler_ = nullptr;
+}
+
+void Section::bind_node(DataHandler::Handler& handler,
+                        DataHandler::Node& node) {
+  assert(node.type() == DataHandler::Node::SECTION);
+  assert(node_ == nullptr);
+  assert(datahandler_ == nullptr || datahandler_ == &handler);
+  assert(!node.has_owner());
+
+  datahandler_ = &handler;
+  node_ = &node;
+
+  node.bind_owner(this, &Section::invalidate_node_owner);
+
+  assert(handler.owns(node));
+}
+
+void Section::release_node() noexcept {
+  if (node_ == nullptr) {
+    return;
+  }
+
+  assert(datahandler_ != nullptr);
+
+  DataHandler::Handler* handler = datahandler_;
+  DataHandler::Node* node = node_;
+
+  assert(handler->owns(*node));
+
+  const bool removed = handler->remove(*node);
+  assert(removed);
+  if (!removed) {
+    std::abort();
+  }
+
+  assert(node_ == nullptr);
+  assert(datahandler_ == nullptr);
+}
+
+void Section::rebind_node_owner() noexcept {
+  if (node_ != nullptr) {
+    node_->rebind_owner(this);
+  }
 }
 
 bool Section::has(const Segment& segment) const {
@@ -170,10 +234,8 @@ bool Section::has(const Segment& segment) const {
 
 void Section::size(uint64_t size) {
   if (datahandler_ != nullptr && !is_frame()) {
-    if (auto node = datahandler_->get(file_offset(), this->size(),
-                                      DataHandler::Node::SECTION))
-    {
-      node->get().size(size);
+    if (node_ != nullptr) {
+      node_->size(size);
     } else {
       if (type() != TYPE::NOBITS) {
         LIEF_ERR("Node not found, cannot resize section '{}'", name());
@@ -187,10 +249,8 @@ void Section::size(uint64_t size) {
 
 void Section::offset(uint64_t offset) {
   if (datahandler_ != nullptr && !is_frame()) {
-    if (auto node =
-            datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION))
-    {
-      node->get().offset(offset);
+    if (node_ != nullptr) {
+      node_->offset(offset);
     } else {
       if (type() != TYPE::NOBITS) {
         LIEF_WARN("Node not found, cannot change offset of section '{}'", name());
@@ -213,15 +273,15 @@ span<const uint8_t> Section::content() const {
     return {};
   }
 
-  auto res = datahandler_->get(offset(), size(), DataHandler::Node::SECTION);
-  if (!res) {
+  if (node_ == nullptr) {
     if (type() != TYPE::NOBITS) {
       LIEF_WARN("Section '{}' has no content", name());
     }
     return {};
   }
   const std::vector<uint8_t>& binary_content = datahandler_->content();
-  DataHandler::Node& node = res.value();
+
+  const DataHandler::Node& node = *node_;
   auto end_offset = (int64_t)node.offset() + (int64_t)node.size();
   if (end_offset <= 0 || end_offset > (int64_t)binary_content.size()) {
     return {};
@@ -260,13 +320,12 @@ void Section::content(const std::vector<uint8_t>& data) {
              data.size(), file_offset(), name());
 
 
-  auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
-  if (!res) {
+  if (node_ == nullptr) {
     LIEF_ERR("Node not found, section content cannot be updated");
     return;
   }
 
-  DataHandler::Node& node = res.value();
+  DataHandler::Node& node = *node_;
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
   datahandler_->reserve(node.offset(), data.size());
@@ -308,12 +367,11 @@ void Section::content(std::vector<uint8_t>&& data) {
   LIEF_DEBUG("Setting {:#x} bytes in data handler@{:#x} of section '{}'",
              data.size(), file_offset(), name());
 
-  auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
-  if (!res) {
+  if (node_ == nullptr) {
     LIEF_ERR("Node not found, section content cannot be updated");
     return;
   }
-  DataHandler::Node& node = res.value();
+  DataHandler::Node& node = *node_;
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
   datahandler_->reserve(node.offset(), data.size());
@@ -393,12 +451,11 @@ Section& Section::clear(uint8_t value) {
   }
 
   std::vector<uint8_t>& binary_content = datahandler_->content();
-  auto res = datahandler_->get(file_offset(), size(), DataHandler::Node::SECTION);
-  if (!res) {
+  if (node_ == nullptr) {
     LIEF_ERR("Node not found, section content cannot be cleared");
     return *this;
   }
-  DataHandler::Node& node = res.value();
+  DataHandler::Node& node = *node_;
 
   std::fill_n(binary_content.begin() + node.offset(), size(), value);
   return *this;

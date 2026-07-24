@@ -210,7 +210,7 @@ void Binary::remove(const Section& section, bool clear) {
   }
 
 
-  datahandler_->remove(s->file_offset(), s->size(), DataHandler::Node::SECTION);
+  s->release_node();
 
   // Patch header
   header().numberof_sections(header().numberof_sections() - 1);
@@ -1108,12 +1108,11 @@ Segment* Binary::replace(const Segment& new_segment,
   std::vector<uint8_t> content{content_ref.data(), content_ref.end()};
 
   auto new_segment_ptr = std::make_unique<Segment>(new_segment);
-  new_segment_ptr->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{new_segment_ptr->file_offset(),
                              new_segment_ptr->physical_size(),
                              DataHandler::Node::SEGMENT};
-  datahandler_->add(new_node);
+  new_segment_ptr->bind_node(*datahandler_, datahandler_->add(new_node));
   new_segment_ptr->handler_size_ = new_segment_ptr->physical_size();
 
   const uint64_t last_offset_sections = last_offset_section();
@@ -1161,9 +1160,7 @@ Segment* Binary::replace(const Segment& new_segment,
   // Remove
   std::unique_ptr<Segment> local_original_segment =
       std::move(*it_original_segment);
-  datahandler_->remove(local_original_segment->file_offset(),
-                       local_original_segment->physical_size(),
-                       DataHandler::Node::SEGMENT);
+  local_original_segment->release_node();
   segments_.erase(it_original_segment);
 
   // Patch shdr
@@ -1194,8 +1191,7 @@ void Binary::remove(const Segment& segment, bool clear) {
     local_segment->clear();
   }
 
-  datahandler_->remove(local_segment->file_offset(),
-                       local_segment->physical_size(), DataHandler::Node::SEGMENT);
+  local_segment->release_node();
   if (phdr_reloc_info_.new_offset > 0) {
     ++phdr_reloc_info_.nb_segments;
   }
@@ -2983,11 +2979,10 @@ uint64_t Binary::relocate_phdr_table_v3() {
   phdr_load_segment->physical_address(phdr_load_segment->virtual_address());
   phdr_load_segment->alignment(0x1000);
   phdr_load_segment->add(Segment::FLAGS::R);
-  phdr_load_segment->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{phdr_reloc_info_.new_offset, new_segtbl_sz,
                              DataHandler::Node::SEGMENT};
-  datahandler_->add(new_node);
+  phdr_load_segment->bind_node(*datahandler_, datahandler_->add(new_node));
 
   const auto it_new_place =
       std::find_if(segments_.rbegin(), segments_.rend(),
@@ -3143,12 +3138,11 @@ uint64_t Binary::relocate_phdr_table_v2() {
   nsegment_addr->flags(Segment::FLAGS::R);
   nsegment_addr->alignment(0x1000);
   nsegment_addr->file_offset(phdr_reloc_info_.new_offset);
-  nsegment_addr->datahandler_ = datahandler_.get();
 
   DataHandler::Node new_node{phdr_reloc_info_.new_offset, new_phdr_size,
                              DataHandler::Node::SEGMENT};
 
-  datahandler_->add(new_node);
+  nsegment_addr->bind_node(*datahandler_, datahandler_->add(new_node));
 
   const auto it_new_segment_place =
       std::find_if(segments_.rbegin(), segments_.rend(),
