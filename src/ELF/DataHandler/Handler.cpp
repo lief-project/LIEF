@@ -28,6 +28,7 @@
 
 
 namespace LIEF::ELF::DataHandler {
+static constexpr uint64_t MAX_MEMORY_SIZE = 6_GB;
 
 class DataHandlerStream : public BinaryStream {
   public:
@@ -165,17 +166,33 @@ Node& Handler::add(const Node& node) {
 }
 
 ok_error_t Handler::make_hole(uint64_t offset, uint64_t size) {
-  auto res = reserve(offset, size);
-  if (!res) {
-    return res;
+  const auto current_size = static_cast<uint64_t>(data_.size());
+  const uint64_t base_size = offset >= current_size ? offset : current_size;
+
+  if (base_size > MAX_MEMORY_SIZE || size > MAX_MEMORY_SIZE - base_size) {
+    return make_error_code(lief_errors::corrupted);
   }
-  data_.insert(data_.begin() + offset, size, 0);
+
+  const uint64_t final_size = base_size + size;
+  if (final_size > static_cast<uint64_t>(data_.max_size())) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  if (offset >= current_size) {
+    data_.resize(static_cast<size_t>(final_size), uint8_t{0});
+    return ok();
+  }
+
+  data_.insert(data_.begin() +
+               static_cast<std::vector<uint8_t>::difference_type>(offset),
+               static_cast<size_t>(size),
+               uint8_t{0});
+
   return ok();
 }
 
 
 ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
-  static constexpr auto MAX_MEMORY_SIZE = 6_GB;
   const auto full_size = static_cast<int64_t>(offset) + static_cast<int64_t>(size);
   if (full_size < 0) {
     return make_error_code(lief_errors::corrupted);
