@@ -64,6 +64,9 @@ class LIEF_API Binary : public LIEF::Binary {
   friend class Layout;
   friend class ObjectFileLayout;
 
+  static constexpr uint32_t MAX_REGULAR_PHDRS = 0xFFFE;
+  size_t reserved_user_segments_ = 9;
+
   public:
   using string_list_t = std::vector<std::string>;
 
@@ -1177,6 +1180,31 @@ class LIEF_API Binary : public LIEF::Binary {
 
   bool should_swap() const {
     return should_swap_;
+  }
+
+  /// Configure the number of user segments for which space is reserved when
+  /// relocating the program-header table with `PHDR_RELOC::BINARY_END`.
+  ///
+  /// This function must be called before the program-header table is relocated.
+  /// One additional entry is reserved internally for the `PT_LOAD` segment that
+  /// maps the relocated table.
+  ///
+  /// @param[in] count The number of segments to reserve
+  /// @return `false` if the reservation is zero, too large, or relocation has
+  ///         already occurred, and `true` otherwise.
+  bool reserve_segments(size_t count) {
+    if (count == 0 || phdr_reloc_info_.new_offset != 0) {
+      return false;
+    }
+
+    const uint64_t current = header_.numberof_segments();
+    if (current >= MAX_REGULAR_PHDRS ||
+        count > MAX_REGULAR_PHDRS - current - 1) {
+      return false;
+    }
+
+    reserved_user_segments_ = count;
+    return true;
   }
 
   protected:

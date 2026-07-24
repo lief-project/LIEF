@@ -943,6 +943,13 @@ ok_error_t Parser::parse_segments() {
   LIEF_DEBUG("Parsing segments");
   const Header& hdr = binary_->header();
   const Elf_Off segment_headers_offset = hdr.program_headers_offset();
+
+  static constexpr uint32_t PN_XNUM = 0xFFFF;
+  if (hdr.numberof_segments() == PN_XNUM) {
+    LIEF_WARN("Extended program-header numbering is not supported");
+    return make_error_code(lief_errors::not_supported);
+  }
+
   const auto nbof_segments =
       std::min<uint32_t>(hdr.numberof_segments(), Parser::NB_MAX_SEGMENTS);
 

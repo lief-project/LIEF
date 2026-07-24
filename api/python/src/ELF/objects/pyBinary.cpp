@@ -853,6 +853,10 @@ void create<Binary>(nb::module_& m) {
       "array_tag"_a
     )
 
+    .def("reserve_segments",
+        &Binary::reserve_segments,
+        "count"_a)
+
     .def("find_version_requirement",
       nb::overload_cast<const std::string&>(&Binary::find_version_requirement),
       R"doc(

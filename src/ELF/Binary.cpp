@@ -2913,8 +2913,32 @@ uint64_t Binary::relocate_phdr_table_pie() {
  * strongly increase the final size of the binary.
  */
 uint64_t Binary::relocate_phdr_table_v3() {
-  // Reserve space for 10 user's segments
-  static constexpr size_t USER_SEGMENTS = 10;
+  static constexpr uint64_t INTERNAL_SEGMENTS = 1;
+
+  const uint64_t user_segments = reserved_user_segments_;
+
+  Header& header = this->header();
+
+  const uint64_t nb_segments = header.numberof_segments();
+  if (nb_segments >= MAX_REGULAR_PHDRS ||
+      user_segments > MAX_REGULAR_PHDRS - nb_segments - INTERNAL_SEGMENTS) {
+    LIEF_ERR("Can't reserve {} additional segments: the resulting PHDR count "
+             "would exceed {}", user_segments, MAX_REGULAR_PHDRS);
+    return 0;
+  }
+
+  const uint64_t reserved_phdr_entries = user_segments + INTERNAL_SEGMENTS;
+  const uint64_t total_phdr_entries = nb_segments + reserved_phdr_entries;
+  const uint64_t phdr_size = type() == Header::CLASS::ELF32 ?
+                                 sizeof(details::ELF32::Elf_Phdr) :
+                                 sizeof(details::ELF64::Elf_Phdr);
+
+  if (total_phdr_entries > std::numeric_limits<uint64_t>::max() / phdr_size) {
+    LIEF_ERR("Program-header table size overflow");
+    return 0;
+  }
+
+  const size_t new_segtbl_sz = total_phdr_entries * phdr_size;
 
   uint64_t last_off = 0;
   for (const std::unique_ptr<Segment>& segment : segments_) {
@@ -2930,20 +2954,12 @@ uint64_t Binary::relocate_phdr_table_v3() {
   }
 
   LIEF_DEBUG("Running v3 (file end) PHDR relocator");
-
-  Header& header = this->header();
-
-  const uint64_t phdr_size = type() == Header::CLASS::ELF32 ?
-                                 sizeof(details::ELF32::Elf_Phdr) :
-                                 sizeof(details::ELF64::Elf_Phdr);
   LIEF_DEBUG("Moving segment table at the end of the binary ({:#012x})",
              last_off_aligned);
 
   phdr_reloc_info_.new_offset = last_off_aligned;
   header.program_headers_offset(last_off_aligned);
 
-  const size_t new_segtbl_sz =
-      (header.numberof_segments() + USER_SEGMENTS) * phdr_size;
   const uint64_t delta = last_off_aligned - last_off + new_segtbl_sz;
   shift_sections(last_off, delta);
 
@@ -2985,7 +3001,7 @@ uint64_t Binary::relocate_phdr_table_v3() {
   }
 
   header.numberof_segments(header.numberof_segments() + 1);
-  phdr_reloc_info_.nb_segments = USER_SEGMENTS - /* For the PHDR LOAD */ 1;
+  phdr_reloc_info_.nb_segments = static_cast<size_t>(user_segments);
   return phdr_reloc_info_.new_offset;
 }
 
