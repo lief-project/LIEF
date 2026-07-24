@@ -63,6 +63,8 @@ class LIEF_API Binary : public LIEF::Binary {
   friend class ExeLayout;
   friend class Layout;
   friend class ObjectFileLayout;
+  friend class Section;
+  friend class Segment;
 
   static constexpr uint32_t MAX_REGULAR_PHDRS = 0xFFFE;
   size_t reserved_user_segments_ = 9;
@@ -1212,6 +1214,12 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   protected:
+  struct append_extent_cache_t {
+    uint64_t end = 0;
+    size_t contributors = 0;
+    bool valid = false;
+  };
+
   struct phdr_relocation_info_t {
     uint64_t new_offset = 0;
     size_t nb_segments = 0;
@@ -1290,6 +1298,18 @@ class LIEF_API Binary : public LIEF::Binary {
 
   LIEF_LOCAL LIEF::Binary::functions_t tor_functions(DynamicEntry::TAG tag) const;
 
+  LIEF_LOCAL void add_layout_extent(uint64_t end) noexcept;
+  LIEF_LOCAL void invalidate_append_file_end() noexcept;
+  LIEF_LOCAL bool append_file_end_valid() const noexcept;
+
+  LIEF_LOCAL void publish_layout(Section& section) noexcept;
+  LIEF_LOCAL void publish_layout(Segment& segment) noexcept;
+
+  LIEF_LOCAL void recompute_append_file_end() noexcept;
+  LIEF_LOCAL void update_layout_extent(
+    bool old_contributes, uint64_t old_offset, uint64_t old_size,
+    bool new_contributes, uint64_t new_offset, uint64_t new_size) noexcept;
+
   Header::CLASS type_ = Header::CLASS::NONE;
   Header header_;
   sections_t sections_;
@@ -1305,6 +1325,7 @@ class LIEF_API Binary : public LIEF::Binary {
   std::unique_ptr<GnuHash> gnu_hash_;
   std::unique_ptr<SysvHash> sysv_hash_;
   std::unique_ptr<DataHandler::Handler> datahandler_;
+  append_extent_cache_t append_extent_cache_;
   phdr_relocation_info_t phdr_reloc_info_;
 
   std::string interpreter_;

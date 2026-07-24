@@ -328,6 +328,12 @@ class LIEF_API Segment : public Object {
   static void invalidate_node_owner(void* owner,
                                     DataHandler::Node& node) noexcept;
 
+  LIEF_LOCAL void observe_layout(Binary& binary) noexcept;
+  LIEF_LOCAL void stop_observing_layout() noexcept;
+  LIEF_LOCAL void notify_layout_change(
+      bool old_contributes, uint64_t old_offset, uint64_t old_size,
+      bool new_contributes, uint64_t new_offset, uint64_t new_size) noexcept;
+
   TYPE type_ = TYPE::PT_NULL_;
   ARCH arch_ = ARCH::NONE;
   uint32_t flags_ = 0;
@@ -339,6 +345,12 @@ class LIEF_API Segment : public Object {
   uint64_t alignment_ = 0;
   uint64_t handler_size_ = 0;
   sections_t sections_;
+
+  /**
+   * Non-owning pointer to `Binary` whose segment table contains this object.
+   * Copies and detached segments do not observe a layout.
+   */
+  Binary* layout_observer_ = nullptr;
 
   /**
    * Handler exclusively owns node_. The node stores a non-owning pointer to

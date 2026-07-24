@@ -916,7 +916,9 @@ ok_error_t Parser::parse_sections() {
     }
     sections_idx_[i] = section.get();
     sections_names[section.get()] = shdr->sh_name;
+    Section* section_ptr = section.get();
     binary_->sections_.push_back(std::move(section));
+    binary_->publish_layout(*section_ptr);
   }
 
   LIEF_DEBUG("    Parse section names");
@@ -1068,7 +1070,9 @@ ok_error_t Parser::parse_segments() {
         segment->sections_.push_back(section.get());
       }
     }
+    Segment* segment_ptr = segment.get();
     binary_->segments_.push_back(std::move(segment));
+    binary_->publish_layout(*segment_ptr);
   }
   return ok();
 }

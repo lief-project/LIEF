@@ -25,6 +25,7 @@
 
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Binary.hpp"
 
 #include "LIEF/ELF/EnumToString.hpp"
 
@@ -146,6 +147,19 @@ Section::Section(const Section& other) :
   content_c_{other.content_c_} {}
 
 void Section::swap(Section& other) noexcept {
+  if (this == &other) {
+    return;
+  }
+
+  if (layout_observer_ != nullptr) {
+    layout_observer_->invalidate_append_file_end();
+  }
+
+  if (other.layout_observer_ != nullptr &&
+      other.layout_observer_ != layout_observer_) {
+    other.layout_observer_->invalidate_append_file_end();
+  }
+
   std::swap(name_, other.name_);
   std::swap(virtual_address_, other.virtual_address_);
   std::swap(offset_, other.offset_);
@@ -225,6 +239,29 @@ void Section::rebind_node_owner() noexcept {
   }
 }
 
+void Section::observe_layout(Binary& binary) noexcept {
+  assert(layout_observer_ == nullptr);
+
+  layout_observer_ = &binary;
+}
+
+void Section::stop_observing_layout() noexcept {
+  assert(layout_observer_ != nullptr);
+  layout_observer_ = nullptr;
+}
+
+void Section::notify_layout_change(
+    bool old_contributes, uint64_t old_offset, uint64_t old_size,
+    bool new_contributes, uint64_t new_offset, uint64_t new_size) noexcept {
+  if (layout_observer_ == nullptr) {
+    return;
+  }
+  layout_observer_->update_layout_extent(
+    old_contributes, old_offset, old_size,
+    new_contributes, new_offset, new_size
+  );
+}
+
 bool Section::has(const Segment& segment) const {
   auto it_segment = std::find_if(segments_.begin(), segments_.end(),
                                  [&segment](Segment* s) { return *s == segment; });
@@ -233,6 +270,10 @@ bool Section::has(const Segment& segment) const {
 
 
 void Section::size(uint64_t size) {
+  const uint64_t old_size = size_;
+  const bool layout_changed = old_size != size;
+  const bool contributes = type() != TYPE::NOBITS && !is_frame();
+
   if (datahandler_ != nullptr && !is_frame()) {
     if (node_ != nullptr) {
       node_->size(size);
@@ -244,10 +285,21 @@ void Section::size(uint64_t size) {
     }
   }
   size_ = size;
+
+  if (layout_changed) {
+    notify_layout_change(
+      contributes, offset_, old_size,
+      contributes, offset_, size
+    );
+  }
 }
 
 
 void Section::offset(uint64_t offset) {
+  const uint64_t old_offset = offset_;
+  const bool layout_changed = old_offset != offset;
+  const bool contributes = type() != TYPE::NOBITS && !is_frame();
+
   if (datahandler_ != nullptr && !is_frame()) {
     if (node_ != nullptr) {
       node_->offset(offset);
@@ -258,6 +310,13 @@ void Section::offset(uint64_t offset) {
     }
   }
   offset_ = offset;
+
+  if (layout_changed) {
+    notify_layout_change(
+      contributes, old_offset, size_,
+      contributes, offset, size_
+    );
+  }
 }
 
 span<const uint8_t> Section::content() const {
@@ -441,6 +500,24 @@ void Section::remove(Section::FLAGS flag) {
   flags(flags() & (~raw_flag));
 }
 
+void Section::type(TYPE type) {
+  if (type_ == type) {
+    return;
+  }
+
+  const bool contributed_before = type_ != TYPE::NOBITS && !is_frame();
+  const bool contributes_after = type != TYPE::NOBITS && !is_frame();
+
+  type_ = type;
+
+  if (contributed_before != contributes_after) {
+    notify_layout_change(
+      contributed_before, offset_, size_,
+      contributes_after, offset_, size_
+    );
+  }
+}
+
 Section& Section::clear(uint8_t value) {
   if (is_frame()) {
     return *this;
@@ -458,6 +535,22 @@ Section& Section::clear(uint8_t value) {
   DataHandler::Node& node = *node_;
 
   std::fill_n(binary_content.begin() + node.offset(), size(), value);
+  return *this;
+}
+
+Section& Section::as_frame() {
+  if (is_frame_) {
+    return *this;
+  }
+
+  const bool contributed_before = type() != TYPE::NOBITS;
+
+  is_frame_ = true;
+
+  if (contributed_before) {
+    notify_layout_change(true, offset_, size_, false, offset_, size_);
+  }
+
   return *this;
 }
 

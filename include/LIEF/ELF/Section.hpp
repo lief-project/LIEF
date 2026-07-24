@@ -321,9 +321,7 @@ class LIEF_API Section : public LIEF::Section {
   /// Remove the given ELF_SECTION_FLAGS
   void remove(FLAGS flag);
 
-  void type(TYPE type) {
-    type_ = type;
-  }
+  void type(TYPE type);
 
   void flags(uint64_t flags) {
     flags_ = flags;
@@ -361,10 +359,7 @@ class LIEF_API Section : public LIEF::Section {
     return segments_;
   }
 
-  Section& as_frame() LIEF_LIFETIMEBOUND {
-    is_frame_ = true;
-    return *this;
-  }
+  Section& as_frame() LIEF_LIFETIMEBOUND;
 
   bool is_frame() const {
     return is_frame_;
@@ -403,6 +398,12 @@ class LIEF_API Section : public LIEF::Section {
   static void invalidate_node_owner(void* owner,
                                     DataHandler::Node& node) noexcept;
 
+  LIEF_LOCAL void observe_layout(Binary& binary) noexcept;
+  LIEF_LOCAL void stop_observing_layout() noexcept;
+  LIEF_LOCAL void notify_layout_change(
+      bool old_contributes, uint64_t old_offset, uint64_t old_size,
+      bool new_contributes, uint64_t new_offset, uint64_t new_size) noexcept;
+
   ARCH arch_ = ARCH::NONE;
   TYPE type_ = TYPE::SHT_NULL_;
   uint64_t flags_ = 0;
@@ -413,6 +414,12 @@ class LIEF_API Section : public LIEF::Section {
   uint64_t entry_size_ = 0;
   segments_t segments_;
   bool is_frame_ = false;
+
+  /**
+   * Non-owning pointer to `Binary` whose section table contains this object.
+   * Copies and detached sections do not observe a layout.
+   */
+  Binary* layout_observer_ = nullptr;
 
   /**
    * Handler exclusively owns node_. The node stores a non-owning pointer to

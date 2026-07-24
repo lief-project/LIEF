@@ -509,12 +509,10 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
   std::vector<uint8_t> content{content_ref.data(), content_ref.end()};
   auto new_segment = std::make_unique<Segment>(segment);
 
-  uint64_t last_offset_sections = last_offset_section();
-  uint64_t last_offset_segments = last_offset_segment();
-
-
-  uint64_t last_offset =
-      std::max<uint64_t>(last_offset_sections, last_offset_segments);
+  if (!append_file_end_valid()) {
+    recompute_append_file_end();
+  }
+  const uint64_t last_offset = append_extent_cache_.end;
 
   const auto psize = page_size();
   const uint64_t last_offset_aligned = align(last_offset, psize);
@@ -575,8 +573,11 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
     seg_ptr =
         segments_.insert(segments_.begin() + idx, std::move(new_segment))->get();
   }
-  phdr_reloc_info_.nb_segments--;
   assert(seg_ptr != nullptr);
+
+  publish_layout(*seg_ptr);
+
+  phdr_reloc_info_.nb_segments--;
   return seg_ptr;
 }
 
@@ -673,6 +674,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
         segments_.insert(segments_.begin() + idx, std::move(new_segment))->get();
   }
   assert(seg_ptr != nullptr);
+  publish_layout(*seg_ptr);
   return seg_ptr;
 }
 

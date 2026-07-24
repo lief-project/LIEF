@@ -21,6 +21,7 @@ add_executable(unittests
   test_iostream.cpp
   test_pe.cpp
   test_elf.cpp
+  test_elf_append_extent.cpp
   test_oat.cpp
   test_linux_header.cpp
 )

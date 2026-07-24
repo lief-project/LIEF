@@ -191,7 +191,9 @@ void Binary::remove_section_at(size_t idx, bool clear) {
     return;
   }
 
+  invalidate_append_file_end();
   Section* s = sections_[idx].get();
+  s->stop_observing_layout();
 
   // Remove from segments:
   for (std::unique_ptr<Segment>& segment : segments_) {
@@ -1034,9 +1036,11 @@ Section* Binary::add(const Section& section, bool loaded, SEC_INSERT_POS pos) {
 
 Section* Binary::add_frame_section(const Section& sec) {
   auto new_section = std::make_unique<Section>(sec);
+  Section* section_ptr = new_section.get();
   this->header().numberof_sections(this->header().numberof_sections() + 1);
   this->sections_.push_back(std::move(new_section));
-  return this->sections_.back().get();
+  publish_layout(*section_ptr);
+  return section_ptr;
 }
 
 bool Binary::is_pie() const {
@@ -1187,6 +1191,9 @@ Segment* Binary::replace(const Segment& new_segment,
     (*it_segment_phdr)->clear();
   }
 
+  invalidate_append_file_end();
+  (*it_original_segment)->stop_observing_layout();
+
   // Remove
   std::unique_ptr<Segment> local_original_segment =
       std::move(*it_original_segment);
@@ -1199,7 +1206,9 @@ Segment* Binary::replace(const Segment& new_segment,
       new_segment_ptr->file_offset() + new_segment_ptr->physical_size();
   header.section_headers_offset(new_section_hdr_offset);
 
-  return segments_.emplace_back(std::move(new_segment_ptr)).get();
+  Segment* inserted = segments_.emplace_back(std::move(new_segment_ptr)).get();
+  publish_layout(*inserted);
+  return inserted;
 }
 
 
@@ -1214,6 +1223,10 @@ void Binary::remove(const Segment& segment, bool clear) {
     LIEF_ERR("Provided segment not found");
     return;
   }
+
+  invalidate_append_file_end();
+  Segment* segment_ptr = it_segment->get();
+  segment_ptr->stop_observing_layout();
 
   std::unique_ptr<Segment> local_segment = std::move(*it_segment);
 
@@ -1866,8 +1879,133 @@ void Binary::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+void Binary::add_layout_extent(uint64_t end) noexcept {
+  if (!append_file_end_valid()) {
+    return;
+  }
+
+  if (end > append_extent_cache_.end) {
+    append_extent_cache_.end = end;
+    append_extent_cache_.contributors = 1;
+  } else if (end == append_extent_cache_.end) {
+    ++append_extent_cache_.contributors;
+  }
+}
+
+void Binary::invalidate_append_file_end() noexcept {
+  append_extent_cache_ = {};
+}
+
+bool Binary::append_file_end_valid() const noexcept {
+  return append_extent_cache_.valid;
+}
+
+void Binary::publish_layout(Section& section) noexcept {
+  section.observe_layout(*this);
+
+  if (!append_file_end_valid() ||
+      section.is_frame() ||
+      section.type() == Section::TYPE::NOBITS) {
+    return;
+  }
+
+  add_layout_extent(section.file_offset() + section.size());
+}
+
+void Binary::publish_layout(Segment& segment) noexcept {
+  segment.observe_layout(*this);
+
+  if (!append_file_end_valid()) {
+    return;
+  }
+
+  add_layout_extent(segment.file_offset() + segment.physical_size());
+}
+
+void Binary::recompute_append_file_end() noexcept {
+  uint64_t maximum = 0;
+  size_t maximum_count = 0;
+
+  const auto account = [&maximum, &maximum_count](uint64_t end) {
+    if (end > maximum) {
+      maximum = end;
+      maximum_count = 1;
+    } else if (end == maximum) {
+      ++maximum_count;
+    }
+  };
+
+  for (const std::unique_ptr<Section>& section : sections_) {
+    if (section->is_frame() || section->type() == Section::TYPE::NOBITS) {
+      continue;
+    }
+
+    account(section->file_offset() + section->size());
+  }
+
+  for (const std::unique_ptr<Segment>& segment : segments_) {
+    account(segment->file_offset() + segment->physical_size());
+  }
+
+  append_extent_cache_.end = maximum;
+  append_extent_cache_.contributors = maximum_count;
+  append_extent_cache_.valid = true;
+}
+
+void Binary::update_layout_extent(
+    bool old_contributes, uint64_t old_offset, uint64_t old_size,
+    bool new_contributes, uint64_t new_offset, uint64_t new_size) noexcept {
+  if (!append_file_end_valid()) {
+    return;
+  }
+
+  const uint64_t old_end = old_offset + old_size;
+  const uint64_t new_end = new_offset + new_size;
+
+  uint64_t& maximum = append_extent_cache_.end;
+  size_t& maximum_count = append_extent_cache_.contributors;
+
+  bool removed_last_maximum = false;
+
+  if (old_contributes) {
+    if (old_end > maximum) {
+      invalidate_append_file_end();
+      return;
+    }
+
+    if (old_end == maximum) {
+      if (maximum_count == 0) {
+        invalidate_append_file_end();
+        return;
+      }
+
+      --maximum_count;
+      removed_last_maximum = maximum_count == 0;
+    }
+  }
+
+  if (new_contributes) {
+    if (new_end > maximum) {
+      maximum = new_end;
+      maximum_count = 1;
+      return;
+    }
+
+    if (new_end == maximum) {
+      ++maximum_count;
+      return;
+    }
+  }
+
+  // The next-largest extent is not known without a scan.
+  if (removed_last_maximum) {
+    invalidate_append_file_end();
+  }
+}
+
 void Binary::shift_sections(uint64_t from, uint64_t shift) {
   LIEF_DEBUG("[+] Shift Sections");
+  invalidate_append_file_end();
   for (std::unique_ptr<Section>& section : sections_) {
     if (section->is_frame()) {
       continue;
@@ -1886,6 +2024,8 @@ void Binary::shift_sections(uint64_t from, uint64_t shift) {
 void Binary::shift_segments(uint64_t from, uint64_t shift) {
 
   LIEF_DEBUG("Shifting segments by {:#x} from {:#x}", shift, from);
+
+  invalidate_append_file_end();
 
   for (std::unique_ptr<Segment>& segment : segments_) {
     if (segment->file_offset() >= from) {
@@ -2893,6 +3033,8 @@ uint64_t Binary::relocate_phdr_table_pie() {
   phdr_reloc_info_.new_offset = from;
   phdr_reloc_info_.nb_segments = shift / phdr_size - header_.numberof_segments();
 
+  invalidate_append_file_end();
+
   auto alloc = datahandler_->make_hole(from, shift);
   if (!alloc) {
     LIEF_ERR("Allocation failed");
@@ -2999,6 +3141,8 @@ uint64_t Binary::relocate_phdr_table_v3() {
     return 0;
   }
 
+  invalidate_append_file_end();
+
   // Add a segment that wraps this new PHDR
   auto phdr_load_segment = std::make_unique<Segment>();
   phdr_load_segment->type(Segment::TYPE::LOAD);
@@ -3014,6 +3158,8 @@ uint64_t Binary::relocate_phdr_table_v3() {
                              DataHandler::Node::SEGMENT};
   phdr_load_segment->bind_node(*datahandler_, datahandler_->add(new_node));
 
+  Segment* phdr_load_segment_ptr = phdr_load_segment.get();
+
   const auto it_new_place =
       std::find_if(segments_.rbegin(), segments_.rend(),
                    [](const auto& s) { return s->is_load(); });
@@ -3024,6 +3170,7 @@ uint64_t Binary::relocate_phdr_table_v3() {
     const size_t idx = std::distance(segments_.begin(), it_new_place.base());
     segments_.insert(segments_.begin() + idx, std::move(phdr_load_segment));
   }
+  publish_layout(*phdr_load_segment_ptr);
 
   header.numberof_segments(header.numberof_segments() + 1);
   phdr_reloc_info_.nb_segments = static_cast<size_t>(user_segments);
@@ -3155,6 +3302,9 @@ uint64_t Binary::relocate_phdr_table_v2() {
     LIEF_ERR("Allocation failed");
     return 0;
   }
+
+  invalidate_append_file_end();
+
   bss_segment->physical_size(bss_segment->virtual_size());
 
   // Create a LOAD segment that wraps the new location of the PT_PHDR.
@@ -3174,6 +3324,8 @@ uint64_t Binary::relocate_phdr_table_v2() {
 
   nsegment_addr->bind_node(*datahandler_, datahandler_->add(new_node));
 
+  Segment* new_segment_raw = new_segment_ptr.get();
+
   const auto it_new_segment_place =
       std::find_if(segments_.rbegin(), segments_.rend(),
                    [nsegment_addr](const std::unique_ptr<Segment>& s) {
@@ -3187,6 +3339,7 @@ uint64_t Binary::relocate_phdr_table_v2() {
         std::distance(segments_.begin(), it_new_segment_place.base());
     segments_.insert(segments_.begin() + idx, std::move(new_segment_ptr));
   }
+  publish_layout(*new_segment_raw);
 
   this->header().numberof_segments(this->header().numberof_segments() + 1);
 
@@ -3237,6 +3390,8 @@ uint64_t Binary::relocate_phdr_table_v1() {
   if (phdr_reloc_info_.new_offset > 0) {
     return phdr_reloc_info_.new_offset;
   }
+
+  invalidate_append_file_end();
 
   LIEF_DEBUG("Running v1 (gap) PHDR relocator");
 
@@ -3470,6 +3625,7 @@ Section* Binary::add_section(std::unique_ptr<Section> sec) {
     sec_ptr = sections_.insert(it_new_sec_place, std::move(sec))->get();
   }
 
+  publish_layout(*sec_ptr);
   return sec_ptr;
 }
 

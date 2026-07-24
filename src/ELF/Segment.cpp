@@ -25,6 +25,7 @@
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Binary.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/Structures.hpp"
@@ -113,6 +114,19 @@ Segment::Segment(Segment&& other) noexcept {
 }
 
 void Segment::swap(Segment& other) noexcept {
+  if (this == &other) {
+    return;
+  }
+
+  if (layout_observer_ != nullptr) {
+    layout_observer_->invalidate_append_file_end();
+  }
+
+  if (other.layout_observer_ != nullptr &&
+      other.layout_observer_ != layout_observer_) {
+    other.layout_observer_->invalidate_append_file_end();
+  }
+
   std::swap(type_, other.type_);
   std::swap(arch_, other.arch_);
   std::swap(flags_, other.flags_);
@@ -186,6 +200,29 @@ void Segment::rebind_node_owner() noexcept {
   if (node_ != nullptr) {
     node_->rebind_owner(this);
   }
+}
+
+void Segment::observe_layout(Binary& binary) noexcept {
+  assert(layout_observer_ == nullptr);
+
+  layout_observer_ = &binary;
+}
+
+void Segment::stop_observing_layout() noexcept {
+  assert(layout_observer_ != nullptr);
+  layout_observer_ = nullptr;
+}
+
+void Segment::notify_layout_change(
+    bool old_contributes, uint64_t old_offset, uint64_t old_size,
+    bool new_contributes, uint64_t new_offset, uint64_t new_size) noexcept {
+  if (layout_observer_ == nullptr) {
+    return;
+  }
+  layout_observer_->update_layout_extent(
+    old_contributes, old_offset, old_size,
+    new_contributes, new_offset, new_size
+  );
 }
 
 Segment& Segment::operator=(Segment other) {
@@ -351,6 +388,9 @@ void Segment::remove(Segment::FLAGS flag) {
 }
 
 void Segment::file_offset(uint64_t file_offset) {
+  const uint64_t old_offset = file_offset_;
+  const bool layout_changed = old_offset != file_offset;
+
   if (datahandler_ != nullptr) {
     if (node_ == nullptr) {
       LIEF_ERR("Node not found, file offset cannot be updated");
@@ -359,9 +399,16 @@ void Segment::file_offset(uint64_t file_offset) {
     node_->offset(file_offset);
   }
   file_offset_ = file_offset;
+
+  if (layout_changed) {
+    notify_layout_change(true, old_offset, size_, true, file_offset, size_);
+  }
 }
 
 void Segment::physical_size(uint64_t physical_size) {
+  const uint64_t old_size = size_;
+  const bool layout_changed = old_size != physical_size;
+
   if (datahandler_ != nullptr) {
     if (node_ != nullptr) {
       node_->size(physical_size);
@@ -371,6 +418,13 @@ void Segment::physical_size(uint64_t physical_size) {
     }
   }
   size_ = physical_size;
+
+  if (layout_changed) {
+    notify_layout_change(
+      true, file_offset_, old_size,
+      true, file_offset_, physical_size
+    );
+  }
 }
 
 void Segment::content(std::vector<uint8_t> content) {
