@@ -7,7 +7,7 @@ from textwrap import dedent
 
 import lief
 import pytest
-from utils import get_sample, is_64bits_platform, parse_pe
+from utils import address_space_limiter, get_sample, is_64bits_platform, parse_pe
 
 
 def test_dos_header():
@@ -1207,3 +1207,18 @@ def test_coff_string_table_offset_overflow():
     pe = lief.PE.parse(sample)
     assert pe is not None
     assert len(pe.coff_string_table) == 0
+
+
+@pytest.mark.private
+def test_issue_1362():
+    sample = Path(get_sample("private/PE/issue_1362.pe")).absolute()
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-c",
+            "import lief; import sys; lief.parse(sys.argv[1])",
+            str(sample),
+        ],
+        timeout=30.0,
+        preexec_fn=address_space_limiter(),
+    )
