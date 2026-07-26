@@ -395,6 +395,13 @@ ok_error_t Parser::parse_relocations() {
       break;
     }
 
+    if (raw_struct.BlockSize > max_offset - current_offset) {
+      LIEF_ERR("Corrupted relocation: BlockSize ({}) exceeds remaining relocation "
+               "directory size ({})",
+               raw_struct.BlockSize, max_offset - current_offset);
+      break;
+    }
+
     if (raw_struct.BlockSize > binary_->optional_header().sizeof_image()) {
       LIEF_ERR("Corrupted relocation: BlockSize exceeds binary virtual size: "
                "{0} ({0:#10x})",
