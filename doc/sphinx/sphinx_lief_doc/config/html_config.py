@@ -1,11 +1,12 @@
-import lief
 import os
-import sphinx_lief
 
+import lief
+import sphinx_lief
 from sphinx.application import Sphinx
 
+
 def minify_option() -> dict[str, bool]:
-    if os.getenv('LIEF_DOC_MINIFY') is not None:
+    if os.getenv("LIEF_DOC_MINIFY") is not None:
         return {
             "html_minify": True,
             "css_minify": True,
@@ -20,20 +21,23 @@ def minify_option() -> dict[str, bool]:
 
 
 def setup(app: Sphinx):
-    app.config.html_theme_path       = sphinx_lief.html_theme_path()
-    app.config.html_context          = sphinx_lief.get_html_context()
-    app.config.html_theme            = app.config.lief_html_theme
-    app.config.html_base_url         = app.config.lief_public_website
-    app.config.base_url              = f"{app.config.html_base_url}/doc/{app.config.lief_doc_endpoint}"
-    app.config.html_last_updated_fmt = '%d/%m/%Y, %H:%M:%S'
-    app.config.html_logo             = '_static/logo_blue.png'
-    app.config.html_favicon          = '_static/favicon.ico'
-    app.config.html_static_path      = ['_static']
-    app.config.htmlhelp_basename     = 'LIEFdoc'
+    app.config.html_theme_path = sphinx_lief.html_theme_path()
+    app.config.html_context = sphinx_lief.get_html_context()
+    app.config.html_theme = app.config.lief_html_theme
+    app.config.html_base_url = app.config.lief_public_website
+    app.config.base_url = (
+        f"{app.config.html_base_url}/doc/{app.config.lief_doc_endpoint}"
+    )
+    app.config.html_last_updated_fmt = "%d/%m/%Y, %H:%M:%S"
+    app.config.html_logo = "_static/logo_blue.png"
+    app.config.html_favicon = "_static/favicon.ico"
+    app.config.html_static_path = ["_static"]
+    app.config.htmlhelp_basename = "LIEFdoc"
     app.config.html_theme_options = {
         "commit": app.config.lief_commit,
         "base_url": f"{app.config.base_url}/",
         "sponsor_link": app.config.lief_gh_sponsor_url,
+        "extended_link": app.config.lief_extended_url,
         "discord_invite": app.config.lief_discord,
         "repo_url": app.config.lief_gh_repo_url,
         "repo_name": app.config.lief_gh_repo,
@@ -47,13 +51,13 @@ def setup(app: Sphinx):
                 "href": app.config.html_base_url,
                 "internal": False,
                 "title": "Home",
-                "icon": "fa-solid fa-house"
+                "icon": "fa-solid fa-house",
             },
             {
                 "href": f"{app.config.html_base_url}/blog",
                 "internal": False,
                 "title": "Blog",
-                "icon": "fa-solid fa-rss"
+                "icon": "fa-solid fa-rss",
             },
             {
                 "href": f"{app.config.html_base_url}/download",
@@ -71,13 +75,13 @@ def setup(app: Sphinx):
                         "title": "Doxygen",
                         "href": f"{app.config.base_url}/doxygen",
                     },
-                ]
+                ],
             },
             {
                 "href": f"{app.config.html_base_url}/about",
                 "internal": False,
                 "title": "About",
-                "icon": "fa-solid fa-bars-staggered"
+                "icon": "fa-solid fa-bars-staggered",
             },
         ],
         "table_classes": ["plain"],
