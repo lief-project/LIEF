@@ -45,6 +45,7 @@
 #include "LIEF/errors.hpp"
 
 #include "ELF/Structures.hpp"
+#include "ELF/reloc_utils.hpp"
 #include "ELF/SizingInfo.hpp"
 #include "Object.tcc"
 #include "ExeLayout.hpp"
@@ -1454,6 +1455,12 @@ ok_error_t Builder::build_section_relocations() {
   }
 
   const bool is_rela = object_relocations[0].is_rela();
+  const Header::CLASS reloc_class = std::is_same_v<ELF_T, details::ELF32>
+                                        ? Header::CLASS::ELF32
+                                        : Header::CLASS::ELF64;
+  const bool mips_n64 =
+      reloc_utils::is_mips_n64(binary_->header().machine_type(), reloc_class);
+  const Header::ELF_DATA reloc_data = binary_->header().identity_data();
   std::unordered_map<Section*, vector_iostream> section_content;
 
   const ObjectFileLayout::sections_reloc_map_t& sec_relo_map =
@@ -1489,9 +1496,10 @@ ok_error_t Builder::build_section_relocations() {
         reloc->info(symidx);
       }
 
-      uint64_t r_info = reloc->r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                          Header::CLASS::ELF32 :
-                                          Header::CLASS::ELF64);
+      uint64_t r_info = mips_n64
+          ? reloc_utils::encode_mips_n64(Relocation::to_value(reloc->type()),
+                                         reloc->info(), reloc_data)
+          : reloc->r_info(reloc_class);
 
       if (is_rela) {
         Elf_Rela relahdr;
@@ -1651,6 +1659,13 @@ ok_error_t Builder::build_dynamic_relocations() {
   }
 
 
+  const Header::CLASS reloc_class = std::is_same_v<ELF_T, details::ELF32>
+                                        ? Header::CLASS::ELF32
+                                        : Header::CLASS::ELF64;
+  const bool mips_n64 =
+      reloc_utils::is_mips_n64(binary_->header().machine_type(), reloc_class);
+  const Header::ELF_DATA reloc_data = binary_->header().identity_data();
+
   vector_iostream content(should_swap());
   for (Relocation& relocation : binary_->dynamic_relocations()) {
     if (!relocation.is_rel() && !relocation.is_rela()) {
@@ -1677,9 +1692,10 @@ ok_error_t Builder::build_dynamic_relocations() {
       relocation.info(idx);
     }
 
-    uint64_t r_info = relocation.r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                            Header::CLASS::ELF32 :
-                                            Header::CLASS::ELF64);
+    uint64_t r_info = mips_n64
+        ? reloc_utils::encode_mips_n64(Relocation::to_value(relocation.type()),
+                                       relocation.info(), reloc_data)
+        : relocation.r_info(reloc_class);
     if (is_rela) {
       Elf_Rela relahdr;
       relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
@@ -1737,6 +1753,13 @@ ok_error_t Builder::build_pltgot_relocations() {
     return make_error_code(lief_errors::not_found);
   }
 
+  const Header::CLASS reloc_class = std::is_same_v<ELF_T, details::ELF32>
+                                        ? Header::CLASS::ELF32
+                                        : Header::CLASS::ELF64;
+  const bool mips_n64 =
+      reloc_utils::is_mips_n64(binary_->header().machine_type(), reloc_class);
+  const Header::ELF_DATA reloc_data = binary_->header().identity_data();
+
   vector_iostream content(should_swap()); // Section's content
   for (Relocation& relocation : binary_->pltgot_relocations()) {
     uint32_t idx = 0;
@@ -1758,9 +1781,10 @@ ok_error_t Builder::build_pltgot_relocations() {
       relocation.info(idx);
     }
 
-    uint64_t r_info = relocation.r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                            Header::CLASS::ELF32 :
-                                            Header::CLASS::ELF64);
+    uint64_t r_info = mips_n64
+        ? reloc_utils::encode_mips_n64(Relocation::to_value(relocation.type()),
+                                       relocation.info(), reloc_data)
+        : relocation.r_info(reloc_class);
 
     if (is_rela) {
       Elf_Rela relahdr;

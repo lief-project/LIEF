@@ -43,6 +43,7 @@
 #include "LIEF/ELF/Binary.hpp"
 
 #include "ELF/Structures.hpp"
+#include "ELF/reloc_utils.hpp"
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/SizingInfo.hpp"
 
@@ -712,8 +713,12 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset,
                     std::is_same_v<REL_T, typename ELF_T::Elf_Rela>,
                 "REL_T must be Elf_Rel || Elf_Rela");
 
+  const Header& hdr = binary_->header();
+  const Header::CLASS clazz = std::is_same_v<ELF_T, details::ELF64>
+                                  ? Header::CLASS::ELF64
+                                  : Header::CLASS::ELF32;
+  const bool mips_n64 = reloc_utils::is_mips_n64(hdr.machine_type(), clazz);
   const uint8_t shift = ELF_T::r_info_shift;
-  ;
 
   const auto nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
 
@@ -724,7 +729,11 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset,
     if (!reloc_entry) {
       break;
     }
-    idx = std::max(idx, static_cast<uint32_t>(reloc_entry->r_info >> shift));
+    const uint32_t sym_idx = mips_n64
+        ? reloc_utils::decode_mips_n64(reloc_entry->r_info,
+                                       hdr.identity_data()).sym_idx
+        : static_cast<uint32_t>(reloc_entry->r_info >> shift);
+    idx = std::max(idx, sym_idx);
   }
   return idx + 1;
 } // max_relocation_index
@@ -1163,7 +1172,8 @@ ok_error_t Parser::parse_packed_relocations(uint64_t offset, uint64_t size) {
       R.r_addend = addend;
       R.r_offset = r_offset;
       auto reloc = std::unique_ptr<Relocation>(new Relocation(
-          R, Relocation::PURPOSE::DYNAMIC, Relocation::ENCODING::ANDROID_SLEB, arch
+          R, Relocation::PURPOSE::DYNAMIC, Relocation::ENCODING::ANDROID_SLEB, arch,
+          binary_->header().identity_data()
       ));
       bind_symbol(*reloc);
       insert_relocation(std::move(reloc));
@@ -1264,7 +1274,8 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset,
     }
 
     auto reloc = std::unique_ptr<Relocation>(new Relocation(
-        std::move(*raw_reloc), Relocation::PURPOSE::DYNAMIC, enc, arch
+        std::move(*raw_reloc), Relocation::PURPOSE::DYNAMIC, enc, arch,
+        binary_->header().identity_data()
     ));
     bind_symbol(*reloc);
     insert_relocation(std::move(reloc));
@@ -1669,7 +1680,8 @@ ok_error_t Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
     }
 
     auto reloc = std::unique_ptr<Relocation>(
-        new Relocation(std::move(*rel_hdr), Relocation::PURPOSE::PLTGOT, enc, arch)
+        new Relocation(std::move(*rel_hdr), Relocation::PURPOSE::PLTGOT, enc, arch,
+               binary_->header().identity_data())
     );
     bind_symbol(*reloc);
     insert_relocation(std::move(reloc));
@@ -1735,9 +1747,13 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
     symbol_table = binary_->sections_[sh_link].get();
   }
 
-  constexpr uint8_t shift = ELF_T::r_info_shift;
-
   const ARCH arch = binary_->header_.machine_type();
+  const Header::CLASS clazz = std::is_same_v<ELF_T, details::ELF64>
+                                  ? Header::CLASS::ELF64
+                                  : Header::CLASS::ELF32;
+  const Header::ELF_DATA data = binary_->header().identity_data();
+  const bool mips_n64 = reloc_utils::is_mips_n64(arch, clazz);
+  const uint8_t shift = ELF_T::r_info_shift;
 
   constexpr Relocation::ENCODING enc =
       std::is_same_v<REL_T, typename ELF_T::Elf_Rel> ? Relocation::ENCODING::REL :
@@ -1764,7 +1780,8 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
       break;
     }
     auto reloc = std::unique_ptr<Relocation>(
-        new Relocation(*rel_hdr, Relocation::PURPOSE::NONE, enc, arch)
+        new Relocation(*rel_hdr, Relocation::PURPOSE::NONE, enc, arch,
+                       binary_->header().identity_data())
     );
 
     reloc->section_ = applies_to;
@@ -1774,7 +1791,9 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
       reloc->purpose(Relocation::PURPOSE::OBJECT);
     }
 
-    const auto idx = static_cast<uint32_t>(rel_hdr->r_info >> shift);
+    const auto idx = mips_n64
+        ? reloc_utils::decode_mips_n64(rel_hdr->r_info, data).sym_idx
+        : static_cast<uint32_t>(rel_hdr->r_info >> shift);
 
     const bool is_from_dynsym =
         idx > 0 && idx < binary_->dynamic_symbols_.size() &&

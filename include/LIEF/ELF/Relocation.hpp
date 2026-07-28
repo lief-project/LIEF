@@ -245,9 +245,10 @@ class LIEF_API Relocation : public LIEF::Relocation {
     if (clazz == Header::CLASS::NONE) {
       return 0;
     }
-    return clazz == Header::CLASS::ELF32 ?
-               uint32_t(info()) << 8 | to_value(type()) :
-               uint64_t(info()) << 32 | (to_value(type()) & 0xffffffffL);
+    if (clazz == Header::CLASS::ELF32) {
+      return uint32_t(info()) << 8 | to_value(type());
+    }
+    return uint64_t(info()) << 32 | (to_value(type()) & 0xffffffffL);
   }
 
   /// Target architecture for this relocation
@@ -352,7 +353,8 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   private:
   template<class T>
-  LIEF_LOCAL Relocation(const T& header, PURPOSE purpose, ENCODING enc, ARCH arch);
+  LIEF_LOCAL Relocation(const T& header, PURPOSE purpose, ENCODING enc,
+                        ARCH arch, Header::ELF_DATA data);
 
   TYPE type_ = TYPE::UNKNOWN;
   int64_t addend_ = 0;

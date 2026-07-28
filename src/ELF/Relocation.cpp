@@ -21,6 +21,7 @@
 #include "LIEF/ELF/Binary.hpp"
 
 #include "ELF/Structures.hpp"
+#include "ELF/reloc_utils.hpp"
 
 #include "logging.hpp"
 
@@ -30,13 +31,13 @@ namespace LIEF::ELF {
 int32_t get_reloc_size(Relocation::TYPE type);
 
 template Relocation::Relocation(const details::Elf32_Rel&, PURPOSE, ENCODING,
-                                ARCH);
+                                ARCH, Header::ELF_DATA);
 template Relocation::Relocation(const details::Elf32_Rela&, PURPOSE, ENCODING,
-                                ARCH);
+                                ARCH, Header::ELF_DATA);
 template Relocation::Relocation(const details::Elf64_Rel&, PURPOSE, ENCODING,
-                                ARCH);
+                                ARCH, Header::ELF_DATA);
 template Relocation::Relocation(const details::Elf64_Rela&, PURPOSE, ENCODING,
-                                ARCH);
+                                ARCH, Header::ELF_DATA);
 
 Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
   static std::set<ARCH> ERR;
@@ -67,7 +68,8 @@ Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
 }
 
 template<class T>
-Relocation::Relocation(const T& header, PURPOSE purpose, ENCODING enc, ARCH arch) :
+Relocation::Relocation(const T& header, PURPOSE purpose, ENCODING enc,
+                       ARCH arch, Header::ELF_DATA data) :
   LIEF::Relocation{header.r_offset, 0},
   encoding_{enc},
   architecture_{arch},
@@ -77,13 +79,21 @@ Relocation::Relocation(const T& header, PURPOSE purpose, ENCODING enc, ARCH arch
   {
     type_ = type_from(header.r_info & 0xff, arch);
     info_ = static_cast<uint32_t>(header.r_info >> 8);
-  }
-
-  if constexpr (std::is_same_v<T, details::Elf64_Rel> ||
-                std::is_same_v<T, details::Elf64_Rela>)
-  {
-    type_ = type_from(header.r_info & 0xffffffff, arch);
-    info_ = static_cast<uint32_t>(header.r_info >> 32);
+  } else {
+    // MIPS n64 (ELFCLASS64 + EM_MIPS) packs r_info as r_sym|r_ssym|r_type3|
+    // r_type2|r_type instead of the generic sym<<32|type layout. Android
+    // packed relocations carry a logical r_info, so they keep the generic
+    // decode below.
+    if ((enc == ENCODING::REL || enc == ENCODING::RELA) &&
+        reloc_utils::is_mips_n64(arch, Header::CLASS::ELF64))
+    {
+      const auto mips = reloc_utils::decode_mips_n64(header.r_info, data);
+      type_ = type_from(mips.type_value, arch);
+      info_ = mips.sym_idx;
+    } else {
+      type_ = type_from(header.r_info & 0xffffffff, arch);
+      info_ = static_cast<uint32_t>(header.r_info >> 32);
+    }
   }
 
   if constexpr (std::is_same_v<T, details::Elf32_Rela> ||
