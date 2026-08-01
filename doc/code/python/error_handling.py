@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-
+# ruff: noqa: BLE001
 import lief
 
 
@@ -24,5 +23,5 @@ def get_type_error() -> None:
     elif isinstance(pe_type, lief.lief_errors):
         print("Another kind of error")
     else:
-        print("No error, type is: {}".format(pe_type))
+        print(f"No error, type is: {pe_type}")
     # lief-doc: get-type-error-end

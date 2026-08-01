@@ -25,7 +25,7 @@ import lief
 HAS_EXCEPTION = False
 
 
-class exceptions_handler(object):
+class exceptions_handler:
     func = None
 
     def __init__(self, exceptions, on_except_callback=None):
@@ -45,7 +45,7 @@ class exceptions_handler(object):
                 self.on_except_callback(e)
             else:
                 print("-" * 60, file=sys.stderr)
-                print("Exception in {}: {}".format(self.func.__name__, e))
+                print(f"Exception in {self.func.__name__}: {e}")
                 traceback.print_exc()
                 print("-" * 60, file=sys.stderr)
 
@@ -274,7 +274,7 @@ def process_signature(sig: lief.PE.Signature, args):
         show_crts(sig, args)
 
     if args.show_hash:
-        print("Authentihash: {}".format(sig.content_info.digest.hex()))
+        print(f"Authentihash: {sig.content_info.digest.hex()}")
 
 
 def main():
@@ -375,7 +375,7 @@ def main():
     if lief.is_pe(args.file):
         binary = lief.PE.parse(args.file)
         if binary is None:
-            print("Error while parsing {}".format(args.file))
+            print(f"Error while parsing {args.file}")
             sys.exit(1)
 
         if args.check_sig:
@@ -386,17 +386,9 @@ def main():
             print(res)
 
         if args.show_hash:
-            print(
-                "Binary MD5     authentihash: {}".format(binary.authentihash_md5.hex())
-            )
-            print(
-                "Binary SHA-1   authentihash: {}".format(binary.authentihash_sha1.hex())
-            )
-            print(
-                "Binary SHA-256 authentihash: {}".format(
-                    binary.authentihash_sha256.hex()
-                )
-            )
+            print(f"Binary MD5     authentihash: {binary.authentihash_md5.hex()}")
+            print(f"Binary SHA-1   authentihash: {binary.authentihash_sha1.hex()}")
+            print(f"Binary SHA-256 authentihash: {binary.authentihash_sha256.hex()}")
 
         for idx, sig in enumerate(binary.signatures):
             process_signature(sig, args)
@@ -408,7 +400,7 @@ def main():
                     path += ".p7b"
                 outpath = pathlib.Path(path)
                 outpath.write_bytes(sig.raw_der)
-                print("Signature saved to {}".format(outpath))
+                print(f"Signature saved to {outpath}")
     else:
         # Try as a regular p7b signature
         sig = lief.PE.Signature.parse(args.file)

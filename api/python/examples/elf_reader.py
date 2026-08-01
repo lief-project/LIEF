@@ -25,7 +25,7 @@ terminal_columns = _term_size.columns - 10
 terminal_rows = _term_size.lines
 
 
-class exceptions_handler(object):
+class exceptions_handler:
     func = None
 
     def __init__(self, exceptions, on_except_callback=None):
@@ -43,8 +43,8 @@ class exceptions_handler(object):
                 self.on_except_callback(e)
             else:
                 print("-" * 60)
-                print("Exception in {}: {}".format(self.func.__name__, e))
-                exc_type, exc_value, exc_traceback = sys.exc_info()
+                print(f"Exception in {self.func.__name__}: {e}")
+                _exc_type, _exc_value, exc_traceback = sys.exc_info()
                 traceback.print_tb(exc_traceback)
                 print("-" * 60)
 
@@ -110,7 +110,7 @@ def print_header(binary):
     print(format_dec.format("Section Header Size:", header.section_header_size))
     print(format_dec.format("Number of segments:", header.numberof_segments))
     print(format_dec.format("Number of sections:", header.numberof_sections))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -147,7 +147,7 @@ def print_sections(binary):
                     segments_str,
                 )
             )
-        print("")
+        print()
     else:
         print("No sections")
 
@@ -197,7 +197,7 @@ def print_segments(binary):
                     s,
                 )
             )
-        print("")
+        print()
     else:
         print("No segments")
 
@@ -236,12 +236,10 @@ def print_dynamic_entries(binary):
                     ", ".join(map(hex, entry.array)),
                 )
             )
-        elif entry.tag == ELF.DynamicEntry.TAG.FLAGS:
-            flags_str = " - ".join(
-                [str(ELF.DynamicEntryFlags.FLAG(s)).split(".")[-1] for s in entry.flags]
-            )
-            print(f_value.format(str(entry.tag).split(".")[-1], entry.value, flags_str))
-        elif entry.tag == ELF.DynamicEntry.TAG.FLAGS_1:
+        elif (
+            entry.tag == ELF.DynamicEntry.TAG.FLAGS
+            or entry.tag == ELF.DynamicEntry.TAG.FLAGS_1
+        ):
             flags_str = " - ".join(
                 [str(ELF.DynamicEntryFlags.FLAG(s)).split(".")[-1] for s in entry.flags]
             )
@@ -249,7 +247,7 @@ def print_dynamic_entries(binary):
         else:
             print(f_value.format(str(entry.tag).split(".")[-1], entry.value, ""))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -292,9 +290,7 @@ def print_symbols(symbols, no_trunc):
 
         wrapped = textwrap.wrap(symbol_name, maxsize)
 
-        if len(wrapped) <= 1 or no_trunc:
-            symbol_name = symbol_name
-        else:
+        if len(wrapped) > 1 and not no_trunc:
             symbol_name = wrapped[0][:-3] + "..."
 
         print(
@@ -333,13 +329,12 @@ def print_relocations(binary, relocations):
 
     for relocation in relocations:
         type = str(relocation.type)
-        if binary.header.machine_type == ELF.ARCH.x86_64:
-            type = str(relocation.type)
-        elif binary.header.machine_type == ELF.ARCH.i386:
-            type = str(relocation.type)
-        elif binary.header.machine_type == ELF.ARCH.ARM:
-            type = str(relocation.type)
-        elif binary.header.machine_type == ELF.ARCH.AARCH64:
+        if (
+            binary.header.machine_type == ELF.ARCH.x86_64
+            or binary.header.machine_type == ELF.ARCH.i386
+            or binary.header.machine_type == ELF.ARCH.ARM
+            or binary.header.machine_type == ELF.ARCH.AARCH64
+        ):
             type = str(relocation.type)
 
         symbol_name = ""
@@ -350,10 +345,10 @@ def print_relocations(binary, relocations):
             elif symbol.type == lief.ELF.Symbol.TYPE.SECTION:
                 shndx = symbol.shndx
                 sections = binary.sections
-                if 0 < shndx and shndx < len(sections):
+                if 0 < shndx < len(sections):
                     symbol_name = sections[shndx].name + " + " + hex(relocation.addend)
                 else:
-                    symbol_name = "<section #{}>".format(shndx)
+                    symbol_name = f"<section #{shndx}>"
 
         print(
             f_value.format(
@@ -469,11 +464,11 @@ def print_notes(binary):
     notes = binary.notes
     for idx, note in enumerate(notes):
         description = note.description
-        description_str = " ".join(map(lambda e: "{:02x}".format(e), description[:16]))
+        description_str = " ".join(f"{e:02x}" for e in description[:16])
         if len(description) > 16:
             description_str += " ..."
 
-        print("Note #{:d}".format(idx))
+        print(f"Note #{idx:d}")
 
         type_str = note.type_core if note.is_core else note.type
         type_str = str(type_str).split(".")[-1]
@@ -491,7 +486,7 @@ def print_notes(binary):
 
         if isinstance(note_details, lief.ELF.NoteAbi):
             version = note_details.version
-            version_str = "{:d}.{:d}.{:d}".format(version[0], version[1], version[2])
+            version_str = f"{version[0]:d}.{version[1]:d}.{version[2]:d}"
 
             print(format_str.format("ABI:", note_details.abi))
             print(format_str.format("Version:", version_str))
@@ -509,9 +504,9 @@ def print_notes(binary):
 def print_ctor(binary):
     print("== Constructors ==\n")
 
-    print("Functions: ({:d})".format(len(binary.ctor_functions)))
+    print(f"Functions: ({len(binary.ctor_functions):d})")
     for idx, f in enumerate(binary.ctor_functions):
-        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+        print(f"    [{idx:d}] {f.name}: 0x{f.address:x}")
 
 
 @exceptions_handler(Exception)
@@ -519,9 +514,9 @@ def print_strings(binary):
     print("== Strings ==\n")
 
     strings = binary.strings
-    print("Strings: ({:d})".format(len(binary.strings)))
+    print(f"Strings: ({len(binary.strings):d})")
     for s in strings:
-        print("    {}".format(s))
+        print(f"    {s}")
 
 
 @exceptions_handler(Exception)
@@ -529,9 +524,9 @@ def print_functions(binary):
     print("== Functions ==\n")
 
     functions = binary.functions
-    print("Functions: ({:d})".format(len(functions)))
+    print(f"Functions: ({len(functions):d})")
     for idx, f in enumerate(functions):
-        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+        print(f"    [{idx:d}] {f.name}: 0x{f.address:x}")
 
 
 def main():

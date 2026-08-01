@@ -31,7 +31,7 @@ def generate_samples(melkor, seed="/usr/bin/ls", nb=100):
     p = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=melkor_path
     )
-    out, err = p.communicate()
+    _out, _err = p.communicate()
 
     return output_dir
 

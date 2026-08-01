@@ -70,9 +70,8 @@ def test_add_note(tmp_path: Path):
     # The string printed is largely irrelevant, but running print ensures no
     # regression occurs in a previous Note::dump segfault
     # https://github.com/lief-project/LIEF/issues/300
-    with StringIO() as temp_stdout:
-        with redirect_stdout(temp_stdout):
-            lief.logging.info(etterlog)
+    with StringIO() as temp_stdout, redirect_stdout(temp_stdout):
+        lief.logging.info(etterlog)
 
 
 def test_android_note(tmp_path: Path):

@@ -117,7 +117,7 @@ def test_symtab(tmp_path: Path):
         fsize = target.stat().st_size
         for i in range(nb_symbols):
             sym = lief.ELF.Symbol()
-            sym.name = "test_sym_{:03}".format(i)
+            sym.name = f"test_sym_{i:03}"
             sym.value = 0x1000 + i
             sym.type = lief.ELF.Symbol.TYPE.FUNC
             sym.binding = lief.ELF.Symbol.BINDING.LOCAL

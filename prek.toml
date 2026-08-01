@@ -90,6 +90,7 @@ hooks = [
     name = "lint(tests) - ruff",
     language = "system",
     entry = "ruff check",
+    #args = ["--fix"],
     files = { glob = ["tests/**/*.py"] },
   },
   {
@@ -97,6 +98,7 @@ hooks = [
     name = "lint(examples) - ruff",
     language = "system",
     entry = "ruff check",
+    #args = ["--fix"],
     files = { glob = ["api/python/examples/**/*.py"] },
   },
   {
@@ -104,6 +106,7 @@ hooks = [
     name = "lint(doc) - ruff",
     language = "system",
     entry = "ruff check",
+    #args = ["--fix"],
     files = { glob = ["doc/code/python/**/*.py"] },
   },
   {
@@ -152,7 +155,7 @@ hooks = [
     entry = "iwyu-lint",
     args = [
       "--no-insert",
-      "--fix",
+      #"--fix",
       "--ignore", ".*third-party.*",
       "--ignore", ".*spdlog.*",
       "--ignore", ".*mbedtls.*",

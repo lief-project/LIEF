@@ -286,7 +286,7 @@ def test_DW_TAG_set_type():
     dbg_info = get_debug_info(elf)
     assert dbg_info is not None
 
-    CU = list(dbg_info.compilation_units)[0]
+    CU = next(iter(dbg_info.compilation_units))
     assert CU is not None
     assert CU.language.lang == lief.dwarf.CompilationUnit.Language.LANG.MODULA
     assert CU.language.version == 3
@@ -336,7 +336,7 @@ def test_DW_TAG_immutable_type():
     dbg_info = get_debug_info(elf)
     assert dbg_info is not None
 
-    CU = list(dbg_info.compilation_units)[0]
+    CU = next(iter(dbg_info.compilation_units))
     assert CU is not None
     assert CU.language.lang == lief.dwarf.CompilationUnit.Language.LANG.D
     assert CU.language.version == 0

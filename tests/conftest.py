@@ -59,13 +59,15 @@ def pytest_addoption(parser):
 
 
 def pytest_runtest_setup(item: pytest.Function):
-    if item.get_closest_marker("slow") is not None:
-        if item.config.getoption("--skip-slow"):
-            pytest.skip("Skipping slow tests")
+    if item.get_closest_marker("slow") is not None and item.config.getoption(
+        "--skip-slow"
+    ):
+        pytest.skip("Skipping slow tests")
 
-    if item.get_closest_marker("private") is not None:
-        if item.config.getoption("--skip-private") or not has_private_samples():
-            pytest.skip("Skipping private test")
+    if item.get_closest_marker("private") is not None and (
+        item.config.getoption("--skip-private") or not has_private_samples()
+    ):
+        pytest.skip("Skipping private test")
 
     if linux_marker := item.get_closest_marker("linux"):
         args = cast(list[str], linux_marker.args)
@@ -73,18 +75,22 @@ def pytest_runtest_setup(item: pytest.Function):
             pytest.skip("Skipping Linux test")
         if len(args) > 0:
             arch = args[0]
-            if arch.lower().strip() in ("x86_64", "x64", "x86-64"):
-                if not is_x86_64():
-                    pytest.skip("Skipping Linux[x86_64] test")
+            if arch.lower().strip() in ("x86_64", "x64", "x86-64") and not is_x86_64():
+                pytest.skip("Skipping Linux[x86_64] test")
 
-    if item.get_closest_marker("lief_extended") is not None:
-        if item.config.getoption("--skip-extended") or not lief.__extended__:
-            pytest.skip("Skipping LIEF extended test")
+    if item.get_closest_marker("lief_extended") is not None and (
+        item.config.getoption("--skip-extended") or not lief.__extended__
+    ):
+        pytest.skip("Skipping LIEF extended test")
 
-    if item.config.getoption("--only-extended") and lief.__extended__:
-        if item.get_closest_marker("lief_extended") is None:
-            pytest.skip("Skipping non extended tests")
+    if (
+        item.config.getoption("--only-extended")
+        and lief.__extended__
+        and item.get_closest_marker("lief_extended") is None
+    ):
+        pytest.skip("Skipping non extended tests")
 
-    if item.get_closest_marker("runtime") is not None:
-        if item.config.getoption("--skip-runtime"):
-            pytest.skip("Skipping runtime tests")
+    if item.get_closest_marker("runtime") is not None and item.config.getoption(
+        "--skip-runtime"
+    ):
+        pytest.skip("Skipping runtime tests")

@@ -10,7 +10,7 @@ def test_simple():
 
     assert (
         len(
-            [s for s in macho.sections if s.type == lief.MachO.Section.TYPE.SYMBOL_STUBS] # fmt: off
+            [s for s in macho.sections if s.type == lief.MachO.Section.TYPE.SYMBOL_STUBS]
         ) == 1
     )  # fmt: off
     assert len(stubs) == 25

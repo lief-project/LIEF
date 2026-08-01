@@ -8,7 +8,7 @@ from utils import get_sample, parse_pe
 
 try:
     sys.set_int_max_str_digits(0)
-except Exception:  # pragma: no cover
+except Exception:  # pragma: no cover # noqa
     pass
 
 
@@ -512,7 +512,7 @@ def test_ms_counter_signature():
         == "C=US, ST=Washington, L=Redmond, O=Microsoft Corporation, CN=Microsoft Time-Stamp PCA 2010"
     )
     assert (
-        ":".join(map(lambda e: f"{e:02x}", signer.serial_number))
+        ":".join(f"{e:02x}" for e in signer.serial_number)
         == "33:00:00:01:b7:21:27:1a:07:a2:2a:86:46:00:01:00:00:01:b7"
     )
 

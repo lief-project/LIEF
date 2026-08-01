@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import lief
 
 
@@ -61,10 +60,10 @@ def explore(pdb: lief.pdb.DebugInfo) -> None:
     # lief-doc: explore-start
     pdb: lief.pdb.DebugInfo
 
-    print("arg={}, guid={}".format(pdb.age, pdb.guid))
+    print(f"arg={pdb.age}, guid={pdb.guid}")
 
     for sym in pdb.public_symbols:
-        print("name={}, section={}, RVA={}".format(sym.name, sym.section_name, sym.RVA))
+        print(f"name={sym.name}, section={sym.section_name}, RVA={sym.RVA}")
 
     for ty in pdb.types:
         if isinstance(ty, lief.pdb.types.Class):
@@ -77,11 +76,6 @@ def explore(pdb: lief.pdb.DebugInfo) -> None:
 
         for func in cu.functions:
             print(
-                "name={}, section={}, RVA={}, code_size={}".format(
-                    func.name,
-                    func.section_name,
-                    func.RVA,
-                    func.code_size,
-                )
+                f"name={func.name}, section={func.section_name}, RVA={func.RVA}, code_size={func.code_size}"
             )
     # lief-doc: explore-end

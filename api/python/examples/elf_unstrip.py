@@ -24,10 +24,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("input", metavar="<elf>", help="Input (stripped) ELF binary")
     parser.add_argument("output", metavar="<out>", help="Output ELF binary")
-    parser.add_argument("--address", type=lambda e: int(e, 0), default=0x402A00,
-                        help="Address of the added symbol (default: 0x402A00)")
-    parser.add_argument("--name", default="main",
-                        help="Name of the added symbol (default: main)")
+    parser.add_argument(
+        "--address",
+        type=lambda e: int(e, 0),
+        default=0x402A00,
+        help="Address of the added symbol (default: 0x402A00)",
+    )
+    parser.add_argument(
+        "--name", default="main", help="Name of the added symbol (default: main)"
+    )
     args = parser.parse_args()
 
     binary = ELF.parse(args.input)

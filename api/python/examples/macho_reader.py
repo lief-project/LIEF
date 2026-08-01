@@ -25,7 +25,7 @@ terminal_rows = _term_size.lines
 EXIT_STATUS = 0
 
 
-class exceptions_handler(object):
+class exceptions_handler:
     func = None
 
     def __init__(self, exceptions, on_except_callback=None):
@@ -40,14 +40,14 @@ class exceptions_handler(object):
             return self.func(*args, **kwargs)
         except self.exceptions as e:
             global EXIT_STATUS
-            print("{} raised: {}".format(self.func.__name__, e))
+            print(f"{self.func.__name__} raised: {e}")
             EXIT_STATUS = 1
             if self.on_except_callback is not None:
                 self.on_except_callback(e)
             else:
                 print("-" * 60)
-                print("Exception in {}: {}".format(self.func.__name__, e))
-                exc_type, exc_value, exc_traceback = sys.exc_info()
+                print(f"Exception in {self.func.__name__}: {e}")
+                _exc_type, _exc_value, exc_traceback = sys.exc_info()
                 traceback.print_tb(exc_traceback)
                 print("-" * 60)
 
@@ -64,7 +64,7 @@ def print_information(binary):
     print(format_str.format("PIE:", str(binary.is_pie)))
     print(format_str.format("NX:", str(binary.has_nx)))
     print(format_str.format("Arch:", cpu))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -102,7 +102,7 @@ def print_commands(binary):
                 command.size,
             )
         )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -127,7 +127,7 @@ def print_libraries(binary):
                 compatibility_version_str,
             )
         )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -151,7 +151,7 @@ def print_segments(binary):
         )
     )
     for segment in binary.segments:
-        sections = ", ".join(map(lambda s: s.name, segment.sections))
+        sections = ", ".join(s.name for s in segment.sections)
         print(
             f_value.format(
                 segment.name,
@@ -165,7 +165,7 @@ def print_segments(binary):
             )
         )
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -237,9 +237,9 @@ def print_sections(binary):
                         scat=str(reloc.is_scattered),
                     )
                 )
-            print("")
+            print()
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -249,7 +249,7 @@ def print_symbols(binary):
         return
     try:
         maxsize = max([len(symbol.demangled_name) for symbol in symbols])
-    except Exception:
+    except Exception:  # noqa
         maxsize = max([len(symbol.name) for symbol in symbols])
     maxsize = (
         min(maxsize, terminal_columns - 90)
@@ -272,7 +272,6 @@ def print_symbols(binary):
         if symbol.has_binding_info and symbol.binding_info.has_library:
             libname = symbol.binding_info.library.name
 
-        symbol_value = 0
         if symbol.has_export_info:
             symbol_value = symbol.export_info.address
         elif symbol.has_binding_info:
@@ -282,7 +281,7 @@ def print_symbols(binary):
 
         try:
             symbol_name = symbol.demangled_name
-        except Exception:
+        except Exception:  # noqa
             symbol_name = symbol.name
         print(
             f_value.format(
@@ -294,7 +293,7 @@ def print_symbols(binary):
                 libname,
             )
         )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -312,7 +311,7 @@ def print_symbol_command(binary):
     print(format_hex.format("String offset", scmd.strings_offset))
     print(format_hex.format("String size", scmd.strings_size))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -373,17 +372,17 @@ def print_dynamic_symbol_command(binary):
     print(format_hex.format("Local relocation offset", dyscmd.local_relocation_offset))
     print(format_dec.format("Number of local relocations", dyscmd.nb_local_relocations))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
 def print_uuid(binary):
     print("== UUID ==")
     cmd = binary.uuid
-    uuid_str = " ".join(map(lambda e: "{:02x}".format(e), cmd.uuid))
-    print("UUID: {}".format(uuid_str))
+    uuid_str = " ".join(f"{e:02x}" for e in cmd.uuid)
+    print(f"UUID: {uuid_str}")
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -397,7 +396,7 @@ def print_main_command(binary):
     print(format_hex.format("Entry point:", cmd.entrypoint))
     print(format_hex.format("Stack size:", cmd.stack_size))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -412,26 +411,25 @@ def print_thread_command(binary):
     print(format_hex.format("Count:", cmd.count))
     print(format_hex.format("PC:", cmd.pc))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
 def print_rpath_command(binary):
 
-
     print("== Rpath Command ==")
     cmd = binary.rpath
-    print("Path: {}".format(cmd.path))
+    print(f"Path: {cmd.path}")
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
 def print_dylinker(binary):
     print("== Dylinker ==")
-    print("Path: {}".format(binary.dylinker.name))
+    print(f"Path: {binary.dylinker.name}")
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -444,11 +442,11 @@ def print_function_starts(binary):
 
     print(format_hex.format("Offset:", fstarts.data_offset))
     print(format_hex.format("Size:", fstarts.data_size))
-    print("Functions: ({:d})".format(len(fstarts.functions)))
+    print(f"Functions: ({len(fstarts.functions):d})")
     for idx, address in enumerate(fstarts.functions):
-        print("    [{:d}] __TEXT + 0x{:x}".format(idx, address))
+        print(f"    [{idx:d}] __TEXT + 0x{address:x}")
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -461,13 +459,11 @@ def print_data_in_code(binary):
 
     print(format_hex.format("Offset:", datacode.data_offset))
     print(format_hex.format("Size:", datacode.data_size))
-    print("")
+    print()
     for entry in datacode.entries:
         type_str = str(entry.type).split(".")[-1]
-        print(
-            "- {:<14}: 0x{:x} ({:d} bytes)".format(type_str, entry.offset, entry.length)
-        )
-    print("")
+        print(f"- {type_str:<14}: 0x{entry.offset:x} ({entry.length:d} bytes)")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -481,7 +477,7 @@ def print_segment_split_info(binary):
     print(format_hex.format("Offset:", sinfo.data_offset))
     print(format_hex.format("Size:", sinfo.data_size))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -493,7 +489,7 @@ def print_sub_framework(binary):
     sinfo = binary.sub_framework
     print(format_str.format("Umbrella:", sinfo.umbrella))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -505,7 +501,7 @@ def print_dyld_environment(binary):
     env = binary.dyld_environment
     print(format_str.format("Value:", env.value))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -523,11 +519,11 @@ def print_dyld_info(binary):
     print(f_value.format("Lazy Bind", dyld_info.lazy_bind[0], dyld_info.lazy_bind[1]))
     print(f_value.format("Export", dyld_info.export_info[0], dyld_info.export_info[1]))
 
-    print("")
+    print()
 
     print("Bindings")
     print("--------")
-    for idx, binfo in enumerate(dyld_info.bindings):
+    for _idx, binfo in enumerate(dyld_info.bindings):
         print("{:10}: {}".format("Class", str(binfo.binding_class).split(".")[-1]))
         print("{:10}: {}".format("Type", str(binfo.binding_type).split(".")[-1]))
         print("{:10}: {:x}".format("Address", binfo.address))
@@ -544,18 +540,18 @@ def print_dyld_info(binary):
         if binfo.binding_class == lief.MachO.BINDING_CLASS.LAZY:
             print("{:10}: {}".format("Offset", binfo.original_offset))
 
-        print("")
+        print()
 
-    print("")
+    print()
 
     print("Exports")
     print("-------")
-    for idx, einfo in enumerate(dyld_info.exports):
-        output = "0x{:08x} - {}".format(einfo.address, einfo.symbol.name)
+    for _idx, einfo in enumerate(dyld_info.exports):
+        output = f"0x{einfo.address:08x} - {einfo.symbol.name}"
         if einfo.alias:
-            output += " - {}".format(einfo.alias.name)
+            output += f" - {einfo.alias.name}"
             if einfo.alias_library:
-                output += " from {}".format(einfo.alias_library.name)
+                output += f" from {einfo.alias_library.name}"
         print(output)
 
         # print("{:10}: {:<10x}".format("Address", einfo.address))
@@ -564,9 +560,9 @@ def print_dyld_info(binary):
         # if binfo.has_symbol:
         #    print("{:10}: {}".format("Symbol", einfo.symbol.name))
 
-        print("")
+        print()
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -575,7 +571,7 @@ def print_rebase_opcodes(binary):
 
     print(binary.dyld_info.show_rebases_opcodes)
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -584,7 +580,7 @@ def print_bind_opcodes(binary):
 
     print(binary.dyld_info.show_bind_opcodes)
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -593,7 +589,7 @@ def print_weak_bind_opcodes(binary):
 
     print(binary.dyld_info.show_weak_bind_opcodes)
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -602,7 +598,7 @@ def print_lazy_bind_opcodes(binary):
 
     print(binary.dyld_info.show_lazy_bind_opcodes)
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -612,14 +608,10 @@ def print_export_trie(binary):
         print(binary.dyld_info.show_export_trie)
     if binary.has_dyld_exports_trie:
         trie: lief.MachO.DyldExportsTrie = binary.dyld_exports_trie
-        print(
-            "Linkedit position: 0x{} (0x{:x} bytes)".format(
-                trie.data_offset, trie.data_size
-            )
-        )
+        print(f"Linkedit position: 0x{trie.data_offset} (0x{trie.data_size:x} bytes)")
         print(trie.show_export_trie())
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -630,7 +622,7 @@ def print_source_version(binary):
 
     print("Version: {:d}.{:d}.{:d}.{:d}.{:d}".format(*version))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -643,7 +635,7 @@ def print_version_min(binary):
     print("Version: {:d}.{:d}.{:d}".format(*version))
     print("SDK: {:d}.{:d}.{:d}".format(*sdk))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -665,7 +657,6 @@ def print_relocations(binary):
     )
 
     for reloc in binary.relocations:
-        type_str = ""
         rtype = reloc.type
         if isinstance(rtype, int):
             type_str = str(rtype)
@@ -678,7 +669,7 @@ def print_relocations(binary):
 
         secseg_name = ""
         if reloc.has_segment and reloc.has_section:
-            secseg_name = "{}.{}".format(reloc.segment.name, reloc.section.name)
+            secseg_name = f"{reloc.segment.name}.{reloc.section.name}"
         else:
             if reloc.has_segment:
                 secseg_name = reloc.segment.name
@@ -697,7 +688,7 @@ def print_relocations(binary):
             )
         )
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -713,34 +704,34 @@ def print_encryption_info(binary):
     print(format_hex.format("Size:", cmd.crypt_size))
     print(format_dec.format("ID:", cmd.crypt_id))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
 def print_ctor(binary):
     print("== Constructors ==\n")
 
-    print("Functions: ({:d})".format(len(binary.ctor_functions)))
+    print(f"Functions: ({len(binary.ctor_functions):d})")
     for idx, f in enumerate(binary.ctor_functions):
-        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+        print(f"    [{idx:d}] {f.name}: 0x{f.address:x}")
 
 
 @exceptions_handler(Exception)
 def print_unwind_functions(binary):
     print("== Unwind functions ==\n")
 
-    print("Functions: ({:d})".format(len(binary.unwind_functions)))
+    print(f"Functions: ({len(binary.unwind_functions):d})")
     for idx, f in enumerate(binary.unwind_functions):
-        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+        print(f"    [{idx:d}] {f.name}: 0x{f.address:x}")
 
 
 @exceptions_handler(Exception)
 def print_functions(binary):
     print("== Functions ==\n")
 
-    print("Functions: ({:d})".format(len(binary.functions)))
+    print(f"Functions: ({len(binary.functions):d})")
     for idx, f in enumerate(binary.functions):
-        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+        print(f"    [{idx:d}] {f.name}: 0x{f.address:x}")
 
 
 @exceptions_handler(Exception)
@@ -755,7 +746,7 @@ def print_build_version(binary):
 
     tools = build_version.tools
     if len(tools) > 0:
-        print("~~ Tools ({}) ~~".format(len(tools)))
+        print(f"~~ Tools ({len(tools)}) ~~")
         for tool in tools:
             tool_str = str(tool.tool).split(".")[-1]
             print("    {} - {}.{}.{}".format(tool_str, *tool.version))
@@ -1070,11 +1061,11 @@ def main():
 
     binaries = MachO.parse(args.binary)
     if binaries is None:
-        print("Can't parse {}".format(args.binary))
+        print(f"Can't parse {args.binary}")
         sys.exit(1)
 
     if len(binaries) > 1:
-        print("Fat Mach-O: {:d} binaries".format(len(binaries)))
+        print(f"Fat Mach-O: {len(binaries):d} binaries")
 
     if args.check_layout:
         isok, err = MachO.check_layout(binaries)

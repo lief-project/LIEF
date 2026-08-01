@@ -20,7 +20,7 @@ import lief
 from lief import PE
 
 
-class exceptions_handler(object):
+class exceptions_handler:
     func = None
 
     def __init__(self, exceptions, on_except_callback=None):
@@ -38,8 +38,8 @@ class exceptions_handler(object):
                 self.on_except_callback(e)
             else:
                 print("-" * 60)
-                print("Exception in {}: {}".format(self.func.__name__, e))
-                exc_type, exc_value, exc_traceback = sys.exc_info()
+                print(f"Exception in {self.func.__name__}: {e}")
+                _exc_type, _exc_value, exc_traceback = sys.exc_info()
                 traceback.print_tb(exc_traceback)
                 print("-" * 60)
 
@@ -66,7 +66,7 @@ def print_header(binary):
     format_dec = "{:<33} {:<30d}"
 
     print("== Dos Header ==")
-    print(format_str.format("Magic:", str((dos_header.magic))))
+    print(format_str.format("Magic:", str(dos_header.magic)))
     print(
         format_dec.format(
             "Used bytes in the last page:", dos_header.used_bytes_in_last_page
@@ -107,7 +107,7 @@ def print_header(binary):
             "Address of optional header:", dos_header.addressof_new_exeheader
         )
     )
-    print("")
+    print()
 
     print("== Header ==")
 
@@ -123,7 +123,7 @@ def print_header(binary):
     print(format_dec.format("Number of symbols:", header.numberof_symbols))
     print(format_dec.format("Size of optional header:", header.sizeof_optional_header))
     print(format_str.format("Characteristics:", char_str))
-    print("")
+    print()
 
     dll_char_str = " - ".join(
         [
@@ -213,7 +213,7 @@ def print_header(binary):
             "Number of RVA and size:", optional_header.numberof_rva_and_size
         )
     )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -235,7 +235,7 @@ def print_data_directories(binary):
                 section_name,
             )
         )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -274,7 +274,7 @@ def print_sections(binary):
                 flags,
             )
         )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -296,7 +296,6 @@ def print_symbols(binary):
             )
         )
         for symbol in symbols:
-            section_nb_str = ""
             if symbol.section_number <= 0:
                 section_nb_str = str(
                     PE.SYMBOL_SECTION_NUMBER(symbol.section_number)
@@ -304,8 +303,8 @@ def print_symbols(binary):
             else:
                 try:
                     section_nb_str = symbol.section.name
-                except Exception:
-                    section_nb_str = "section<{:d}>".format(symbol.section_number)
+                except Exception:  # noqa
+                    section_nb_str = f"section<{symbol.section_number:d}>"
 
             print(
                 f_value.format(
@@ -333,7 +332,7 @@ def print_imports(binary, resolve=False):
         f_value = "  {:<33} 0x{:<14x} 0x{:<14x} 0x{:<16x}"
         for entry in entries:
             print(f_value.format(entry.name, entry.data, entry.iat_value, entry.hint))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -361,7 +360,7 @@ def print_tls(binary):
     print(format_hex.format("Characteristics:", tls.characteristics))
     print(format_str.format("Section:", tls.section.name))
     print(format_str.format("Data directory:", str(tls.directory.type)))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -377,7 +376,7 @@ def print_relocations(binary):
                     entry.position, str(entry.type).split(".")[-1]
                 )
             )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -400,11 +399,9 @@ def print_export(binary):
     for entry in entries:
         extern = "[EXTERN]" if entry.is_extern else ""
         print(
-            "  {:<20} {:d} 0x{:<10x} {:<13}".format(
-                entry.name[:20], entry.ordinal, entry.address, extern
-            )
+            f"  {entry.name[:20]:<20} {entry.ordinal:d} 0x{entry.address:<10x} {extern:<13}"
         )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -414,7 +411,7 @@ def print_debug(binary):
     format_dec = "{:<33} {:<30d}"
 
     debugs = binary.debug
-    print("== Debug ({}) ==".format(len(debugs)))
+    print(f"== Debug ({len(debugs)}) ==")
     for debug in debugs:
         print(format_hex.format("Characteristics:", debug.characteristics))
         print(format_hex.format("Timestamp:", debug.timestamp))
@@ -428,7 +425,7 @@ def print_debug(binary):
         if isinstance(debug, lief.PE.CodeViewPDB):
             code_view: lief.PE.CodeViewPDB = debug
             cv_signature = code_view.cv_signature
-            sig_str = " ".join(map(lambda e: "{:02x}".format(e), code_view.signature))
+            sig_str = " ".join(f"{e:02x}" for e in code_view.signature)
             print(
                 format_str.format(
                     "Code View Signature:", str(cv_signature).split(".")[-1]
@@ -451,11 +448,7 @@ def print_debug(binary):
             print(format_str.format("Signature:", sig_str))
             print("Entries:")
             for entry in pogo.entries:
-                print(
-                    "    {:<20} 0x{:x} ({:d})".format(
-                        entry.name, entry.start_rva, entry.size
-                    )
-                )
+                print(f"    {entry.name:<20} 0x{entry.start_rva:x} ({entry.size:d})")
 
         print("\n")
 
@@ -470,15 +463,13 @@ def print_signature(binary):
 def print_rich_header(binary):
     print("== Rich Header ==")
     header = binary.rich_header
-    print("Key: 0x{:08x}".format(header.key))
+    print(f"Key: 0x{header.key:08x}")
 
     for entry in header.entries:
         print(
-            "  - ID: {:04x} Build ID: {:04x} Count: {:d}".format(
-                entry.id, entry.build_id, entry.count
-            )
+            f"  - ID: {entry.id:04x} Build ID: {entry.build_id:04x} Count: {entry.count:d}"
         )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -488,7 +479,7 @@ def print_resources(binary):
 
     print(manager)
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -540,7 +531,7 @@ def print_load_configuration(binary):
 
     if isinstance(config, lief.PE.LoadConfigurationV1):
         flags_str = " - ".join(
-            map(lambda e: str(e).split(".")[-1], config.guard_cf_flags_list)
+            str(e).split(".")[-1] for e in config.guard_cf_flags_list
         )
         print(
             format_hex.format(
@@ -644,36 +635,34 @@ def print_load_configuration(binary):
     if isinstance(config, lief.PE.LoadConfigurationV7):
         print(format_hex.format("Reserved 3:", config.reserved3))
 
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
 def print_ctor(binary):
     print("== Constructors ==\n")
 
-    print("Functions: ({:d})".format(len(binary.ctor_functions)))
+    print(f"Functions: ({len(binary.ctor_functions):d})")
     for idx, f in enumerate(binary.ctor_functions):
-        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+        print(f"    [{idx:d}] {f.name}: 0x{f.address:x}")
 
 
 @exceptions_handler(Exception)
 def print_exception_functions(binary):
     print("== Exception functions ==\n")
 
-    print("Functions: ({:d})".format(len(binary.exception_functions)))
+    print(f"Functions: ({len(binary.exception_functions):d})")
     for idx, f in enumerate(binary.exception_functions):
-        print("    [{:d}] {}: 0x{:x}".format(idx, f.name, f.address))
+        print(f"    [{idx:d}] {f.name}: 0x{f.address:x}")
 
 
 @exceptions_handler(Exception)
 def print_functions(binary):
     print("== Functions ==\n")
 
-    print("Functions: ({:d})".format(len(binary.functions)))
+    print(f"Functions: ({len(binary.functions):d})")
     for idx, f in enumerate(binary.functions):
-        print(
-            "    [{:d}] {}: 0x{:x} ({:d} bytes)".format(idx, f.name, f.address, f.size)
-        )
+        print(f"    [{idx:d}] {f.name}: 0x{f.address:x} ({f.size:d} bytes)")
 
 
 @exceptions_handler(Exception)
@@ -684,18 +673,16 @@ def print_delay_imports(binary):
     print("== Delay Imports ==\n")
     for imp in delay_imports:
         print(imp.name)
-        print("  Attribute:   {}".format(imp.attribute))
-        print("  Handle:      0x{:x}".format(imp.handle))
-        print("  IAT:         0x{:x}".format(imp.iat))
-        print("  Names Table: 0x{:x}".format(imp.names_table))
-        print("  Bound IAT:   0x{:x}".format(imp.biat))
-        print("  Unload IAT:  0x{:x}".format(imp.uiat))
-        print("  Timestamp:   0x{:x}".format(imp.timestamp))
+        print(f"  Attribute:   {imp.attribute}")
+        print(f"  Handle:      0x{imp.handle:x}")
+        print(f"  IAT:         0x{imp.iat:x}")
+        print(f"  Names Table: 0x{imp.names_table:x}")
+        print(f"  Bound IAT:   0x{imp.biat:x}")
+        print(f"  Unload IAT:  0x{imp.uiat:x}")
+        print(f"  Timestamp:   0x{imp.timestamp:x}")
         for entry in imp.entries:
             print(
-                "    {:<25} 0x{:08x}: 0x{:010x} - 0x{:x}".format(
-                    entry.name, entry.value, entry.iat_value, entry.hint
-                )
+                f"    {entry.name:<25} 0x{entry.value:08x}: 0x{entry.iat_value:010x} - 0x{entry.hint:x}"
             )
 
 

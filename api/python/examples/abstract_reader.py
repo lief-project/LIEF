@@ -17,7 +17,7 @@ import traceback
 import lief
 
 
-class exceptions_handler(object):
+class exceptions_handler:
     func = None
 
     def __init__(self, exceptions, on_except_callback=None):
@@ -35,8 +35,8 @@ class exceptions_handler(object):
                 self.on_except_callback(e)
             else:
                 print("-" * 60)
-                print("Exception in {}: {}".format(self.func.__name__, e))
-                exc_type, exc_value, exc_traceback = sys.exc_info()
+                print(f"Exception in {self.func.__name__}: {e}")
+                _exc_type, _exc_value, exc_traceback = sys.exc_info()
                 traceback.print_tb(exc_traceback)
                 print("-" * 60)
 
@@ -63,7 +63,7 @@ def print_header(binary):
     print(format_str.format("Object type:", str(header.object_type).split(".")[-1]))
     print(format_str.format("Endianness:", str(header.endianness).split(".")[-1]))
     print(format_str.format("Bitness:", bitness))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -82,7 +82,7 @@ def print_sections(binary):
                 section.entropy,
             )
         )
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -93,7 +93,7 @@ def print_relocations(binary):
     print(f_title.format("Address", "Size"))
     for relocation in binary.relocations:
         print(f_value.format(relocation.address, relocation.size))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -107,7 +107,7 @@ def print_symbols(binary):
 
     for symbol in binary.symbols:
         print(f.format(symbol.name))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -118,7 +118,7 @@ def print_exported_functions(binary):
     print(f.format("Name"))
     for func in binary.exported_functions:
         print(f.format(func))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -129,7 +129,7 @@ def print_imported_functions(binary):
     print(f.format("Name"))
     for func in binary.imported_functions:
         print(f.format(func))
-    print("")
+    print()
 
 
 @exceptions_handler(Exception)
@@ -140,7 +140,7 @@ def print_imported_libraries(binary):
     print(f.format("Name"))
     for library in binary.libraries:
         print(f.format(library))
-    print("")
+    print()
 
 
 def main():

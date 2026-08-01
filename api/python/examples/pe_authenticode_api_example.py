@@ -25,8 +25,7 @@ def main() -> int:
     parser.add_argument(
         "--bundle",
         default=os.getenv("LIEF_CA_BUNDLE"),
-        help="Path to a PEM bundle of trust anchors "
-             "(default: $LIEF_CA_BUNDLE)",
+        help="Path to a PEM bundle of trust anchors (default: $LIEF_CA_BUNDLE)",
     )
     args = parser.parse_args()
 
@@ -51,8 +50,7 @@ def main() -> int:
     # Look for a well-known DigiCert root CA in the embedded chain.
     bin_ca = None
     target_issuer = (
-        "C=US, O=DigiCert Inc, OU=www.digicert.com, "
-        "CN=DigiCert Assured ID Root CA"
+        "C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert Assured ID Root CA"
     )
     for crt in signature.certificates:
         if crt.issuer == target_issuer:

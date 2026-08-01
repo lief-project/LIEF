@@ -75,7 +75,7 @@ def test_kik_class():
     assert len(cls.methods) == 14
     assert cls.index == 6220
 
-    methods_name = sorted(list(set(m.name for m in cls.methods)))
+    methods_name = sorted({m.name for m in cls.methods})
     assert methods_name == sorted(
         [
             "<clinit>",

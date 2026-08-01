@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import lief
 
 
@@ -15,7 +13,7 @@ def iterate_libraries(dyld_cache: lief.dsc.DyldSharedCache) -> None:
     dyld_cache: lief.dsc.DyldSharedCache
 
     for dylib in dyld_cache.libraries:
-        print("{:#016x}: {}".format(dylib.address, dylib.path))
+        print(f"{dylib.address:#016x}: {dylib.path}")
     # lief-doc: libraries-end
 
 

@@ -1,4 +1,3 @@
-#!python
 import ctypes
 from multiprocessing import Process
 from pathlib import Path

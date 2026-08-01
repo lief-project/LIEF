@@ -344,12 +344,12 @@ def test_issue_804(tmp_path: Path):
 
     assert len(bindings) == 5
 
-    objc_nsobj = set(
+    objc_nsobj = {
         binding.address
         for binding in bindings
         if binding.symbol is not None
         and binding.symbol.name == "_OBJC_METACLASS_$_NSObject"
-    )
+    }
     assert objc_nsobj == {0x0100008090, 0x0100008098}
 
     output = f"{tmp_path}/test_issue_804.built"
@@ -365,12 +365,12 @@ def test_issue_804(tmp_path: Path):
 
     assert len(bindings) == 5
 
-    objc_nsobj = set(
+    objc_nsobj = {
         binding.address
         for binding in bindings
         if binding.symbol is not None
         and binding.symbol.name == "_OBJC_METACLASS_$_NSObject"
-    )
+    }
     assert objc_nsobj == {0x0100008090, 0x0100008098}
 
     if is_apple_m1():

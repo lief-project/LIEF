@@ -37,7 +37,7 @@ def test_dwo():
 def test_structures():
     binaryninja_dxp = lief.dwarf.load(get_sample("private/DWARF/binaryninja/dxp.debug"))
     assert binaryninja_dxp is not None
-    CU = list(binaryninja_dxp.compilation_units)[0]
+    CU = next(iter(binaryninja_dxp.compilation_units))
     assert CU is not None
     _dp_init_mp3_info = CU.find_function("dp_init_mp3_info")
 
@@ -45,7 +45,7 @@ def test_structures():
 def test_find():
     binaryninja_dxp = lief.dwarf.load(get_sample("private/DWARF/binaryninja/dxp.debug"))
     assert binaryninja_dxp is not None
-    CU = list(binaryninja_dxp.compilation_units)[0]
+    CU = next(iter(binaryninja_dxp.compilation_units))
     assert CU is not None
     var = CU.find_variable(0x78BE0)
     assert var is not None

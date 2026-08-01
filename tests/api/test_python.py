@@ -1,6 +1,5 @@
 import io
 import sys
-from io import open as io_open
 from pathlib import Path
 from typing import Any, cast
 
@@ -34,27 +33,27 @@ def test_io():
     assert isinstance(ls, lief.ELF.Binary)
     assert ls.abstract.header is not None
 
-    with io_open(lspath, "rb") as f:
+    with open(lspath, "rb") as f:
         ls = lief.parse(f)
         assert isinstance(ls, lief.ELF.Binary)
         assert ls.abstract.header is not None
 
-    with io_open(lspath, "rb") as f:
+    with open(lspath, "rb") as f:
         ls = lief.parse(f)
         assert isinstance(ls, lief.ELF.Binary)
         assert ls.abstract.header is not None
 
-    with io_open(lspath, "rb") as f:
+    with open(lspath, "rb") as f:
         ls = lief.ELF.parse(f)
         assert ls is not None
         assert ls.abstract.header is not None
 
-    with io_open(get_sample("PE/PE64_x86-64_binary_HelloWorld.exe"), "rb") as f:
+    with open(get_sample("PE/PE64_x86-64_binary_HelloWorld.exe"), "rb") as f:
         binary = lief.PE.parse(f)
         assert binary is not None
         assert binary.abstract.header is not None
 
-    with io_open(get_sample("MachO/MachO64_x86-64_binary_dd.bin"), "rb") as f:
+    with open(get_sample("MachO/MachO64_x86-64_binary_dd.bin"), "rb") as f:
         fat = lief.MachO.parse(f)
         assert fat is not None
         binary = fat[0]
@@ -182,10 +181,10 @@ def test_iterator():
 
 def test_abstract_concrete():
     pe = parse_pe("PE/PE64_x86-64_binary_HelloWorld.exe")
-    assert type(pe) == lief.PE.Binary  # noqa
+    assert type(pe) == lief.PE.Binary
     abstract = pe.abstract
-    assert type(abstract) == lief.Binary  # noqa
-    assert type(abstract.concrete) == lief.PE.Binary  # noqa
+    assert type(abstract) == lief.Binary
+    assert type(abstract.concrete) == lief.PE.Binary
 
 
 def test_from_bytes():

@@ -48,7 +48,7 @@ def test_function_starts():
     assert function_starts is not None
     assert function_starts.data_offset == 21168
     assert function_starts.data_size == 48
-    text_segment = list(filter(lambda e: e.name == "__TEXT", dd.segments))[0]
+    text_segment = next(filter(lambda e: e.name == "__TEXT", dd.segments))
     functions_dd = map(text_segment.virtual_address.__add__, function_starts.functions)
 
     assert functions == list(functions_dd)

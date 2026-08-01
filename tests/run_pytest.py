@@ -1,7 +1,6 @@
 import argparse
 import sys
 from pathlib import Path
-from typing import Optional
 
 import pytest
 
@@ -9,7 +8,7 @@ CWD = Path(__file__).parent
 
 
 def run(
-    junit_xml: Optional[str] = None,
+    junit_xml: str | None = None,
     skip_slow: bool = False,
     parallel_threads: int | None = None,
 ):

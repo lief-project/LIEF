@@ -1,4 +1,3 @@
-#!python
 import ctypes
 from multiprocessing import Process
 from pathlib import Path
@@ -90,7 +89,7 @@ def test_remove_tls_callback(tmp_path: Path):
     for reloc in new.relocations:
         for entry in reloc.entries:
             addr = entry.address
-            assert not (tls_cbk_start <= addr and addr < tls_cbk_end)
+            assert not (tls_cbk_start <= addr < tls_cbk_end)
 
     if is_windows_x86_64():
         ret = win_exec(output, gui=False)
@@ -147,7 +146,7 @@ def test_add_callback(tmp_path: Path):
     for reloc in new.relocations:
         for entry in reloc.entries:
             addr = entry.address
-            if tls_cbk_start <= addr and addr < tls_cbk_end:
+            if tls_cbk_start <= addr < tls_cbk_end:
                 found.append(entry)
     assert len(found) == nb + 1
 

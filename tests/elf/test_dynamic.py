@@ -3,7 +3,7 @@ import stat
 import subprocess
 from pathlib import Path
 from subprocess import Popen
-from typing import Any, List, cast
+from typing import Any, cast
 
 import lief
 import pytest
@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 """
 
 
-def compile_libadd(out: Path, infile: Path, extra_flags: List[str]):
+def compile_libadd(out: Path, infile: Path, extra_flags: list[str]):
     CC_FLAGS = ["-fPIC", "-shared", "-Wl,-soname,libadd.so"] + extra_flags
     cmd = [COMPILER, "-o", out] + CC_FLAGS + [infile]
     lief.logging.info("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
@@ -58,7 +58,7 @@ def compile_libadd(out: Path, infile: Path, extra_flags: List[str]):
         lief.logging.info(stdout)
 
 
-def compile_binadd(out: Path, infile: Path, extra_flags: List[str]):
+def compile_binadd(out: Path, infile: Path, extra_flags: list[str]):
     CC_FLAGS = ["-fPIC", "-pie", "-L", out.parent] + extra_flags
     cmd = [COMPILER, "-o", out] + CC_FLAGS + [infile, "-ladd"]
     lief.logging.info("Compile 'libadd' with: {}".format(" ".join(map(str, cmd))))
@@ -138,7 +138,7 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
         )
 
         assert all(
-            map(
+            (
                 lambda sym: (
                     sym.shndx == 0 and sym.binding == lief.ELF.Symbol.BINDING.LOCAL
                 ),
@@ -147,7 +147,7 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
         )
 
         assert all(
-            map(
+            (
                 lambda sym: (
                     sym.shndx == 0 and sym.binding != lief.ELF.Symbol.BINDING.LOCAL
                 ),
@@ -158,7 +158,7 @@ def test_add_dynamic_symbols(tmp_path: Path, style):
         )
 
         assert all(
-            map(
+            (
                 lambda sym: sym.shndx != 0,
                 dynamic_symbols[first_exported_symbol_index:],
             )

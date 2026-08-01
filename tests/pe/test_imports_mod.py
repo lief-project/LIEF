@@ -1,4 +1,3 @@
-#!python
 import ctypes
 from multiprocessing import Process
 from pathlib import Path
@@ -102,7 +101,6 @@ def test_import_simple(tmp_path: Path, sample: str):
 
     if sample.startswith("private/") and not has_private_samples():  # pragma: no cover
         pytest.skip(reason="needs private samples")
-        return
 
     input_path = Path(get_sample(sample))
 
@@ -153,7 +151,6 @@ def test_remove_entry(tmp_path: Path, sample: str):
 
     if sample.startswith("private/") and not has_private_samples():  # pragma: no cover
         pytest.skip(reason="needs private samples")
-        return
 
     input_path = Path(get_sample(sample))
 
@@ -325,7 +322,6 @@ def test_remove_import(tmp_path: Path, sample: str):
     """
     if sample.startswith("private/") and not has_private_samples():  # pragma: no cover
         pytest.skip(reason="needs private samples")
-        return
 
     input_path = Path(get_sample(sample))
 
@@ -423,7 +419,7 @@ def test_import_front(tmp_path: Path):
 
     pe.add_import("api-ms-win-crt-stdio-l1-1-0.dll", pos=0)
 
-    assert pe.imports[0].name == "api-ms-win-crt-stdio-l1-1-0.dll"
+    assert next(iter(pe.imports)).name == "api-ms-win-crt-stdio-l1-1-0.dll"
 
     config = lief.PE.Builder.config_t()
     config.exports = True
@@ -436,4 +432,4 @@ def test_import_front(tmp_path: Path):
     new = lief.PE.parse(out)
     assert new is not None
 
-    assert new.imports[0].name == "api-ms-win-crt-stdio-l1-1-0.dll"
+    assert next(iter(pe.imports)).name == "api-ms-win-crt-stdio-l1-1-0.dll"

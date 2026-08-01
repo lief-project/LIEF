@@ -78,9 +78,10 @@ def modules_info():
                 print("   ", inst)
 
     # This parses the ELF from its path on the disk
-    if elf_on_disk := libc.parse_from_path():
-        if __cxa_finalize := elf_on_disk.get_symbol("__cxa_finalize"):
-            print(f"__cxa_finalize: {__cxa_finalize.value:#010x}")
+    if (elf_on_disk := libc.parse_from_path()) is not None and (
+        __cxa_finalize := elf_on_disk.get_symbol("__cxa_finalize")
+    ) is not None:
+        print(f"__cxa_finalize: {__cxa_finalize.value:#010x}")
 
     # This code loads 'librt.so' and wrap the dlopen handler in a Module.
     if librt := lief.runtime.linux.dlopen("librt.so.1"):

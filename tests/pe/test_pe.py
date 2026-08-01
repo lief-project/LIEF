@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import ctypes
 import json
 import os
@@ -28,7 +27,7 @@ def test_remove_section(tmp_path: Path):
     os.chmod(output, st.st_mode | stat.S_IEXEC)
 
     if ret := win_exec(output, gui=False):
-        ret_code, stdout = ret
+        _ret_code, stdout = ret
         assert "Hello World" in stdout
 
 

@@ -23,6 +23,7 @@ Example:
 """
 
 import sys
+
 import lief
 
 
@@ -54,7 +55,11 @@ def verify_authenticode(filename):
 
     # Certificate chain for each signature
     for sig_idx, sig in enumerate(binary.signatures):
-        label = f"Signature #{sig_idx}" if len(binary.signatures) > 1 else "Certificate Chain"
+        label = (
+            f"Signature #{sig_idx}"
+            if len(binary.signatures) > 1
+            else "Certificate Chain"
+        )
         print(f"  {label}:")
         print(f"    Digest Algorithm: {sig.digest_algorithm}")
         print()

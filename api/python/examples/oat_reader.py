@@ -24,7 +24,7 @@ terminal_columns = _term_size.columns
 terminal_rows = _term_size.lines
 
 
-class exceptions_handler(object):
+class exceptions_handler:
     func = None
 
     def __init__(self, exceptions, on_except_callback=None):
@@ -39,14 +39,14 @@ class exceptions_handler(object):
             return self.func(*args, **kwargs)
         except self.exceptions as e:
             global EXIT_STATUS
-            print("{} raised: {}".format(self.func.__name__, e))
+            print(f"{self.func.__name__} raised: {e}")
             EXIT_STATUS = 1
             if self.on_except_callback is not None:
                 self.on_except_callback(e)
             else:
                 print("-" * 60)
-                print("Exception in {}: {}".format(self.func.__name__, e))
-                exc_type, exc_value, exc_traceback = sys.exc_info()
+                print(f"Exception in {self.func.__name__}: {e}")
+                _exc_type, _exc_value, exc_traceback = sys.exc_info()
                 traceback.print_tb(exc_traceback)
                 print("-" * 60)
 
@@ -59,13 +59,11 @@ def print_information(binary):
     code_name = lief.Android.code_name(android_version)
     version = lief.Android.version_string(android_version)
 
-    print(
-        "Version: {} - Android {} {}".format(binary.header.version, version, code_name)
-    )
-    print("Number of dex files: {}".format(len(binary.oat_dex_files)))
-    print("Number of classes: {}".format(len(binary.classes)))
-    print("Number of methods: {}".format(len(binary.methods)))
-    print("")
+    print(f"Version: {binary.header.version} - Android {version} {code_name}")
+    print(f"Number of dex files: {len(binary.oat_dex_files)}")
+    print(f"Number of classes: {len(binary.classes)}")
+    print(f"Number of methods: {len(binary.methods)}")
+    print()
 
 
 @exceptions_handler(Exception)

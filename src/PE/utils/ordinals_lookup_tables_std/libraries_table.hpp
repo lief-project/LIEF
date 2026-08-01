@@ -16,7 +16,8 @@
 #ifndef LIEF_PE_UTILS_LIBRARY_TABLE_STD_H
 #define LIEF_PE_UTILS_LIBRARY_TABLE_STD_H
 
+// IWYU pragma: begin_exports
 #include "oleauth32_dll_lookup.hpp"
 #include "ws2_32_dll_lookup.hpp"
-
+// IWYU pragma: end_exports
 #endif

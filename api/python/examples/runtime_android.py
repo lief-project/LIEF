@@ -79,9 +79,10 @@ def modules_info():
             for inst in islice(lief.runtime.disassemble(malloc_addr), 4):
                 print("   ", inst)
 
-    if elf_on_disk := libc.parse_from_path():
-        if __cxa_finalize := elf_on_disk.get_symbol("__cxa_finalize"):
-            print(f"__cxa_finalize: {__cxa_finalize.value:#010x}")
+    if (elf_on_disk := libc.parse_from_path()) is not None and (
+        __cxa_finalize := elf_on_disk.get_symbol("__cxa_finalize")
+    ) is not None:
+        print(f"__cxa_finalize: {__cxa_finalize.value:#010x}")
 
     if liblog := lief.runtime.android.dlopen("liblog.so"):
         print(

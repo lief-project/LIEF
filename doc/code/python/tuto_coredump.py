@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import lief
 
 
@@ -7,7 +6,7 @@ def list_segments(core: lief.ELF.Binary) -> None:
     core: lief.ELF.Binary
 
     segments = core.segments
-    print("Number of segments {}".format(len(segments)))
+    print(f"Number of segments {len(segments)}")
 
     for segment in segments:
         print(hex(segment.virtual_address))

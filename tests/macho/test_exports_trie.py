@@ -17,7 +17,9 @@ def process(target: lief.MachO.Binary):
     assert exports.data_offset == 0x70278
 
     entries = list(exports.exports)
-    entries = sorted(entries, key=lambda e: e.symbol.name)
+    entries = sorted(
+        entries, key=lambda e: e.symbol.name if e.symbol is not None else ""
+    )
 
     assert len(entries) == 885
 

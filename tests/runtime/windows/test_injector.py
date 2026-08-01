@@ -7,7 +7,7 @@ from utils import resolve_runtime_library
 if not lief.runtime.enabled:
     pytest.skip("skipping: needs runtime support", allow_module_level=True)
 
-if not lief.runtime.platform == lief.runtime.PLATFORMS.WINDOWS:
+if lief.runtime.platform != lief.runtime.PLATFORMS.WINDOWS:
     pytest.skip("skipping: windows only", allow_module_level=True)
 
 

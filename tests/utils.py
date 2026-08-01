@@ -10,11 +10,12 @@ import subprocess
 import sys
 import sysconfig
 import time
+from collections.abc import Iterable
 from functools import lru_cache, wraps
 from itertools import product
 from pathlib import Path
 from subprocess import Popen
-from typing import Any, Iterable, List, Optional, Tuple, TypeAlias, cast
+from typing import Any, TypeAlias, cast
 
 import lief
 
@@ -202,7 +203,7 @@ def is_aarch64() -> bool:
 
 
 @lru_cache(maxsize=1)
-def glibc_version() -> Tuple[int, int]:
+def glibc_version() -> tuple[int, int]:
     """Return the system glibc version as a (major, minor)"""
     try:
         out = subprocess.check_output(["ldd", "--version"]).decode("ascii")
@@ -296,9 +297,7 @@ def get_dsc_sample(suffix: str) -> Path:
     return Path(dsc_samples_dir).resolve().absolute() / suffix
 
 
-def _win_gui_exec_server(
-    executable: Path, timeout: int = 60
-) -> Optional[Tuple[int, str]]:
+def _win_gui_exec_server(executable: Path, timeout: int = 60) -> tuple[int, str] | None:
     """Execute a Windows GUI application with a hidden window"""
     si = subprocess.STARTUPINFO()  # type: ignore
     si.dwFlags = subprocess.STARTF_USESTDHANDLES | subprocess.STARTF_USESHOWWINDOW  # type: ignore
@@ -329,7 +328,7 @@ def _win_gui_exec_server(
                 return None
 
 
-def _win_gui_exec(executable: Path, timeout: int = 60) -> Optional[Tuple[int, str]]:
+def _win_gui_exec(executable: Path, timeout: int = 60) -> tuple[int, str] | None:
     """Execute a Windows GUI application"""
     if is_server_ci():
         return _win_gui_exec_server(executable, timeout)
@@ -359,8 +358,8 @@ def win_exec(
     timeout: int = 60,
     gui: bool = True,
     universal_newlines: bool = True,
-    args: List[str] = [],
-) -> Optional[Tuple[int, str]]:
+    args: list[str] | None = None,
+) -> tuple[int, str] | None:
     """
     Execute a Windows binary (GUI or console) and return its exit code and output.
     """
@@ -379,6 +378,8 @@ def win_exec(
         "stderr": subprocess.STDOUT,
         "creationflags": 0x8000000,  # win32con.CREATE_NO_WINDOW
     }
+
+    args = args if args is not None else []
 
     with Popen([executable.as_posix(), *args], **popen_args) as proc:
         try:
@@ -465,7 +466,7 @@ def convert_size(size_bytes: int) -> str:
     if size_bytes == 0:
         return "0B"
     size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-    i = int(math.floor(math.log(size_bytes, 1024)))
+    i = math.floor(math.log(size_bytes, 1024))
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
     return f"{s} {size_name[i]}"
@@ -493,13 +494,10 @@ def check_attributes(
         if not hasattr(value, "__eq__"):
             return False
 
-        if hasattr(value, "__call__"):
+        if callable(value):
             return False
 
-        if hasattr(value, "__iter__"):
-            return False
-
-        return True
+        return not hasattr(value, "__iter__")
 
     if hasattr(lhs, "__iter__") and hasattr(rhs, "__iter__"):
         lhs_list = list(cast(Iterable[Any], lhs))

@@ -24,11 +24,13 @@ void my_constructor(void) {
 
 def compile(output: Path, extra_flags: list[str] | None = None) -> str:
     extra_flags = extra_flags if extra_flags else []
-    with tempfile.NamedTemporaryFile(
-        prefix="libexample_", suffix=".c", delete=False
-    ) as ftmp:
-        with open(ftmp.name, "w") as f:
-            f.write(LIBRARY_CODE)
+    with (
+        tempfile.NamedTemporaryFile(
+            prefix="libexample_", suffix=".c", delete=False
+        ) as ftmp,
+        open(ftmp.name, "w") as f,
+    ):
+        f.write(LIBRARY_CODE)
 
     COMPILER = "/usr/bin/clang"
     CC_FLAGS = ["-fPIC", "-shared"]
