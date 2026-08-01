@@ -15,19 +15,19 @@
  */
 #ifndef LIEF_PE_OPTIONAL_HEADER_H
 #define LIEF_PE_OPTIONAL_HEADER_H
+#include <cstdint>
 #include <ostream>
 #include <vector>
-#include <cstdint>
 
-#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/enums.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/enums.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class Parser;
 class Binary;
 
@@ -490,7 +490,7 @@ LIEF_API const char* to_string(OptionalHeader::DLL_CHARACTERISTICS);
 LIEF_API const char* to_string(OptionalHeader::SUBSYSTEM);
 
 }
-}
+
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::OptionalHeader::DLL_CHARACTERISTICS);
 

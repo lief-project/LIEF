@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_MACHO_RELOCATION_DYLD_COMMAND_H
 #define LIEF_MACHO_RELOCATION_DYLD_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/Relocation.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 
@@ -48,7 +49,7 @@ class LIEF_API RelocationDyld : public Relocation {
   ~RelocationDyld() override = default;
 
   std::unique_ptr<Relocation> clone() const override {
-    return std::unique_ptr<RelocationDyld>(new RelocationDyld(*this));
+    return std::make_unique<RelocationDyld>(*this);
   }
 
   /// Indicates whether the item containing the address to be
@@ -88,5 +89,5 @@ class LIEF_API RelocationDyld : public Relocation {
 };
 
 }
-}
+
 #endif

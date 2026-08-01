@@ -16,10 +16,10 @@
 
 #include <utility>
 
+#include "LIEF/DEX/Method.hpp"
+#include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/hash.hpp"
-#include "LIEF/OAT/Class.hpp"
-#include "LIEF/DEX/Method.hpp"
 
 
 namespace LIEF::OAT {
@@ -69,7 +69,7 @@ std::string Method::name() const {
     return "";
   }
 
-  return dex_method_->name();
+  return std::string(dex_method_->name());
 }
 
 const DEX::dex2dex_method_info_t& Method::dex2dex_info() const {
@@ -91,7 +91,7 @@ void Method::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const Method& meth) {
-  std::string pretty_name = meth.oat_class()->fullname();
+  std::string pretty_name{meth.oat_class()->fullname()};
   pretty_name = pretty_name.substr(1, pretty_name.size() - 2);
 
   os << pretty_name << "." << meth.name();

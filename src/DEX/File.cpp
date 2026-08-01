@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <fstream>
-#include <climits>
-#include "LIEF/BinaryStream/SpanStream.hpp"
-#include "logging.hpp"
 #include "LIEF/DEX/File.hpp"
-#include "LIEF/DEX/utils.hpp"
-#include "LIEF/DEX/instructions.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Prototype.hpp"
-#include "LIEF/DEX/hash.hpp"
-#include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/Field.hpp"
-#include "DEX/Structures.hpp"
+#include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Prototype.hpp" // IWYU pragma: keep
+#include "LIEF/DEX/Type.hpp"
+#include "LIEF/DEX/hash.hpp"
+#include "LIEF/DEX/instructions.hpp"
+#include "LIEF/DEX/utils.hpp"
+#include "logging.hpp"
+#include <climits>
+#include <fstream>
 
 #if defined(LIEF_JSON_SUPPORT)
   #include "visitors/json.hpp"
@@ -49,7 +48,7 @@ dex_version_t File::version() const {
 std::string File::save(const std::string& path, bool deoptimize) const {
   if (path.empty()) {
     if (!name().empty()) {
-      return save(name());
+      return save(std::string(name()));
     }
     return save("classes.dex");
   }
@@ -407,12 +406,12 @@ void File::deoptimize_instance_field_access(uint8_t* inst_ptr, uint32_t value,
   reinterpret_cast<uint16_t*>(inst_ptr)[1] = value;
 }
 
-const std::string& File::name() const {
+std::string_view File::name() const {
   return name_;
 }
 
 
-const std::string& File::location() const {
+std::string_view File::location() const {
   return location_;
 }
 
@@ -480,7 +479,7 @@ std::string File::dex2dex_json_info() const {
   // Iterate over the quickened classes
   for (const auto& class_map : dex2dex_info()) {
     const Class* clazz = class_map.first;
-    const std::string& class_name = clazz->fullname();
+    std::string class_name{clazz->fullname()};
     mapping[class_name] = json::object();
 
     const dex2dex_class_info_t& class_info = class_map.second;

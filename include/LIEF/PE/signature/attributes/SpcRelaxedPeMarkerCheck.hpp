@@ -17,11 +17,11 @@
 #define LIEF_PE_ATTRIBUTES_SPC_RELAXED_PE_MARKER_CHECK_H
 #include <cstdint>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class LIEF_API SpcRelaxedPeMarkerCheck : public Attribute {
   friend class Parser;
@@ -67,6 +67,6 @@ class LIEF_API SpcRelaxedPeMarkerCheck : public Attribute {
 };
 
 }
-}
+
 
 #endif

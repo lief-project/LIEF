@@ -14,14 +14,14 @@
  */
 #pragma once
 
-#include <jni_bind.h>
-#include "jni/lief/generic/Binary.hpp"
-#include "jni/lief/elf/Relocation.hpp"
 #include "jni/iterator.hpp"
+#include "jni/lief/elf/Relocation.hpp"
+#include "jni/lief/generic/Binary.hpp"
+#include <jni_bind.h>
 
 #include <LIEF/ELF/Binary.hpp>
-#include <LIEF/ELF/Relocation.hpp>
 #include <LIEF/ELF/Parser.hpp>
+#include <LIEF/ELF/Relocation.hpp>
 
 namespace lief_jni::elf {
 

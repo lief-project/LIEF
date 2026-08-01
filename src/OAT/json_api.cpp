@@ -15,7 +15,6 @@
  */
 #include "LIEF/config.h"
 
-#include "logging.hpp"
 #include "LIEF/OAT/json.hpp"
 
 #ifdef LIEF_JSON_SUPPORT
@@ -38,4 +37,4 @@ std::string to_json(const Object& v) {
 #endif
 }
 
-} // namespace LIEF::OAT
+}

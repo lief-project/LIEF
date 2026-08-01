@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-#include <cstdint>
-#include <vector>
 #include "LIEF/rust/Stream.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include <cstdint>
+#include <vector>
 
 std::unique_ptr<RustStream> RustStream::from_rust(uint8_t* buffer, size_t size) {
   std::vector<uint8_t> vector{buffer, buffer + size};

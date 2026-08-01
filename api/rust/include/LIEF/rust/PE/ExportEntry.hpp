@@ -15,9 +15,9 @@
 #pragma once
 #include <cstdint>
 
+#include "LIEF/PE/ExportEntry.hpp"
 #include "LIEF/rust/Abstract/Symbol.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/PE/ExportEntry.hpp"
 
 class PE_ExportEntry : public AbstractSymbol {
   public:

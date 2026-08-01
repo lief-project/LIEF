@@ -16,18 +16,19 @@
 #ifndef LIEF_MACHO_SEGMENT_COMMAND_H
 #define LIEF_MACHO_SEGMENT_COMMAND_H
 
+#include <string_view>
+#include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
-#include <memory>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/enums.hpp"
 #include "LIEF/span.hpp"
-#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/iterators.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/iterators.hpp"
 
 
 namespace LIEF {
@@ -120,13 +121,13 @@ class LIEF_API SegmentCommand : public LoadCommand {
   void swap(SegmentCommand& other) noexcept;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<SegmentCommand>(new SegmentCommand(*this));
+    return std::make_unique<SegmentCommand>(*this);
   }
 
   ~SegmentCommand() override;
 
   /// Name of the segment (e.g. ``__TEXT``)
-  const std::string& name() const {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 

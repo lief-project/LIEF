@@ -15,12 +15,12 @@
  */
 #ifndef LIEF_COFF_REGULAR_HEADER_H
 #define LIEF_COFF_REGULAR_HEADER_H
-#include <cstdint>
 #include "LIEF/COFF/Header.hpp"
 #include "LIEF/visibility.h"
+#include <cstdint>
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 
 /// This class represents the COFF header for non-bigobj
 class LIEF_API RegularHeader : public Header {
@@ -73,5 +73,5 @@ class LIEF_API RegularHeader : public Header {
 };
 
 }
-}
+
 #endif

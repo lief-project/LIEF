@@ -15,17 +15,18 @@
  */
 #ifndef LIEF_MACHO_FUNCTION_STARTS_COMMAND_H
 #define LIEF_MACHO_FUNCTION_STARTS_COMMAND_H
-#include <vector>
+#include <memory>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/span.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/span.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 class LinkEdit;
 
@@ -49,7 +50,7 @@ class LIEF_API FunctionStarts : public LoadCommand {
   FunctionStarts(const FunctionStarts& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<FunctionStarts>(new FunctionStarts(*this));
+    return std::make_unique<FunctionStarts>(*this);
   }
 
   /// Offset in the ``__LINKEDIT`` SegmentCommand where *start functions* are
@@ -119,5 +120,5 @@ class LIEF_API FunctionStarts : public LoadCommand {
 };
 
 }
-}
+
 #endif

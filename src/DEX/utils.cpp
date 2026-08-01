@@ -18,8 +18,8 @@
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "LIEF/DEX/utils.hpp"
 #include "DEX/Structures.hpp"
+#include "LIEF/DEX/utils.hpp"
 
 #include "internal_utils.hpp"
 

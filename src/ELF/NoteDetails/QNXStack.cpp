@@ -61,4 +61,4 @@ void QNXStack::dump(std::ostream& os) const {
      << fmt::format("  Executable:      {}\n", is_executable());
 }
 
-} // namespace LIEF::ELF
+}

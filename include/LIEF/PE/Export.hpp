@@ -16,17 +16,19 @@
 #ifndef LIEF_PE_EXPORT_H
 #define LIEF_PE_EXPORT_H
 
+#include <string_view>
+#include <memory>
 #include <ostream>
 #include <string>
-#include <memory>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Builder;
 class Parser;
@@ -95,7 +97,7 @@ class LIEF_API Export : public Object {
   }
 
   /// The name of the library exported (e.g. `KERNEL32.dll`)
-  const std::string& name() const {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -237,6 +239,6 @@ class LIEF_API Export : public Object {
 };
 
 }
-}
+
 
 #endif

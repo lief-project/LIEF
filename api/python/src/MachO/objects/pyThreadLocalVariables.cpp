@@ -20,7 +20,7 @@
 
 #include "MachO/pyMachO.hpp"
 #include "nanobind/extra/random_access_iterator.hpp"
-#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/optional.h>
 
 namespace LIEF::MachO::py {
 

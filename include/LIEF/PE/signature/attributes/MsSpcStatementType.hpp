@@ -16,12 +16,12 @@
 #ifndef LIEF_PE_ATTRIBUTES_MS_SPC_STATEMENT_TYPE_H
 #define LIEF_PE_ATTRIBUTES_MS_SPC_STATEMENT_TYPE_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/types.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.11``
 ///
@@ -73,6 +73,6 @@ class LIEF_API MsSpcStatementType : public Attribute {
 };
 
 }
-}
+
 
 #endif

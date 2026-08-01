@@ -16,8 +16,8 @@
 
 #include <jni_bind.h>
 
-#include "jni/mirror.hpp"
 #include "jni/canbe_unique.hpp"
+#include "jni/mirror.hpp"
 
 #include <LIEF/PE/DataDirectory.hpp>
 

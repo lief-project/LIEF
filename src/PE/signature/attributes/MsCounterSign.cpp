@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
+#include "LIEF/Visitor.hpp"
 #include <sstream>
 
 

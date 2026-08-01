@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_MACHO_BUILD_TOOL_VERSION_COMMAND_H
 #define LIEF_MACHO_BUILD_TOOL_VERSION_COMMAND_H
-#include <ostream>
 #include <array>
 #include <cstdint>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct build_tool_version;
@@ -82,5 +82,5 @@ class LIEF_API BuildToolVersion : public Object {
 LIEF_API const char* to_string(BuildToolVersion::TOOLS tool);
 
 }
-}
+
 #endif

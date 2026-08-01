@@ -4,8 +4,8 @@
 #include <string>
 
 #include <LIEF/Abstract/Binary.hpp>
-#include <LIEF/DebugDeclOpt.hpp>
 #include <LIEF/Abstract/DebugInfo.hpp>
+#include <LIEF/DebugDeclOpt.hpp>
 #include <LIEF/PDB.hpp>
 #include <LIEF/PE.hpp>
 #include <LIEF/asm/Instruction.hpp>

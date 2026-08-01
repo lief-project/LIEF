@@ -15,10 +15,10 @@
  */
 #include <sstream>
 
-#include "LIEF/COFF/Relocation.hpp"
-#include "LIEF/COFF/Symbol.hpp"
-#include "LIEF/COFF/Section.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/COFF/Relocation.hpp"
+#include "LIEF/COFF/Section.hpp"
+#include "LIEF/COFF/Symbol.hpp"
 
 #include <spdlog/fmt/fmt.h>
 

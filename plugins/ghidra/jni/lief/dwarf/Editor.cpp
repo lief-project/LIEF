@@ -29,9 +29,9 @@
 #include "jni/lief/dwarf/editor/Variable.hpp"
 #include "jni/lief/generic/Binary.hpp"
 
-#include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 #include "jni/java/lang/Enum.hpp"
+#include "jni/jni_utils.hpp"
+#include "jni/log.hpp"
 
 namespace lief_jni::dwarf {
 

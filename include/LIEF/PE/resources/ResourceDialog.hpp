@@ -16,16 +16,16 @@
 #ifndef LIEF_PE_RESOURCE_DIALOG_H
 #define LIEF_PE_RESOURCE_DIALOG_H
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/enums.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include <memory>
-#include <vector>
 #include <ostream>
+#include <vector>
 
 namespace LIEF {
 class BinaryStream;
@@ -514,7 +514,7 @@ class LIEF_API ResourceDialog : public Object {
   /// a ResourceDialogExtended.
   template<class T>
   const T* as() const {
-    static_assert(std::is_base_of<ResourceDialog, T>::value,
+    static_assert(std::is_base_of_v<ResourceDialog, T>,
                   "Require ResourceDialog inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);

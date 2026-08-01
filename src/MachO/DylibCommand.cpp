@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/Visitor.hpp"
+#include "LIEF/utils.hpp"
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
-#include "LIEF/utils.hpp"
-#include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "MachO/Structures.hpp"

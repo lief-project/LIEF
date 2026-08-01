@@ -16,18 +16,18 @@
 #ifndef LIEF_ELF_HEADER_H
 #define LIEF_ELF_HEADER_H
 
-#include <ostream>
 #include <array>
+#include <ostream>
 #include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/ELF/enums.hpp"
 #include "LIEF/ELF/ProcessorFlags.hpp"
+#include "LIEF/ELF/enums.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 class Parser;
 
 /// Class which represents the ELF's header. This class mirrors the raw
@@ -331,5 +331,5 @@ LIEF_API const char* to_string(Header::OS_ABI abi);
 LIEF_API const char* to_string(Header::ELF_DATA abi);
 
 }
-}
+
 #endif

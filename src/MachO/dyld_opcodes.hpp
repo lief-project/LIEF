@@ -17,8 +17,8 @@
 #define LIEF_MACHO_DYLD_OPCODES_H
 #include <cstdint>
 
-#include "logging.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
+#include "logging.hpp"
 
 namespace LIEF::MachO {
 

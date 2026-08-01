@@ -16,7 +16,6 @@
 #ifndef LIEF_DEX_JSON_INTERNAL_H_
 #define LIEF_DEX_JSON_INTERNAL_H_
 
-#include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
 

@@ -24,7 +24,7 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <nanobind/extra/stl/lief_optional.h>
+#include <nanobind/stl/optional.h>
 
 #include "nanobind/utils.hpp"
 

@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_RUNTIME_LINUX_HOST_H
 #define LIEF_RUNTIME_LINUX_HOST_H
-#include <LIEF/visibility.h>
+#include "LIEF/visibility.h"
 
 #include <string>
 
-namespace LIEF {
-namespace runtime {
-namespace Linux {
+
+namespace LIEF::runtime::Linux {
 
 /// This class exposes Linux-specific host information.
 class LIEF_API Host {
@@ -41,6 +40,6 @@ class LIEF_API Host {
 
 
 }
-}
-}
+
+
 #endif

@@ -16,9 +16,11 @@
 #ifndef LIEF_RUNTIME_ANDROID_H
 #define LIEF_RUNTIME_ANDROID_H
 
-#include <LIEF/runtime/android/Module.hpp>
-#include <LIEF/runtime/android/Host.hpp>
-#include <LIEF/runtime/android/Process.hpp>
-#include <LIEF/runtime/android/Property.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/runtime/android/Host.hpp"
+#include "LIEF/runtime/android/Module.hpp"
+#include "LIEF/runtime/android/Process.hpp"
+#include "LIEF/runtime/android/Property.hpp"
+// IWYU pragma: end_exports
 
 #endif

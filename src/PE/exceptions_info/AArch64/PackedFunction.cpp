@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include "LIEF/PE/exceptions_info/AArch64/PackedFunction.hpp"
 #include "logging.hpp"
+#include <sstream>
 
 #include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 

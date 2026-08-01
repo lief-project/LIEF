@@ -119,4 +119,4 @@ const char* to_string(ARCH e) {
   return it == enums2str.end() ? "UNDEFINED" : it->second;
 }
 
-} // namespace LIEF::ELF
+}

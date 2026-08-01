@@ -16,22 +16,24 @@
 #ifndef LIEF_PE_SIGNATURE_H
 #define LIEF_PE_SIGNATURE_H
 
+#include <string_view>
+
 #include "LIEF/Object.hpp"
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/PE/signature/x509.hpp"
-#include "LIEF/PE/signature/SignerInfo.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
+#include "LIEF/PE/signature/SignerInfo.hpp"
+#include "LIEF/PE/signature/x509.hpp"
 
 #include "LIEF/PE/enums.hpp"
 
-#include "LIEF/iterators.hpp"
 #include "LIEF/enums.hpp"
+#include "LIEF/iterators.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class SignatureParser;
 class Binary;
@@ -160,21 +162,24 @@ class LIEF_API Signature : public Object {
   }
 
   /// Find x509 certificate according to its serial number
-  const x509* find_crt(const std::vector<uint8_t>& serialno) const;
+  const x509*
+      find_crt(const std::vector<uint8_t>& serialno) const LIEF_LIFETIMEBOUND;
 
   /// Find x509 certificate according to its subject
-  const x509* find_crt_subject(const std::string& subject) const;
+  const x509* find_crt_subject(std::string_view subject) const LIEF_LIFETIMEBOUND;
 
   /// Find x509 certificate according to its subject **AND** serial number
-  const x509* find_crt_subject(const std::string& subject,
-                               const std::vector<uint8_t>& serialno) const;
+  const x509* find_crt_subject(
+      std::string_view subject, const std::vector<uint8_t>& serialno
+  ) const LIEF_LIFETIMEBOUND;
 
   /// Find x509 certificate according to its issuer
-  const x509* find_crt_issuer(const std::string& issuer) const;
+  const x509* find_crt_issuer(std::string_view issuer) const LIEF_LIFETIMEBOUND;
 
   /// Find x509 certificate according to its issuer **AND** serial number
-  const x509* find_crt_issuer(const std::string& issuer,
-                              const std::vector<uint8_t>& serialno) const;
+  const x509* find_crt_issuer(
+      std::string_view issuer, const std::vector<uint8_t>& serialno
+  ) const LIEF_LIFETIMEBOUND;
 
   /// Check if this signature is valid according to the Authenticode/PKCS #7
   /// verification scheme
@@ -227,7 +232,7 @@ class LIEF_API Signature : public Object {
 
 
 }
-}
+
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::Signature::VERIFICATION_FLAGS);
 ENABLE_BITMASK_OPERATORS(LIEF::PE::Signature::VERIFICATION_CHECKS);

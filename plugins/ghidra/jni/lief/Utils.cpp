@@ -14,9 +14,9 @@
  */
 #include <array>
 
+#include "jni/jni_utils.hpp"
 #include "jni/lief/Utils.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 thread_local int jni::ThreadGuard::thread_guard_count_ = 0;
 thread_local jni::ThreadLocalGuardDestructor

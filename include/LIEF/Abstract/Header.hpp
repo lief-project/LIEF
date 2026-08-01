@@ -16,13 +16,13 @@
 #ifndef LIEF_ABSTRACT_HEADER_H
 #define LIEF_ABSTRACT_HEADER_H
 
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 #include <vector>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 namespace ELF {

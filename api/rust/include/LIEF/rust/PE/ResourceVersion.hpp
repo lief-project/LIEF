@@ -17,13 +17,13 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/PE/resources/ResourceVersion.hpp"
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
-#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
 #include "LIEF/PE/resources/ResourceStringTable.hpp"
 #include "LIEF/PE/resources/ResourceVar.hpp"
-#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceVersion.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class PE_ResourceStringTable_entry_t

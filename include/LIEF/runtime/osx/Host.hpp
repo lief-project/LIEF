@@ -15,14 +15,13 @@
  */
 #ifndef LIEF_RUNTIME_OSX_HOST_H
 #define LIEF_RUNTIME_OSX_HOST_H
-#include <LIEF/visibility.h>
+#include "LIEF/visibility.h"
 #include <cstdint>
-#include <string>
 #include <ostream>
+#include <string>
 
-namespace LIEF {
-namespace runtime {
-namespace osx {
+
+namespace LIEF::runtime::osx {
 
 class LIEF_API Host {
   public:
@@ -82,6 +81,6 @@ class LIEF_API Host {
 
 
 }
-}
-}
+
+
 #endif

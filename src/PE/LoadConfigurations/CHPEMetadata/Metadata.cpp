@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Header.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataX86.hpp"
-#include "LIEF/PE/Header.hpp"
 #include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/Binary.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 

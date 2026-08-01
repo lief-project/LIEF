@@ -172,6 +172,7 @@ endif()
 
 if(MSVC)
   target_compile_options(LIB_LIEF PRIVATE /bigobj)
+  target_compile_options(LIB_LIEF PUBLIC /Zc:__cplusplus)
 endif()
 
 if(BUILD_SHARED_LIBS OR LIEF_FORCE_API_EXPORTS)
@@ -214,7 +215,6 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/LIEF/config.h.in"
 
 set(LIEF_PUBLIC_INCLUDE_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/include/
-    ${CMAKE_CURRENT_SOURCE_DIR}/api/c/include/
     ${CMAKE_CURRENT_BINARY_DIR}/include/)
 
 set(LIEF_PRIVATE_INCLUDE_DIR

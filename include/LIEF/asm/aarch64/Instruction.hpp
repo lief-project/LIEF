@@ -14,18 +14,16 @@
  */
 #ifndef LIEF_ASM_AARCH64_INST_H
 #define LIEF_ASM_AARCH64_INST_H
-#include "LIEF/visibility.h"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/asm/Instruction.hpp"
-#include "LIEF/asm/aarch64/opcodes.hpp"
 #include "LIEF/asm/aarch64/Operand.hpp"
+#include "LIEF/asm/aarch64/opcodes.hpp"
 
-namespace LIEF {
-namespace assembly {
 
 /// AArch64 architecture-related namespace
-namespace aarch64 {
+namespace LIEF::assembly::aarch64 {
 
 /// This class represents an AArch64 instruction
 class LIEF_API Instruction : public assembly::Instruction {
@@ -46,6 +44,6 @@ class LIEF_API Instruction : public assembly::Instruction {
   ~Instruction() override = default;
 };
 }
-}
-}
+
+
 #endif

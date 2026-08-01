@@ -15,19 +15,17 @@
 #ifndef LIEF_DWARF_EDITOR_POINTER_TYPE_H
 #define LIEF_DWARF_EDITOR_POINTER_TYPE_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 
 /// This class represents a pointer to another type.
 class LIEF_API PointerType : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   PointerType(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -37,6 +35,6 @@ class LIEF_API PointerType : public Type {
 };
 
 }
-}
-}
+
+
 #endif

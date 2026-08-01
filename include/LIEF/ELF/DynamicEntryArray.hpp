@@ -16,13 +16,14 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_ARRAY_H
 #define LIEF_ELF_DYNAMIC_ENTRY_ARRAY_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/visibility.h"
 
+#include <memory>
 #include <vector>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class that represent an Array in the dynamic table.
 /// This entry is associated with constructors:
@@ -46,7 +47,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   DynamicEntryArray(const DynamicEntryArray&) = default;
 
   std::unique_ptr<DynamicEntry> clone() const override {
-    return std::unique_ptr<DynamicEntryArray>(new DynamicEntryArray(*this));
+    return std::make_unique<DynamicEntryArray>(*this);
   }
 
   /// Return the array values (list of pointers)
@@ -106,6 +107,6 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   array_t array_;
 };
 }
-}
+
 
 #endif

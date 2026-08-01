@@ -16,13 +16,13 @@
 #ifndef LIEF_DUMP_STREAM_H
 #define LIEF_DUMP_STREAM_H
 
-#include <memory>
 #include <cstdint>
+#include <memory>
 
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 class Binary;

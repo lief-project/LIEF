@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "log.hpp"
+#include "binaryninja/analysis/PE/analyzers/LoadConfiguration.hpp"
+#include "LIEF/PE/Binary.hpp"
 #include "binaryninja/analysis/PE/TypeBuilder.hpp"
 #include "binaryninja/lief_utils.hpp"
-#include "LIEF/PE/Binary.hpp"
-#include "binaryninja/analysis/PE/analyzers/LoadConfiguration.hpp"
+#include "log.hpp"
 
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>

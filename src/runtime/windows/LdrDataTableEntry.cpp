@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 #include "LIEF/runtime/windows/LdrDataTableEntry.hpp"
-#include "LIEF/runtime/windows/PEB.hpp"
 #include "LIEF/runtime/windows/Host.hpp"
-#include "LIEF/optional.hpp"
+#include "LIEF/runtime/windows/PEB.hpp"
 #include "LIEF/utils.hpp"
+#include <optional>
 
 #include "internal_utils.hpp"
 
@@ -311,107 +311,107 @@ uintptr_t LdrDataTableEntry::lock() const {
   return impl_->raw().Lock;
 }
 
-optional<uintptr_t> LdrDataTableEntry::ddag_node() const {
+std::optional<uintptr_t> LdrDataTableEntry::ddag_node() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().DdagNode;
 }
 
-optional<uintptr_t> LdrDataTableEntry::load_context() const {
+std::optional<uintptr_t> LdrDataTableEntry::load_context() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().LoadContext;
 }
 
-optional<uintptr_t> LdrDataTableEntry::parent_dll_base() const {
+std::optional<uintptr_t> LdrDataTableEntry::parent_dll_base() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().ParentDllBase;
 }
 
-optional<uintptr_t> LdrDataTableEntry::switch_back_context() const {
+std::optional<uintptr_t> LdrDataTableEntry::switch_back_context() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().SwitchBackContext;
 }
 
-optional<uintptr_t> LdrDataTableEntry::original_base() const {
+std::optional<uintptr_t> LdrDataTableEntry::original_base() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().OriginalBase;
 }
 
-optional<int64_t> LdrDataTableEntry::load_time() const {
+std::optional<int64_t> LdrDataTableEntry::load_time() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().LoadTime;
 }
 
-optional<uint32_t> LdrDataTableEntry::base_name_hash_value() const {
+std::optional<uint32_t> LdrDataTableEntry::base_name_hash_value() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().BaseNameHashValue;
 }
 
-optional<int32_t> LdrDataTableEntry::load_reason() const {
+std::optional<int32_t> LdrDataTableEntry::load_reason() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().LoadReason;
 }
 
-optional<uint32_t> LdrDataTableEntry::implicit_path_options() const {
+std::optional<uint32_t> LdrDataTableEntry::implicit_path_options() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().ImplicitPathOptions;
 }
 
-optional<uint32_t> LdrDataTableEntry::reference_count() const {
+std::optional<uint32_t> LdrDataTableEntry::reference_count() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().ReferenceCount;
 }
 
-optional<uint32_t> LdrDataTableEntry::dependent_load_flags() const {
+std::optional<uint32_t> LdrDataTableEntry::dependent_load_flags() const {
   if (!has_win8_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().DependentLoadFlags;
 }
 
-optional<uint8_t> LdrDataTableEntry::signing_level() const {
+std::optional<uint8_t> LdrDataTableEntry::signing_level() const {
   if (!has_win10_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().SigningLevel;
 }
 
-optional<uint32_t> LdrDataTableEntry::check_sum() const {
+std::optional<uint32_t> LdrDataTableEntry::check_sum() const {
   if (!has_win10_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().CheckSum;
 }
 
-optional<uintptr_t> LdrDataTableEntry::active_patch_image_base() const {
+std::optional<uintptr_t> LdrDataTableEntry::active_patch_image_base() const {
   if (!has_win11_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().ActivePatchImageBase;
 }
 
-optional<uint32_t> LdrDataTableEntry::hot_patch_state() const {
+std::optional<uint32_t> LdrDataTableEntry::hot_patch_state() const {
   if (!has_win11_fields()) {
-    return nullopt();
+    return std::nullopt;
   }
   return impl_->raw().HotPatchState;
 }

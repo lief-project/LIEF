@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "binaryninja/lief_utils.hpp"
+#include "binaryninja/analysis/ELF/analyzers/RelativeRelocations.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Relocation.hpp"
-#include "binaryninja/analysis/ELF/analyzers/RelativeRelocations.hpp"
+#include "binaryninja/lief_utils.hpp"
 
-#include <binaryninja/binaryninjacore.h>
 #include <binaryninja/binaryninjaapi.h>
+#include <binaryninja/binaryninjacore.h>
 
 using namespace LIEF::ELF;
 using namespace BinaryNinja;

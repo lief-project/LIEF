@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/ELF/Section.hpp>
+#include <LIEF/hash.hpp>
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
-#include <LIEF/hash.hpp>
-#include <LIEF/ELF/Section.hpp>
 
 using namespace LIEF;
 
@@ -54,5 +54,19 @@ TEST_CASE("lief.test.hash", "[lief][test][hash]") {
     auto P2 = std::make_pair(1, 2);
 
     REQUIRE(H1.process(P1).value() == H2.process(P2).value());
+  }
+
+  SECTION("LIEF::Hash::string-literal") {
+    Hash H1(0x123);
+    Hash H2(0x123);
+
+    REQUIRE(H1.process("literal").value() ==
+            H2.process(std::string("literal")).value());
+
+    Hash H3(0x123);
+    Hash H4(0x123);
+
+    REQUIRE(H3.process("literal\0ignored").value() ==
+            H4.process(std::string("literal")).value());
   }
 }

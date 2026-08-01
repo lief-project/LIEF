@@ -15,14 +15,14 @@
  */
 #ifndef LIEF_MACHO_INDIRECT_BINDING_INFO_H
 #define LIEF_MACHO_INDIRECT_BINDING_INFO_H
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 /// This class represents a binding operation inferred from the indirect symbol
 /// table.
@@ -63,5 +63,5 @@ class LIEF_API IndirectBindingInfo : public BindingInfo {
 };
 
 }
-}
+
 #endif

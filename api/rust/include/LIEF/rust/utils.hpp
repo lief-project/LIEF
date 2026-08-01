@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/utils.hpp"
 #include "LIEF/rust/error.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/utils.hpp"
 
 class LIEFVersion {
   public:

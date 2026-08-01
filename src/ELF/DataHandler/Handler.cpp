@@ -18,11 +18,11 @@
 
 #include "logging.hpp"
 
-#include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/DumpStream.hpp"
-#include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/FileStream.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 
@@ -191,4 +191,4 @@ ok_error_t Handler::reserve(uint64_t offset, uint64_t size) {
 }
 
 
-} // namespace LIEF::ELF::DataHandler
+}

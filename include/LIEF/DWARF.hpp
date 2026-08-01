@@ -16,28 +16,30 @@
 #ifndef LIEF_DWARF_H
 #define LIEF_DWARF_H
 
-#include "LIEF/DWARF/enums.hpp"
-#include "LIEF/DWARF/DebugInfo.hpp"
+// IWYU pragma: begin_exports
 #include "LIEF/DWARF/CompilationUnit.hpp"
+#include "LIEF/DWARF/DebugInfo.hpp"
+#include "LIEF/DWARF/Editor.hpp"
 #include "LIEF/DWARF/Function.hpp"
-#include "LIEF/DWARF/Variable.hpp"
+#include "LIEF/DWARF/LexicalBlock.hpp"
+#include "LIEF/DWARF/Parameter.hpp"
 #include "LIEF/DWARF/Scope.hpp"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/Variable.hpp"
+#include "LIEF/DWARF/enums.hpp"
 #include "LIEF/DWARF/types.hpp"
-#include "LIEF/DWARF/Parameter.hpp"
-#include "LIEF/DWARF/Editor.hpp"
-#include "LIEF/DWARF/LexicalBlock.hpp"
 
-#include "LIEF/DWARF/editor/CompilationUnit.hpp"
-#include "LIEF/DWARF/editor/Function.hpp"
-#include "LIEF/DWARF/editor/Variable.hpp"
-#include "LIEF/DWARF/editor/Type.hpp"
-#include "LIEF/DWARF/editor/PointerType.hpp"
-#include "LIEF/DWARF/editor/EnumType.hpp"
-#include "LIEF/DWARF/editor/BaseType.hpp"
 #include "LIEF/DWARF/editor/ArrayType.hpp"
+#include "LIEF/DWARF/editor/BaseType.hpp"
+#include "LIEF/DWARF/editor/CompilationUnit.hpp"
+#include "LIEF/DWARF/editor/EnumType.hpp"
+#include "LIEF/DWARF/editor/Function.hpp"
 #include "LIEF/DWARF/editor/FunctionType.hpp"
-#include "LIEF/DWARF/editor/TypeDef.hpp"
+#include "LIEF/DWARF/editor/PointerType.hpp"
 #include "LIEF/DWARF/editor/StructType.hpp"
+#include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/DWARF/editor/TypeDef.hpp"
+#include "LIEF/DWARF/editor/Variable.hpp"
+// IWYU pragma: end_exports
 
 #endif

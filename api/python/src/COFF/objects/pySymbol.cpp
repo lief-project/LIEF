@@ -23,6 +23,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/extra/stl/wstring.h>
 
 #include "enums_wrapper.hpp"

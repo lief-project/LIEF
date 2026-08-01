@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include <spdlog/fmt/fmt.h>
-#include "LIEF/Visitor.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
-#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/Visitor.hpp"
+#include <spdlog/fmt/fmt.h>
 
 
 namespace LIEF::MachO {

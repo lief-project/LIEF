@@ -15,15 +15,18 @@
  */
 #ifndef LIEF_MACHO_SUB_FRAMEWORK_H
 #define LIEF_MACHO_SUB_FRAMEWORK_H
-#include <string>
+#include <string_view>
+#include <memory>
 #include <ostream>
+#include <string>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 
@@ -54,11 +57,11 @@ class LIEF_API SubFramework : public LoadCommand {
   SubFramework(const SubFramework& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<SubFramework>(new SubFramework(*this));
+    return std::make_unique<SubFramework>(*this);
   }
 
   /// Name of the umbrella framework
-  const std::string& umbrella() const {
+  std::string_view umbrella() const LIEF_LIFETIMEBOUND {
     return umbrella_;
   }
   void umbrella(std::string u) {
@@ -80,5 +83,5 @@ class LIEF_API SubFramework : public LoadCommand {
 };
 
 }
-}
+
 #endif

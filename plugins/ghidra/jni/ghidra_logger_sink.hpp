@@ -17,8 +17,8 @@
 #include <spdlog/details/fmt_helper.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/details/os.h>
-#include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/synchronous_factory.h>
+#include <spdlog/sinks/base_sink.h>
 
 #include <ghidra/util/Msg.hpp>
 
@@ -72,7 +72,7 @@ using ghidra_sink_st = ghidra_sink<details::null_mutex>;
 using ghidra_sink_buf_mt = ghidra_sink<std::mutex>;
 using ghidra_sink_buf_st = ghidra_sink<details::null_mutex>;
 
-} // namespace sinks
+}
 
 // Create and register Ghidra sink
 template<typename Factory = spdlog::synchronous_factory>

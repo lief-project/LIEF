@@ -15,8 +15,8 @@
  */
 
 #include "LIEF/VDEX/File.hpp"
-#include "LIEF/VDEX/hash.hpp"
 #include "LIEF/DEX/File.hpp"
+#include "LIEF/VDEX/hash.hpp"
 
 #if defined(LIEF_JSON_SUPPORT)
   #include "visitors/json.hpp"
@@ -61,7 +61,7 @@ std::string File::dex2dex_json_info() {
 
   for (const std::unique_ptr<DEX::File>& dex_file : dex_files_) {
     json dex2dex = json::parse(dex_file->dex2dex_json_info());
-    mapping[dex_file->name()] = dex2dex;
+    mapping[std::string(dex_file->name())] = dex2dex;
   }
 
   return mapping.dump();
@@ -93,4 +93,4 @@ std::ostream& operator<<(std::ostream& os, const File& vdex_file) {
   return os;
 }
 
-} // namespace LIEF::VDEX
+}

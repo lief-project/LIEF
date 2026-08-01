@@ -27,7 +27,7 @@ namespace LIEF::ELF {
 
 std::vector<std::string> DynamicEntryRpath::paths() const {
   std::stringstream ss;
-  ss.str(rpath());
+  ss.str(std::string(rpath()));
   std::string path;
   std::vector<std::string> paths;
   while (std::getline(ss, path, DynamicEntryRpath::delimiter)) {

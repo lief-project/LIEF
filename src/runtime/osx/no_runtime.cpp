@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include "LIEF/runtime/osx/Module.hpp"
-#include "LIEF/runtime/osx/Host.hpp"
-#include "LIEF/runtime/osx/Process.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/ParserConfig.hpp"
+#include "LIEF/runtime/osx/Host.hpp"
+#include "LIEF/runtime/osx/Module.hpp"
+#include "LIEF/runtime/osx/Process.hpp"
 
 #include <spdlog/fmt/fmt.h>
 
-namespace LIEF::runtime {
-namespace details {
+
+namespace LIEF::runtime::details {
 class ModuleIt {};
 class Module {};
 }
-}
+
 
 namespace LIEF::runtime::osx {
 

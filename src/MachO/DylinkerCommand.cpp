@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/utils.hpp"
 #include "LIEF/MachO/hash.hpp"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/MachO/DylinkerCommand.hpp"
 #include "MachO/Structures.hpp"

@@ -21,8 +21,8 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// Class which represents an entry associated to the RichHeader
 class LIEF_API RichEntry : public Object {
@@ -73,6 +73,6 @@ class LIEF_API RichEntry : public Object {
   uint32_t count_ = 0;
 };
 }
-}
+
 
 #endif

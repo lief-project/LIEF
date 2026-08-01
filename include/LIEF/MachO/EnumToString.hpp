@@ -19,8 +19,8 @@
 
 #include "LIEF/MachO/enums.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 LIEF_API const char* to_string(MACHO_TYPES e);
 
@@ -30,7 +30,7 @@ LIEF_API const char* to_string(PPC_RELOCATION e);
 LIEF_API const char* to_string(ARM_RELOCATION e);
 LIEF_API const char* to_string(ARM64_RELOCATION e);
 
-} // namespace MachO
-} // namespace LIEF
+}
+
 
 #endif

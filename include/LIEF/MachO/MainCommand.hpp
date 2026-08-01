@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_MACHO_MAIN_COMMAND_H
 #define LIEF_MACHO_MAIN_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct entry_point_command;
@@ -40,7 +41,7 @@ class LIEF_API MainCommand : public LoadCommand {
   MainCommand(const MainCommand& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<MainCommand>(new MainCommand(*this));
+    return std::make_unique<MainCommand>(*this);
   }
 
   ~MainCommand() override = default;
@@ -77,5 +78,5 @@ class LIEF_API MainCommand : public LoadCommand {
 };
 
 }
-}
+
 #endif

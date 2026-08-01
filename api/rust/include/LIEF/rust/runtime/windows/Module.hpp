@@ -14,9 +14,9 @@
  */
 #pragma once
 
+#include "LIEF/runtime/windows/Module.hpp"
 #include "LIEF/rust/PE/Binary.hpp"
 #include "LIEF/rust/runtime/Module.hpp"
-#include "LIEF/runtime/windows/Module.hpp"
 
 class runtime_windows_Module : public runtime_Module {
   public:

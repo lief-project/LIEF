@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/ImportEntry.hpp"
-#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
 #include "PE/Structures.hpp"
 
-#include "logging.hpp"
 #include "LIEF/utils.hpp"
+#include "logging.hpp"
 
 
 namespace LIEF::PE {
@@ -535,7 +535,7 @@ ok_error_t Builder::build_imports() {
     return ok();
   }
 
-  std::unordered_map<std::string, uint32_t> names_offset;
+  std::unordered_map<std::string_view, uint32_t> names_offset;
 
   vector_iostream headers_ilt;
   vector_iostream names_stream;
@@ -544,13 +544,13 @@ ok_error_t Builder::build_imports() {
   uint32_t nb_imported_functions = 0;
 
   for (const Import& imp : binary_->imports()) {
-    const std::string& imp_name = imp.name();
+    std::string_view imp_name = imp.name();
     if (auto it = names_offset.find(imp_name); it == names_offset.end()) {
       names_offset[imp_name] = names_stream.tellp();
       names_stream.write(imp_name);
     }
     for (const ImportEntry& entry : imp.entries()) {
-      const std::string& entry_name = entry.name();
+      std::string_view entry_name = entry.name();
       if (auto it = names_offset.find(entry_name); it == names_offset.end()) {
         names_offset[entry_name] = names_stream.tellp();
         names_stream.write<uint16_t>(entry.hint()).write(entry_name).align(2);
@@ -574,7 +574,7 @@ ok_error_t Builder::build_imports() {
   for (Import& imp : binary_->imports()) {
     const bool has_existing_iat = imp.import_address_table_rva() != 0;
 
-    const std::string& imp_name = imp.name();
+    std::string_view imp_name = imp.name();
     const auto it = names_offset.find(imp_name);
 
     if (it == names_offset.end()) {

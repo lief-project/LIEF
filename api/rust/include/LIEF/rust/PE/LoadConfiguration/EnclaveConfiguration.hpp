@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/Span.hpp"
 #include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
 #include "LIEF/PE/LoadConfigurations/EnclaveImport.hpp"
+#include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_EnclaveImport : public Mirror<LIEF::PE::EnclaveImport> {
   public:

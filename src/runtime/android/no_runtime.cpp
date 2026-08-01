@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-#include "LIEF/runtime/android/Module.hpp"
 #include "LIEF/runtime/android/Host.hpp"
+#include "LIEF/runtime/android/Module.hpp"
 #include "LIEF/runtime/android/Process.hpp"
 #include "LIEF/runtime/android/Property.hpp"
 
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/ParserConfig.hpp"
 
-namespace LIEF::runtime {
-namespace details {
+
+namespace LIEF::runtime::details {
 class ModuleIt {};
 class Module {};
 }
-}
+
 
 namespace LIEF::runtime::android {
 
@@ -65,16 +65,16 @@ std::unique_ptr<Module> dlopen(const std::string& /*name*/) {
   return nullptr;
 }
 
-optional<uint32_t> Host::sdk_version() {
-  return nullopt();
+std::optional<uint32_t> Host::sdk_version() {
+  return std::nullopt;
 }
 
 std::string Process::cmdline() {
   return "";
 }
 
-optional<Property> Process::get_system_property(const std::string& /*name*/) {
-  return nullopt();
+std::optional<Property> Process::get_system_property(const std::string& /*name*/) {
+  return std::nullopt;
 }
 
 Process::properties_t Process::properties() {

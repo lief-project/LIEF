@@ -16,8 +16,8 @@
  */
 
 #include "LIEF/DEX/CodeInfo.hpp"
-#include "LIEF/DEX/hash.hpp"
 #include "DEX/Structures.hpp"
+#include "LIEF/DEX/hash.hpp"
 
 
 namespace LIEF::DEX {

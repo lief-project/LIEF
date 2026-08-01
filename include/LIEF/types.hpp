@@ -15,9 +15,6 @@
  */
 #ifndef LIEF_TYPES_H
 #define LIEF_TYPES_H
-#include <cstdint>
-#include <cinttypes>
-#include <cstddef>
 
 #if defined(_MSC_VER)
   #define ALIGNED_(x) __declspec(align(x))

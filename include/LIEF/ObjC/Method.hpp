@@ -14,15 +14,15 @@
  */
 #ifndef LIEF_OBJC_METHOD_H
 #define LIEF_OBJC_METHOD_H
-#include <LIEF/iterators.hpp>
-#include <LIEF/visibility.h>
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include <cstdint>
 #include <memory>
 #include <string>
 
-namespace LIEF {
-namespace objc {
+
+namespace LIEF::objc {
 
 namespace details {
 class Method;
@@ -103,5 +103,5 @@ class LIEF_API Method {
 };
 
 }
-}
+
 #endif

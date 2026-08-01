@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include "OAT/Structures.hpp"
 #include "LIEF/OAT/utils.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/utils.hpp"
+#include "OAT/Structures.hpp"
 #include "frozen.hpp"
+#include <string>
 
 #include "internal_utils.hpp"
 
@@ -115,4 +115,4 @@ Android::ANDROID_VERSIONS android_version(oat_version_t version) {
 }
 
 
-} // namespace LIEF::OAT
+}

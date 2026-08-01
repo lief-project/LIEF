@@ -15,8 +15,8 @@
 #pragma once
 #include "LIEF/asm/Instruction.hpp"
 #include "LIEF/rust/Span.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/error.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 #include "LIEF/rust/Mirror.hpp"
 

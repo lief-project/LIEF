@@ -14,11 +14,11 @@
  */
 #include <array>
 
-#include "jni/lief/pe/LoadConfiguration.hpp"
+#include "jni/jni_utils.hpp"
 #include "jni/lief/pe/CodeIntegrity.hpp"
+#include "jni/lief/pe/LoadConfiguration.hpp"
 #include "jni/lief/pe/LoadConfigurations/CHPEMetadata/Metadata.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 namespace lief_jni::pe {
 

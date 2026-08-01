@@ -18,6 +18,7 @@
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryFile.hpp"
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 namespace LIEF::COFF::py {
 

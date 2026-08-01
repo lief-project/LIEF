@@ -14,18 +14,16 @@
  */
 #ifndef LIEF_ASM_EBPF_INST_H
 #define LIEF_ASM_EBPF_INST_H
-#include "LIEF/visibility.h"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/asm/Instruction.hpp"
-#include "LIEF/asm/ebpf/opcodes.hpp"
 #include "LIEF/asm/ebpf/Operand.hpp"
+#include "LIEF/asm/ebpf/opcodes.hpp"
 
-namespace LIEF {
-namespace assembly {
 
 /// eBPF architecture-related namespace
-namespace ebpf {
+namespace LIEF::assembly::ebpf {
 
 /// This class represents an eBPF instruction
 class LIEF_API Instruction : public assembly::Instruction {
@@ -46,6 +44,6 @@ class LIEF_API Instruction : public assembly::Instruction {
   ~Instruction() override = default;
 };
 }
-}
-}
+
+
 #endif

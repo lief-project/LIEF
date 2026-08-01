@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/enums.hpp>
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
-#include <LIEF/enums.hpp>
 
 enum class TEST_ENUM : uint32_t {
   None = 0,

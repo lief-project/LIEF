@@ -16,8 +16,8 @@
 #ifndef LIEF_OAT_ENUMS_H
 #define LIEF_OAT_ENUMS_H
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 
 enum OAT_CLASS_TYPES {
   OAT_CLASS_ALL_COMPILED =
@@ -85,5 +85,5 @@ static const HEADER_KEYS header_keys_list[] = {
 };
 
 }
-}
+
 #endif

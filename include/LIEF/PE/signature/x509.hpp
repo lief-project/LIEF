@@ -30,8 +30,8 @@
 
 struct mbedtls_x509_crt;
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Parser;
 class SignatureParser;
@@ -259,7 +259,7 @@ class LIEF_API x509 : public Object {
 };
 
 }
-}
+
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::x509::VERIFICATION_FLAGS);
 

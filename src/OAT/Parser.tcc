@@ -23,19 +23,19 @@
 #include "LIEF/DEX.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 
-#include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/Method.hpp"
 #include "OAT/Structures.hpp"
 
 #include "Header.tcc"
 #include "Object.tcc"
 
-#include "oat_64.tcc"
-#include "oat_79.tcc"
+#include "LIEF/OAT/Parser.hpp"
 #include "oat_124.tcc"
 #include "oat_131.tcc"
-#include "LIEF/OAT/Parser.hpp"
+#include "oat_64.tcc"
+#include "oat_79.tcc"
 
 
 namespace LIEF::OAT {

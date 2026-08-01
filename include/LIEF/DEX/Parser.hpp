@@ -16,13 +16,13 @@
 #ifndef LIEF_DEX_PARSER_H
 #define LIEF_DEX_PARSER_H
 
-#include <memory>
-#include <vector>
-#include <string>
 #include <unordered_map>
+#include <memory>
+#include <string>
+#include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/DEX/types.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;
@@ -119,6 +119,6 @@ class LIEF_API Parser {
   std::unique_ptr<VectorStream> stream_;
 };
 
-} // namespace DEX
-} // namespace LIEF
+}
+}
 #endif

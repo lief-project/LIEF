@@ -21,9 +21,8 @@
 
 #include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
 
-namespace LIEF {
-namespace PE {
-namespace unwind_aarch64 {
+
+namespace LIEF::PE::unwind_aarch64 {
 
 /// This class represents a packed AArch64 exception entry.
 ///
@@ -47,7 +46,7 @@ class LIEF_API PackedFunction : public RuntimeFunctionAArch64 {
   ~PackedFunction() override = default;
 
   std::unique_ptr<ExceptionInfo> clone() const override {
-    return std::unique_ptr<PackedFunction>(new PackedFunction(*this));
+    return std::make_unique<PackedFunction>(*this);
   }
 
   std::string to_string() const override;
@@ -124,6 +123,6 @@ class LIEF_API PackedFunction : public RuntimeFunctionAArch64 {
   uint8_t reg_F_ = 0;
 };
 }
-}
-}
+
+
 #endif

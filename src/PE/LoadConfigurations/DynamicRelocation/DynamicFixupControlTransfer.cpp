@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupControlTransfer.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/Parser.hpp"
 
 #include "logging.hpp"
 

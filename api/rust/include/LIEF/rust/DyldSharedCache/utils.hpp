@@ -14,8 +14,8 @@
  */
 
 #pragma once
-#include <string>
 #include "LIEF/DyldSharedCache/utils.hpp"
+#include <string>
 
 class dsc_Utils {
   public:

@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_PROFILING_UTILS_H
 #define LIEF_PROFILING_UTILS_H
-#include <spdlog/stopwatch.h>
-#include <spdlog/fmt/chrono.h>
 #include "logging.hpp"
+#include <spdlog/fmt/chrono.h>
+#include <spdlog/stopwatch.h>
 #include <chrono>
 
 using std::chrono::duration_cast;

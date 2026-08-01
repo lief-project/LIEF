@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_MIPS_OPERANDS_H
 #define LIEF_ASM_MIPS_OPERANDS_H
-#include <LIEF/asm/mips/operands/Register.hpp>
-#include <LIEF/asm/mips/operands/Immediate.hpp>
-#include <LIEF/asm/mips/operands/PCRelative.hpp>
-#include <LIEF/asm/mips/operands/Memory.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/mips/operands/Immediate.hpp"
+#include "LIEF/asm/mips/operands/Memory.hpp"
+#include "LIEF/asm/mips/operands/PCRelative.hpp"
+#include "LIEF/asm/mips/operands/Register.hpp"
+// IWYU pragma: end_exports
 #endif

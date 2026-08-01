@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 #include "spdlog/fmt/fmt.h"
 
@@ -62,4 +62,4 @@ void CoreSigInfo::dump(std::ostream& os) const {
                     sigcode().value_or(-1), sigerrno().value_or(-1));
 }
 
-} // namespace LIEF::ELF
+}

@@ -17,21 +17,21 @@
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
-#include "LIEF/rust/ELF/Binary.hpp"
-#include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/utils.hpp"
+#include "LIEF/rust/ELF/Binary.hpp"
 
-#include "LIEF/rust/PE/Binary.hpp"
-#include "LIEF/PE/utils.hpp"
 #include "LIEF/PE/Parser.hpp"
+#include "LIEF/PE/utils.hpp"
+#include "LIEF/rust/PE/Binary.hpp"
 
-#include "LIEF/rust/MachO/FatBinary.hpp"
-#include "LIEF/MachO/utils.hpp"
 #include "LIEF/MachO/Parser.hpp"
+#include "LIEF/MachO/utils.hpp"
+#include "LIEF/rust/MachO/FatBinary.hpp"
 
-#include "LIEF/rust/COFF/Binary.hpp"
-#include "LIEF/COFF/utils.hpp"
 #include "LIEF/COFF/Parser.hpp"
+#include "LIEF/COFF/utils.hpp"
+#include "LIEF/rust/COFF/Binary.hpp"
 
 #include "LIEF/visibility.h"
 

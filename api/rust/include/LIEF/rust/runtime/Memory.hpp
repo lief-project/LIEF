@@ -14,10 +14,10 @@
  */
 #pragma once
 
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/error.hpp"
 #include "LIEF/runtime/Memory.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/error.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class runtime_Memory_Chunk : public Mirror<LIEF::runtime::Memory::Chunk> {
   public:

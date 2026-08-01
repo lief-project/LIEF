@@ -15,17 +15,18 @@
  */
 #ifndef LIEF_MACHO_BUILD_VERSION_COMMAND_H
 #define LIEF_MACHO_BUILD_VERSION_COMMAND_H
-#include <vector>
-#include <ostream>
 #include <array>
+#include <memory>
+#include <ostream>
+#include <vector>
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/BuildToolVersion.hpp"
+#include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct build_version_command;
@@ -81,7 +82,7 @@ class LIEF_API BuildVersion : public LoadCommand {
   BuildVersion(const BuildVersion& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<BuildVersion>(new BuildVersion(*this));
+    return std::make_unique<BuildVersion>(*this);
   }
 
   version_t minos() const {
@@ -130,5 +131,5 @@ class LIEF_API BuildVersion : public LoadCommand {
 LIEF_API const char* to_string(BuildVersion::PLATFORMS e);
 
 }
-}
+
 #endif

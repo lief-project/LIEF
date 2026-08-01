@@ -14,12 +14,12 @@
  */
 #pragma once
 #include "LIEF/DWARF/Variable.hpp"
-#include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/DWARF/Scope.hpp"
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/error.hpp"
-#include "LIEF/rust/debug_location.hpp"
+#include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/DebugDeclOpt.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/debug_location.hpp"
+#include "LIEF/rust/error.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {

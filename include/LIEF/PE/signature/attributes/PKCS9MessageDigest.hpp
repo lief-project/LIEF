@@ -16,15 +16,15 @@
 #ifndef LIEF_PE_ATTRIBUTES_PKCS9_MESSAGE_DIGEST_H
 #define LIEF_PE_ATTRIBUTES_PKCS9_MESSAGE_DIGEST_H
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include <vector>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Parser;
 class SignatureParser;
@@ -85,6 +85,6 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
 };
 
 }
-}
+
 
 #endif

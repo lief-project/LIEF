@@ -15,8 +15,8 @@
 #ifndef LIEF_OBJC_DECL_OPT_H
 #define LIEF_OBJC_DECL_OPT_H
 
-namespace LIEF {
-namespace objc {
+
+namespace LIEF::objc {
 /// This structure wraps options to tweak the generated output of
 /// functions like LIEF::objc::Metadata::to_decl
 struct DeclOpt {
@@ -24,5 +24,5 @@ struct DeclOpt {
   bool show_annotations = true;
 };
 }
-}
+
 #endif

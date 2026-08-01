@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 #include <algorithm>
+#include <variant>
+#include <type_traits>
 
 #include <string>
 #include <sstream>
@@ -585,56 +587,14 @@ void create<ChainedPointerAnalysis>(nb::module_& m) {
     .def("get_as",
       [] (const ChainedPointerAnalysis& self, DYLD_CHAINED_PTR_FORMAT fmt) -> ChainedPointer {
          ChainedPointerAnalysis::union_pointer_t ptr = self.get_as(fmt);
-         switch (ptr.type) {
-          case ChainedPointerAnalysis::PTR_TYPE::UNKNOWN:
-            return nb::cast(ptr.raw);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_REBASE:
-            return nb::cast(ptr.arm64e_rebase);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_BIND:
-            return nb::cast(ptr.arm64e_bind);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_AUTH_REBASE:
-            return nb::cast(ptr.arm64e_auth_rebase);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_AUTH_BIND:
-            return nb::cast(ptr.arm64e_auth_bind);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_64_REBASE:
-            return nb::cast(ptr.ptr_64_rebase);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_BIND24:
-            return nb::cast(ptr.arm64e_bind24);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_AUTH_BIND24:
-            return nb::cast(ptr.arm64e_auth_bind24);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_64_BIND:
-            return nb::cast(ptr.ptr_64_bind);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_64_KERNEL_CACHE_REBASE:
-            return nb::cast(ptr.ptr_64_kernel_cache_rebase);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_REBASE:
-            return nb::cast(ptr.ptr_32_rebase);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_BIND:
-            return nb::cast(ptr.ptr_32_bind);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_CACHE_REBASE:
-            return nb::cast(ptr.ptr_32_cache_rebase);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_32_FIRMWARE_REBASE:
-            return nb::cast(ptr.ptr_32_firmware_rebase);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_SEGMENTED_REBASE:
-            return nb::cast(ptr.ptr_arm64e_segmented_rebase);
-
-          case ChainedPointerAnalysis::PTR_TYPE::DYLD_CHAINED_PTR_ARM64E_AUTH_SEGMENTED_REBASE:
-            return nb::cast(ptr.ptr_arm64e_auth_segmented_rebase);
-         }
-         return nb::none();
+         return std::visit([&ptr] (const auto& value) -> ChainedPointer {
+           using T = std::decay_t<decltype(value)>;
+           if constexpr (std::is_same_v<T, std::monostate>) {
+             return nb::cast(ptr.raw);
+           } else {
+             return nb::cast(value);
+           }
+         }, ptr.content);
       }
     )
   ;

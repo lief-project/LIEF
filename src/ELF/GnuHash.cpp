@@ -15,16 +15,16 @@
  */
 #include <spdlog/fmt/fmt.h>
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/ELF/hash.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/ELF/utils.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/utils.hpp"
 
-#include "logging.hpp"
 #include "ELF/Structures.hpp"
+#include "logging.hpp"
 
 
 namespace LIEF::ELF {
@@ -235,4 +235,4 @@ template result<uint32_t> GnuHash::nb_symbols<details::ELF32_x32>(SpanStream&);
 template result<uint32_t> GnuHash::nb_symbols<details::ELF32_arm64>(SpanStream&);
 
 
-} // namespace LIEF::ELF
+}

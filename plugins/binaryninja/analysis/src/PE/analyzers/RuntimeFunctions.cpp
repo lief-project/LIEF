@@ -12,15 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "log.hpp"
 #include "binaryninja/analysis/PE/TypeBuilder.hpp"
 #include "binaryninja/lief_utils.hpp"
+#include "log.hpp"
 
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
-#include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
-#include "LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp"
 #include "LIEF/PE/exceptions_info/AArch64/PackedFunction.hpp"
+#include "LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp"
+#include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
+#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 #include "binaryninja/analysis/PE/analyzers/RuntimeFunctions.hpp"
 
 #include <binaryninja/binaryninjaapi.h>

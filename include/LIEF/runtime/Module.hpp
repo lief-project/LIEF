@@ -15,14 +15,14 @@
  */
 #ifndef LIEF_RUNTIME_MODULE_H
 #define LIEF_RUNTIME_MODULE_H
-#include <ostream>
-#include <fstream>
 #include <cstdint>
 #include <cstring>
+#include <fstream>
+#include <ostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include <memory>
 #include <string>
@@ -156,7 +156,7 @@ class LIEF_API Module {
   /// This function can be used to **downcast** a Module instance
   template<class T>
   const T* as() const LIEF_LIFETIMEBOUND {
-    static_assert(std::is_base_of<Module, T>::value, "Require Module inheritance");
+    static_assert(std::is_base_of_v<Module, T>, "Require Module inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/ELF.hpp>
 #include <iostream>
 #include <memory>
-#include <LIEF/ELF.hpp>
 
 int main(int argc, char** argv) {
   std::cout << "ELF Strip" << '\n';

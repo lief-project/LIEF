@@ -16,6 +16,7 @@
 #ifndef LIEF_MACHO_H
 #define LIEF_MACHO_H
 
+// IWYU pragma: begin_exports
 #include "LIEF/config.h"
 
 #if defined(LIEF_MACHO_SUPPORT)
@@ -48,8 +49,8 @@
   #include "LIEF/MachO/FatBinary.hpp"
   #include "LIEF/MachO/FilesetCommand.hpp"
   #include "LIEF/MachO/FunctionStarts.hpp"
-  #include "LIEF/MachO/FunctionVariants.hpp"
   #include "LIEF/MachO/FunctionVariantFixups.hpp"
+  #include "LIEF/MachO/FunctionVariants.hpp"
   #include "LIEF/MachO/Header.hpp"
   #include "LIEF/MachO/IndirectBindingInfo.hpp"
   #include "LIEF/MachO/LazyLoadDylibInfo.hpp"
@@ -67,7 +68,6 @@
   #include "LIEF/MachO/RelocationObject.hpp"
   #include "LIEF/MachO/Routine.hpp"
   #include "LIEF/MachO/Section.hpp"
-  #include "LIEF/MachO/ThreadLocalVariables.hpp"
   #include "LIEF/MachO/SegmentCommand.hpp"
   #include "LIEF/MachO/SegmentSplitInfo.hpp"
   #include "LIEF/MachO/SourceVersion.hpp"
@@ -77,6 +77,7 @@
   #include "LIEF/MachO/Symbol.hpp"
   #include "LIEF/MachO/SymbolCommand.hpp"
   #include "LIEF/MachO/ThreadCommand.hpp"
+  #include "LIEF/MachO/ThreadLocalVariables.hpp"
   #include "LIEF/MachO/TwoLevelHints.hpp"
   #include "LIEF/MachO/UUIDCommand.hpp"
   #include "LIEF/MachO/UnknownCommand.hpp"
@@ -88,6 +89,7 @@
   #include "LIEF/MachO/utils.hpp"
 
   #include "LIEF/ObjC/Metadata.hpp"
+  // IWYU pragma: end_exports
 
 #endif
 #endif

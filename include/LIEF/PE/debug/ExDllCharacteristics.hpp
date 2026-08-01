@@ -17,12 +17,12 @@
 #define LIEF_PE_EX_DLL_CHARACTERISTICS_H
 #include <vector>
 
+#include "LIEF/PE/debug/Debug.hpp"
 #include "LIEF/enums.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/PE/debug/Debug.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class represents the `IMAGE_DEBUG_TYPE_EX_DLLCHARACTERISTICS` debug
 /// entry
@@ -86,7 +86,7 @@ class LIEF_API ExDllCharacteristics : public Debug {
 LIEF_API const char* to_string(ExDllCharacteristics::CHARACTERISTICS e);
 
 }
-}
+
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::ExDllCharacteristics::CHARACTERISTICS);
 

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/Memory.hpp"
+#include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/utils.hpp"
 #include "logging.hpp"
 
@@ -78,10 +78,10 @@ Memory::Chunk& Memory::Chunk::cache_flush() {
   return *this;
 }
 
-optional<Memory::Chunk> Memory::mmap(size_t size, uint32_t /*flags*/,
-                                     uint32_t perms) {
+std::optional<Memory::Chunk> Memory::mmap(size_t size, uint32_t /*flags*/,
+                                          uint32_t perms) {
   if (size == 0) {
-    return nullopt();
+    return std::nullopt;
   }
 
   DWORD win_perms = get_win_flags(perms);
@@ -90,7 +90,7 @@ optional<Memory::Chunk> Memory::mmap(size_t size, uint32_t /*flags*/,
                              /*flProtect=*/win_perms);
   if (ret == nullptr) {
     LIEF_ERR("VirtualAlloc failed with error code: {}", GetLastError());
-    return nullopt();
+    return std::nullopt;
   }
 
   return Chunk(ret, size, perms);

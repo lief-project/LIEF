@@ -18,14 +18,14 @@
 #include <ostream>
 #include <sstream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/PE/resources/ResourceVersion.hpp"
-#include "LIEF/PE/resources/ResourceIcon.hpp"
-#include "LIEF/PE/resources/ResourceDialog.hpp"
 #include "LIEF/PE/resources/ResourceAccelerator.hpp"
+#include "LIEF/PE/resources/ResourceDialog.hpp"
+#include "LIEF/PE/resources/ResourceIcon.hpp"
+#include "LIEF/PE/resources/ResourceVersion.hpp"
 
 namespace LIEF {
 class VectorStream;
@@ -224,7 +224,7 @@ class LIEF_API ResourcesManager : public Object {
 
 LIEF_API const char* to_string(ResourcesManager::TYPE type);
 
-} // namespace PE
-} // namespace LIEF
+}
+}
 
 #endif

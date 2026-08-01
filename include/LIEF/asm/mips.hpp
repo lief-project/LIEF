@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_MIPS_H
 #define LIEF_ASM_MIPS_H
-#include <LIEF/asm/mips/Instruction.hpp>
-#include <LIEF/asm/mips/opcodes.hpp>
-#include <LIEF/asm/mips/registers.hpp>
-#include <LIEF/asm/mips/operands.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/mips/Instruction.hpp"
+#include "LIEF/asm/mips/opcodes.hpp"
+#include "LIEF/asm/mips/operands.hpp"
+#include "LIEF/asm/mips/registers.hpp"
+// IWYU pragma: end_exports
 #endif

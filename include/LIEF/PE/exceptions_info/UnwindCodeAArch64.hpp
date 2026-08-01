@@ -16,11 +16,9 @@
 #ifndef LIEF_PE_UNWIND_CODE_AARCH64_H
 #define LIEF_PE_UNWIND_CODE_AARCH64_H
 
-namespace LIEF {
 
-namespace PE {
 /// This namespace wraps code related to PE-ARM64 unwinding code
-namespace unwind_aarch64 {
+namespace LIEF::PE::unwind_aarch64 {
 
 enum class OPCODES {
   ALLOC_S,
@@ -57,6 +55,6 @@ enum class OPCODES {
   SAVE_ZREG,
 };
 }
-}
-}
+
+
 #endif

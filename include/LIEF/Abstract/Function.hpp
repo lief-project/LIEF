@@ -16,12 +16,12 @@
 #ifndef LIEF_ABSTRACT_FUNCTION_H
 #define LIEF_ABSTRACT_FUNCTION_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "LIEF/Abstract/Symbol.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/enums.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 

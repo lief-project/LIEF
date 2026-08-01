@@ -15,19 +15,19 @@
  */
 #ifndef LIEF_RUNTIME_ANDROID_PROPERTY_H
 #define LIEF_RUNTIME_ANDROID_PROPERTY_H
-#include <ostream>
+#include <string_view>
 #include <cstdint>
+#include <ostream>
 #include <string>
 
-#include <LIEF/compiler_attributes.hpp>
-#include <LIEF/visibility.h>
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
 // Forward definition from include/sys/system_properties.h
 typedef struct prop_info prop_info; // NOLINT
 
-namespace LIEF {
-namespace runtime {
-namespace android {
+
+namespace LIEF::runtime::android {
 
 /// This class represents an Android property such as `ro.boot.hardware`
 class LIEF_API Property {
@@ -49,12 +49,12 @@ class LIEF_API Property {
   ~Property() = default;
 
   /// Name of the property (e.g. `ro.boot.hardware`).
-  const std::string& name() const LIEF_LIFETIMEBOUND {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
   /// Value associated with the property.
-  const std::string& value() const LIEF_LIFETIMEBOUND {
+  std::string_view value() const LIEF_LIFETIMEBOUND {
     return value_;
   }
 
@@ -81,6 +81,6 @@ class LIEF_API Property {
   uint32_t serial_ = 0;
 };
 }
-}
-}
+
+
 #endif

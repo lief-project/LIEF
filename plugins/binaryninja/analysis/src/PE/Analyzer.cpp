@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #include "binaryninja/analysis/PE/Analyzer.hpp"
-#include "log.hpp"
 #include "binaryninja/analysis/PE/TypeBuilder.hpp"
+#include "log.hpp"
 
 #include "binaryninja/analysis/PE/analyzers/LoadConfiguration.hpp"
 #include "binaryninja/analysis/PE/analyzers/RuntimeFunctions.hpp"

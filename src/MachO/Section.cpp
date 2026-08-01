@@ -16,16 +16,16 @@
 #include <algorithm>
 #include <iterator>
 
-#include "spdlog/fmt/fmt.h"
-#include "logging.hpp"
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
+#include "logging.hpp"
+#include "spdlog/fmt/fmt.h"
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/ThreadLocalVariables.hpp"
 #include "MachO/Structures.hpp"
@@ -214,7 +214,7 @@ void Section::content(const content_t& data) {
   std::move(data.begin(), data.end(), content.data() + relative_offset);
 }
 
-const std::string& Section::segment_name() const {
+std::string_view Section::segment_name() const {
   if (segment_ == nullptr || segment_->name().empty()) {
     return segment_name_;
   }
@@ -326,4 +326,4 @@ const char* to_string(Section::TYPE e) {
   return "UNKNOWN";
 }
 
-} // namespace LIEF::MachO
+}

@@ -14,8 +14,8 @@
  */
 #ifndef LIEF_MACHO_CHAINED_FIXUP_H
 #define LIEF_MACHO_CHAINED_FIXUP_H
-#include <cstdint>
 #include <type_traits>
+#include <cstdint>
 
 
 namespace LIEF::MachO::details {

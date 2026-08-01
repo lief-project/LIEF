@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 #include "LIEF/errors.hpp"
+#include "logging.hpp"
 
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
@@ -24,15 +24,15 @@
 #include "LIEF/MachO/DyldExportsTrie.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
-#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
 
 
 namespace LIEF::MachO {

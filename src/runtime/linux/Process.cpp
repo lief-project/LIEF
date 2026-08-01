@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/platforms.hpp"
 #include "LIEF/runtime/Process.hpp"
+#include "LIEF/platforms.hpp"
 #include "LIEF/runtime/linux/Process.hpp"
 
 #include "linux_android_shared/Process.hpp"
 #include "logging.hpp"
 
+#include <sys/syscall.h>
 #include <cstdlib>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/syscall.h>
 
 #if defined(LIEF_PLATFORM_GLIBC)
   #include <gnu/libc-version.h>
@@ -46,11 +45,11 @@ uint32_t Process::page_size() {
   return PAGESZ;
 }
 
-optional<std::string> Process::get_env(const std::string& key) {
+std::optional<std::string> Process::get_env(const std::string& key) {
   if (const char* value = ::getenv(key.c_str())) {
     return std::string(value);
   }
-  return nullopt();
+  return std::nullopt;
 }
 
 

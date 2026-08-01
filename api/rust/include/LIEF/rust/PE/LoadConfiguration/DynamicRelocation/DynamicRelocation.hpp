@@ -18,8 +18,8 @@
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationV1.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationV2.hpp"
 
-#include "LIEF/rust/PE/LoadConfiguration/DynamicRelocation/DynamicFixup.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PE/LoadConfiguration/DynamicRelocation/DynamicFixup.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class PE_DynamicRelocation : public Mirror<LIEF::PE::DynamicRelocation> {

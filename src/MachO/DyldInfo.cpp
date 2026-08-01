@@ -17,9 +17,9 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#include "logging.hpp"
-#include "frozen.hpp"
 #include "LIEF/iostream.hpp"
+#include "frozen.hpp"
+#include "logging.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 
@@ -28,17 +28,17 @@
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/MachO/DylibCommand.hpp"
 
-#include "MachO/exports_trie.hpp"
 #include "MachO/Structures.hpp"
 #include "MachO/dyld_opcodes.hpp"
+#include "MachO/exports_trie.hpp"
 
 #include "Object.tcc"
 
@@ -116,12 +116,13 @@ void DyldInfo::rebase_opcodes(buffer_t raw) {
   std::move(raw.begin(), raw.end(), rebase_opcodes_.data());
 }
 
-inline std::string safe_segment_name(Binary::it_segments& segments, size_t idx) {
+inline std::string_view safe_segment_name(Binary::it_segments& segments,
+                                          size_t idx) {
   return idx < segments.size() ? segments[idx].name() : "<invalid>";
 }
 
-inline std::string safe_library_name(Binary::it_libraries& libraries,
-                                     int64_t idx) {
+inline std::string_view safe_library_name(Binary::it_libraries& libraries,
+                                          int64_t idx) {
   if (idx >= 0 && static_cast<size_t>(idx) < libraries.size()) {
     return libraries[idx].name();
   }

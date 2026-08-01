@@ -16,12 +16,12 @@
 #ifndef LIEF_DEX_PROTOTYPE_H
 #define LIEF_DEX_PROTOTYPE_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 class Parser;
 class Type;
 
@@ -60,5 +60,5 @@ class LIEF_API Prototype : public Object {
 };
 
 } // Namespace DEX
-} // Namespace LIEF
+// Namespace LIEF
 #endif

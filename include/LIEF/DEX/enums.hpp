@@ -16,8 +16,8 @@
 #ifndef LIEF_DEX_ENUMS_H
 #define LIEF_DEX_ENUMS_H
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 enum ACCESS_FLAGS {
   ACC_UNKNOWN = 0x0,
@@ -68,5 +68,5 @@ static const ACCESS_FLAGS access_flags_list[] = {
 };
 
 }
-}
+
 #endif

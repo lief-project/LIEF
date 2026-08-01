@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_MACHO_DYLD_INFO_COMMAND_H
 #define LIEF_MACHO_DYLD_INFO_COMMAND_H
-#include <string>
-#include <set>
-#include <vector>
-#include <ostream>
 #include <memory>
+#include <ostream>
+#include <set>
+#include <string>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/type_traits.hpp"
@@ -180,7 +180,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   void swap(DyldInfo& other) noexcept;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<DyldInfo>(new DyldInfo(*this));
+    return std::make_unique<DyldInfo>(*this);
   }
 
   ~DyldInfo() override;

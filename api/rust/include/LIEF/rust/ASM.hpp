@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/asm/Engine.hpp"
+#include "LIEF/rust/asm/Instruction.hpp"
 
 #include "LIEF/rust/asm/aarch64/Instruction.hpp"
 #include "LIEF/rust/asm/aarch64/operands.hpp"
@@ -25,7 +25,7 @@
 #include "LIEF/rust/asm/x86/operands/Register.hpp"
 
 #include "LIEF/rust/asm/arm/Instruction.hpp"
-#include "LIEF/rust/asm/powerpc/Instruction.hpp"
-#include "LIEF/rust/asm/mips/Instruction.hpp"
-#include "LIEF/rust/asm/riscv/Instruction.hpp"
 #include "LIEF/rust/asm/ebpf/Instruction.hpp"
+#include "LIEF/rust/asm/mips/Instruction.hpp"
+#include "LIEF/rust/asm/powerpc/Instruction.hpp"
+#include "LIEF/rust/asm/riscv/Instruction.hpp"

@@ -13,20 +13,20 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/DebugDeclOpt.hpp"
 #include "LIEF/DWARF/Function.hpp"
-#include "LIEF/rust/DWARF/Variable.hpp"
 #include "LIEF/rust/DWARF/LexicalBlock.hpp"
+#include "LIEF/rust/DWARF/Parameter.hpp"
 #include "LIEF/rust/DWARF/Scope.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
-#include "LIEF/rust/DWARF/Parameter.hpp"
-#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/DWARF/Variable.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
 #include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/range.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/debug_location.hpp"
 #include "LIEF/rust/error.hpp"
-#include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/range.hpp"
 
 class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   public:

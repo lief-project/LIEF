@@ -15,10 +15,10 @@
  */
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/Relocation.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
-#include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/Symbol.hpp"
 
 #include "ELF/Structures.hpp"
 

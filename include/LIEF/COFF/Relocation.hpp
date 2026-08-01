@@ -19,9 +19,9 @@
 #include <memory>
 #include <ostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/COFF/Header.hpp"
 #include "LIEF/Abstract/Relocation.hpp"
+#include "LIEF/COFF/Header.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;

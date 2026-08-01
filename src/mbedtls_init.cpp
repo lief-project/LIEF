@@ -14,10 +14,10 @@
  */
 #include <mutex>
 
+#include "logging.hpp"
+#include "mbedtls_init.hpp"
 #include "psa/crypto.h"
 #include "threading_alt.h"
-#include "mbedtls_init.hpp"
-#include "logging.hpp"
 
 #if defined(MBEDTLS_THREADING_C)
   #if defined(MBEDTLS_SELF_TEST)

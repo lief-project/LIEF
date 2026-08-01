@@ -19,10 +19,9 @@
 #include "LIEF/asm/Instruction.hpp"
 #include "LIEF/asm/arm/opcodes.hpp"
 
-namespace LIEF {
-namespace assembly {
+
 /// ARM architecture-related namespace
-namespace arm {
+namespace LIEF::assembly::arm {
 
 /// This class represents an ARM/Thumb instruction
 class LIEF_API Instruction : public assembly::Instruction {
@@ -38,6 +37,6 @@ class LIEF_API Instruction : public assembly::Instruction {
   ~Instruction() override = default;
 };
 }
-}
-}
+
+
 #endif

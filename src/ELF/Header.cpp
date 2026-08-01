@@ -19,9 +19,9 @@
 
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/Header.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/Header.hpp"
 
 #include "logging.hpp"
 

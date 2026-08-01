@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_EBPF_H
 #define LIEF_ASM_EBPF_H
-#include <LIEF/asm/ebpf/Instruction.hpp>
-#include <LIEF/asm/ebpf/opcodes.hpp>
-#include <LIEF/asm/ebpf/registers.hpp>
-#include <LIEF/asm/ebpf/operands.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/ebpf/Instruction.hpp"
+#include "LIEF/asm/ebpf/opcodes.hpp"
+#include "LIEF/asm/ebpf/operands.hpp"
+#include "LIEF/asm/ebpf/registers.hpp"
+// IWYU pragma: end_exports
 #endif

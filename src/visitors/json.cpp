@@ -15,7 +15,6 @@
  */
 #include <utility>
 
-#include "LIEF/Abstract.hpp"
 
 #include "visitors/json.hpp"
 

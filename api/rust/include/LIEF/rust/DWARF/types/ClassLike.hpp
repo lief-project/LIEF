@@ -14,8 +14,8 @@
  */
 #pragma once
 #include "LIEF/DWARF/types/ClassLike.hpp"
-#include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/DWARF/Function.hpp"
+#include "LIEF/rust/DWARF/Type.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/helpers.hpp"

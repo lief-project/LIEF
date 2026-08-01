@@ -18,10 +18,8 @@
 #include "LIEF/asm/mips/Operand.hpp"
 #include "LIEF/asm/mips/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace mips {
-namespace operands {
+
+namespace LIEF::assembly::mips::operands {
 
 /// This class represents a register operand.
 ///
@@ -45,7 +43,6 @@ class LIEF_API Register : public Operand {
   ~Register() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

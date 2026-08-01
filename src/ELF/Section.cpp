@@ -16,12 +16,12 @@
 #include <algorithm>
 #include <iterator>
 
-#include "logging.hpp"
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
+#include "logging.hpp"
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"

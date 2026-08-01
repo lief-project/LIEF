@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/iterators.hpp"
+#include <type_traits>
 #include <cstdint>
 #include <memory>
-#include <type_traits>
-#include "LIEF/iterators.hpp"
 
 namespace details {
 template<class It, class = void>

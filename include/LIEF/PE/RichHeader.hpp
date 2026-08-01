@@ -25,8 +25,8 @@
 #include "LIEF/PE/RichEntry.hpp"
 #include "LIEF/PE/enums.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// Class which represents the not-so-documented rich header
 ///
@@ -112,6 +112,6 @@ class LIEF_API RichHeader : public Object {
   entries_t entries_;
 };
 }
-}
+
 
 #endif

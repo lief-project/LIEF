@@ -15,20 +15,18 @@
 #ifndef LIEF_DWARF_EDITOR_BASE_TYPE_H
 #define LIEF_DWARF_EDITOR_BASE_TYPE_H
 
-#include <cstdint>
-#include "LIEF/visibility.h"
 #include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/visibility.h"
+#include <cstdint>
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 
 /// This class represents a primitive type like `int, char`.
 class LIEF_API BaseType : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   BaseType(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -49,6 +47,6 @@ class LIEF_API BaseType : public Type {
 };
 
 }
-}
-}
+
+
 #endif

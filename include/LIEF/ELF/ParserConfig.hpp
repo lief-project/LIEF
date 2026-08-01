@@ -19,8 +19,8 @@
 
 #include <cstdint>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// This structure is used to tweak the ELF Parser (ELF::Parser)
 struct LIEF_API ParserConfig {
@@ -75,5 +75,5 @@ struct LIEF_API ParserConfig {
 };
 
 }
-}
+
 #endif

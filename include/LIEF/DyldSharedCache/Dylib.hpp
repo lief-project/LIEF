@@ -15,9 +15,9 @@
  */
 #ifndef LIEF_DSC_DYLIB_H
 #define LIEF_DSC_DYLIB_H
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include <memory>
 #include <string>

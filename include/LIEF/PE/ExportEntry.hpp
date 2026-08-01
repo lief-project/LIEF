@@ -16,15 +16,15 @@
 #ifndef LIEF_PE_EXPORT_ENTRY_H
 #define LIEF_PE_EXPORT_ENTRY_H
 
-#include <string>
 #include <ostream>
+#include <string>
 
+#include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/Abstract/Symbol.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Builder;
 class Parser;
@@ -153,6 +153,6 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
 };
 
 }
-}
+
 
 #endif

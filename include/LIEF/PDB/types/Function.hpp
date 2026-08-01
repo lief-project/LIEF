@@ -15,20 +15,18 @@
 #ifndef LIEF_PDB_TYPE_FUNCTION_H
 #define LIEF_PDB_TYPE_FUNCTION_H
 
+#include "LIEF/PDB/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/PDB/Type.hpp"
 
-namespace LIEF {
-namespace pdb {
-namespace types {
+
+namespace LIEF::pdb::types {
 
 /// This class represents a `LF_PROCEDURE` PDB type
 class LIEF_API Function : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   Function(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
   using parameters_t = std::vector<std::unique_ptr<Type>>;
@@ -47,6 +45,6 @@ class LIEF_API Function : public Type {
 };
 
 }
-}
-}
+
+
 #endif

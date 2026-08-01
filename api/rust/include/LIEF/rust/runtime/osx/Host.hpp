@@ -14,8 +14,8 @@
  */
 #pragma once
 
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/runtime/osx/Host.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class runtime_osx_Host {
   public:

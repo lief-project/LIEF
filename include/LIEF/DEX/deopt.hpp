@@ -15,11 +15,11 @@
  */
 #ifndef LIEF_DEX_DEOPT_TYPES_H
 #define LIEF_DEX_DEOPT_TYPES_H
-#include <cstdint>
 #include <unordered_map>
+#include <cstdint>
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 class Class;
 class Method;
 
@@ -29,6 +29,6 @@ using dex2dex_class_info_t = std::unordered_map<Method*, dex2dex_method_info_t>;
 using dex2dex_info_t = std::unordered_map<Class*, dex2dex_class_info_t>;
 
 }
-}
+
 
 #endif

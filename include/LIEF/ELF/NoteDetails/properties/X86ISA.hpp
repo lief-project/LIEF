@@ -15,14 +15,14 @@
  */
 #ifndef LIEF_ELF_NOTE_DETAILS_PROPERTIES_X86ISA_H
 #define LIEF_ELF_NOTE_DETAILS_PROPERTIES_X86ISA_H
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// This class interfaces the different ``GNU_PROPERTY_X86_ISA_*``
 /// properties which includes:
@@ -108,6 +108,6 @@ LIEF_API const char* to_string(X86ISA::FLAG flag);
 LIEF_API const char* to_string(X86ISA::ISA isa);
 
 }
-}
+
 
 #endif

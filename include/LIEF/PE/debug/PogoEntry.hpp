@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_PE_DEBUG_POGO_ENTRY_H
 #define LIEF_PE_DEBUG_POGO_ENTRY_H
-#include <ostream>
+#include <string_view>
 #include <cstdint>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Builder;
 class Parser;
@@ -55,7 +56,7 @@ class LIEF_API PogoEntry : public Object {
     return size_;
   }
 
-  const std::string& name() const {
+  std::string_view name() const {
     return name_;
   }
 
@@ -83,6 +84,6 @@ class LIEF_API PogoEntry : public Object {
 };
 
 } // Namespace PE
-} // Namespace LIEF
+// Namespace LIEF
 
 #endif

@@ -16,11 +16,11 @@
 #ifndef LIEF_MACHO_HASH_H
 #define LIEF_MACHO_HASH_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class Binary;
 class BindingInfo;
@@ -123,6 +123,6 @@ class LIEF_API Hash : public LIEF::Hash {
 };
 
 }
-}
+
 
 #endif

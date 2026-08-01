@@ -16,15 +16,15 @@
 #define LIEF_PDB_PUBLIC_SYMBOL_H
 #include <cstdint>
 #include <memory>
-#include <string>
 #include <ostream>
+#include <string>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 
 namespace details {
 class PublicSymbol;
@@ -119,5 +119,5 @@ class LIEF_API PublicSymbol {
 };
 
 }
-}
+
 #endif

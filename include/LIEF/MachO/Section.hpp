@@ -15,11 +15,12 @@
  */
 #ifndef LIEF_MACHO_SECTION_H
 #define LIEF_MACHO_SECTION_H
+#include <string_view>
 #include <cstdint>
+#include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
-#include <memory>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
@@ -177,7 +178,7 @@ class LIEF_API Section : public LIEF::Section {
   void content(const content_t& data) override;
 
   /// Return the name of the segment linked to this section
-  const std::string& segment_name() const;
+  std::string_view segment_name() const LIEF_LIFETIMEBOUND;
 
   /// Virtual base address of the section
   uint64_t address() const {
@@ -331,8 +332,7 @@ class LIEF_API Section : public LIEF::Section {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<Section, T>::value,
-                  "Require Section inheritance");
+    static_assert(std::is_base_of_v<Section, T>, "Require Section inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }

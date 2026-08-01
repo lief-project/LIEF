@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
+#include <binaryninja/binaryninjaapi.h>
 #include <cassert>
 #include <optional>
 #include <string>
-#include <binaryninja/binaryninjaapi.h>
 
 namespace analysis_plugin {
 class TypeBuilder {

@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/error.hpp"
-#include "LIEF/rust/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
+#include "LIEF/rust/ELF/Note.hpp"
+#include "LIEF/rust/error.hpp"
 
 #include <cstdint>
 

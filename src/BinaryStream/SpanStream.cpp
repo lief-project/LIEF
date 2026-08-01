@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 namespace LIEF {
 
 std::unique_ptr<VectorStream> SpanStream::to_vector() const {

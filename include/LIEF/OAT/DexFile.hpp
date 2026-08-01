@@ -16,12 +16,13 @@
 #ifndef LIEF_OAT_DEXFILE_H
 #define LIEF_OAT_DEXFILE_H
 
+#include <string_view>
 #include <cstdint>
 #include <string>
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class Visitor;
@@ -41,7 +42,7 @@ class LIEF_API DexFile : public Object {
   DexFile(const DexFile&);
   DexFile& operator=(const DexFile&);
 
-  const std::string& location() const;
+  std::string_view location() const;
 
   uint32_t checksum() const;
   uint32_t dex_offset() const;

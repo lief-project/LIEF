@@ -19,11 +19,11 @@
 #include <cstdint>
 #include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 namespace details {
 struct code_item;
 }
@@ -56,5 +56,5 @@ class LIEF_API CodeInfo : public Object {
 };
 
 } // Namespace DEX
-} // Namespace LIEF
+// Namespace LIEF
 #endif

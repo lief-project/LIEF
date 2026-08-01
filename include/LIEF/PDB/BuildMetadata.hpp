@@ -14,15 +14,17 @@
  */
 #ifndef LIEF_PDB_BUILD_METADATA_H
 #define LIEF_PDB_BUILD_METADATA_H
-#include <vector>
+#include <cstdint>
 #include <memory>
 #include <ostream>
+#include <string>
+#include <vector>
 
 #include "LIEF/visibility.h"
-#include "LIEF/optional.hpp"
+#include <optional>
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 
 namespace details {
 class BuildMetadata;
@@ -182,7 +184,7 @@ class LIEF_API BuildMetadata {
   CPU target_cpu() const;
 
   /// Build information represented by the `S_BUILDINFO` symbol
-  optional<build_info_t> build_info() const;
+  std::optional<build_info_t> build_info() const;
 
   /// Environment information represented by the `S_ENVBLOCK` symbol
   std::vector<std::string> env() const;
@@ -203,5 +205,5 @@ LIEF_API const char* to_string(BuildMetadata::CPU cpu);
 LIEF_API const char* to_string(BuildMetadata::LANG cpu);
 
 }
-}
+
 #endif

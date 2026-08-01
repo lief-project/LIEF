@@ -18,16 +18,16 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/range.hpp"
-#include "LIEF/iterators.hpp"
-#include "LIEF/DebugDeclOpt.hpp"
 #include "LIEF/DWARF/Function.hpp"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DebugDeclOpt.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/range.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
+
+namespace LIEF::dwarf {
 
 namespace details {
 class CompilationUnit;
@@ -274,5 +274,5 @@ class LIEF_API CompilationUnit {
 };
 
 }
-}
+
 #endif

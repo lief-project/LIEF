@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_PE_CHECKSUM_H
 #define LIEF_PE_CHECKSUM_H
-#include <cstdint>
 #include <type_traits>
 #include <cstddef>
+#include <cstdint>
 
 #include "LIEF/span.hpp"
 
@@ -60,10 +60,9 @@ class ChecksumStream {
     return write(reinterpret_cast<const uint8_t*>(&value), size);
   }
 
-  template<class T,
-           typename = typename std::enable_if<(std::is_standard_layout_v<T> &&
-                                               std::is_trivial_v<T>) ||
-                                              std::is_integral_v<T>>::type>
+  template<class T, typename = std::enable_if_t<(std::is_standard_layout_v<T> &&
+                                                 std::is_trivial_v<T>) ||
+                                                std::is_integral_v<T>>>
   ChecksumStream& write(const T& t) {
     return write(reinterpret_cast<const uint8_t*>(&t), sizeof(T));
   }

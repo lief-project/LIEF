@@ -14,40 +14,39 @@
  */
 
 // NOLINTBEGIN
-#include "LIEF/DWARF/DebugInfo.hpp"
 #include "LIEF/DWARF/CompilationUnit.hpp"
+#include "LIEF/DWARF/DebugInfo.hpp"
+#include "LIEF/DWARF/Editor.hpp"
 #include "LIEF/DWARF/Function.hpp"
 #include "LIEF/DWARF/LexicalBlock.hpp"
-#include "LIEF/DWARF/Variable.hpp"
-#include "LIEF/DWARF/Type.hpp"
-#include "LIEF/DWARF/Scope.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
-#include "LIEF/DWARF/Editor.hpp"
-#include "LIEF/DWARF/editor/CompilationUnit.hpp"
-#include "LIEF/DWARF/editor/Variable.hpp"
-#include "LIEF/DWARF/editor/Function.hpp"
-#include "LIEF/DWARF/editor/Type.hpp"
-#include "LIEF/DWARF/editor/PointerType.hpp"
-#include "LIEF/DWARF/editor/EnumType.hpp"
-#include "LIEF/DWARF/editor/BaseType.hpp"
+#include "LIEF/DWARF/Scope.hpp"
+#include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/editor/ArrayType.hpp"
+#include "LIEF/DWARF/editor/BaseType.hpp"
+#include "LIEF/DWARF/editor/CompilationUnit.hpp"
+#include "LIEF/DWARF/editor/EnumType.hpp"
+#include "LIEF/DWARF/editor/Function.hpp"
 #include "LIEF/DWARF/editor/FunctionType.hpp"
-#include "LIEF/DWARF/editor/TypeDef.hpp"
+#include "LIEF/DWARF/editor/PointerType.hpp"
 #include "LIEF/DWARF/editor/StructType.hpp"
+#include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/DWARF/editor/TypeDef.hpp"
+#include "LIEF/DWARF/editor/Variable.hpp"
 
-#include "LIEF/DWARF/types/ClassLike.hpp"
-#include "LIEF/DWARF/types/Pointer.hpp"
-#include "LIEF/DWARF/types/Const.hpp"
-#include "LIEF/DWARF/types/Base.hpp"
 #include "LIEF/DWARF/types/Array.hpp"
-#include "LIEF/DWARF/types/Typedef.hpp"
 #include "LIEF/DWARF/types/Atomic.hpp"
+#include "LIEF/DWARF/types/Base.hpp"
+#include "LIEF/DWARF/types/ClassLike.hpp"
 #include "LIEF/DWARF/types/Coarray.hpp"
+#include "LIEF/DWARF/types/Const.hpp"
 #include "LIEF/DWARF/types/Dynamic.hpp"
 #include "LIEF/DWARF/types/Enum.hpp"
 #include "LIEF/DWARF/types/File.hpp"
 #include "LIEF/DWARF/types/Immutable.hpp"
 #include "LIEF/DWARF/types/Interface.hpp"
+#include "LIEF/DWARF/types/Pointer.hpp"
 #include "LIEF/DWARF/types/PointerToMember.hpp"
 #include "LIEF/DWARF/types/RValueRef.hpp"
 #include "LIEF/DWARF/types/Reference.hpp"
@@ -58,11 +57,12 @@
 #include "LIEF/DWARF/types/Subroutine.hpp"
 #include "LIEF/DWARF/types/TemplateAlias.hpp"
 #include "LIEF/DWARF/types/Thrown.hpp"
+#include "LIEF/DWARF/types/Typedef.hpp"
 #include "LIEF/DWARF/types/Volatile.hpp"
 
+#include "internal_utils.hpp"
 #include "logging.hpp"
 #include "messages.hpp"
-#include "internal_utils.hpp"
 
 namespace LIEF::details {
 class DebugInfo {};
@@ -389,9 +389,9 @@ std::unique_ptr<Type> DebugInfo::find_type(const std::string& /*name*/) const {
   return nullptr;
 }
 
-optional<uint64_t>
+std::optional<uint64_t>
     DebugInfo::find_function_address(const std::string& /*name*/) const {
-  return nullopt();
+  return std::nullopt;
 }
 
 DebugInfo::compilation_units_it DebugInfo::compilation_units() const {
@@ -655,20 +655,20 @@ LexicalBlock::sub_blocks_it LexicalBlock::sub_blocks() const {
   return make_empty_iterator<LexicalBlock>();
 }
 
-optional<uint64_t> LexicalBlock::addr() const {
-  return nullopt();
+std::optional<uint64_t> LexicalBlock::addr() const {
+  return std::nullopt;
 }
 
 uint64_t LexicalBlock::size() const {
   return 0;
 }
 
-optional<uint64_t> LexicalBlock::low_pc() const {
-  return nullopt();
+std::optional<uint64_t> LexicalBlock::low_pc() const {
+  return std::nullopt;
 }
 
-optional<uint64_t> LexicalBlock::high_pc() const {
-  return nullopt();
+std::optional<uint64_t> LexicalBlock::high_pc() const {
+  return std::nullopt;
 }
 
 std::vector<range_t> LexicalBlock::ranges() const {
@@ -867,16 +867,16 @@ std::string Enum::Entry::name() const {
   return "";
 }
 
-optional<int64_t> Enum::Entry::value() const {
-  return nullopt();
+std::optional<int64_t> Enum::Entry::value() const {
+  return std::nullopt;
 }
 
 std::vector<Enum::Entry> Enum::entries() const {
   return {};
 }
 
-optional<Enum::Entry> Enum::find_entry(int64_t /*value*/) const {
-  return nullopt();
+std::optional<Enum::Entry> Enum::find_entry(int64_t /*value*/) const {
+  return std::nullopt;
 }
 
 const Type* Enum::underlying_type() const {
@@ -1011,7 +1011,7 @@ const Type* Volatile::underlying_type() const {
   return nullptr;
 }
 
-} // namespace types
+}
 
 
 // ----------------------------------------------------------------------------

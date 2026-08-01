@@ -18,14 +18,14 @@
 #include <map>
 #include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/DEX/MapItem.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 class Parser;
 class Class;
 
@@ -79,5 +79,5 @@ class LIEF_API MapList : public Object {
 };
 
 } // Namespace DEX
-} // Namespace LIEF
+// Namespace LIEF
 #endif

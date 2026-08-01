@@ -19,8 +19,8 @@
 #include <memory>
 #include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationBase.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -42,7 +42,7 @@ class LIEF_API DynamicRelocationV2 : public DynamicRelocation {
   DynamicRelocationV2& operator=(DynamicRelocationV2&&) = default;
 
   std::unique_ptr<DynamicRelocation> clone() const override {
-    return std::unique_ptr<DynamicRelocationV2>(new DynamicRelocationV2(*this));
+    return std::make_unique<DynamicRelocationV2>(*this);
   }
 
   std::string to_string() const override;

@@ -15,9 +15,9 @@
 #pragma once
 
 #include "LIEF/PE/DelayImport.hpp"
-#include "LIEF/rust/PE/DelayImportEntry.hpp"
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PE/DelayImportEntry.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 #include <memory>

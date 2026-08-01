@@ -18,8 +18,8 @@
 
 #include "ELF/NoteDetails/properties/common.hpp"
 
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
 
 FMT_FORMATTER(LIEF::ELF::X86ISA::FLAG, LIEF::ELF::to_string);
 FMT_FORMATTER(LIEF::ELF::X86ISA::ISA, LIEF::ELF::to_string);

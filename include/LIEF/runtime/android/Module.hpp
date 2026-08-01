@@ -26,8 +26,8 @@ class Binary;
 struct ParserConfig;
 }
 
-namespace runtime {
-namespace android {
+
+namespace runtime::android {
 
 /// This class exposes Android-specific API for a module
 class LIEF_API Module : public runtime::Module {
@@ -70,7 +70,6 @@ class LIEF_API Module : public runtime::Module {
 /// Load the library with the given path/name
 LIEF_API std::unique_ptr<Module> dlopen(const std::string& name);
 
-}
 }
 }
 #endif

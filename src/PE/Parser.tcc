@@ -20,26 +20,30 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 #include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/PE/TLS.hpp"
 
 #include "PE/Structures.hpp"
 
 namespace LIEF::PE {
 
 inline uint64_t delta(const Parser& parser) {
-  assert(parser.bin().optional_header().imagebase() >= *parser.config().rebase);
-  return parser.bin().optional_header().imagebase() - *parser.config().rebase;
+  const ParserConfig& config = parser.config();
+  assert(config.rebase.has_value());
+  const uint64_t imagebase = parser.bin().optional_header().imagebase();
+  const uint64_t rebase = config.rebase.value_or(imagebase);
+  assert(imagebase >= rebase);
+  return imagebase - rebase;
 }
 
 bool inline warn_missing_section(const DataDirectory& dir) {
@@ -603,7 +607,7 @@ ok_error_t Parser::parse_import_table() {
 
 
     // We assume that a DLL name should be at least 4 characters long and printable
-    const std::string& imp_name = import->name();
+    std::string imp_name{import->name()};
     if (!is_valid_dll_name(imp_name)) {
       if (!imp_name.empty()) {
         LIEF_WARN("Invalid import name '{}', discarding", imp_name);

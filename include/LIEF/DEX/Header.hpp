@@ -18,12 +18,12 @@
 #define LIEF_DEX_HEADER_H
 
 #include <array>
-#include <utility>
 #include <cstdint>
 #include <ostream>
+#include <utility>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class Visitor;

@@ -16,8 +16,8 @@
 #pragma once
 
 #include "LIEF/COFF/Relocation.hpp"
-#include "LIEF/rust/COFF/Symbol.hpp"
 #include "LIEF/rust/Abstract/Relocation.hpp"
+#include "LIEF/rust/COFF/Symbol.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class COFF_Section;

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/endianness_support.hpp"
+#include "logging.hpp"
 
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "MachO/Structures.hpp"

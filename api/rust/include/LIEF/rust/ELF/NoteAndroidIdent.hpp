@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
+#include "LIEF/rust/ELF/Note.hpp"
 
 class ELF_AndroidIdent : public ELF_Note {
   public:

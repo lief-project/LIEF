@@ -16,10 +16,8 @@
 #define LIEF_ASM_X86_OPERAND_PCREL_H
 #include "LIEF/asm/x86/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace x86 {
-namespace operands {
+
+namespace LIEF::assembly::x86::operands {
 
 /// This class represents a RIP/EIP-relative operand.
 ///
@@ -42,7 +40,6 @@ class LIEF_API PCRelative : public Operand {
   ~PCRelative() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

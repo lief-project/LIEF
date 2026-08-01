@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/PDB/types/Method.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/PDB/types/Method.hpp"
 
 class PDB_types_Method : private Mirror<LIEF::pdb::types::Method> {
   public:

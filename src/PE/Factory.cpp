@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 #include "LIEF/PE/Factory.hpp"
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/TLS.hpp"
 
 #include "PE/Structures.hpp"
 

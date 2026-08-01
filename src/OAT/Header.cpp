@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 #include "LIEF/OAT/Header.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/hash.hpp"
+#include "logging.hpp"
 
-#include <map>
 #include <iomanip>
-#include <sstream>
+#include <map>
 
 
 namespace LIEF::OAT {
@@ -141,7 +140,7 @@ Header::it_key_values_t Header::key_values() {
 }
 
 Header::it_const_key_values_t Header::key_values() const {
-  std::remove_const<it_const_key_values_t::container_type>::type key_values_list;
+  std::remove_const_t<it_const_key_values_t::container_type> key_values_list;
   key_values_list.reserve(dex2oat_context_.size());
 
   for (const auto& [k, v] : dex2oat_context_) {

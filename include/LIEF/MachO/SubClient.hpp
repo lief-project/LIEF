@@ -14,15 +14,18 @@
  */
 #ifndef LIEF_MACHO_SUB_CLIENT_H
 #define LIEF_MACHO_SUB_CLIENT_H
-#include <string>
+#include <string_view>
+#include <memory>
 #include <ostream>
+#include <string>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 
@@ -51,11 +54,11 @@ class LIEF_API SubClient : public LoadCommand {
   SubClient(const SubClient& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<SubClient>(new SubClient(*this));
+    return std::make_unique<SubClient>(*this);
   }
 
   /// Name of the client
-  const std::string& client() const {
+  std::string_view client() const LIEF_LIFETIMEBOUND {
     return client_;
   }
 
@@ -78,5 +81,5 @@ class LIEF_API SubClient : public LoadCommand {
 };
 
 }
-}
+
 #endif

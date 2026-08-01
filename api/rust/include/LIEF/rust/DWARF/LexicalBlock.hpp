@@ -14,11 +14,11 @@
  */
 #pragma once
 #include "LIEF/DWARF/LexicalBlock.hpp"
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/range.hpp"
-#include "LIEF/rust/optional.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/optional.hpp"
+#include "LIEF/rust/range.hpp"
 
 class DWARF_LexicalBlock : private Mirror<LIEF::dwarf::LexicalBlock> {
   public:

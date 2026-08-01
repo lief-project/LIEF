@@ -15,10 +15,10 @@
  */
 #include "logging.hpp"
 
-#include "LIEF/utils.hpp"
-#include "LIEF/ART/Parser.hpp"
-#include "LIEF/ART/File.hpp"
 #include "LIEF/ART/EnumToString.hpp"
+#include "LIEF/ART/File.hpp"
+#include "LIEF/ART/Parser.hpp"
+#include "LIEF/utils.hpp"
 
 
 namespace LIEF::ART {

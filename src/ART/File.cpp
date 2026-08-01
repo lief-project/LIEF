@@ -43,4 +43,4 @@ std::ostream& operator<<(std::ostream& os, const File& art_file) {
   return os;
 }
 
-} // namespace LIEF::ART
+}

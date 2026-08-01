@@ -14,9 +14,9 @@
  */
 
 #pragma once
-#include "LIEF/rust/Span.hpp"
 #include "LIEF/MachO/NoteCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
+#include "LIEF/rust/Span.hpp"
 
 class MachO_NoteCommand : public MachO_Command {
   public:

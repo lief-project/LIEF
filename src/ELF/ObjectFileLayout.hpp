@@ -15,17 +15,15 @@
 #ifndef LIEF_ELF_OBJECT_FILE_LAYOUT_H
 #define LIEF_ELF_OBJECT_FILE_LAYOUT_H
 
-#include <LIEF/types.hpp>
-#include <LIEF/visibility.h>
-#include <LIEF/ELF/Binary.hpp>
-#include <LIEF/ELF/Section.hpp>
-#include <LIEF/ELF/Symbol.hpp>
-#include <LIEF/iostream.hpp>
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/visibility.h"
 
 #include "ELF/DataHandler/Handler.hpp"
 
-#include "logging.hpp"
 #include "Layout.hpp"
+#include "logging.hpp"
 
 namespace LIEF::ELF {
 

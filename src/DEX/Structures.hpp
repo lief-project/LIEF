@@ -16,11 +16,7 @@
 #ifndef LIEF_DEX_STRUCTURES_H
 #define LIEF_DEX_STRUCTURES_H
 
-#include <cstring>
-#include <tuple>
 
-#include "LIEF/types.hpp"
-#include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/types.hpp"
 
 
@@ -243,7 +239,7 @@ class DEX39 {
 
   static constexpr dex_version_t dex_version = DEX_39::dex_version;
 };
-} // namespace LIEF::DEX::details
+}
 
 
 #endif

@@ -18,10 +18,8 @@
 #include "LIEF/asm/powerpc/Operand.hpp"
 #include "LIEF/asm/powerpc/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace powerpc {
-namespace operands {
+
+namespace LIEF::assembly::powerpc::operands {
 
 /// This class represents a register operand.
 ///
@@ -45,7 +43,6 @@ class LIEF_API Register : public Operand {
   ~Register() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

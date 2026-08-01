@@ -17,26 +17,26 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp"
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationV1.hpp"
+#include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 #include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
-#include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationV1.hpp"
-#include "LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp"
+#include "LIEF/PE/Parser.hpp"
+#include "LIEF/PE/Section.hpp"
 
 #include "PE/Structures.hpp"
 
-#include "overload_cast.hpp"
-#include "logging.hpp"
+#include "fmt_formatter.hpp"
 #include "frozen.hpp"
 #include "internal_utils.hpp"
-#include "fmt_formatter.hpp"
+#include "logging.hpp"
+#include "overload_cast.hpp"
 
 FMT_FORMATTER(LIEF::PE::LoadConfiguration::IMAGE_GUARD, LIEF::PE::to_string);
 
@@ -1254,4 +1254,4 @@ template ok_error_t LoadConfiguration::parse_enclave_config<details::PE64>(
     Parser& ctx, LoadConfiguration& config
 );
 
-} // namespace LIEF::PE
+}

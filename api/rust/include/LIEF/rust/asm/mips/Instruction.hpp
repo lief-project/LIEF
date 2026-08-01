@@ -15,10 +15,10 @@
 #pragma once
 #include <LIEF/asm/mips/Instruction.hpp>
 
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/asm/mips/Operand.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
 
 class asm_mips_Instruction : public asm_Instruction {
   public:

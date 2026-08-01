@@ -15,24 +15,24 @@
  */
 #ifndef LIEF_INTERNAL_UTILS_HEADER
 #define LIEF_INTERNAL_UTILS_HEADER
-#include <memory>
-#include <string>
-#include <vector>
-#include <set>
-#include <algorithm>
 #include <unordered_map>
-#include <sstream>
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
+#include <algorithm>
+#include <memory>
+#include <set>
+#include <sstream>
+#include <string>
+#include <vector>
 
-#include "LIEF/span.hpp"
-#include "LIEF/optional.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
+#include <optional>
 
 
 namespace LIEF {
-std::string printable_string(const std::string& str);
+std::string printable_string(std::string_view str);
 
 inline bool is_printable(char c) {
   return ' ' <= c && c <= '~';
@@ -91,14 +91,14 @@ inline std::string to_hex(const T& container, size_t maxsize = 0) {
 template<typename HANDLER>
 std::vector<std::string>
     optimize(const HANDLER& container,
-             std::string (*getter)(const typename HANDLER::value_type&),
+             std::string_view (*getter)(const typename HANDLER::value_type&),
              size_t& offset_counter,
-             std::unordered_map<std::string, size_t>* of_map_p = nullptr) {
+             std::unordered_map<std::string_view, size_t>* of_map_p = nullptr) {
   if (container.empty()) {
     return {};
   }
 
-  std::set<std::string> string_table;
+  std::set<std::string_view> string_table;
   std::vector<std::string> string_table_optimized;
   string_table_optimized.reserve(container.size());
 
@@ -114,7 +114,7 @@ std::vector<std::string>
   }
 
   std::sort(string_table_optimized.begin(), string_table_optimized.end(),
-            [](const std::string& lhs, const std::string& rhs) {
+            [](std::string_view lhs, std::string_view rhs) {
               bool ret = false;
               if (lhs.size() > rhs.size()) {
                 auto res = lhs.compare(0, rhs.size(), rhs);
@@ -141,7 +141,7 @@ std::vector<std::string>
         std::string rev_to_set_elm = to_set_elm;
         std::reverse(rev_cur_elm.begin(), rev_cur_elm.end());
         std::reverse(rev_to_set_elm.begin(), rev_to_set_elm.end());
-        merged_map[rev_cur_elm] = rev_to_set_elm;
+        merged_map[std::move(rev_cur_elm)] = std::move(rev_to_set_elm);
         continue;
       }
     }
@@ -162,19 +162,25 @@ std::vector<std::string>
   std::sort(string_table_optimized.begin(), string_table_optimized.end());
 
   if (of_map_p != nullptr) {
-    std::unordered_map<std::string, size_t>& offset_map = *of_map_p;
+    std::unordered_map<std::string_view, size_t>& offset_map = *of_map_p;
     offset_map[""] = 0;
 
     for (const auto& v : string_table_optimized) {
       if (!v.empty()) {
-        offset_map[v] = offset_counter;
+        auto it_v = string_table.find(v);
+        assert(it_v != string_table.end());
+        offset_map[*it_v] = offset_counter;
         offset_counter += v.size() + 1;
       }
     }
     for (const auto& kv : merged_map) {
       if (!kv.first.empty()) {
-        offset_map[kv.first] =
-            offset_map[kv.second] + (kv.second.size() - kv.first.size());
+        auto it_kv_first = string_table.find(kv.first);
+        auto it_kv_second = string_table.find(kv.second);
+        assert(it_kv_first != string_table.end() &&
+               it_kv_second != string_table.end());
+        offset_map[*it_kv_first] =
+            offset_map[*it_kv_second] + (kv.second.size() - kv.first.size());
       }
     }
   }
@@ -262,10 +268,11 @@ inline bool endswith(const std::string& str, const std::string& suffix) {
   return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 }
 
-inline optional<std::string> libname(const std::string& path, char sep = '/') {
+inline std::optional<std::string_view> libname(std::string_view path,
+                                               char sep = '/') {
   size_t pos = path.rfind(sep);
   if (pos == std::string::npos) {
-    return nullopt();
+    return std::nullopt;
   }
   return path.substr(pos + 1);
 }

@@ -16,8 +16,8 @@
 #include <cstdint>
 
 #include "LIEF/PE/Export.hpp"
-#include "LIEF/rust/PE/ExportEntry.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/PE/ExportEntry.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 #include <memory>

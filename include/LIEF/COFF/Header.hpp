@@ -19,8 +19,8 @@
 #include <memory>
 #include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/Header.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -117,7 +117,7 @@ class LIEF_API Header {
 
   template<class T>
   const T* as() const {
-    static_assert(std::is_base_of<Header, T>::value, "Require Header inheritance");
+    static_assert(std::is_base_of_v<Header, T>, "Require Header inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }

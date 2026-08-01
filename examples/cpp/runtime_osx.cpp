@@ -16,14 +16,15 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <format>
+#include <optional>
 #include <ranges>
 #include <string>
-#include <format>
 
+#include <LIEF/MachO.hpp>
+#include <LIEF/logging.hpp>
 #include <LIEF/runtime.hpp>
 #include <LIEF/runtime/assembler.hpp>
-#include <LIEF/logging.hpp>
-#include <LIEF/MachO.hpp>
 
 using namespace LIEF::logging;
 
@@ -153,7 +154,7 @@ void memory_example() {
 
   class Config : public LIEF::assembly::AssemblerConfig {
     public:
-    LIEF::optional<uint64_t> resolve_symbol(const std::string& name) override {
+    std::optional<uint64_t> resolve_symbol(const std::string& name) override {
       // The message to print
       static constexpr char HELLO[] = "Hello World\n";
       static constexpr uint32_t HELLO_LEN = sizeof(HELLO) - 1;
@@ -163,7 +164,7 @@ void memory_example() {
 
       if (libsystem == nullptr) {
         err("Failed to dlopen libSystem.B.dylib");
-        return LIEF::nullopt();
+        return std::nullopt;
       }
 
       // Resolve the symbols that are used by the shellcode
@@ -179,7 +180,7 @@ void memory_example() {
         return HELLO_LEN;
       }
 
-      return LIEF::nullopt();
+      return std::nullopt;
     }
   };
 

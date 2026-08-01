@@ -17,9 +17,9 @@
 #include <LIEF/utils.hpp>
 #include <LIEF/version.h>
 
+#include "binaryninja/analysis/Analyzer.hpp"
 #include "binaryninja/analysis/commands.hpp"
 #include "log.hpp"
-#include "binaryninja/analysis/Analyzer.hpp"
 
 namespace bn = BinaryNinja;
 

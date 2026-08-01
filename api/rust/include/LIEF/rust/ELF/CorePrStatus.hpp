@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 #include "LIEF/rust/ELF/Note.hpp"
 #include "LIEF/rust/error.hpp"
-#include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 
 class ELF_CorePrStatus_Status {
   public:

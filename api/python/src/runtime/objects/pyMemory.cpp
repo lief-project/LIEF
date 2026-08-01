@@ -2,7 +2,7 @@
 #include "LIEF/runtime/Memory.hpp"
 #include "runtime/pyRuntime.hpp"
 
-#include <nanobind/extra/stl/lief_optional.h>
+#include <nanobind/stl/optional.h>
 #include <nanobind/extra/memoryview.hpp>
 
 #include <nanobind/stl/string.h>

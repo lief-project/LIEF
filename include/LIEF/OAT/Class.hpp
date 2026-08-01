@@ -16,14 +16,14 @@
 #ifndef LIEF_OAT_CLASS_H
 #define LIEF_OAT_CLASS_H
 
-#include "LIEF/iterators.hpp"
-#include "LIEF/OAT/enums.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/OAT/enums.hpp"
+#include "LIEF/iterators.hpp"
+#include <string_view>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-#include <string>
 
 namespace LIEF {
 namespace DEX {
@@ -57,7 +57,7 @@ class LIEF_API Class : public Object {
   OAT_CLASS_STATUS status() const;
   OAT_CLASS_TYPES type() const;
 
-  const std::string& fullname() const;
+  std::string_view fullname() const;
   size_t index() const;
 
   it_methods methods();

@@ -19,8 +19,8 @@
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_FunctionVariants_RuntimeTableEntry
   : public Mirror<LIEF::MachO::FunctionVariants::RuntimeTableEntry> {

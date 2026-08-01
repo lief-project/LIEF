@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_RISCV_H
 #define LIEF_ASM_RISCV_H
-#include <LIEF/asm/riscv/Instruction.hpp>
-#include <LIEF/asm/riscv/opcodes.hpp>
-#include <LIEF/asm/riscv/registers.hpp>
-#include <LIEF/asm/riscv/operands.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/riscv/Instruction.hpp"
+#include "LIEF/asm/riscv/opcodes.hpp"
+#include "LIEF/asm/riscv/operands.hpp"
+#include "LIEF/asm/riscv/registers.hpp"
+// IWYU pragma: end_exports
 #endif

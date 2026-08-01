@@ -16,8 +16,8 @@
 #pragma once
 
 #include "LIEF/MachO/ExportInfo.hpp"
-#include "LIEF/rust/MachO/Symbol.hpp"
 #include "LIEF/rust/MachO/Dylib.hpp"
+#include "LIEF/rust/MachO/Symbol.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 

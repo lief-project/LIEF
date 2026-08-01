@@ -16,8 +16,8 @@
 #ifndef LIEF_ART_PARSER_H
 #define LIEF_ART_PARSER_H
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "LIEF/ART/types.hpp"
 #include "LIEF/visibility.h"
@@ -103,6 +103,6 @@ class LIEF_API Parser {
   std::unique_ptr<BinaryStream> stream_;
   uint32_t imagebase_ = 0;
 };
-} // namespace ART
-} // namespace LIEF
+}
+}
 #endif

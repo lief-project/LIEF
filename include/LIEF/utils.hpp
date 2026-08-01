@@ -1,4 +1,4 @@
-/* Copyright 2017 - 2026 R. Thomasliefuthp
+/* Copyright 2017 - 2026 R. Thomas
  * Copyright 2017 - 2026 Quarkslab
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,13 @@
  */
 #ifndef LIEF_UTILS_HEADER
 #define LIEF_UTILS_HEADER
+#include <string_view>
 #include <ostream>
 #include <string>
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/errors.hpp"
 
@@ -133,7 +134,7 @@ LIEF_API lief_version_t version();
 /// Demangle the given input.
 ///
 /// This function only works with the extended version of LIEF
-LIEF_API result<std::string> demangle(const std::string& mangled);
+LIEF_API result<std::string> demangle(std::string_view mangled);
 
 /// Hexdump the provided buffer.
 ///

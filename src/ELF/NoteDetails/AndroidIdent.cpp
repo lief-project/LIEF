@@ -77,4 +77,4 @@ void AndroidIdent::dump(std::ostream& os) const {
                     ndk_build_number());
 }
 
-} // namespace LIEF::ELF
+}

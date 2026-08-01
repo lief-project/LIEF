@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_WS2_32_DLL_LOOKUP_STD_H
 #define LIEF_PE_WS2_32_DLL_LOOKUP_STD_H
 
-#include <cinttypes>
+#include <cstdint>
 
 
 namespace LIEF::PE::imphashstd {

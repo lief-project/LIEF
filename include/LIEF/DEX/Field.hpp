@@ -15,18 +15,19 @@
 #ifndef LIEF_DEX_FIELD_H
 #define LIEF_DEX_FIELD_H
 
+#include <string_view>
 #include <climits>
 #include <cstdint>
 
 #include "LIEF/DEX/enums.hpp"
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/DEX/Type.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 class Parser;
 class Class;
 
@@ -45,7 +46,7 @@ class LIEF_API Field : public Object {
   Field& operator=(const Field&);
 
   /// Name of the Field
-  const std::string& name() const;
+  std::string_view name() const;
 
   /// True if a class is associated with this field
   /// (which should be the case)
@@ -91,5 +92,5 @@ class LIEF_API Field : public Object {
 };
 
 } // Namespace DEX
-} // Namespace LIEF
+// Namespace LIEF
 #endif

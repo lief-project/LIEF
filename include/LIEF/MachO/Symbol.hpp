@@ -24,8 +24,8 @@
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 class BindingInfo;
@@ -251,5 +251,5 @@ LIEF_API const char* to_string(Symbol::CATEGORY e);
 LIEF_API const char* to_string(Symbol::TYPE e);
 
 }
-}
+
 #endif

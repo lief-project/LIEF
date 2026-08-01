@@ -37,4 +37,4 @@ std::ostream& operator<<(std::ostream& os, const SysvHash& sysvhash) {
   return os;
 }
 
-} // namespace LIEF::ELF
+}

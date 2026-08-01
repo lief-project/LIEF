@@ -16,14 +16,15 @@
  */
 #ifndef LIEF_PE_ATTRIBUTES_SPC_SP_OPUS_INFO_H
 #define LIEF_PE_ATTRIBUTES_SPC_SP_OPUS_INFO_H
+#include <string_view>
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
 
-namespace LIEF {
-namespace PE {
+namespace LIEF::PE {
 
 /// Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.12``
 ///
@@ -59,12 +60,12 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
   }
 
   /// Program description provided by the publisher
-  const std::string& program_name() const {
+  std::string_view program_name() const LIEF_LIFETIMEBOUND {
     return program_name_;
   }
 
   /// Other information such as an url
-  const std::string& more_info() const {
+  std::string_view more_info() const LIEF_LIFETIMEBOUND {
     return more_info_;
   }
 
@@ -85,6 +86,6 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
 };
 
 }
-}
+
 
 #endif

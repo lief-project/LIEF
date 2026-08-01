@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_DEBUG_LOCATION_H
 #define LIEF_DEBUG_LOCATION_H
-#include <string>
 #include <cstdint>
+#include <string>
 
 namespace LIEF {
 /// This structure holds a debug location (source filename & line)

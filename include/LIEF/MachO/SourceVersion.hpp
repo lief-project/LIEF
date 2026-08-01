@@ -15,15 +15,16 @@
  */
 #ifndef LIEF_MACHO_SOURCE_VERSION_COMMAND_H
 #define LIEF_MACHO_SOURCE_VERSION_COMMAND_H
-#include <ostream>
 #include <array>
+#include <memory>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct source_version_command;
@@ -45,7 +46,7 @@ class LIEF_API SourceVersion : public LoadCommand {
   SourceVersion(const SourceVersion& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<SourceVersion>(new SourceVersion(*this));
+    return std::make_unique<SourceVersion>(*this);
   }
 
   ~SourceVersion() override = default;
@@ -71,5 +72,5 @@ class LIEF_API SourceVersion : public LoadCommand {
 };
 
 }
-}
+
 #endif

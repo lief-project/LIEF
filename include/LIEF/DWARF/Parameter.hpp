@@ -15,15 +15,15 @@
 #ifndef LIEF_DWARF_PARAMETER_H
 #define LIEF_DWARF_PARAMETER_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
+#include <cstdint>
 #include <memory>
 #include <string>
-#include <cstdint>
 
-namespace LIEF {
-namespace dwarf {
+
+namespace LIEF::dwarf {
 
 class Type;
 
@@ -186,5 +186,5 @@ class LIEF_API TemplateType : public Parameter {
 }
 
 }
-}
+
 #endif

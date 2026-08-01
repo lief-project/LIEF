@@ -1,5 +1,5 @@
-#include <LIEF/LIEF.hpp>
 #include <LIEF/BinaryStream/SpanStream.hpp>
+#include <LIEF/LIEF.hpp>
 #include <memory>
 #include <sstream>
 

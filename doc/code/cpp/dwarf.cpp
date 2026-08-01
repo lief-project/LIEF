@@ -3,10 +3,10 @@
 #include <memory>
 #include <string>
 
+#include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/DWARF.hpp>
 #include <LIEF/ELF.hpp>
 #include <LIEF/PE.hpp>
-#include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/asm/Instruction.hpp>
 #include <LIEF/logging.hpp>
 

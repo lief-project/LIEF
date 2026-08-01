@@ -21,8 +21,8 @@
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
+
+namespace LIEF::dwarf {
 
 namespace details {
 class Scope;
@@ -63,5 +63,5 @@ class LIEF_API Scope {
 };
 
 }
-}
+
 #endif

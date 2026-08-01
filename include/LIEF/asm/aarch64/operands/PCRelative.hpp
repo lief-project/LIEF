@@ -16,10 +16,8 @@
 #define LIEF_ASM_AARCH64_OPERAND_PCREL_H
 #include "LIEF/asm/aarch64/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace aarch64 {
-namespace operands {
+
+namespace LIEF::assembly::aarch64::operands {
 
 /// This class represents a PC-relative operand.
 ///
@@ -41,7 +39,6 @@ class LIEF_API PCRelative : public Operand {
   ~PCRelative() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

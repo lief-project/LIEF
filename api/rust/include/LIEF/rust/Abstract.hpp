@@ -14,8 +14,8 @@
  */
 #pragma once
 #include "LIEF/rust/Abstract/Binary.hpp"
-#include "LIEF/rust/Abstract/Relocation.hpp"
-#include "LIEF/rust/Abstract/Symbol.hpp"
-#include "LIEF/rust/Abstract/Section.hpp"
 #include "LIEF/rust/Abstract/DebugInfo.hpp"
 #include "LIEF/rust/Abstract/Function.hpp"
+#include "LIEF/rust/Abstract/Relocation.hpp"
+#include "LIEF/rust/Abstract/Section.hpp"
+#include "LIEF/rust/Abstract/Symbol.hpp"

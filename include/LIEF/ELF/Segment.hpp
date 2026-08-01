@@ -16,17 +16,17 @@
 #ifndef LIEF_ELF_SEGMENT_H
 #define LIEF_ELF_SEGMENT_H
 
+#include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
-#include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/ELF/Header.hpp"
 

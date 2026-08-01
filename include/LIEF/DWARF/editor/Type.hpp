@@ -14,15 +14,14 @@
  */
 #ifndef LIEF_DWARF_EDITOR_TYPE_H
 #define LIEF_DWARF_EDITOR_TYPE_H
-#include <memory>
 #include <cassert>
+#include <memory>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 class PointerType;
 
 namespace details {
@@ -63,6 +62,6 @@ class LIEF_API Type {
 };
 
 }
-}
-}
+
+
 #endif

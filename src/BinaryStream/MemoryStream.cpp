@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/utils.hpp"
 
 namespace LIEF {

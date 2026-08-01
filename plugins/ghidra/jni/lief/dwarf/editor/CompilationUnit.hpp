@@ -16,8 +16,8 @@
 
 #include "jni/mirror.hpp"
 
-#include <jni_bind.h>
 #include <LIEF/Abstract/Binary.hpp>
+#include <jni_bind.h>
 
 #include <LIEF/DWARF/Editor.hpp>
 #include <LIEF/DWARF/editor/CompilationUnit.hpp>

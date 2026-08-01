@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
-#include <LIEF/DWARF/editor/Variable.hpp>
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/DWARF/editor/Type.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include <LIEF/DWARF/editor/Variable.hpp>
 
 class DWARF_editor_Variable : public Mirror<LIEF::dwarf::editor::Variable> {
   public:

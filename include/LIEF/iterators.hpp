@@ -16,29 +16,29 @@
  */
 #ifndef LIEF_ITERATORS_H
 #define LIEF_ITERATORS_H
-#include <cstddef>
-#include <cassert>
-#include <iterator>
-#include <functional>
-#include <algorithm>
 #include <type_traits>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <functional>
+#include <iterator>
 #include <vector>
 
-#include <LIEF/compiler_attributes.hpp>
+#include "LIEF/compiler_attributes.hpp"
 
 namespace LIEF {
 
 template<class T>
-using decay_t = typename std::decay<T>::type;
+using decay_t = std::decay_t<T>;
 
 template<class T>
-using add_const_t = typename std::add_const<T>::type;
+using add_const_t = std::add_const_t<T>;
 
 template<class T>
-using remove_const_t = typename std::remove_const<T>::type;
+using remove_const_t = std::remove_const_t<T>;
 
 template<class T>
-using add_lvalue_reference_t = typename std::add_lvalue_reference<T>::type;
+using add_lvalue_reference_t = std::add_lvalue_reference_t<T>;
 
 
 /// Iterator which returns reference on container's values
@@ -52,8 +52,8 @@ class ref_iterator {
   using iterator_category = std::bidirectional_iterator_tag;
   using value_type = decay_t<U>;
   using difference_type = ptrdiff_t;
-  using pointer = typename std::remove_pointer<U>::type*;
-  using reference = typename std::remove_pointer<U>::type&;
+  using pointer = std::remove_pointer_t<U>*;
+  using reference = std::remove_pointer_t<U>&;
 
   using container_type = T; // e.g. std::vector<Section*>&
   using DT_VAL = U;         // e.g. Section*
@@ -80,10 +80,10 @@ class ref_iterator {
   }
 
   template<class T2, typename U2, class IT2,
-           typename = typename std::enable_if<
-               !std::is_same<ref_iterator, ref_iterator<T2, U2, IT2>>::value &&
-               std::is_same<decay_t<T>, decay_t<T2>>::value
-           >::type>
+           typename = std::enable_if_t<
+               !std::is_same_v<ref_iterator, ref_iterator<T2, U2, IT2>> &&
+               std::is_same_v<decay_t<T>, decay_t<T2>>
+           >>
   ref_iterator(const ref_iterator<T2, U2, IT2>& other) :
     container_{
         const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(other.container_)
@@ -94,10 +94,10 @@ class ref_iterator {
   }
 
   template<class T2, typename U2, class IT2,
-           typename = typename std::enable_if<
-               !std::is_same<ref_iterator, ref_iterator<T2, U2, IT2>>::value &&
-               std::is_same<decay_t<T>, decay_t<T2>>::value
-           >::type>
+           typename = std::enable_if_t<
+               !std::is_same_v<ref_iterator, ref_iterator<T2, U2, IT2>> &&
+               std::is_same_v<decay_t<T>, decay_t<T2>>
+           >>
   // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
   ref_iterator(ref_iterator<T2, U2, IT2>&& other) noexcept :
     container_{const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(
@@ -179,8 +179,7 @@ class ref_iterator {
   }
 
 
-  typename std::enable_if<!std::is_const<ref_t>::value,
-                          remove_const_t<ref_t>>::type
+  std::enable_if_t<!std::is_const_v<ref_t>, remove_const_t<ref_t>>
       operator[](size_t n) {
     return const_cast<remove_const_t<ref_t>>(
         static_cast<const ref_iterator*>(this)->operator[](n)
@@ -276,30 +275,25 @@ class ref_iterator {
     return container_.empty();
   }
 
-  typename std::enable_if<!std::is_const<ref_t>::value,
-                          remove_const_t<ref_t>>::type
-      operator*() {
+  std::enable_if_t<!std::is_const_v<ref_t>, remove_const_t<ref_t>> operator*() {
     return const_cast<remove_const_t<ref_t>>(
         static_cast<const ref_iterator*>(this)->operator*()
     );
   }
 
   template<typename V = DT_VAL>
-  typename std::enable_if<std::is_pointer<V>::value, add_const_t<ref_t>>::type
-      operator*() const {
+  std::enable_if_t<std::is_pointer_v<V>, add_const_t<ref_t>> operator*() const {
     assert(*it_ && "integrity error: nullptr");
     return const_cast<add_const_t<ref_t>>(static_cast<ref_t>(**it_));
   }
 
   template<typename V = DT_VAL>
-  typename std::enable_if<!std::is_pointer<V>::value, add_const_t<ref_t>>::type
-      operator*() const {
+  std::enable_if_t<!std::is_pointer_v<V>, add_const_t<ref_t>> operator*() const {
     return const_cast<add_const_t<ref_t>>(*(it_));
   }
 
 
-  typename std::enable_if<!std::is_const<pointer_t>::value, pointer_t>::type
-      operator->() {
+  std::enable_if_t<!std::is_const_v<pointer_t>, pointer_t> operator->() {
     return const_cast<remove_const_t<pointer_t>>(
         static_cast<const ref_iterator*>(this)->operator->()
     );
@@ -318,7 +312,7 @@ class ref_iterator {
 
 /// Iterator which returns a const ref on container's values
 template<class T, typename U = typename decay_t<T>::value_type,
-         class CT = typename std::add_const<T>::type>
+         class CT = std::add_const_t<T>>
 using const_ref_iterator =
     ref_iterator<CT, U, typename decay_t<CT>::const_iterator>;
 
@@ -332,8 +326,8 @@ class filter_iterator {
   using iterator_category = std::forward_iterator_tag;
   using value_type = decay_t<U>;
   using difference_type = ptrdiff_t;
-  using pointer = typename std::remove_pointer<U>::type*;
-  using reference = typename std::remove_pointer<U>::type&;
+  using pointer = std::remove_pointer_t<U>*;
+  using reference = std::remove_pointer_t<U>&;
 
   using container_type = T;
   using DT_VAL = U;
@@ -472,30 +466,25 @@ class filter_iterator {
     return end();
   }
 
-  typename std::enable_if<!std::is_const<ref_t>::value,
-                          remove_const_t<ref_t>>::type
-      operator*() {
+  std::enable_if_t<!std::is_const_v<ref_t>, remove_const_t<ref_t>> operator*() {
     return const_cast<remove_const_t<ref_t>>(
         static_cast<const filter_iterator*>(this)->operator*()
     );
   }
 
   template<typename V = DT_VAL>
-  typename std::enable_if<std::is_pointer<V>::value, add_const_t<ref_t>>::type
-      operator*() const {
+  std::enable_if_t<std::is_pointer_v<V>, add_const_t<ref_t>> operator*() const {
     assert(*it_ && "integrity error: nullptr");
     return const_cast<add_const_t<ref_t>>(static_cast<ref_t>(**it_));
   }
 
   template<typename V = DT_VAL>
-  typename std::enable_if<!std::is_pointer<V>::value, add_const_t<ref_t>>::type
-      operator*() const {
+  std::enable_if_t<!std::is_pointer_v<V>, add_const_t<ref_t>> operator*() const {
     return const_cast<add_const_t<ref_t>>(*(it_));
   }
 
 
-  typename std::enable_if<!std::is_const<ref_t>::value,
-                          remove_const_t<ref_t>>::type
+  std::enable_if_t<!std::is_const_v<ref_t>, remove_const_t<ref_t>>
       operator[](size_t n) {
     return const_cast<remove_const_t<ref_t>>(
         static_cast<const filter_iterator*>(this)->operator[](n)
@@ -511,8 +500,7 @@ class filter_iterator {
   }
 
 
-  typename std::enable_if<!std::is_const<pointer_t>::value, pointer_t>::type
-      operator->() {
+  std::enable_if_t<!std::is_const_v<pointer_t>, pointer_t> operator->() {
     return const_cast<remove_const_t<pointer_t>>(
         static_cast<const filter_iterator*>(this)->operator->()
     );
@@ -591,7 +579,7 @@ class filter_iterator {
 
 /// Iterator which returns a const ref on container's values given predicates
 template<class T, typename U = typename decay_t<T>::value_type,
-         class CT = typename std::add_const<T>::type>
+         class CT = std::add_const_t<T>>
 using const_filter_iterator =
     filter_iterator<CT, U, typename decay_t<CT>::const_iterator>;
 
@@ -603,7 +591,7 @@ template<typename IteratorT>
 class iterator_range {
   public:
   using IteratorTy = IteratorT;
-  using IteratorDecayTy = typename std::decay<IteratorT>::type;
+  using IteratorDecayTy = std::decay_t<IteratorT>;
 
   template<class T>
   iterator_range(T&& it_begin, T&& it_end) :
@@ -659,11 +647,11 @@ class iterator_range {
   protected:
   enum {
     IsRandomAccess =
-        std::is_base_of<std::random_access_iterator_tag,
-                        typename IteratorDecayTy::iterator_category>::value,
+        std::is_base_of_v<std::random_access_iterator_tag,
+                          typename IteratorDecayTy::iterator_category>,
     IsBidirectional =
-        std::is_base_of<std::bidirectional_iterator_tag,
-                        typename IteratorDecayTy::iterator_category>::value,
+        std::is_base_of_v<std::bidirectional_iterator_tag,
+                          typename IteratorDecayTy::iterator_category>,
   };
 
   private:
@@ -676,7 +664,7 @@ iterator_range<T> make_range(T&& x, T&& y) {
   return iterator_range<T>(std::forward<T>(x), std::forward<T>(y));
 }
 
-} // namespace LIEF
+}
 
 #if LIEF_HAS_STD_RANGES
 template<typename IteratorT>
@@ -758,9 +746,9 @@ class iterator_facade_base {
   protected:
   enum {
     IsRandomAccess =
-        std::is_base_of<std::random_access_iterator_tag, IteratorCategoryT>::value,
+        std::is_base_of_v<std::random_access_iterator_tag, IteratorCategoryT>,
     IsBidirectional =
-        std::is_base_of<std::bidirectional_iterator_tag, IteratorCategoryT>::value,
+        std::is_base_of_v<std::bidirectional_iterator_tag, IteratorCategoryT>,
   };
 
   /// A proxy object for computing a reference via indirecting a copy of an
@@ -803,7 +791,7 @@ class iterator_facade_base {
 
   public:
   DerivedT operator+(DifferenceTypeT n) const {
-    static_assert(std::is_base_of<iterator_facade_base, DerivedT>::value,
+    static_assert(std::is_base_of_v<iterator_facade_base, DerivedT>,
                   "Must pass the derived type to this template!");
     static_assert(IsRandomAccess,
                   "The '+' operator is only defined for random access iterators.");
@@ -825,7 +813,7 @@ class iterator_facade_base {
   }
 
   DerivedT& operator++() {
-    static_assert(std::is_base_of<iterator_facade_base, DerivedT>::value,
+    static_assert(std::is_base_of_v<iterator_facade_base, DerivedT>,
                   "Must pass the derived type to this template!");
     return static_cast<DerivedT*>(this)->operator+=(1);
   }
@@ -901,16 +889,16 @@ template<typename DerivedT, typename WrappedIteratorT,
          typename T = typename std::iterator_traits<WrappedIteratorT>::value_type,
          typename DifferenceTypeT =
              typename std::iterator_traits<WrappedIteratorT>::difference_type,
-         typename PointerT = typename std::conditional<
-             std::is_same<T, typename std::iterator_traits<WrappedIteratorT>::
-                                 value_type>::value,
+         typename PointerT = std::conditional_t<
+             std::is_same_v<T, typename std::iterator_traits<WrappedIteratorT>::
+                                   value_type>,
              typename std::iterator_traits<WrappedIteratorT>::pointer, T*
-         >::type,
-         typename ReferenceT = typename std::conditional<
-             std::is_same<T, typename std::iterator_traits<WrappedIteratorT>::
-                                 value_type>::value,
+         >,
+         typename ReferenceT = std::conditional_t<
+             std::is_same_v<T, typename std::iterator_traits<WrappedIteratorT>::
+                                   value_type>,
              typename std::iterator_traits<WrappedIteratorT>::reference, T&
-         >::type>
+         >>
 class iterator_adaptor_base
   : public iterator_facade_base<DerivedT, IteratorCategoryT, T, DifferenceTypeT,
                                 PointerT, ReferenceT> {
@@ -923,7 +911,7 @@ class iterator_adaptor_base
 
   explicit iterator_adaptor_base(WrappedIteratorT u) :
     I(std::move(u)) {
-    static_assert(std::is_base_of<iterator_adaptor_base, DerivedT>::value,
+    static_assert(std::is_base_of_v<iterator_adaptor_base, DerivedT>,
                   "Must pass the derived type to this template!");
   }
 
@@ -1002,8 +990,8 @@ class iterator_adaptor_base
 ///   using iterator = pointee_iterator<SmallVectorImpl<T *>::iterator>;
 /// @endcode
 template<typename WrappedIteratorT,
-         typename T = typename std::
-             remove_reference<decltype(**std::declval<WrappedIteratorT>())>::type>
+         typename T =
+             std::remove_reference_t<decltype(**std::declval<WrappedIteratorT>())>>
 struct pointee_iterator
   : iterator_adaptor_base<
         pointee_iterator<WrappedIteratorT, T>, WrappedIteratorT,
@@ -1058,12 +1046,11 @@ iterator_range<pointer_iterator<WrappedIteratorT>>
 }
 
 template<typename WrappedIteratorT,
-         typename T1 = typename std::
-             remove_reference<decltype(**std::declval<WrappedIteratorT>())>::type,
-         typename T2 = typename std::add_pointer<T1>::type>
+         typename T1 =
+             std::remove_reference_t<decltype(**std::declval<WrappedIteratorT>())>,
+         typename T2 = std::add_pointer_t<T1>>
 using raw_pointer_iterator =
     pointer_iterator<pointee_iterator<WrappedIteratorT, T1>, T2>;
-
 }
 
 #endif

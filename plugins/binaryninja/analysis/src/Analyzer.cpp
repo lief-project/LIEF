@@ -12,14 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "log.hpp"
 #include "binaryninja/analysis/Analyzer.hpp"
+#include "log.hpp"
 
-#include "binaryninja/analysis/PE/Analyzer.hpp"
-#include "binaryninja/analysis/ELF/Analyzer.hpp"
-#include "binaryninja/analysis/MachO/Analyzer.hpp"
 #include "binaryninja/analysis/COFF/Analyzer.hpp"
 #include "binaryninja/analysis/DSC/Analyzer.hpp"
+#include "binaryninja/analysis/ELF/Analyzer.hpp"
+#include "binaryninja/analysis/MachO/Analyzer.hpp"
+#include "binaryninja/analysis/PE/Analyzer.hpp"
 
 #include "binaryninja/lief_utils.hpp"
 

@@ -18,8 +18,8 @@
 
 #include <utility>
 
-#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/iostream.hpp"
 
 
@@ -35,11 +35,11 @@ TrieNode::node_list_t TrieNode::add_symbol(const ExportInfo& info) {
     return nodes;
   }
   const Symbol& sym = *info.symbol();
-  std::string partial_str = sym.name().substr(cummulative_string_.size());
+  std::string_view partial_str = sym.name().substr(cummulative_string_.size());
 
   for (std::unique_ptr<TrieEdge>& edge : children_) {
 
-    std::string edge_string = edge->substr;
+    std::string_view edge_string = edge->substr;
 
     if (partial_str.find(edge_string) == 0) {
       node_list_t subnodes = edge->child->add_symbol(info);
@@ -59,8 +59,8 @@ TrieNode::node_list_t TrieNode::add_symbol(const ExportInfo& info) {
 
         TrieNode& c_node = *edge->child;
 
-        std::string ab_edge_str = edge_string.substr(0, n);
-        std::string bc_edge_str = edge_string.substr(n);
+        std::string_view ab_edge_str = edge_string.substr(0, n);
+        std::string_view bc_edge_str = edge_string.substr(n);
 
         TrieEdge& ab_edge = *edge;
 
@@ -86,7 +86,7 @@ TrieNode::node_list_t TrieNode::add_symbol(const ExportInfo& info) {
     LIEF_DEBUG("STUB_AND_RESOLVER: other=0");
   }
 
-  std::unique_ptr<TrieNode> new_node = TrieNode::create(sym.name());
+  std::unique_ptr<TrieNode> new_node = TrieNode::create(std::string(sym.name()));
   std::unique_ptr<TrieEdge> new_edge = TrieEdge::create(partial_str, *new_node);
 
   new_node->address_ = info.address();
@@ -123,10 +123,10 @@ std::vector<TrieNode*> TrieNode::add_ordered_nodes(const ExportInfo& info) {
     return nodes;
   }
 
-  std::string partial_str =
+  std::string_view partial_str =
       info.symbol()->name().substr(cummulative_string_.size());
   for (std::unique_ptr<TrieEdge>& edge : children_) {
-    std::string edge_string = edge->substr;
+    std::string_view edge_string = edge->substr;
 
     if (partial_str.find(edge_string) == 0) {
       std::vector<TrieNode*> subnodes = edge->child->add_ordered_nodes(info);

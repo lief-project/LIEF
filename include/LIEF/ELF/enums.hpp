@@ -16,11 +16,9 @@
 #ifndef LIEF_ELF_ENUMS_H
 #define LIEF_ELF_ENUMS_H
 #include "LIEF/enums.hpp"
-#include <cstdint>
-#include <cstddef>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /**
  * Machine architectures
@@ -214,6 +212,6 @@ enum class ARCH {
 };
 
 }
-}
+
 
 #endif

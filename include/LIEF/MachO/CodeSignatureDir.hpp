@@ -15,16 +15,17 @@
  */
 #ifndef LIEF_MACHO_CODE_SIGNATURE_DIR_COMMAND_H
 #define LIEF_MACHO_CODE_SIGNATURE_DIR_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 class Builder;
@@ -47,7 +48,7 @@ class LIEF_API CodeSignatureDir : public LoadCommand {
   CodeSignatureDir(const CodeSignatureDir& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<CodeSignatureDir>(new CodeSignatureDir(*this));
+    return std::make_unique<CodeSignatureDir>(*this);
   }
 
   /// Offset in the binary where the signature starts
@@ -93,5 +94,5 @@ class LIEF_API CodeSignatureDir : public LoadCommand {
 };
 
 }
-}
+
 #endif

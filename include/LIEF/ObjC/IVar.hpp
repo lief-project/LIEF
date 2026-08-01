@@ -14,16 +14,14 @@
  */
 #ifndef LIEF_OBJC_IVAR_H
 #define LIEF_OBJC_IVAR_H
-#include <LIEF/visibility.h>
-#include <LIEF/ObjC/Method.hpp>
-#include <LIEF/ObjC/Property.hpp>
-#include <LIEF/iterators.hpp>
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include <memory>
 #include <string>
 
-namespace LIEF {
-namespace objc {
+
+namespace LIEF::objc {
 
 namespace details {
 class IVar;
@@ -97,5 +95,5 @@ class LIEF_API IVar {
 };
 
 }
-}
+
 #endif

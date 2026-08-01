@@ -1,6 +1,6 @@
 #include <LIEF/DWARF.hpp>
-#include <LIEF/logging.hpp>
 #include <LIEF/PE.hpp>
+#include <LIEF/logging.hpp>
 #include <LIEF/utils.hpp>
 
 #include <cstdlib>

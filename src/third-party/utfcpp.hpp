@@ -14,7 +14,7 @@
  */
 #ifndef LIEF_UTFCPP_H
 #define LIEF_UTFCPP_H
-#include "LIEF/config.h"
+#include "LIEF/config.h" // IWYU pragma: keep
 
 #ifndef LIEF_EXTERNAL_UTF8CPP
   #include <internal/utfcpp/utf8/unchecked.h>

@@ -15,23 +15,23 @@
  */
 #ifndef LIEF_MACHO_BINARY_PARSER_H
 #define LIEF_MACHO_BINARY_PARSER_H
+#include <unordered_map>
+#include <limits>
+#include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
-#include <limits>
-#include <set>
-#include <map>
-#include <unordered_map>
 
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Parser.hpp"
 
-#include "LIEF/MachO/enums.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp"
 #include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "LIEF/MachO/ParserConfig.hpp"
-#include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "LIEF/MachO/enums.hpp"
 
 namespace LIEF {
 class BinaryStream;
@@ -318,6 +318,6 @@ class LIEF_API BinaryParser : public LIEF::Parser {
 };
 
 
-} // namespace MachO
-} // namespace LIEF
+}
+}
 #endif

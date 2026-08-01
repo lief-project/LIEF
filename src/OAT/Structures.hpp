@@ -131,9 +131,9 @@ struct oat_quick_method_header {
 namespace OAT_079 {
 static constexpr oat_version_t oat_version = 79;
 
-using OAT_064::oat_header;
-using OAT_064::oat_dex_file;
 using OAT_064::dex_file;
+using OAT_064::oat_dex_file;
+using OAT_064::oat_header;
 
 // Defined in
 // - art/runtime/oat_quick_method_header.h
@@ -161,11 +161,11 @@ namespace OAT_088 {
 
 static constexpr oat_version_t oat_version = 88;
 
-using OAT_079::oat_header;
-using OAT_079::oat_dex_file;
 using OAT_079::dex_file;
-using OAT_079::oat_quick_method_header;
 using OAT_079::lookup_table_entry_t;
+using OAT_079::oat_dex_file;
+using OAT_079::oat_header;
+using OAT_079::oat_quick_method_header;
 
 
 }
@@ -176,9 +176,9 @@ namespace OAT_124 {
 
 static constexpr oat_version_t oat_version = 126;
 
-using OAT_088::oat_header;
-using OAT_088::oat_dex_file;
 using OAT_088::dex_file;
+using OAT_088::oat_dex_file;
+using OAT_088::oat_header;
 
 using OAT_088::lookup_table_entry_t;
 
@@ -229,23 +229,23 @@ struct oat_header {
   // uint8_t key_value_store[0];  // note variable width data at end
 };
 
-using OAT_124::oat_dex_file;
 using OAT_124::dex_file;
+using OAT_124::oat_dex_file;
 
-using OAT_124::oat_quick_method_header;
 using OAT_124::lookup_table_entry_t;
+using OAT_124::oat_quick_method_header;
 }
 
 
 // OAT 138  - Android 9.0.0
 namespace OAT_138 {
 static constexpr oat_version_t oat_version = 138;
-using OAT_131::oat_header;
-using OAT_131::oat_dex_file;
 using OAT_131::dex_file;
+using OAT_131::oat_dex_file;
+using OAT_131::oat_header;
 
-using OAT_131::oat_quick_method_header;
 using OAT_131::lookup_table_entry_t;
+using OAT_131::oat_quick_method_header;
 }
 
 class OAT64_t {
@@ -312,7 +312,7 @@ class OAT138_t {
   using lookup_table_entry_t = OAT_138::lookup_table_entry_t;
 };
 
-} // namespace LIEF::OAT::details
+}
 
 
 #endif

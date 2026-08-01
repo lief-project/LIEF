@@ -15,10 +15,10 @@
 #pragma once
 #include <LIEF/asm/riscv/Instruction.hpp>
 
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/asm/riscv/Operand.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
 
 class asm_riscv_Instruction : public asm_Instruction {
   public:

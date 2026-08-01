@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_X86_OPERANDS_H
 #define LIEF_ASM_X86_OPERANDS_H
-#include <LIEF/asm/x86/operands/Register.hpp>
-#include <LIEF/asm/x86/operands/Immediate.hpp>
-#include <LIEF/asm/x86/operands/PCRelative.hpp>
-#include <LIEF/asm/x86/operands/Memory.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/x86/operands/Immediate.hpp"
+#include "LIEF/asm/x86/operands/Memory.hpp"
+#include "LIEF/asm/x86/operands/PCRelative.hpp"
+#include "LIEF/asm/x86/operands/Register.hpp"
+// IWYU pragma: end_exports
 #endif

@@ -14,10 +14,10 @@
  */
 #pragma once
 
+#include "LIEF/runtime/android/Process.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/runtime/android/Property.hpp"
-#include "LIEF/runtime/android/Process.hpp"
 
 class runtime_android_Process {
   public:

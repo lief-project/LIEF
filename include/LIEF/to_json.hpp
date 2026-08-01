@@ -16,6 +16,7 @@
 #ifndef LIEF_TO_JSON_H
 #define LIEF_TO_JSON_H
 
+// IWYU pragma: begin_exports
 #include "LIEF/config.h"
 
 #ifdef LIEF_JSON_SUPPORT
@@ -34,6 +35,7 @@
   #include "LIEF/Abstract.hpp"
   #include "LIEF/ELF.hpp"
   #include "LIEF/PE.hpp"
+  // IWYU pragma: end_exports
 
 #endif
 

@@ -14,12 +14,12 @@
  */
 #ifndef LIEF_ASM_ENGINE_H
 #define LIEF_ASM_ENGINE_H
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/asm/Instruction.hpp"
 #include "LIEF/asm/AssemblerConfig.hpp"
+#include "LIEF/asm/Instruction.hpp"
 
 #include <memory>
 

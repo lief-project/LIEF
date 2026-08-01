@@ -17,8 +17,8 @@
 #define LIEF_PE_DEBUG_CODE_VIEW_H
 #include "LIEF/PE/debug/Debug.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class Parser;
 class Builder;
 
@@ -80,6 +80,6 @@ class LIEF_API CodeView : public Debug {
 
 LIEF_API const char* to_string(CodeView::SIGNATURES e);
 
-} // namespace PE
-} // namespace LIEF
+}
+
 #endif

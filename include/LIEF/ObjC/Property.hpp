@@ -14,14 +14,14 @@
  */
 #ifndef LIEF_OBJC_PROPERTY_H
 #define LIEF_OBJC_PROPERTY_H
-#include <LIEF/iterators.hpp>
-#include <LIEF/visibility.h>
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include <memory>
 #include <string>
 
-namespace LIEF {
-namespace objc {
+
+namespace LIEF::objc {
 
 namespace details {
 class Property;
@@ -96,5 +96,5 @@ class LIEF_API Property {
 };
 
 }
-}
+
 #endif

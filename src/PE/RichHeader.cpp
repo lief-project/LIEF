@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/RichHeader.hpp"
-#include "LIEF/iostream.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/hash.hpp"
+#include "LIEF/iostream.hpp"
 
 #include "frozen.hpp"
 #include "logging.hpp"

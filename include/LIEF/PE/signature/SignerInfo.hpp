@@ -15,19 +15,20 @@
  */
 #ifndef LIEF_PE_SIGNER_INFO_H
 #define LIEF_PE_SIGNER_INFO_H
+#include <string_view>
 #include <memory>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/iterators.hpp"
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/iterators.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Signature;
 class Attribute;
@@ -94,7 +95,7 @@ class LIEF_API SignerInfo : public Object {
   }
 
   /// Return the x509::issuer used by this signer
-  const std::string& issuer() const {
+  std::string_view issuer() const LIEF_LIFETIMEBOUND {
     return issuer_;
   }
 
@@ -194,6 +195,6 @@ class LIEF_API SignerInfo : public Object {
 };
 
 }
-}
+
 
 #endif

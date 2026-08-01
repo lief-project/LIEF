@@ -14,11 +14,11 @@
  */
 #include <array>
 
+#include "jni/jni_utils.hpp"
 #include "jni/lief/pe/LoadConfigurations/CHPEMetadata/Metadata.hpp"
 #include "jni/lief/pe/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp"
 #include "jni/lief/pe/LoadConfigurations/CHPEMetadata/MetadataX86.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 #include <LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp>
 #include <LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataX86.hpp>

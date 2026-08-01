@@ -24,11 +24,11 @@
 
 #include "LIEF/errors.hpp"
 
-#include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 class Binary;
 class Layout;
 class Header;
@@ -239,8 +239,7 @@ class LIEF_API Builder {
   std::unique_ptr<Layout> layout_;
 };
 
-} // namespace ELF
-} // namespace LIEF
+}
 
 
 #endif

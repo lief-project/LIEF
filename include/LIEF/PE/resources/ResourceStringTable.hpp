@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_PE_RESOURCE_STRING_TABLE_H
 #define LIEF_PE_RESOURCE_STRING_TABLE_H
-#include <string>
+#include <cstdint>
 #include <ostream>
+#include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
-#include "LIEF/optional.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
 namespace LIEF {
 class BinaryStream;
@@ -109,18 +110,18 @@ class LIEF_API ResourceStringTable : public Object {
     return entries_;
   }
 
-  optional<std::u16string> get(const std::u16string& key) const {
+  std::optional<std::u16string> get(const std::u16string& key) const {
     auto it =
         std::find_if(entries_.begin(), entries_.end(),
                      [&key](const entry_t& entry) { return entry.key == key; });
     if (it == entries_.end()) {
-      return nullopt();
+      return std::nullopt;
     }
 
     return it->value;
   }
 
-  optional<std::string> get(const std::string& key) const;
+  std::optional<std::string> get(const std::string& key) const;
 
   ResourceStringTable& key(std::u16string value) {
     key_ = std::move(value);
@@ -142,11 +143,11 @@ class LIEF_API ResourceStringTable : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  optional<std::string> operator[](const std::string& str) const {
+  std::optional<std::string> operator[](const std::string& str) const {
     return get(str);
   }
 
-  optional<std::u16string> operator[](const std::u16string& str) const {
+  std::optional<std::u16string> operator[](const std::u16string& str) const {
     return get(str);
   }
 

@@ -18,14 +18,14 @@
 #include <memory>
 #include <string>
 
+#include "LIEF/DebugDeclOpt.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/optional.hpp"
-#include "LIEF/DebugDeclOpt.hpp"
+#include <optional>
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 
 namespace details {
 class Type;
@@ -100,10 +100,10 @@ class LIEF_API Type {
 
   /// Size of the type. This size should match the value of `sizeof(...)`
   /// applied to this type.
-  optional<uint64_t> size() const;
+  std::optional<uint64_t> size() const;
 
   /// Type's name (if present)
-  optional<std::string> name() const;
+  std::optional<std::string> name() const;
 
   /// Generates a C/C++ definition for this type
   std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
@@ -126,5 +126,5 @@ class LIEF_API Type {
 };
 
 }
-}
+
 #endif

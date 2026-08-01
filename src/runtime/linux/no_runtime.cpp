@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/Binary.hpp"
-#include "LIEF/runtime/linux/Module.hpp"
 #include "LIEF/runtime/linux/Host.hpp"
+#include "LIEF/runtime/linux/Module.hpp"
 #include "LIEF/runtime/linux/Process.hpp"
 
 namespace LIEF::runtime {

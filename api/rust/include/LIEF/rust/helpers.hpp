@@ -13,13 +13,14 @@
  * limitations under the License.
  */
 #pragma once
-#include <cstdint>
+#include <string_view>
 #include <type_traits>
+#include <algorithm>
 #include <array>
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 template<class T>
 using unique_vector = std::unique_ptr<std::vector<T>>;
@@ -33,6 +34,10 @@ inline auto to_int(T value) {
 
 inline auto to_unique_string(std::string s) {
   return std::make_unique<std::string>(std::move(s));
+}
+
+inline auto to_unique_string(std::string_view s) {
+  return std::make_unique<std::string>(s);
 }
 
 template<typename T>

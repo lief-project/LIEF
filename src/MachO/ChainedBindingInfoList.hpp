@@ -16,9 +16,9 @@
 #ifndef LIEF_MACHO_CHAINED_BINDING_INFO_LIST_H
 #define LIEF_MACHO_CHAINED_BINDING_INFO_LIST_H
 
-#include <vector>
-#include <memory>
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include <memory>
+#include <vector>
 
 
 namespace LIEF::MachO {

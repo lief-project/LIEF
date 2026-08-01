@@ -14,8 +14,8 @@
  */
 #pragma once
 
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/runtime/linux/Host.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class runtime_linux_Host {
   public:

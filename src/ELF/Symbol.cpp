@@ -18,12 +18,12 @@
 #ifdef __unix__
   #include <cxxabi.h>
 #endif
-#include "LIEF/utils.hpp"
-#include "LIEF/config.h"
+#include "ELF/Structures.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/Visitor.hpp"
-#include "ELF/Structures.hpp"
+#include "LIEF/config.h"
+#include "LIEF/utils.hpp"
 
 #include "frozen.hpp"
 #include <spdlog/fmt/fmt.h>
@@ -87,7 +87,7 @@ std::string Symbol::demangled_name() const {
   } else {
 #if defined(__unix__)
     int status = 0;
-    const std::string& name = this->name();
+    std::string name{this->name()};
     if (name.find("_Z") != 0) {
       return name;
     }

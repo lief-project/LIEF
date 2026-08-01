@@ -16,10 +16,12 @@
 #ifndef LIEF_PE_RESOURCE_DIALOG_REGULAR_H
 #define LIEF_PE_RESOURCE_DIALOG_REGULAR_H
 
-#include "LIEF/visibility.h"
+#include <memory>
+
 #include "LIEF/PE/resources/ResourceDialog.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -93,9 +95,7 @@ class LIEF_API ResourceDialogRegular : public ResourceDialog {
   static std::unique_ptr<ResourceDialogRegular> create(BinaryStream& stream);
 
   std::unique_ptr<ResourceDialog> clone() const override {
-    return std::unique_ptr<ResourceDialogRegular>(
-        new ResourceDialogRegular(*this)
-    );
+    return std::make_unique<ResourceDialogRegular>(*this);
   }
 
   static bool classof(const ResourceDialog* dialog) {

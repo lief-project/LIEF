@@ -15,22 +15,21 @@
  */
 #ifndef LIEF_RUNTIME_PROCESS_H
 #define LIEF_RUNTIME_PROCESS_H
+#include <unordered_map>
 #include <cstdint>
 #include <string>
-#include <unordered_map>
 
-#include "LIEF/visibility.h"
 #include "LIEF/runtime/utils.hpp"
-#include "LIEF/optional.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
-namespace LIEF {
-namespace assembly {
+
+namespace LIEF::assembly {
 class Engine;
 }
-}
 
-namespace LIEF {
-namespace runtime {
+
+namespace LIEF::runtime {
 
 /// This structure represents the current process and provides
 /// functions to query process-level information.
@@ -69,7 +68,7 @@ class LIEF_API Process {
   static uint32_t page_size();
 
   /// Return the environment variable associated with the given key.
-  static optional<std::string> get_env(const std::string& key);
+  static std::optional<std::string> get_env(const std::string& key);
 
   /// Return the environment variables present in the current process
   static EnvVars get_envs();
@@ -78,5 +77,5 @@ class LIEF_API Process {
   static assembly::Engine* default_engine();
 };
 }
-}
+
 #endif

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "MachO/json_internal.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/BindingInfoIterator.hpp"
@@ -36,6 +35,7 @@
 #include "LIEF/MachO/DylinkerCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
+#include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/FilesetCommand.hpp"
@@ -68,10 +68,10 @@
 #include "LIEF/MachO/VersionMin.hpp"
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/utils.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
+#include "MachO/json_internal.hpp"
 
-#include "Object.tcc"
 #include "MachO/Binary.tcc"
+#include "Object.tcc"
 
 namespace LIEF::MachO {
 
@@ -547,4 +547,4 @@ void JsonVisitor::visit(const TwoLevelHints& e) {
 }
 
 
-} // namespace LIEF::MachO
+}

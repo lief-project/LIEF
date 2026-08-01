@@ -15,17 +15,17 @@
  */
 #ifndef LIEF_COFF_BINARY_H
 #define LIEF_COFF_BINARY_H
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/COFF/String.hpp"
 
 #include "LIEF/asm/Instruction.hpp"
 
+#include <unordered_map>
 #include <memory>
 #include <vector>
-#include <unordered_map>
 
 namespace LIEF {
 

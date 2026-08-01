@@ -16,17 +16,17 @@
 
 #include "jni/lief/pe/ExceptionInfo.hpp"
 #include "jni/lief/pe/RuntimeFunctionAArch64.hpp"
+#include "jni/lief/pe/RuntimeFunctionX64.hpp"
 #include "jni/lief/pe/aarch64/PackedFunction.hpp"
 #include "jni/lief/pe/aarch64/UnpackedFunction.hpp"
-#include "jni/lief/pe/RuntimeFunctionX64.hpp"
 
-#include "jni/log.hpp"
 #include "jni/jni_utils.hpp"
+#include "jni/log.hpp"
 
-#include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
-#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 #include "LIEF/PE/exceptions_info/AArch64/PackedFunction.hpp"
 #include "LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp"
+#include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
+#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 
 namespace lief_jni::pe {
 

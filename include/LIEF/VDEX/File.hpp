@@ -20,12 +20,12 @@
 #include "LIEF/VDEX/Header.hpp"
 #include "LIEF/VDEX/type_traits.hpp"
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace LIEF {
 namespace DEX {

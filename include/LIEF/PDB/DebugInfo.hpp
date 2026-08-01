@@ -15,12 +15,12 @@
 #ifndef LIEF_PDB_INFO_H
 #define LIEF_PDB_INFO_H
 #include <memory>
-#include <string>
 #include <ostream>
+#include <string>
 
+#include "LIEF/Abstract/DebugInfo.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
-#include "LIEF/Abstract/DebugInfo.hpp"
 
 #include "LIEF/PDB/CompilationUnit.hpp"
 #include "LIEF/PDB/PublicSymbol.hpp"
@@ -28,8 +28,8 @@
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 class Function;
 
 /// This class provides an interface for PDB files.
@@ -92,7 +92,8 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
       find_public_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Attempt to resolve the address of the function specified by `name`.
-  optional<uint64_t> find_function_address(const std::string& name) const override;
+  std::optional<uint64_t>
+      find_function_address(const std::string& name) const override;
 
   /// The number of times the PDB file has been written.
   uint32_t age() const;
@@ -119,5 +120,5 @@ inline std::unique_ptr<DebugInfo> load(const std::string& pdb_path) {
 }
 
 }
-}
+
 #endif

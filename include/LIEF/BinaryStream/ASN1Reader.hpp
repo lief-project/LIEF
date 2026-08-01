@@ -16,10 +16,10 @@
 #ifndef LIEF_ASN1_READER_H
 #define LIEF_ASN1_READER_H
 
-#include <vector>
-#include <memory>
 #include <cstdint>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "LIEF/errors.hpp"
 

@@ -14,11 +14,11 @@
  */
 #pragma once
 
-#include "LIEF/rust/debug_location.hpp"
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/DebugDeclOpt.hpp"
 #include "LIEF/PDB/Function.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/debug_location.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PDB_Function : private Mirror<LIEF::pdb::Function> {
   public:

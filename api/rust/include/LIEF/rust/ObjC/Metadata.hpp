@@ -16,10 +16,10 @@
 #include "LIEF/ObjC/Metadata.hpp"
 #include "LIEF/rust/Mirror.hpp"
 
-#include "LIEF/rust/ObjC/Class.hpp"
-#include "LIEF/rust/ObjC/Protocol.hpp"
 #include "LIEF/rust/ObjC/Category.hpp"
+#include "LIEF/rust/ObjC/Class.hpp"
 #include "LIEF/rust/ObjC/DeclOpt.hpp"
+#include "LIEF/rust/ObjC/Protocol.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/helpers.hpp"

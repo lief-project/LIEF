@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include <string>
 #include "LIEF/COFF/utils.hpp"
+#include <string>
 
 class COFF_Utils {
   public:

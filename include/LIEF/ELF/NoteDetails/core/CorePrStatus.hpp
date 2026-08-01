@@ -16,16 +16,17 @@
 #ifndef LIEF_ELF_CORE_PRSTATUS_H
 #define LIEF_ELF_CORE_PRSTATUS_H
 
-#include <vector>
+#include <memory>
 #include <ostream>
 #include <utility>
+#include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/ELF/enums.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/enums.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 class Parser;
 class Builder;
@@ -193,7 +194,7 @@ class LIEF_API CorePrStatus : public Note {
     class_(cls) {}
 
   std::unique_ptr<Note> clone() const override {
-    return std::unique_ptr<CorePrStatus>(new CorePrStatus(*this));
+    return std::make_unique<CorePrStatus>(*this);
   }
 
   /// Return the pr_status_t structure
@@ -283,7 +284,7 @@ LIEF_API const char* to_string(CorePrStatus::Registers::X86_64 e);
 LIEF_API const char* to_string(CorePrStatus::Registers::ARM e);
 LIEF_API const char* to_string(CorePrStatus::Registers::AARCH64 e);
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

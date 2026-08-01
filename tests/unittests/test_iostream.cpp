@@ -18,8 +18,8 @@
 
 #include <string>
 
-#include "LIEF/span.hpp"
 #include "LIEF/iostream.hpp"
+#include "LIEF/span.hpp"
 
 TEST_CASE("lief.test.iostream", "[lief][test][iostream]") {
   SECTION("Span") {

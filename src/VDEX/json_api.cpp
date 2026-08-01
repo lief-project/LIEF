@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 
 #include "LIEF/config.h"
 
@@ -37,4 +36,4 @@ std::string to_json(const Object& v) {
 #endif
 }
 
-} // namespace LIEF::VDEX
+}

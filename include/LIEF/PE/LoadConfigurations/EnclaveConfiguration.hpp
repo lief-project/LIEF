@@ -15,13 +15,13 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_ENCLAVE_CONFIG_H
 #define LIEF_PE_LOAD_CONFIGURATION_ENCLAVE_CONFIG_H
+#include <array>
 #include <memory>
 #include <string>
-#include <array>
 
+#include "LIEF/PE/LoadConfigurations/EnclaveImport.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/PE/LoadConfigurations/EnclaveImport.hpp"
 
 namespace LIEF {
 class BinaryStream;
@@ -50,7 +50,7 @@ class LIEF_API EnclaveConfiguration {
   EnclaveConfiguration& operator=(EnclaveConfiguration&&) = default;
 
   std::unique_ptr<EnclaveConfiguration> clone() const {
-    return std::unique_ptr<EnclaveConfiguration>(new EnclaveConfiguration(*this));
+    return std::make_unique<EnclaveConfiguration>(*this);
   }
 
   /// The size of the `IMAGE_ENCLAVE_CONFIG64/IMAGE_ENCLAVE_CONFIG32` structure,

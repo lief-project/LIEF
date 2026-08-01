@@ -16,18 +16,18 @@
 #ifndef LIEF_PE_PARSER_H
 #define LIEF_PE_PARSER_H
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
-#include "LIEF/visibility.h"
-#include "LIEF/utils.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/utils.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Parser.hpp"
-#include "LIEF/PE/enums.hpp"
-#include "LIEF/PE/ParserConfig.hpp"
 #include "LIEF/COFF/String.hpp"
+#include "LIEF/PE/ParserConfig.hpp"
+#include "LIEF/PE/enums.hpp"
 
 namespace LIEF {
 class BinaryStream;

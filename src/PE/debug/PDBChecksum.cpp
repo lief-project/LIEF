@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include "LIEF/PE/debug/PDBChecksum.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include <sstream>
 
 #include "logging.hpp"
 

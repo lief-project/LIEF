@@ -16,15 +16,15 @@
 #ifndef LIEF_ELF_CORE_FILE_H
 #define LIEF_ELF_CORE_FILE_H
 
-#include <vector>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/ELF/Note.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class representing a core `NT_FILE` which describes the mapped files
 /// of the process
@@ -109,7 +109,7 @@ class LIEF_API CoreFile : public Note {
   Header::CLASS class_ = Header::CLASS::NONE;
 };
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

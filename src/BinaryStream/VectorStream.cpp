@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <memory>
-#include <vector>
-#include <string>
 #include <fstream>
+#include <memory>
+#include <string>
+#include <vector>
 
-#include "logging.hpp"
-#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 

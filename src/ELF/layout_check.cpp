@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/ELF/Binary.hpp"
-#include "LIEF/ELF/Header.hpp"
-#include "LIEF/ELF/Segment.hpp"
-#include "LIEF/ELF/Section.hpp"
-#include "LIEF/ELF/Symbol.hpp"
-#include "LIEF/ELF/DynamicEntry.hpp"
-#include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/SysvHash.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/Header.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/SysvHash.hpp"
+#include "LIEF/ELF/utils.hpp"
 
 #include <spdlog/fmt/fmt.h>
 #include <algorithm>

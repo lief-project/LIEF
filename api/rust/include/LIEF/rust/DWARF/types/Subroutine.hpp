@@ -14,8 +14,8 @@
  */
 #pragma once
 #include "LIEF/DWARF/types/Subroutine.hpp"
-#include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/DWARF/Parameter.hpp"
+#include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/Iterator.hpp"
 
 class DWARF_types_Subroutine : public DWARF_Type {

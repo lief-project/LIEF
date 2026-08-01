@@ -6,11 +6,6 @@ from utils import lief_build_dir, lief_samples_dir
 SAMPLE = lief_samples_dir() / "ELF" / "ELF64_x86-64_binary_ls.bin"
 
 
-def test_elf_reader_c() -> None:
-    target = lief_build_dir() / "examples/c/elf_reader"
-    check_call([target, SAMPLE])
-
-
 def test_elf_reader_cpp() -> None:
     target = lief_build_dir() / "examples/cpp/elf_reader"
     check_call([target, SAMPLE])

@@ -14,8 +14,8 @@
  */
 #pragma once
 
-#include <binaryninja/binaryninjaapi.h>
 #include "binaryninja/analysis/ELF/AnalyzerBase.hpp"
+#include <binaryninja/binaryninjaapi.h>
 
 namespace binaryninja {
 class BNStream;

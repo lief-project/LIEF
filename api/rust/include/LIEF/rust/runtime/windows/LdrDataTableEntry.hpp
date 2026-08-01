@@ -14,8 +14,8 @@
  */
 #pragma once
 
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/optional.hpp"
 

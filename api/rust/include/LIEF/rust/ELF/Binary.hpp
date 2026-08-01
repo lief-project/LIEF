@@ -13,30 +13,30 @@
  * limitations under the License.
  */
 #pragma once
-#include <string>
-#include <sstream>
 #include <LIEF/ELF/Binary.hpp>
 #include <LIEF/ELF/Parser.hpp>
+#include <sstream>
+#include <string>
 
-#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/Abstract/Binary.hpp"
+#include "LIEF/rust/ELF/DynamicEntry.hpp"
+#include "LIEF/rust/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/rust/ELF/GnuHash.hpp"
-#include "LIEF/rust/ELF/Sysvhash.hpp"
+#include "LIEF/rust/ELF/Header.hpp"
+#include "LIEF/rust/ELF/Note.hpp"
+#include "LIEF/rust/ELF/Relocation.hpp"
+#include "LIEF/rust/ELF/Section.hpp"
+#include "LIEF/rust/ELF/Segment.hpp"
+#include "LIEF/rust/ELF/Symbol.hpp"
 #include "LIEF/rust/ELF/SymbolVersion.hpp"
 #include "LIEF/rust/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/rust/ELF/SymbolVersionRequirement.hpp"
-#include "LIEF/rust/ELF/DynamicEntryLibrary.hpp"
-#include "LIEF/rust/ELF/Segment.hpp"
-#include "LIEF/rust/ELF/Section.hpp"
-#include "LIEF/rust/ELF/Symbol.hpp"
-#include "LIEF/rust/ELF/Relocation.hpp"
-#include "LIEF/rust/ELF/Header.hpp"
-#include "LIEF/rust/ELF/Note.hpp"
-#include "LIEF/rust/ELF/DynamicEntry.hpp"
+#include "LIEF/rust/ELF/Sysvhash.hpp"
+#include "LIEF/rust/Iterator.hpp"
 
+#include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/error.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Span.hpp"
 
 class ELF_Binary_write_config_t {
   public:

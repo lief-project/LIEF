@@ -16,21 +16,21 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"
 
-#include "LIEF/PE/resources/langs.hpp"
-#include "LIEF/PE/ResourcesManager.hpp"
-#include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/ResourcesManager.hpp"
+#include "LIEF/PE/resources/langs.hpp"
 
 #include "PE/Structures.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/iostream.hpp"
 
-#include "frozen.hpp"
-#include "logging.hpp"
-#include "internal_utils.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
+#include "internal_utils.hpp"
+#include "logging.hpp"
 
 FMT_FORMATTER(LIEF::PE::ResourcesManager::TYPE, LIEF::PE::to_string);
 
@@ -714,4 +714,4 @@ const char* to_string(ResourcesManager::TYPE type) {
 }
 
 
-} // namespace LIEF::PE
+}

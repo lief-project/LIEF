@@ -20,13 +20,13 @@
 #include <vector>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/enums.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/enums.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 
 namespace details {
@@ -259,7 +259,7 @@ LIEF_API const char* to_string(Header::CPU_TYPE e);
 LIEF_API const char* to_string(Header::FLAGS e);
 
 }
-}
+
 
 ENABLE_BITMASK_OPERATORS(LIEF::MachO::Header::FLAGS);
 

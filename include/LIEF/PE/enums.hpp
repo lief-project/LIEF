@@ -16,8 +16,8 @@
 #define LIEF_PE_ENUMS_H
 #include <cstdint>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 enum class PE_TYPE : uint16_t {
   PE32 = 0x10b,      ///< 32bits
@@ -52,6 +52,6 @@ enum class ALGORITHMS : uint32_t {
 };
 
 }
-}
+
 
 #endif

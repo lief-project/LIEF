@@ -15,12 +15,12 @@
  */
 #ifndef LIEF_MACHO_BINDING_INFO_IT_H
 #define LIEF_MACHO_BINDING_INFO_IT_H
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class Binary;
 class DyldInfo;
 class DyldChainedFixups;
@@ -97,5 +97,5 @@ class LIEF_API BindingInfoIterator
 };
 
 }
-}
+
 #endif

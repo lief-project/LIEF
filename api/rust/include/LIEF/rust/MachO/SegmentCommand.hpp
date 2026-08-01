@@ -16,8 +16,8 @@
 #pragma once
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
-#include "LIEF/rust/MachO/Section.hpp"
 #include "LIEF/rust/MachO/Relocation.hpp"
+#include "LIEF/rust/MachO/Section.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class MachO_SegmentCommand : public MachO_Command {

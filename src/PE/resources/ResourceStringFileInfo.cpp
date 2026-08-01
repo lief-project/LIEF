@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include "LIEF/Visitor.hpp"
+#include <sstream>
 
 #include "LIEF/utils.hpp"
 
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
 #include "LIEF/PE/resources/ResourceStringTable.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#include "logging.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 
 namespace LIEF::PE {

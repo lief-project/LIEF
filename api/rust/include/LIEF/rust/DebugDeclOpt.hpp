@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include <memory>
 #include <LIEF/DebugDeclOpt.hpp>
+#include <memory>
 
 class LIEF_DeclOpt {
   public:

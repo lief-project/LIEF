@@ -35,6 +35,10 @@
 
 namespace intmem {
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+#pragma clang diagnostic ignored "-Wunused-template"
+
 #ifdef INTMEM_CPP20_SUPPORT
 template<class T>
 static INTMEM_CE T bswap_ce(T V) {
@@ -116,7 +120,7 @@ static INTMEM_CE int64_t bswap(int64_t V) {
 
 template<class T>
 static T loadu(const void* Ptr) {
-  static_assert(std::is_integral<T>::value, "T must be an integer!");
+  static_assert(std::is_integral_v<T>, "T must be an integer!");
   T Ret;
   memcpy(&Ret, Ptr, sizeof(T));
   return Ret;
@@ -124,7 +128,7 @@ static T loadu(const void* Ptr) {
 
 template<class T>
 static void storeu(void* Ptr, const T V) {
-  static_assert(std::is_integral<T>::value, "T must be an integer!");
+  static_assert(std::is_integral_v<T>, "T must be an integer!");
   memcpy(Ptr, &V, sizeof(V));
 }
 
@@ -219,6 +223,8 @@ template<class T>
 static INTMEM_CE void store_be(T* Ptr, const T V) {
   *Ptr = bswap_be(V);
 }
+
+#pragma clang diagnostic pop
 
 } // intmem
 

@@ -15,7 +15,6 @@
  */
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryFile.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/utils.hpp"
 
 #include "logging.hpp"
 namespace LIEF::COFF {

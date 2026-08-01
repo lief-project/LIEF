@@ -16,18 +16,19 @@
 #ifndef LIEF_PE_IMPORT_H
 #define LIEF_PE_IMPORT_H
 
-#include <string>
-#include <ostream>
+#include <string_view>
 #include <memory>
+#include <ostream>
+#include <string>
 
-#include "LIEF/errors.hpp"
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class Parser;
 class Builder;
 class DataDirectory;
@@ -110,7 +111,7 @@ class LIEF_API Import : public Object {
   const ImportEntry* get_entry(const std::string& name) const LIEF_LIFETIMEBOUND;
 
   /// Return the library's name (e.g. `kernel32.dll`)
-  const std::string& name() const LIEF_LIFETIMEBOUND {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -202,6 +203,6 @@ class LIEF_API Import : public Object {
 };
 
 }
-}
+
 
 #endif

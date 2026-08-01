@@ -14,12 +14,12 @@
  */
 #pragma once
 #include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/PE/CodeIntegrity.hpp"
 #include "LIEF/rust/PE/LoadConfiguration/CHPEMetadata.hpp"
+#include "LIEF/rust/PE/LoadConfiguration/DynamicRelocation/DynamicRelocation.hpp"
 #include "LIEF/rust/PE/LoadConfiguration/EnclaveConfiguration.hpp"
 #include "LIEF/rust/PE/LoadConfiguration/VolatileMetadata.hpp"
-#include "LIEF/rust/PE/LoadConfiguration/DynamicRelocation/DynamicRelocation.hpp"
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/optional.hpp"
 
 class PE_LoadConfiguration_guard_function_t

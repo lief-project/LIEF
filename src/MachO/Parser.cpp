@@ -17,23 +17,23 @@
 
 #include "logging.hpp"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/DumpStream.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
-#include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/Parser.hpp"
-#include "LIEF/MachO/DyldInfo.hpp"
-#include "LIEF/MachO/DyldBindingInfo.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
-#include "LIEF/MachO/utils.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
+#include "LIEF/MachO/Parser.hpp"
 #include "LIEF/MachO/Relocation.hpp"
-#include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
+#include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/ThreadLocalVariables.hpp"
+#include "LIEF/MachO/utils.hpp"
 #include "MachO/Structures.hpp"
 
 
@@ -335,4 +335,4 @@ ok_error_t Parser::undo_reloc_bindings(uintptr_t base_address) {
   return ok();
 }
 
-} // namespace LIEF::MachO
+}

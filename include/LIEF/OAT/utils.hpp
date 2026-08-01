@@ -19,7 +19,6 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/OAT/type_traits.hpp"

@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_PE_PKCS9_TSTINFO_H
 #define LIEF_PE_PKCS9_TSTINFO_H
-#include <ostream>
 #include <memory>
+#include <ostream>
 
+#include "LIEF/PE/signature/ContentInfo.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/PE/signature/ContentInfo.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// Interface over the structure described by the OID `1.2.840.113549.1.9.16.1.4`
 /// (PKCS #9)
@@ -87,5 +87,5 @@ class LIEF_API PKCS9TSTInfo : public ContentInfo::Content {
   uint32_t version_ = 0;
 };
 }
-}
+
 #endif

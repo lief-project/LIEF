@@ -17,14 +17,14 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/MachO/utils.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/enums.hpp"
+#include "LIEF/MachO/utils.hpp"
 
 #include "Object.tcc"
 
 #include "MachO/Structures.hpp"
-
 
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"

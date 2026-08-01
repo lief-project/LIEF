@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BindingInfoIterator.hpp"
-#include "LIEF/MachO/DyldInfo.hpp"
-#include "LIEF/MachO/DyldBindingInfo.hpp"
-#include "LIEF/MachO/ChainedBindingInfo.hpp"
-#include "LIEF/MachO/IndirectBindingInfo.hpp"
+#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/ChainedBindingInfo.hpp" // IWYU pragma: keep
+#include "LIEF/MachO/DyldBindingInfo.hpp"    // IWYU pragma: keep
 #include "LIEF/MachO/DyldChainedFixups.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/IndirectBindingInfo.hpp" // IWYU pragma: keep
 
 #include "logging.hpp"
 

@@ -18,9 +18,9 @@
 #include <cstdint>
 #include <memory>
 
+#include "LIEF/ELF/Parser.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/ELF/Parser.hpp"
 
 namespace LIEF {
 
@@ -98,6 +98,6 @@ class LIEF_API Parser : public ELF::Parser {
   uint64_t exec_size_ = 0;
 };
 
-} // namespace OAT
-} // namespace LIEF
+}
+}
 #endif

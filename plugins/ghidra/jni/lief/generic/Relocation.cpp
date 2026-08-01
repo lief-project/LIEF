@@ -14,9 +14,9 @@
  */
 #include <array>
 
+#include "jni/jni_utils.hpp"
 #include "jni/lief/generic/Relocation.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 namespace lief_jni::generic {
 

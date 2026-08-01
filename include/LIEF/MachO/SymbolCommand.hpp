@@ -15,16 +15,17 @@
  */
 #ifndef LIEF_MACHO_SYMBOL_COMMAND_H
 #define LIEF_MACHO_SYMBOL_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 class LinkEdit;
 
@@ -45,7 +46,7 @@ class LIEF_API SymbolCommand : public LoadCommand {
   SymbolCommand(const SymbolCommand& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<SymbolCommand>(new SymbolCommand(*this));
+    return std::make_unique<SymbolCommand>(*this);
   }
 
   ~SymbolCommand() override = default;
@@ -129,5 +130,5 @@ class LIEF_API SymbolCommand : public LoadCommand {
 };
 
 }
-}
+
 #endif

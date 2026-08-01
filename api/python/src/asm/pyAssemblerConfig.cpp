@@ -3,9 +3,7 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/trampoline.h>
-#include "nanobind/extra/stl/lief_optional.h"
-
-#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/optional.h>
 
 namespace LIEF::assembly::py {
 
@@ -14,7 +12,7 @@ class PyAssemblerConfig : public assembly::AssemblerConfig {
   static constexpr auto NB_NUM_SLOTS = 3;
   NB_TRAMPOLINE(assembly::AssemblerConfig, NB_NUM_SLOTS);
 
-  optional<uint64_t> resolve_symbol(const std::string& name) override {
+  std::optional<uint64_t> resolve_symbol(const std::string& name) override {
     NB_OVERRIDE(resolve_symbol, name);
   }
 

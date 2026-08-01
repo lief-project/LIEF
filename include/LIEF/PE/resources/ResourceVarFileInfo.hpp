@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_PE_RESOURCE_VAR_FILE_INFO_H
 #define LIEF_PE_RESOURCE_VAR_FILE_INFO_H
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/PE/resources/ResourceVar.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
-#include "LIEF/PE/resources/ResourceVar.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;

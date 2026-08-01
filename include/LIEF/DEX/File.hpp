@@ -15,19 +15,20 @@
  */
 #ifndef LIEF_DEX_FILE_H
 #define LIEF_DEX_FILE_H
+#include <string_view>
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/DEX/Header.hpp"
 #include "LIEF/DEX/MapList.hpp"
-#include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/types.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 class Parser;
 class Class;
 class Method;
@@ -75,12 +76,12 @@ class LIEF_API File : public Object {
   dex_version_t version() const;
 
   /// Name of this file
-  const std::string& name() const;
+  std::string_view name() const;
 
   void name(const std::string& name);
 
   /// Location of this file
-  const std::string& location() const;
+  std::string_view location() const;
   void location(const std::string& location);
 
   /// DEX header
@@ -175,6 +176,6 @@ class LIEF_API File : public Object {
 };
 
 }
-}
+
 
 #endif

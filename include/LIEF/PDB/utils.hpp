@@ -20,12 +20,12 @@
 #include "LIEF/visibility.h"
 #include <string>
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 
 /// Check if the file given in parameter points to a PDB file
 LIEF_API bool is_pdb(const std::string& pdb_path);
 
 }
-}
+
 #endif

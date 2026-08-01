@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
+#include <unordered_set>
 #include <cstddef>
 #include <memory>
-#include <unordered_set>
 
 #include "logging.hpp"
 
 #include "MachO/ChainedFixup.hpp"
 
-#include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/DumpStream.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 #include "LIEF/MachO/BinaryParser.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
 #include "LIEF/MachO/DataInCode.hpp"
@@ -46,10 +46,10 @@
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/FilesetCommand.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
-#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
-#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/IndirectBindingInfo.hpp"
+#include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
@@ -74,9 +74,9 @@
 #include "LIEF/MachO/UnknownCommand.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
 
-#include "MachO/Structures.hpp"
-#include "MachO/ChainedFixup.hpp"
 #include "MachO/ChainedBindingInfoList.hpp"
+#include "MachO/ChainedFixup.hpp"
+#include "MachO/Structures.hpp"
 #include "MachO/dyld_opcodes.hpp"
 
 #include "Object.tcc"

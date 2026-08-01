@@ -15,16 +15,16 @@
  */
 #ifndef LIEF_PE_RESOURCE_NODE_H
 #define LIEF_PE_RESOURCE_NODE_H
-#include <string>
-#include <vector>
+#include <cstdint>
 #include <memory>
 #include <sstream>
-#include <cstdint>
+#include <string>
+#include <vector>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -184,7 +184,7 @@ class LIEF_API ResourceNode : public Object {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<ResourceNode, T>::value,
+    static_assert(std::is_base_of_v<ResourceNode, T>,
                   "Require inheritance relationship");
     if (T::classof(this)) {
       return static_cast<const T*>(this);

@@ -16,13 +16,13 @@
 #ifndef LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_RELOCATION_FUNC_OVERRIDE_INFO_H
 #define LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_RELOCATION_FUNC_OVERRIDE_INFO_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
-#include <cstdint>
 
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class SpanStream;

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #include "binaryninja/analysis/MachO/Analyzer.hpp"
-#include "log.hpp"
 #include "binaryninja/analysis/MachO/TypeBuilder.hpp"
+#include "log.hpp"
 
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>

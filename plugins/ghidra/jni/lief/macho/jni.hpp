@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 #pragma once
-#include <jni.h>
-#include "jni/lief/macho/Header.hpp"
 #include "jni/lief/macho/Binary.hpp"
 #include "jni/lief/macho/FatBinary.hpp"
+#include "jni/lief/macho/Header.hpp"
 #include "jni/lief/macho/Utils.hpp"
+#include <jni.h>
 
 namespace lief_jni::macho {
 

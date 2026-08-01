@@ -15,13 +15,16 @@
  */
 #ifndef LIEF_PE_DEBUG_CODE_VIEW_PDB_H
 #define LIEF_PE_DEBUG_CODE_VIEW_PDB_H
+#include <string_view>
+
 #include "LIEF/PE/debug/CodeView.hpp"
+#include "LIEF/compiler_attributes.hpp"
 
-#include <cstdint>
 #include <array>
+#include <cstdint>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class Parser;
 class Builder;
 
@@ -74,7 +77,7 @@ class LIEF_API CodeViewPDB : public CodeView {
   }
 
   /// The path to the `.pdb` file
-  const std::string& filename() const {
+  std::string_view filename() const LIEF_LIFETIMEBOUND {
     return filename_;
   }
 
@@ -116,6 +119,6 @@ class LIEF_API CodeViewPDB : public CodeView {
   std::string filename_;
 };
 
-} // namespace PE
-} // namespace LIEF
+}
+
 #endif

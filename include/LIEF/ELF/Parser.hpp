@@ -17,8 +17,8 @@
 #define LIEF_ELF_PARSER_H
 #include <unordered_map>
 
-#include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/errors.hpp"
@@ -337,6 +337,6 @@ class LIEF_API Parser : public LIEF::Parser {
   uint64_t memory_address_ = 0;
 };
 
-} // namespace ELF
-} // namespace LIEF
+}
+}
 #endif

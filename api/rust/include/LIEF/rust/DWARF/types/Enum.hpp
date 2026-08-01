@@ -15,9 +15,9 @@
 #pragma once
 #include "LIEF/DWARF/types/Enum.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
-#include "LIEF/rust/optional.hpp"
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/optional.hpp"
 
 class DWARF_types_Enum_Entry : public Mirror<LIEF::dwarf::types::Enum::Entry> {
   public:

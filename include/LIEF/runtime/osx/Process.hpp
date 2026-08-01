@@ -19,9 +19,8 @@
 #include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/utils.hpp"
 
-namespace LIEF {
-namespace runtime {
-namespace osx {
+
+namespace LIEF::runtime::osx {
 
 /// This class exposes OSX-specific API for the current process
 class LIEF_API Process : public runtime::Process {
@@ -37,6 +36,6 @@ class LIEF_API Process : public runtime::Process {
 };
 
 }
-}
-}
+
+
 #endif

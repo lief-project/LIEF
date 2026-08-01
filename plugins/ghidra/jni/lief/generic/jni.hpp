@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include <jni.h>
 #include "jni/lief/generic/Binary.hpp"
+#include <jni.h>
 
 namespace lief_jni::generic {
 

@@ -19,10 +19,8 @@
 #include "LIEF/asm/riscv/Operand.hpp"
 #include "LIEF/asm/riscv/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace riscv {
-namespace operands {
+
+namespace LIEF::assembly::riscv::operands {
 
 /// This class represents a memory operand.
 ///
@@ -51,7 +49,6 @@ class LIEF_API Memory : public Operand {
   ~Memory() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

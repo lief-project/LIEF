@@ -14,21 +14,21 @@
  */
 #ifndef LIEF_ASM_INST_H
 #define LIEF_ASM_INST_H
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 #include <string>
 
 namespace llvm {
 class MCInst;
 }
 
-namespace LIEF {
-namespace assembly {
+
+namespace LIEF::assembly {
 
 namespace details {
 class Instruction;
@@ -188,7 +188,7 @@ class LIEF_API Instruction {
   /// ```
   template<class T>
   const T* as() const LIEF_LIFETIMEBOUND {
-    static_assert(std::is_base_of<Instruction, T>::value,
+    static_assert(std::is_base_of_v<Instruction, T>,
                   "Require Instruction inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
@@ -225,5 +225,5 @@ class LIEF_API Instruction {
   std::unique_ptr<details::Instruction> impl_;
 };
 }
-}
+
 #endif

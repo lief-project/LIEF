@@ -18,11 +18,11 @@
 #include "LIEF/COFF/Binary.hpp"
 #include "LIEF/COFF/Parser.hpp"
 
-#include "LIEF/rust/COFF/Relocation.hpp"
-#include "LIEF/rust/COFF/Symbol.hpp"
-#include "LIEF/rust/COFF/String.hpp"
-#include "LIEF/rust/COFF/Section.hpp"
 #include "LIEF/rust/COFF/Header.hpp"
+#include "LIEF/rust/COFF/Relocation.hpp"
+#include "LIEF/rust/COFF/Section.hpp"
+#include "LIEF/rust/COFF/String.hpp"
+#include "LIEF/rust/COFF/Symbol.hpp"
 
 #include "LIEF/rust/asm/Instruction.hpp"
 

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/enums.hpp"
 #include "frozen.hpp"
 
 

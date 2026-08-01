@@ -15,12 +15,14 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_GENERIC_H
 #define LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_GENERIC_H
+#include <memory>
+
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
 
 #include "LIEF/iterators.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class Relocation;
 
 /// This class represents a generic entry where fixups are regular
@@ -41,7 +43,7 @@ class LIEF_API DynamicFixupGeneric : public DynamicFixup {
   DynamicFixupGeneric& operator=(DynamicFixupGeneric&&);
 
   std::unique_ptr<DynamicFixup> clone() const override {
-    return std::unique_ptr<DynamicFixupGeneric>(new DynamicFixupGeneric(*this));
+    return std::make_unique<DynamicFixupGeneric>(*this);
   }
 
   /// Iterator over the relocations
@@ -71,6 +73,6 @@ class LIEF_API DynamicFixupGeneric : public DynamicFixup {
 
 
 }
-}
+
 
 #endif

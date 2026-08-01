@@ -15,7 +15,7 @@
  */
 #ifndef LIEF_RUNTIME_ASSEMBLER_H
 #define LIEF_RUNTIME_ASSEMBLER_H
-#include <LIEF/visibility.h>
+#include "LIEF/visibility.h"
 #include <vector>
 
 #include "LIEF/asm/AssemblerConfig.hpp"
@@ -24,8 +24,8 @@ namespace llvm {
 class MCInst;
 }
 
-namespace LIEF {
-namespace runtime {
+
+namespace LIEF::runtime {
 
 /// Assemble the provided assembly code at the specified (absolute) virtual
 /// address.
@@ -58,5 +58,5 @@ LIEF_API std::vector<uint8_t> assemble(uint64_t address,
                                        const std::vector<llvm::MCInst>& insts);
 
 }
-}
+
 #endif

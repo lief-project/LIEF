@@ -23,11 +23,10 @@
 
 #include "LIEF/platforms/android.hpp"
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 
 /// Check if the given file is a VDEX one.
 LIEF_API bool is_vdex(const std::string& file);
@@ -44,7 +43,6 @@ LIEF_API vdex_version_t version(const std::vector<uint8_t>& raw);
 /// Return the ANDROID_VERSIONS associated with the given VDEX version
 LIEF_API Android::ANDROID_VERSIONS android_version(vdex_version_t version);
 
-}
 }
 
 

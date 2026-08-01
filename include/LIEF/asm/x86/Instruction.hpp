@@ -14,18 +14,16 @@
  */
 #ifndef LIEF_ASM_X86_INST_H
 #define LIEF_ASM_X86_INST_H
-#include "LIEF/visibility.h"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/asm/Instruction.hpp"
-#include "LIEF/asm/x86/opcodes.hpp"
 #include "LIEF/asm/x86/Operand.hpp"
+#include "LIEF/asm/x86/opcodes.hpp"
 
-namespace LIEF {
-namespace assembly {
 
 /// x86/x86-64 architecture-related namespace
-namespace x86 {
+namespace LIEF::assembly::x86 {
 
 /// This class represents a x86/x86-64 instruction
 class LIEF_API Instruction : public assembly::Instruction {
@@ -46,6 +44,6 @@ class LIEF_API Instruction : public assembly::Instruction {
   ~Instruction() override = default;
 };
 }
-}
-}
+
+
 #endif

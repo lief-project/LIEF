@@ -15,16 +15,16 @@
  */
 #include <algorithm>
 
-#include "logging.hpp"
 #include "frozen.hpp"
+#include "logging.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/Structures.hpp"

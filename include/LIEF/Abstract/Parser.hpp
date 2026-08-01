@@ -16,9 +16,9 @@
 #ifndef LIEF_ABSTRACT_PARSER_H
 #define LIEF_ABSTRACT_PARSER_H
 
-#include <string>
-#include <memory>
 #include <cstdint>
+#include <memory>
+#include <string>
 #include <vector>
 
 #include "LIEF/visibility.h"

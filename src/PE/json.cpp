@@ -15,29 +15,31 @@
  */
 #include "PE/json_internal.hpp"
 
-#include "LIEF/utils.hpp"
 #include "LIEF/hash.hpp"
+#include "LIEF/utils.hpp"
 
-#include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/RichHeader.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/debug/CodeView.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/PE/debug/Pogo.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
 #include "LIEF/PE/resources/ResourceDialogExtended.hpp"
 #include "LIEF/PE/resources/ResourceDialogRegular.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
-#include "LIEF/PE/RichHeader.hpp"
-#include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/Relocation.hpp"
-#include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/Export.hpp"
-#include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/debug/Debug.hpp"
-#include "LIEF/PE/debug/CodeView.hpp"
-#include "LIEF/PE/debug/Pogo.hpp"
-#include "LIEF/PE/debug/Repro.hpp"
-#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
 #include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
@@ -49,10 +51,8 @@
 #include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
 #include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
-#include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 #include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
-#include "LIEF/PE/signature/SpcIndirectData.hpp"
-#include "LIEF/PE/signature/GenericContent.hpp"
+#include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 
 #include "Object.tcc"
 
@@ -64,7 +64,7 @@ std::string to_hex(const char c) {
   return std::string("\\x") + ss.str();
 }
 
-std::string escape_non_ascii(const std::string& s) {
+std::string escape_non_ascii(std::string_view s) {
   std::string result;
   const auto len = s.size();
   for (auto i = 0u; i < len; i++) {
@@ -1008,4 +1008,4 @@ void JsonVisitor::visit(const LIEF::Section& section) {
   visit(static_cast<const LIEF::PE::Section&>(section));
 }
 
-} // namespace LIEF::PE
+}

@@ -15,10 +15,10 @@
  */
 #include <string>
 
-#include "logging.hpp"
-#include "LIEF/ART/Header.hpp"
-#include "LIEF/ART/EnumToString.hpp"
 #include "ART/Structures.hpp"
+#include "LIEF/ART/EnumToString.hpp"
+#include "LIEF/ART/Header.hpp"
+#include "logging.hpp"
 
 
 namespace LIEF::ART {
@@ -86,4 +86,4 @@ Header::Header(const T* header) :
   LIEF_DEBUG("{}", to_string(storage_mode_));
 }
 
-} // namespace LIEF::ART
+}

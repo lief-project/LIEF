@@ -15,8 +15,8 @@
 
 #pragma once
 #include "LIEF/MachO/DyldChainedFixups.hpp"
-#include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/rust/MachO/LoadCommand.hpp"
 
 #include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/helpers.hpp"

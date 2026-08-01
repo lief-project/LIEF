@@ -15,7 +15,9 @@
  */
 #ifndef LIEF_ASM_ARM_H
 #define LIEF_ASM_ARM_H
-#include <LIEF/asm/arm/Instruction.hpp>
-#include <LIEF/asm/arm/opcodes.hpp>
-#include <LIEF/asm/arm/registers.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/arm/Instruction.hpp"
+#include "LIEF/asm/arm/opcodes.hpp"
+#include "LIEF/asm/arm/registers.hpp"
+// IWYU pragma: end_exports
 #endif

@@ -19,8 +19,8 @@
 #include "LIEF/visibility.h"
 #include <string>
 
-namespace LIEF {
-namespace runtime {
+
+namespace LIEF::runtime {
 
 /// This class represents the current host.
 class LIEF_API Host {
@@ -45,5 +45,5 @@ class LIEF_API Host {
   static std::string cache_dir();
 };
 }
-}
+
 #endif

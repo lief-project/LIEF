@@ -38,6 +38,6 @@ class PE_ResourceAccelerator : private Mirror<LIEF::PE::ResourceAccelerator> {
   }
 
   auto ansi_str() const {
-    return to_unique_string(get().ansi_str());
+    return to_unique_string(std::string(get().ansi_str()));
   }
 };

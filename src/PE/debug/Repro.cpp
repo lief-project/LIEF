@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include "LIEF/PE/debug/Repro.hpp"
 #include "LIEF/Visitor.hpp"
+#include <sstream>
 
 #include "internal_utils.hpp"
 
@@ -40,4 +40,4 @@ std::string Repro::to_string() const {
   return os.str();
 }
 
-} // namespace LIEF::PE
+}

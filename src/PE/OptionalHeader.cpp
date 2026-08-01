@@ -17,9 +17,9 @@
 
 #include "frozen.hpp"
 
-#include "LIEF/PE/hash.hpp"
-#include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/OptionalHeader.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "PE/Structures.hpp"
 
 #include <spdlog/fmt/fmt.h>

@@ -16,13 +16,13 @@
 #ifndef LIEF_COFF_AUXILIARY_SYMBOL_H
 #define LIEF_COFF_AUXILIARY_SYMBOL_H
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 #include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -49,7 +49,7 @@ class LIEF_API AuxiliarySymbol {
       parse(Symbol& sym, std::vector<uint8_t> payload);
 
   virtual std::unique_ptr<AuxiliarySymbol> clone() const {
-    return std::unique_ptr<AuxiliarySymbol>(new AuxiliarySymbol(*this));
+    return std::make_unique<AuxiliarySymbol>(*this);
   }
 
   /// Type discriminator for the subclasses
@@ -97,7 +97,7 @@ class LIEF_API AuxiliarySymbol {
   /// Helper to **downcast** an AuxiliarySymbol into a concrete implementation
   template<class T>
   const T* as() const {
-    static_assert(std::is_base_of<AuxiliarySymbol, T>::value,
+    static_assert(std::is_base_of_v<AuxiliarySymbol, T>,
                   "Require AuxiliarySymbol inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);

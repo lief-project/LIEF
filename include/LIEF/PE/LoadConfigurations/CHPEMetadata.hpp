@@ -15,7 +15,9 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_CHPE_METADATA_HEADERS_H
 #define LIEF_PE_LOAD_CONFIGURATION_CHPE_METADATA_HEADERS_H
+// IWYU pragma: begin_exports
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataX86.hpp"
+// IWYU pragma: end_exports
 #endif

@@ -14,10 +14,10 @@
  */
 #pragma once
 
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/runtime/Module.hpp"
+#include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class runtime_Module : public Mirror<LIEF::runtime::Module> {
   public:

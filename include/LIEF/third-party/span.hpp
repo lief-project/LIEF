@@ -14,10 +14,10 @@
  */
 #ifndef LIEF_THIRD_PARTY_SPAN_H
 #define LIEF_THIRD_PARTY_SPAN_H
-#include "LIEF/config.h"
+#include "LIEF/config.h" // IWYU pragma: keep
 
 #ifndef LIEF_EXTERNAL_SPAN
-  #include <LIEF/third-party/internal/span.hpp>
+  #include "LIEF/third-party/internal/span.hpp"
 #else
   #include <tcb/span.hpp>
 #endif

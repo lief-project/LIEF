@@ -16,15 +16,15 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_DEFINITION_H
 #define LIEF_ELF_SYMBOL_VERSION_DEFINITION_H
 #include <cstdint>
-#include <ostream>
 #include <memory>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 class SymbolVersionAux;
 class Parser;
@@ -112,5 +112,5 @@ class LIEF_API SymbolVersionDefinition : public Object {
   version_aux_t symbol_version_aux_;
 };
 }
-}
+
 #endif

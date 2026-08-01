@@ -16,10 +16,10 @@
 #include <cstdint>
 
 #include "LIEF/COFF/Symbol.hpp"
-#include "LIEF/rust/COFF/AuxiliarySymbol.hpp"
-#include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/Abstract/Symbol.hpp"
+#include "LIEF/rust/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class COFF_Section;
 

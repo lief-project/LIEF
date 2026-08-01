@@ -15,17 +15,17 @@
  */
 #ifndef LIEF_PE_UNWIND_CODE_X64_H
 #define LIEF_PE_UNWIND_CODE_X64_H
-#include <ostream>
-#include <memory>
-#include <string>
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
+#include <memory>
+#include <ostream>
+#include <string>
 
 namespace LIEF {
 class SpanStream;
 
-namespace PE {
+
 /// This namespace wraps code related to PE-x64 unwinding code
-namespace unwind_x64 {
+namespace PE::unwind_x64 {
 
 /// Base class for all unwind operations
 class LIEF_API Code {
@@ -288,8 +288,6 @@ class LIEF_API Spare : public Code {
     return code->opcode() == OPCODE::SPARE;
   }
 };
-
-}
 
 }
 }

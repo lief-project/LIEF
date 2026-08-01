@@ -17,8 +17,8 @@
 
 #include "LIEF/utils.hpp"
 
-#include "LIEF/PE/resources/ResourceVar.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/PE/resources/ResourceVar.hpp"
 
 
 namespace LIEF::PE {

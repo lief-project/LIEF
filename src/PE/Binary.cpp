@@ -13,32 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <utility>
 #include <algorithm>
 #include <iterator>
-#include <numeric>
 #include <limits>
+#include <numeric>
+#include <utility>
 
-#include "logging.hpp"
 #include "hash_stream.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
-#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
-#include <LIEF/PE/debug/Debug.hpp>
-#include <LIEF/PE/debug/CodeView.hpp>
-#include <LIEF/PE/debug/Pogo.hpp>
-#include <LIEF/PE/debug/PogoEntry.hpp>
-#include <LIEF/PE/debug/Repro.hpp>
-#include <LIEF/PE/debug/CodeViewPDB.hpp>
-#include <LIEF/PE/debug/VCFeature.hpp>
-#include <LIEF/PE/debug/ExDllCharacteristics.hpp>
-#include <LIEF/PE/debug/FPO.hpp>
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
@@ -50,9 +41,15 @@
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/ExceptionInfo.hpp"
-#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 #include "LIEF/PE/TLS.hpp"
+#include "LIEF/PE/debug/CodeView.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/PE/debug/Pogo.hpp"
+#include "LIEF/PE/debug/PogoEntry.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
+#include "LIEF/PE/hash.hpp"
 #include "LIEF/PE/utils.hpp"
 
 #include "LIEF/COFF/Symbol.hpp"
@@ -662,9 +659,7 @@ uint32_t Binary::compute_checksum() const {
   // Section headers
   for (const std::unique_ptr<Section>& sec : sections_) {
     std::array<char, 8> name = {0};
-    const std::string& sec_name = sec->fullname();
-    uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(name));
-    std::copy(sec_name.c_str(), sec_name.c_str() + name_length, name.begin());
+    sec->fullname().copy(name.data(), name.size());
     cs.write(name)
         .write(sec->virtual_size())
         .write<uint32_t>(sec->virtual_address())
@@ -812,9 +807,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
 
   for (const std::unique_ptr<Section>& sec : sections_) {
     std::array<char, 8> name = {0};
-    const std::string& sec_name = sec->fullname();
-    uint32_t name_length = std::min<uint32_t>(sec_name.size() + 1, sizeof(name));
-    std::copy(sec_name.c_str(), sec_name.c_str() + name_length, name.begin());
+    sec->fullname().copy(name.data(), name.size());
     ios.write(name)
         .write(sec->virtual_size())
         .write<uint32_t>(sec->virtual_address())
@@ -971,9 +964,10 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   LIEF::Binary::functions_t result;
   if (const Export* exp = get_export()) {
     for (const ExportEntry& entry : exp->entries()) {
-      const std::string& name = entry.name();
+      std::string_view name = entry.name();
       if (!name.empty()) {
-        result.emplace_back(name, entry.address(), Function::FLAGS::EXPORTED);
+        result.emplace_back(std::string(name), entry.address(),
+                            Function::FLAGS::EXPORTED);
       }
     }
   }
@@ -988,9 +982,10 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
       resolved = std::move(*resolution);
     }
     for (const ImportEntry& entry : resolved.entries()) {
-      const std::string& name = entry.name();
+      std::string_view name = entry.name();
       if (!name.empty()) {
-        result.emplace_back(name, entry.iat_address(), Function::FLAGS::IMPORTED);
+        result.emplace_back(std::string(name), entry.iat_address(),
+                            Function::FLAGS::IMPORTED);
       }
     }
   }
@@ -1001,9 +996,10 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
       if (entry.is_ordinal()) {
         continue;
       }
-      const std::string& name = entry.name();
+      std::string_view name = entry.name();
       if (!name.empty()) {
-        result.emplace_back(name, entry.value(), Function::FLAGS::IMPORTED);
+        result.emplace_back(std::string(name), entry.value(),
+                            Function::FLAGS::IMPORTED);
       }
     }
   }
@@ -1014,10 +1010,10 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
 std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const Import& import : imports()) {
-    result.push_back(import.name());
+    result.emplace_back(import.name());
   }
   for (const DelayImport& import : delay_imports()) {
-    result.push_back(import.name());
+    result.emplace_back(import.name());
   }
   return result;
 }

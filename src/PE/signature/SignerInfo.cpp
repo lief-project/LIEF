@@ -19,9 +19,9 @@
 
 #include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/signature/x509.hpp"
-#include "LIEF/PE/signature/SignerInfo.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/PE/signature/SignerInfo.hpp"
+#include "LIEF/PE/signature/x509.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
 

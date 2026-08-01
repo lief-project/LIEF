@@ -115,7 +115,7 @@ foreach(example ${LIEF_CPP_EXAMPLES})
   if (${output_name} MATCHES "^runtime_")
     set_target_properties(${output_name} PROPERTIES CXX_STANDARD 23)
   else()
-    set_target_properties(${output_name} PROPERTIES CXX_STANDARD 11)
+    set_target_properties(${output_name} PROPERTIES CXX_STANDARD 17)
   endif()
 
   target_link_libraries(${output_name} PUBLIC LIB_LIEF)

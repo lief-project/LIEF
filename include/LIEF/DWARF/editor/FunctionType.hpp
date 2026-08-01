@@ -14,13 +14,12 @@
  */
 #ifndef LIEF_DWARF_EDITOR_FUNCTION_TYPE_H
 #define LIEF_DWARF_EDITOR_FUNCTION_TYPE_H
+#include "LIEF/DWARF/editor/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/DWARF/editor/Type.hpp"
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 
 namespace details {
 class FunctionTyParameter;
@@ -30,8 +29,7 @@ class FunctionTyParameter;
 class LIEF_API FunctionType : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   FunctionType(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -59,6 +57,6 @@ class LIEF_API FunctionType : public Type {
 };
 
 }
-}
-}
+
+
 #endif

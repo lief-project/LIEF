@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/Relocation.hpp"
-#include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/FunctionOverride.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/FunctionOverrideInfo.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/FunctionOverrideInfo.hpp"
+#include "LIEF/PE/Parser.hpp"
+#include "LIEF/PE/Relocation.hpp"
 
-#include "logging.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF::PE {
 using image_bdd_info_t = FunctionOverride::image_bdd_info_t;

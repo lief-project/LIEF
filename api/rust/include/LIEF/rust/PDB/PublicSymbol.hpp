@@ -14,9 +14,9 @@
  */
 #pragma once
 
+#include "LIEF/PDB/PublicSymbol.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/PDB/PublicSymbol.hpp"
 
 class PDB_PublicSymbol : private Mirror<LIEF::pdb::PublicSymbol> {
   public:

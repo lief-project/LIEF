@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
 
 FMT_FORMATTER(LIEF::ELF::DynamicEntryFlags::FLAG, LIEF::ELF::to_string);
 

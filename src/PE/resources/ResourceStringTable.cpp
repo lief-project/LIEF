@@ -16,11 +16,11 @@
 #include <spdlog/fmt/fmt.h>
 #include <utility>
 
-#include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/utils.hpp"
 
-#include "LIEF/PE/resources/ResourceStringTable.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/PE/resources/ResourceStringTable.hpp"
 
 namespace LIEF::PE {
 
@@ -148,17 +148,17 @@ std::string ResourceStringTable::key_u8() const {
   return u16tou8(key());
 }
 
-optional<std::string> ResourceStringTable::get(const std::string& key) const {
+std::optional<std::string> ResourceStringTable::get(const std::string& key) const {
   auto u16 = u8tou16(key);
   if (!u16) {
-    return nullopt();
+    return std::nullopt;
   }
 
   if (auto value = get(*u16)) {
     return u16tou8(*value);
   }
 
-  return nullopt();
+  return std::nullopt;
 }
 
 void ResourceStringTable::accept(Visitor& visitor) const {

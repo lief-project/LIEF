@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include "LIEF/VDEX/Header.hpp"
+#include <string>
 
 #include "internal_utils.hpp"
 
@@ -37,4 +37,4 @@ Header::Header(const T* header) :
 }
 
 
-} // namespace LIEF::VDEX
+}

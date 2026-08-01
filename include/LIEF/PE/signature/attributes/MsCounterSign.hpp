@@ -16,17 +16,17 @@
 #ifndef LIEF_PE_ATTRIBUTES_MS_COUNTER_SIGNATURE_H
 #define LIEF_PE_ATTRIBUTES_MS_COUNTER_SIGNATURE_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/PE/signature/x509.hpp"
-#include "LIEF/PE/signature/SignerInfo.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
+#include "LIEF/PE/signature/SignerInfo.hpp"
+#include "LIEF/PE/signature/x509.hpp"
 
 #include <vector>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class exposes the MS Counter Signature attribute
 class LIEF_API MsCounterSign : public Attribute {
@@ -101,6 +101,6 @@ class LIEF_API MsCounterSign : public Attribute {
 };
 
 }
-}
+
 
 #endif

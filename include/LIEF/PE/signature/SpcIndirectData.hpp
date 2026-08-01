@@ -15,19 +15,20 @@
  */
 #ifndef LIEF_PE_SPC_INDIRECT_DATA_H
 #define LIEF_PE_SPC_INDIRECT_DATA_H
+#include <string_view>
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include <vector>
-#include <cstdint>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class LIEF_API SpcIndirectData : public ContentInfo::Content {
   friend class SignatureParser;
 
@@ -57,11 +58,11 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
     return digest_;
   }
 
-  const std::string& file() const {
+  std::string_view file() const LIEF_LIFETIMEBOUND {
     return file_;
   }
 
-  const std::string& url() const {
+  std::string_view url() const LIEF_LIFETIMEBOUND {
     return url_;
   }
 
@@ -89,5 +90,5 @@ class LIEF_API SpcIndirectData : public ContentInfo::Content {
   std::vector<uint8_t> digest_;
 };
 }
-}
+
 #endif

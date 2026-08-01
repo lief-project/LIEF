@@ -16,11 +16,9 @@
 #define LIEF_ASM_MIPS_OPERAND_IMM_H
 #include "LIEF/asm/mips/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace mips {
+
 /// Namespace that wraps the different Mips operands
-namespace operands {
+namespace LIEF::assembly::mips::operands {
 
 
 /// This class represents an immediate operand (i.e. a constant)
@@ -43,7 +41,6 @@ class LIEF_API Immediate : public Operand {
   ~Immediate() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

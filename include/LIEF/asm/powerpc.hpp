@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_POWERPC_H
 #define LIEF_ASM_POWERPC_H
-#include <LIEF/asm/powerpc/Instruction.hpp>
-#include <LIEF/asm/powerpc/opcodes.hpp>
-#include <LIEF/asm/powerpc/registers.hpp>
-#include <LIEF/asm/powerpc/operands.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/powerpc/Instruction.hpp"
+#include "LIEF/asm/powerpc/opcodes.hpp"
+#include "LIEF/asm/powerpc/operands.hpp"
+#include "LIEF/asm/powerpc/registers.hpp"
+// IWYU pragma: end_exports
 #endif

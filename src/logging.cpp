@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "LIEF/config.h"
 #include "LIEF/logging.hpp"
+#include "LIEF/config.h"
 #include "LIEF/platforms.hpp"
 #include "logging.hpp"
 
@@ -27,8 +27,8 @@
   #include "fmt/args.h"
 #endif
 
-#include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 #if defined(__ANDROID__)
   #include "spdlog/sinks/android_sink.h"

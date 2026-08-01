@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "spdlog/fmt/fmt.h"
 #include "LIEF/Visitor.hpp"
+#include "spdlog/fmt/fmt.h"
 
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "MachO/Structures.hpp"

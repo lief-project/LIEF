@@ -14,10 +14,10 @@
  */
 #pragma once
 #include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
-#include "LIEF/rust/PE/signature/x509.hpp"
-#include "LIEF/rust/PE/signature/SignerInfo.hpp"
 #include "LIEF/rust/PE/signature/ContentInfo.hpp"
+#include "LIEF/rust/PE/signature/SignerInfo.hpp"
 #include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
+#include "LIEF/rust/PE/signature/x509.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class PE_MsCounterSign : public PE_Attribute {

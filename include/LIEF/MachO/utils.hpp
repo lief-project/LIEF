@@ -16,9 +16,9 @@
 #ifndef LIEF_MACHO_UTILS_H
 #define LIEF_MACHO_UTILS_H
 
+#include "LIEF/visibility.h"
 #include <cstdint>
 #include <functional>
-#include "LIEF/visibility.h"
 
 #include <string>
 #include <vector>

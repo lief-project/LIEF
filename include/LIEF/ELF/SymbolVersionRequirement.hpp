@@ -16,18 +16,19 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_REQUIREMENTS_H
 #define LIEF_ELF_SYMBOL_VERSION_REQUIREMENTS_H
 
+#include <string_view>
 #include <cstdint>
-#include <string>
-#include <ostream>
-#include <vector>
 #include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 class Parser;
 class SymbolVersionAuxRequirement;
 
@@ -81,7 +82,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
   }
 
   /// Return the library name associated with this requirement (e.g. ``libc.so.6``)
-  const std::string& name() const LIEF_LIFETIMEBOUND {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -148,5 +149,5 @@ class LIEF_API SymbolVersionRequirement : public Object {
 };
 
 }
-}
+
 #endif

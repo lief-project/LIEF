@@ -15,9 +15,9 @@
 
 #pragma once
 #include "LIEF/MachO/BuildVersion.hpp"
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/MachO/BuildToolVersion.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
-#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class MachO_BuildVersion : public MachO_Command {

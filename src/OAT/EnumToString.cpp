@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/OAT/enums.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
+#include "LIEF/OAT/enums.hpp"
 
 #include "frozen.hpp"
 
@@ -96,4 +96,4 @@ const char* to_string(INSTRUCTION_SETS e) {
 }
 
 
-} // namespace LIEF::OAT
+}

@@ -12,14 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <array>
 #include <spdlog/fmt/compile.h>
+#include <array>
 
 #include "jni/java/util/List.hpp"
 
+#include "jni/jni_utils.hpp"
 #include "jni/lief/dwarf/editor/Function.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 namespace lief_jni::dwarf::editor {
 

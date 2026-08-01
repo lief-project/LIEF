@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/errors.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 
 namespace LIEF::MachO {

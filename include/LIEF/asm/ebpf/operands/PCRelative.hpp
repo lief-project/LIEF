@@ -16,10 +16,8 @@
 #define LIEF_ASM_EBPF_OPERAND_PCREL_H
 #include "LIEF/asm/ebpf/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace ebpf {
-namespace operands {
+
+namespace LIEF::assembly::ebpf::operands {
 
 /// This class represents a PC-relative operand.
 ///
@@ -41,7 +39,6 @@ class LIEF_API PCRelative : public Operand {
   ~PCRelative() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

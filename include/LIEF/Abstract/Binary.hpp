@@ -16,22 +16,22 @@
 #ifndef LIEF_ABSTRACT_BINARY_H
 #define LIEF_ABSTRACT_BINARY_H
 
-#include <vector>
-#include <memory>
 #include <unordered_map>
+#include <memory>
+#include <vector>
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
-#include "LIEF/iterators.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/Function.hpp"
+#include "LIEF/Abstract/Header.hpp"
 
-#include "LIEF/asm/Instruction.hpp"
 #include "LIEF/asm/AssemblerConfig.hpp"
+#include "LIEF/asm/Instruction.hpp"
 
 namespace llvm {
 class MCInst;
@@ -241,7 +241,7 @@ class LIEF_API Binary : public Object {
       get_int_from_virtual_address(uint64_t va,
                                    VA_TYPES addr_type = VA_TYPES::AUTO) const {
     T value;
-    static_assert(std::is_integral<T>::value, "Require an integral type");
+    static_assert(std::is_integral_v<T>, "Require an integral type");
     span<const uint8_t> raw =
         get_content_from_virtual_address(va, sizeof(T), addr_type);
     if (raw.empty() || raw.size() < sizeof(T)) {

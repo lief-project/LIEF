@@ -18,16 +18,16 @@
 
 #include <cstdint>
 
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 class Binary;
 class LIEF_API MemoryStream : public BinaryStream {
   public:
-  using BinaryStream::p;
   using BinaryStream::end;
+  using BinaryStream::p;
   using BinaryStream::start;
 
   MemoryStream() = delete;

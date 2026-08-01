@@ -14,12 +14,12 @@
  */
 #ifndef LIEF_DEBUGINFO_H
 #define LIEF_DEBUGINFO_H
-#include <memory>
 #include <cstdint>
+#include <memory>
 #include <string>
 
 #include "LIEF/visibility.h"
-#include "LIEF/optional.hpp"
+#include <optional>
 namespace LIEF {
 
 class Binary;
@@ -61,7 +61,7 @@ class LIEF_API DebugInfo {
   /// ```
   template<class T>
   const T* as() const {
-    static_assert(std::is_base_of<DebugInfo, T>::value,
+    static_assert(std::is_base_of_v<DebugInfo, T>,
                   "Requires DebugInfo inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
@@ -70,7 +70,7 @@ class LIEF_API DebugInfo {
   }
 
   /// Attempt to resolve the address of the function specified by `name`.
-  virtual optional<uint64_t>
+  virtual std::optional<uint64_t>
       find_function_address(const std::string& name) const = 0;
 
   protected:

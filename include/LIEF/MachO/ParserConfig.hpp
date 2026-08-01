@@ -17,8 +17,8 @@
 #define LIEF_MACHO_PARSER_CONFIG_H
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 /// This structure is used to tweak the MachO Parser (MachO::Parser)
 struct LIEF_API ParserConfig {
@@ -60,5 +60,5 @@ struct LIEF_API ParserConfig {
 };
 
 }
-}
+
 #endif

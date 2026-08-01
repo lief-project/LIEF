@@ -1,5 +1,5 @@
-#include <LIEF/ObjC.hpp>
 #include <LIEF/MachO.hpp>
+#include <LIEF/ObjC.hpp>
 #include <LIEF/logging.hpp>
 #include <LIEF/utils.hpp>
 

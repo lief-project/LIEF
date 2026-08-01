@@ -15,8 +15,8 @@
 #pragma once
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class ELF_Note : public Mirror<LIEF::ELF::Note> {
   public:

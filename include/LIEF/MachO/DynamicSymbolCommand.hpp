@@ -15,15 +15,16 @@
  */
 #ifndef LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H
 #define LIEF_MACHO_DYNAMIC_SYMBOL_COMMAND_H
+#include <memory>
 #include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class Symbol;
 class BinaryParser;
 class Builder;
@@ -58,7 +59,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   DynamicSymbolCommand(const DynamicSymbolCommand& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<DynamicSymbolCommand>(new DynamicSymbolCommand(*this));
+    return std::make_unique<DynamicSymbolCommand>(*this);
   }
 
   ~DynamicSymbolCommand() override = default;
@@ -296,5 +297,5 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
 };
 
 }
-}
+
 #endif

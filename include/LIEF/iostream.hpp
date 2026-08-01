@@ -15,18 +15,19 @@
  */
 #ifndef LIEF_OSTREAM_H
 #define LIEF_OSTREAM_H
-#include <limits>
+#include <array>
 #include <cassert>
-#include <ios>
 #include <cstdint>
 #include <cstring>
+#include <ios>
+#include <limits>
+#include <string>
 #include <vector>
-#include <array>
 
-#include "LIEF/visibility.h"
-#include "LIEF/span.hpp"
-#include "LIEF/optional.hpp"
 #include "LIEF/endianness_support.hpp"
+#include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
 namespace LIEF {
 class LIEF_API vector_iostream {
@@ -74,6 +75,11 @@ class LIEF_API vector_iostream {
     return write(reinterpret_cast<const uint8_t*>(s.c_str()), s.size() + 1);
   }
 
+  vector_iostream& write(const std::string_view& s) {
+    write(reinterpret_cast<const uint8_t*>(s.data()), s.size());
+    return write<uint8_t>(0);
+  }
+
   bool empty() const {
     return raw_->empty();
   }
@@ -94,9 +100,8 @@ class LIEF_API vector_iostream {
     return write(other.data());
   }
 
-  template<class T,
-           typename = typename std::enable_if<std::is_standard_layout<T>::value &&
-                                              std::is_trivial<T>::value>::type>
+  template<class T, typename = std::enable_if_t<std::is_standard_layout_v<T> &&
+                                                std::is_trivial_v<T>>>
   vector_iostream& write(const T& t) {
     const auto pos = static_cast<size_t>(tellp());
     if (raw_->size() < (pos + sizeof(T))) {
@@ -140,7 +145,7 @@ class LIEF_API vector_iostream {
   }
 
   template<typename T, class U>
-  vector_iostream& write(const optional<U>& opt) {
+  vector_iostream& write(const std::optional<U>& opt) {
     return opt ? write<T>(*opt) : *this;
   }
 

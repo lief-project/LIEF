@@ -16,8 +16,8 @@
 #ifndef LIEF_ELF_NOTE_DETAILS_PROPERTIES_AARCH64_PAUTH_H
 #define LIEF_ELF_NOTE_DETAILS_PROPERTIES_AARCH64_PAUTH_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;

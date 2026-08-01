@@ -14,9 +14,9 @@
  */
 #pragma once
 #include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/rust/Abstract/Symbol.hpp"
 #include "LIEF/rust/ELF/Section.hpp"
 #include "LIEF/rust/ELF/SymbolVersion.hpp"
-#include "LIEF/rust/Abstract/Symbol.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class ELF_Symbol : public AbstractSymbol {

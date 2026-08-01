@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_AARCH64_H
 #define LIEF_ASM_AARCH64_H
-#include <LIEF/asm/aarch64/Instruction.hpp>
-#include <LIEF/asm/aarch64/opcodes.hpp>
-#include <LIEF/asm/aarch64/registers.hpp>
-#include <LIEF/asm/aarch64/operands.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/aarch64/Instruction.hpp"
+#include "LIEF/asm/aarch64/opcodes.hpp"
+#include "LIEF/asm/aarch64/operands.hpp"
+#include "LIEF/asm/aarch64/registers.hpp"
+// IWYU pragma: end_exports
 #endif

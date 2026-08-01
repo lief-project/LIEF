@@ -15,9 +15,9 @@
 
 #pragma once
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/Symbol.hpp"
-#include "LIEF/rust/Iterator.hpp"
 
 class MachO_DynamicSymbolCommand : public MachO_Command {
   public:

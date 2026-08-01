@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_RUNTIME_UTILS_H
 #define LIEF_RUNTIME_UTILS_H
-#include <cstdint>
 #include "LIEF/config.h"
+#include <cstdint>
 
 #if defined(LIEF_RUNTIME_SUPPORT)
   #include "LIEF/runtime/config.h"
 #endif
 
-namespace LIEF {
-namespace runtime {
+
+namespace LIEF::runtime {
 
 enum class PLATFORMS : uint32_t {
   NONE = 0,
@@ -110,5 +110,5 @@ static inline constexpr uintptr_t page_end(uintptr_t address,
 }
 
 }
-}
+
 #endif

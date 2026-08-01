@@ -17,16 +17,16 @@
 #include <memory>
 #include <string>
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/iterators.hpp"
 #include "LIEF/Abstract/DebugInfo.hpp"
 #include "LIEF/DWARF/CompilationUnit.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
+
 /// Namespace for the DWARF debug format
-namespace dwarf {
+namespace LIEF::dwarf {
 class Function;
 class Variable;
 
@@ -76,7 +76,8 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   compilation_units_it compilation_units() const LIEF_LIFETIMEBOUND;
 
   /// Attempt to resolve the address of the function specified by `name`.
-  optional<uint64_t> find_function_address(const std::string& name) const override;
+  std::optional<uint64_t>
+      find_function_address(const std::string& name) const override;
 
   FORMAT format() const override {
     return LIEF::DebugInfo::FORMAT::DWARF;
@@ -96,5 +97,5 @@ inline std::unique_ptr<DebugInfo> load(const std::string& dwarf_path) {
 }
 
 }
-}
+
 #endif

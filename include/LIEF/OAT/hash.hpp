@@ -16,8 +16,8 @@
 #ifndef LIEF_OAT_HASH_H
 #define LIEF_OAT_HASH_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class Object;

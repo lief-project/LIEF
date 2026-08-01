@@ -15,13 +15,13 @@
  */
 #ifndef ELF_ENUM_TO_STRING_H
 #define ELF_ENUM_TO_STRING_H
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 LIEF_API const char* to_string(ARCH e);
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

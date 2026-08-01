@@ -18,8 +18,8 @@
 
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/ExceptionInfo.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -60,9 +60,7 @@ class LIEF_API RuntimeFunctionAArch64 : public ExceptionInfo {
   RuntimeFunctionAArch64& operator=(RuntimeFunctionAArch64&&) = default;
 
   std::unique_ptr<ExceptionInfo> clone() const override {
-    return std::unique_ptr<RuntimeFunctionAArch64>(
-        new RuntimeFunctionAArch64(*this)
-    );
+    return std::make_unique<RuntimeFunctionAArch64>(*this);
   }
 
   /// Length of the function in bytes

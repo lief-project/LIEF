@@ -14,10 +14,10 @@
  */
 #include <array>
 
+#include "jni/jni_utils.hpp"
 #include "jni/lief/elf/Binary.hpp"
 #include "jni/lief/elf/Relocation.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 namespace lief_jni::elf {
 

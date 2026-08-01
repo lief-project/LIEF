@@ -19,7 +19,6 @@
 
 #include "COFF/structures.hpp"
 
-#include "logging.hpp"
 
 #include <spdlog/fmt/fmt.h>
 #include <sstream>

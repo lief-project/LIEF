@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 // NOLINTBEGIN
-#include "LIEF/ObjC/Metadata.hpp"
-#include "LIEF/ObjC/Class.hpp"
-#include "LIEF/ObjC/Category.hpp"
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/ObjC/Category.hpp"
+#include "LIEF/ObjC/Class.hpp"
+#include "LIEF/ObjC/Metadata.hpp"
 
+#include "internal_utils.hpp"
 #include "logging.hpp"
 #include "messages.hpp"
-#include "internal_utils.hpp"
 
 // ----------------------------------------------------------------------------
 // Mach-O Interface

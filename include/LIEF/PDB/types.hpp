@@ -14,16 +14,18 @@
  */
 #ifndef LIEF_PDB_TYPES_H
 #define LIEF_PDB_TYPES_H
-#include <LIEF/PDB/Type.hpp>
-#include <LIEF/PDB/types/Simple.hpp>
-#include <LIEF/PDB/types/Array.hpp>
-#include <LIEF/PDB/types/BitField.hpp>
-#include <LIEF/PDB/types/ClassLike.hpp>
-#include <LIEF/PDB/types/Enum.hpp>
-#include <LIEF/PDB/types/Function.hpp>
-#include <LIEF/PDB/types/Attribute.hpp>
-#include <LIEF/PDB/types/Method.hpp>
-#include <LIEF/PDB/types/Modifier.hpp>
-#include <LIEF/PDB/types/Pointer.hpp>
-#include <LIEF/PDB/types/Union.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/PDB/Type.hpp"
+#include "LIEF/PDB/types/Array.hpp"
+#include "LIEF/PDB/types/Attribute.hpp"
+#include "LIEF/PDB/types/BitField.hpp"
+#include "LIEF/PDB/types/ClassLike.hpp"
+#include "LIEF/PDB/types/Enum.hpp"
+#include "LIEF/PDB/types/Function.hpp"
+#include "LIEF/PDB/types/Method.hpp"
+#include "LIEF/PDB/types/Modifier.hpp"
+#include "LIEF/PDB/types/Pointer.hpp"
+#include "LIEF/PDB/types/Simple.hpp"
+#include "LIEF/PDB/types/Union.hpp"
+// IWYU pragma: end_exports
 #endif

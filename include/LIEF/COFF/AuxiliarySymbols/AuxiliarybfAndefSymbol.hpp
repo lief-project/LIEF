@@ -18,12 +18,11 @@
 
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
 
-namespace COFF {
+namespace LIEF::COFF {
 
 class LIEF_API AuxiliarybfAndefSymbol : public AuxiliarySymbol {
   public:
@@ -40,9 +39,7 @@ class LIEF_API AuxiliarybfAndefSymbol : public AuxiliarySymbol {
   AuxiliarybfAndefSymbol& operator=(AuxiliarybfAndefSymbol&&) = default;
 
   std::unique_ptr<AuxiliarySymbol> clone() const override {
-    return std::unique_ptr<AuxiliarybfAndefSymbol>(
-        new AuxiliarybfAndefSymbol{*this}
-    );
+    return std::make_unique<AuxiliarybfAndefSymbol>(*this);
   }
 
   std::string to_string() const override {
@@ -57,5 +54,5 @@ class LIEF_API AuxiliarybfAndefSymbol : public AuxiliarySymbol {
 };
 
 }
-}
+
 #endif

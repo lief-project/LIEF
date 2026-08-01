@@ -14,13 +14,13 @@
  */
 #pragma once
 
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/PDB/Function.hpp"
-#include "LIEF/rust/PDB/BuildMetadata.hpp"
-#include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/DebugDeclOpt.hpp"
 #include "LIEF/PDB/CompilationUnit.hpp"
+#include "LIEF/rust/DebugDeclOpt.hpp"
+#include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PDB/BuildMetadata.hpp"
+#include "LIEF/rust/PDB/Function.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PDB_CompilationUnit : private Mirror<LIEF::pdb::CompilationUnit> {
   public:

@@ -15,19 +15,17 @@
 #ifndef LIEF_DWARF_EDITOR_ARRAY_TYPE_H
 #define LIEF_DWARF_EDITOR_ARRAY_TYPE_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 
 /// This class represents an array type (`DW_TAG_array_type`).
 class LIEF_API ArrayType : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   ArrayType(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -37,6 +35,6 @@ class LIEF_API ArrayType : public Type {
 };
 
 }
-}
-}
+
+
 #endif

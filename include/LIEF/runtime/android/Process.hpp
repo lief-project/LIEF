@@ -15,16 +15,15 @@
  */
 #ifndef LIEF_RUNTIME_ANDROID_PROCESS_H
 #define LIEF_RUNTIME_ANDROID_PROCESS_H
-#include <LIEF/visibility.h>
-#include <LIEF/runtime/Process.hpp>
-#include <LIEF/runtime/android/Property.hpp>
+#include "LIEF/runtime/Process.hpp"
+#include "LIEF/runtime/android/Property.hpp"
+#include "LIEF/visibility.h"
 
 #include <string>
 #include <vector>
 
-namespace LIEF {
-namespace runtime {
-namespace android {
+
+namespace LIEF::runtime::android {
 
 /// This class exposes Android-specific API for the current process
 class LIEF_API Process : public runtime::Process {
@@ -38,7 +37,7 @@ class LIEF_API Process : public runtime::Process {
 
   /// Return the value of the Android system property with the given `name`
   /// (e.g. `ro.build.version.sdk`).
-  static optional<Property> get_system_property(const std::string& name);
+  static std::optional<Property> get_system_property(const std::string& name);
 
   /// Get all the system properties
   static properties_t properties();
@@ -49,6 +48,6 @@ class LIEF_API Process : public runtime::Process {
 };
 
 }
-}
-}
+
+
 #endif

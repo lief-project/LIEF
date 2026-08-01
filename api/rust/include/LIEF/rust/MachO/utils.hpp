@@ -14,10 +14,10 @@
  */
 
 #pragma once
-#include <string>
 #include "LIEF/MachO/utils.hpp"
 #include "LIEF/rust/MachO/Binary.hpp"
 #include "LIEF/rust/MachO/FatBinary.hpp"
+#include <string>
 
 class MachO_Utils {
   public:

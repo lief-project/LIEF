@@ -16,17 +16,17 @@
 #ifndef LIEF_PE_HEADER_H
 #define LIEF_PE_HEADER_H
 #include <array>
-#include <vector>
-#include <ostream>
 #include <cstdint>
+#include <ostream>
+#include <vector>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/enums.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/enums.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 namespace details {
 struct pe_header;
@@ -328,7 +328,7 @@ class LIEF_API Header : public Object {
 LIEF_API const char* to_string(Header::CHARACTERISTICS c);
 LIEF_API const char* to_string(Header::MACHINE_TYPES c);
 }
-}
+
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::Header::CHARACTERISTICS);
 #endif

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <memory>
 #include "LIEF/runtime/Process.hpp"
-#include "LIEF/runtime/windows/Process.hpp"
 #include "LIEF/runtime/windows/PEB.hpp"
+#include "LIEF/runtime/windows/Process.hpp"
 #include "LIEF/utils.hpp"
 #include "logging.hpp"
+#include <memory>
 
 #include <Windows.h>
-#include <sysinfoapi.h>
 #include <processenv.h>
+#include <sysinfoapi.h>
 
 namespace LIEF::runtime {
 int32_t Process::pid() {
@@ -42,11 +42,11 @@ uint32_t Process::page_size() {
   return PAGESZ;
 }
 
-optional<std::string> Process::get_env(const std::string& key) {
+std::optional<std::string> Process::get_env(const std::string& key) {
   auto u16key = u8tou16(key);
   if (!u16key) {
     LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
-    return nullopt();
+    return std::nullopt;
   }
   std::array<wchar_t, MAX_PATH> value{};
 
@@ -57,7 +57,7 @@ optional<std::string> Process::get_env(const std::string& key) {
   if (size == 0) {
     LIEF_DEBUG("Error: {}:{}. GetEnvironmentVariableW('{}') failed", __FUNCTION__,
                __LINE__, key);
-    return nullopt();
+    return std::nullopt;
   }
 
   if (size <= value.size()) {
@@ -72,7 +72,7 @@ optional<std::string> Process::get_env(const std::string& key) {
     return u16tou8(reinterpret_cast<const char16_t*>(out.data()), size);
   }
 
-  return nullopt();
+  return std::nullopt;
 }
 
 Process::EnvVars Process::get_envs() {

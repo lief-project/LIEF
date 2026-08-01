@@ -17,6 +17,7 @@
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/string_view.h>
 
 #include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"

@@ -18,9 +18,9 @@
 #include "LIEF/rust/DyldSharedCache/MappingInfo.hpp"
 #include "LIEF/rust/DyldSharedCache/SubCache.hpp"
 
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
 
 class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
   public:

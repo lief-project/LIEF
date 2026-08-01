@@ -15,12 +15,14 @@
  */
 #ifndef LIEF_PE_RESOURCE_VERSION_H
 #define LIEF_PE_RESOURCE_VERSION_H
+#include <cstdint>
 #include <ostream>
+#include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/errors.hpp"
-#include "LIEF/optional.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
@@ -378,8 +380,8 @@ class LIEF_API ResourceVersion : public Object {
   std::u16string key_;
   fixed_file_info_t fixed_file_info_;
 
-  optional<ResourceStringFileInfo> string_file_info_;
-  optional<ResourceVarFileInfo> var_file_info_;
+  std::optional<ResourceStringFileInfo> string_file_info_;
+  std::optional<ResourceVarFileInfo> var_file_info_;
 };
 
 LIEF_API const char* to_string(ResourceVersion::fixed_file_info_t::FILE_FLAGS e);

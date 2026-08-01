@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/config.h"
-#include "LIEF/Object.hpp"
-#include "logging.hpp"
 #include "LIEF/Abstract/json.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/config.h"
 
 #ifdef LIEF_JSON_SUPPORT
   #include "Abstract/json_internal.hpp"
+#else
+  #include "logging.hpp"
 #endif
 
 namespace LIEF {
@@ -35,4 +36,4 @@ std::string to_json_from_abstract([[maybe_unused]] const Object& v) {
 #endif
 }
 
-} // namespace LIEF
+}

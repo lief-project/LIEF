@@ -16,13 +16,13 @@
 #ifndef LIEF_PE_POGO_H
 #define LIEF_PE_POGO_H
 
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/PE/debug/Debug.hpp"
 #include "LIEF/PE/debug/PogoEntry.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Builder;
 class Parser;
@@ -106,6 +106,6 @@ class LIEF_API Pogo : public Debug {
 LIEF_API const char* to_string(Pogo::SIGNATURES e);
 
 } // Namespace PE
-} // Namespace LIEF
+// Namespace LIEF
 
 #endif

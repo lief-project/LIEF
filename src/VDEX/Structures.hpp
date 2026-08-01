@@ -16,8 +16,8 @@
 #ifndef LIEF_VDEX_STRUCTURES_H
 #define LIEF_VDEX_STRUCTURES_H
 
-#include <cstring>
 #include "LIEF/types.hpp"
+#include <cstring>
 
 
 /// Namespace related to the LIEF's VDEX module
@@ -82,7 +82,7 @@ class VDEX11 {
   static constexpr vdex_version_t vdex_version = VDEX_11::vdex_version;
 };
 
-} // namespace LIEF::VDEX::details
+}
 
 
 #endif

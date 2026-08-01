@@ -1,7 +1,7 @@
 #pragma once
+#include "LIEF/asm/AssemblerConfig.hpp"
 #include "LIEF/visibility.h"
 #include <memory>
-#include "LIEF/asm/AssemblerConfig.hpp"
 
 struct AssemblerConfig_r;
 

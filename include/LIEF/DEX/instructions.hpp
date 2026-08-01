@@ -16,12 +16,11 @@
 #ifndef LIEF_DEX_INSTRUCTIONS_H
 #define LIEF_DEX_INSTRUCTIONS_H
 #include "LIEF/visibility.h"
-#include "LIEF/types.hpp"
 #include <cstddef>
 #include <cstdint>
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 enum SWITCH_ARRAY_IDENT : uint16_t {
   IDENT_PACKED_SWITCH = 0x0100,
@@ -355,6 +354,6 @@ inline bool valid_inst_size(const uint8_t* ptr, const uint8_t* end, size_t size)
 }
 
 } // Namespace LIEF
-} // Namespace DEX
+// Namespace DEX
 
 #endif

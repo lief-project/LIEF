@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include "LIEF/DEX/Header.hpp"
+#include <string>
 
 namespace LIEF::DEX {
 
@@ -57,4 +57,4 @@ Header::Header(const T& header) :
 }
 
 
-} // namespace LIEF::DEX
+}

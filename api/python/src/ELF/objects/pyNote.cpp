@@ -18,6 +18,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/string_view.h>
 #include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/utils.hpp"
 
@@ -159,4 +160,3 @@ void create<Note>(nb::module_& m) {
 }
 
 }
-

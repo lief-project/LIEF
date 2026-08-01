@@ -16,8 +16,8 @@
 #include "LIEF/ELF/NoteDetails/properties/AArch64Feature.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
 
 FMT_FORMATTER(LIEF::ELF::AArch64Feature::FEATURE, LIEF::ELF::to_string);
 

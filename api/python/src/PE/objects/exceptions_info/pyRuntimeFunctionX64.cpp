@@ -25,7 +25,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 
-#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/optional.h>
 
 namespace LIEF::PE::unwind_x64::py {
 void init(nb::module_& m);

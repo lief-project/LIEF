@@ -16,28 +16,29 @@
 #ifndef LIEF_PE_BINARY_H
 #define LIEF_PE_BINARY_H
 
-#include "LIEF/PE/Header.hpp"
-#include "LIEF/PE/OptionalHeader.hpp"
-#include "LIEF/PE/DosHeader.hpp"
-#include "LIEF/PE/Import.hpp"
-#include "LIEF/PE/DelayImport.hpp"
-#include "LIEF/PE/DataDirectory.hpp"
+#include <memory>
+
 #include "LIEF/PE/Builder.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/DelayImport.hpp"
+#include "LIEF/PE/DosHeader.hpp"
+#include "LIEF/PE/Header.hpp"
+#include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 
-#include "LIEF/COFF/Symbol.hpp"
 #include "LIEF/COFF/String.hpp"
+#include "LIEF/COFF/Symbol.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
 
 /// Namespace related to the LIEF's PE module
-namespace PE {
+namespace LIEF::PE {
 class ExceptionInfo;
 class CodeViewPDB;
 class Debug;
@@ -667,12 +668,12 @@ class LIEF_API Binary : public LIEF::Binary {
   Import& add_import(const std::string& name,
                      int32_t pos = -1) LIEF_LIFETIMEBOUND {
     if (pos < 0) {
-      imports_.push_back(std::unique_ptr<Import>(new Import(name)));
+      imports_.push_back(std::make_unique<Import>(name));
       return *imports_.back();
     }
     assert(pos >= 0);
     return **imports_.insert(imports_.begin() + pos,
-                             std::unique_ptr<Import>(new Import(name)));
+                             std::make_unique<Import>(name));
   }
 
   /// Remove the imported library with the given `name`
@@ -1004,5 +1005,5 @@ class LIEF_API Binary : public LIEF::Binary {
 };
 
 }
-}
+
 #endif

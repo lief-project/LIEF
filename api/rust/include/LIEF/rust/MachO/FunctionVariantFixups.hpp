@@ -20,8 +20,8 @@
 #include "LIEF/rust/MachO/SegmentCommand.hpp"
 
 #include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class MachO_FunctionVariantFixups_Fixup
   : public Mirror<LIEF::MachO::FunctionVariantFixups::Fixup> {

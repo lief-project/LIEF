@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
-#include <memory>
 #include "binaryninja/analysis/Analyzer.hpp"
 #include "binaryninja/analysis/TypeBuilder.hpp"
+#include <memory>
 
 #include "LIEF/DyldSharedCache.hpp"
 

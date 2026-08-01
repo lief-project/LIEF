@@ -15,20 +15,20 @@
  */
 #include <sstream>
 
-#include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/PE/ResourceData.hpp"
-#include "LIEF/PE/resources/ResourceVersion.hpp"
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
+#include "LIEF/PE/resources/ResourceVersion.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "logging.hpp"
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
+#include "logging.hpp"
 
 FMT_FORMATTER(LIEF::PE::ResourceVersion::fixed_file_info_t::VERSION_OS,
               LIEF::PE::to_string);

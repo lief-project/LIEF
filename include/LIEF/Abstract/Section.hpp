@@ -16,13 +16,14 @@
 #ifndef LIEF_ABSTRACT_SECTION_H
 #define LIEF_ABSTRACT_SECTION_H
 
+#include <string_view>
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
 
-#include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/span.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -41,13 +42,13 @@ class LIEF_API Section : public Object {
   Section(const Section&) = default;
 
   /// Section's name
-  virtual std::string name() const {
-    return name_.c_str();
+  virtual std::string_view name() const LIEF_LIFETIMEBOUND {
+    return fullname().substr(0, fullname().find_first_of('\0'));
   }
 
   /// Return the **complete** section's name which might include
   /// trailing (``0``) bytes
-  virtual const std::string& fullname() const {
+  virtual std::string_view fullname() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 

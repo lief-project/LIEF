@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 #pragma once
-#include <LIEF/DWARF/editor/CompilationUnit.hpp>
 #include "LIEF/rust/Mirror.hpp"
+#include <LIEF/DWARF/editor/CompilationUnit.hpp>
 
-#include "LIEF/rust/DWARF/editor/Function.hpp"
-#include "LIEF/rust/DWARF/editor/Variable.hpp"
-#include "LIEF/rust/DWARF/editor/Type.hpp"
-#include "LIEF/rust/DWARF/editor/EnumType.hpp"
-#include "LIEF/rust/DWARF/editor/TypeDef.hpp"
-#include "LIEF/rust/DWARF/editor/StructType.hpp"
+#include "LIEF/rust/DWARF/editor/ArrayType.hpp"
 #include "LIEF/rust/DWARF/editor/BaseType.hpp"
+#include "LIEF/rust/DWARF/editor/EnumType.hpp"
+#include "LIEF/rust/DWARF/editor/Function.hpp"
 #include "LIEF/rust/DWARF/editor/FunctionType.hpp"
 #include "LIEF/rust/DWARF/editor/PointerType.hpp"
-#include "LIEF/rust/DWARF/editor/ArrayType.hpp"
+#include "LIEF/rust/DWARF/editor/StructType.hpp"
+#include "LIEF/rust/DWARF/editor/Type.hpp"
+#include "LIEF/rust/DWARF/editor/TypeDef.hpp"
+#include "LIEF/rust/DWARF/editor/Variable.hpp"
 
 class DWARF_editor_CompilationUnit
   : public Mirror<LIEF::dwarf::editor::CompilationUnit> {

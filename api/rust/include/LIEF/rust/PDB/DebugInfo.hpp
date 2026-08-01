@@ -20,8 +20,8 @@
 #include "LIEF/rust/PDB/Type.hpp"
 #include "LIEF/rust/helpers.hpp"
 
-#include "LIEF/PDB/DebugInfo.hpp"
 #include "LIEF/PDB/CompilationUnit.hpp"
+#include "LIEF/PDB/DebugInfo.hpp"
 
 class PDB_DebugInfo : public AbstracDebugInfo {
   public:

@@ -15,9 +15,9 @@
  */
 #include "threading_alt.h"
 
-#include <mutex>
 #include <condition_variable>
 #include <mbedtls/threading.h>
+#include <mutex>
 
 inline auto* get_mu(mbedtls_platform_mutex_t* mu) {
   return reinterpret_cast<std::mutex*>(mu->mutex);

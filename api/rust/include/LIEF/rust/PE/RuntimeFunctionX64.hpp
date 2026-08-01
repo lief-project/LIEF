@@ -15,12 +15,12 @@
 #pragma once
 
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/PE/ExceptionInfo.hpp"
 #include "LIEF/rust/PE/UnwindCodeX64.hpp"
 #include "LIEF/rust/Span.hpp"
-#include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/optional.hpp"
 #include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/optional.hpp"
 
 class PE_RuntimeFunctionX64_unwind_info_t;
 

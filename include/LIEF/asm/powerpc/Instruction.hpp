@@ -14,18 +14,16 @@
  */
 #ifndef LIEF_ASM_POWERPC_INST_H
 #define LIEF_ASM_POWERPC_INST_H
-#include "LIEF/visibility.h"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/asm/Instruction.hpp"
-#include "LIEF/asm/powerpc/opcodes.hpp"
 #include "LIEF/asm/powerpc/Operand.hpp"
+#include "LIEF/asm/powerpc/opcodes.hpp"
 
-namespace LIEF {
-namespace assembly {
 
 /// PowerPC architecture-related namespace
-namespace powerpc {
+namespace LIEF::assembly::powerpc {
 
 class LIEF_API Instruction : public assembly::Instruction {
   public:
@@ -45,6 +43,6 @@ class LIEF_API Instruction : public assembly::Instruction {
   ~Instruction() override = default;
 };
 }
-}
-}
+
+
 #endif

@@ -1,9 +1,6 @@
 [[repos]]
 repo = "local"
 hooks = [
-  # ---------------------------------------------------------------------------
-  # Code formatting
-  # ---------------------------------------------------------------------------
   {
     id = "clang-format",
     name = "format - clang-format",
@@ -39,9 +36,6 @@ hooks = [
     entry = "rustfmt --edition 2024",
     files = "\\.rs$",
   },
-  # ---------------------------------------------------------------------------
-  # Linter
-  # ---------------------------------------------------------------------------
   {
     id = "lint-bindings-python-ty",
     name = "lint(bindings-python) - ty",
@@ -150,5 +144,33 @@ hooks = [
     ],
     pass_filenames = false,
     files = { glob = ["api/rust/crates/**/*.rs"] },
+  },
+  {
+    id = "iwyu-lint",
+    name = "IWYU",
+    language = "system",
+    entry = "iwyu-lint",
+    args = [
+      "--no-insert",
+      "--fix",
+      "--ignore", ".*third-party.*",
+      "--ignore", ".*spdlog.*",
+      "--ignore", ".*mbedtls.*",
+      "--ignore", ".*/psa/.*",
+      "--ignore", ".*nlohmann.*",
+      "--ignore", ".*frozen.*",
+      "--ignore", ".*nanobind.*",
+      "--ignore", ".*catch2.*",
+      "--ignore", ".*Catch2.*",
+      "--ignore", ".*utf8.*",
+      "--ignore", ".*utfcpp.*",
+    ],
+    files = {
+      glob = [
+        "src/**/*.cpp",
+        "include/**/*.hpp",
+        "src/**/*.hpp"
+      ]
+    },
   },
 ]

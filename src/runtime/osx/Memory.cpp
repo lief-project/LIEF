@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/Memory.hpp"
+#include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/utils.hpp"
 #include "logging.hpp"
 
@@ -104,9 +104,10 @@ std::string Memory::Chunk::to_string() const {
   return fmt::format("[0x{:016x}, 0x{:016x}]", addr(), addr() + size());
 }
 
-optional<Memory::Chunk> Memory::mmap(size_t size, uint32_t flags, uint32_t perms) {
+std::optional<Memory::Chunk> Memory::mmap(size_t size, uint32_t flags,
+                                          uint32_t perms) {
   if (size == 0) {
-    return nullopt();
+    return std::nullopt;
   }
 
   void* ret = ::mmap(/*__addr=*/nullptr, /*__len=*/size, get_posix_flags(perms),
@@ -114,7 +115,7 @@ optional<Memory::Chunk> Memory::mmap(size_t size, uint32_t flags, uint32_t perms
                      /*__fd=*/-1, /*__offset=*/0);
   if (ret == nullptr || reinterpret_cast<intptr_t>(ret) == -1) {
     LIEF_ERR("mmap failed: {}", strerror(errno));
-    return nullopt();
+    return std::nullopt;
   }
   return Chunk(ret, size, perms);
 }

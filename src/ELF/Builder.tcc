@@ -14,40 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <unordered_map>
 #include <algorithm>
 #include <cassert>
 #include <iterator>
-#include <unordered_map>
 
 #include "logging.hpp"
 
-#include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Builder.hpp"
+#include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Symbol.hpp"
-#include "LIEF/ELF/DynamicEntry.hpp"
-#include "LIEF/ELF/DynamicEntryArray.hpp"
-#include "LIEF/ELF/DynamicEntryLibrary.hpp"
-#include "LIEF/ELF/DynamicSharedObject.hpp"
-#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
-#include "LIEF/ELF/DynamicEntryFilter.hpp"
-#include "LIEF/ELF/DynamicEntryRunPath.hpp"
-#include "LIEF/ELF/DynamicEntryRpath.hpp"
-#include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
-#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/utils.hpp"
 
 #include "LIEF/errors.hpp"
 
-#include "ELF/Structures.hpp"
 #include "ELF/SizingInfo.hpp"
-#include "Object.tcc"
+#include "ELF/Structures.hpp"
 #include "ExeLayout.hpp"
+#include "Object.tcc"
 #include "ObjectFileLayout.hpp"
 #include "internal_utils.hpp"
 
@@ -801,7 +801,8 @@ ok_error_t Builder::build_sections() {
   vector_iostream section_headers(/*endian_swap=*/ios_.endian_swap());
   section_headers.reserve(nb_sections * sizeof(Elf_Shdr));
 
-  const std::unordered_map<std::string, size_t>& shstr_map = layout_->shstr_map();
+  const std::unordered_map<std::string_view, size_t>& shstr_map =
+      layout_->shstr_map();
   for (size_t i = 0; i < nb_sections; ++i) {
     const std::unique_ptr<Section>& section = binary_->sections_[i];
     LIEF_DEBUG("[FRAME  ] {}", section->is_frame());
@@ -991,7 +992,7 @@ ok_error_t Builder::build_symtab_symbols() {
 
   // On recent compilers, the symtab string table is merged with the section name
   // table
-  const std::unordered_map<std::string, size_t>* str_map =
+  const std::unordered_map<std::string_view, size_t>* str_map =
       layout->is_strtab_shared_shstrtab() ? &layout->shstr_map() :
                                             &layout->strtab_map();
 
@@ -1043,7 +1044,7 @@ ok_error_t Builder::build_dynamic_section() {
     switch (entry->tag()) {
       case DynamicEntry::TAG::NEEDED:
       {
-        const std::string& name = entry->as<DynamicEntryLibrary>()->name();
+        std::string name{entry->as<DynamicEntryLibrary>()->name()};
         auto it = dynstr_map.find(name);
         if (it == dynstr_map.end()) {
           LIEF_ERR("Can't find string offset in .dynstr for {}", name);
@@ -1055,7 +1056,7 @@ ok_error_t Builder::build_dynamic_section() {
 
       case DynamicEntry::TAG::SONAME:
       {
-        const std::string& name = entry->as<DynamicSharedObject>()->name();
+        std::string name{entry->as<DynamicSharedObject>()->name()};
         auto it = dynstr_map.find(name);
         if (it == dynstr_map.end()) {
           LIEF_ERR("Can't find string offset in .dynstr for {}", name);
@@ -1067,7 +1068,7 @@ ok_error_t Builder::build_dynamic_section() {
 
       case DynamicEntry::TAG::AUXILIARY:
       {
-        const std::string& name = entry->as<DynamicEntryAuxiliary>()->name();
+        std::string name{entry->as<DynamicEntryAuxiliary>()->name()};
         auto it = dynstr_map.find(name);
         if (it == dynstr_map.end()) {
           LIEF_ERR("Can't find string offset in .dynstr for {}", name);
@@ -1079,7 +1080,7 @@ ok_error_t Builder::build_dynamic_section() {
 
       case DynamicEntry::TAG::FILTER:
       {
-        const std::string& name = entry->as<DynamicEntryFilter>()->name();
+        std::string name{entry->as<DynamicEntryFilter>()->name()};
         auto it = dynstr_map.find(name);
         if (it == dynstr_map.end()) {
           LIEF_ERR("Can't find string offset in .dynstr for {}", name);
@@ -1091,7 +1092,7 @@ ok_error_t Builder::build_dynamic_section() {
 
       case DynamicEntry::TAG::RPATH:
       {
-        const std::string& name = entry->as<DynamicEntryRpath>()->rpath();
+        std::string name{entry->as<DynamicEntryRpath>()->rpath()};
         auto it = dynstr_map.find(name);
         if (it == dynstr_map.end()) {
           LIEF_ERR("Can't find string offset in .dynstr for {}", name);
@@ -1103,7 +1104,7 @@ ok_error_t Builder::build_dynamic_section() {
 
       case DynamicEntry::TAG::RUNPATH:
       {
-        const std::string& name = entry->as<DynamicEntryRunPath>()->runpath();
+        std::string name{entry->as<DynamicEntryRunPath>()->runpath()};
         auto it = dynstr_map.find(name);
         if (it == dynstr_map.end()) {
           LIEF_ERR("Can't find string offset in .dynstr for {}", name);
@@ -1342,7 +1343,7 @@ ok_error_t Builder::build_obj_symbols() {
 
   using Elf_Sym = typename ELF_T::Elf_Sym;
   const auto* layout = static_cast<const ObjectFileLayout*>(layout_.get());
-  const std::unordered_map<std::string, size_t>* str_map = nullptr;
+  const std::unordered_map<std::string_view, size_t>* str_map = nullptr;
 
   if (layout->is_strtab_shared_shstrtab()) {
     str_map = &layout->shstr_map();
@@ -1818,7 +1819,7 @@ ok_error_t Builder::build_symbol_requirement() {
   const auto& sym_name_offset =
       static_cast<ExeLayout*>(layout_.get())->dynstr_map();
   for (SymbolVersionRequirement& svr : binary_->symbols_version_requirement()) {
-    const std::string& name = svr.name();
+    std::string name{svr.name()};
 
     Elf_Off name_offset = 0;
     auto it_name_offset = sym_name_offset.find(name);
@@ -1850,7 +1851,7 @@ ok_error_t Builder::build_symbol_requirement() {
 
     uint32_t svar_idx = 0;
     for (SymbolVersionAuxRequirement& svar : svars) {
-      const std::string& svar_name = svar.name();
+      std::string svar_name{svar.name()};
 
       Elf_Off svar_name_offset = 0;
 
@@ -2011,7 +2012,7 @@ ok_error_t Builder::build_interpreter() {
     return ok();
   }
   LIEF_DEBUG("[+] Building Interpreter");
-  const std::string& inter_str = binary_->interpreter();
+  std::string inter_str{binary_->interpreter()};
   Segment* interp_segment = binary_->get(Segment::TYPE::INTERP);
   if (interp_segment == nullptr) {
     LIEF_ERR("Can't find a PT_INTERP segment");
@@ -2110,4 +2111,4 @@ bool Builder::should_build_notes() const {
   return config_.notes;
 }
 
-} // namespace LIEF::ELF
+}

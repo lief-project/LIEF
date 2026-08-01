@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
+#include <LIEF/DWARF/DebugInfo.hpp>
 #include <LIEF/rust/Abstract/DebugInfo.hpp>
 #include <LIEF/rust/DWARF/CompilationUnit.hpp>
 #include <LIEF/rust/DWARF/Function.hpp>
-#include <LIEF/DWARF/DebugInfo.hpp>
 
 #include "LIEF/rust/Iterator.hpp"
 

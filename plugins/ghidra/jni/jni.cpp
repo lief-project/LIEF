@@ -12,19 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <jni.h>
 #include <jni_bind.h>
 #include <spdlog/logger.h>
+#include <jni.h>
 
-#include "jni/log.hpp"
 #include "jni/ghidra_logger_sink.hpp"
+#include "jni/log.hpp"
 
 #include "jni/lief/dwarf/Editor.hpp"
 #include "jni/lief/generic/jni.hpp"
 
 #include "jni/lief/elf/jni.hpp"
-#include "jni/lief/pe/jni.hpp"
 #include "jni/lief/macho/jni.hpp"
+#include "jni/lief/pe/jni.hpp"
 
 #include "jni/lief/Utils.hpp"
 

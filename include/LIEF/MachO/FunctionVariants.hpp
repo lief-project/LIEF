@@ -15,13 +15,14 @@
  */
 #ifndef LIEF_MACHO_FUNCTION_VARIANTS_COMMAND_H
 #define LIEF_MACHO_FUNCTION_VARIANTS_COMMAND_H
-#include <vector>
+#include <memory>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -286,7 +287,7 @@ class LIEF_API FunctionVariants : public LoadCommand {
   FunctionVariants(const FunctionVariants& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<FunctionVariants>(new FunctionVariants(*this));
+    return std::make_unique<FunctionVariants>(*this);
   }
 
   /// Offset in the `__LINKEDIT` SegmentCommand where the payload starts

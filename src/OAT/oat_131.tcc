@@ -22,10 +22,10 @@
 
 #include "LIEF/DEX.hpp"
 
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/Parser.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Binary.hpp"
 #include "LIEF/VDEX/File.hpp"
 #include "OAT/Structures.hpp"
 
@@ -136,4 +136,4 @@ void Parser::parse_dex_files<details::OAT131_t>() {
 }
 
 
-} // namespace LIEF::OAT
+}

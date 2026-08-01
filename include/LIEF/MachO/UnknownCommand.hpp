@@ -14,14 +14,15 @@
  */
 #ifndef LIEF_MACHO_UNKNOWN_COMMAND_H
 #define LIEF_MACHO_UNKNOWN_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct load_command;
@@ -43,7 +44,7 @@ class LIEF_API UnknownCommand : public LoadCommand {
   UnknownCommand(const UnknownCommand& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<UnknownCommand>(new UnknownCommand(*this));
+    return std::make_unique<UnknownCommand>(*this);
   }
 
   ~UnknownCommand() override = default;
@@ -66,5 +67,5 @@ class LIEF_API UnknownCommand : public LoadCommand {
 };
 
 }
-}
+
 #endif

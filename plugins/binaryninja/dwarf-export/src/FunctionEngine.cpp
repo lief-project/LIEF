@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <LIEF/DWARF/editor/Variable.hpp>
 #include <LIEF/DWARF/editor/Function.hpp>
+#include <LIEF/DWARF/editor/Variable.hpp>
 
+#include "binaryninja/api_compat.hpp"
 #include "binaryninja/dwarf-export/FunctionEngine.hpp"
 #include "binaryninja/dwarf-export/TypeEngine.hpp"
 #include "binaryninja/dwarf-export/log.hpp"
-#include "binaryninja/api_compat.hpp"
 
 #include "log.hpp"
 

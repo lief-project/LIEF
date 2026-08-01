@@ -17,8 +17,8 @@
 #define LIEF_ELF_NOTE_DETAILS_PROPERTIES_NEEDED_H
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;

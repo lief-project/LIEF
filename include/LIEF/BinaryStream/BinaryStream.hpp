@@ -16,12 +16,12 @@
 #ifndef LIEF_BINARY_STREAM_H
 #define LIEF_BINARY_STREAM_H
 
+#include <algorithm>
 #include <cstdint>
-#include <vector>
 #include <cstring>
 #include <string>
-#include <algorithm>
 #include <utility>
+#include <vector>
 
 #include "LIEF/endianness_support.hpp"
 #include "LIEF/errors.hpp"
@@ -332,7 +332,7 @@ class LIEF_API BinaryStream {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<BinaryStream, T>::value,
+    static_assert(std::is_base_of_v<BinaryStream, T>,
                   "Require BinaryStream inheritance");
     if (T::classof(*this)) {
       return static_cast<const T*>(this);

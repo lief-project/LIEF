@@ -16,14 +16,14 @@
 #ifndef LIEF_DSC_MAPPING_INFO_H
 #define LIEF_DSC_MAPPING_INFO_H
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-#include <memory>
 #include <cstdint>
+#include <memory>
 
-namespace LIEF {
-namespace dsc {
+
+namespace LIEF::dsc {
 
 namespace details {
 class MappingInfo;
@@ -111,5 +111,5 @@ class LIEF_API MappingInfo {
 };
 
 }
-}
+
 #endif

@@ -17,8 +17,8 @@
 #include <LIEF/logging.hpp>
 #include <mach-o/dyld.h>
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 using namespace LIEF::MachO;
 

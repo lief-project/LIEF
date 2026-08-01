@@ -15,8 +15,8 @@
  */
 #include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/TLS.hpp"
 #include "PE/Structures.hpp"
 
 #include <spdlog/fmt/fmt.h>
@@ -69,4 +69,4 @@ std::ostream& operator<<(std::ostream& os, const TLS& entry) {
   return os;
 }
 
-} // namespace LIEF::PE
+}

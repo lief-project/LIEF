@@ -15,7 +15,7 @@
 #pragma once
 #include "LIEF/rust/DyldSharedCache/DyldSharedCache.hpp"
 #include "LIEF/rust/DyldSharedCache/Dylib.hpp"
-#include "LIEF/rust/DyldSharedCache/SubCache.hpp"
 #include "LIEF/rust/DyldSharedCache/MappingInfo.hpp"
+#include "LIEF/rust/DyldSharedCache/SubCache.hpp"
 #include "LIEF/rust/DyldSharedCache/caching.hpp"
 #include "LIEF/rust/DyldSharedCache/utils.hpp"

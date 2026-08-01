@@ -16,13 +16,15 @@
 #ifndef LIEF_ART_H
 #define LIEF_ART_H
 
+// IWYU pragma: begin_exports
 #include "LIEF/config.h"
 
 #if defined(LIEF_ART_SUPPORT)
+  #include "LIEF/ART/EnumToString.hpp"
+  #include "LIEF/ART/File.hpp"
   #include "LIEF/ART/Parser.hpp"
   #include "LIEF/ART/utils.hpp"
-  #include "LIEF/ART/File.hpp"
-  #include "LIEF/ART/EnumToString.hpp"
 #endif
+// IWYU pragma: end_exports
 
 #endif

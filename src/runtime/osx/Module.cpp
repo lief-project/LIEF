@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 #include "LIEF/runtime/osx/Module.hpp"
-#include "LIEF/runtime/osx/Host.hpp"
-#include "LIEF/range.hpp"
-#include "LIEF/MachO/utils.hpp"
-#include "LIEF/MachO/Parser.hpp"
-#include "LIEF/MachO/ParserConfig.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
-#include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/MachO/Parser.hpp"
+#include "LIEF/MachO/ParserConfig.hpp"
+#include "LIEF/MachO/utils.hpp"
+#include "LIEF/range.hpp"
+#include "LIEF/runtime/osx/Host.hpp"
 
-#include <mach/mach.h>
-#include <mach-o/loader.h>
 #include <mach-o/dyld.h>
 #include <mach-o/dyld_images.h>
 #include <mach-o/getsect.h>
+#include <mach-o/loader.h>
+#include <mach/mach.h>
 #include <sys/sysctl.h>
 #include <dlfcn.h>
 
@@ -514,7 +514,7 @@ list_modules_t& get_modules() {
   return modules;
 }
 
-} // namespace details
+}
 
 Module::Iterator::Iterator() = default;
 Module::Iterator::Iterator(const Iterator& other) :

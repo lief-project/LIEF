@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "frozen.hpp"
-#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "LIEF/Visitor.hpp"
+#include "frozen.hpp"
 
 
 namespace LIEF::MachO {

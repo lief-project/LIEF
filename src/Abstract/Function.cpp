@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/Visitor.hpp"
+#include <spdlog/fmt/fmt.h>
 #include <algorithm>
 #include <ostream>
-#include <spdlog/fmt/fmt.h>
-#include "LIEF/Visitor.hpp"
 
 #include "LIEF/Abstract/Function.hpp"
 
-#include "internal_utils.hpp"
 #include "frozen.hpp"
+#include "internal_utils.hpp"
 
 namespace LIEF {
 

@@ -17,14 +17,14 @@
 #define LIEF_ELF_SYSV_HASH_H
 
 #include <cstdint>
-#include <vector>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 class Parser;
 class Builder;
@@ -85,7 +85,7 @@ class LIEF_API SysvHash : public Object {
   std::vector<uint32_t> chains_;
 };
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

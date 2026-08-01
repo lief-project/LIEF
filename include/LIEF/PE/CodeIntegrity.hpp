@@ -15,12 +15,12 @@
  */
 #ifndef LIEF_PE_CODE_INTEGRITY_H
 #define LIEF_PE_CODE_INTEGRITY_H
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 
+#include "LIEF/Object.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
-#include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {

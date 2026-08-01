@@ -16,8 +16,8 @@
 #pragma once
 
 #include "LIEF/MachO/BindingInfo.hpp"
-#include "LIEF/rust/MachO/SegmentCommand.hpp"
 #include "LIEF/rust/MachO/Dylib.hpp"
+#include "LIEF/rust/MachO/SegmentCommand.hpp"
 #include "LIEF/rust/MachO/Symbol.hpp"
 
 class MachO_BindingInfo : public Mirror<LIEF::MachO::BindingInfo> {

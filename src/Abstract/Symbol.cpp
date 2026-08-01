@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/Abstract/Symbol.hpp"
+#include "LIEF/Visitor.hpp"
 #include <algorithm>
 #include <ostream>
-#include "LIEF/Visitor.hpp"
-#include "LIEF/Abstract/Symbol.hpp"
 
 namespace LIEF {
 
@@ -31,7 +31,7 @@ void Symbol::accept(Visitor& visitor) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Symbol& entry) {
-  std::string name = entry.name();
+  std::string name{entry.name()};
   // UTF8 -> ASCII
   std::transform(name.begin(), name.end(), name.begin(),
                  [](unsigned char c) { return (c < 127 && c > 32) ? c : ' '; });

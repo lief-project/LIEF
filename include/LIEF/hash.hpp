@@ -16,14 +16,16 @@
 #ifndef LIEF_HASH_H
 #define LIEF_HASH_H
 
-#include <vector>
+#include <string_view>
+#include <cstdint>
 #include <string>
+#include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/span.hpp"
-#include "LIEF/optional.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
 namespace LIEF {
 
@@ -56,8 +58,20 @@ class LIEF_API Hash : public Visitor {
   virtual Hash& process(const std::vector<uint8_t>& raw);
   virtual Hash& process(span<const uint8_t> raw);
 
-  template<class T,
-           typename = typename std::enable_if<std::is_enum<T>::value>::type>
+  Hash& process(std::string_view str) {
+    return process(std::string(str));
+  }
+
+  template<size_t N>
+  Hash& process(const char (&str)[N]) {
+    size_t size = 0;
+    while (size < N && str[size] != '\0') {
+      ++size;
+    }
+    return process(std::string_view(str, size));
+  }
+
+  template<class T, typename = std::enable_if_t<std::is_enum_v<T>>>
   Hash& process(T v) {
     return process(static_cast<value_type>(v));
   }
@@ -87,7 +101,7 @@ class LIEF_API Hash : public Visitor {
   }
 
   template<class T>
-  Hash& process(const optional<T>& opt) {
+  Hash& process(const std::optional<T>& opt) {
     if (opt) {
       return process(*opt);
     }

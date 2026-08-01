@@ -15,9 +15,9 @@
  */
 #ifndef LIEF_VISITOR_H
 #define LIEF_VISITOR_H
+#include <cstddef>
 #include <set>
 #include <utility>
-#include <cstddef>
 
 #include "LIEF/visibility.h"
 #include "LIEF/visitor_macros.hpp"

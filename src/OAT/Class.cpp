@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <utility>
 #include <climits>
+#include <utility>
 
-#include "LIEF/OAT/Class.hpp"
-#include "LIEF/OAT/hash.hpp"
-#include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/DEX/Method.hpp"
+#include "LIEF/OAT/Class.hpp"
+#include "LIEF/OAT/EnumToString.hpp"
+#include "LIEF/OAT/hash.hpp"
 
 #include "LIEF/DEX/Class.hpp"
 
@@ -83,7 +83,7 @@ DEX::dex2dex_class_info_t Class::dex2dex_info() const {
 }
 
 
-const std::string& Class::fullname() const {
+std::string_view Class::fullname() const {
   return dex_class()->fullname();
 }
 

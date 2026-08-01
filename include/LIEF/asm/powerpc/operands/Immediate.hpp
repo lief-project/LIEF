@@ -16,11 +16,9 @@
 #define LIEF_ASM_POWERPC_OPERAND_IMM_H
 #include "LIEF/asm/powerpc/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace powerpc {
+
 /// Namespace that wraps the different PowerPC operands
-namespace operands {
+namespace LIEF::assembly::powerpc::operands {
 
 
 /// This class represents an immediate operand (i.e. a constant)
@@ -43,7 +41,6 @@ class LIEF_API Immediate : public Operand {
   ~Immediate() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 #include "internal_utils.hpp"
-#include <ctime>
 #include <chrono>
+#include <ctime>
 #include <mutex>
 
 namespace LIEF {
 
-std::string printable_string(const std::string& str) {
+std::string printable_string(std::string_view str) {
   std::string out;
   out.reserve(str.size());
   for (char c : str) {

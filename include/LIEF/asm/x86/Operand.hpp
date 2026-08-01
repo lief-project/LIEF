@@ -14,19 +14,18 @@
  */
 #ifndef LIEF_ASM_X86_OPERAND_H
 #define LIEF_ASM_X86_OPERAND_H
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
+#include <cassert>
 #include <memory>
 #include <string>
-#include <cassert>
 
 #include <ostream>
 
-namespace LIEF {
-namespace assembly {
-namespace x86 {
+
+namespace LIEF::assembly::x86 {
 
 namespace details {
 class Operand;
@@ -93,8 +92,7 @@ class LIEF_API Operand {
   /// ```
   template<class T>
   const T* as() const LIEF_LIFETIMEBOUND {
-    static_assert(std::is_base_of<Operand, T>::value,
-                  "Require Operand inheritance");
+    static_assert(std::is_base_of_v<Operand, T>, "Require Operand inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }
@@ -130,7 +128,6 @@ class LIEF_API Operand {
 };
 
 }
-}
-}
+
 
 #endif

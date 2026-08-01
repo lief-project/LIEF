@@ -5,7 +5,7 @@ The purpose of this project is to provide a cross-platform library to parse,
 modify, and abstract the :ref:`ELF <format-elf>`, :ref:`PE <format-pe>`, and
 :ref:`Mach-O <format-macho>` formats.
 
-From a technical standpoint, the library is written in C++ with a C++11 public
+From a technical standpoint, the library is written in C++ with a C++17 public
 interface and exposes bindings for Python and Rust.
 
 As a result, you can use LIEF through an idiomatic API in these languages:

@@ -3,6 +3,15 @@
 :fa:`solid fa-code-compare` Changelog
 =====================================
 
+2.0.0 - Not Released Yet
+------------------------
+
+.. admonition:: Breaking Changes
+  :class: warning
+
+  - **C++17 Migration**: LIEF public headers, public API, and STL have been bumped from C++11 to **C++17**.
+  - **C API Removal**: The legacy C API has been completely removed.
+
 1.0.0 - July 12th, 2026
 -----------------------
 

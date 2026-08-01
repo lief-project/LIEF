@@ -14,8 +14,8 @@
  */
 
 #pragma once
-#include <string>
 #include "LIEF/PDB/utils.hpp"
+#include <string>
 
 class PDB_Utils {
   public:

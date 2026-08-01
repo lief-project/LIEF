@@ -16,20 +16,20 @@
 #ifndef LIEF_ELF_QNX_STACK_H
 #define LIEF_ELF_QNX_STACK_H
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class representing the QNX `QNT_STACK` note
 class LIEF_API QNXStack : public Note {
   public:
   std::unique_ptr<Note> clone() const override {
-    return std::unique_ptr<QNXStack>(new QNXStack(*this));
+    return std::make_unique<QNXStack>(*this);
   }
 
   /// Size of the stack
@@ -66,7 +66,7 @@ class LIEF_API QNXStack : public Note {
 };
 
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

@@ -17,8 +17,8 @@
 
 #include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/ImportEntry.hpp"
 #include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/ImportEntry.hpp"
 #include "PE/Structures.hpp"
 
 #include <spdlog/fmt/fmt.h>

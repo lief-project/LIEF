@@ -1,10 +1,10 @@
+#include "LIEF/asm/Instruction.hpp"
 #include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/disassembler.hpp"
-#include "LIEF/asm/Instruction.hpp"
 
 #include "internal_utils.hpp"
-#include "messages.hpp"
 #include "logging.hpp"
+#include "messages.hpp"
 
 namespace LIEF::assembly::details {
 class Instruction {};

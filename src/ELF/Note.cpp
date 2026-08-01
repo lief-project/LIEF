@@ -13,29 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <memory>
 #include <algorithm>
+#include <memory>
 #include <utility>
 
-#include "LIEF/utils.hpp"
-#include "LIEF/ELF/hash.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
-#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
+#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
+#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
-#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/iostream.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/utils.hpp"
 
 #include "frozen.hpp"
-#include "logging.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 #define IMPL_READ_AT(T) template result<T> Note::read_at(size_t) const;
 
@@ -759,4 +759,4 @@ IMPL_WRITE_AT(int32_t)
 IMPL_WRITE_AT(uint64_t)
 IMPL_WRITE_AT(int64_t)
 
-} // namespace LIEF::ELF
+}

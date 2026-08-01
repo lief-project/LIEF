@@ -18,11 +18,11 @@
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
-#include "LIEF/rust/PE/signature/ContentInfo.hpp"
-#include "LIEF/rust/PE/signature/x509.hpp"
-#include "LIEF/rust/PE/signature/SignerInfo.hpp"
-#include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PE/signature/ContentInfo.hpp"
+#include "LIEF/rust/PE/signature/SignerInfo.hpp"
+#include "LIEF/rust/PE/signature/x509.hpp"
+#include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class PE_Signature : private Mirror<LIEF::PE::Signature> {

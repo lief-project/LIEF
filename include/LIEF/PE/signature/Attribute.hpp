@@ -16,14 +16,14 @@
 #ifndef LIEF_PE_ATTRIBUTES_H
 #define LIEF_PE_ATTRIBUTES_H
 #include <memory>
-#include <string>
 #include <ostream>
+#include <string>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// Interface over PKCS #7 attribute
 class LIEF_API Attribute : public Object {
@@ -78,7 +78,7 @@ class LIEF_API Attribute : public Object {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<Attribute, T>::value,
+    static_assert(std::is_base_of_v<Attribute, T>,
                   "Require Attribute inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
@@ -100,6 +100,6 @@ class LIEF_API Attribute : public Object {
 LIEF_API const char* to_string(Attribute::TYPE e);
 
 }
-}
+
 
 #endif

@@ -3,7 +3,6 @@ include(CMakeDependentOption)
 
 option(LIEF_TESTS                      "Enable tests"                               OFF)
 option(LIEF_PYTHON_API                 "Enable Python Bindings"                     OFF)
-option(LIEF_C_API                      "C API"                                      ON)
 option(LIEF_EXAMPLES                   "Build LIEF C++ examples"                    ON)
 option(LIEF_FORCE32                    "Force build LIEF 32 bits version"           OFF)
 option(LIEF_USE_CCACHE                 "Use ccache to speed up compilation"         ON)

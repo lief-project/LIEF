@@ -15,17 +15,17 @@
  */
 #ifndef LIEF_COFF_PARSER_H
 #define LIEF_COFF_PARSER_H
-#include <map>
-#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
+#include <map>
 
-#include "LIEF/COFF/ParserConfig.hpp"
 #include "LIEF/COFF/Header.hpp"
+#include "LIEF/COFF/ParserConfig.hpp"
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 class Binary;
 class Section;
 class String;
@@ -98,5 +98,5 @@ class Parser {
   LIEF_MAYBE_UNUSED ParserConfig config_;
 };
 }
-}
+
 #endif

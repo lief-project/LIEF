@@ -21,9 +21,9 @@
 #include "LIEF/utils.hpp"
 
 #include "LIEF/DEX.hpp"
-#include "LIEF/OAT/Parser.hpp"
-#include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/DexFile.hpp"
+#include "LIEF/OAT/Parser.hpp"
 
 #include "DEX/Structures.hpp"
 #include "OAT/Structures.hpp"
@@ -134,7 +134,7 @@ void Parser::parse_dex_files<details::OAT64_t>() {
     if (DEX::is_dex(data_v)) {
       std::unique_ptr<DEX::File> dexfile =
           DEX::Parser::parse(std::move(data_v), name);
-      dexfile->location(oat_dex_file->location());
+      dexfile->location(std::string(oat_dex_file->location()));
       oat_dex_file->dex_file_ = dexfile.get();
       oat.dex_files_.push_back(std::move(dexfile));
     } else {
@@ -145,4 +145,4 @@ void Parser::parse_dex_files<details::OAT64_t>() {
 }
 
 
-} // namespace LIEF::OAT
+}

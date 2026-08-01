@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/ObjC/Metadata.hpp"
 #include "LIEF/rust/ObjC/Class.hpp"
-#include "LIEF/rust/ObjC/Protocol.hpp"
-#include "LIEF/rust/ObjC/Method.hpp"
-#include "LIEF/rust/ObjC/IVar.hpp"
-#include "LIEF/rust/ObjC/Property.hpp"
 #include "LIEF/rust/ObjC/DeclOpt.hpp"
+#include "LIEF/rust/ObjC/IVar.hpp"
+#include "LIEF/rust/ObjC/Metadata.hpp"
+#include "LIEF/rust/ObjC/Method.hpp"
+#include "LIEF/rust/ObjC/Property.hpp"
+#include "LIEF/rust/ObjC/Protocol.hpp"

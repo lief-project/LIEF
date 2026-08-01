@@ -6,7 +6,6 @@ parallel-jobs   = 0
 extra-cmake-opt = [
   "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded",
   "-DLIEF_TESTS=on",
-  "-DLIEF_C_API=on",
   "-DLIEF_RUST_API=ON",
   "-DCMAKE_COLOR_DIAGNOSTICS=ON",
 ]

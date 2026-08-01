@@ -16,8 +16,10 @@
 #ifndef LIEF_RUNTIME_OSX_H
 #define LIEF_RUNTIME_OSX_H
 
-#include <LIEF/runtime/osx/Module.hpp>
-#include <LIEF/runtime/osx/Host.hpp>
-#include <LIEF/runtime/osx/Process.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/runtime/osx/Host.hpp"
+#include "LIEF/runtime/osx/Module.hpp"
+#include "LIEF/runtime/osx/Process.hpp"
+// IWYU pragma: end_exports
 
 #endif

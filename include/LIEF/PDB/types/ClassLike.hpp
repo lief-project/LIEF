@@ -15,26 +15,24 @@
 #ifndef LIEF_PDB_TYPE_CLASS_H
 #define LIEF_PDB_TYPE_CLASS_H
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
 #include "LIEF/PDB/types/Attribute.hpp"
 #include "LIEF/PDB/types/Method.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include <type_traits>
 
-namespace LIEF {
-namespace pdb {
-namespace types {
+
+namespace LIEF::pdb::types {
 
 /// This class abstracts the following PDB types: `LF_STRUCTURE`, `LF_INTERFACE`,
 /// `LF_CLASS` or `LF_UNION`.
 class LIEF_API ClassLike : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   ClassLike(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -54,10 +52,8 @@ class LIEF_API ClassLike : public Type {
   methods_iterator methods() const LIEF_LIFETIMEBOUND;
 
   template<class T>
-  static bool classof(
-      const T*,
-      typename std::enable_if<std::is_base_of<ClassLike, T>::value>::type* = 0
-  ) {
+  static bool classof(const T*,
+                      std::enable_if_t<std::is_base_of_v<ClassLike, T>>* = 0) {
     return true;
   }
 
@@ -69,8 +65,8 @@ class LIEF_API ClassLike : public Type {
 class LIEF_API Structure : public ClassLike {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+           typename =
+               std::enable_if_t<std::is_constructible_v<ClassLike, Args&&...>>>
   Structure(Args&&... args) :
     ClassLike(std::forward<Args>(args)...) {}
 
@@ -85,8 +81,8 @@ class LIEF_API Structure : public ClassLike {
 class LIEF_API Class : public ClassLike {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+           typename =
+               std::enable_if_t<std::is_constructible_v<ClassLike, Args&&...>>>
   Class(Args&&... args) :
     ClassLike(std::forward<Args>(args)...) {}
 
@@ -101,8 +97,8 @@ class LIEF_API Class : public ClassLike {
 class LIEF_API Interface : public ClassLike {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+           typename =
+               std::enable_if_t<std::is_constructible_v<ClassLike, Args&&...>>>
   Interface(Args&&... args) :
     ClassLike(std::forward<Args>(args)...) {}
 
@@ -115,6 +111,6 @@ class LIEF_API Interface : public ClassLike {
 
 
 }
-}
-}
+
+
 #endif

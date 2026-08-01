@@ -16,12 +16,15 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H
 #define LIEF_ELF_DYNAMIC_ENTRY_LIBRARY_H
 
-#include <string>
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
+#include <string_view>
+#include <memory>
+#include <string>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class which represents a ``DT_NEEDED`` entry in the dynamic table.
 ///
@@ -42,11 +45,11 @@ class LIEF_API DynamicEntryLibrary : public DynamicEntry {
   DynamicEntryLibrary(const DynamicEntryLibrary&) = default;
 
   std::unique_ptr<DynamicEntry> clone() const override {
-    return std::unique_ptr<DynamicEntryLibrary>(new DynamicEntryLibrary{*this});
+    return std::make_unique<DynamicEntryLibrary>(*this);
   }
 
   /// Return the library associated with this entry (e.g. ``libc.so.6``)
-  const std::string& name() const {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return libname_;
   }
 
@@ -66,6 +69,6 @@ class LIEF_API DynamicEntryLibrary : public DynamicEntry {
   std::string libname_;
 };
 }
-}
+
 
 #endif

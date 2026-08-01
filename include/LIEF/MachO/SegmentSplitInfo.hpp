@@ -15,16 +15,17 @@
  */
 #ifndef LIEF_MACHO_SEGMENT_SPLIT_INFO_H
 #define LIEF_MACHO_SEGMENT_SPLIT_INFO_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 class LinkEdit;
 
@@ -45,7 +46,7 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
   SegmentSplitInfo(const SegmentSplitInfo& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<SegmentSplitInfo>(new SegmentSplitInfo(*this));
+    return std::make_unique<SegmentSplitInfo>(*this);
   }
 
   uint32_t data_offset() const {
@@ -87,5 +88,5 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
 };
 
 }
-}
+
 #endif

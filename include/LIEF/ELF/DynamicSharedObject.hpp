@@ -16,13 +16,16 @@
 #ifndef LIEF_ELF_DYNAMIC_SHARED_OBJECT_H
 #define LIEF_ELF_DYNAMIC_SHARED_OBJECT_H
 
+#include <string_view>
+#include <memory>
 #include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class which represents a ``DT_SONAME`` entry in the dynamic table
 /// This kind of entry is usually used to name the original library.
@@ -43,11 +46,11 @@ class LIEF_API DynamicSharedObject : public DynamicEntry {
   DynamicSharedObject(const DynamicSharedObject&) = default;
 
   std::unique_ptr<DynamicEntry> clone() const override {
-    return std::unique_ptr<DynamicSharedObject>(new DynamicSharedObject(*this));
+    return std::make_unique<DynamicSharedObject>(*this);
   }
 
   /// The actual name (e.g. ``libMyLib.so``)
-  const std::string& name() const {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -69,5 +72,5 @@ class LIEF_API DynamicSharedObject : public DynamicEntry {
   std::string name_;
 };
 }
-}
+
 #endif

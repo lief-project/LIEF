@@ -18,14 +18,15 @@
 #include <cstdint>
 #include <memory>
 #include <ostream>
+#include <string>
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/Abstract/Section.hpp"
-#include "LIEF/PE/Section.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliarySectionDefinition.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
-#include "LIEF/optional.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
 namespace LIEF {
 class BinaryStream;
@@ -173,7 +174,7 @@ class LIEF_API Section : public LIEF::Section {
 
   /// Return comdat information (only if the section has the
   /// CHARACTERISTICS::LNK_COMDAT characteristic)
-  optional<ComdatInfo> comdat_info() const;
+  std::optional<ComdatInfo> comdat_info() const;
 
   /// Whether there is a large number of relocations whose number need
   /// to be stored in the virtual address attribute

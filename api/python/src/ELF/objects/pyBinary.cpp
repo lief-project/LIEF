@@ -20,6 +20,7 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <nanobind/stl/string_view.h>
 #include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/extra/stl/pathlike.h"
 
@@ -472,7 +473,7 @@ void create<Binary>(nb::module_& m) {
         "virtual_address"_a)
 
     .def("get_section",
-        nb::overload_cast<const std::string&>(&Binary::get_section),
+        nb::overload_cast<std::string_view>(&Binary::get_section),
         R"delim(
         Return the :class:`~lief.ELF.Section` with the given ``name``
 

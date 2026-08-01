@@ -14,39 +14,37 @@
  */
 #ifndef LIEF_ELF_EXE_LAYOUT_H
 #define LIEF_ELF_EXE_LAYOUT_H
-#include <LIEF/types.hpp>
-#include <LIEF/visibility.h>
-#include <LIEF/ELF/Binary.hpp>
-#include <LIEF/ELF/Builder.hpp>
-#include <LIEF/ELF/Symbol.hpp>
-#include <LIEF/ELF/DynamicEntryArray.hpp>
-#include <LIEF/ELF/DynamicEntryLibrary.hpp>
-#include <LIEF/ELF/DynamicEntryRpath.hpp>
-#include <LIEF/ELF/DynamicEntryRunPath.hpp>
-#include <LIEF/ELF/DynamicSharedObject.hpp>
-#include <LIEF/ELF/DynamicEntryAuxiliary.hpp>
-#include <LIEF/ELF/DynamicEntryFilter.hpp>
-#include <LIEF/ELF/SymbolVersionDefinition.hpp>
-#include <LIEF/ELF/SymbolVersionAux.hpp>
-#include <LIEF/ELF/SymbolVersionRequirement.hpp>
-#include <LIEF/ELF/SymbolVersionAuxRequirement.hpp>
-#include <LIEF/ELF/EnumToString.hpp>
-#include <LIEF/ELF/Segment.hpp>
-#include <LIEF/ELF/Section.hpp>
-#include <LIEF/ELF/Relocation.hpp>
-#include <LIEF/ELF/Note.hpp>
-#include <LIEF/ELF/GnuHash.hpp>
-#include <LIEF/ELF/SysvHash.hpp>
-#include <LIEF/ELF/utils.hpp>
-#include <LIEF/iostream.hpp>
-#include <LIEF/errors.hpp>
+#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Builder.hpp"
+#include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/DynamicEntryRpath.hpp"
+#include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/GnuHash.hpp"
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Relocation.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
+#include "LIEF/ELF/SymbolVersionDefinition.hpp"
+#include "LIEF/ELF/SymbolVersionRequirement.hpp"
+#include "LIEF/ELF/SysvHash.hpp"
+#include "LIEF/ELF/utils.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/iostream.hpp"
+#include "LIEF/visibility.h"
 #include <algorithm>
 #include <iterator>
 
 #include "ELF/Structures.hpp"
+#include "Layout.hpp"
 #include "internal_utils.hpp"
 #include "logging.hpp"
-#include "Layout.hpp"
 
 
 namespace LIEF::ELF {
@@ -111,53 +109,49 @@ class LIEF_LOCAL ExeLayout : public Layout {
     vector_iostream raw_dynstr(should_swap());
     raw_dynstr.write<uint8_t>(0);
 
-    std::vector<std::string> opt_list;
+    std::vector<std::string_view> opt_list;
 
     std::transform(binary_->dynamic_symbols_.begin(),
                    binary_->dynamic_symbols_.end(), std::back_inserter(opt_list),
-                   [](const std::unique_ptr<Symbol>& sym) { return sym->name(); });
+                   [](const std::unique_ptr<Symbol>& sym) {
+                     return static_cast<const Symbol&>(*sym).name();
+                   });
 
     for (std::unique_ptr<DynamicEntry>& entry : binary_->dynamic_entries_) {
       switch (entry->tag()) {
         case DynamicEntry::TAG::NEEDED:
         {
-          const std::string& name = entry->as<DynamicEntryLibrary>()->name();
-          opt_list.push_back(name);
+          opt_list.push_back(entry->as<DynamicEntryLibrary>()->name());
           break;
         }
 
         case DynamicEntry::TAG::SONAME:
         {
-          const std::string& name = entry->as<DynamicSharedObject>()->name();
-          opt_list.push_back(name);
+          opt_list.push_back(entry->as<DynamicSharedObject>()->name());
           break;
         }
 
         case DynamicEntry::TAG::AUXILIARY:
         {
-          const std::string& name = entry->as<DynamicEntryAuxiliary>()->name();
-          opt_list.push_back(name);
+          opt_list.push_back(entry->as<DynamicEntryAuxiliary>()->name());
           break;
         }
 
         case DynamicEntry::TAG::FILTER:
         {
-          const std::string& name = entry->as<DynamicEntryFilter>()->name();
-          opt_list.push_back(name);
+          opt_list.push_back(entry->as<DynamicEntryFilter>()->name());
           break;
         }
 
         case DynamicEntry::TAG::RPATH:
         {
-          const std::string& name = entry->as<DynamicEntryRpath>()->rpath();
-          opt_list.push_back(name);
+          opt_list.push_back(entry->as<DynamicEntryRpath>()->rpath());
           break;
         }
 
         case DynamicEntry::TAG::RUNPATH:
         {
-          const std::string& name = entry->as<DynamicEntryRunPath>()->runpath();
-          opt_list.push_back(name);
+          opt_list.push_back(entry->as<DynamicEntryRunPath>()->runpath());
           break;
         }
 
@@ -174,9 +168,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
       auto saux = svd.symbols_aux();
       aux_names.reserve(saux.size());
       for (const SymbolVersionAux& sva : saux) {
-        const std::string& sva_name = sva.name();
-        aux_names.push_back(sva_name);
-        opt_list.push_back(sva_name);
+        aux_names.emplace_back(sva.name());
+        opt_list.push_back(sva.name());
       }
       auto res = verdef_info_.names_list.insert(std::move(aux_names));
       verdef_info_.def_to_names[&svd] = &*res.first;
@@ -186,22 +179,20 @@ class LIEF_LOCAL ExeLayout : public Layout {
     for (const SymbolVersionRequirement& svr :
          binary_->symbols_version_requirement())
     {
-      const std::string& libname = svr.name();
-      opt_list.push_back(libname);
+      opt_list.push_back(svr.name());
       for (const SymbolVersionAuxRequirement& svar : svr.auxiliary_symbols()) {
-        const std::string& name = svar.name();
-        opt_list.push_back(name);
+        opt_list.push_back(svar.name());
       }
     }
 
     size_t offset_counter = raw_dynstr.tellp();
 
     std::vector<std::string> string_table_optimized = optimize(
-        opt_list, [](const std::string& name) { return name; }, offset_counter,
-        &offset_name_map_
+        opt_list, [](const std::string_view& name) { return name; },
+        offset_counter, &offset_name_map_
     );
 
-    for (const std::string& name : string_table_optimized) {
+    for (std::string_view name : string_table_optimized) {
       raw_dynstr.write(name);
     }
 
@@ -253,8 +244,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       raw_notes.write<uint32_t>(type);
 
       // Then we write the note's name
-      const std::string& name = note.name();
-      raw_notes.write(name);
+      raw_notes.write(note.name());
 
       // Alignment
       raw_notes.align(sizeof(uint32_t), 0);
@@ -973,9 +963,9 @@ class LIEF_LOCAL ExeLayout : public Layout {
       }
       std::unique_ptr<Section>& string_names_section =
           binary_->sections_[hdr.section_name_table_idx()];
-      std::string sec_name = binary_->shstrtab_name();
+      std::string_view sec_name = binary_->shstrtab_name();
       binary_->remove(*string_names_section, /* clear */ true);
-      Section sec_str_section(sec_name, Section::TYPE::STRTAB);
+      Section sec_str_section(std::string(sec_name), Section::TYPE::STRTAB);
       sec_str_section.content(std::vector<uint8_t>(raw_shstrtab_.size()));
       Section* sec = binary_->add(sec_str_section, /*loaded=*/false,
                                   /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);
@@ -1752,7 +1742,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     return true;
   }
 
-  const std::unordered_map<std::string, size_t>& dynstr_map() const {
+  const std::unordered_map<std::string_view, size_t>& dynstr_map() const {
     return offset_name_map_;
   }
 
@@ -1768,7 +1758,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
   ExeLayout() = delete;
 
   private:
-  std::unordered_map<std::string, size_t> offset_name_map_;
+  std::unordered_map<std::string_view, size_t> offset_name_map_;
   std::unordered_map<const Note*, size_t> notes_off_map_;
 
   sym_verdef_info_t verdef_info_;

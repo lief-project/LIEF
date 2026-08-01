@@ -20,11 +20,11 @@
 #include "LIEF/visibility.h"
 
 #include <cstdint>
-#include <string>
 #include <memory>
+#include <string>
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 class Type;
 namespace types {
 
@@ -101,5 +101,5 @@ class LIEF_API Attribute {
 
 }
 }
-}
+
 #endif

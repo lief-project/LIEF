@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_MACHO_RELOCATION_OBJECT_COMMAND_H
 #define LIEF_MACHO_RELOCATION_OBJECT_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/Relocation.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 
@@ -53,7 +54,7 @@ class LIEF_API RelocationObject : public Relocation {
   ~RelocationObject() override = default;
 
   std::unique_ptr<Relocation> clone() const override {
-    return std::unique_ptr<RelocationObject>(new RelocationObject(*this));
+    return std::make_unique<RelocationObject>(*this);
   }
 
   /// Whether the relocation is PC relative
@@ -114,5 +115,5 @@ class LIEF_API RelocationObject : public Relocation {
 };
 
 }
-}
+
 #endif

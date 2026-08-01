@@ -16,11 +16,11 @@
 #ifndef LIEF_PE_ATTRIBUTES_SIGNING_CERTIFICATE_V2_H
 #define LIEF_PE_ATTRIBUTES_SIGNING_CERTIFICATE_V2_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 /// SigningCertificateV2 ::= SEQUENCE {
 ///   certs    SEQUENCE OF ESSCertIDv2,
 ///   policies SEQUENCE OF PolicyInformation OPTIONAL
@@ -67,6 +67,6 @@ class LIEF_API SigningCertificateV2 : public Attribute {
 };
 
 }
-}
+
 
 #endif

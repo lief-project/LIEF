@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
 #include "LIEF/DEX/Field.hpp"
 #include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/hash.hpp"
-#include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/EnumToString.hpp"
 #include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/enums.hpp"
+#include "LIEF/DEX/hash.hpp"
+#include "logging.hpp"
 
 #include <numeric>
 #include <utility>
@@ -35,7 +35,7 @@ Field::Field(std::string name, Class* parent) :
   name_{std::move(name)},
   parent_{parent} {}
 
-const std::string& Field::name() const {
+std::string_view Field::name() const {
   return name_;
 }
 
@@ -93,7 +93,7 @@ void Field::accept(Visitor& visitor) const {
 
 
 std::ostream& operator<<(std::ostream& os, const Field& field) {
-  std::string pretty_cls_name = field.cls()->fullname();
+  std::string pretty_cls_name{field.cls()->fullname()};
   if (!pretty_cls_name.empty()) {
     pretty_cls_name = pretty_cls_name.substr(1, pretty_cls_name.size() - 2);
     std::replace(pretty_cls_name.begin(), pretty_cls_name.end(), '/', '.');

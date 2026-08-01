@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <fstream>
 
-#include "LIEF/VDEX/File.hpp"
-#include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/File.hpp"
+#include "LIEF/VDEX/File.hpp"
 
 #include "LIEF/OAT/Binary.hpp"
-#include "LIEF/OAT/hash.hpp"
 #include "LIEF/OAT/Class.hpp"
-#include "LIEF/OAT/Method.hpp"
 #include "LIEF/OAT/DexFile.hpp"
+#include "LIEF/OAT/Method.hpp"
+#include "LIEF/OAT/hash.hpp"
 
 
 #if defined(LIEF_JSON_SUPPORT)
@@ -142,7 +141,7 @@ std::string Binary::dex2dex_json_info() {
 
   for (const DEX::File& dex_file : dex_files()) {
     json dex2dex = json::parse(dex_file.dex2dex_json_info());
-    mapping[dex_file.name()] = dex2dex;
+    mapping[std::string(dex_file.name())] = dex2dex;
   }
 
   return mapping.dump();

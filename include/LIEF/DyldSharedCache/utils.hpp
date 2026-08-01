@@ -16,15 +16,15 @@
 #ifndef LIEF_DSC_UTILS_H
 #define LIEF_DSC_UTILS_H
 
-#include <LIEF/visibility.h>
+#include "LIEF/visibility.h"
 
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include <string>
 
-namespace LIEF {
-namespace dsc {
+
+namespace LIEF::dsc {
 
 /// Check if the given stream wraps a Dyld Shared Cache
 LIEF_API bool is_shared_cache(BinaryStream& stream);
@@ -50,5 +50,5 @@ inline bool is_shared_cache(const std::vector<uint8_t>& buffer) {
 }
 
 }
-}
+
 #endif

@@ -16,15 +16,15 @@
 #ifndef LIEF_ELF_NOTE_ABI_H
 #define LIEF_ELF_NOTE_ABI_H
 
-#include <ostream>
 #include <array>
 #include <memory>
+#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class that wraps the `NT_GNU_ABI_TAG` note
 class LIEF_API NoteAbi : public Note {
@@ -87,7 +87,7 @@ class LIEF_API NoteAbi : public Note {
 
 LIEF_API const char* to_string(NoteAbi::ABI abi);
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

@@ -17,8 +17,8 @@
 #define LIEF_PLATFORMS_ANDROID_VERSIONS_H
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace Android {
+
+namespace LIEF::Android {
 
 enum class ANDROID_VERSIONS {
   VERSION_UNKNOWN = 0,
@@ -40,5 +40,5 @@ LIEF_API const char* to_string(ANDROID_VERSIONS version);
 
 
 }
-}
+
 #endif

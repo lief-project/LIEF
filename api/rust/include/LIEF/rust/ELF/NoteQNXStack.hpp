@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/QNXStack.hpp"
+#include "LIEF/rust/ELF/Note.hpp"
 
 class ELF_QNXStack : public ELF_Note {
   public:

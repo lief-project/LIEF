@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_COFF_STRING_H
 #define LIEF_COFF_STRING_H
+#include <string_view>
+#include <cstdint>
 #include <ostream>
 #include <string>
-#include <cstdint>
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 
 /// This class represents a string located in the COFF string table.
 ///
@@ -47,7 +48,12 @@ class LIEF_API String {
   ~String() = default;
 
   /// The actual string
-  const std::string& str() const LIEF_LIFETIMEBOUND {
+  std::string_view str() const LIEF_LIFETIMEBOUND {
+    return str_;
+  }
+
+  /// Mutable access to the underlying string storage.
+  std::string& str() LIEF_LIFETIMEBOUND {
     return str_;
   }
 
@@ -77,5 +83,5 @@ class LIEF_API String {
   uint32_t offset_ = 0;
 };
 }
-}
+
 #endif

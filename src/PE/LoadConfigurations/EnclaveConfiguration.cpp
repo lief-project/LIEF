@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/LoadConfigurations/EnclaveImport.hpp"
+#include "LIEF/PE/Parser.hpp"
 #include <algorithm>
 #include <sstream>
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
-#include "LIEF/PE/LoadConfigurations/EnclaveImport.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 #include "PE/Structures.hpp"
 
-#include "logging.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF::PE {
 

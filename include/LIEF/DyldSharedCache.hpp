@@ -15,10 +15,12 @@
  */
 #ifndef LIEF_DYLD_SHARED_CACHE_H
 #define LIEF_DYLD_SHARED_CACHE_H
-#include <LIEF/DyldSharedCache/DyldSharedCache.hpp>
-#include <LIEF/DyldSharedCache/Dylib.hpp>
-#include <LIEF/DyldSharedCache/MappingInfo.hpp>
-#include <LIEF/DyldSharedCache/SubCache.hpp>
-#include <LIEF/DyldSharedCache/caching.hpp>
-#include <LIEF/DyldSharedCache/utils.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/DyldSharedCache/DyldSharedCache.hpp"
+#include "LIEF/DyldSharedCache/Dylib.hpp"
+#include "LIEF/DyldSharedCache/MappingInfo.hpp"
+#include "LIEF/DyldSharedCache/SubCache.hpp"
+#include "LIEF/DyldSharedCache/caching.hpp"
+#include "LIEF/DyldSharedCache/utils.hpp"
+// IWYU pragma: end_exports
 #endif

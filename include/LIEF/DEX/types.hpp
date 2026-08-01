@@ -17,12 +17,12 @@
 #define LIEF_DEX_TYPEDEF_H
 #include <cstdint>
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 
 using dex_version_t = uint32_t;
 
 }
-}
+
 
 #endif

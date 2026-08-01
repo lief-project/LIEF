@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/ART/enums.hpp"
 #include "LIEF/ART/EnumToString.hpp"
+#include "LIEF/ART/enums.hpp"
 #include <map>
 
 
@@ -128,4 +128,4 @@ const char* to_string(ART_44::IMAGE_ROOTS e) {
   return it == enumStrings.end() ? "UNDEFINED" : it->second;
 }
 
-} // namespace LIEF::ART
+}

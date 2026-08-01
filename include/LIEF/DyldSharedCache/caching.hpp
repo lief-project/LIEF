@@ -15,11 +15,11 @@
  */
 #ifndef LIEF_DSC_CACHING_H
 #define LIEF_DSC_CACHING_H
-#include <string>
 #include "LIEF/visibility.h"
+#include <string>
 
-namespace LIEF {
-namespace dsc {
+
+namespace LIEF::dsc {
 
 /// Enable globally cache/memoization. One can also leverage this function
 /// by setting the environment variable `DYLDSC_ENABLE_CACHE` to `1`
@@ -51,5 +51,5 @@ LIEF_API bool enable_cache();
 /// user-provided cache directory
 LIEF_API bool enable_cache(const std::string& dir);
 }
-}
+
 #endif

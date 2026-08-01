@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "binaryninja/binaryninjacore.h"
 #include "binaryninja/analysis/commands.hpp"
+#include "binaryninja/binaryninjacore.h"
 
 extern "C" {
 BN_DECLARE_CORE_ABI_VERSION

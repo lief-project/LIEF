@@ -16,14 +16,14 @@
 #include <string>
 
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/MachO/RelocationFixup.hpp"
-#include "LIEF/MachO/DylibCommand.hpp"
-#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 #include "LIEF/MachO/DyldChainedFixups.hpp"
 #include "LIEF/MachO/DyldChainedFixupsCreator.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"
+#include "LIEF/MachO/RelocationFixup.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/Symbol.hpp"
 
 #include "MachO/ChainedBindingInfoList.hpp"
 #include "MachO/ChainedFixup.hpp"
@@ -223,7 +223,7 @@ DyldChainedFixups::binding_info_t DyldChainedFixupsCreator::process_bindings(
     }
 
     segment_chains_[segment].emplace_back(*binding);
-    strong_symbol_t strong_sym{sym->name(), ord};
+    strong_symbol_t strong_sym{std::string(sym->name()), ord};
     auto it = strong_map.find(strong_sym);
     if (it != strong_map.end()) {
       it->second->elements_.push_back(binding.get());

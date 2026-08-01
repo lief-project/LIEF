@@ -15,9 +15,9 @@
 #pragma once
 #include <LIEF/PE/debug/Debug.hpp>
 
+#include "LIEF/PE/debug/PDBChecksum.hpp"
 #include "LIEF/rust/PE/debug/Debug.hpp"
 #include "LIEF/rust/Span.hpp"
-#include "LIEF/PE/debug/PDBChecksum.hpp"
 
 class PE_PDBChecksum : public PE_Debug {
   public:

@@ -16,14 +16,15 @@
 #ifndef LIEF_PE_RUNTIME_FUNCTION_AARCH64_UNPACKED_H
 #define LIEF_PE_RUNTIME_FUNCTION_AARCH64_UNPACKED_H
 
+#include <memory>
+
+#include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
+#include "LIEF/iterators.hpp"
 #include "LIEF/span.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
-#include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
 
-namespace LIEF {
-namespace PE {
-namespace unwind_aarch64 {
+
+namespace LIEF::PE::unwind_aarch64 {
 
 /// This class represents an unpacked AArch64 exception entry
 ///
@@ -63,7 +64,7 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
   ~UnpackedFunction() override = default;
 
   std::unique_ptr<ExceptionInfo> clone() const override {
-    return std::unique_ptr<UnpackedFunction>(new UnpackedFunction(*this));
+    return std::make_unique<UnpackedFunction>(*this);
   }
 
   std::string to_string() const override;
@@ -229,6 +230,6 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
   uint64_t exception_handler_offset_ = 0;
 };
 }
-}
-}
+
+
 #endif

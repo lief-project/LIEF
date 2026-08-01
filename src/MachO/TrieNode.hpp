@@ -16,9 +16,9 @@
 #ifndef LIEF_MACHO_TRIE_NODE_H_
 #define LIEF_MACHO_TRIE_NODE_H_
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "LIEF/visibility.h"
 
@@ -30,19 +30,19 @@ class ExportInfo;
 
 class LIEF_LOCAL TrieEdge {
   public:
-  static std::unique_ptr<TrieEdge> create(const std::string& str, TrieNode& node) {
+  static std::unique_ptr<TrieEdge> create(std::string_view str, TrieNode& node) {
     return std::make_unique<TrieEdge>(str, node);
   }
 
   TrieEdge() = delete;
-  TrieEdge(std::string str, TrieNode& node) :
-    substr(std::move(str)),
+  TrieEdge(std::string_view str, TrieNode& node) :
+    substr(str),
     child(&node) {}
 
   ~TrieEdge() = default;
 
   public:
-  std::string substr;
+  std::string_view substr;
   TrieNode* child = nullptr;
 };
 

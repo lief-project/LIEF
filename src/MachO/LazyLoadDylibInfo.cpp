@@ -23,9 +23,9 @@
 #include "LIEF/iostream.hpp"
 #include "LIEF/utils.hpp"
 
+#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 #include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
-#include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 
 #include "MachO/Structures.hpp"
 

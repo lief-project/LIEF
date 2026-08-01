@@ -16,14 +16,14 @@
 #ifndef LIEF_ELF_ANDROID_IDENT_H
 #define LIEF_ELF_ANDROID_IDENT_H
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class representing the ".note.android.ident" section
 ///
@@ -37,7 +37,7 @@ class LIEF_API AndroidIdent : public Note {
 
   public:
   std::unique_ptr<Note> clone() const override {
-    return std::unique_ptr<AndroidIdent>(new AndroidIdent(*this));
+    return std::make_unique<AndroidIdent>(*this);
   }
 
   /// Target SDK version (or 0 if it can't be resolved)
@@ -78,7 +78,7 @@ class LIEF_API AndroidIdent : public Note {
 };
 
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

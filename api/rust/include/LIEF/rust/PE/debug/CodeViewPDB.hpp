@@ -14,9 +14,9 @@
  */
 #pragma once
 
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
 #include "LIEF/rust/PE/debug/CodeView.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/PE/debug/CodeViewPDB.hpp"
 
 class PE_CodeViewPDB : public PE_CodeView {
   public:

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/ContentInfo.hpp"
-#include "LIEF/PE/signature/GenericContent.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "Object.tcc"
 #include "internal_utils.hpp"

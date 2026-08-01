@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_PE_DOS_HEADER_H
 #define LIEF_PE_DOS_HEADER_H
-#include <cstdint>
 #include <array>
+#include <cstdint>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 enum class PE_TYPE : uint16_t;
 
@@ -237,6 +237,6 @@ class LIEF_API DosHeader : public Object {
   uint32_t addr_new_exe_header_ = 0;
 };
 }
-}
+
 
 #endif

@@ -16,13 +16,13 @@
 #ifndef LIEF_PE_RELOCATION_H
 #define LIEF_PE_RELOCATION_H
 #include <cstdint>
-#include <vector>
-#include <ostream>
 #include <memory>
+#include <ostream>
+#include <vector>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;

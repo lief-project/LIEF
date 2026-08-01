@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-#include "logging.hpp"
-#include "frozen.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/iostream.hpp"
+#include "frozen.hpp"
+#include "logging.hpp"
 
-#include "LIEF/ELF/hash.hpp"
+#include "ELF/Structures.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
-#include "ELF/Structures.hpp"
+#include "LIEF/ELF/hash.hpp"
 
 
 namespace LIEF::ELF {
@@ -478,4 +478,4 @@ const char* to_string(CorePrStatus::Registers::AARCH64 e) {
   return "UNKNOWN";
 }
 
-} // namespace LIEF::ELF
+}

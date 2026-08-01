@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include <memory>
 #include <LIEF/BinaryStream/BinaryStream.hpp>
+#include <memory>
 
 #include <binaryninja/binaryninjaapi.h>
 

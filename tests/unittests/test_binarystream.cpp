@@ -19,10 +19,10 @@
 #include "utils.hpp"
 
 #include <LIEF/BinaryStream/BinaryStream.hpp>
+#include <LIEF/BinaryStream/FileStream.hpp>
 #include <LIEF/BinaryStream/MemoryStream.hpp>
 #include <LIEF/BinaryStream/SpanStream.hpp>
 #include <LIEF/BinaryStream/VectorStream.hpp>
-#include <LIEF/BinaryStream/FileStream.hpp>
 
 using namespace LIEF;
 

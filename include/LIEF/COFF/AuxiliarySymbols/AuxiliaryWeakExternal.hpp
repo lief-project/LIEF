@@ -16,16 +16,15 @@
 #ifndef LIEF_COFF_AUXILIARY_WEAK_EXTERNAL_H
 #define LIEF_COFF_AUXILIARY_WEAK_EXTERNAL_H
 
-#include <memory>
 #include <cassert>
+#include <memory>
 
+#include "LIEF/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/COFF/AuxiliarySymbol.hpp"
 
-namespace LIEF {
 
-namespace COFF {
+namespace LIEF::COFF {
 
 /// "Weak externals" are a mechanism for object files that allows flexibility at
 /// link time. A module can contain an unresolved external symbol (`sym1`), but
@@ -78,9 +77,7 @@ class LIEF_API AuxiliaryWeakExternal : public AuxiliarySymbol {
   AuxiliaryWeakExternal& operator=(AuxiliaryWeakExternal&&) = default;
 
   std::unique_ptr<AuxiliarySymbol> clone() const override {
-    return std::unique_ptr<AuxiliaryWeakExternal>(
-        new AuxiliaryWeakExternal{*this}
-    );
+    return std::make_unique<AuxiliaryWeakExternal>(*this);
   }
 
   /// The symbol-table index of `sym2`, the symbol to be linked if `sym1` is not
@@ -114,5 +111,5 @@ class LIEF_API AuxiliaryWeakExternal : public AuxiliarySymbol {
 LIEF_API const char* to_string(AuxiliaryWeakExternal::CHARACTERISTICS e);
 
 }
-}
+
 #endif

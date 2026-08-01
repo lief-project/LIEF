@@ -15,17 +15,17 @@
  */
 #ifndef LIEF_COFF_BIGOBJ_HEADER_H
 #define LIEF_COFF_BIGOBJ_HEADER_H
-#include <cstdint>
 #include <array>
+#include <cstdint>
 
 #include "LIEF/COFF/Header.hpp"
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 
 /// This class represents the header for a COFF object compiled
 /// with `/bigobj` support (i.e. the number of sections can exceed 65536).
@@ -120,5 +120,5 @@ class LIEF_API BigObjHeader : public Header {
 };
 
 }
-}
+
 #endif

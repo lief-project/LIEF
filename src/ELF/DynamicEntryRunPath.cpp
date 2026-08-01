@@ -26,7 +26,7 @@ namespace LIEF::ELF {
 
 std::vector<std::string> DynamicEntryRunPath::paths() const {
   std::stringstream ss;
-  ss.str(runpath());
+  ss.str(std::string(runpath()));
 
   std::string path;
 

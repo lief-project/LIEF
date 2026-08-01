@@ -15,14 +15,13 @@
  */
 #ifndef LIEF_RUNTIME_WINDOWS_HOST_H
 #define LIEF_RUNTIME_WINDOWS_HOST_H
-#include <LIEF/visibility.h>
+#include "LIEF/visibility.h"
 #include <cstdint>
-#include <string>
 #include <ostream>
+#include <string>
 
-namespace LIEF {
-namespace runtime {
-namespace windows {
+
+namespace LIEF::runtime::windows {
 
 /// This class exposes Windows-specific host information.
 class LIEF_API Host {
@@ -69,6 +68,6 @@ class LIEF_API Host {
 
 
 }
-}
-}
+
+
 #endif

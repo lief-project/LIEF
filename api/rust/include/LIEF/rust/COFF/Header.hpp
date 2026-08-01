@@ -15,12 +15,12 @@
 #pragma once
 #include <cstdint>
 
+#include "LIEF/COFF/BigObjHeader.hpp"
 #include "LIEF/COFF/Header.hpp"
 #include "LIEF/COFF/RegularHeader.hpp"
-#include "LIEF/COFF/BigObjHeader.hpp"
 #include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class COFF_Header : public Mirror<LIEF::COFF::Header> {
   public:

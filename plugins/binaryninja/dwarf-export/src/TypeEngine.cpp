@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 #include "binaryninja/dwarf-export/TypeEngine.hpp"
-#include <LIEF/DWARF/editor/StructType.hpp>
-#include <LIEF/DWARF/editor/EnumType.hpp>
-#include <LIEF/DWARF/editor/TypeDef.hpp>
-#include <LIEF/DWARF/editor/PointerType.hpp>
 #include <LIEF/DWARF/editor/ArrayType.hpp>
+#include <LIEF/DWARF/editor/EnumType.hpp>
 #include <LIEF/DWARF/editor/FunctionType.hpp>
+#include <LIEF/DWARF/editor/PointerType.hpp>
+#include <LIEF/DWARF/editor/StructType.hpp>
+#include <LIEF/DWARF/editor/TypeDef.hpp>
 
 #include "binaryninja/api_compat.hpp"
 #include "binaryninja/lief_utils.hpp"

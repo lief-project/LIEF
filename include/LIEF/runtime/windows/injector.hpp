@@ -16,16 +16,15 @@
 #ifndef LIEF_RUNTIME_WIN_INJECTOR_H
 #define LIEF_RUNTIME_WIN_INJECTOR_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
+#include <unordered_map>
 #include <ostream>
 #include <string>
-#include <unordered_map>
 
-namespace LIEF {
-namespace runtime {
-namespace windows {
+
+namespace LIEF::runtime::windows {
 
 /// Describes how to spawn a new process and inject a library into it.
 struct LIEF_API injection_context_t {
@@ -67,6 +66,6 @@ struct LIEF_API injection_context_t {
 LIEF_API ok_error_t inject_spawn(const injection_context_t& ctx);
 
 }
-}
-}
+
+
 #endif

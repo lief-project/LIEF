@@ -15,15 +15,16 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_CHPE_METADATA_X86_H
 #define LIEF_PE_LOAD_CONFIGURATION_CHPE_METADATA_X86_H
-#include <memory>
 #include <cstdint>
+#include <memory>
+#include <string>
 
-#include "LIEF/optional.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class represents hybrid metadata for X86.
 class LIEF_API CHPEMetadataX86 : public CHPEMetadata {
@@ -38,7 +39,7 @@ class LIEF_API CHPEMetadataX86 : public CHPEMetadata {
   CHPEMetadataX86& operator=(CHPEMetadataX86&&) = default;
 
   std::unique_ptr<CHPEMetadata> clone() const override {
-    return std::unique_ptr<CHPEMetadataX86>(new CHPEMetadataX86(*this));
+    return std::make_unique<CHPEMetadataX86>(*this);
   }
 
   static std::unique_ptr<CHPEMetadataX86> parse(Parser& ctx, BinaryStream& stream,
@@ -81,11 +82,11 @@ class LIEF_API CHPEMetadataX86 : public CHPEMetadata {
     return wowa64_dispatch_jump_function_pointer_;
   }
 
-  optional<uint32_t> compiler_iat_pointer() const {
+  std::optional<uint32_t> compiler_iat_pointer() const {
     return compiler_iat_pointer_;
   }
 
-  optional<uint32_t> wowa64_rdtsc_function_pointer() const {
+  std::optional<uint32_t> wowa64_rdtsc_function_pointer() const {
     return wowa64_rdtsc_function_pointer_;
   }
 
@@ -176,11 +177,11 @@ class LIEF_API CHPEMetadataX86 : public CHPEMetadata {
   uint32_t wowa64_dispatch_ret_function_pointer_ = 0;
   uint32_t wowa64_dispatch_ret_leaf_function_pointer_ = 0;
   uint32_t wowa64_dispatch_jump_function_pointer_ = 0;
-  optional<uint32_t> compiler_iat_pointer_;
-  optional<uint32_t> wowa64_rdtsc_function_pointer_;
+  std::optional<uint32_t> compiler_iat_pointer_;
+  std::optional<uint32_t> wowa64_rdtsc_function_pointer_;
 };
 
 }
-}
+
 
 #endif

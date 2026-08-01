@@ -16,9 +16,9 @@
 #include <memory>
 #include <optional>
 
-#include <LIEF/PE/ParserConfig.hpp>
 #include <LIEF/ELF/ParserConfig.hpp>
 #include <LIEF/MachO/ParserConfig.hpp>
+#include <LIEF/PE/ParserConfig.hpp>
 
 namespace LIEF {
 class Binary;

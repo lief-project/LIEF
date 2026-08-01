@@ -17,9 +17,9 @@
 #define LIEF_PE_ATTRIBUTES_CONTENT_TYPE_H
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/types.hpp"
+#include "LIEF/visibility.h"
 
 
 namespace LIEF {

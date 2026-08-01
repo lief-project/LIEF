@@ -16,11 +16,13 @@
 #ifndef LIEF_ABSTRACT_H
 #define LIEF_ABSTRACT_H
 
-#include <LIEF/Abstract/Binary.hpp>
-#include <LIEF/Abstract/Parser.hpp>
-#include <LIEF/Abstract/Relocation.hpp>
-#include <LIEF/Abstract/Function.hpp>
-#include <LIEF/Abstract/Symbol.hpp>
-#include <LIEF/Abstract/Section.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/Abstract/Binary.hpp"
+#include "LIEF/Abstract/Function.hpp"
+#include "LIEF/Abstract/Parser.hpp"
+#include "LIEF/Abstract/Relocation.hpp"
+#include "LIEF/Abstract/Section.hpp"
+#include "LIEF/Abstract/Symbol.hpp"
+// IWYU pragma: end_exports
 
 #endif

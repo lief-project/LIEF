@@ -15,20 +15,18 @@
 #ifndef LIEF_PDB_TYPE_SIMPLE_H
 #define LIEF_PDB_TYPE_SIMPLE_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PDB/Type.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace pdb {
-namespace types {
+
+namespace LIEF::pdb::types {
 
 /// This class represents primitive types (int, float, ...) which are
 /// also named *simple* types in the PDB format.
 class LIEF_API Simple : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   Simple(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -150,6 +148,6 @@ class LIEF_API Simple : public Type {
 };
 
 }
-}
-}
+
+
 #endif

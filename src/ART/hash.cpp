@@ -57,4 +57,4 @@ void Hash::visit(const Header& header) {
 }
 
 
-} // namespace LIEF::ART
+}

@@ -16,12 +16,12 @@
 #include <cstdint>
 
 #include "LIEF/PE/ResourcesManager.hpp"
-#include "LIEF/rust/PE/ResourceNode.hpp"
-#include "LIEF/rust/PE/ResourceIcon.hpp"
-#include "LIEF/rust/PE/ResourceVersion.hpp"
-#include "LIEF/rust/PE/ResourceAccelerator.hpp"
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PE/ResourceAccelerator.hpp"
+#include "LIEF/rust/PE/ResourceIcon.hpp"
+#include "LIEF/rust/PE/ResourceNode.hpp"
+#include "LIEF/rust/PE/ResourceVersion.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class PE_ResourcesManager_string_entry_t

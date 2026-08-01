@@ -15,13 +15,15 @@
  */
 #ifndef LIEF_PE_DEBUG_INC_H
 #define LIEF_PE_DEBUG_INC_H
-#include <LIEF/PE/debug/Debug.hpp>
-#include <LIEF/PE/debug/CodeView.hpp>
-#include <LIEF/PE/debug/Pogo.hpp>
-#include <LIEF/PE/debug/PogoEntry.hpp>
-#include <LIEF/PE/debug/Repro.hpp>
-#include <LIEF/PE/debug/CodeViewPDB.hpp>
-#include <LIEF/PE/debug/VCFeature.hpp>
-#include <LIEF/PE/debug/ExDllCharacteristics.hpp>
-#include <LIEF/PE/debug/FPO.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/PE/debug/CodeView.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/PE/debug/ExDllCharacteristics.hpp"
+#include "LIEF/PE/debug/FPO.hpp"
+#include "LIEF/PE/debug/Pogo.hpp"
+#include "LIEF/PE/debug/PogoEntry.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/PE/debug/VCFeature.hpp"
+// IWYU pragma: end_exports
 #endif

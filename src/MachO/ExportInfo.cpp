@@ -19,10 +19,10 @@
 
 #include "frozen.hpp"
 
-#include "LIEF/MachO/hash.hpp"
-#include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 
 FMT_FORMATTER(LIEF::MachO::ExportInfo::FLAGS, LIEF::MachO::to_string);

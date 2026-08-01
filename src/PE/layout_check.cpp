@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/TLS.hpp"
-#include "LIEF/utils.hpp"
 #include "LIEF/PE/utils.hpp"
+#include "LIEF/utils.hpp"
 
 #include "PE/Structures.hpp"
 
@@ -142,7 +142,7 @@ class LayoutChecker {
     return vaddr_start <= va && va < vaddr_end;
   }
 
-  bool contains(optional<uint64_t> va) const {
+  bool contains(std::optional<uint64_t> va) const {
     return contains(va.value_or(0));
   }
 
@@ -473,8 +473,7 @@ bool LayoutChecker::check_load_config() {
   }
 
   // NOTE(romain): dynamic_value_reloctable_section starts by indexing from 1
-  if (auto value = config->dynamic_value_reloctable_section();
-      value.value_or(0) > 0)
+  if (auto value = config->dynamic_value_reloctable_section(); value && *value > 0)
   {
     if ((*value - 1) < 0 ||
         static_cast<size_t>((*value - 1)) >= pe.sections().size())
@@ -483,7 +482,7 @@ bool LayoutChecker::check_load_config() {
     }
   }
 
-  if (auto value = config->guard_cf_function_table(); value.value_or(0) > 0) {
+  if (auto value = config->guard_cf_function_table(); value && *value > 0) {
     if (*value < pe.optional_header().imagebase()) {
       return error("{}:{}", __FUNCTION__, __LINE__);
     }
@@ -655,7 +654,7 @@ bool LayoutChecker::check_imports() {
       const uint32_t iat_address = entry.iat_address(); // RVA
       std::string entry_name = entry.is_ordinal() ?
                                    fmt::format("#{:04d}", entry.ordinal()) :
-                                   entry.name();
+                                   std::string(entry.name());
       // 2-byte alignment seems sufficient
       if (iat_address % sizeof(uint16_t) != 0) {
         return error("{}:{} IAT is wrongly aligned: {:#010x}", imp.name(),

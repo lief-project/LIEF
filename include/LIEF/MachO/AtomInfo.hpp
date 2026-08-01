@@ -15,16 +15,17 @@
  */
 #ifndef LIEF_MACHO_ATOM_INFO_COMMAND_H
 #define LIEF_MACHO_ATOM_INFO_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/span.hpp"
 #include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/span.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 class LinkEdit;
 
@@ -45,7 +46,7 @@ class LIEF_API AtomInfo : public LoadCommand {
   AtomInfo(const AtomInfo& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<AtomInfo>(new AtomInfo(*this));
+    return std::make_unique<AtomInfo>(*this);
   }
 
   /// Offset in the `__LINKEDIT` SegmentCommand where the payload starts
@@ -90,5 +91,5 @@ class LIEF_API AtomInfo : public LoadCommand {
 };
 
 }
-}
+
 #endif

@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
-#include <LIEF/DWARF/Editor.hpp>
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/DWARF/editor/CompilationUnit.hpp"
 #include "LIEF/rust/Abstract/Binary.hpp"
+#include "LIEF/rust/DWARF/editor/CompilationUnit.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include <LIEF/DWARF/Editor.hpp>
 
 class DWARF_Editor : public Mirror<LIEF::dwarf::Editor> {
   public:

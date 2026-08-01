@@ -16,8 +16,8 @@
 #define LIEF_CAN_BE_UNIQUE_H
 #include <memory>
 
-namespace LIEF {
-namespace details {
+
+namespace LIEF::details {
 template<class T>
 class canbe_unique {
   public:
@@ -113,5 +113,5 @@ inline bool operator==(std::nullptr_t, const canbe_unique<T>& lhs) {
 }
 
 }
-}
+
 #endif

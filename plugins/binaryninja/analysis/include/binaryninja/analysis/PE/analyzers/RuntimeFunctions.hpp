@@ -17,8 +17,8 @@
 #include "binaryninja/analysis/PE/AnalyzerBase.hpp"
 
 #include "LIEF/PE/ExceptionInfo.hpp"
-#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
+#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 
 namespace analysis_plugin::pe::analyzers {
 class RuntimeFunctions : public AnalyzerBase {

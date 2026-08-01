@@ -15,22 +15,20 @@
  */
 #ifndef LIEF_OAT_HEADER_H
 #define LIEF_OAT_HEADER_H
-#include <functional>
+#include <array>
 #include <map>
 #include <string>
 #include <vector>
-#include <utility>
-#include <array>
 
-#include "LIEF/iterators.hpp"
-#include "LIEF/OAT/type_traits.hpp"
 #include "LIEF/OAT/enums.hpp"
+#include "LIEF/OAT/type_traits.hpp"
+#include "LIEF/iterators.hpp"
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace OAT {
+
+namespace LIEF::OAT {
 class Parser;
 
 class LIEF_API Header : public Object {
@@ -150,6 +148,6 @@ class LIEF_API Header : public Object {
 };
 
 }
-}
+
 
 #endif

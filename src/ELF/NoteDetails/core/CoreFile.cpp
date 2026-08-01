@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-#include "logging.hpp"
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/iostream.hpp"
+#include "logging.hpp"
 
 
 namespace LIEF::ELF {
@@ -132,4 +132,4 @@ std::ostream& operator<<(std::ostream& os, const CoreFile::entry_t& entry) {
   return os;
 }
 
-} // namespace LIEF::ELF
+}

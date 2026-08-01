@@ -15,9 +15,9 @@
  */
 #ifndef LIEF_ENDIANNESS_SUPPORT_H
 #define LIEF_ENDIANNESS_SUPPORT_H
-#include <cstdint>
 #include "LIEF/config.h"
 #include "LIEF/visibility.h"
+#include <cstdint>
 
 #define LIEF_ENDIAN_SUPPORT(X)                                                    \
   template<>                                                                      \
@@ -25,8 +25,8 @@
 
 namespace LIEF {
 
-namespace ELF {
-namespace details {
+
+namespace ELF::details {
 struct Elf32_Auxv;
 struct Elf32_Dyn;
 struct Elf32_Ehdr;
@@ -54,10 +54,9 @@ struct Elf64_Verdef;
 struct Elf64_Vernaux;
 struct Elf64_Verneed;
 }
-}
 
-namespace MachO {
-namespace details {
+
+namespace MachO::details {
 struct arm_thread_state64_t;
 struct arm_thread_state_t;
 struct build_tool_version;
@@ -112,7 +111,7 @@ struct x86_thread_state_t;
 struct ppc_thread_state_t;
 struct ppc_thread_state64_t;
 }
-}
+
 
 template<typename T>
 void swap_endian(T*) {}

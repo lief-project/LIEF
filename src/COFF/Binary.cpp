@@ -15,12 +15,11 @@
  */
 #include "LIEF/COFF/Binary.hpp"
 #include "LIEF/COFF/Header.hpp"
+#include "LIEF/COFF/Relocation.hpp"
 #include "LIEF/COFF/Section.hpp"
 #include "LIEF/COFF/Symbol.hpp"
-#include "LIEF/COFF/Relocation.hpp"
 
-#include "LIEF/asm/Engine.hpp"
-#include "LIEF/asm/Instruction.hpp"
+#include "LIEF/asm/Engine.hpp" // IWYU pragma: keep
 
 #include "internal_utils.hpp"
 

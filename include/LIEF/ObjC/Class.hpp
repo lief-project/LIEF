@@ -15,20 +15,20 @@
 #ifndef LIEF_OBJC_CLASS_H
 #define LIEF_OBJC_CLASS_H
 
-#include <LIEF/visibility.h>
-#include <LIEF/compiler_attributes.hpp>
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-#include <LIEF/ObjC/IVar.hpp>
-#include <LIEF/ObjC/Protocol.hpp>
-#include <LIEF/ObjC/Method.hpp>
-#include <LIEF/ObjC/Property.hpp>
-#include <LIEF/ObjC/DeclOpt.hpp>
+#include "LIEF/ObjC/DeclOpt.hpp"
+#include "LIEF/ObjC/IVar.hpp"
+#include "LIEF/ObjC/Method.hpp"
+#include "LIEF/ObjC/Property.hpp"
+#include "LIEF/ObjC/Protocol.hpp"
 
 #include <memory>
 #include <string>
 
-namespace LIEF {
-namespace objc {
+
+namespace LIEF::objc {
 
 namespace details {
 class Class;
@@ -148,5 +148,5 @@ class LIEF_API Class {
 };
 
 }
-}
+
 #endif

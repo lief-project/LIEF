@@ -1,6 +1,6 @@
 #pragma once
-#include "LIEF/PE/signature/attributes/GenericType.hpp"
 #include "Attribute.hpp"
+#include "LIEF/PE/signature/attributes/GenericType.hpp"
 #include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/helpers.hpp"
 

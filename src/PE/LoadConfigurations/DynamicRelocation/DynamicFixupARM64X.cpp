@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/utils.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupARM64X.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/Parser.hpp"
 
-#include "logging.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF::PE {
 

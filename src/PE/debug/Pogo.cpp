@@ -63,4 +63,4 @@ const char* to_string(Pogo::SIGNATURES e) {
   return "UNKNOWN";
 }
 
-} // namespace LIEF::PE
+}

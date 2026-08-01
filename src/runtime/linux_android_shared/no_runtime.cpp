@@ -16,7 +16,7 @@
 #include "linux_android_shared/Process.hpp"
 namespace LIEF::runtime::linux_android {
 
-optional<std::string> cmdline() {
-  return nullopt();
+std::optional<std::string> cmdline() {
+  return std::nullopt;
 }
 }

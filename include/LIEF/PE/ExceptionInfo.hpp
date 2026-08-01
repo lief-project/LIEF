@@ -16,11 +16,11 @@
 #ifndef LIEF_PE_EXCEPTION_INFO_H
 #define LIEF_PE_EXCEPTION_INFO_H
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/Header.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -83,7 +83,7 @@ class LIEF_API ExceptionInfo {
   /// Helper to **downcast** an ExceptionInfo into a concrete implementation
   template<class T>
   T* as() {
-    static_assert(std::is_base_of<ExceptionInfo, T>::value,
+    static_assert(std::is_base_of_v<ExceptionInfo, T>,
                   "Require ExceptionInfo inheritance");
     if (T::classof(this)) {
       return static_cast<T*>(this);

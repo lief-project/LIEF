@@ -5,6 +5,7 @@
 #include <LIEF/BinaryStream/SpanStream.hpp>
 #include <vector>
 #include <memory>
+#include <string_view>
 
 #include "nanobind/extra/memoryview.hpp"
 
@@ -19,6 +20,10 @@ inline nanobind::bytes to_bytes(LIEF::span<const uint8_t> sp) {
 }
 
 inline nanobind::bytes to_bytes(const std::string& str) {
+  return nanobind::bytes(str.data(), str.size());
+}
+
+inline nanobind::bytes to_bytes(const std::string_view& str) {
   return nanobind::bytes(str.data(), str.size());
 }
 

@@ -17,9 +17,8 @@
 
 /* Generated from LLVM: 22.1.8 */
 
-namespace LIEF {
-namespace assembly {
-namespace aarch64 {
+
+namespace LIEF::assembly::aarch64 {
 enum class OPCODE {
   PHI = 0,
   INLINEASM = 1,
@@ -9159,6 +9158,6 @@ enum class OPCODE {
   INSTRUCTION_LIST_END = 9135,
 };
 }
-}
-}
+
+
 #endif

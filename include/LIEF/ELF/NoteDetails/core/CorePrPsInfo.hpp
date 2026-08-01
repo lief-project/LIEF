@@ -18,13 +18,13 @@
 
 #include <ostream>
 
+#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/enums.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/ELF/enums.hpp"
-#include "LIEF/ELF/Note.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class representing the NT_PRPSINFO core note.
 /// This kind of note represents general information about the process
@@ -90,7 +90,7 @@ class LIEF_API CorePrPsInfo : public Note {
   Header::CLASS class_ = Header::CLASS::NONE;
 };
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

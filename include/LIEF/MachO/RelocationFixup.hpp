@@ -15,16 +15,16 @@
  */
 #ifndef LIEF_MACHO_RELOCATION_FIXUP_H
 #define LIEF_MACHO_RELOCATION_FIXUP_H
-#include <ostream>
 #include <memory>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 
-#include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/DyldChainedFormat.hpp"
+#include "LIEF/MachO/Relocation.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct dyld_chained_ptr_arm64e_rebase;
@@ -71,7 +71,7 @@ class LIEF_API RelocationFixup : public Relocation {
   ~RelocationFixup() override;
 
   std::unique_ptr<Relocation> clone() const override {
-    return std::unique_ptr<RelocationFixup>(new RelocationFixup(*this));
+    return std::make_unique<RelocationFixup>(*this);
   }
 
   /// Not relevant for this kind of relocation
@@ -169,5 +169,5 @@ class LIEF_API RelocationFixup : public Relocation {
 };
 
 }
-}
+
 #endif

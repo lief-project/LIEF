@@ -18,8 +18,8 @@
 
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// This class represents a property which doesn't have a concrete LIEF
 /// implementation.
@@ -48,5 +48,5 @@ class Generic : public NoteGnuProperty::Property {
   uint32_t raw_type_ = 0;
 };
 }
-}
+
 #endif

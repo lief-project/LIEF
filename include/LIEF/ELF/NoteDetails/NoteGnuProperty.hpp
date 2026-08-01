@@ -16,15 +16,15 @@
 #ifndef LIEF_ELF_NOTE_GNU_PROPERTY_H
 #define LIEF_ELF_NOTE_GNU_PROPERTY_H
 
-#include <vector>
-#include <ostream>
 #include <memory>
+#include <ostream>
+#include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class that wraps the `NT_GNU_PROPERTY_TYPE_0` note
 class LIEF_API NoteGnuProperty : public Note {
@@ -126,7 +126,7 @@ class LIEF_API NoteGnuProperty : public Note {
 
 LIEF_API const char* to_string(NoteGnuProperty::Property::TYPE type);
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <ostream>
 #include <algorithm>
+#include <ostream>
 
 #include <spdlog/fmt/fmt.h>
 
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/SymbolVersionDefinition.hpp"
-#include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/SymbolVersionDefinition.hpp"
 
 
 namespace LIEF::ELF {

@@ -20,10 +20,10 @@
 
 // NOTE(romain): Windows is #define-ing uuid_t so we can't use this alias
 
-namespace LIEF {
-namespace dsc {
+
+namespace LIEF::dsc {
 /// UUID used in different places of the shared cache
 using sc_uuid_t = std::array<uint8_t, 16>;
 }
-}
+
 #endif

@@ -15,12 +15,12 @@
 #ifndef LIEF_DWARF_THROWN_TYPE_H
 #define LIEF_DWARF_THROWN_TYPE_H
 
-#include "LIEF/visibility.h"
-#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
+
+namespace LIEF::dwarf {
 class Parameter;
 
 namespace types {
@@ -29,8 +29,7 @@ namespace types {
 class LIEF_API Thrown : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   Thrown(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -63,5 +62,5 @@ class LIEF_API Thrown : public Type {
 
 }
 }
-}
+
 #endif

@@ -26,10 +26,10 @@
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
@@ -290,4 +290,4 @@ void Hash::visit(const SysvHash& sysvhash) {
 }
 
 
-} // namespace LIEF::ELF
+}

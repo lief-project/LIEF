@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
+#include "jni/log.hpp"
+#include <jni_bind.h>
 #include <cassert>
 #include <jni.h>
-#include <jni_bind.h>
-#include "jni/log.hpp"
 
 #include <spdlog/fmt/compile.h>
 #include <spdlog/fmt/fmt.h>

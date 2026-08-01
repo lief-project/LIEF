@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -56,7 +56,7 @@ class LIEF_API VolatileMetadata {
   VolatileMetadata& operator=(VolatileMetadata&&) = default;
 
   std::unique_ptr<VolatileMetadata> clone() const {
-    return std::unique_ptr<VolatileMetadata>(new VolatileMetadata(*this));
+    return std::make_unique<VolatileMetadata>(*this);
   }
 
   /// Size (in bytes) of the current raw structure

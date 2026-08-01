@@ -16,12 +16,12 @@
 #ifndef LIEF_OAT_METHOD_H
 #define LIEF_OAT_METHOD_H
 
-#include <vector>
-#include <string>
-#include <ostream>
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
+#include <ostream>
+#include <string>
+#include <vector>
 
 namespace LIEF {
 namespace DEX {

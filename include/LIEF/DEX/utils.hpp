@@ -21,7 +21,6 @@
 
 #include "LIEF/DEX/types.hpp"
 
-#include "LIEF/types.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {

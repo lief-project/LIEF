@@ -1,22 +1,23 @@
-#include <LIEF/config.h>
+// IWYU pragma: begin_exports
+#include "LIEF/config.h"
 
 #if defined __cplusplus
   #include "spdlog/spdlog.h"
   #include <spdlog/fmt/fmt.h>
   #include <spdlog/fmt/ranges.h>
 
+  #include <unordered_map>
+  #include <algorithm>
+  #include <array>
+  #include <cstddef>
+  #include <cstdint>
+  #include <map>
+  #include <memory>
+  #include <ostream>
+  #include <set>
+  #include <sstream>
   #include <string>
   #include <vector>
-  #include <set>
-  #include <map>
-  #include <unordered_map>
-  #include <array>
-  #include <memory>
-  #include <algorithm>
-  #include <cstdint>
-  #include <cstddef>
-  #include <ostream>
-  #include <sstream>
 
   #if LIEF_JSON_SUPPORT
     #if defined(__clang__)
@@ -34,6 +35,7 @@
     #endif
   #endif
 #else
-  #include <stdint.h>
   #include <stddef.h>
+  #include <stdint.h>
 #endif
+// IWYU pragma: end_exports

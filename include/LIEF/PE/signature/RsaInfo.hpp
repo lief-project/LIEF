@@ -15,14 +15,14 @@
  */
 #ifndef LIEF_PE_SIGNATURE_RSA_INFO_H
 #define LIEF_PE_SIGNATURE_RSA_INFO_H
-#include <vector>
-#include <ostream>
 #include <cstdint>
+#include <ostream>
+#include <vector>
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class x509;
 
 /// Object that wraps a RSA key
@@ -76,5 +76,5 @@ class LIEF_API RsaInfo {
 };
 
 }
-}
+
 #endif

@@ -14,13 +14,13 @@
  */
 #include <cctype>
 
-#include "log.hpp"
-#include "binaryninja/analysis/ELF/AnalyzerBase.hpp"
-#include "LIEF/ELF.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/ELF.hpp"
+#include "binaryninja/analysis/ELF/AnalyzerBase.hpp"
+#include "log.hpp"
 
-#include <binaryninja/binaryninjacore.h>
 #include <binaryninja/binaryninjaapi.h>
+#include <binaryninja/binaryninjacore.h>
 
 using namespace LIEF::ELF;
 

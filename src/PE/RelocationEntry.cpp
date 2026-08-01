@@ -17,11 +17,11 @@
 
 #include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/Relocation.hpp"
+#include "LIEF/PE/RelocationEntry.hpp"
 
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
 
 FMT_FORMATTER(LIEF::PE::RelocationEntry::BASE_TYPES, LIEF::PE::to_string);
 

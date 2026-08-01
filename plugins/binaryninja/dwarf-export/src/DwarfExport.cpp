@@ -17,28 +17,28 @@
 
 #include "binaryninja/lief_utils.hpp"
 
-#include <LIEF/MachO/utils.hpp>
-#include <LIEF/MachO/Parser.hpp>
+#include <LIEF/ELF/utils.hpp>
 #include <LIEF/MachO/Binary.hpp>
 #include <LIEF/MachO/FatBinary.hpp>
 #include <LIEF/MachO/Header.hpp>
-#include <LIEF/ELF/utils.hpp>
+#include <LIEF/MachO/Parser.hpp>
+#include <LIEF/MachO/utils.hpp>
 #include <LIEF/PE/utils.hpp>
 
-#include <LIEF/utils.hpp>
 #include <LIEF/DWARF/Editor.hpp>
 #include <LIEF/DWARF/editor/CompilationUnit.hpp>
 #include <LIEF/DWARF/editor/Function.hpp>
 #include <LIEF/DWARF/editor/Variable.hpp>
+#include <LIEF/utils.hpp>
 
 #include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/Abstract/Parser.hpp>
 
-#include "binaryninja/dwarf-export/log.hpp"
 #include "binaryninja/dwarf-export/DwarfExport.hpp"
 #include "binaryninja/dwarf-export/FunctionEngine.hpp"
-#include "binaryninja/dwarf-export/VarEngine.hpp"
 #include "binaryninja/dwarf-export/TypeEngine.hpp"
+#include "binaryninja/dwarf-export/VarEngine.hpp"
+#include "binaryninja/dwarf-export/log.hpp"
 #include "log.hpp"
 
 namespace bn = BinaryNinja;

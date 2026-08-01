@@ -16,8 +16,8 @@
 #ifndef LIEF_PE_RESOURCE_LANG_H
 #define LIEF_PE_RESOURCE_LANG_H
 #include <cstdint>
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 enum class RESOURCE_LANGS {
   NEUTRAL = 0x00,
@@ -139,5 +139,5 @@ static constexpr uint32_t encode_lang(uint32_t lang, uint32_t sublang) {
 
 
 }
-}
+
 #endif

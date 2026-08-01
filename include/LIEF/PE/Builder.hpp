@@ -16,18 +16,18 @@
 #ifndef LIEF_PE_BUILDER_H
 #define LIEF_PE_BUILDER_H
 
-#include <string>
-#include <vector>
 #include <functional>
 #include <ostream>
+#include <string>
+#include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/iostream.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/errors.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class Binary;
 class ResourceNode;
 class ResourceDirectory;
@@ -204,5 +204,5 @@ class LIEF_API Builder {
 };
 
 }
-}
+
 #endif

@@ -16,8 +16,8 @@
 
 #include "binaryninja/analysis/PE/AnalyzerBase.hpp"
 
-#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 
 namespace analysis_plugin::pe::analyzers {
 class LoadConfiguration : public AnalyzerBase {

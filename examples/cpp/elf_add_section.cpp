@@ -15,7 +15,6 @@
  */
 #include <iostream>
 #include <memory>
-#include <iostream>
 
 #include <LIEF/ELF.hpp>
 

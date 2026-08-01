@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/RelocationDyld.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/Visitor.hpp"
 
 
 namespace LIEF::MachO {

@@ -16,17 +16,16 @@
  */
 #include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/osx/Process.hpp"
-#include "LIEF/optional.hpp"
 #include "logging.hpp"
+#include <optional>
 
+#include <sys/types.h>
 #include <cstdlib>
 #include <unistd.h>
-#include <sys/types.h>
 
 #include <mach-o/dyld_images.h>
 #include <mach/mach.h>
 #include <mach/task_info.h>
-#include <mach-o/dyld_images.h>
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 extern const char** environ;
@@ -45,11 +44,11 @@ uint32_t Process::page_size() {
   return PAGESZ;
 }
 
-optional<std::string> Process::get_env(const std::string& key) {
+std::optional<std::string> Process::get_env(const std::string& key) {
   if (const char* value = ::getenv(key.c_str())) {
     return std::string(value);
   }
-  return nullopt();
+  return std::nullopt;
 }
 
 Process::EnvVars Process::get_envs() {
@@ -70,7 +69,7 @@ Process::EnvVars Process::get_envs() {
 
 namespace osx {
 
-static optional<task_dyld_info_data_t> get_dyld_info_data_t() {
+static std::optional<task_dyld_info_data_t> get_dyld_info_data_t() {
   task_dyld_info_data_t dyld_info{};
   mach_msg_type_number_t count = TASK_DYLD_INFO_COUNT;
 
@@ -79,7 +78,7 @@ static optional<task_dyld_info_data_t> get_dyld_info_data_t() {
 
   if (kr != KERN_SUCCESS) {
     LIEF_ERR("task_info failed with error code: {}", kr);
-    return nullopt();
+    return std::nullopt;
   }
   return dyld_info;
 }

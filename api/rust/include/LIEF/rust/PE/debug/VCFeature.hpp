@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/PE/debug/Debug.hpp"
 #include "LIEF/PE/debug/VCFeature.hpp"
+#include "LIEF/rust/PE/debug/Debug.hpp"
 
 class PE_VCFeature : public PE_Debug {
   public:

@@ -21,9 +21,8 @@
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 class Type;
 
 namespace details {
@@ -66,6 +65,6 @@ class LIEF_API Variable {
 };
 
 }
-}
-}
+
+
 #endif

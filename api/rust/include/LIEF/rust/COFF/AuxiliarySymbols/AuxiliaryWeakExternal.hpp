@@ -16,8 +16,8 @@
 
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryWeakExternal.hpp"
 #include "LIEF/rust/COFF/AuxiliarySymbol.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class COFF_AuxiliaryWeakExternal : public COFF_AuxiliarySymbol {
   public:

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
 #include "LIEF/Abstract/Header.hpp"
+#include "LIEF/Visitor.hpp"
 
 #if defined(LIEF_ELF_SUPPORT)
   #include "LIEF/ELF/Binary.hpp"
@@ -28,10 +28,10 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#include "frozen.hpp"
-#include "fmt_formatter.hpp"
-#include "logging.hpp"
 #include "LIEF/config.h"
+#include "fmt_formatter.hpp"
+#include "frozen.hpp"
+#include "logging.hpp" // IWYU pragma: keep
 
 FMT_FORMATTER(LIEF::Header::MODES, LIEF::to_string);
 

@@ -20,16 +20,16 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#include "LIEF/utils.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/utils.hpp"
 #include "LIEF/version.h"
 
 #include "third-party/utfcpp.hpp"
 
 #include "LIEF/config.h"
 
-#include "logging.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF {
 
@@ -176,7 +176,7 @@ lief_version_t version() {
 }
 
 #if !defined(LIEF_EXTENDED)
-result<std::string> demangle(const std::string& /*mangled*/) {
+result<std::string> demangle(std::string_view /*mangled*/) {
   logging::needs_lief_extended();
   return make_error_code(lief_errors::require_extended_version);
 }
@@ -194,4 +194,4 @@ lief_version_t extended_version() {
 }
 #endif
 
-} // namespace LIEF
+}

@@ -14,12 +14,12 @@
  */
 #pragma once
 
-#include <jni_bind.h>
 #include "jni/lief/generic/Binary.hpp"
 #include "jni/lief/macho/Header.hpp"
+#include <jni_bind.h>
 
-#include <LIEF/MachO/Binary.hpp>
 #include <LIEF/Abstract/Parser.hpp>
+#include <LIEF/MachO/Binary.hpp>
 
 namespace lief_jni::macho {
 

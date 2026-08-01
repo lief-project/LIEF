@@ -16,11 +16,9 @@
 #define LIEF_ASM_RISCV_OPERAND_IMM_H
 #include "LIEF/asm/riscv/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace riscv {
+
 /// Namespace that wraps the different RISC-V operands
-namespace operands {
+namespace LIEF::assembly::riscv::operands {
 
 
 /// This class represents an immediate operand (i.e. a constant)
@@ -43,7 +41,6 @@ class LIEF_API Immediate : public Operand {
   ~Immediate() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

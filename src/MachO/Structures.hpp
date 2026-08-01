@@ -19,10 +19,6 @@
 #include <cstdint>
 #include <string>
 
-#include "LIEF/types.hpp"
-
-#include "LIEF/MachO/enums.hpp"
-
 
 // Swap 2 byte, 16 bit values:
 #define Swap2Bytes(val) ((((val) >> 8) & 0x00FF) | (((val) << 8) & 0xFF00))
@@ -733,6 +729,5 @@ class MachO64 {
   using uint = uint64_t;
 };
 }
-// end namespace MachO
 
 #endif

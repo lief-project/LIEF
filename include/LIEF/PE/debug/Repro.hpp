@@ -17,13 +17,13 @@
 #define LIEF_PE_REPRO_H
 #include <vector>
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Builder;
 class Parser;
@@ -91,6 +91,6 @@ class LIEF_API Repro : public Debug {
 };
 
 } // Namespace PE
-} // Namespace LIEF
+// Namespace LIEF
 
 #endif

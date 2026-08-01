@@ -15,11 +15,12 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_ENCLAVE_IMPORT_H
 #define LIEF_PE_LOAD_CONFIGURATION_ENCLAVE_IMPORT_H
-#include <string>
+#include <string_view>
 #include <array>
+#include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;
@@ -103,7 +104,7 @@ class LIEF_API EnclaveImport {
   }
 
   /// Resolved import name
-  const std::string& import_name() const LIEF_LIFETIMEBOUND {
+  std::string_view import_name() const LIEF_LIFETIMEBOUND {
     return import_name_;
   }
 

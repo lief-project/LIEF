@@ -19,10 +19,10 @@
 #include <memory>
 #include <string>
 
-#include "LIEF/visibility.h"
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class SpanStream;
@@ -75,7 +75,7 @@ class LIEF_API FunctionOverride : public DynamicFixup {
   FunctionOverride& operator=(FunctionOverride&&);
 
   std::unique_ptr<DynamicFixup> clone() const override {
-    return std::unique_ptr<FunctionOverride>(new FunctionOverride(*this));
+    return std::make_unique<FunctionOverride>(*this);
   }
 
   /// Iterator over the overriding info

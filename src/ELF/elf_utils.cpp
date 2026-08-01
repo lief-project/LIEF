@@ -9,12 +9,12 @@
 
 namespace LIEF::ELF {
 
-optional<elf_file_info_t> get_info(BinaryStream& strm) {
+std::optional<elf_file_info_t> get_info(BinaryStream& strm) {
   elf_file_info_t info{};
   auto header = strm.read<ELF::details::Elf64_Ehdr>();
   if (!header) {
     LIEF_ERR("Failed to read ELF Header");
-    return nullopt();
+    return std::nullopt;
   }
 
   const auto cls = static_cast<Header::CLASS>(header->e_ident[Header::ELI_CLASS]);
@@ -22,7 +22,7 @@ optional<elf_file_info_t> get_info(BinaryStream& strm) {
       static_cast<Header::ELF_DATA>(header->e_ident[Header::ELI_DATA]);
   if (cls != Header::CLASS::ELF64 || data != Header::ELF_DATA::LSB) {
     LIEF_WARN("{} only supports 64-bit little-endian ELF images", __FUNCTION__);
-    return nullopt();
+    return std::nullopt;
   }
 
   strm.setpos(header->e_phoff);
@@ -49,7 +49,7 @@ optional<elf_file_info_t> get_info(BinaryStream& strm) {
       info.end_address < info.imagebase)
   {
     LIEF_WARN("No loadable segment found while probing the ELF image");
-    return nullopt();
+    return std::nullopt;
   }
 
   return info;

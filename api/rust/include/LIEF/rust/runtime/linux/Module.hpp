@@ -14,9 +14,9 @@
  */
 #pragma once
 
+#include "LIEF/runtime/linux/Module.hpp"
 #include "LIEF/rust/ELF/Binary.hpp"
 #include "LIEF/rust/runtime/Module.hpp"
-#include "LIEF/runtime/linux/Module.hpp"
 
 class runtime_linux_Module : public runtime_Module {
   public:

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationV2.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 #include "logging.hpp"
 

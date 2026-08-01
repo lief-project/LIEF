@@ -16,18 +16,19 @@
 #ifndef LIEF_DEX_METHOD_H
 #define LIEF_DEX_METHOD_H
 
+#include <string_view>
 #include <climits>
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/CodeInfo.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/DEX/enums.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 class Parser;
 class Class;
 class Prototype;
@@ -48,7 +49,7 @@ class LIEF_API Method : public Object {
   Method& operator=(const Method&);
 
   /// Name of the Method
-  const std::string& name() const;
+  std::string_view name() const;
 
   /// True if a class is associated with this method
   bool has_class() const;
@@ -114,5 +115,5 @@ class LIEF_API Method : public Object {
 };
 
 } // Namespace DEX
-} // Namespace LIEF
+// Namespace LIEF
 #endif

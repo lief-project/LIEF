@@ -51,4 +51,4 @@ ParserConfig& ParserConfig::full_dyldinfo(bool flag) {
 }
 
 
-} // namespace LIEF::MachO
+}

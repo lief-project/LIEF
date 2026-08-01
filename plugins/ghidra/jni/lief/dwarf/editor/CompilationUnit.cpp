@@ -16,19 +16,19 @@
 
 #include "jni/java/lang/Enum.hpp"
 
-#include "jni/lief/dwarf/editor/Function.hpp"
-#include "jni/lief/dwarf/editor/Variable.hpp"
+#include "jni/jni_utils.hpp"
 #include "jni/lief/dwarf/editor/ArrayType.hpp"
 #include "jni/lief/dwarf/editor/BaseType.hpp"
+#include "jni/lief/dwarf/editor/CompilationUnit.hpp"
 #include "jni/lief/dwarf/editor/EnumType.hpp"
+#include "jni/lief/dwarf/editor/Function.hpp"
 #include "jni/lief/dwarf/editor/FunctionType.hpp"
 #include "jni/lief/dwarf/editor/PointerType.hpp"
 #include "jni/lief/dwarf/editor/StructType.hpp"
 #include "jni/lief/dwarf/editor/Type.hpp"
 #include "jni/lief/dwarf/editor/TypeDef.hpp"
-#include "jni/lief/dwarf/editor/CompilationUnit.hpp"
+#include "jni/lief/dwarf/editor/Variable.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 namespace lief_jni::dwarf::editor {
 

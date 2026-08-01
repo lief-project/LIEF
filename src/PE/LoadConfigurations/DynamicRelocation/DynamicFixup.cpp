@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupUnknown.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/FunctionOverride.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupARM64Kernel.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupARM64X.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupControlTransfer.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupARM64Kernel.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupGeneric.hpp"
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupUnknown.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationBase.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/FunctionOverride.hpp"
 
 #include "logging.hpp"
 

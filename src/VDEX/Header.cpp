@@ -18,8 +18,8 @@
 
 #include "VDEX/Structures.hpp"
 
-#include <sstream>
 #include <iomanip>
+#include <sstream>
 
 #define PRINT_FIELD_X(name, attr)                                                 \
   os << std::setw(WIDTH) << std::setfill(' ') << name << std::hex << attr << '\n'
@@ -101,4 +101,4 @@ std::ostream& operator<<(std::ostream& os, const Header& header) {
 
 Header::~Header() = default;
 
-} // namespace LIEF::VDEX
+}

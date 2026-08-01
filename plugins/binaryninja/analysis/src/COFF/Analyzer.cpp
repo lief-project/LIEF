@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #include "binaryninja/analysis/COFF/Analyzer.hpp"
-#include "log.hpp"
 #include "binaryninja/analysis/COFF/TypeBuilder.hpp"
+#include "log.hpp"
 
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>

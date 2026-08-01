@@ -16,15 +16,16 @@
 #ifndef LIEF_ELF_NOTE_H
 #define LIEF_ELF_NOTE_H
 
-#include <vector>
-#include <ostream>
+#include <string_view>
 #include <memory>
+#include <ostream>
+#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/ELF/Header.hpp"
 
@@ -144,11 +145,11 @@ class LIEF_API Note : public Object {
   static result<const char*> type_to_section(TYPE type);
 
   static result<std::string> note_to_section(const Note& note) {
-    const std::string& sec_name = note.section_name();
+    std::string_view sec_name = note.section_name();
     if (sec_name.empty()) {
       return type_to_section(note.type());
     }
-    return sec_name;
+    return std::string(sec_name);
   }
 
   /// Try to determine the owner's name of the TYPE provided in parameter
@@ -187,16 +188,16 @@ class LIEF_API Note : public Object {
 
   /// Clone the current note and keep its polymorphic type
   virtual std::unique_ptr<Note> clone() const {
-    return std::unique_ptr<Note>(new Note(*this));
+    return std::make_unique<Note>(*this);
   }
 
   /// Return the *name* of the note (also known as 'owner' )
-  const std::string& name() const {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
   /// Return the section name in which the note is or should be stored
-  const std::string& section_name() const {
+  std::string_view section_name() const LIEF_LIFETIMEBOUND {
     return section_name_;
   }
 
@@ -244,7 +245,7 @@ class LIEF_API Note : public Object {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<Note, T>::value, "Require Note inheritance");
+    static_assert(std::is_base_of_v<Note, T>, "Require Note inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }
@@ -287,6 +288,6 @@ class LIEF_API Note : public Object {
 LIEF_API const char* to_string(Note::TYPE type);
 
 
-} // namespace ELF
-} // namespace LIEF
+}
+}
 #endif

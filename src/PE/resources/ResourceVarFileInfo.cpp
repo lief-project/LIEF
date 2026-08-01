@@ -15,12 +15,12 @@
  */
 #include <sstream>
 
-#include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/utils.hpp"
 
-#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
-#include "LIEF/PE/resources/ResourceVar.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/PE/resources/ResourceVar.hpp"
+#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
 
 #include "internal_utils.hpp"
 #include "logging.hpp"

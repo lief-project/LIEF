@@ -21,11 +21,11 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class Builder;
 class BinaryParser;
 class Binary;
@@ -123,7 +123,7 @@ class LIEF_API LoadCommand : public Object {
   void swap(LoadCommand& other) noexcept;
 
   virtual std::unique_ptr<LoadCommand> clone() const {
-    return std::unique_ptr<LoadCommand>(new LoadCommand(*this));
+    return std::make_unique<LoadCommand>(*this);
   }
 
   ~LoadCommand() override = default;
@@ -172,7 +172,7 @@ class LIEF_API LoadCommand : public Object {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<LoadCommand, T>::value,
+    static_assert(std::is_base_of_v<LoadCommand, T>,
                   "Require LoadCommand inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
@@ -201,5 +201,5 @@ class LIEF_API LoadCommand : public Object {
 LIEF_API const char* to_string(LoadCommand::TYPE type);
 
 }
-}
+
 #endif

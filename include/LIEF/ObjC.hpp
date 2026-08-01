@@ -15,12 +15,14 @@
  */
 #ifndef LIEF_OBJC_H
 #define LIEF_OBJC_H
-#include <LIEF/ObjC/Metadata.hpp>
-#include <LIEF/ObjC/Class.hpp>
-#include <LIEF/ObjC/Category.hpp>
-#include <LIEF/ObjC/IVar.hpp>
-#include <LIEF/ObjC/Method.hpp>
-#include <LIEF/ObjC/Property.hpp>
-#include <LIEF/ObjC/Protocol.hpp>
-#include <LIEF/ObjC/DeclOpt.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/ObjC/Category.hpp"
+#include "LIEF/ObjC/Class.hpp"
+#include "LIEF/ObjC/DeclOpt.hpp"
+#include "LIEF/ObjC/IVar.hpp"
+#include "LIEF/ObjC/Metadata.hpp"
+#include "LIEF/ObjC/Method.hpp"
+#include "LIEF/ObjC/Property.hpp"
+#include "LIEF/ObjC/Protocol.hpp"
+// IWYU pragma: end_exports
 #endif

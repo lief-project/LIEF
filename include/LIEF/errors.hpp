@@ -15,10 +15,10 @@
  */
 #ifndef LIEF_ERROR_H
 #define LIEF_ERROR_H
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/third-party/expected.hpp"
 #include <cstdint>
-#include <string>
-#include <LIEF/compiler_attributes.hpp>
-#include <LIEF/third-party/expected.hpp>
+#include <string> // IWYU pragma: keep
 
 /// LIEF error codes definition
 enum class lief_errors : uint32_t {

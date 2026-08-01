@@ -16,15 +16,15 @@
 #ifndef LIEF_ELF_SECTION_H
 #define LIEF_ELF_SECTION_H
 
-#include <string>
-#include <ostream>
-#include <vector>
 #include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
 
-#include "LIEF/utils.hpp"
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/Abstract/Section.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/utils.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/ELF/enums.hpp"
 #include "LIEF/iterators.hpp"

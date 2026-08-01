@@ -16,10 +16,12 @@
 #ifndef LIEF_RUNTIME_WIN_H
 #define LIEF_RUNTIME_WIN_H
 
-#include <LIEF/runtime/windows/Module.hpp>
-#include <LIEF/runtime/windows/Host.hpp>
-#include <LIEF/runtime/windows/Process.hpp>
-#include <LIEF/runtime/windows/PEB.hpp>
-#include <LIEF/runtime/windows/LdrDataTableEntry.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/runtime/windows/Host.hpp"
+#include "LIEF/runtime/windows/LdrDataTableEntry.hpp"
+#include "LIEF/runtime/windows/Module.hpp"
+#include "LIEF/runtime/windows/PEB.hpp"
+#include "LIEF/runtime/windows/Process.hpp"
+// IWYU pragma: end_exports
 
 #endif

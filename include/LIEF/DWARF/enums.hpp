@@ -16,8 +16,8 @@
 #ifndef LIEF_DWARF_ENUMS_H
 #define LIEF_DWARF_ENUMS_H
 
-namespace LIEF {
-namespace dwarf {
+
+namespace LIEF::dwarf {
 
 enum class EH_ENCODING {
   ABSPTR = 0x00,
@@ -41,6 +41,6 @@ enum class EH_ENCODING {
 };
 
 } // dwarf
-} // LIEF
+// LIEF
 
 #endif

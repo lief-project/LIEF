@@ -15,10 +15,10 @@
  */
 #include "logging.hpp"
 
+#include "LIEF/PE/ImportEntry.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/config.h"
 #include "LIEF/utils.hpp"
-#include "LIEF/Visitor.hpp"
-#include "LIEF/PE/ImportEntry.hpp"
 
 
 namespace LIEF::PE {
@@ -61,5 +61,5 @@ std::ostream& operator<<(std::ostream& os, const ImportEntry& entry) {
   return os;
 }
 
-} // namespace LIEF::PE
+}
 // namespace LIEF

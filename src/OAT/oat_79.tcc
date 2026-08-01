@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <memory>
 #include <type_traits>
+#include <memory>
 
 #include "logging.hpp"
 
@@ -24,10 +24,10 @@
 #include "DEX/Structures.hpp"
 #include "OAT/Structures.hpp"
 
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/Parser.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Binary.hpp"
 
 
 namespace LIEF::OAT {
@@ -131,7 +131,7 @@ void Parser::parse_dex_files<details::OAT79_t>() {
     if (DEX::is_dex(data_v)) {
       std::unique_ptr<DEX::File> dexfile =
           DEX::Parser::parse(std::move(data_v), name);
-      dexfile->location(oat_dex_file->location());
+      dexfile->location(std::string(oat_dex_file->location()));
       const uint32_t nb_classes = dexfile->header().nb_classes();
 
       oat_dex_file->dex_file_ = dexfile.get();
@@ -163,4 +163,4 @@ void Parser::parse_dex_files<details::OAT79_t>() {
 }
 
 
-} // namespace LIEF::OAT
+}

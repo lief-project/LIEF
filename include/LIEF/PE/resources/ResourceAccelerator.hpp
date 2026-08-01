@@ -26,8 +26,8 @@
 #include "LIEF/PE/resources/AcceleratorCodes.hpp"
 #include "LIEF/enums.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class ResourcesManager;
 
 namespace details {
@@ -134,7 +134,7 @@ class LIEF_API ResourceAccelerator : public Object {
 LIEF_API const char* to_string(ResourceAccelerator::FLAGS e);
 
 }
-}
+
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::ResourceAccelerator::FLAGS);
 #endif

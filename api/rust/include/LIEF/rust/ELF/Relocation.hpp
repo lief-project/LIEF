@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/error.hpp"
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/rust/Abstract/Relocation.hpp"
-#include "LIEF/rust/ELF/Symbol.hpp"
 #include "LIEF/rust/ELF/Section.hpp"
+#include "LIEF/rust/ELF/Symbol.hpp"
+#include "LIEF/rust/error.hpp"
 
 class ELF_Relocation : public AbstractRelocation {
   public:

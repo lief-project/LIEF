@@ -16,13 +16,12 @@
 #ifndef LIEF_PE_ATTRIBUTES_MS_SPC_NESTED_SIG_H
 #define LIEF_PE_ATTRIBUTES_MS_SPC_NESTED_SIG_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
+#include "LIEF/visibility.h"
 
 
-namespace LIEF {
-namespace PE {
+namespace LIEF::PE {
 
 /// Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
 ///
@@ -72,6 +71,6 @@ class LIEF_API MsSpcNestedSignature : public Attribute {
 };
 
 }
-}
+
 
 #endif

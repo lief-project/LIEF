@@ -16,14 +16,17 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_RPATH_H
 #define LIEF_ELF_DYNAMIC_ENTRY_RPATH_H
 
+#include <string_view>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class which represents a ``DT_RPATH`` entry. This attribute is
 /// deprecated (cf. ``man ld``) in favor of ``DT_RUNPATH`` (See
@@ -49,11 +52,11 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
   DynamicEntryRpath(const DynamicEntryRpath&) = default;
 
   std::unique_ptr<DynamicEntry> clone() const override {
-    return std::unique_ptr<DynamicEntryRpath>(new DynamicEntryRpath(*this));
+    return std::make_unique<DynamicEntryRpath>(*this);
   }
 
   /// The actual rpath as a string
-  const std::string& rpath() const {
+  std::string_view rpath() const LIEF_LIFETIMEBOUND {
     return rpath_;
   }
 
@@ -97,6 +100,6 @@ class LIEF_API DynamicEntryRpath : public DynamicEntry {
   std::string rpath_;
 };
 }
-}
+
 
 #endif

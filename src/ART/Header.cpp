@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 #include "LIEF/ART/Header.hpp"
-#include "LIEF/ART/hash.hpp"
 #include "LIEF/ART/EnumToString.hpp"
+#include "LIEF/ART/hash.hpp"
 
 #include <iomanip>
 
@@ -178,4 +178,4 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 
 Header::~Header() = default;
 
-} // namespace LIEF::ART
+}

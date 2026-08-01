@@ -14,14 +14,14 @@
  */
 #pragma once
 
-#include <jni_bind.h>
-#include "jni/lief/generic/Binary.hpp"
-#include "jni/java/util/Optional.hpp"
 #include "jni/iterator.hpp"
+#include "jni/java/util/Optional.hpp"
+#include "jni/lief/generic/Binary.hpp"
+#include <jni_bind.h>
 
-#include "jni/lief/pe/LoadConfiguration.hpp"
 #include "jni/lief/pe/DataDirectory.hpp"
 #include "jni/lief/pe/ExceptionInfo.hpp"
+#include "jni/lief/pe/LoadConfiguration.hpp"
 
 #include <LIEF/PE/Binary.hpp>
 #include <LIEF/PE/Parser.hpp>

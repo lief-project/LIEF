@@ -15,19 +15,18 @@
 #ifndef LIEF_PDB_TYPE_UNION_H
 #define LIEF_PDB_TYPE_UNION_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PDB/types/ClassLike.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace pdb {
-namespace types {
+
+namespace LIEF::pdb::types {
 
 /// This class represents a `LF_UNION` PDB type
 class LIEF_API Union : public ClassLike {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<ClassLike, Args&&...>::value>::type>
+           typename =
+               std::enable_if_t<std::is_constructible_v<ClassLike, Args&&...>>>
   Union(Args&&... args) :
     ClassLike(std::forward<Args>(args)...) {}
 
@@ -39,6 +38,6 @@ class LIEF_API Union : public ClassLike {
 };
 
 }
-}
-}
+
+
 #endif

@@ -17,6 +17,7 @@
 
 #include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 #include <string>
 #include <sstream>

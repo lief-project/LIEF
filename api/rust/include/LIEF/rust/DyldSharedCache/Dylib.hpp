@@ -14,8 +14,8 @@
  */
 #pragma once
 #include "LIEF/DyldSharedCache/Dylib.hpp"
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/MachO/Binary.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class dsc_Dylib_extract_opt {

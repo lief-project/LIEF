@@ -16,17 +16,17 @@
 #define LIEF_DWARF_LEXICAL_BLOCK_H
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
-#include "LIEF/optional.hpp"
 #include "LIEF/range.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
+#include <cstdint>
 #include <memory>
 #include <string>
-#include <cstdint>
 
-namespace LIEF {
-namespace dwarf {
+
+namespace LIEF::dwarf {
 
 namespace details {
 class LexicalBlock;
@@ -103,17 +103,17 @@ class LIEF_API LexicalBlock {
   sub_blocks_it sub_blocks() const LIEF_LIFETIMEBOUND;
 
   /// Return the start address of this block
-  optional<uint64_t> addr() const;
+  std::optional<uint64_t> addr() const;
 
   /// Return the size of this block as the difference of the highest address and
   /// the lowest address.
   uint64_t size() const;
 
   /// Return the lowest virtual address owned by this block.
-  optional<uint64_t> low_pc() const;
+  std::optional<uint64_t> low_pc() const;
 
   /// Return the highest virtual address owned by this block.
-  optional<uint64_t> high_pc() const;
+  std::optional<uint64_t> high_pc() const;
 
   /// Return a list of address ranges owned by this block.
   ///
@@ -131,5 +131,5 @@ class LIEF_API LexicalBlock {
 };
 
 }
-}
+
 #endif

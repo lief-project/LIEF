@@ -16,21 +16,21 @@
 #include "LIEF/Visitor.hpp"
 
 #include "LIEF/ELF/DynamicEntry.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
-#include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicSharedObject.hpp"
-#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
-#include "LIEF/ELF/DynamicEntryFilter.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
 
 #include <spdlog/fmt/fmt.h>
 
+#include "ELF/Structures.hpp"
 #include "frozen.hpp"
 #include "logging.hpp"
-#include "ELF/Structures.hpp"
 
 
 namespace LIEF::ELF {

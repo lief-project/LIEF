@@ -16,8 +16,8 @@
 #ifndef LIEF_ART_ENUMS_H
 #define LIEF_ART_ENUMS_H
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 
 enum STORAGE_MODES {
   STORAGE_UNCOMPRESSED = 0,
@@ -120,13 +120,13 @@ enum IMAGE_ROOTS {
 
 namespace ART_46 {
 
-using ART_30::IMAGE_SECTIONS;
 using ART_30::IMAGE_METHODS;
 using ART_30::IMAGE_ROOTS;
+using ART_30::IMAGE_SECTIONS;
 
 
 } // Namespace ART_46
 
 }
-}
+
 #endif

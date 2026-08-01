@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/PE/debug/FPO.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/PE/debug/Debug.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/PE/debug/FPO.hpp"
 
 
 class PE_FPO_entry_t : private Mirror<LIEF::PE::FPO::entry_t> {

@@ -15,12 +15,12 @@
  */
 #ifndef LIEF_DSC_DYLD_SHARED_CACHE_H
 #define LIEF_DSC_DYLD_SHARED_CACHE_H
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/DyldSharedCache/Dylib.hpp"
 #include "LIEF/DyldSharedCache/MappingInfo.hpp"
 #include "LIEF/DyldSharedCache/SubCache.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/asm/Instruction.hpp"
 

@@ -17,12 +17,12 @@
 #define LIEF_PE_DATADIRECTORY_H
 
 #include <cstdint>
-#include <ostream>
 #include <memory>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class SpanStream;

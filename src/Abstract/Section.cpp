@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <array>
-#include <ostream>
 #include <algorithm>
+#include <array>
 #include <cmath>
-#include <utility>
+#include <ostream>
 
 #include <spdlog/fmt/fmt.h>
 
 #include "LIEF/Visitor.hpp"
-
-#include "logging.hpp"
-#include "LIEF/Abstract/hash.hpp"
 
 
 #include "LIEF/Abstract/Section.hpp"

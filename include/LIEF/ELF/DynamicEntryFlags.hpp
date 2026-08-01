@@ -16,15 +16,16 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_FLAGS_H
 #define LIEF_ELF_DYNAMIC_ENTRY_FLAGS_H
 
-#include <vector>
-#include <ostream>
+#include <memory>
 #include <numeric>
+#include <ostream>
+#include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 class LIEF_API DynamicEntryFlags : public DynamicEntry {
   public:
@@ -89,7 +90,7 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
   DynamicEntryFlags(const DynamicEntryFlags&) = default;
 
   std::unique_ptr<DynamicEntry> clone() const override {
-    return std::unique_ptr<DynamicEntryFlags>(new DynamicEntryFlags(*this));
+    return std::make_unique<DynamicEntryFlags>(*this);
   }
 
   /// If the current entry has the given FLAG
@@ -141,6 +142,6 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
 LIEF_API const char* to_string(DynamicEntryFlags::FLAG e);
 
 }
-}
+
 
 #endif

@@ -15,12 +15,12 @@
  */
 #include <sstream>
 
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryCLRToken.hpp"
 #include "LIEF/COFF/Symbol.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "logging.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 

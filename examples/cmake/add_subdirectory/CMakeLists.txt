@@ -34,7 +34,7 @@ else()
   set(LIEF_GIT_URL "https://github.com/lief-project/LIEF.git")
 
   # LIEF's version to be used (can be 'main')
-  set(LIEF_VERSION 0.13.0)
+  set(LIEF_VERSION 1.0.0)
 
   include(FetchContent)
   FetchContent_Declare(LIEF
@@ -66,7 +66,7 @@ add_executable(HelloLIEF main.cpp)
 
 # Enable C++11
 set_property(TARGET HelloLIEF
-             PROPERTY CXX_STANDARD           11
+             PROPERTY CXX_STANDARD           17
              PROPERTY CXX_STANDARD_REQUIRED  ON)
 
 # Link the executable with LIEF

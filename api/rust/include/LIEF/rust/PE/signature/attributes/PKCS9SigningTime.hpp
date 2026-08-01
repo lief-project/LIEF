@@ -1,7 +1,7 @@
 #pragma once
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
 #include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_PKCS9SigningTime : public PE_Attribute {
   using lief_t = LIEF::PE::PKCS9SigningTime;

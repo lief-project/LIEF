@@ -14,8 +14,8 @@
  */
 #pragma once
 
-#include <jni_bind.h>
 #include "jni/lief/dwarf/editor/Type.hpp"
+#include <jni_bind.h>
 
 #include <LIEF/DWARF/editor/EnumType.hpp>
 

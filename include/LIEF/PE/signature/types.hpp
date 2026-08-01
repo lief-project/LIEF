@@ -17,13 +17,13 @@
 #define LIEF_PE_SIGNATURE_TYPES_H
 #include <string>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 using oid_t = std::string;
 
 
 }
-}
+
 
 #endif

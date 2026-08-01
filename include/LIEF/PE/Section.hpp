@@ -15,16 +15,16 @@
  */
 #ifndef LIEF_PE_SECTION_H
 #define LIEF_PE_SECTION_H
-#include <ostream>
-#include <vector>
-#include <string>
 #include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
 
-#include "LIEF/iostream.hpp"
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/Abstract/Section.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/enums.hpp"
+#include "LIEF/iostream.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class SpanStream;
@@ -286,8 +286,8 @@ class LIEF_API Section : public LIEF::Section {
 
 LIEF_API const char* to_string(Section::CHARACTERISTICS e);
 
-} // namespace PE
-} // namespace LIEF
+}
+}
 
 ENABLE_BITMASK_OPERATORS(LIEF::PE::Section::CHARACTERISTICS);
 

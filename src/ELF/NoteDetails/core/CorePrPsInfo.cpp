@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include "LIEF/ELF/hash.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 #include "LIEF/iostream.hpp"
 
 #include "spdlog/fmt/fmt.h"
@@ -129,4 +129,4 @@ void CorePrPsInfo::dump(std::ostream& os) const {
                     info_res->sname);
 }
 
-} // namespace LIEF::ELF
+}

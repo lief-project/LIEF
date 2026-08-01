@@ -19,6 +19,7 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/set.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/operators.h>
 
 #include "LIEF/MachO/Section.hpp"

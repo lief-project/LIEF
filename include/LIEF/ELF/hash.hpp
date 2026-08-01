@@ -16,11 +16,11 @@
 #ifndef LIEF_ELF_HASH_H
 #define LIEF_ELF_HASH_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 class Binary;
 class Header;
@@ -99,6 +99,6 @@ class LIEF_API Hash : public LIEF::Hash {
 };
 
 }
-}
+
 
 #endif

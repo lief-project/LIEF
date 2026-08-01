@@ -16,21 +16,21 @@
 #ifndef LIEF_ELF_CORE_SIGINFO_H
 #define LIEF_ELF_CORE_SIGINFO_H
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class representing a core siginfo object
 class LIEF_API CoreSigInfo : public Note {
   public:
   std::unique_ptr<Note> clone() const override {
-    return std::unique_ptr<CoreSigInfo>(new CoreSigInfo(*this));
+    return std::make_unique<CoreSigInfo>(*this);
   }
 
   /// Signal number or an error if it can't be resolved
@@ -64,7 +64,7 @@ class LIEF_API CoreSigInfo : public Note {
   protected:
   using Note::Note;
 };
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

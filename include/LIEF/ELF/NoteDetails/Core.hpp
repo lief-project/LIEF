@@ -16,10 +16,12 @@
 #ifndef LIEF_ELF_NOTE_DETAILS_CORE_H
 #define LIEF_ELF_NOTE_DETAILS_CORE_H
 
+// IWYU pragma: begin_exports
+#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
+// IWYU pragma: end_exports
 
 #endif

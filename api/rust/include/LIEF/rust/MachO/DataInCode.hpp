@@ -17,9 +17,9 @@
 #include <memory>
 
 #include "LIEF/MachO/DataInCode.hpp"
-#include "LIEF/rust/MachO/LoadCommand.hpp"
-#include "LIEF/rust/MachO/DataCodeEntry.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/MachO/DataCodeEntry.hpp"
+#include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/Span.hpp"
 
 class MachO_DataInCode : public MachO_Command {

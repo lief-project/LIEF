@@ -18,11 +18,11 @@
 #include <memory>
 #include <vector>
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/span.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/types.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class VectorStream;

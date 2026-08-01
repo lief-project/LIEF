@@ -16,26 +16,27 @@
 #ifndef LIEF_ELF_BINARY_H
 #define LIEF_ELF_BINARY_H
 
-#include <vector>
+#include <string_view>
 #include <memory>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Binary.hpp"
 
-#include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/Header.hpp"
+#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
-#include "LIEF/ELF/Builder.hpp"
 
-namespace LIEF {
+
 /// Namespace related to the LIEF's ELF module
-namespace ELF {
+namespace LIEF::ELF {
 namespace DataHandler {
 class Handler;
 }
@@ -525,12 +526,12 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return Section with the given `name`. If the section can't be
   /// found, it returns a nullptr
-  Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND {
+  Section* get_section(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->get_section(name)
     );
   }
-  const Section* get_section(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const Section* get_section(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Return the `.text` section. If the section
   /// can't be found, it returns a nullptr
@@ -567,7 +568,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// If the binary does not have an interpreter, it returns an empty string
   ///
   /// @see has_interpreter
-  const std::string& interpreter() const LIEF_LIFETIMEBOUND {
+  std::string_view interpreter() const LIEF_LIFETIMEBOUND {
     return interpreter_;
   }
 
@@ -1252,7 +1253,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   std::vector<Symbol*> symtab_dyn_symbols() const LIEF_LIFETIMEBOUND;
 
-  LIEF_LOCAL std::string shstrtab_name() const;
+  LIEF_LOCAL std::string_view shstrtab_name() const;
   LIEF_LOCAL Section* add_frame_section(const Section& sec) LIEF_LIFETIMEBOUND;
   LIEF_LOCAL Section* add_section(std::unique_ptr<Section> sec) LIEF_LIFETIMEBOUND;
 
@@ -1283,5 +1284,5 @@ class LIEF_API Binary : public LIEF::Binary {
 };
 
 }
-}
+
 #endif

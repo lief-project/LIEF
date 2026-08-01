@@ -14,11 +14,11 @@
  */
 #include <array>
 
+#include "jni/jni_utils.hpp"
 #include "jni/lief/pe/RuntimeFunctionAArch64.hpp"
 #include "jni/lief/pe/aarch64/PackedFunction.hpp"
 #include "jni/lief/pe/aarch64/UnpackedFunction.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 namespace lief_jni::pe {
 

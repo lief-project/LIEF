@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/PE/signature/ContentInfo.hpp"
 #include "LIEF/PE/signature/PKCS9TSTInfo.hpp"
+#include "LIEF/rust/PE/signature/ContentInfo.hpp"
 
 class PE_PKCS9TSTInfo : public PE_ContentInfo_Content {
   public:

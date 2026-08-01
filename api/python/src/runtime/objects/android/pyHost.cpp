@@ -1,7 +1,7 @@
 #include "LIEF/runtime/android/Host.hpp"
 #include "runtime/pyRuntime.hpp"
 
-#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/optional.h>
 
 namespace LIEF::runtime::android::py {
 

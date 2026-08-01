@@ -15,13 +15,15 @@
  */
 #ifndef LIEF_MACHO_LAZY_LOAD_DYLIB_INFO_COMMAND_H
 #define LIEF_MACHO_LAZY_LOAD_DYLIB_INFO_COMMAND_H
+#include <string_view>
+#include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -89,7 +91,7 @@ class LIEF_API LazyLoadDylibInfo : public LoadCommand {
 
     /// Name of the bound symbol, resolved from ordinal() (empty if the ordinal
     /// is out of the symbols() range)
-    const std::string& symbol() const LIEF_LIFETIMEBOUND {
+    std::string_view symbol() const LIEF_LIFETIMEBOUND {
       return symbol_;
     }
 
@@ -129,7 +131,7 @@ class LIEF_API LazyLoadDylibInfo : public LoadCommand {
   LazyLoadDylibInfo(const LazyLoadDylibInfo& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<LazyLoadDylibInfo>(new LazyLoadDylibInfo(*this));
+    return std::make_unique<LazyLoadDylibInfo>(*this);
   }
 
   /// Offset in the `__LINKEDIT` segment where the payload starts
@@ -161,7 +163,7 @@ class LIEF_API LazyLoadDylibInfo : public LoadCommand {
   }
 
   /// Load path of the dylib to bind lazily
-  const std::string& load_path() const LIEF_LIFETIMEBOUND {
+  std::string_view load_path() const LIEF_LIFETIMEBOUND {
     return load_path_;
   }
 

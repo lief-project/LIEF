@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 #include "binaryninja/analysis/ELF/Analyzer.hpp"
-#include "log.hpp"
 #include "binaryninja/analysis/ELF/TypeBuilder.hpp"
+#include "log.hpp"
 
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>
 
-#include "binaryninja/analysis/ELF/analyzers/AndroidPackedRelocations.hpp"
-#include "binaryninja/analysis/ELF/analyzers/Relocations.hpp"
-#include "binaryninja/analysis/ELF/analyzers/RelativeRelocations.hpp"
 #include "binaryninja/analysis/ELF/analyzers/AndroidJNI.hpp"
+#include "binaryninja/analysis/ELF/analyzers/AndroidPackedRelocations.hpp"
+#include "binaryninja/analysis/ELF/analyzers/RelativeRelocations.hpp"
+#include "binaryninja/analysis/ELF/analyzers/Relocations.hpp"
 
 using namespace LIEF;
 

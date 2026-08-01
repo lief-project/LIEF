@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "spdlog/fmt/fmt.h"
-#include "LIEF/Visitor.hpp"
-#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/Relocation.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
-#include "LIEF/MachO/DyldInfo.hpp"
-#include "LIEF/MachO/Relocation.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/Visitor.hpp"
 #include "frozen.hpp"
+#include "spdlog/fmt/fmt.h"
 
 
 namespace LIEF::MachO {

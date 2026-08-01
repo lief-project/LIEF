@@ -15,13 +15,14 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_ARM64_KERNEL_H
 #define LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_ARM64_KERNEL_H
-#include <vector>
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
+#include <memory>
+#include <vector>
 
 #include "LIEF/iterators.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class wraps fixups associated with the (special) symbol value:
 /// `IMAGE_DYNAMIC_RELOCATION_ARM64_KERNEL_IMPORT_CALL_TRANSFER (8)`.
@@ -76,9 +77,7 @@ class LIEF_API DynamicFixupARM64Kernel : public DynamicFixup {
   DynamicFixupARM64Kernel& operator=(DynamicFixupARM64Kernel&&) = default;
 
   std::unique_ptr<DynamicFixup> clone() const override {
-    return std::unique_ptr<DynamicFixupARM64Kernel>(
-        new DynamicFixupARM64Kernel(*this)
-    );
+    return std::make_unique<DynamicFixupARM64Kernel>(*this);
   }
 
   std::string to_string() const override;
@@ -108,6 +107,6 @@ class LIEF_API DynamicFixupARM64Kernel : public DynamicFixup {
 
 
 }
-}
+
 
 #endif

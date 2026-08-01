@@ -17,11 +17,13 @@
 #ifndef LIEF_PE_ATTRIBUTES_MS_MANIFEST_BINARY_ID_H
 #define LIEF_PE_ATTRIBUTES_MS_MANIFEST_BINARY_ID_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
+#include <string_view>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// Interface over the structure described by the OID `1.3.6.1.4.1.311.10.3.28`
 /// (szOID_PLATFORM_MANIFEST_BINARY_ID)
@@ -54,7 +56,7 @@ class LIEF_API MsManifestBinaryID : public Attribute {
   }
 
   /// The manifest id as a string
-  const std::string& manifest_id() const {
+  std::string_view manifest_id() const LIEF_LIFETIMEBOUND {
     return id_;
   }
 
@@ -79,6 +81,6 @@ class LIEF_API MsManifestBinaryID : public Attribute {
 };
 
 }
-}
+
 
 #endif

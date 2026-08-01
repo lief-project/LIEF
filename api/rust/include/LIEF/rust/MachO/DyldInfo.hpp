@@ -16,12 +16,12 @@
 #pragma once
 #include <LIEF/MachO/DyldInfo.hpp>
 
-#include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/DyldBindingInfo.hpp"
 #include "LIEF/rust/MachO/ExportInfo.hpp"
+#include "LIEF/rust/MachO/LoadCommand.hpp"
 
-#include <memory>
 #include "LIEF/rust/Span.hpp"
+#include <memory>
 
 class MachO_DyldInfo : public MachO_Command {
   public:

@@ -15,8 +15,8 @@
  */
 
 
-#include "OAT/json_internal.hpp"
 #include "LIEF/OAT.hpp"
+#include "OAT/json_internal.hpp"
 
 
 namespace LIEF::OAT {
@@ -110,4 +110,4 @@ void JsonVisitor::visit(const Method& method) {
 }
 
 
-} // namespace LIEF::OAT
+}

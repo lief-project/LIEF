@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_ASM_POWERPC_REGISTER_H
 #define LIEF_ASM_POWERPC_REGISTER_H
-namespace LIEF {
-namespace assembly {
-namespace powerpc {
+
+
+namespace LIEF::assembly::powerpc {
 enum class REG;
 const char* get_register_name(REG r);
 
@@ -637,6 +637,6 @@ enum class REG {
 };
 
 }
-}
-}
+
+
 #endif

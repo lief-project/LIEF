@@ -19,10 +19,8 @@
 #include "LIEF/asm/ebpf/Operand.hpp"
 #include "LIEF/asm/ebpf/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace ebpf {
-namespace operands {
+
+namespace LIEF::assembly::ebpf::operands {
 
 /// This class represents a memory operand.
 ///
@@ -51,7 +49,6 @@ class LIEF_API Memory : public Operand {
   ~Memory() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 #pragma once
-#include <string>
+#include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/utils.hpp"
 #include "LIEF/rust/PE/Binary.hpp"
 #include "LIEF/rust/PE/Import.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/PE/utils.hpp"
-#include "LIEF/PE/signature/OIDToString.hpp"
+#include <string>
 
 class PE_Utils {
   public:

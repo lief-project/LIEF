@@ -15,14 +15,14 @@
  */
 #ifndef LIEF_MACHO_BINDING_INFO_H
 #define LIEF_MACHO_BINDING_INFO_H
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class DylibCommand;
 class SegmentCommand;
 class Symbol;
@@ -146,7 +146,7 @@ class LIEF_API BindingInfo : public Object {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<BindingInfo, T>::value,
+    static_assert(std::is_base_of_v<BindingInfo, T>,
                   "Require BindingInfo inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
@@ -173,5 +173,5 @@ class LIEF_API BindingInfo : public Object {
 };
 
 }
-}
+
 #endif

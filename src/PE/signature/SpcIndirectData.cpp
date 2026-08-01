@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "internal_utils.hpp"
 

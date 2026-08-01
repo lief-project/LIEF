@@ -18,8 +18,8 @@
 #include "LIEF/rust/asm/Instruction.hpp"
 #include "LIEF/rust/asm/aarch64/Operand.hpp"
 
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class asm_aarch64_Instruction : public asm_Instruction {
   public:

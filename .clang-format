@@ -65,10 +65,6 @@ AllowShortCaseExpressionOnASingleLine: true
 BinPackArguments: true
 BinPackParameters: true
 
-# Includes - preserve existing order
-SortIncludes: Never
-SortUsingDeclarations: Never
-
 # Namespaces
 CompactNamespaces: false
 FixNamespaceComments: false
@@ -106,3 +102,17 @@ BraceWrapping:
 RemoveEmptyLinesInUnwrappedLines: true
 RemoveSemicolon: true
 QualifierAlignment: Left
+
+
+# Includes - preserve existing order
+SortIncludes: true
+SortUsingDeclarations: LexicographicNumeric
+
+IncludeCategories:
+  - Regex:           '^((<|")(spdlog|nanobind|catch2|utf8)/)'
+    Priority:        3
+  - Regex:           '<[[:alnum:].]+>'
+    Priority:        4
+  - Regex:           '.*'
+    Priority:        1
+    SortPriority:    0

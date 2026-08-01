@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <memory>
 #include <type_traits>
+#include <memory>
 
 #include "logging.hpp"
 
@@ -24,10 +24,10 @@
 #include "LIEF/DEX.hpp"
 #include "LIEF/VDEX/File.hpp"
 
+#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/Parser.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Binary.hpp"
 
 #include "OAT/Structures.hpp"
 
@@ -139,4 +139,4 @@ void Parser::parse_dex_files<details::OAT124_t>() {
 }
 
 
-} // namespace LIEF::OAT
+}

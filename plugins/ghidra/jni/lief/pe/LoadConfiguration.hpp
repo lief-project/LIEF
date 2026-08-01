@@ -16,15 +16,15 @@
 
 #include <jni_bind.h>
 
-#include "jni/mirror.hpp"
 #include "jni/canbe_unique.hpp"
+#include "jni/mirror.hpp"
 
 #include "jni/java/util/Optional.hpp"
 #include "jni/java/util/OptionalInt.hpp"
 #include "jni/java/util/OptionalLong.hpp"
 
-#include "jni/lief/pe/LoadConfigurations/CHPEMetadata/Metadata.hpp"
 #include "jni/lief/pe/CodeIntegrity.hpp"
+#include "jni/lief/pe/LoadConfigurations/CHPEMetadata/Metadata.hpp"
 
 #include <LIEF/PE/LoadConfigurations.hpp>
 
@@ -233,14 +233,14 @@ class LoadConfiguration
 
   static jobject jni_get_dynamic_value_reloctable_section(JNIEnv* env,
                                                           jobject thiz) {
-    return java::util::make_optional((LIEF::optional<uint32_t>)from_jni(thiz)
+    return java::util::make_optional((std::optional<uint32_t>)from_jni(thiz)
                                          ->cast<lief_t>()
                                          .dynamic_value_reloctable_section());
   }
 
   static jobject jni_get_reserved2(JNIEnv* env, jobject thiz) {
     return java::util::make_optional(
-        (LIEF::optional<uint32_t>)from_jni(thiz)->cast<lief_t>().reserved2()
+        (std::optional<uint32_t>)from_jni(thiz)->cast<lief_t>().reserved2()
     );
   }
 

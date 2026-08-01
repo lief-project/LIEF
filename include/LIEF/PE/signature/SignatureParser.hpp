@@ -15,9 +15,9 @@
  */
 #ifndef LIEF_PE_SIGNATURE_PARSER_H
 #define LIEF_PE_SIGNATURE_PARSER_H
+#include <array>
 #include <memory>
 #include <string>
-#include <array>
 
 #include "LIEF/errors.hpp"
 

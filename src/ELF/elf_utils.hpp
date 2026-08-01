@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/optional.hpp"
+#include <optional>
 
 #include <spdlog/fmt/fmt.h>
 #include <cassert>
@@ -40,5 +40,5 @@ struct elf_file_info_t {
   }
 };
 
-optional<elf_file_info_t> get_info(BinaryStream& strm);
+std::optional<elf_file_info_t> get_info(BinaryStream& strm);
 }

@@ -14,28 +14,28 @@
  */
 
 // NOLINTBEGIN
-#include "LIEF/PDB/DebugInfo.hpp"
-#include "LIEF/PDB/CompilationUnit.hpp"
-#include "LIEF/PDB/PublicSymbol.hpp"
-#include "LIEF/PDB/Function.hpp"
 #include "LIEF/PDB/BuildMetadata.hpp"
+#include "LIEF/PDB/CompilationUnit.hpp"
+#include "LIEF/PDB/DebugInfo.hpp"
+#include "LIEF/PDB/Function.hpp"
+#include "LIEF/PDB/PublicSymbol.hpp"
 #include "LIEF/PDB/Type.hpp"
 #include "LIEF/PDB/utils.hpp"
 
-#include "LIEF/PDB/types/Simple.hpp"
 #include "LIEF/PDB/types/Array.hpp"
+#include "LIEF/PDB/types/Attribute.hpp"
 #include "LIEF/PDB/types/BitField.hpp"
 #include "LIEF/PDB/types/ClassLike.hpp"
 #include "LIEF/PDB/types/Enum.hpp"
 #include "LIEF/PDB/types/Function.hpp"
 #include "LIEF/PDB/types/Modifier.hpp"
 #include "LIEF/PDB/types/Pointer.hpp"
+#include "LIEF/PDB/types/Simple.hpp"
 #include "LIEF/PDB/types/Union.hpp"
-#include "LIEF/PDB/types/Attribute.hpp"
 
+#include "internal_utils.hpp"
 #include "logging.hpp"
 #include "messages.hpp"
-#include "internal_utils.hpp"
 
 namespace LIEF::details {
 class DebugInfo {};
@@ -113,9 +113,9 @@ std::unique_ptr<DebugInfo> DebugInfo::from_file(const std::string&) {
   return nullptr;
 }
 
-optional<uint64_t>
+std::optional<uint64_t>
     DebugInfo::find_function_address(const std::string& /*name*/) const {
-  return nullopt();
+  return std::nullopt;
 }
 
 // ----------------------------------------------------------------------------
@@ -368,12 +368,12 @@ Type::KIND Type::kind() const {
   return Type::KIND::UNKNOWN;
 }
 
-optional<std::string> Type::name() const {
-  return nullopt();
+std::optional<std::string> Type::name() const {
+  return std::nullopt;
 }
 
-optional<uint64_t> Type::size() const {
-  return nullopt();
+std::optional<uint64_t> Type::size() const {
+  return std::nullopt;
 }
 
 std::string Type::to_decl(const DeclOpt& /*opt*/) const {
@@ -515,8 +515,8 @@ const Type* Enum::underlying_type() const {
   return nullptr;
 }
 
-optional<Enum::Entry> Enum::find_entry(int64_t /*value*/) const {
-  return nullopt();
+std::optional<Enum::Entry> Enum::find_entry(int64_t /*value*/) const {
+  return std::nullopt;
 }
 
 Enum::~Enum() = default;
@@ -711,8 +711,8 @@ BuildMetadata::CPU BuildMetadata::target_cpu() const {
   return CPU::UNKNOWN;
 }
 
-optional<BuildMetadata::build_info_t> BuildMetadata::build_info() const {
-  return nullopt();
+std::optional<BuildMetadata::build_info_t> BuildMetadata::build_info() const {
+  return std::nullopt;
 }
 
 std::vector<std::string> BuildMetadata::env() const {

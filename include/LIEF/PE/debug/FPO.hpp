@@ -16,13 +16,13 @@
 #ifndef LIEF_PE_FPO_H
 #define LIEF_PE_FPO_H
 
-#include <vector>
+#include "LIEF/PE/debug/Debug.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/PE/debug/Debug.hpp"
+#include <vector>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class represents the `IMAGE_DEBUG_TYPE_FPO` debug entry
 class LIEF_API FPO : public Debug {
@@ -120,6 +120,6 @@ class LIEF_API FPO : public Debug {
 LIEF_API const char* to_string(FPO::FRAME_TYPE e);
 
 }
-}
+
 
 #endif

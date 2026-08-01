@@ -15,9 +15,9 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_CHPE_METADATA_H
 #define LIEF_PE_LOAD_CONFIGURATION_CHPE_METADATA_H
+#include <cstdint>
 #include <memory>
 #include <string>
-#include <cstdint>
 
 #include "LIEF/visibility.h"
 
@@ -50,7 +50,7 @@ class LIEF_API CHPEMetadata {
   CHPEMetadata& operator=(CHPEMetadata&&) = default;
 
   virtual std::unique_ptr<CHPEMetadata> clone() const {
-    return std::unique_ptr<CHPEMetadata>(new CHPEMetadata(*this));
+    return std::make_unique<CHPEMetadata>(*this);
   }
 
   static std::unique_ptr<CHPEMetadata> parse(Parser& ctx, BinaryStream& stream);
@@ -71,7 +71,7 @@ class LIEF_API CHPEMetadata {
 
   template<class T>
   T* as() {
-    static_assert(std::is_base_of<CHPEMetadata, T>::value,
+    static_assert(std::is_base_of_v<CHPEMetadata, T>,
                   "Require CHPEMetadata inheritance");
     if (T::classof(this)) {
       return static_cast<T*>(this);

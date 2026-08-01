@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "spdlog/fmt/fmt.h"
 #include "LIEF/MachO/DyldChainedFixups.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
-#include "LIEF/MachO/hash.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/hash.hpp"
+#include "spdlog/fmt/fmt.h"
 
-#include "MachO/Structures.hpp"
+#include "MachO/ChainedBindingInfoList.hpp" // IWYU pragma: keep
 #include "MachO/ChainedFixup.hpp"
-#include "MachO/ChainedBindingInfoList.hpp"
+#include "MachO/Structures.hpp"
 
 
 namespace LIEF::MachO {

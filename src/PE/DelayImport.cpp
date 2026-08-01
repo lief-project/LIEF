@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <utility>
 #include <spdlog/fmt/fmt.h>
+#include <utility>
 
 #include "LIEF/Visitor.hpp"
 

@@ -15,5 +15,7 @@
  */
 #ifndef LIEF_PLATFORMS_ANDROID_H
 #define LIEF_PLATFORMS_ANDROID_H
+// IWYU pragma: begin_exports
 #include "LIEF/platforms/android/version.hpp"
+// IWYU pragma: end_exports
 #endif

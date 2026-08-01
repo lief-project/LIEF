@@ -16,13 +16,16 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_FILTER_H
 #define LIEF_ELF_DYNAMIC_ENTRY_FILTER_H
 
+#include <string_view>
+#include <memory>
 #include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class which represents a `DT_FILTER` entry in the dynamic table
 /// This kind of entry is used to specify a shared object for which the
@@ -42,11 +45,11 @@ class LIEF_API DynamicEntryFilter : public DynamicEntry {
   DynamicEntryFilter(const DynamicEntryFilter&) = default;
 
   std::unique_ptr<DynamicEntry> clone() const override {
-    return std::unique_ptr<DynamicEntryFilter>(new DynamicEntryFilter(*this));
+    return std::make_unique<DynamicEntryFilter>(*this);
   }
 
   /// The actual name (e.g. `libfilter.so`)
-  const std::string& name() const {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -68,5 +71,5 @@ class LIEF_API DynamicEntryFilter : public DynamicEntry {
   std::string name_;
 };
 }
-}
+
 #endif

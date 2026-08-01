@@ -15,16 +15,16 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_CHPE_METADATA_ARM64_H
 #define LIEF_PE_LOAD_CONFIGURATION_CHPE_METADATA_ARM64_H
-#include <memory>
 #include <cstdint>
+#include <memory>
 
-#include "LIEF/errors.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp"
+#include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class represents ARM64-specific metadata used in CHPE
 /// (Compatible Hybrid PE) binaries, particularly for hybrid architectures like
@@ -115,7 +115,7 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
   CHPEMetadataARM64& operator=(CHPEMetadataARM64&&) = default;
 
   std::unique_ptr<CHPEMetadata> clone() const override {
-    return std::unique_ptr<CHPEMetadataARM64>(new CHPEMetadataARM64(*this));
+    return std::make_unique<CHPEMetadataARM64>(*this);
   }
 
   static std::unique_ptr<CHPEMetadataARM64>
@@ -402,6 +402,6 @@ class LIEF_API CHPEMetadataARM64 : public CHPEMetadata {
 
 LIEF_API const char* to_string(CHPEMetadataARM64::range_entry_t::TYPE e);
 }
-}
+
 
 #endif

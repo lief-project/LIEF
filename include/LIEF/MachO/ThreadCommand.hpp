@@ -15,18 +15,19 @@
  */
 #ifndef LIEF_MACHO_THREAD_COMMAND_H
 #define LIEF_MACHO_THREAD_COMMAND_H
-#include <vector>
+#include <memory>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/Header.hpp"
+#include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 
@@ -54,7 +55,7 @@ class LIEF_API ThreadCommand : public LoadCommand {
   ThreadCommand(const ThreadCommand& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<ThreadCommand>(new ThreadCommand(*this));
+    return std::make_unique<ThreadCommand>(*this);
   }
 
   ~ThreadCommand() override = default;
@@ -130,5 +131,5 @@ class LIEF_API ThreadCommand : public LoadCommand {
 };
 
 }
-}
+
 #endif

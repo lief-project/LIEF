@@ -16,10 +16,10 @@
 #include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/rust/Abstract/DebugInfo.hpp>
 #include <LIEF/rust/Abstract/Function.hpp>
-#include <LIEF/rust/asm/Instruction.hpp>
-#include <LIEF/rust/Mirror.hpp>
 #include <LIEF/rust/Iterator.hpp>
+#include <LIEF/rust/Mirror.hpp>
 #include <LIEF/rust/asm/AssemblerConfig.hpp>
+#include <LIEF/rust/asm/Instruction.hpp>
 
 #include "LIEF/rust/error.hpp"
 

@@ -42,4 +42,4 @@ std::string to_json([[maybe_unused]] const Object& v) {
 }
 
 
-} // namespace LIEF::PE
+}

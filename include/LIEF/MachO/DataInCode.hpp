@@ -15,19 +15,20 @@
  */
 #ifndef LIEF_MACHO_DATA_IN_CODE_COMMAND_H
 #define LIEF_MACHO_DATA_IN_CODE_COMMAND_H
-#include <vector>
+#include <memory>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/DataCodeEntry.hpp"
+#include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 class LinkEdit;
 
@@ -57,7 +58,7 @@ class LIEF_API DataInCode : public LoadCommand {
   DataInCode(const DataInCode&) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<DataInCode>(new DataInCode(*this));
+    return std::make_unique<DataInCode>(*this);
   }
 
   /// Start of the array of the DataCodeEntry entries
@@ -118,5 +119,5 @@ class LIEF_API DataInCode : public LoadCommand {
 };
 
 }
-}
+
 #endif

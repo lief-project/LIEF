@@ -15,18 +15,19 @@
  */
 #ifndef LIEF_MACHO_TWO_LEVEL_HINTS_H
 #define LIEF_MACHO_TWO_LEVEL_HINTS_H
-#include <vector>
+#include <memory>
 #include <ostream>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/span.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 class Builder;
@@ -54,7 +55,7 @@ class LIEF_API TwoLevelHints : public LoadCommand {
   TwoLevelHints(const TwoLevelHints& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<TwoLevelHints>(new TwoLevelHints(*this));
+    return std::make_unique<TwoLevelHints>(*this);
   }
 
   /// Original payload of the command
@@ -104,5 +105,5 @@ class LIEF_API TwoLevelHints : public LoadCommand {
 };
 
 }
-}
+
 #endif

@@ -20,6 +20,7 @@
 
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 namespace LIEF::OAT::py {
 template<>
@@ -54,4 +55,3 @@ void create<DexFile>(nb::module_& m) {
 
 }
 }
-

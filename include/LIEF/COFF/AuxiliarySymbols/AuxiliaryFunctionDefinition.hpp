@@ -18,11 +18,11 @@
 
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 
 /// This auxiliary symbols marks the beginning of a function definition.
 ///
@@ -53,9 +53,7 @@ class LIEF_API AuxiliaryFunctionDefinition : public AuxiliarySymbol {
   AuxiliaryFunctionDefinition& operator=(AuxiliaryFunctionDefinition&&) = default;
 
   std::unique_ptr<AuxiliarySymbol> clone() const override {
-    return std::unique_ptr<AuxiliaryFunctionDefinition>(
-        new AuxiliaryFunctionDefinition{*this}
-    );
+    return std::make_unique<AuxiliaryFunctionDefinition>(*this);
   }
 
   /// The symbol-table index of the corresponding `.bf` (begin function)
@@ -107,5 +105,5 @@ class LIEF_API AuxiliaryFunctionDefinition : public AuxiliarySymbol {
 };
 
 }
-}
+
 #endif

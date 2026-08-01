@@ -18,10 +18,10 @@
 #include "LIEF/Object.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
+#include "LIEF/Abstract/Function.hpp"
+#include "LIEF/Abstract/Relocation.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
-#include "LIEF/Abstract/Relocation.hpp"
-#include "LIEF/Abstract/Function.hpp"
 
 #include "Object.tcc"
 
@@ -124,4 +124,4 @@ void AbstractJsonVisitor::visit(const Function& function) {
 }
 
 
-} // namespace LIEF
+}

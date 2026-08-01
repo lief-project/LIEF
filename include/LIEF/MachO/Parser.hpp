@@ -15,9 +15,9 @@
  */
 #ifndef LIEF_MACHO_PARSER_H
 #define LIEF_MACHO_PARSER_H
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"

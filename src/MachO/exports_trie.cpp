@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/iostream.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/iostream.hpp"
 
-#include <algorithm>
 #include <unordered_set>
+#include <algorithm>
 
 #include <spdlog/fmt/fmt.h>
 
 #include "logging.hpp"
 
-#include "MachO/exports_trie.hpp"
 #include "MachO/TrieNode.hpp"
+#include "MachO/exports_trie.hpp"
 
 
 namespace LIEF::MachO {

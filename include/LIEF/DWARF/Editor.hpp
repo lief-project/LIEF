@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_DWARF_EDITOR_H
 #define LIEF_DWARF_EDITOR_H
+#include <cstdint>
 #include <memory>
 #include <string>
-#include <cstdint>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"

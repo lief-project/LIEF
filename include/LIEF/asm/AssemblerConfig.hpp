@@ -16,13 +16,13 @@
 #define LIEF_ASM_ASSEMBLER_CONFIG_H
 
 #include "LIEF/visibility.h"
-#include "LIEF/optional.hpp"
+#include <cstdint>
+#include <optional>
 
 #include <string>
 
-namespace LIEF {
 
-namespace assembly {
+namespace LIEF::assembly {
 
 /// This class exposes the different elements that can be configured to assemble
 /// code.
@@ -71,21 +71,21 @@ class LIEF_API AssemblerConfig {
   /// ```cpp
   /// class MyConfig : public AssemblerConfig {
   ///   public:
-  ///   optional<uint64_t> resolve_symbol(const std::string& name) {
+  ///   std::optional<uint64_t> resolve_symbol(const std::string& name) {
   ///     if (name == "_my_function") {
   ///       return 0x4000;
   ///     }
-  ///     return nullopt(); // or AssemblerConfig::resolve_symbol(name)
+  ///     return std::nullopt; // or AssemblerConfig::resolve_symbol(name)
   ///   }
   /// };
   /// ```
-  virtual optional<uint64_t> resolve_symbol(const std::string& /*name*/) {
-    return nullopt();
+  virtual std::optional<uint64_t> resolve_symbol(const std::string& /*name*/) {
+    return std::nullopt;
   }
 
   virtual ~AssemblerConfig() = default;
 };
 }
-}
+
 
 #endif

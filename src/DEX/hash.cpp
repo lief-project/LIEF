@@ -139,4 +139,4 @@ void Hash::visit(const MapList& list) {
 }
 
 
-} // namespace LIEF::DEX
+}

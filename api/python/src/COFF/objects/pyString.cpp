@@ -20,6 +20,7 @@
 #include <sstream>
 #include <string>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 namespace LIEF::COFF::py {
 
@@ -53,4 +54,3 @@ void create<String>(nb::module_& m) {
 }
 
 }
-

@@ -18,17 +18,17 @@
 
 #include "LIEF/visibility.h"
 
-#include <string>
-#include <memory>
-#include <vector>
 #include <cstdint>
+#include <memory>
+#include <string>
+#include <vector>
 
 namespace spdlog {
 class logger;
 }
 
-namespace LIEF {
-namespace logging {
+
+namespace LIEF::logging {
 
 /// **Hierarchical** logging level
 ///
@@ -273,6 +273,6 @@ class Scoped {
 
 
 }
-}
+
 
 #endif

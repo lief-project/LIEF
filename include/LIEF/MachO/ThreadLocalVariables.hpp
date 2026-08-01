@@ -16,9 +16,9 @@
 #ifndef LIEF_MACHO_THREAD_LOCAL_VARIABLES_H
 #define LIEF_MACHO_THREAD_LOCAL_VARIABLES_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
-#include "LIEF/optional.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
 #include "LIEF/MachO/Section.hpp"
 
@@ -30,9 +30,8 @@
 #include <ostream>
 #include <string>
 
-namespace LIEF {
 
-namespace MachO {
+namespace LIEF::MachO {
 
 /// This class represents a MachO section with type
 /// Section::TYPE::THREAD_LOCAL_VARIABLES (`S_THREAD_LOCAL_VARIABLES`).
@@ -155,13 +154,13 @@ class LIEF_API ThreadLocalVariables : public LIEF::MachO::Section {
 
   /// Access the Thunk at the given @p idx, or return an empty optional if the
   /// index is out of range.
-  optional<Thunk> get(size_t idx) const;
+  std::optional<Thunk> get(size_t idx) const;
 
   /// Change the Thunk at the given @p idx
   void set(size_t idx, const Thunk& thunk);
 
   /// Access the Thunk at the given @p idx
-  optional<Thunk> operator[](size_t idx) const {
+  std::optional<Thunk> operator[](size_t idx) const {
     return get(idx);
   }
 
@@ -173,6 +172,6 @@ class LIEF_API ThreadLocalVariables : public LIEF::MachO::Section {
 };
 
 }
-}
+
 
 #endif

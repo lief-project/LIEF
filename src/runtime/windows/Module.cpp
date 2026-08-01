@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-#include "LIEF/PE/ParserConfig.hpp"
-#include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/Binary.hpp"
 #include "LIEF/runtime/windows/Module.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Parser.hpp"
+#include "LIEF/PE/ParserConfig.hpp"
 
 #include "logging.hpp"
 
 #include <Windows.h>
-#include <psapi.h>
 #include <errhandlingapi.h>
 #include <libloaderapi.h>
+#include <psapi.h>
 
 #include "LIEF/utils.hpp"
 

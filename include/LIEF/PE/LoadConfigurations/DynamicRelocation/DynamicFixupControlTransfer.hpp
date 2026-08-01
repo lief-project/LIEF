@@ -15,13 +15,14 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_CONTROL_TRANSFER_H
 #define LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_CONTROL_TRANSFER_H
-#include <vector>
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
+#include <memory>
+#include <vector>
 
 #include "LIEF/iterators.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class wraps fixups associated with the (special) symbol value:
 /// `IMAGE_DYNAMIC_RELOCATION_GUARD_IMPORT_CONTROL_TRANSFER (3)`.
@@ -65,9 +66,7 @@ class LIEF_API DynamicFixupControlTransfer : public DynamicFixup {
   DynamicFixupControlTransfer& operator=(DynamicFixupControlTransfer&&) = default;
 
   std::unique_ptr<DynamicFixup> clone() const override {
-    return std::unique_ptr<DynamicFixupControlTransfer>(
-        new DynamicFixupControlTransfer(*this)
-    );
+    return std::make_unique<DynamicFixupControlTransfer>(*this);
   }
 
   std::string to_string() const override;
@@ -97,6 +96,6 @@ class LIEF_API DynamicFixupControlTransfer : public DynamicFixup {
 
 
 }
-}
+
 
 #endif

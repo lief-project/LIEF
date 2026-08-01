@@ -16,7 +16,7 @@
 #ifndef LIEF_PE_UTILS_LIBRARY_TABLE_STD_H
 #define LIEF_PE_UTILS_LIBRARY_TABLE_STD_H
 
-#include "ws2_32_dll_lookup.hpp"
 #include "oleauth32_dll_lookup.hpp"
+#include "ws2_32_dll_lookup.hpp"
 
 #endif

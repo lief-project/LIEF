@@ -17,17 +17,16 @@
 
 #include "mbedtls_wraps.h"
 
-#include "LIEF/utils.hpp"
 #include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/signature/Signature.hpp"
-#include "LIEF/PE/signature/OIDToString.hpp"
 #include "LIEF/PE/EnumToString.hpp"
+#include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/signature/Signature.hpp"
 
 #include "LIEF/PE/signature/Attribute.hpp"
-#include "LIEF/PE/signature/attributes.hpp"
-#include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/signature/RsaInfo.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
+#include "LIEF/PE/signature/attributes.hpp"
 
 #include <psa/crypto_builtin_primitives.h>
 
@@ -435,7 +434,7 @@ const x509* Signature::find_crt(const std::vector<uint8_t>& serialno) const {
 }
 
 
-const x509* Signature::find_crt_subject(const std::string& subject) const {
+const x509* Signature::find_crt_subject(std::string_view subject) const {
   auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
                               [&subject](const x509& cert) {
                                 return cert.subject() == subject;
@@ -447,7 +446,7 @@ const x509* Signature::find_crt_subject(const std::string& subject) const {
 }
 
 const x509*
-    Signature::find_crt_subject(const std::string& subject,
+    Signature::find_crt_subject(std::string_view subject,
                                 const std::vector<uint8_t>& serialno) const {
   auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
                               [&subject, &serialno](const x509& cert) {
@@ -460,7 +459,7 @@ const x509*
   return &(*it_cert);
 }
 
-const x509* Signature::find_crt_issuer(const std::string& issuer) const {
+const x509* Signature::find_crt_issuer(std::string_view issuer) const {
   auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
                               [&issuer](const x509& cert) {
                                 return cert.issuer() == issuer;
@@ -472,7 +471,7 @@ const x509* Signature::find_crt_issuer(const std::string& issuer) const {
 }
 
 const x509*
-    Signature::find_crt_issuer(const std::string& issuer,
+    Signature::find_crt_issuer(std::string_view issuer,
                                const std::vector<uint8_t>& serialno) const {
   auto it_cert = std::find_if(certificates_.begin(), certificates_.end(),
                               [&issuer, &serialno](const x509& cert) {

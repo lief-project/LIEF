@@ -18,6 +18,7 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/string_view.h>
 #include "nanobind/extra/stl/pathlike.h"
 #include "nanobind/utils.hpp"
 
@@ -131,29 +132,29 @@ void create<Signature>(nb::module_& m) {
     .def("find_crt",
         nb::overload_cast<const std::vector<uint8_t>&>(&Signature::find_crt, nb::const_),
         "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its serial number"_doc,
-        nb::rv_policy::reference,
+        nb::rv_policy::reference_internal,
         "serialno"_a)
 
     .def("find_crt_subject",
-        nb::overload_cast<const std::string&>(&Signature::find_crt_subject, nb::const_),
+        nb::overload_cast<std::string_view>(&Signature::find_crt_subject, nb::const_),
         "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its subject"_doc,
         nb::rv_policy::reference,
         "subject"_a)
 
     .def("find_crt_subject",
-        nb::overload_cast<const std::string&, const std::vector<uint8_t>&>(&Signature::find_crt_subject, nb::const_),
+        nb::overload_cast<std::string_view, const std::vector<uint8_t>&>(&Signature::find_crt_subject, nb::const_),
         "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its subject **AND** its serial number"_doc,
         nb::rv_policy::reference,
         "subject"_a, "serialno"_a)
 
     .def("find_crt_issuer",
-        nb::overload_cast<const std::string&>(&Signature::find_crt_issuer, nb::const_),
+        nb::overload_cast<std::string_view>(&Signature::find_crt_issuer, nb::const_),
         "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its issuer"_doc,
         nb::rv_policy::reference,
         "issuer"_a)
 
     .def("find_crt_issuer",
-        nb::overload_cast<const std::string&, const std::vector<uint8_t>&>(&Signature::find_crt_issuer, nb::const_),
+        nb::overload_cast<std::string_view, const std::vector<uint8_t>&>(&Signature::find_crt_issuer, nb::const_),
         "Find the " RST_CLASS_REF(lief.PE.x509) " certificate according to its issuer **AND** its serial number"_doc,
         nb::rv_policy::reference,
         "issuer"_a, "serialno"_a)

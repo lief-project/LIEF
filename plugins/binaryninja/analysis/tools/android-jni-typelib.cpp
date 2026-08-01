@@ -1,5 +1,5 @@
-#include <filesystem>
 #include "log.hpp"
+#include <filesystem>
 
 #include <binaryninja/binaryninjaapi.h>
 

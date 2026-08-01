@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <cstring>
 #include <algorithm>
+#include <cstring>
 #include <fstream>
 #include <iterator>
 
@@ -252,11 +252,8 @@ ok_error_t Builder::build(const DataDirectory& data_directory) {
 ok_error_t Builder::build(const Section& section) {
   std::array<char, 8> section_name{};
 
-  const std::string& sec_name = section.fullname();
-  uint32_t name_length =
-      std::min<uint32_t>(sec_name.size() + 1, section_name.size());
-  std::copy(sec_name.c_str(), sec_name.c_str() + name_length,
-            section_name.begin());
+  std::string_view sec_name = section.fullname();
+  sec_name.copy(section_name.data(), section_name.size());
   ios_.increase_capacity(sizeof(details::pe_section))
       .write(section_name)
       .write<uint32_t>(section.virtual_size())
@@ -1034,9 +1031,9 @@ ok_error_t Builder::build_exports() {
     exp_dir->size(0);
     return ok();
   }
-
-  std::unordered_map<std::string, size_t> strmap_offset;
-  std::vector<std::string> strings;
+  std::vector<std::string> owned_strings;
+  std::unordered_map<std::string_view, size_t> strmap_offset;
+  std::vector<std::string_view> strings;
   size_t name_table_cnt = 0;
 
   uint32_t base_ord = 1 << 16;
@@ -1054,6 +1051,11 @@ ok_error_t Builder::build_exports() {
                      return lhs->name() < rhs->name();
                    });
 
+  // strmap_offset is keyed by string_view into these owned strings, so the
+  // vector must never reallocate since it would move the backing storage and
+  // create dangling keys
+  owned_strings.reserve(entries.size());
+
   for (const ExportEntry* entry : entries) {
     LIEF_DEBUG("{}: {:#08x} (ord={})", entry->name(), entry->function_rva(),
                entry->ordinal());
@@ -1061,7 +1063,7 @@ ok_error_t Builder::build_exports() {
     max_ord = std::max<uint32_t>(entry->ordinal(), max_ord);
     bool has_name = false;
     if (ExportEntry::forward_information_t fwd = entry->forward_information()) {
-      strings.push_back(fwd.key());
+      strings.push_back(*owned_strings.insert(owned_strings.end(), fwd.key()));
       strings.push_back(entry->name());
       has_name = true;
     } else {
@@ -1077,7 +1079,7 @@ ok_error_t Builder::build_exports() {
 
   size_t offset_counter = 0;
   std::vector<std::string> strings_opt = optimize(
-      strings, [](const std::string& s) { return s; }, offset_counter,
+      strings, [](const std::string_view& s) { return s; }, offset_counter,
       &strmap_offset
   );
 
@@ -1173,7 +1175,7 @@ ok_error_t Builder::build_exports() {
           .record_fixup(FX_BASE_RVA)
           .write<uint32_t>(str_table_off + it_name->second);
       ++name_idx;
-    } else if (const std::string& name = E->name(); !name.empty()) {
+    } else if (std::string name = std::string(E->name()); !name.empty()) {
       auto it = strmap_offset.find(name);
 
       if (it == strmap_offset.end()) {

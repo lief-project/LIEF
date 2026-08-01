@@ -100,4 +100,4 @@ const char* to_string(Type::PRIMITIVES e) {
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
 
-} // namespace LIEF::DEX
+}

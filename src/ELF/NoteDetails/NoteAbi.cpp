@@ -84,4 +84,4 @@ const char* to_string(NoteAbi::ABI abi) {
   return "UNKNOWN";
 }
 
-} // namespace LIEF::ELF
+}

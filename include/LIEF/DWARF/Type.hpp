@@ -17,16 +17,16 @@
 
 #include <memory>
 
+#include "LIEF/DebugDeclOpt.hpp"
+#include "LIEF/canbe_unique.hpp"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/debug_loc.hpp"
+#include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/errors.hpp"
-#include "LIEF/debug_loc.hpp"
-#include "LIEF/canbe_unique.hpp"
-#include "LIEF/DebugDeclOpt.hpp"
 
-namespace LIEF {
-namespace dwarf {
+
+namespace LIEF::dwarf {
 class Scope;
 
 namespace details {
@@ -197,5 +197,5 @@ class LIEF_API Type {
 };
 
 }
-}
+
 #endif

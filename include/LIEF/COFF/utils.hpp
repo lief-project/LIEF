@@ -15,13 +15,13 @@
  */
 #ifndef LIEF_COFF_UTILS_H
 #define LIEF_COFF_UTILS_H
-#include "LIEF/visibility.h"
-#include "LIEF/COFF/Header.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/COFF/Header.hpp"
+#include "LIEF/visibility.h"
 #include <string>
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 
 /// This function determines if the given stream wraps a COFF binary and if so,
 /// whether it's a regular or bigobj COFF.
@@ -58,5 +58,5 @@ LIEF_API inline bool is_regular(BinaryStream& stream) {
 }
 
 }
-}
+
 #endif

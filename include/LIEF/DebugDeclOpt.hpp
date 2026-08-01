@@ -14,10 +14,10 @@
  */
 #ifndef LIEF_DEBUG_DECL_OPT_H
 #define LIEF_DEBUG_DECL_OPT_H
+#include <unordered_map>
 #include <cstdint>
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
+#include "LIEF/rust/ELF/Note.hpp"
 
 class ELF_CorePrPsInfo : public ELF_Note {
   public:

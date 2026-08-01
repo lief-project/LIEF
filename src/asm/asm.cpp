@@ -14,26 +14,26 @@
  */
 // NOLINTBEGIN
 
-#include "LIEF/asm/Instruction.hpp"
 #include "LIEF/asm/Engine.hpp"
+#include "LIEF/asm/Instruction.hpp"
 
 #include "LIEF/asm/aarch64/Instruction.hpp"
 #include "LIEF/asm/aarch64/Operand.hpp"
 #include "LIEF/asm/aarch64/registers.hpp"
 
 #include "LIEF/asm/aarch64/operands/Immediate.hpp"
-#include "LIEF/asm/aarch64/operands/Register.hpp"
-#include "LIEF/asm/aarch64/operands/PCRelative.hpp"
 #include "LIEF/asm/aarch64/operands/Memory.hpp"
+#include "LIEF/asm/aarch64/operands/PCRelative.hpp"
+#include "LIEF/asm/aarch64/operands/Register.hpp"
 
 #include "LIEF/asm/x86/Instruction.hpp"
 #include "LIEF/asm/x86/Operand.hpp"
 #include "LIEF/asm/x86/registers.hpp"
 
 #include "LIEF/asm/x86/operands/Immediate.hpp"
-#include "LIEF/asm/x86/operands/Register.hpp"
-#include "LIEF/asm/x86/operands/PCRelative.hpp"
 #include "LIEF/asm/x86/operands/Memory.hpp"
+#include "LIEF/asm/x86/operands/PCRelative.hpp"
+#include "LIEF/asm/x86/operands/Register.hpp"
 
 #include "LIEF/asm/arm/Instruction.hpp"
 #include "LIEF/asm/arm/registers.hpp"
@@ -43,36 +43,36 @@
 #include "LIEF/asm/mips/registers.hpp"
 
 #include "LIEF/asm/mips/operands/Immediate.hpp"
-#include "LIEF/asm/mips/operands/Register.hpp"
-#include "LIEF/asm/mips/operands/PCRelative.hpp"
 #include "LIEF/asm/mips/operands/Memory.hpp"
+#include "LIEF/asm/mips/operands/PCRelative.hpp"
+#include "LIEF/asm/mips/operands/Register.hpp"
 
 #include "LIEF/asm/ebpf/Instruction.hpp"
 #include "LIEF/asm/ebpf/Operand.hpp"
 #include "LIEF/asm/ebpf/registers.hpp"
 
 #include "LIEF/asm/ebpf/operands/Immediate.hpp"
-#include "LIEF/asm/ebpf/operands/Register.hpp"
-#include "LIEF/asm/ebpf/operands/PCRelative.hpp"
 #include "LIEF/asm/ebpf/operands/Memory.hpp"
+#include "LIEF/asm/ebpf/operands/PCRelative.hpp"
+#include "LIEF/asm/ebpf/operands/Register.hpp"
 
 #include "LIEF/asm/riscv/Instruction.hpp"
 #include "LIEF/asm/riscv/Operand.hpp"
 #include "LIEF/asm/riscv/registers.hpp"
 
 #include "LIEF/asm/riscv/operands/Immediate.hpp"
-#include "LIEF/asm/riscv/operands/Register.hpp"
-#include "LIEF/asm/riscv/operands/PCRelative.hpp"
 #include "LIEF/asm/riscv/operands/Memory.hpp"
+#include "LIEF/asm/riscv/operands/PCRelative.hpp"
+#include "LIEF/asm/riscv/operands/Register.hpp"
 
 #include "LIEF/asm/powerpc/Instruction.hpp"
 #include "LIEF/asm/powerpc/Operand.hpp"
 #include "LIEF/asm/powerpc/registers.hpp"
 
 #include "LIEF/asm/powerpc/operands/Immediate.hpp"
-#include "LIEF/asm/powerpc/operands/Register.hpp"
-#include "LIEF/asm/powerpc/operands/PCRelative.hpp"
 #include "LIEF/asm/powerpc/operands/Memory.hpp"
+#include "LIEF/asm/powerpc/operands/PCRelative.hpp"
+#include "LIEF/asm/powerpc/operands/Register.hpp"
 
 #include "LIEF/Abstract/Binary.hpp"
 #if defined(LIEF_COFF_SUPPORT)
@@ -80,8 +80,8 @@
 #endif
 
 #include "internal_utils.hpp"
-#include "messages.hpp"
 #include "logging.hpp"
+#include "messages.hpp"
 
 namespace LIEF {
 

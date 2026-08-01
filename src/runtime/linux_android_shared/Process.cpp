@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 #include "linux_android_shared/Process.hpp"
+#include "fmt_formatter/error_code.hpp" // IWYU pragma: keep
+#include "fmt_formatter/filesystem.hpp" // IWYU pragma: keep
 #include "logging.hpp"
-#include "fmt_formatter/error_code.hpp"
-#include "fmt_formatter/filesystem.hpp"
 
 #include <filesystem>
 #include <fstream>
 
 namespace LIEF::runtime::linux_android {
 
-optional<std::string> cmdline() {
+std::optional<std::string> cmdline() {
   static std::filesystem::path CMDLINE_FS("/proc/cmdline");
   std::error_code ec;
   std::uintmax_t fsize = std::filesystem::file_size(CMDLINE_FS, ec);
   if (ec) {
     LIEF_ERR("Failed to determine the file size of {} ({})", CMDLINE_FS, ec);
-    return nullopt();
+    return std::nullopt;
   }
 
   std::ifstream ifs(CMDLINE_FS, std::ios_base::binary);
   if (!ifs) {
     LIEF_ERR("Failed to open: {}", CMDLINE_FS);
-    return nullopt();
+    return std::nullopt;
   }
 
   std::string content;

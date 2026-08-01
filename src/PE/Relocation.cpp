@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/Visitor.hpp"
 
 
-#include "PE/Structures.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
+#include "PE/Structures.hpp"
 
 #include <spdlog/fmt/fmt.h>
 

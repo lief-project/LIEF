@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
-#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/debug/Debug.hpp"
 #include "LIEF/PE/Section.hpp"
+#include "LIEF/Visitor.hpp"
 #include "PE/Structures.hpp"
+#include <sstream>
 
 #include "frozen.hpp"
-#include "spdlog/fmt/fmt.h"
 #include "overflow_check.hpp"
+#include "spdlog/fmt/fmt.h"
 
 
 namespace LIEF::PE {

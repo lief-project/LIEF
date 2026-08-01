@@ -16,8 +16,8 @@
 
 #include "LIEF/runtime/windows/Host.hpp"
 
-#include <tuple>
 #include <spdlog/fmt/fmt.h>
+#include <tuple>
 
 namespace LIEF::runtime::windows {
 bool Host::version_t::operator<=(const version_t& rhs) const {

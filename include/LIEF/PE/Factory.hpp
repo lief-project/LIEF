@@ -16,14 +16,14 @@
 #ifndef LIEF_PE_FACTORY_H
 #define LIEF_PE_FACTORY_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/visibility.h"
 #include <memory>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This factory is used to create PE from scratch
 class LIEF_API Factory {
@@ -38,7 +38,7 @@ class LIEF_API Factory {
   static std::unique_ptr<Factory> create(PE_TYPE type);
 
   Factory& add_section(const Section& section) {
-    sections_.push_back(std::unique_ptr<Section>(new Section(section)));
+    sections_.push_back(std::make_unique<Section>(section));
     return *this;
   }
 
@@ -76,7 +76,7 @@ class LIEF_API Factory {
 
   protected:
   Factory() :
-    pe_(std::unique_ptr<Binary>(new Binary{})) {}
+    pe_(std::make_unique<Binary>()) {}
   std::unique_ptr<Binary> process();
 
   ok_error_t check_overlapping() const;
@@ -90,5 +90,5 @@ class LIEF_API Factory {
   std::unique_ptr<Binary> pe_;
 };
 }
-}
+
 #endif

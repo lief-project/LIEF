@@ -16,12 +16,12 @@
 #ifndef LIEF_FILE_STREAM_H
 #define LIEF_FILE_STREAM_H
 
-#include <vector>
-#include <string>
 #include <fstream>
+#include <string>
+#include <vector>
 
-#include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {

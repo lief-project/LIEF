@@ -15,9 +15,9 @@
  */
 #include <spdlog/fmt/fmt.h>
 
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 #include "LIEF/Visitor.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 
 namespace LIEF::PE {

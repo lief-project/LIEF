@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/config.h"
 #include "paging.hpp"
-#include "Object.tcc"
+#include "LIEF/config.h"
 #include "LIEF/utils.hpp"
+#include "Object.tcc"
 
 #if defined(LIEF_ELF_SUPPORT)
   #include "LIEF/ELF/Binary.hpp"

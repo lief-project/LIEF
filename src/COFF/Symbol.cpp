@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/utils.hpp"
 #include "LIEF/COFF/Symbol.hpp"
-#include "LIEF/COFF/String.hpp"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/COFF/String.hpp"
+#include "LIEF/utils.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
 #include "COFF/structures.hpp"
 
-#include "logging.hpp"
-#include "internal_utils.hpp"
 #include "frozen.hpp"
+#include "internal_utils.hpp"
+#include "logging.hpp"
 
 namespace LIEF::COFF {
 
 Symbol::Symbol() = default;
-Symbol::Symbol(Symbol&&) = default;
-Symbol& Symbol::operator=(Symbol&&) = default;
+Symbol::Symbol(Symbol&&) noexcept = default;
+Symbol& Symbol::operator=(Symbol&&) noexcept = default;
 
 Symbol::~Symbol() = default;
 Symbol::Symbol(const Symbol& other) :
@@ -114,7 +114,7 @@ std::unique_ptr<Symbol> Symbol::parse_impl(parsing_context_t& ctx,
   return sym;
 }
 
-const std::string& Symbol::name() const {
+std::string_view Symbol::name() const {
   if (coff_name_ != nullptr) {
     return coff_name_->str();
   }
@@ -123,7 +123,7 @@ const std::string& Symbol::name() const {
 
 std::string& Symbol::name() {
   if (coff_name_ != nullptr) {
-    return const_cast<std::string&>(coff_name_->str());
+    return coff_name_->str();
   }
   return name_;
 }

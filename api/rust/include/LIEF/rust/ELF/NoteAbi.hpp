@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/rust/ELF/Note.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 
 class ELF_NoteAbi : public ELF_Note {
   public:

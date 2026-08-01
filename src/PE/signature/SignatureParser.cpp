@@ -23,37 +23,37 @@
 #include "LIEF/utils.hpp"
 
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/ASN1Reader.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/PE/utils.hpp"
 
-#include "LIEF/PE/signature/SignatureParser.hpp"
-#include "LIEF/PE/signature/Signature.hpp"
-#include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/signature/GenericContent.hpp"
 #include "LIEF/PE/signature/PKCS9TSTInfo.hpp"
+#include "LIEF/PE/signature/Signature.hpp"
+#include "LIEF/PE/signature/SignatureParser.hpp"
+#include "LIEF/PE/signature/SpcIndirectData.hpp"
 
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
-#include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
-#include "LIEF/PE/signature/attributes/PKCS9CounterSignature.hpp"
-#include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
-#include "LIEF/PE/signature/attributes/PKCS9AtSequenceNumber.hpp"
-#include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
+#include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
+#include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
 #include "LIEF/PE/signature/attributes/MsSpcStatementType.hpp"
-#include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
+#include "LIEF/PE/signature/attributes/PKCS9AtSequenceNumber.hpp"
+#include "LIEF/PE/signature/attributes/PKCS9CounterSignature.hpp"
+#include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
+#include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
 #include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
 #include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
-#include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
+#include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 
-#include "logging.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 #include "mbedtls_init.hpp"
 
 namespace LIEF::PE {

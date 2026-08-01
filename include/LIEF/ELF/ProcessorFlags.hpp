@@ -15,11 +15,11 @@
  */
 #ifndef LIEF_ELF_PROCESSOR_FLAGS_H
 #define LIEF_ELF_PROCESSOR_FLAGS_H
-#include <cstdint>
 #include "LIEF/visibility.h"
+#include <cstdint>
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 // clang-format off
 static constexpr uint64_t PFLAGS_BIT = 43;
@@ -122,5 +122,5 @@ LIEF_API const char* to_string(PROCESSOR_FLAGS flag);
 
 
 }
-}
+
 #endif

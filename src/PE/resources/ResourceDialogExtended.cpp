@@ -15,14 +15,14 @@
  */
 #include <sstream>
 
+#include "LIEF/PE/resources/ResourceDialogExtended.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"
-#include "LIEF/PE/resources/ResourceDialogExtended.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#include "logging.hpp"
 #include "fmt_formatter.hpp"
+#include "logging.hpp"
 
 FMT_FORMATTER(LIEF::PE::ResourceDialog::DIALOG_STYLES, LIEF::PE::to_string);
 FMT_FORMATTER(LIEF::PE::ResourceDialog::WINDOW_EXTENDED_STYLES,

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include "VDEX/json_internal.hpp"
 #include "DEX/json_internal.hpp"
+#include "VDEX/json_internal.hpp"
 
-#include "LIEF/VDEX.hpp"
 #include "LIEF/DEX/File.hpp"
+#include "LIEF/VDEX.hpp" // IWYU pragma: keep
 
 
 namespace LIEF::VDEX {
@@ -45,4 +45,4 @@ void JsonVisitor::visit(const Header& header) {
   node_["quickening_info_size"] = header.quickening_info_size();
 }
 
-} // namespace LIEF::VDEX
+}

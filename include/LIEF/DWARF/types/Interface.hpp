@@ -15,19 +15,17 @@
 #ifndef LIEF_DWARF_TYPE_INTERFACE_H
 #define LIEF_DWARF_TYPE_INTERFACE_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
-namespace types {
+
+namespace LIEF::dwarf::types {
 
 /// This class represents a `DW_TAG_interface_type`
 class LIEF_API Interface : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   Interface(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -45,6 +43,6 @@ class LIEF_API Interface : public Type {
 };
 
 }
-}
-}
+
+
 #endif

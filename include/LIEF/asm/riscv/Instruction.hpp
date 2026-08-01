@@ -14,18 +14,16 @@
  */
 #ifndef LIEF_ASM_RISCV_INST_H
 #define LIEF_ASM_RISCV_INST_H
-#include "LIEF/visibility.h"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/asm/Instruction.hpp"
-#include "LIEF/asm/riscv/opcodes.hpp"
 #include "LIEF/asm/riscv/Operand.hpp"
+#include "LIEF/asm/riscv/opcodes.hpp"
 
-namespace LIEF {
-namespace assembly {
 
 /// RISC-V architecture-related namespace
-namespace riscv {
+namespace LIEF::assembly::riscv {
 
 /// This class represents a RISC-V (32 or 64 bit) instruction
 class LIEF_API Instruction : public assembly::Instruction {
@@ -46,6 +44,6 @@ class LIEF_API Instruction : public assembly::Instruction {
   ~Instruction() override = default;
 };
 }
-}
-}
+
+
 #endif

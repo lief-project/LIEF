@@ -15,10 +15,10 @@
 
 #pragma once
 #include "LIEF/MachO/Relocation.hpp"
-#include "LIEF/rust/MachO/Symbol.hpp"
+#include "LIEF/rust/Abstract/Relocation.hpp"
 #include "LIEF/rust/MachO/Section.hpp"
 #include "LIEF/rust/MachO/SegmentCommand.hpp"
-#include "LIEF/rust/Abstract/Relocation.hpp"
+#include "LIEF/rust/MachO/Symbol.hpp"
 
 #include <memory>
 

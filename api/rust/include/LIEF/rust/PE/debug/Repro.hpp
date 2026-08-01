@@ -15,9 +15,9 @@
 #pragma once
 #include <LIEF/PE/debug/Debug.hpp>
 
+#include "LIEF/PE/debug/Repro.hpp"
 #include "LIEF/rust/PE/debug/Debug.hpp"
 #include "LIEF/rust/Span.hpp"
-#include "LIEF/PE/debug/Repro.hpp"
 
 
 class PE_Repro : public PE_Debug {

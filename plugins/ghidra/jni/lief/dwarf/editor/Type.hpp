@@ -14,8 +14,8 @@
  */
 #pragma once
 
-#include <jni_bind.h>
 #include "jni/mirror.hpp"
+#include <jni_bind.h>
 
 #include <LIEF/DWARF/editor/Type.hpp>
 

@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PDB/types/Attribute.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/PDB/Type.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PDB_types_Attribute : private Mirror<LIEF::pdb::types::Attribute> {
   public:

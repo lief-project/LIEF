@@ -16,9 +16,9 @@
 #ifndef LIEF_ELF_UTILS_H
 #define LIEF_ELF_UTILS_H
 
+#include <cstdint>
 #include <string>
 #include <vector>
-#include <cstdint>
 
 #include "LIEF/visibility.h"
 

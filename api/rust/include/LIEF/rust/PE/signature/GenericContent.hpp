@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/PE/signature/ContentInfo.hpp"
 #include "LIEF/PE/signature/GenericContent.hpp"
+#include "LIEF/rust/PE/signature/ContentInfo.hpp"
 #include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/helpers.hpp"
 

@@ -17,9 +17,9 @@
 #include <cstdint>
 #include <memory>
 
+#include "LIEF/runtime/disassembler.hpp"
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/asm/Instruction.hpp"
-#include "LIEF/runtime/disassembler.hpp"
 
 class runtime_it_instructions
   : public ForwardIterator<asm_Instruction,

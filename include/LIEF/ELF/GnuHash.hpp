@@ -16,13 +16,13 @@
 #ifndef LIEF_ELF_GNU_HASH_H
 #define LIEF_ELF_GNU_HASH_H
 
-#include <vector>
-#include <ostream>
 #include <cstdint>
 #include <memory>
+#include <ostream>
+#include <vector>
 
-#include "LIEF/errors.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -153,7 +153,7 @@ class LIEF_API GnuHash : public Object {
 };
 
 
-} // namespace ELF
-} // namespace LIEF
+}
+}
 
 #endif

@@ -15,20 +15,18 @@
 #ifndef LIEF_PDB_TYPE_POINTER_H
 #define LIEF_PDB_TYPE_POINTER_H
 
+#include "LIEF/PDB/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/PDB/Type.hpp"
 
-namespace LIEF {
-namespace pdb {
-namespace types {
+
+namespace LIEF::pdb::types {
 
 /// This class represents a `LF_POINTER` PDB type
 class LIEF_API Pointer : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   Pointer(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -43,6 +41,6 @@ class LIEF_API Pointer : public Type {
 };
 
 }
-}
-}
+
+
 #endif

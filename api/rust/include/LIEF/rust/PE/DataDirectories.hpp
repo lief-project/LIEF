@@ -14,8 +14,8 @@
  */
 #pragma once
 #include "LIEF/PE/DataDirectory.hpp"
-#include "LIEF/rust/PE/Section.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PE/Section.hpp"
 #include "LIEF/rust/Span.hpp"
 
 class PE_DataDirectory : private Mirror<LIEF::PE::DataDirectory> {

@@ -16,11 +16,11 @@
 #ifndef LIEF_PE_VC_FEATURE_H
 #define LIEF_PE_VC_FEATURE_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/debug/Debug.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class represents the `IMAGE_DEBUG_TYPE_VC_FEATURE` debug entry
 class LIEF_API VCFeature : public Debug {
@@ -118,6 +118,6 @@ class LIEF_API VCFeature : public Debug {
 };
 
 }
-}
+
 
 #endif

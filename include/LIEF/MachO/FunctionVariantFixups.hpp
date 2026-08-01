@@ -15,12 +15,13 @@
  */
 #ifndef LIEF_MACHO_FUNCTION_VARIANT_FIXUPS_COMMAND_H
 #define LIEF_MACHO_FUNCTION_VARIANT_FIXUPS_COMMAND_H
-#include <vector>
+#include <memory>
 #include <ostream>
+#include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/span.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
@@ -206,9 +207,7 @@ class LIEF_API FunctionVariantFixups : public LoadCommand {
   FunctionVariantFixups(const FunctionVariantFixups& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<FunctionVariantFixups>(
-        new FunctionVariantFixups(*this)
-    );
+    return std::make_unique<FunctionVariantFixups>(*this);
   }
 
   /// Offset in the `__LINKEDIT` SegmentCommand where the payload starts

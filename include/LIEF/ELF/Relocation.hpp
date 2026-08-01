@@ -19,16 +19,16 @@
 #include <ostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Relocation.hpp"
 
-#include "LIEF/ELF/enums.hpp"
 #include "LIEF/ELF/Header.hpp"
+#include "LIEF/ELF/enums.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 class Parser;
 class Binary;
@@ -370,5 +370,5 @@ class LIEF_API Relocation : public LIEF::Relocation {
 LIEF_API const char* to_string(Relocation::TYPE type);
 
 }
-}
+
 #endif

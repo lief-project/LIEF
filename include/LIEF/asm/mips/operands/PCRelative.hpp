@@ -16,10 +16,8 @@
 #define LIEF_ASM_MIPS_OPERAND_PCREL_H
 #include "LIEF/asm/mips/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace mips {
-namespace operands {
+
+namespace LIEF::assembly::mips::operands {
 
 /// This class represents a PC-relative operand.
 ///
@@ -41,7 +39,6 @@ class LIEF_API PCRelative : public Operand {
   ~PCRelative() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

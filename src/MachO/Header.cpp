@@ -21,8 +21,8 @@
 #include "frozen.hpp"
 #include "spdlog/fmt/fmt.h"
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/Header.hpp"
+#include "LIEF/Visitor.hpp"
 #include "MachO/Structures.hpp"
 
 FMT_FORMATTER(LIEF::MachO::Header::FLAGS, LIEF::MachO::to_string);

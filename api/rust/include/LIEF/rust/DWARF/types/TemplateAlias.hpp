@@ -14,8 +14,8 @@
  */
 #pragma once
 #include "LIEF/DWARF/types/TemplateAlias.hpp"
-#include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/DWARF/Parameter.hpp"
+#include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/Iterator.hpp"
 
 class DWARF_types_TemplateAlias : public DWARF_Type {

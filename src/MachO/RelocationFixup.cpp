@@ -16,9 +16,9 @@
 #include "logging.hpp"
 #include "spdlog/fmt/fmt.h"
 
-#include "LIEF/Visitor.hpp"
-#include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
+#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/Visitor.hpp"
 #include "MachO/ChainedFixup.hpp"
 
 

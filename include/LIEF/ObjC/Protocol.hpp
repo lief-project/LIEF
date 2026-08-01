@@ -14,19 +14,19 @@
  */
 #ifndef LIEF_OBJC_PROTOCOL_H
 #define LIEF_OBJC_PROTOCOL_H
-#include <LIEF/compiler_attributes.hpp>
-#include <LIEF/visibility.h>
-#include <LIEF/iterators.hpp>
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-#include <LIEF/ObjC/Method.hpp>
-#include <LIEF/ObjC/Property.hpp>
-#include <LIEF/ObjC/DeclOpt.hpp>
+#include "LIEF/ObjC/DeclOpt.hpp"
+#include "LIEF/ObjC/Method.hpp"
+#include "LIEF/ObjC/Property.hpp"
 
 #include <memory>
 #include <string>
 
-namespace LIEF {
-namespace objc {
+
+namespace LIEF::objc {
 
 namespace details {
 class Protocol;
@@ -120,5 +120,5 @@ class LIEF_API Protocol {
 };
 
 }
-}
+
 #endif

@@ -18,6 +18,7 @@
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 #include "LIEF/MachO/DyldEnvironment.hpp"
 

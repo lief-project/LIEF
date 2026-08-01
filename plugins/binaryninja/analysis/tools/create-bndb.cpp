@@ -1,8 +1,8 @@
 #include "log.hpp"
 
+#include "binaryninja/lief_utils.hpp"
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>
-#include "binaryninja/lief_utils.hpp"
 
 #include "binaryninja/analysis/Analyzer.hpp"
 

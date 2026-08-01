@@ -14,9 +14,9 @@
  */
 
 #pragma once
-#include <string>
 #include "LIEF/ELF/utils.hpp"
 #include "LIEF/rust/ELF/Binary.hpp"
+#include <string>
 
 class ELF_Utils {
   public:

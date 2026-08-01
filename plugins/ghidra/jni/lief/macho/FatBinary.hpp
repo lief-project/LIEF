@@ -14,9 +14,9 @@
  */
 #pragma once
 
-#include <jni_bind.h>
-#include "jni/mirror.hpp"
 #include "jni/iterator.hpp"
+#include "jni/mirror.hpp"
+#include <jni_bind.h>
 
 #include "jni/lief/macho/Binary.hpp"
 

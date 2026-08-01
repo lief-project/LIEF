@@ -16,16 +16,16 @@
 #ifndef LIEF_ELF_CORE_AUXV_H
 #define LIEF_ELF_CORE_AUXV_H
 
-#include <ostream>
 #include <map>
+#include <ostream>
 #include <utility>
 
-#include "LIEF/visibility.h"
-#include "LIEF/ELF/enums.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/enums.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class representing core auxv object
 class LIEF_API CoreAuxv : public Note {
@@ -114,7 +114,7 @@ class LIEF_API CoreAuxv : public Note {
 
 LIEF_API const char* to_string(CoreAuxv::TYPE type);
 
-} // namespace ELF
-} // namespace LIEF
+}
+
 
 #endif

@@ -16,8 +16,8 @@
 #pragma once
 
 #include "LIEF/MachO/ThreadLocalVariables.hpp"
-#include "LIEF/rust/MachO/Section.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/MachO/Section.hpp"
 #include "LIEF/rust/Mirror.hpp"
 
 class MachO_ThreadLocalVariables_Thunk

@@ -14,8 +14,8 @@
  */
 
 #include "LIEF/rust/MachO/Symbol.hpp"
-#include "LIEF/rust/MachO/ExportInfo.hpp"
 #include "LIEF/rust/MachO/BindingInfo.hpp"
+#include "LIEF/rust/MachO/ExportInfo.hpp"
 
 std::unique_ptr<MachO_ExportInfo> MachO_Symbol::export_info() const {
   return details::try_unique<MachO_ExportInfo>(impl().export_info());

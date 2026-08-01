@@ -15,7 +15,6 @@
  */
 #ifndef LIEF_PLATFORMS_H
 #define LIEF_PLATFORMS_H
-#include "LIEF/platforms/android.hpp"
 
 #if defined(__APPLE__)
   #include "TargetConditionals.h"

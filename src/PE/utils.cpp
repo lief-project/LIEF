@@ -23,19 +23,17 @@
 #include "logging.hpp"
 #include "psa/crypto_builtin_primitives.h"
 
-#include "LIEF/PE/utils.hpp"
+#include "LIEF/BinaryStream/FileStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Import.hpp"
-#include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/ImportEntry.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/BinaryStream/FileStream.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/utils.hpp"
 #include "PE/Structures.hpp"
 
-#include "LIEF/utils.hpp"
 
-#include "utils/ordinals_lookup_tables/libraries_table.hpp"
-#include "utils/ordinals_lookup_tables_std/libraries_table.hpp"
+#include "utils/ordinals_lookup_tables/libraries_table.hpp" // IWYU pragma: keep
 
 #include "hash_stream.hpp"
 #include "internal_utils.hpp"
@@ -46,8 +44,8 @@ namespace LIEF::PE {
 static constexpr size_t SIZEOF_OPT_HEADER_32 = 0xE0;
 static constexpr size_t SIZEOF_OPT_HEADER_64 = 0xF0;
 
-inline std::string to_lower(std::string str) {
-  std::string lower = str;
+inline std::string to_lower(std::string_view str) {
+  std::string lower{str};
   std::transform(str.begin(), str.end(), lower.begin(), ::tolower);
   return lower;
 }
@@ -178,13 +176,16 @@ std::string get_imphash_std(const Binary& binary) {
     {
       resolved = std::move(*resolution);
     }
+    std::string_view resolved_name = resolved.name();
 
-    size_t ext_idx = resolved.name().find_last_of('.');
-    std::string name = resolved.name();
+    size_t ext_idx = resolved_name.rfind('.');
+    std::string name{resolved.name()};
+
     std::string ext;
     if (ext_idx != std::string::npos) {
-      ext = to_lower(resolved.name().substr(ext_idx + 1));
+      ext = to_lower(resolved_name.substr(ext_idx + 1));
     }
+
     if (ALLOWED_EXT.find(ext) != ALLOWED_EXT.end()) {
       name = name.substr(0, ext_idx);
     }
@@ -235,8 +236,10 @@ std::string get_imphash_lief(const Binary& binary) {
       resolved = std::move(*resolution);
     }
 
-    size_t ext_idx = resolved.name().find_last_of('.');
-    std::string name_without_ext = resolved.name();
+    std::string_view resolved_name = resolved.name();
+
+    size_t ext_idx = resolved_name.rfind('.');
+    std::string_view name_without_ext = resolved.name();
 
     if (ext_idx != std::string::npos) {
       name_without_ext = name_without_ext.substr(0, ext_idx);

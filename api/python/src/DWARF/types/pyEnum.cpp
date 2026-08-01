@@ -2,7 +2,7 @@
 #include "LIEF/DWARF/types/Enum.hpp"
 #include "DWARF/pyDwarf.hpp"
 
-#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/optional.h>
 
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>

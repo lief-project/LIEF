@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "logging.hpp"
-#include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "MachO/ChainedFixup.hpp"
+#include "LIEF/MachO/DyldChainedFormat.hpp"
+#include "logging.hpp"
 
 
 namespace LIEF::MachO::details {

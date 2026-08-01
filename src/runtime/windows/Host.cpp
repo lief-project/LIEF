@@ -17,26 +17,26 @@
 #include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/windows/Host.hpp"
 #include "LIEF/runtime/windows/Module.hpp"
-#include "LIEF/optional.hpp"
 #include "LIEF/utils.hpp"
+#include <optional>
 
 #include <spdlog/fmt/fmt.h>
 
-#include <winsock.h>
 #include <shlobj.h>
 #include <shtypes.h>
+#include <winsock.h>
 
 namespace LIEF::runtime {
-inline optional<std::string> get_folder_id(KNOWNFOLDERID id) {
+inline std::optional<std::string> get_folder_id(KNOWNFOLDERID id) {
   wchar_t* path = nullptr;
   HRESULT ret = ::SHGetKnownFolderPath(id, /*dwFlags=*/KF_FLAG_DEFAULT,
                                        /*hToken=*/nullptr, &path);
   if (ret != S_OK) {
-    return nullopt();
+    return std::nullopt;
   }
   size_t len = wcsnlen_s(path, 255);
   if (len == 0) {
-    return nullopt();
+    return std::nullopt;
   }
   std::string u8 = u16tou8(reinterpret_cast<const char16_t*>(path), len,
                            /*remove_null_char=*/true);
@@ -77,23 +77,23 @@ std::string Host::cache_dir() {
 }
 
 namespace windows {
-static optional<RTL_OSVERSIONINFOW> get_os_info() {
+static std::optional<RTL_OSVERSIONINFOW> get_os_info() {
   // using LONG (WINAPI *RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
   using RtlGetVersionPtr = LONG (*)(PRTL_OSVERSIONINFOW);
   RTL_OSVERSIONINFOW os_info{};
   auto ntdll = find_module("ntdll.dll");
   if (ntdll == nullptr) {
-    return nullopt();
+    return std::nullopt;
   }
   void* ptr = ntdll->dlsym("RtlGetVersion");
   if (ptr == nullptr) {
-    return nullopt();
+    return std::nullopt;
   }
 
   auto _RtlGetVersion = reinterpret_cast<RtlGetVersionPtr>(ptr);
   os_info.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOW);
   if (_RtlGetVersion(&os_info) != 0) {
-    return nullopt();
+    return std::nullopt;
   }
 
   return os_info;

@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_JSON_MAIN_H
 #define LIEF_JSON_MAIN_H
+#include "LIEF/visibility.h"
 #include <string>
-#include <LIEF/visibility.h>
 namespace LIEF {
 class Object;
 

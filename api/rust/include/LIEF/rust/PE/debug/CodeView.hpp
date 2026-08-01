@@ -15,8 +15,8 @@
 #pragma once
 #include <cstdint>
 
-#include "LIEF/rust/PE/debug/Debug.hpp"
 #include "LIEF/PE/debug/CodeView.hpp"
+#include "LIEF/rust/PE/debug/Debug.hpp"
 
 class PE_CodeView : public PE_Debug {
   public:

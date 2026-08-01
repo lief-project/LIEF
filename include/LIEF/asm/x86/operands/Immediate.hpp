@@ -16,11 +16,9 @@
 #define LIEF_ASM_X86_OPERAND_IMM_H
 #include "LIEF/asm/x86/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace x86 {
+
 /// Namespace that wraps the different x86/x86-64 operands
-namespace operands {
+namespace LIEF::assembly::x86::operands {
 
 
 /// This class represents an immediate operand (i.e. a constant)
@@ -43,7 +41,6 @@ class LIEF_API Immediate : public Operand {
   ~Immediate() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

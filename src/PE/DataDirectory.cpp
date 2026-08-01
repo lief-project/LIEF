@@ -15,10 +15,10 @@
  */
 #include <ostream>
 
-#include "LIEF/Visitor.hpp"
-#include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/Section.hpp"
+#include "LIEF/Visitor.hpp"
 #include "PE/Structures.hpp"
 
 #include "frozen.hpp"

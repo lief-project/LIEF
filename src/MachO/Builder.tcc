@@ -17,9 +17,9 @@
 #include <cstring>
 #include <vector>
 
-#include "logging.hpp"
-#include "LIEF/utils.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/utils.hpp"
+#include "logging.hpp"
 
 #include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/Binary.hpp"
@@ -37,35 +37,35 @@
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/DylinkerCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
-#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 #include "LIEF/MachO/NoteCommand.hpp"
-#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 #include "LIEF/MachO/SourceVersion.hpp"
-#include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/MachO/SubClient.hpp"
+#include "LIEF/MachO/SubFramework.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 #include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/ThreadCommand.hpp"
-#include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/TwoLevelHints.hpp"
 #include "LIEF/MachO/VersionMin.hpp"
 
+#include "MachO/ChainedBindingInfoList.hpp"
+#include "MachO/ChainedFixup.hpp"
 #include "MachO/Structures.hpp"
 #include "MachO/exports_trie.hpp"
-#include "MachO/ChainedFixup.hpp"
-#include "MachO/ChainedBindingInfoList.hpp"
 
 #include "internal_utils.hpp"
 
@@ -198,11 +198,9 @@ ok_error_t Builder::build_segments() {
     segment_header.cmd = static_cast<uint32_t>(segment.command());
     segment_header.cmdsize = static_cast<uint32_t>(segment.size());
 
-    const std::string& seg_name = segment.name();
-    const uint32_t segname_length =
-        std::min<uint32_t>(seg_name.size() + 1, sizeof(segment_header.segname));
-    std::copy(seg_name.c_str(), seg_name.c_str() + segname_length,
-              std::begin(segment_header.segname));
+    std::string_view seg_name = segment.name();
+    seg_name.copy(segment_header.segname, sizeof(segment_header.segname));
+
     if (LinkEdit::segmentof(segment) && config_.linkedit) {
       segment_header.vmsize =
           static_cast<uint__>(align(linkedit_.size(), binary->page_size()));
@@ -244,20 +242,13 @@ ok_error_t Builder::build_segments() {
     SegmentCommand::it_sections sections = segment.sections();
     for (uint32_t i = 0; i < segment.numberof_sections(); ++i) {
       const Section& section = sections[i];
-      const std::string& sec_name = section.name();
-      const std::string& segment_name = segment.name();
+      std::string_view sec_name = section.name();
+      std::string_view segment_name = segment.name();
       LIEF_DEBUG("{}", to_string(section));
       section_t header{};
 
-      const auto segname_length =
-          std::min<uint32_t>(segment_name.size() + 1, sizeof(header.segname));
-      std::copy(segment_name.c_str(), segment_name.c_str() + segname_length,
-                std::begin(header.segname));
-
-      const auto secname_length =
-          std::min<uint32_t>(sec_name.size() + 1, sizeof(header.sectname));
-      std::copy(sec_name.c_str(), sec_name.c_str() + secname_length,
-                std::begin(header.sectname));
+      segment_name.copy(header.segname, sizeof(header.segname));
+      sec_name.copy(header.sectname, sizeof(header.sectname));
 
       header.addr = static_cast<uint__>(section.address());
       header.size = static_cast<uint__>(section.size());
@@ -324,7 +315,7 @@ ok_error_t Builder::build(DylibCommand& library) {
             std::back_inserter(library.original_data_));
 
   // Write String
-  const std::string& libname = library.name();
+  std::string_view libname = library.name();
   std::move(libname.begin(), libname.end(),
             std::back_inserter(library.original_data_));
   library.original_data_.push_back(0);
@@ -366,7 +357,7 @@ ok_error_t Builder::build(DylinkerCommand& linker) {
             std::back_inserter(linker.original_data_));
 
   // Write String
-  const std::string& linkpath = linker.name();
+  std::string_view linkpath = linker.name();
   std::move(linkpath.begin(), linkpath.end(),
             std::back_inserter(linker.original_data_));
 
@@ -473,7 +464,7 @@ ok_error_t Builder::build(RPathCommand& rpath_cmd) {
             std::back_inserter(rpath_cmd.original_data_));
 
   // Write String
-  const std::string& rpath = rpath_cmd.path();
+  std::string_view rpath = rpath_cmd.path();
   std::move(rpath.begin(), rpath.end(),
             std::back_inserter(rpath_cmd.original_data_));
   rpath_cmd.original_data_.push_back(0);
@@ -685,7 +676,7 @@ ok_error_t Builder::build(FunctionStarts& function_starts) {
 template<class MACHO_T>
 inline ok_error_t
     write_symbol(vector_iostream& nlist_table, Symbol& sym,
-                 std::unordered_map<std::string, size_t>& offset_name_map) {
+                 std::unordered_map<std::string_view, size_t>& offset_name_map) {
   using nlist_t = typename MACHO_T::nlist;
   const std::string& name = sym.name();
   const auto it_name = offset_name_map.find(name);
@@ -745,7 +736,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
   std::vector<uint8_t> strtab;
   std::vector<uint8_t> raw_nlist_table;
-  std::unordered_map<std::string, size_t> offset_name_map;
+  std::unordered_map<std::string_view, size_t> offset_name_map;
 
   details::symtab_command symtab{};
   DynamicSymbolCommand* dynsym = binary_->dynamic_symbol_command();
@@ -773,15 +764,16 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
 
     size_t offset_counter = 1;
     std::vector<std::string> string_table_opt = optimize(
-        all_syms, [](Symbol* const& sym) { return sym->name(); }, offset_counter,
-        &offset_name_map
+        all_syms,
+        [](Symbol* const& sym) { return static_cast<const Symbol*>(sym)->name(); },
+        offset_counter, &offset_name_map
     );
     all_syms.clear();
 
     // 0 index is reserved
     vector_iostream raw_symbol_names;
     raw_symbol_names.write<uint8_t>(0);
-    for (const std::string& name : string_table_opt) {
+    for (std::string_view name : string_table_opt) {
       raw_symbol_names.write(name);
     }
     raw_symbol_names.align(8);
@@ -1108,7 +1100,7 @@ ok_error_t Builder::build(SubFramework& sf) {
             std::back_inserter(sf.original_data_));
 
   // Write String
-  const std::string& um = sf.umbrella();
+  std::string_view um = sf.umbrella();
   std::move(um.begin(), um.end(), std::back_inserter(sf.original_data_));
   sf.original_data_.push_back(0);
   sf.original_data_.insert(sf.original_data_.end(), padding, 0);
@@ -1147,7 +1139,7 @@ ok_error_t Builder::build(SubClient& sc) {
             std::back_inserter(sc.original_data_));
 
   // Write String
-  const std::string& um = sc.client();
+  std::string_view um = sc.client();
   std::move(um.begin(), um.end(), std::back_inserter(sc.original_data_));
   sc.original_data_.push_back(0);
   sc.original_data_.insert(sc.original_data_.end(), padding, 0);
@@ -1185,7 +1177,7 @@ ok_error_t Builder::build(DyldEnvironment& de) {
             std::back_inserter(de.original_data_));
 
   // Write String
-  const std::string& value = de.value();
+  std::string_view value = de.value();
   std::move(value.begin(), value.end(), std::back_inserter(de.original_data_));
 
   de.original_data_.push_back(0);
@@ -1468,7 +1460,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   vector_iostream imports_addend;
   vector_iostream imports_addend64;
 
-  std::unordered_map<std::string, size_t> offset_name_map;
+  std::unordered_map<std::string_view, size_t> offset_name_map;
   string_pool.write<uint8_t>(0);
   size_t offset_counter = string_pool.tellp();
   std::vector<std::string> string_table_optimized = optimize(
@@ -1477,12 +1469,12 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
         if (const Symbol* s = bnd->symbol()) {
           return s->name();
         }
-        return std::string();
+        return std::string_view();
       },
       offset_counter, &offset_name_map
   );
   string_pool.reserve(string_table_optimized.size() * 10);
-  for (const std::string& name : string_table_optimized) {
+  for (std::string_view name : string_table_optimized) {
     string_pool.write(name);
   }
 

@@ -16,8 +16,8 @@
 
 #include <jni_bind.h>
 
-#include "jni/mirror.hpp"
 #include "jni/lief/dwarf/editor/Type.hpp"
+#include "jni/mirror.hpp"
 
 #include <LIEF/DWARF/editor/Variable.hpp>
 

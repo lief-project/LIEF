@@ -18,8 +18,8 @@
 
 #include "LIEF/asm/Instruction.hpp"
 
-namespace LIEF {
-namespace runtime {
+
+namespace LIEF::runtime {
 
 using instructions_it = iterator_range<assembly::Instruction::Iterator>;
 
@@ -33,5 +33,5 @@ using instructions_it = iterator_range<assembly::Instruction::Iterator>;
 LIEF_API instructions_it disassemble(uintptr_t addr);
 
 }
-}
+
 #endif

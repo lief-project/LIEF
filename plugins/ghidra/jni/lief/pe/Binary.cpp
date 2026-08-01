@@ -14,9 +14,9 @@
  */
 #include <array>
 
+#include "jni/jni_utils.hpp"
 #include "jni/lief/pe/Binary.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 namespace lief_jni::pe {
 int Binary::ExceptionsIterator::register_natives(JNIEnv* env) {

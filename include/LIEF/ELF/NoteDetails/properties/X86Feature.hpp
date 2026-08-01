@@ -15,14 +15,14 @@
  */
 #ifndef LIEF_ELF_NOTE_DETAILS_PROPERTIES_X86FEATURES_H
 #define LIEF_ELF_NOTE_DETAILS_PROPERTIES_X86FEATURES_H
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// This class interfaces the different ``GNU_PROPERTY_X86_FEATURE_*``
 /// properties which includes:
@@ -98,6 +98,6 @@ LIEF_API const char* to_string(X86Features::FLAG flag);
 LIEF_API const char* to_string(X86Features::FEATURE feat);
 
 }
-}
+
 
 #endif

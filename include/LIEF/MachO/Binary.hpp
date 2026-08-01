@@ -16,27 +16,30 @@
 #ifndef LIEF_MACHO_BINARY_H
 #define LIEF_MACHO_BINARY_H
 
-#include <vector>
+#include <string_view>
 #include <map>
-#include <set>
 #include <memory>
 #include <mutex>
-
-#include "LIEF/MachO/LoadCommand.hpp"
-#include "LIEF/MachO/Header.hpp"
-#include "LIEF/MachO/BindingInfoIterator.hpp"
-#include "LIEF/MachO/BuildVersion.hpp"
-#include "LIEF/MachO/Stub.hpp"
-#include "LIEF/MachO/Builder.hpp"
+#include <set>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
+
+#include "LIEF/MachO/BindingInfoIterator.hpp"
+#include "LIEF/MachO/BuildVersion.hpp"
+#include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/Header.hpp"
+#include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/MachO/Stub.hpp"
+
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/utils.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Binary.hpp"
 
-#include "LIEF/iterators.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
 
 namespace LIEF {
 
@@ -493,7 +496,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the binary's loader (e.g. `/usr/lib/dyld`) or an
   /// empty string if the binary does not use a loader/linker
-  std::string loader() const;
+  std::string_view loader() const LIEF_LIFETIMEBOUND;
 
   /// Check if a section with the given name exists
   bool has_section(const std::string& name) const {
@@ -1075,7 +1078,7 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Name associated with the `LC_FILESET_ENTRY` for this MachO.
   /// For instance: `com.apple.kec.corecrypto`
-  const std::string& fileset_name() const {
+  std::string_view fileset_name() const LIEF_LIFETIMEBOUND {
     return fileset_info_.name;
   }
 
@@ -1226,6 +1229,6 @@ class LIEF_API Binary : public LIEF::Binary {
   mutable std::mutex mu_;
 };
 
-} // namespace MachO
-} // namespace LIEF
+}
+}
 #endif

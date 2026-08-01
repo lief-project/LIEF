@@ -17,9 +17,8 @@
 
 /* Generated from LLVM: 22.1.8 */
 
-namespace LIEF {
-namespace assembly {
-namespace riscv {
+
+namespace LIEF::assembly::riscv {
 enum class OPCODE {
   PHI = 0,
   INLINEASM = 1,
@@ -16245,6 +16244,6 @@ enum class OPCODE {
   INSTRUCTION_LIST_END = 16221,
 };
 }
-}
-}
+
+
 #endif

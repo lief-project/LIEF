@@ -16,28 +16,25 @@
 #ifndef LIEF_ART_JAVA_STRUCTURES_H
 #define LIEF_ART_JAVA_STRUCTURES_H
 
-#include <cstring>
-#include <tuple>
 
 #include "LIEF/types.hpp"
-#include "LIEF/ART/enums.hpp"
-#include "LIEF/ART/types.hpp"
+#include <cstdint>
 
-namespace LIEF {
+
 /// Namespace related to the LIEF's ART module
-namespace ART {
 
-namespace details {
+
+namespace LIEF::ART::details {
 
 struct no_brooks_read_barrier_t {};
 
 // ======================
 // Android 6.0.1 - ART 17
 // ======================
-namespace ART_17 {
+
 
 /// Namespace related to the Java part of ART 17
-namespace Java {
+namespace ART_17::Java {
 
 using heap_reference_t = uint32_t;
 
@@ -123,15 +120,15 @@ struct ALIGNED_(4) jdex_cache_t {
 
 
 } // Namespace Java
-} // Namespace ART_17
+// Namespace ART_17
 
 // ======================
 // Android 7.0.0 - ART 29
 // ======================
-namespace ART_29 {
+
 
 /// Namespace related to the Java part of ART 29
-namespace Java {
+namespace ART_29::Java {
 using heap_reference_t = ART_17::Java::heap_reference_t;
 using brooks_read_barrier_t = ART_17::Java::brooks_read_barrier_t;
 
@@ -205,16 +202,16 @@ struct ALIGNED_(4) jdex_cache_t {
 
 
 } // Namespace Java
-} // Namespace ART_29
+// Namespace ART_29
 
 
 // ======================
 // Android 7.1.X - ART 30
 // ======================
-namespace ART_30 {
+
 
 /// Namespace related to the Java part of ART 30
-namespace Java {
+namespace ART_30::Java {
 
 using heap_reference_t = ART_29::Java::heap_reference_t;
 using brooks_read_barrier_t = ART_29::Java::brooks_read_barrier_t;
@@ -237,15 +234,15 @@ template<class T = no_brooks_read_barrier_t>
 using jdex_cache_t = ART_29::Java::jdex_cache_t<T>;
 
 } // Namespace Java
-} // Namespace ART_30
+// Namespace ART_30
 
 // ======================
 // Android 8.0.0 - ART 44
 // ======================
-namespace ART_44 {
+
 
 /// Namespace related to the Java part of ART 44
-namespace Java {
+namespace ART_44::Java {
 
 
 using heap_reference_t = ART_30::Java::heap_reference_t;
@@ -325,16 +322,16 @@ struct ALIGNED_(4) jdex_cache_t {
 
 
 } // Namespace Java
-} // Namespace ART_44
+// Namespace ART_44
 
 
 // ======================
 // Android 8.1.X - ART 46
 // ======================
-namespace ART_46 {
+
 
 /// Namespace related to the Java part of ART 46
-namespace Java {
+namespace ART_46::Java {
 
 using heap_reference_t = ART_44::Java::heap_reference_t;
 using brooks_read_barrier_t = ART_44::Java::brooks_read_barrier_t;
@@ -355,15 +352,15 @@ template<class T = no_brooks_read_barrier_t>
 using jdex_cache_t = ART_44::Java::jdex_cache_t<T>;
 
 } // Namespace Java
-} // Namespace ART_46
+// Namespace ART_46
 
 // ======================
 // Android 9.0.0 - ART 66
 // ======================
-namespace ART_56 {
+
 
 /// Namespace related to the Java part of ART 46
-namespace Java {
+namespace ART_56::Java {
 
 using heap_reference_t = ART_46::Java::heap_reference_t;
 using brooks_read_barrier_t = ART_46::Java::brooks_read_barrier_t;
@@ -384,11 +381,11 @@ template<class T = no_brooks_read_barrier_t>
 using jdex_cache_t = ART_46::Java::jdex_cache_t<T>;
 
 } // Namespace Java
-} // Namespace ART_56
+// Namespace ART_56
 
-} // namespace details
-} // Namespace ART
-} // Namespace LIEF
+}
+// Namespace ART
+// Namespace LIEF
 
 
 #endif

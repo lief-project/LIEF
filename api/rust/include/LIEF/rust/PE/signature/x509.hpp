@@ -16,8 +16,8 @@
 #include <cstdint>
 
 #include "LIEF/PE/signature/x509.hpp"
-#include "LIEF/rust/PE/signature/RsaInfo.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PE/signature/RsaInfo.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class PE_x509 : private Mirror<LIEF::PE::x509> {

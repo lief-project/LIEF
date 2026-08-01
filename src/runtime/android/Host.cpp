@@ -17,9 +17,10 @@
 #include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/android/Host.hpp"
 
-#include <unistd.h>
-#include <climits>
 #include <android/api-level.h>
+#include <array>
+#include <climits>
+#include <unistd.h>
 
 namespace LIEF::runtime {
 std::string Host::name() {
@@ -55,10 +56,10 @@ std::string Host::cache_dir() {
 }
 
 namespace android {
-optional<uint32_t> Host::sdk_version() {
+std::optional<uint32_t> Host::sdk_version() {
   int level = android_get_device_api_level();
   if (level <= 0) {
-    return nullopt();
+    return std::nullopt;
   }
   return (uint32_t)level;
 }

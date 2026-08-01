@@ -19,8 +19,10 @@
 
 #include "logging.hpp"
 
+// clang-format off
 #include <windows.h>
 #include <WinBase.h>
+// clang-format on
 
 namespace LIEF::runtime::windows {
 

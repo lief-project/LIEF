@@ -13,11 +13,12 @@
  * limitations under the License.
  */
 #pragma once
-#include <cassert>
-#include <jni_bind.h>
+#include "LIEF/errors.hpp"
 #include "jni/java/util/OptionalInt.hpp"
 #include "jni/java/util/OptionalLong.hpp"
-#include <LIEF/optional.hpp>
+#include <jni_bind.h>
+#include <cassert>
+#include <optional>
 
 namespace java::util {
 
@@ -43,7 +44,7 @@ class Optional {
   }
 };
 
-inline jobject make_optional(LIEF::optional<uint32_t> opt) {
+inline jobject make_optional(std::optional<uint32_t> opt) {
   return opt ? OptionalInt::of(*opt) : OptionalInt::empty();
 }
 
@@ -51,7 +52,7 @@ inline jobject make_optional(LIEF::result<uint32_t> opt) {
   return opt ? OptionalInt::of(*opt) : OptionalInt::empty();
 }
 
-inline jobject make_optional(LIEF::optional<int32_t> opt) {
+inline jobject make_optional(std::optional<int32_t> opt) {
   return opt ? OptionalInt::of(*opt) : OptionalInt::empty();
 }
 
@@ -59,7 +60,7 @@ inline jobject make_optional(LIEF::result<int32_t> opt) {
   return opt ? OptionalInt::of(*opt) : OptionalInt::empty();
 }
 
-inline jobject make_optional(LIEF::optional<uint64_t> opt) {
+inline jobject make_optional(std::optional<uint64_t> opt) {
   return opt ? OptionalLong::of(*opt) : OptionalLong::empty();
 }
 
@@ -67,7 +68,7 @@ inline jobject make_optional(LIEF::result<uint64_t> opt) {
   return opt ? OptionalLong::of(*opt) : OptionalLong::empty();
 }
 
-inline jobject make_optional(LIEF::optional<int64_t> opt) {
+inline jobject make_optional(std::optional<int64_t> opt) {
   return opt ? OptionalLong::of(*opt) : OptionalLong::empty();
 }
 

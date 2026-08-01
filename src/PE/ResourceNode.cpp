@@ -15,15 +15,15 @@
  */
 #include <algorithm>
 
-#include "logging.hpp"
 #include "LIEF/Visitor.hpp"
+#include "logging.hpp"
 
 #include "LIEF/utils.hpp"
 
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/ResourceNode.hpp"
-#include "LIEF/PE/ResourceDirectory.hpp"
 #include "LIEF/PE/ResourceData.hpp"
+#include "LIEF/PE/ResourceDirectory.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"

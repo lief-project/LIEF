@@ -3,11 +3,11 @@
 #include <string>
 #include <vector>
 
-#include <LIEF/ELF.hpp>
 #include <LIEF/Abstract/Binary.hpp>
+#include <LIEF/ELF.hpp>
 #include <LIEF/asm/AssemblerConfig.hpp>
 #include <LIEF/asm/Instruction.hpp>
-#include <LIEF/optional.hpp>
+#include <optional>
 
 void disassemble_assemble() {
   // lief-doc: disassemble-assemble-start
@@ -43,11 +43,11 @@ void config_resolver() {
   // lief-doc: config-resolver-start
   class MyConfig : public LIEF::assembly::AssemblerConfig {
     public:
-    LIEF::optional<uint64_t> resolve_symbol(const std::string& name) override {
+    std::optional<uint64_t> resolve_symbol(const std::string& name) override {
       if (name == "a_custom_function") {
         return 0x1000;
       }
-      return LIEF::nullopt();
+      return std::nullopt;
     }
   };
 
@@ -72,11 +72,11 @@ void config_target() {
       LIEF::assembly::AssemblerConfig(),
       target_(&target) {}
 
-    LIEF::optional<uint64_t> resolve_symbol(const std::string& name) override {
+    std::optional<uint64_t> resolve_symbol(const std::string& name) override {
       if (auto addr = target_->get_function_address(name)) {
         return *addr;
       }
-      return LIEF::nullopt();
+      return std::nullopt;
     }
 
     ~MyConfig() override = default;

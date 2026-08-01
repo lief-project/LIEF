@@ -15,15 +15,15 @@
  */
 #include "logging.hpp"
 
-#include "LIEF/VDEX/Parser.hpp"
-#include "VDEX/Structures.hpp"
 #include "DEX/Structures.hpp"
-#include "LIEF/DEX/utils.hpp"
-#include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/Method.hpp"
 #include "LIEF/DEX/Parser.hpp"
+#include "LIEF/DEX/utils.hpp"
+#include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/utils.hpp"
+#include "VDEX/Structures.hpp"
 
 
 namespace LIEF::VDEX {

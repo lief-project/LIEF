@@ -15,11 +15,11 @@
  */
 #ifndef LIEF_PE_CODE_PAGE
 #define LIEF_PE_CODE_PAGE
-#include <cstdint>
 #include "LIEF/visibility.h"
+#include <cstdint>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 // clang-format off
 
@@ -170,5 +170,5 @@ enum class CODE_PAGES : uint32_t  {
 LIEF_API const char* to_string(CODE_PAGES e);
 
 }
-}
+
 #endif

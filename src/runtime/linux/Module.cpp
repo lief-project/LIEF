@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/BinaryStream/MemoryStream.hpp"
-#include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/runtime/linux/Module.hpp"
-#include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/ParserConfig.hpp"
-#include "LIEF/ELF/Parser.hpp"
+#include "LIEF/BinaryStream/FileStream.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/ParserConfig.hpp"
+#include "LIEF/ELF/utils.hpp"
 
 #include "ELF/elf_utils.hpp"
 
-#include <elf.h>
-#include <unistd.h>
-#include <climits>
-#include <link.h>
 #include <cstring>
 #include <dlfcn.h>
+#include <elf.h>
+#include <link.h>
+#include <unistd.h>
 
 #include "logging.hpp"
 

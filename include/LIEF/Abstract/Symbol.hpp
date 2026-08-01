@@ -16,10 +16,12 @@
 #ifndef LIEF_ABSTRACT_SYMBOLS_H
 #define LIEF_ABSTRACT_SYMBOLS_H
 
+#include <string_view>
 #include <cstdint>
 #include <string>
 
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -51,7 +53,7 @@ class LIEF_API Symbol : public Object {
   void swap(Symbol& other) noexcept;
 
   /// Return the symbol's name
-  virtual const std::string& name() const {
+  virtual std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 

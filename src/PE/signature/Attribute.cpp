@@ -15,8 +15,8 @@
  */
 #include "frozen.hpp"
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/Visitor.hpp"
 
 
 namespace LIEF::PE {

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 #include "LIEF/COFF/BigObjHeader.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "COFF/structures.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "internal_utils.hpp"
 
 #include <spdlog/fmt/fmt.h>

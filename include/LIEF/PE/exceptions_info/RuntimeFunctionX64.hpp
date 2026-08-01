@@ -16,12 +16,14 @@
 #ifndef LIEF_PE_RUNTIME_FUNCTION_X64_H
 #define LIEF_PE_RUNTIME_FUNCTION_X64_H
 
+#include <cstdint>
 #include <memory>
+#include <string>
 
+#include "LIEF/enums.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/enums.hpp"
-#include "LIEF/optional.hpp"
+#include <optional>
 
 #include "LIEF/PE/ExceptionInfo.hpp"
 
@@ -187,7 +189,7 @@ class LIEF_API RuntimeFunctionX64 : public ExceptionInfo {
     /// exception or termination handler. This value is set if one of these
     /// flags is set: UNWIND_FLAGS::EXCEPTION_HANDLER,
     /// UNWIND_FLAGS::TERMINATE_HANDLER
-    optional<uint32_t> handler;
+    std::optional<uint32_t> handler;
 
     /// If UNWIND_FLAGS::CHAIN_INFO is set, this attributes references the
     /// chained runtime function.
@@ -223,7 +225,7 @@ class LIEF_API RuntimeFunctionX64 : public ExceptionInfo {
   RuntimeFunctionX64& operator=(RuntimeFunctionX64&&) = default;
 
   std::unique_ptr<ExceptionInfo> clone() const override {
-    return std::unique_ptr<RuntimeFunctionX64>(new RuntimeFunctionX64(*this));
+    return std::make_unique<RuntimeFunctionX64>(*this);
   }
 
   std::string to_string() const override;
@@ -265,7 +267,7 @@ class LIEF_API RuntimeFunctionX64 : public ExceptionInfo {
   private:
   uint32_t rva_end_ = 0;
   uint32_t unwind_rva_ = 0;
-  optional<unwind_info_t> unwind_info_;
+  std::optional<unwind_info_t> unwind_info_;
 };
 
 LIEF_API const char* to_string(RuntimeFunctionX64::UNWIND_OPCODES op);

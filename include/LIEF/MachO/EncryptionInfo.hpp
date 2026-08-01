@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_MACHO_ENCRYPTION_INFO_COMMAND_H
 #define LIEF_MACHO_ENCRYPTION_INFO_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct encryption_info_command;
@@ -43,7 +44,7 @@ class LIEF_API EncryptionInfo : public LoadCommand {
   ~EncryptionInfo() override = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<EncryptionInfo>(new EncryptionInfo(*this));
+    return std::make_unique<EncryptionInfo>(*this);
   }
 
   /// The beginning of the encrypted area
@@ -89,5 +90,5 @@ class LIEF_API EncryptionInfo : public LoadCommand {
 };
 
 }
-}
+
 #endif

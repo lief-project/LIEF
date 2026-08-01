@@ -14,9 +14,9 @@
  */
 #pragma once
 #include <LIEF/Abstract/Section.hpp>
-#include <LIEF/rust/helpers.hpp>
-#include <LIEF/rust/Span.hpp>
 #include <LIEF/rust/Mirror.hpp>
+#include <LIEF/rust/Span.hpp>
+#include <LIEF/rust/helpers.hpp>
 
 #include <string>
 

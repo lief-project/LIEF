@@ -16,18 +16,19 @@
 #ifndef LIEF_DEX_CLASS_H
 #define LIEF_DEX_CLASS_H
 
+#include <string_view>
 #include <climits>
 #include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/deopt.hpp"
+#include "LIEF/DEX/enums.hpp"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 class Parser;
 class Field;
 class Method;
@@ -67,7 +68,7 @@ class LIEF_API Class : public Object {
         Class* parent = nullptr, std::string source_filename = "");
 
   /// Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)
-  const std::string& fullname() const;
+  std::string_view fullname() const;
 
   /// Package Name
   std::string package_name() const;
@@ -85,7 +86,7 @@ class LIEF_API Class : public Object {
   access_flags_list_t access_flags() const;
 
   /// Filename associated with this class (if any)
-  const std::string& source_filename() const;
+  std::string_view source_filename() const;
 
   /// True if the current class extends another one
   bool has_parent() const;
@@ -135,5 +136,5 @@ class LIEF_API Class : public Object {
 };
 
 } // Namespace DEX
-} // Namespace LIEF
+// Namespace LIEF
 #endif

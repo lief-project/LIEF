@@ -1,6 +1,6 @@
-#include "LIEF/rust/DyldSharedCache/SubCache.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/rust/DyldSharedCache/DyldSharedCache.hpp"
+#include "LIEF/rust/DyldSharedCache/SubCache.hpp"
 
 std::unique_ptr<dsc_DyldSharedCache> dsc_SubCache::cache() const {
   return details::try_unique<dsc_DyldSharedCache>(

@@ -16,10 +16,10 @@
 #include <cstdint>
 
 #include "LIEF/PE/debug/Debug.hpp"
-#include "LIEF/rust/PE/Section.hpp"
 #include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/PE/Section.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_Debug : public Mirror<LIEF::PE::Debug> {
   public:

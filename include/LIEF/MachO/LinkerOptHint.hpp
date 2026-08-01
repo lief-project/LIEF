@@ -15,16 +15,17 @@
  */
 #ifndef LIEF_MACHO_LINKER_OPT_HINT_COMMAND_H
 #define LIEF_MACHO_LINKER_OPT_HINT_COMMAND_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 class Builder;
@@ -48,7 +49,7 @@ class LIEF_API LinkerOptHint : public LoadCommand {
   LinkerOptHint(const LinkerOptHint& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<LinkerOptHint>(new LinkerOptHint(*this));
+    return std::make_unique<LinkerOptHint>(*this);
   }
 
   /// Offset in the binary where the *hint* starts
@@ -94,5 +95,5 @@ class LIEF_API LinkerOptHint : public LoadCommand {
 };
 
 }
-}
+
 #endif

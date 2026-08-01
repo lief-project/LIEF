@@ -15,16 +15,18 @@
  */
 #ifndef LIEF_MACHO_DYLIB_COMMAND_H
 #define LIEF_MACHO_DYLIB_COMMAND_H
+#include <string_view>
 #include <array>
-#include <string>
+#include <memory>
 #include <ostream>
+#include <string>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct dylib_command;
@@ -93,11 +95,11 @@ class LIEF_API DylibCommand : public LoadCommand {
   ~DylibCommand() override = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<DylibCommand>(new DylibCommand(*this));
+    return std::make_unique<DylibCommand>(*this);
   }
 
   /// Library name
-  const std::string& name() const LIEF_LIFETIMEBOUND {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -162,5 +164,5 @@ class LIEF_API DylibCommand : public LoadCommand {
 
 
 }
-}
+
 #endif

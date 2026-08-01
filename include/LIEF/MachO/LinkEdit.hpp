@@ -22,8 +22,8 @@
 
 #include "LIEF/MachO/SegmentCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class AtomInfo;
 class Binary;
@@ -59,7 +59,7 @@ class LIEF_API LinkEdit : public SegmentCommand {
   void swap(LinkEdit& other) noexcept;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<LinkEdit>(new LinkEdit(*this));
+    return std::make_unique<LinkEdit>(*this);
   }
 
   ~LinkEdit() override = default;
@@ -96,5 +96,5 @@ class LIEF_API LinkEdit : public SegmentCommand {
 };
 
 }
-}
+
 #endif

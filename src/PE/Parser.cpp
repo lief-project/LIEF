@@ -13,33 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "logging.hpp"
 #include <iterator>
 #include <memory>
-#include <string>
 #include <numeric>
-#include "logging.hpp"
+#include <string>
 
-#include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/DumpStream.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/PE/signature/Signature.hpp"
-#include "LIEF/PE/signature/SignatureParser.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
 #include "LIEF/PE/Parser.hpp"
-#include "LIEF/PE/debug/CodeViewPDB.hpp"
-#include "LIEF/PE/debug/Pogo.hpp"
-#include "LIEF/PE/debug/Repro.hpp"
-#include "LIEF/PE/debug/PogoEntry.hpp"
-#include "LIEF/PE/debug/PDBChecksum.hpp"
-#include "LIEF/PE/debug/VCFeature.hpp"
-#include "LIEF/PE/debug/FPO.hpp"
-#include "LIEF/PE/debug/ExDllCharacteristics.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/ResourceData.hpp"
@@ -48,15 +38,25 @@
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/utils.hpp"
+#include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/ExDllCharacteristics.hpp"
+#include "LIEF/PE/debug/FPO.hpp"
+#include "LIEF/PE/debug/PDBChecksum.hpp"
+#include "LIEF/PE/debug/Pogo.hpp"
+#include "LIEF/PE/debug/PogoEntry.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/PE/debug/VCFeature.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
+#include "LIEF/PE/signature/Signature.hpp"
+#include "LIEF/PE/signature/SignatureParser.hpp"
+#include "LIEF/PE/utils.hpp"
 
-#include "LIEF/COFF/Symbol.hpp"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/COFF/Symbol.hpp"
 
+#include "Parser.tcc"
 #include "internal_utils.hpp"
 #include "overflow_check.hpp"
-#include "Parser.tcc"
 
 
 namespace LIEF::PE {
@@ -320,11 +320,10 @@ ok_error_t Parser::parse_sections() {
 
     read_section_content(raw_sec, i, *section);
 
-    if (const std::string& name = section->name();
-        name.size() > 1 && name[0] == '/')
+    if (std::string_view name = section->name(); name.size() > 1 && name[0] == '/')
     {
       char* endptr = nullptr;
-      uint32_t offset = std::strtol(name.c_str() + 1, &endptr, /*base=*/10);
+      uint32_t offset = std::strtol(name.data() + 1, &endptr, /*base=*/10);
       if (COFF::String* coff_str = binary_->find_coff_string(offset)) {
         section->coff_string_ = coff_str;
       }

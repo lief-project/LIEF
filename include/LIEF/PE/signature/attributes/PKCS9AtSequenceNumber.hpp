@@ -17,11 +17,11 @@
 #define LIEF_PE_ATTRIBUTES_PKCS9_AT_SEQUENCE_NUMBER_H
 #include <cstdint>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Parser;
 class SignatureParser;
@@ -82,6 +82,6 @@ class LIEF_API PKCS9AtSequenceNumber : public Attribute {
 };
 
 }
-}
+
 
 #endif

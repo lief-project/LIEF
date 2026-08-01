@@ -1,5 +1,5 @@
-#include <LIEF/errors.hpp>
 #include <LIEF/PE.hpp>
+#include <LIEF/errors.hpp>
 
 using namespace LIEF;
 using namespace LIEF::PE;

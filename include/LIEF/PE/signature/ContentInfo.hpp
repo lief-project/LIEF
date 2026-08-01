@@ -16,18 +16,18 @@
 #ifndef LIEF_PE_CONTENT_INFO_H
 #define LIEF_PE_CONTENT_INFO_H
 
-#include <vector>
-#include <ostream>
 #include <memory>
+#include <ostream>
+#include <vector>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/PE/signature/types.hpp"
 #include "LIEF/PE/enums.hpp"
+#include "LIEF/PE/signature/types.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Parser;
 class SignatureParser;
@@ -103,7 +103,7 @@ class LIEF_API ContentInfo : public Object {
 
     template<class T>
     const T* cast() const {
-      static_assert(std::is_base_of<Content, T>::value,
+      static_assert(std::is_base_of_v<Content, T>,
                     "Require ContentInfo inheritance");
       if (T::classof(this)) {
         return static_cast<const T*>(this);
@@ -161,6 +161,6 @@ class LIEF_API ContentInfo : public Object {
 };
 
 }
-}
+
 
 #endif

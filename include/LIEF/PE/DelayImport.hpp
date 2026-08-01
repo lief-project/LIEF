@@ -16,18 +16,19 @@
 #ifndef LIEF_PE_DELAY_IMPORT_H
 #define LIEF_PE_DELAY_IMPORT_H
 
-#include <string>
-#include <ostream>
+#include <string_view>
 #include <memory>
+#include <ostream>
+#include <string>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/PE/DelayImportEntry.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 namespace details {
 struct delay_imports;
@@ -73,7 +74,7 @@ class LIEF_API DelayImport : public Object {
   }
 
   /// Return the library's name (e.g. `kernel32.dll`)
-  const std::string& name() const LIEF_LIFETIMEBOUND {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
   void name(std::string name) {
@@ -167,6 +168,6 @@ class LIEF_API DelayImport : public Object {
 };
 
 }
-}
+
 
 #endif

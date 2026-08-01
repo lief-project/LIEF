@@ -16,15 +16,15 @@
 #ifndef LIEF_DEX_TYPE_H
 #define LIEF_DEX_TYPE_H
 
-#include <vector>
-#include <string>
 #include <ostream>
+#include <string>
+#include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace DEX {
+
+namespace LIEF::DEX {
 class Parser;
 class Class;
 
@@ -110,5 +110,5 @@ class LIEF_API Type : public Object {
 };
 
 } // Namespace DEX
-} // Namespace LIEF
+// Namespace LIEF
 #endif

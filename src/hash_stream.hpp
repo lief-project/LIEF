@@ -15,11 +15,11 @@
  */
 #ifndef LIEF_HASH_STREAM_H
 #define LIEF_HASH_STREAM_H
-#include <vector>
-#include <string>
+#include <type_traits>
 #include <array>
 #include <memory>
-#include <type_traits>
+#include <string>
+#include <vector>
 
 #include "LIEF/span.hpp"
 

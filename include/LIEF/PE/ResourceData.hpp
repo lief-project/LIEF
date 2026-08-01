@@ -16,16 +16,17 @@
 #ifndef LIEF_PE_RESOURCE_DATA_H
 #define LIEF_PE_RESOURCE_DATA_H
 
+#include <memory>
 #include <vector>
 
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/PE/ResourceNode.hpp"
-#include "LIEF/span.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iostream.hpp"
+#include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Parser;
 class Builder;
@@ -55,7 +56,7 @@ class LIEF_API ResourceData : public ResourceNode {
   ~ResourceData() override = default;
 
   std::unique_ptr<ResourceNode> clone() const override {
-    return std::unique_ptr<ResourceData>{new ResourceData{*this}};
+    return std::make_unique<ResourceData>(*this);
   }
 
   /// Return the code page that is used to decode code point values within the
@@ -133,6 +134,6 @@ class LIEF_API ResourceData : public ResourceNode {
   uint32_t offset_ = 0;
 };
 
-} // namespace PE
-} // namespace LIEF
+}
+
 #endif

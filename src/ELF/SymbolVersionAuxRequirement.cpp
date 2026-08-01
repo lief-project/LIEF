@@ -15,8 +15,8 @@
  */
 #include "LIEF/ELF/hash.hpp"
 
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
 
 namespace LIEF::ELF {

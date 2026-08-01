@@ -17,12 +17,12 @@
 #define LIEF_MACHO_CHAINED_BINDING_INFO_H
 #include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/MachO/BindingInfo.hpp"
 #include "LIEF/MachO/DyldChainedFormat.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 class Builder;
 class DyldChainedFixupsCreator;
@@ -148,5 +148,5 @@ class LIEF_API ChainedBindingInfo : public BindingInfo {
 };
 
 }
-}
+
 #endif

@@ -78,7 +78,7 @@ public:
     }
 };
 
-} // namespace extra
+}
 
 NAMESPACE_END(NB_NAMESPACE)
 

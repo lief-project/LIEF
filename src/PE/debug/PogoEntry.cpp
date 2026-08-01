@@ -31,4 +31,4 @@ std::ostream& operator<<(std::ostream& os, const PogoEntry& entry) {
   return os;
 }
 
-} // namespace LIEF::PE
+}

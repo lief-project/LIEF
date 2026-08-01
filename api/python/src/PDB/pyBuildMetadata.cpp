@@ -6,7 +6,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 
-#include <nanobind/extra/stl/lief_optional.h>
+#include <nanobind/stl/optional.h>
 
 namespace LIEF::pdb::py {
 template<>

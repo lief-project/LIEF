@@ -16,8 +16,8 @@
 #include <cstdint>
 
 #include "LIEF/PE/Relocation.hpp"
-#include "LIEF/rust/PE/RelocationEntry.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/PE/RelocationEntry.hpp"
 
 class PE_Relocation : Mirror<LIEF::PE::Relocation> {
   public:

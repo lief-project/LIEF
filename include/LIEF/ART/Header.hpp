@@ -18,15 +18,16 @@
 
 #include <array>
 #include <cstdint>
+#include <ostream>
 
-#include "LIEF/ART/types.hpp"
 #include "LIEF/ART/enums.hpp"
+#include "LIEF/ART/types.hpp"
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 class Parser;
 
 class LIEF_API Header : public Object {
@@ -125,6 +126,6 @@ class LIEF_API Header : public Object {
 };
 
 } // Namespace ART
-} // Namespace LIEF
+// Namespace LIEF
 
 #endif

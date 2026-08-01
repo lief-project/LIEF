@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_ASM_X86_REGISTER_H
 #define LIEF_ASM_X86_REGISTER_H
-namespace LIEF {
-namespace assembly {
-namespace x86 {
+
+
+namespace LIEF::assembly::x86 {
 enum class REG;
 const char* get_register_name(REG r);
 
@@ -413,6 +413,6 @@ enum class REG {
 };
 
 }
-}
-}
+
+
 #endif

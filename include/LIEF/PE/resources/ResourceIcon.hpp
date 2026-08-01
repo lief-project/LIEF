@@ -19,14 +19,14 @@
 #include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/span.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class ResourcesManager;
 
 namespace details {
@@ -182,7 +182,6 @@ class LIEF_API ResourceIcon : public Object {
   std::vector<uint8_t> pixels_;
 };
 
-}
 }
 
 

@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_MACHO_ROUTINE_H
 #define LIEF_MACHO_ROUTINE_H
+#include <memory>
 #include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 
@@ -48,7 +49,7 @@ class LIEF_API Routine : public LoadCommand {
   Routine(const Routine& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<Routine>(new Routine(*this));
+    return std::make_unique<Routine>(*this);
   }
 
   /// address of initialization routine
@@ -140,5 +141,5 @@ class LIEF_API Routine : public LoadCommand {
 };
 
 }
-}
+
 #endif

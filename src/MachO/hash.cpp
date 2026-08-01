@@ -420,4 +420,4 @@ void Hash::visit(const LinkerOptHint& e) {
 }
 
 
-} // namespace LIEF::MachO
+}

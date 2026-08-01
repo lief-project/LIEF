@@ -19,11 +19,11 @@
 
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryCLRToken.hpp"
-#include "LIEF/COFF/AuxiliarySymbols/AuxiliaryFunctionDefinition.hpp"
-#include "LIEF/COFF/AuxiliarySymbols/AuxiliarybfAndefSymbol.hpp"
-#include "LIEF/COFF/AuxiliarySymbols/AuxiliaryWeakExternal.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryFile.hpp"
+#include "LIEF/COFF/AuxiliarySymbols/AuxiliaryFunctionDefinition.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliarySectionDefinition.hpp"
+#include "LIEF/COFF/AuxiliarySymbols/AuxiliaryWeakExternal.hpp"
+#include "LIEF/COFF/AuxiliarySymbols/AuxiliarybfAndefSymbol.hpp"
 #include "LIEF/COFF/Symbol.hpp"
 
 #include "internal_utils.hpp"

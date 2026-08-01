@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <utility>
 #include <set>
+#include <utility>
 
-#include "LIEF/MachO/FatBinary.hpp"
-#include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 
 #include "logging.hpp"
 

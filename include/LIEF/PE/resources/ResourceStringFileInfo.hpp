@@ -15,9 +15,9 @@
  */
 #ifndef LIEF_PE_RESOURCE_STRING_FILE_INFO_H
 #define LIEF_PE_RESOURCE_STRING_FILE_INFO_H
+#include <cstdint>
 #include <ostream>
 #include <vector>
-#include <cstdint>
 
 #include "LIEF/visibility.h"
 

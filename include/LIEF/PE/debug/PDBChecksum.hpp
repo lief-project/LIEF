@@ -17,12 +17,12 @@
 #define LIEF_PE_PDBCHECKSUM_H
 #include <vector>
 
+#include "LIEF/PE/debug/Debug.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/PE/debug/Debug.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class represents the PDB Checksum debug entry which is essentially
 /// an array of bytes representing the checksum of the PDB content.
@@ -95,6 +95,6 @@ class LIEF_API PDBChecksum : public Debug {
 LIEF_API const char* to_string(PDBChecksum::HASH_ALGO e);
 
 }
-}
+
 
 #endif

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include <memory>
 #include <cassert>
+#include <memory>
 
 namespace BinaryNinja {
 class BinaryView;

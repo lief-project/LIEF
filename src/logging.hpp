@@ -18,14 +18,14 @@
 #include <memory>
 #include <sstream>
 
-#include "LIEF/logging.hpp" // Public interface
 #include "LIEF/config.h"
+#include "LIEF/logging.hpp" // Public interface
 
 #include "messages.hpp"
 
-#include <spdlog/spdlog.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
+#include <spdlog/spdlog.h>
 
 #define LIEF_TRACE(...) LIEF::logging::Logger::instance().trace(__VA_ARGS__)
 #define LIEF_DEBUG(...) LIEF::logging::Logger::instance().debug(__VA_ARGS__)

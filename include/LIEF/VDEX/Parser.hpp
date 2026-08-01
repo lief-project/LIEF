@@ -17,8 +17,8 @@
 #define LIEF_VDEX_PARSER_H
 
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "LIEF/VDEX/type_traits.hpp"
 #include "LIEF/visibility.h"
@@ -68,6 +68,6 @@ class LIEF_API Parser {
   std::unique_ptr<VectorStream> stream_;
 };
 
-} // namespace VDEX
-} // namespace LIEF
+}
+}
 #endif

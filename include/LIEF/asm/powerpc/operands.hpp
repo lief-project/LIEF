@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_POWERPC_OPERANDS_H
 #define LIEF_ASM_POWERPC_OPERANDS_H
-#include <LIEF/asm/powerpc/operands/Register.hpp>
-#include <LIEF/asm/powerpc/operands/Immediate.hpp>
-#include <LIEF/asm/powerpc/operands/PCRelative.hpp>
-#include <LIEF/asm/powerpc/operands/Memory.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/powerpc/operands/Immediate.hpp"
+#include "LIEF/asm/powerpc/operands/Memory.hpp"
+#include "LIEF/asm/powerpc/operands/PCRelative.hpp"
+#include "LIEF/asm/powerpc/operands/Register.hpp"
+// IWYU pragma: end_exports
 #endif

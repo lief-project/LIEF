@@ -30,6 +30,6 @@ struct safe_string_t : public nanobind::object {
 };
 
 namespace LIEF::py {
-safe_string_t safe_string(const std::string& str);
+safe_string_t safe_string(std::string_view str);
 }
 #endif

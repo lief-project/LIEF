@@ -17,8 +17,8 @@
 #include "pyLIEF.hpp"
 
 namespace LIEF::py {
-safe_string_t safe_string(const std::string& str) {
-  nb::bytes str_bytes(str.c_str(), str.size());
+safe_string_t safe_string(std::string_view str) {
+  nb::bytes str_bytes(str.data(), str.size());
   try {
     return nb::str(str_bytes.attr("decode")("utf8"));
   } catch (const std::exception& e) {

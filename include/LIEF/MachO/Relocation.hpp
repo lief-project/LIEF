@@ -15,17 +15,17 @@
  */
 #ifndef LIEF_MACHO_RELOCATION_COMMAND_H
 #define LIEF_MACHO_RELOCATION_COMMAND_H
-#include <ostream>
 #include <memory>
+#include <ostream>
 
 #include "LIEF/Abstract/Relocation.hpp"
 
 #include "LIEF/MachO/Header.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class BinaryParser;
 class Section;
 class SegmentCommand;
@@ -139,7 +139,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<Relocation, T>::value,
+    static_assert(std::is_base_of_v<Relocation, T>,
                   "Require Relocation inheritance");
     if (T::classof(*this)) {
       return static_cast<const T*>(this);
@@ -174,5 +174,5 @@ class LIEF_API Relocation : public LIEF::Relocation {
 LIEF_API const char* to_string(Relocation::ORIGIN e);
 
 }
-}
+
 #endif

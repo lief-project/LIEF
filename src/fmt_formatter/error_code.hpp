@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <system_error>
+#include <string>
 
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>

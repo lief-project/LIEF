@@ -16,12 +16,12 @@
 #include <cstdint>
 
 #include "LIEF/PE/signature/SignerInfo.hpp"
-#include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
-#include "LIEF/rust/PE/signature/x509.hpp"
 #include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/PE/signature/attributes/Attribute.hpp"
+#include "LIEF/rust/PE/signature/x509.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_SignerInfo : private Mirror<LIEF::PE::SignerInfo> {
   public:

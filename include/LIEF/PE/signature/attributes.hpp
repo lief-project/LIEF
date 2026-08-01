@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_SIGNATURE_ATTRIBUTES_H
 #define LIEF_PE_SIGNATURE_ATTRIBUTES_H
+// IWYU pragma: begin_exports
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
 #include "LIEF/PE/signature/attributes/MsCounterSign.hpp"
@@ -26,6 +27,7 @@
 #include "LIEF/PE/signature/attributes/PKCS9MessageDigest.hpp"
 #include "LIEF/PE/signature/attributes/PKCS9SigningTime.hpp"
 #include "LIEF/PE/signature/attributes/SigningCertificateV2.hpp"
-#include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 #include "LIEF/PE/signature/attributes/SpcRelaxedPeMarkerCheck.hpp"
+#include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
+// IWYU pragma: end_exports
 #endif

@@ -15,8 +15,8 @@
 #ifndef LIEF_MACHO_DYLD_CHAINED_FMT_H
 #define LIEF_MACHO_DYLD_CHAINED_FMT_H
 #include "LIEF/visibility.h"
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 // values for dyld_chained_fixups_header.imports_format
 enum class DYLD_CHAINED_FORMAT {
@@ -65,5 +65,5 @@ LIEF_API const char* to_string(DYLD_CHAINED_FORMAT fmt);
 LIEF_API const char* to_string(DYLD_CHAINED_PTR_FORMAT ptr_fmt);
 
 }
-}
+
 #endif

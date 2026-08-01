@@ -14,9 +14,9 @@
  */
 #pragma once
 
+#include "LIEF/runtime/android/Module.hpp"
 #include "LIEF/rust/ELF/Binary.hpp"
 #include "LIEF/rust/runtime/Module.hpp"
-#include "LIEF/runtime/android/Module.hpp"
 
 class runtime_android_Module : public runtime_Module {
   public:

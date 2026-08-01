@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 #include "LIEF/COFF/Header.hpp"
-#include "LIEF/COFF/RegularHeader.hpp"
 #include "LIEF/COFF/BigObjHeader.hpp"
+#include "LIEF/COFF/RegularHeader.hpp"
 #include "LIEF/COFF/utils.hpp"
 
 #include "internal_utils.hpp"

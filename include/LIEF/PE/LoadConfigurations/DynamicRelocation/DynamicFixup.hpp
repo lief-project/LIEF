@@ -16,12 +16,12 @@
 #ifndef LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_H
 #define LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_H
 
-#include <ostream>
 #include <memory>
+#include <ostream>
 #include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class SpanStream;
@@ -78,7 +78,7 @@ class LIEF_API DynamicFixup {
 
   template<class T>
   T* as() {
-    static_assert(std::is_base_of<DynamicFixup, T>::value,
+    static_assert(std::is_base_of_v<DynamicFixup, T>,
                   "Require DynamicFixup inheritance");
     if (T::classof(this)) {
       return static_cast<T*>(this);

@@ -15,17 +15,17 @@
  */
 #include <memory>
 
-#include "logging.hpp"
 #include "BinaryParser.tcc"
+#include "logging.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "LIEF/MachO/BinaryParser.hpp"
-#include "LIEF/MachO/utils.hpp"
+#include "LIEF/MachO/DyldExportsTrie.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/MachO/ExportInfo.hpp"
-#include "LIEF/MachO/DyldExportsTrie.hpp"
+#include "LIEF/MachO/utils.hpp"
 
 #include "internal_utils.hpp"
 
@@ -510,4 +510,4 @@ ok_error_t BinaryParser::parse_indirect_symbols(DynamicSymbolCommand& cmd,
   return ok();
 }
 
-} // namespace LIEF::MachO
+}

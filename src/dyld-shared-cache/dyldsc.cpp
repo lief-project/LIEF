@@ -21,9 +21,9 @@
 
 #include "LIEF/MachO/Binary.hpp"
 
+#include "internal_utils.hpp"
 #include "logging.hpp"
 #include "messages.hpp"
-#include "internal_utils.hpp"
 
 // NOLINTBEGIN
 

@@ -16,13 +16,15 @@
 #ifndef LIEF_PE_AUXILIARY_FILE_H
 #define LIEF_PE_AUXILIARY_FILE_H
 
+#include <string_view>
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 
 /// This auxiliary symbol represents a filename (auxiliary format 4)
 ///
@@ -50,11 +52,11 @@ class LIEF_API AuxiliaryFile : public AuxiliarySymbol {
   AuxiliaryFile& operator=(AuxiliaryFile&&) = default;
 
   std::unique_ptr<AuxiliarySymbol> clone() const override {
-    return std::unique_ptr<AuxiliaryFile>(new AuxiliaryFile{*this});
+    return std::make_unique<AuxiliaryFile>(*this);
   }
 
   /// The associated filename
-  const std::string& filename() const {
+  std::string_view filename() const LIEF_LIFETIMEBOUND {
     return filename_;
   }
 
@@ -80,5 +82,5 @@ class LIEF_API AuxiliaryFile : public AuxiliarySymbol {
 };
 
 }
-}
+
 #endif

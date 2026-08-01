@@ -12,18 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <cstddef>
 #include <spdlog/fmt/fmt.h>
+#include <cstddef>
 
 #include "MachO/Structures.hpp"
-#include "LIEF/range.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
 #include "LIEF/MachO/AtomInfo.hpp"
-#include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
 #include "LIEF/MachO/DataInCode.hpp"
@@ -33,13 +30,15 @@
 #include "LIEF/MachO/DylibCommand.hpp"
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
-#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
+#include "LIEF/MachO/Routine.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
@@ -53,12 +52,12 @@
 
 #include "MachO/ChainedFixup.hpp"
 
-#include "logging.hpp"
 #include "Object.tcc"
+#include "logging.hpp"
 
+#include <unordered_set>
 #include <algorithm>
 #include <string>
-#include <unordered_set>
 
 namespace LIEF::MachO {
 template<typename T, typename U>

@@ -19,12 +19,12 @@
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
-#include <string>
-#include <memory>
 #include <cstdint>
+#include <memory>
+#include <string>
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 class Type;
 namespace types {
 
@@ -133,5 +133,5 @@ class LIEF_API Method {
 
 }
 }
-}
+
 #endif

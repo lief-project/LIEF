@@ -18,8 +18,8 @@
 
 #include "logging.hpp"
 
-#include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/VDEX/File.hpp"
+#include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/VDEX/utils.hpp"
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
@@ -95,4 +95,4 @@ void Parser::init(const std::string& /*name*/, vdex_version_t version) {
   }
 }
 
-} // namespace LIEF::VDEX
+}

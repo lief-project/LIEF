@@ -18,8 +18,8 @@
 #include <ostream>
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;

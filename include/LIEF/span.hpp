@@ -14,7 +14,7 @@
  */
 #ifndef LIEF_SPAN_H
 #define LIEF_SPAN_H
-#include <LIEF/third-party/span.hpp>
+#include "LIEF/third-party/span.hpp"
 
 namespace LIEF {
 

@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_VDEX_HEADER_H
 #define LIEF_VDEX_HEADER_H
-#include <ostream>
 #include <array>
+#include <ostream>
 
+#include "LIEF/Object.hpp"
 #include "LIEF/VDEX/type_traits.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 class Parser;
 
 class LIEF_API Header : public Object {
@@ -77,6 +77,6 @@ class LIEF_API Header : public Object {
 };
 
 } // Namespace VDEX
-} // Namespace LIEF
+// Namespace LIEF
 
 #endif

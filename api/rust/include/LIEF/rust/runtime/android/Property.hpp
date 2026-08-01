@@ -16,8 +16,8 @@
 
 #include <vector>
 
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 #include "LIEF/runtime/android/Property.hpp"

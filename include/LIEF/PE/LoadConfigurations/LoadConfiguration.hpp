@@ -15,15 +15,17 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_H
 #define LIEF_PE_LOAD_CONFIGURATION_H
-#include <ostream>
+#include "LIEF/errors.hpp"
 #include <cstdint>
+#include <ostream>
+#include <string>
 
 #include <memory>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/optional.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
 #include "LIEF/PE/CodeIntegrity.hpp"
 
@@ -246,13 +248,13 @@ class LIEF_API LoadConfiguration : public Object {
 
   /// The VA of the sorted table of RVAs of each valid, unique handler in the
   /// image. This member is available only for x86.
-  optional<uint64_t> se_handler_table() const {
+  std::optional<uint64_t> se_handler_table() const {
     return se_handler_table_;
   }
 
   /// The count of unique handlers in the table. This member is available only
   /// for x86.
-  optional<uint64_t> se_handler_count() const {
+  std::optional<uint64_t> se_handler_count() const {
     return se_handler_count_;
   }
 
@@ -262,23 +264,23 @@ class LIEF_API LoadConfiguration : public Object {
   }
 
   /// The VA where Control Flow Guard check-function pointer is stored.
-  optional<uint64_t> guard_cf_check_function_pointer() const {
+  std::optional<uint64_t> guard_cf_check_function_pointer() const {
     return guard_cf_check_function_pointer_;
   }
 
   /// The VA where Control Flow Guard dispatch-function pointer is stored.
-  optional<uint64_t> guard_cf_dispatch_function_pointer() const {
+  std::optional<uint64_t> guard_cf_dispatch_function_pointer() const {
     return guard_cf_dispatch_function_pointer_;
   }
 
   /// The VA of the sorted table of RVAs of each Control Flow Guard function in
   /// the image.
-  optional<uint64_t> guard_cf_function_table() const {
+  std::optional<uint64_t> guard_cf_function_table() const {
     return guard_cf_function_table_;
   }
 
   /// The count of unique RVAs in the guard_cf_function_table() table.
-  optional<uint64_t> guard_cf_function_count() const {
+  std::optional<uint64_t> guard_cf_function_count() const {
     return guard_cf_function_count_;
   }
 
@@ -293,7 +295,7 @@ class LIEF_API LoadConfiguration : public Object {
   }
 
   /// Control Flow Guard related flags.
-  optional<uint32_t> guard_flags() const {
+  std::optional<uint32_t> guard_flags() const {
     return flags_;
   }
 
@@ -318,13 +320,13 @@ class LIEF_API LoadConfiguration : public Object {
   }
 
   /// The VA where Control Flow Guard address taken IAT table is stored.
-  optional<uint64_t> guard_address_taken_iat_entry_table() const {
+  std::optional<uint64_t> guard_address_taken_iat_entry_table() const {
     return guard_address_taken_iat_entry_table_;
   }
 
   /// The count of unique RVAs in the table pointed by
   /// guard_address_taken_iat_entry_table().
-  optional<uint64_t> guard_address_taken_iat_entry_count() const {
+  std::optional<uint64_t> guard_address_taken_iat_entry_count() const {
     return guard_address_taken_iat_entry_count_;
   }
 
@@ -338,13 +340,13 @@ class LIEF_API LoadConfiguration : public Object {
   }
 
   /// The VA where Control Flow Guard long jump target table is stored.
-  optional<uint64_t> guard_long_jump_target_table() const {
+  std::optional<uint64_t> guard_long_jump_target_table() const {
     return guard_long_jump_target_table_;
   }
 
   /// The count of unique RVAs in the table pointed by
   /// guard_long_jump_target_table.
-  optional<uint64_t> guard_long_jump_target_count() const {
+  std::optional<uint64_t> guard_long_jump_target_count() const {
     return guard_long_jump_target_count_;
   }
 
@@ -358,7 +360,7 @@ class LIEF_API LoadConfiguration : public Object {
   }
 
   /// VA pointing to a `IMAGE_DYNAMIC_RELOCATION_TABLE`
-  optional<uint64_t> dynamic_value_reloc_table() const {
+  std::optional<uint64_t> dynamic_value_reloc_table() const {
     return dynamic_value_reloc_table_;
   }
 
@@ -372,12 +374,12 @@ class LIEF_API LoadConfiguration : public Object {
   }
 
   /// Alias for chpe_metadata_pointer()
-  optional<uint64_t> hybrid_metadata_pointer() const {
+  std::optional<uint64_t> hybrid_metadata_pointer() const {
     return hybrid_metadata_pointer_;
   }
 
   /// VA to the extra Compiled Hybrid Portable Executable (CHPE) metadata.
-  optional<uint64_t> chpe_metadata_pointer() const {
+  std::optional<uint64_t> chpe_metadata_pointer() const {
     return hybrid_metadata_pointer();
   }
 
@@ -391,45 +393,45 @@ class LIEF_API LoadConfiguration : public Object {
   }
 
   /// VA of the failure routine
-  optional<uint64_t> guard_rf_failure_routine() const {
+  std::optional<uint64_t> guard_rf_failure_routine() const {
     return guard_rf_failure_routine_;
   }
 
   /// VA of the failure routine `fptr`.
-  optional<uint64_t> guard_rf_failure_routine_function_pointer() const {
+  std::optional<uint64_t> guard_rf_failure_routine_function_pointer() const {
     return guard_rf_failure_routine_function_pointer_;
   }
 
   /// Offset of dynamic relocation table relative to the relocation table
-  optional<uint32_t> dynamic_value_reloctable_offset() const {
+  std::optional<uint32_t> dynamic_value_reloctable_offset() const {
     return dynamic_value_reloctable_offset_;
   }
 
   /// The section index of the dynamic value relocation table
-  optional<uint16_t> dynamic_value_reloctable_section() const {
+  std::optional<uint16_t> dynamic_value_reloctable_section() const {
     return dynamic_value_reloctable_section_;
   }
 
   /// Must be zero
-  optional<uint16_t> reserved2() const {
+  std::optional<uint16_t> reserved2() const {
     return reserved2_;
   }
 
   /// VA of the Function verifying the stack pointer
-  optional<uint64_t> guard_rf_verify_stackpointer_function_pointer() const {
+  std::optional<uint64_t> guard_rf_verify_stackpointer_function_pointer() const {
     return guardrf_verify_stackpointer_function_pointer_;
   }
 
   /// Offset to the *hotpatch* table
-  optional<uint32_t> hotpatch_table_offset() const {
+  std::optional<uint32_t> hotpatch_table_offset() const {
     return hotpatch_table_offset_;
   }
 
-  optional<uint32_t> reserved3() const {
+  std::optional<uint32_t> reserved3() const {
     return reserved3_;
   }
 
-  optional<uint64_t> enclave_configuration_ptr() const {
+  std::optional<uint64_t> enclave_configuration_ptr() const {
     return enclave_configuration_ptr_;
   }
 
@@ -441,7 +443,7 @@ class LIEF_API LoadConfiguration : public Object {
     return enclave_config_.get();
   }
 
-  optional<uint64_t> volatile_metadata_pointer() const {
+  std::optional<uint64_t> volatile_metadata_pointer() const {
     return volatile_metadata_pointer_;
   }
 
@@ -453,11 +455,11 @@ class LIEF_API LoadConfiguration : public Object {
     return volatile_metadata_.get();
   }
 
-  optional<uint64_t> guard_eh_continuation_table() const {
+  std::optional<uint64_t> guard_eh_continuation_table() const {
     return guard_eh_continuation_table_;
   }
 
-  optional<uint64_t> guard_eh_continuation_count() const {
+  std::optional<uint64_t> guard_eh_continuation_count() const {
     return guard_eh_continuation_count_;
   }
 
@@ -469,27 +471,27 @@ class LIEF_API LoadConfiguration : public Object {
     return guard_eh_continuation_functions_;
   }
 
-  optional<uint64_t> guard_xfg_check_function_pointer() const {
+  std::optional<uint64_t> guard_xfg_check_function_pointer() const {
     return guard_xfg_check_function_pointer_;
   }
 
-  optional<uint64_t> guard_xfg_dispatch_function_pointer() const {
+  std::optional<uint64_t> guard_xfg_dispatch_function_pointer() const {
     return guard_xfg_dispatch_function_pointer_;
   }
 
-  optional<uint64_t> guard_xfg_table_dispatch_function_pointer() const {
+  std::optional<uint64_t> guard_xfg_table_dispatch_function_pointer() const {
     return guard_xfg_table_dispatch_function_pointer_;
   }
 
-  optional<uint64_t> cast_guard_os_determined_failure_mode() const {
+  std::optional<uint64_t> cast_guard_os_determined_failure_mode() const {
     return cast_guard_os_determined_failure_mode_;
   }
 
-  optional<uint64_t> guard_memcpy_function_pointer() const {
+  std::optional<uint64_t> guard_memcpy_function_pointer() const {
     return guard_memcpy_function_pointer_;
   }
 
-  optional<uint64_t> uma_function_pointers() const {
+  std::optional<uint64_t> uma_function_pointers() const {
     return uma_function_pointers_;
   }
 
@@ -857,51 +859,51 @@ class LIEF_API LoadConfiguration : public Object {
   uint64_t editlist_ = 0;
   uint64_t security_cookie_ = 0;
 
-  optional<uint64_t> se_handler_table_;
-  optional<uint64_t> se_handler_count_;
+  std::optional<uint64_t> se_handler_table_;
+  std::optional<uint64_t> se_handler_count_;
 
-  optional<uint64_t> guard_cf_check_function_pointer_;
-  optional<uint64_t> guard_cf_dispatch_function_pointer_;
-  optional<uint64_t> guard_cf_function_table_;
-  optional<uint64_t> guard_cf_function_count_;
-  optional<uint32_t> flags_;
+  std::optional<uint64_t> guard_cf_check_function_pointer_;
+  std::optional<uint64_t> guard_cf_dispatch_function_pointer_;
+  std::optional<uint64_t> guard_cf_function_table_;
+  std::optional<uint64_t> guard_cf_function_count_;
+  std::optional<uint32_t> flags_;
 
-  optional<CodeIntegrity> code_integrity_;
+  std::optional<CodeIntegrity> code_integrity_;
 
-  optional<uint64_t> guard_address_taken_iat_entry_table_;
-  optional<uint64_t> guard_address_taken_iat_entry_count_;
-  optional<uint64_t> guard_long_jump_target_table_;
-  optional<uint64_t> guard_long_jump_target_count_;
+  std::optional<uint64_t> guard_address_taken_iat_entry_table_;
+  std::optional<uint64_t> guard_address_taken_iat_entry_count_;
+  std::optional<uint64_t> guard_long_jump_target_table_;
+  std::optional<uint64_t> guard_long_jump_target_count_;
 
-  optional<uint64_t> dynamic_value_reloc_table_;
-  optional<uint64_t> hybrid_metadata_pointer_;
+  std::optional<uint64_t> dynamic_value_reloc_table_;
+  std::optional<uint64_t> hybrid_metadata_pointer_;
 
-  optional<uint64_t> guard_rf_failure_routine_;
-  optional<uint64_t> guard_rf_failure_routine_function_pointer_;
-  optional<uint32_t> dynamic_value_reloctable_offset_;
-  optional<uint16_t> dynamic_value_reloctable_section_;
-  optional<uint16_t> reserved2_;
+  std::optional<uint64_t> guard_rf_failure_routine_;
+  std::optional<uint64_t> guard_rf_failure_routine_function_pointer_;
+  std::optional<uint32_t> dynamic_value_reloctable_offset_;
+  std::optional<uint16_t> dynamic_value_reloctable_section_;
+  std::optional<uint16_t> reserved2_;
 
-  optional<uint64_t> guardrf_verify_stackpointer_function_pointer_;
-  optional<uint32_t> hotpatch_table_offset_;
+  std::optional<uint64_t> guardrf_verify_stackpointer_function_pointer_;
+  std::optional<uint32_t> hotpatch_table_offset_;
 
-  optional<uint32_t> reserved3_;
-  optional<uint64_t> enclave_configuration_ptr_;
+  std::optional<uint32_t> reserved3_;
+  std::optional<uint64_t> enclave_configuration_ptr_;
 
-  optional<uint64_t> volatile_metadata_pointer_;
+  std::optional<uint64_t> volatile_metadata_pointer_;
 
-  optional<uint64_t> guard_eh_continuation_table_;
-  optional<uint64_t> guard_eh_continuation_count_;
+  std::optional<uint64_t> guard_eh_continuation_table_;
+  std::optional<uint64_t> guard_eh_continuation_count_;
 
-  optional<uint64_t> guard_xfg_check_function_pointer_;
-  optional<uint64_t> guard_xfg_dispatch_function_pointer_;
-  optional<uint64_t> guard_xfg_table_dispatch_function_pointer_;
+  std::optional<uint64_t> guard_xfg_check_function_pointer_;
+  std::optional<uint64_t> guard_xfg_dispatch_function_pointer_;
+  std::optional<uint64_t> guard_xfg_table_dispatch_function_pointer_;
 
-  optional<uint64_t> cast_guard_os_determined_failure_mode_;
+  std::optional<uint64_t> cast_guard_os_determined_failure_mode_;
 
-  optional<uint64_t> guard_memcpy_function_pointer_;
+  std::optional<uint64_t> guard_memcpy_function_pointer_;
 
-  optional<uint64_t> uma_function_pointers_;
+  std::optional<uint64_t> uma_function_pointers_;
 
   std::unique_ptr<CHPEMetadata> chpe_;
   std::vector<uint32_t> seh_rva_;

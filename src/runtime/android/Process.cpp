@@ -20,11 +20,11 @@
 #include "linux_android_shared/Process.hpp"
 #include "logging.hpp"
 
+#include <sys/system_properties.h>
+#include <sys/types.h>
 #include <array>
 #include <cstdlib>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/system_properties.h>
 
 extern char** environ; // NOLINT
 
@@ -42,11 +42,11 @@ uint32_t Process::page_size() {
   return PAGESZ;
 }
 
-optional<std::string> Process::get_env(const std::string& key) {
+std::optional<std::string> Process::get_env(const std::string& key) {
   if (const char* value = ::getenv(key.c_str())) {
     return std::string(value);
   }
-  return nullopt();
+  return std::nullopt;
 }
 
 Process::EnvVars Process::get_envs() {
@@ -66,10 +66,10 @@ Process::EnvVars Process::get_envs() {
 }
 
 namespace android {
-optional<Property> Process::get_system_property(const std::string& name) {
+std::optional<Property> Process::get_system_property(const std::string& name) {
   const prop_info* pi = __system_property_find(name.c_str());
   if (pi == nullptr) {
-    return nullopt();
+    return std::nullopt;
   }
   return Property::create_from(*pi);
 }

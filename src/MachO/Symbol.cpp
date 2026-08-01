@@ -73,7 +73,7 @@ void Symbol::swap(Symbol& other) noexcept {
 
 std::string Symbol::demangled_name() const {
   if constexpr (lief_extended) {
-    std::string sym_name = name();
+    std::string sym_name{name()};
     if (sym_name.find("__Z") == 0) {
       sym_name = sym_name.substr(1);
     }
@@ -81,7 +81,7 @@ std::string Symbol::demangled_name() const {
   } else {
 #if defined(__unix__)
     int status = 0;
-    const std::string& name = this->name().c_str();
+    std::string name{this->name()};
     char* demangled_name =
         abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status);
 
@@ -167,4 +167,4 @@ const char* to_string(Symbol::TYPE e) {
   return "UNKNOWN";
 }
 
-} // namespace LIEF::MachO
+}

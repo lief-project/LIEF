@@ -18,8 +18,8 @@
 #include "LIEF/DEX/hash.hpp"
 #include "internal_utils.hpp"
 
-#include <numeric>
 #include <iomanip>
+#include <numeric>
 #include <sstream>
 
 #define PRINT_FIELD(name, attr)                                                   \
@@ -156,4 +156,4 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
 Header::~Header() = default;
 
 
-} // namespace LIEF::DEX
+}

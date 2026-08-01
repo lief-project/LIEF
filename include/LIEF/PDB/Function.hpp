@@ -15,17 +15,17 @@
 #ifndef LIEF_PDB_FUNCTION_H
 #define LIEF_PDB_FUNCTION_H
 #include <memory>
-#include <string>
 #include <ostream>
+#include <string>
 
+#include "LIEF/DebugDeclOpt.hpp"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/debug_loc.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/debug_loc.hpp"
-#include "LIEF/DebugDeclOpt.hpp"
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 
 namespace details {
 class Function;
@@ -110,5 +110,5 @@ class LIEF_API Function {
 };
 
 }
-}
+
 #endif

@@ -15,16 +15,16 @@
  */
 #ifndef LIEF_MACHO_EXPORT_INFO_COMMAND_H
 #define LIEF_MACHO_EXPORT_INFO_COMMAND_H
-#include <vector>
-#include <ostream>
 #include <cstdint>
+#include <ostream>
+#include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/enums.hpp"
 #include "LIEF/Object.hpp"
+#include "LIEF/enums.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class BinaryParser;
 class Symbol;
@@ -158,7 +158,7 @@ LIEF_API const char* to_string(ExportInfo::KIND kind);
 LIEF_API const char* to_string(ExportInfo::FLAGS flags);
 
 }
-}
+
 
 ENABLE_BITMASK_OPERATORS(LIEF::MachO::ExportInfo::FLAGS);
 

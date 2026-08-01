@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
-#include <algorithm>
-#include <LIEF/range.hpp>
-#include <LIEF/DWARF/editor/Function.hpp>
 #include "LIEF/rust/Mirror.hpp"
+#include <LIEF/DWARF/editor/Function.hpp>
+#include <LIEF/range.hpp>
+#include <algorithm>
 
 #include "LIEF/rust/DWARF/editor/Type.hpp"
 #include "LIEF/rust/DWARF/editor/Variable.hpp"

@@ -26,7 +26,7 @@ DexFile& DexFile::operator=(const DexFile&) = default;
 
 DexFile::DexFile() = default;
 
-const std::string& DexFile::location() const {
+std::string_view DexFile::location() const {
   return location_;
 }
 

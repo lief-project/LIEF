@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_ASM_RISCV_REGISTER_H
 #define LIEF_ASM_RISCV_REGISTER_H
-namespace LIEF {
-namespace assembly {
-namespace riscv {
+
+
+namespace LIEF::assembly::riscv {
 enum class REG;
 enum class SYSREG;
 const char* get_register_name(REG r);
@@ -1116,6 +1116,6 @@ enum class SYSREG {
   NUM_TARGET_SYSREGS = 513,
 };
 }
-}
-}
+
+
 #endif

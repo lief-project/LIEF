@@ -19,8 +19,8 @@
 #include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Parser.hpp"
 
 #include "logging.hpp"
 

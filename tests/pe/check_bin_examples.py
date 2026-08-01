@@ -7,11 +7,6 @@ from utils import is_github_ci, lief_build_dir, lief_samples_dir
 SAMPLE = lief_samples_dir() / "PE" / "PE32_x86_library_kernel32.dll"
 
 
-def test_pe_reader_c() -> None:
-    target = lief_build_dir() / "examples/c/pe_reader"
-    check_call([target, SAMPLE])
-
-
 def test_pe_reader_cpp() -> None:
     target = lief_build_dir() / "examples/cpp/pe_reader"
     check_call([target, SAMPLE])

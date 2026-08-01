@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <iomanip>
 #include "LIEF/Object.hpp"
+#include <iomanip>
 
 namespace LIEF {
 
@@ -29,4 +29,4 @@ Object::output_const_t<T> Object::as() const {
 }
 
 
-} // namespace LIEF
+}

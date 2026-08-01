@@ -15,15 +15,14 @@
  */
 #ifndef LIEF_RUNTIME_WINDOWS_PEB_H
 #define LIEF_RUNTIME_WINDOWS_PEB_H
+#include "LIEF/iterators.hpp"
+#include "LIEF/runtime/windows/LdrDataTableEntry.hpp"
+#include "LIEF/visibility.h"
 #include <cstdint>
 #include <memory>
-#include <LIEF/visibility.h>
-#include <LIEF/iterators.hpp>
-#include <LIEF/runtime/windows/LdrDataTableEntry.hpp>
 
-namespace LIEF {
-namespace runtime {
-namespace windows {
+
+namespace LIEF::runtime::windows {
 class Process;
 
 namespace details {
@@ -99,6 +98,6 @@ class LIEF_API PEB {
 };
 
 }
-}
-}
+
+
 #endif

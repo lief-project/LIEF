@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <memory>
 #include <algorithm>
+#include <memory>
 
-#include "spdlog/fmt/fmt.h"
-#include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/Visitor.hpp"
+#include "spdlog/fmt/fmt.h"
 
+#include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
-#include "LIEF/MachO/Relocation.hpp"
 #include "MachO/Structures.hpp"
 
 

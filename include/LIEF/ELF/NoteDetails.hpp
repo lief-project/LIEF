@@ -15,11 +15,13 @@
  */
 #ifndef LIEF_ELF_NOTE_DETAILS_H
 #define LIEF_ELF_NOTE_DETAILS_H
-#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
+// IWYU pragma: begin_exports
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
+#include "LIEF/ELF/NoteDetails/Core.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
-#include "LIEF/ELF/NoteDetails/Core.hpp"
 #include "LIEF/ELF/NoteDetails/Properties.hpp"
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
+// IWYU pragma: end_exports
 
 #endif

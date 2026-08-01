@@ -15,11 +15,11 @@
  */
 #include "LIEF/runtime/Host.hpp"
 #include "LIEF/runtime/Process.hpp"
-#include <array>
 #include <spdlog/fmt/fmt.h>
+#include <array>
 
-#include <unistd.h>
 #include <sys/param.h>
+#include <unistd.h>
 
 namespace LIEF::runtime {
 

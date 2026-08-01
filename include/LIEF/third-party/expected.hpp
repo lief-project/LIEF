@@ -14,12 +14,12 @@
  */
 #ifndef LIEF_EXPECTED_H
 #define LIEF_EXPECTED_H
-#include "LIEF/config.h"
+#include "LIEF/config.h" // IWYU pragma: keep
 
 #undef TL_EXPECTED_EXCEPTIONS_ENABLED
 
 #ifndef LIEF_EXTERNAL_EXPECTED
-  #include <LIEF/third-party/internal/expected.hpp>
+  #include "LIEF/third-party/internal/expected.hpp"
 #else
   #include <tl/expected.hpp>
 #endif

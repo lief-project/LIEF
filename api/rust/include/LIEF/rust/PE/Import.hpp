@@ -15,10 +15,10 @@
 #pragma once
 
 #include "LIEF/PE/Import.hpp"
-#include "LIEF/rust/PE/ImportEntry.hpp"
-#include "LIEF/rust/PE/DataDirectories.hpp"
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PE/DataDirectories.hpp"
+#include "LIEF/rust/PE/ImportEntry.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 #include <memory>

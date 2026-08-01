@@ -15,15 +15,17 @@
  */
 #ifndef LIEF_MACHO_DYLD_ENVIROMENT_COMMAND_H
 #define LIEF_MACHO_DYLD_ENVIROMENT_COMMAND_H
-#include <string>
+#include <string_view>
+#include <memory>
 #include <ostream>
+#include <string>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct dylinker_command;
@@ -40,7 +42,7 @@ class LIEF_API DyldEnvironment : public LoadCommand {
   DyldEnvironment(const DyldEnvironment& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<DyldEnvironment>(new DyldEnvironment(*this));
+    return std::make_unique<DyldEnvironment>(*this);
   }
 
   ~DyldEnvironment() override = default;
@@ -48,7 +50,7 @@ class LIEF_API DyldEnvironment : public LoadCommand {
   std::ostream& print(std::ostream& os) const override;
 
   /// The actual environment variable
-  const std::string& value() const LIEF_LIFETIMEBOUND {
+  std::string_view value() const LIEF_LIFETIMEBOUND {
     return value_;
   }
 
@@ -67,5 +69,5 @@ class LIEF_API DyldEnvironment : public LoadCommand {
 };
 
 }
-}
+
 #endif

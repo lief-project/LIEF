@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_X86_H
 #define LIEF_ASM_X86_H
-#include <LIEF/asm/x86/Instruction.hpp>
-#include <LIEF/asm/x86/opcodes.hpp>
-#include <LIEF/asm/x86/registers.hpp>
-#include <LIEF/asm/x86/operands.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/x86/Instruction.hpp"
+#include "LIEF/asm/x86/opcodes.hpp"
+#include "LIEF/asm/x86/operands.hpp"
+#include "LIEF/asm/x86/registers.hpp"
+// IWYU pragma: end_exports
 #endif

@@ -18,10 +18,10 @@
 
 #include "logging.hpp"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/ART/File.hpp"
 #include "LIEF/ART/Parser.hpp"
 #include "LIEF/ART/utils.hpp"
-#include "LIEF/ART/File.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "ART/Structures.hpp"
 
@@ -102,4 +102,4 @@ void Parser::init(const std::string& /*name*/, art_version_t version) {
   }
 }
 
-} // namespace LIEF::ART
+}

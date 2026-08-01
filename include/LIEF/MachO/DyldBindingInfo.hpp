@@ -15,14 +15,14 @@
  */
 #ifndef LIEF_MACHO_DYLD_INFO_BINDING_INFO_H
 #define LIEF_MACHO_DYLD_INFO_BINDING_INFO_H
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 
-#include "LIEF/visibility.h"
 #include "LIEF/MachO/BindingInfo.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 /// This class represents a symbol binding operation associated with
 /// the LC_DYLD_INFO bytecode.
@@ -122,5 +122,5 @@ LIEF_API const char* to_string(DyldBindingInfo::CLASS e);
 LIEF_API const char* to_string(DyldBindingInfo::TYPE e);
 
 }
-}
+
 #endif

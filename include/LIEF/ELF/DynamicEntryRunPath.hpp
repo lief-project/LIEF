@@ -16,14 +16,16 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_RUNPATH_H
 #define LIEF_ELF_DYNAMIC_ENTRY_RUNPATH_H
 
+#include <string_view>
 #include <string>
 #include <vector>
 
-#include "LIEF/visibility.h"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// Class that represents a ``DT_RUNPATH`` which is used by the loader
 /// to resolve libraries (DynamicEntryLibrary).
@@ -55,7 +57,7 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   }
 
   /// Runpath raw value
-  const std::string& runpath() const {
+  std::string_view runpath() const LIEF_LIFETIMEBOUND {
     return runpath_;
   }
 
@@ -99,5 +101,5 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
   std::string runpath_;
 };
 }
-}
+
 #endif

@@ -15,10 +15,10 @@
  */
 #ifndef LIEF_MACHO_EXPORTS_TRIE_H
 #define LIEF_MACHO_EXPORTS_TRIE_H
-#include <ostream>
-#include <vector>
-#include <string>
 #include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
 
 namespace LIEF {
 class BinaryStream;

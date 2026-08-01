@@ -14,11 +14,11 @@
  */
 
 #pragma once
-#include <string>
-#include <memory>
-#include <LIEF/MachO.hpp>
+#include "LIEF/MachO.hpp"
 #include "LIEF/rust/MachO/Binary.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include <memory>
+#include <string>
 
 class MachO_ParserConfig {
   public:

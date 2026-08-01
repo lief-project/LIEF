@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
-#include <jni.h>
 #include "jni/lief/pe/Binary.hpp"
 #include "jni/lief/pe/Utils.hpp"
+#include <jni.h>
 
 namespace lief_jni::pe {
 

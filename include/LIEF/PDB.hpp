@@ -15,12 +15,14 @@
  */
 #ifndef LIEF_PDB_H
 #define LIEF_PDB_H
-#include <LIEF/PDB/CompilationUnit.hpp>
-#include <LIEF/PDB/Function.hpp>
-#include <LIEF/PDB/PublicSymbol.hpp>
-#include <LIEF/PDB/DebugInfo.hpp>
-#include <LIEF/PDB/BuildMetadata.hpp>
-#include <LIEF/PDB/Type.hpp>
-#include <LIEF/PDB/types.hpp>
-#include <LIEF/PDB/utils.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/PDB/BuildMetadata.hpp"
+#include "LIEF/PDB/CompilationUnit.hpp"
+#include "LIEF/PDB/DebugInfo.hpp"
+#include "LIEF/PDB/Function.hpp"
+#include "LIEF/PDB/PublicSymbol.hpp"
+#include "LIEF/PDB/Type.hpp"
+#include "LIEF/PDB/types.hpp"
+#include "LIEF/PDB/utils.hpp"
+// IWYU pragma: end_exports
 #endif

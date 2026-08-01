@@ -14,9 +14,9 @@
  */
 
 #pragma once
+#include <LIEF/MachO.hpp>
 #include <memory>
 #include <sstream>
-#include <LIEF/MachO.hpp>
 
 #include "LIEF/rust/MachO/AtomInfo.hpp"
 #include "LIEF/rust/MachO/BuildVersion.hpp"
@@ -31,11 +31,12 @@
 #include "LIEF/rust/MachO/Dylinker.hpp"
 #include "LIEF/rust/MachO/DynamicSymbolCommand.hpp"
 #include "LIEF/rust/MachO/EncryptionInfo.hpp"
+#include "LIEF/rust/MachO/ExportInfo.hpp"
 #include "LIEF/rust/MachO/FunctionStarts.hpp"
-#include "LIEF/rust/MachO/FunctionVariants.hpp"
 #include "LIEF/rust/MachO/FunctionVariantFixups.hpp"
-#include "LIEF/rust/MachO/LazyLoadDylibInfo.hpp"
+#include "LIEF/rust/MachO/FunctionVariants.hpp"
 #include "LIEF/rust/MachO/Header.hpp"
+#include "LIEF/rust/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/rust/MachO/LinkerOptHint.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"
 #include "LIEF/rust/MachO/Main.hpp"
@@ -55,15 +56,14 @@
 #include "LIEF/rust/MachO/TwoLevelHints.hpp"
 #include "LIEF/rust/MachO/UUIDCommand.hpp"
 #include "LIEF/rust/MachO/VersionMin.hpp"
-#include "LIEF/rust/MachO/ExportInfo.hpp"
 
 #include "LIEF/rust/Abstract/Binary.hpp"
 
 #include "LIEF/rust/ObjC/Metadata.hpp"
 
-#include "LIEF/rust/range.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/range.hpp"
 
 class MachO_Binary_write_config_t {
   public:

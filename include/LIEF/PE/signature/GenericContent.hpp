@@ -17,13 +17,13 @@
 #define LIEF_PE_GENERIC_CONTENT_H
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/PE/signature/ContentInfo.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class LIEF_API GenericContent : public ContentInfo::Content {
   friend class SignatureParser;
 
@@ -67,5 +67,5 @@ class LIEF_API GenericContent : public ContentInfo::Content {
   std::vector<uint8_t> raw_;
 };
 }
-}
+
 #endif

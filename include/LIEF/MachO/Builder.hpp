@@ -23,8 +23,8 @@
 
 #include "LIEF/iostream.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class AtomInfo;
 class Binary;
@@ -243,6 +243,6 @@ class LIEF_API Builder {
   config_t config_;
 };
 
-} // namespace MachO
-} // namespace LIEF
+}
+
 #endif

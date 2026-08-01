@@ -16,8 +16,8 @@
 #include <cstdint>
 
 #include "LIEF/PE/ResourceNode.hpp"
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class PE_ResourceNode : public Mirror<LIEF::PE::ResourceNode> {

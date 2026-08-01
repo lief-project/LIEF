@@ -14,9 +14,9 @@
  */
 #pragma once
 
+#include "LIEF/PDB/BuildMetadata.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/PDB/BuildMetadata.hpp"
 
 namespace details {
 inline std::vector<uint16_t>

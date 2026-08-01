@@ -15,20 +15,18 @@
 #ifndef LIEF_DWARF_TYPE_IMMUTABLE_H
 #define LIEF_DWARF_TYPE_IMMUTABLE_H
 
+#include "LIEF/DWARF/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/DWARF/Type.hpp"
 
-namespace LIEF {
-namespace dwarf {
-namespace types {
+
+namespace LIEF::dwarf::types {
 
 /// This class represents a `DW_TAG_immutable_type`
 class LIEF_API Immutable : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   Immutable(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -60,6 +58,6 @@ class LIEF_API Immutable : public Type {
 };
 
 }
-}
-}
+
+
 #endif

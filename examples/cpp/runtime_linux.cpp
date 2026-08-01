@@ -16,15 +16,15 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <string>
+#include <dlfcn.h>
 #include <format>
 #include <ranges>
-#include <dlfcn.h>
+#include <string>
 
+#include <LIEF/ELF.hpp>
+#include <LIEF/logging.hpp>
 #include <LIEF/runtime.hpp>
 #include <LIEF/runtime/assembler.hpp>
-#include <LIEF/logging.hpp>
-#include <LIEF/ELF.hpp>
 
 using namespace LIEF::logging;
 

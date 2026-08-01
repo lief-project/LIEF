@@ -15,13 +15,13 @@
  */
 #ifndef LIEF_ELF_DATA_HANDLER
 #define LIEF_ELF_DATA_HANDLER
-#include <vector>
 #include <functional>
 #include <memory>
+#include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/utils.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/utils.hpp"
+#include "LIEF/visibility.h"
 
 #include "ELF/DataHandler/Node.hpp"
 
@@ -80,8 +80,8 @@ class LIEF_API Handler {
   std::vector<uint8_t> data_;
   std::vector<std::unique_ptr<Node>> nodes_;
 };
-} // namespace ELF::DataHandler
+}
 
-} // namespace LIEF
+}
 
 #endif

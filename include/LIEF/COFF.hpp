@@ -15,28 +15,30 @@
  */
 #ifndef LIEF_COFF_H
 #define LIEF_COFF_H
+// IWYU pragma: begin_exports
 #include "LIEF/config.h"
 
 #if defined(LIEF_COFF_SUPPORT)
-  #include "LIEF/COFF/Binary.hpp"
-  #include "LIEF/COFF/utils.hpp"
-  #include "LIEF/COFF/Parser.hpp"
-  #include "LIEF/COFF/Header.hpp"
   #include "LIEF/COFF/BigObjHeader.hpp"
-  #include "LIEF/COFF/RegularHeader.hpp"
+  #include "LIEF/COFF/Binary.hpp"
+  #include "LIEF/COFF/Header.hpp"
+  #include "LIEF/COFF/Parser.hpp"
   #include "LIEF/COFF/ParserConfig.hpp"
-  #include "LIEF/COFF/Section.hpp"
+  #include "LIEF/COFF/RegularHeader.hpp"
   #include "LIEF/COFF/Relocation.hpp"
-  #include "LIEF/COFF/Symbol.hpp"
+  #include "LIEF/COFF/Section.hpp"
   #include "LIEF/COFF/String.hpp"
+  #include "LIEF/COFF/Symbol.hpp"
+  #include "LIEF/COFF/utils.hpp"
 
   #include "LIEF/COFF/AuxiliarySymbol.hpp"
-  #include "LIEF/COFF/AuxiliarySymbols/AuxiliarybfAndefSymbol.hpp"
   #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryCLRToken.hpp"
   #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryFile.hpp"
   #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryFunctionDefinition.hpp"
   #include "LIEF/COFF/AuxiliarySymbols/AuxiliarySectionDefinition.hpp"
   #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryWeakExternal.hpp"
+  #include "LIEF/COFF/AuxiliarySymbols/AuxiliarybfAndefSymbol.hpp"
+// IWYU pragma: end_exports
 #endif
 
 #endif

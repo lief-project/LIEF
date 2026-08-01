@@ -17,13 +17,12 @@
 #include <cstdint>
 #include <string>
 
+#include "LIEF/DWARF/editor/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/DWARF/editor/Type.hpp"
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 
 namespace details {
 class EnumValue;
@@ -33,8 +32,7 @@ class EnumValue;
 class LIEF_API EnumType : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   EnumType(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -67,6 +65,6 @@ class LIEF_API EnumType : public Type {
 };
 
 }
-}
-}
+
+
 #endif

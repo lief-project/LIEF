@@ -15,10 +15,10 @@
  */
 #include "logging.hpp"
 
+#include "LIEF/PE/ExportEntry.hpp"
+#include "LIEF/Visitor.hpp"
 #include "LIEF/config.h"
 #include "LIEF/utils.hpp"
-#include "LIEF/Visitor.hpp"
-#include "LIEF/PE/ExportEntry.hpp"
 
 #include "internal_utils.hpp"
 

@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include "LIEF/OAT/Header.hpp"
 #include "OAT/Structures.hpp"
+#include <string>
 
 namespace LIEF::OAT {
 
@@ -100,4 +100,4 @@ Header::Header(const details::OAT_131::oat_header* header) :
 }
 
 
-} // namespace LIEF::OAT
+}

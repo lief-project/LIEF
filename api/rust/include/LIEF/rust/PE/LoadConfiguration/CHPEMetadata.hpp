@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/optional.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp"
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataX86.hpp"
+#include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
+#include "LIEF/rust/optional.hpp"
 
 class PE_CHPEMetadata : public Mirror<LIEF::PE::CHPEMetadata> {
   public:

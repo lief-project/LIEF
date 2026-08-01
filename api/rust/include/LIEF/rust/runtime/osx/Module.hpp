@@ -14,9 +14,9 @@
  */
 #pragma once
 
+#include "LIEF/runtime/osx/Module.hpp"
 #include "LIEF/rust/MachO/Binary.hpp"
 #include "LIEF/rust/runtime/Module.hpp"
-#include "LIEF/runtime/osx/Module.hpp"
 
 class runtime_osx_Module : public runtime_Module {
   public:

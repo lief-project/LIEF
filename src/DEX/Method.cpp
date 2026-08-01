@@ -15,11 +15,11 @@
  */
 
 #include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/hash.hpp"
-#include "LIEF/DEX/enums.hpp"
 #include "LIEF/DEX/EnumToString.hpp"
+#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/enums.hpp"
+#include "LIEF/DEX/hash.hpp"
 
 #include <numeric>
 #include <utility>
@@ -37,7 +37,7 @@ Method::Method(std::string name, Class* parent) :
   name_{std::move(name)},
   parent_{parent} {}
 
-const std::string& Method::name() const {
+std::string_view Method::name() const {
   return name_;
 }
 

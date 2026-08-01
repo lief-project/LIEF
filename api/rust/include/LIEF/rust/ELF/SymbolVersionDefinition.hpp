@@ -16,8 +16,8 @@
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/rust/ELF/SymbolVersionAux.hpp"
 
-#include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
 
 class ELF_SymbolVersionDefinition
   : private Mirror<LIEF::ELF::SymbolVersionDefinition> {

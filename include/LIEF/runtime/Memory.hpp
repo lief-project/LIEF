@@ -15,21 +15,23 @@
  */
 #ifndef LIEF_RUNTIME_MEMORY_H
 #define LIEF_RUNTIME_MEMORY_H
-#include <ostream>
+#include "LIEF/errors.hpp"
 #include <cstdint>
 #include <cstring>
-#include <vector>
+#include <ostream>
+#include <string>
 #include <utility>
+#include <vector>
 
-#include "LIEF/visibility.h"
-#include "LIEF/optional.hpp"
-#include "LIEF/logging.hpp"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/logging.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
 #include "LIEF/runtime/utils.hpp"
 
-namespace LIEF {
-namespace runtime {
+
+namespace LIEF::runtime {
 
 /// This class exposes API to access and manage memory
 class LIEF_API Memory {
@@ -192,8 +194,8 @@ class LIEF_API Memory {
   };
 
   /// Allocate a memory chunk through mmap-like function
-  static optional<Chunk> mmap(size_t size, uint32_t flags,
-                              uint32_t permissions = P_NONE);
+  static std::optional<Chunk> mmap(size_t size, uint32_t flags,
+                                   uint32_t permissions = P_NONE);
 
   /// Deallocate a mmaped memory chunk
   static ok_error_t munmap(Chunk& C);
@@ -219,9 +221,8 @@ class LIEF_API Memory {
   }
 
   /// Generic function to write a typed value
-  template<class T,
-           typename = typename std::enable_if<std::is_standard_layout<T>::value &&
-                                              std::is_trivial<T>::value>::type>
+  template<class T, typename = std::enable_if_t<std::is_standard_layout_v<T> &&
+                                                std::is_trivial_v<T>>>
   static ok_error_t write(const T& value, uintptr_t addr) {
     return write(reinterpret_cast<const uint8_t*>(&value), sizeof(T), addr);
   }
@@ -263,5 +264,5 @@ class LIEF_API Memory {
 };
 
 }
-}
+
 #endif

@@ -15,9 +15,9 @@
  */
 #include <fstream>
 
-#include "LIEF/iostream.hpp"
-#include "LIEF/hash.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/hash.hpp"
+#include "LIEF/iostream.hpp"
 
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 #include "PE/Structures.hpp"

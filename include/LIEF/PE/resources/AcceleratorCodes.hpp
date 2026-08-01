@@ -15,11 +15,11 @@
  */
 #ifndef LIEF_PE_RESOURCE_ACCELERATOR_CODES_H
 #define LIEF_PE_RESOURCE_ACCELERATOR_CODES_H
-#include <cstdint>
 #include "LIEF/visibility.h"
+#include <cstdint>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// From https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
 enum class ACCELERATOR_CODES : uint32_t {
@@ -199,5 +199,5 @@ enum class ACCELERATOR_CODES : uint32_t {
 LIEF_API const char* to_string(ACCELERATOR_CODES code);
 
 }
-}
+
 #endif

@@ -1,7 +1,7 @@
 #include "PDB/pyPDB.hpp"
 #include "LIEF/PDB/Type.hpp"
 
-#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/optional.h>
 #include <nanobind/stl/string.h>
 
 namespace LIEF::pdb::types {

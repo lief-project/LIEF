@@ -15,9 +15,9 @@
  */
 #include "logging.hpp"
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/RelocationObject.hpp"
 #include "LIEF/MachO/Section.hpp"
+#include "LIEF/Visitor.hpp"
 #include "MachO/Structures.hpp"
 
 

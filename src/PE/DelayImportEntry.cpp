@@ -17,9 +17,9 @@
 
 #include "logging.hpp"
 
+#include "LIEF/Visitor.hpp"
 #include "LIEF/config.h"
 #include "LIEF/utils.hpp"
-#include "LIEF/Visitor.hpp"
 
 #include "LIEF/PE/DelayImportEntry.hpp"
 
@@ -63,5 +63,5 @@ std::ostream& operator<<(std::ostream& os, const DelayImportEntry& entry) {
   return os;
 }
 
-} // namespace LIEF::PE
+}
 // namespace LIEF

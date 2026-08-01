@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_MACHO_TYPE_TRAITS_H
 #define LIEF_MACHO_TYPE_TRAITS_H
-#include <vector>
 #include <cstdint>
+#include <vector>
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 using buffer_t = std::vector<uint8_t>;
 
 }
-}
+
 
 #endif

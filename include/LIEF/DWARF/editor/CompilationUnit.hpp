@@ -17,17 +17,16 @@
 #include <memory>
 #include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/DWARF/editor/StructType.hpp"
 #include "LIEF/DWARF/editor/BaseType.hpp"
 #include "LIEF/DWARF/editor/FunctionType.hpp"
 #include "LIEF/DWARF/editor/PointerType.hpp"
+#include "LIEF/DWARF/editor/StructType.hpp"
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 class Function;
 class Variable;
 class Type;
@@ -108,6 +107,6 @@ class LIEF_API CompilationUnit {
 };
 
 }
-}
-}
+
+
 #endif

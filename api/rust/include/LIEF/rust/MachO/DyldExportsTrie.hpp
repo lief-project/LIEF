@@ -15,12 +15,12 @@
 
 #pragma once
 #include "LIEF/MachO/DyldExportsTrie.hpp"
-#include "LIEF/rust/MachO/LoadCommand.hpp"
-#include "LIEF/rust/MachO/ExportInfo.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/MachO/ExportInfo.hpp"
+#include "LIEF/rust/MachO/LoadCommand.hpp"
 
-#include <memory>
 #include "LIEF/rust/Span.hpp"
+#include <memory>
 
 class MachO_DyldExportsTrie : public MachO_Command {
   public:

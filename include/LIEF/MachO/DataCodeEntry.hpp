@@ -15,15 +15,15 @@
  */
 #ifndef LIEF_MACHO_DATA_CODE_ENTRY_H
 #define LIEF_MACHO_DATA_CODE_ENTRY_H
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/Object.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct data_in_code_entry;
@@ -93,6 +93,6 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
 LIEF_API const char* to_string(DataCodeEntry::TYPES e);
 
 }
-}
+
 
 #endif

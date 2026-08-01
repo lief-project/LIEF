@@ -127,7 +127,7 @@ class ELF32_x32 : public ELF32 {};
 class ELF32_arm64 : public ELF32 {};
 
 
-} // namespace LIEF::ELF::details
+}
 
 
 #endif

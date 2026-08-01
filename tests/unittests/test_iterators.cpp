@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 #include <catch2/catch_session.hpp>
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 #include <catch2/catch_template_test_macros.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators_adapters.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include <LIEF/iterators.hpp>
 

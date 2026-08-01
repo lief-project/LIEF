@@ -16,17 +16,18 @@
 #ifndef LIEF_MACHO_NOTE_COMMAND_H
 #define LIEF_MACHO_NOTE_COMMAND_H
 #include <algorithm>
+#include <memory>
 #include <ostream>
 #include <string>
 
 #include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 namespace details {
 struct note_command;
@@ -44,7 +45,7 @@ class LIEF_API NoteCommand : public LoadCommand {
   NoteCommand(const NoteCommand& copy) = default;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<NoteCommand>(new NoteCommand(*this));
+    return std::make_unique<NoteCommand>(*this);
   }
 
   /// Offset of the data associated with this note
@@ -97,5 +98,5 @@ class LIEF_API NoteCommand : public LoadCommand {
 };
 
 }
-}
+
 #endif

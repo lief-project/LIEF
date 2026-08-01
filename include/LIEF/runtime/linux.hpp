@@ -16,8 +16,10 @@
 #ifndef LIEF_RUNTIME_LINUX_H
 #define LIEF_RUNTIME_LINUX_H
 
-#include <LIEF/runtime/linux/Module.hpp>
-#include <LIEF/runtime/linux/Host.hpp>
-#include <LIEF/runtime/linux/Process.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/runtime/linux/Host.hpp"
+#include "LIEF/runtime/linux/Module.hpp"
+#include "LIEF/runtime/linux/Process.hpp"
+// IWYU pragma: end_exports
 
 #endif

@@ -16,15 +16,15 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_AUX_REQUIREMENT_H
 #define LIEF_ELF_SYMBOL_VERSION_AUX_REQUIREMENT_H
 
-#include <ostream>
 #include <cstdint>
+#include <ostream>
 
 #include "LIEF/visibility.h"
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 namespace details {
 struct Elf64_Vernaux;
 struct Elf32_Vernaux;
@@ -88,5 +88,5 @@ class LIEF_API SymbolVersionAuxRequirement : public SymbolVersionAux {
   uint16_t other_ = 0;
 };
 }
-}
+
 #endif

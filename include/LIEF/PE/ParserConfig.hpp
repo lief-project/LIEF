@@ -15,13 +15,14 @@
  */
 #ifndef LIEF_PE_PARSER_CONFIG_H
 #define LIEF_PE_PARSER_CONFIG_H
-#include <string>
-#include <ostream>
 #include "LIEF/visibility.h"
-#include "LIEF/optional.hpp"
+#include <cstdint>
+#include <optional>
+#include <ostream>
+#include <string>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This structure is used to configure the behavior of the PE Parser (PE::Parser).
 struct LIEF_API ParserConfig {
@@ -69,7 +70,7 @@ struct LIEF_API ParserConfig {
   /// If set, this value holds the original image base from which the binary
   /// should be rebased. This is used to *undo* relocations and IAT bindings
   /// when parsing a PE loaded in memory.
-  optional<uint64_t> rebase;
+  std::optional<uint64_t> rebase;
 
   std::string to_string() const;
 
@@ -81,5 +82,5 @@ struct LIEF_API ParserConfig {
 };
 
 }
-}
+
 #endif

@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-#include "LIEF/runtime/windows/Module.hpp"
+#include "LIEF/PE/Binary.hpp"
+#include "LIEF/errors.hpp"
 #include "LIEF/runtime/windows/Host.hpp"
-#include "LIEF/runtime/windows/PEB.hpp"
 #include "LIEF/runtime/windows/LdrDataTableEntry.hpp"
+#include "LIEF/runtime/windows/Module.hpp"
+#include "LIEF/runtime/windows/PEB.hpp"
 #include "LIEF/runtime/windows/Process.hpp"
 #include "LIEF/runtime/windows/injector.hpp"
-#include "LIEF/PE/Binary.hpp"
-#include "LIEF/optional.hpp"
+#include <optional>
 
 
-namespace LIEF::runtime {
-namespace details {
+namespace LIEF::runtime::details {
 class ModuleIt {};
 class Module {};
 }
-}
+
 
 namespace LIEF::runtime::windows {
 
@@ -191,64 +191,64 @@ uintptr_t LdrDataTableEntry::lock() const {
   return 0;
 }
 
-optional<uintptr_t> LdrDataTableEntry::ddag_node() const {
-  return nullopt();
+std::optional<uintptr_t> LdrDataTableEntry::ddag_node() const {
+  return std::nullopt;
 }
 
-optional<uintptr_t> LdrDataTableEntry::load_context() const {
-  return nullopt();
+std::optional<uintptr_t> LdrDataTableEntry::load_context() const {
+  return std::nullopt;
 }
 
-optional<uintptr_t> LdrDataTableEntry::parent_dll_base() const {
-  return nullopt();
+std::optional<uintptr_t> LdrDataTableEntry::parent_dll_base() const {
+  return std::nullopt;
 }
 
-optional<uintptr_t> LdrDataTableEntry::switch_back_context() const {
-  return nullopt();
+std::optional<uintptr_t> LdrDataTableEntry::switch_back_context() const {
+  return std::nullopt;
 }
 
-optional<uintptr_t> LdrDataTableEntry::original_base() const {
-  return nullopt();
+std::optional<uintptr_t> LdrDataTableEntry::original_base() const {
+  return std::nullopt;
 }
 
-optional<int64_t> LdrDataTableEntry::load_time() const {
-  return nullopt();
+std::optional<int64_t> LdrDataTableEntry::load_time() const {
+  return std::nullopt;
 }
 
-optional<uint32_t> LdrDataTableEntry::base_name_hash_value() const {
-  return nullopt();
+std::optional<uint32_t> LdrDataTableEntry::base_name_hash_value() const {
+  return std::nullopt;
 }
 
-optional<int32_t> LdrDataTableEntry::load_reason() const {
-  return nullopt();
+std::optional<int32_t> LdrDataTableEntry::load_reason() const {
+  return std::nullopt;
 }
 
-optional<uint32_t> LdrDataTableEntry::implicit_path_options() const {
-  return nullopt();
+std::optional<uint32_t> LdrDataTableEntry::implicit_path_options() const {
+  return std::nullopt;
 }
 
-optional<uint32_t> LdrDataTableEntry::reference_count() const {
-  return nullopt();
+std::optional<uint32_t> LdrDataTableEntry::reference_count() const {
+  return std::nullopt;
 }
 
-optional<uint32_t> LdrDataTableEntry::dependent_load_flags() const {
-  return nullopt();
+std::optional<uint32_t> LdrDataTableEntry::dependent_load_flags() const {
+  return std::nullopt;
 }
 
-optional<uint8_t> LdrDataTableEntry::signing_level() const {
-  return nullopt();
+std::optional<uint8_t> LdrDataTableEntry::signing_level() const {
+  return std::nullopt;
 }
 
-optional<uint32_t> LdrDataTableEntry::check_sum() const {
-  return nullopt();
+std::optional<uint32_t> LdrDataTableEntry::check_sum() const {
+  return std::nullopt;
 }
 
-optional<uintptr_t> LdrDataTableEntry::active_patch_image_base() const {
-  return nullopt();
+std::optional<uintptr_t> LdrDataTableEntry::active_patch_image_base() const {
+  return std::nullopt;
 }
 
-optional<uint32_t> LdrDataTableEntry::hot_patch_state() const {
-  return nullopt();
+std::optional<uint32_t> LdrDataTableEntry::hot_patch_state() const {
+  return std::nullopt;
 }
 
 std::string LdrDataTableEntry::to_string() const {

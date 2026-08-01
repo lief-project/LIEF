@@ -3,7 +3,7 @@
 #include "Abstract/init.hpp"
 
 #include <nanobind/stl/string.h>
-#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/optional.h>
 
 #include "enums_wrapper.hpp"
 

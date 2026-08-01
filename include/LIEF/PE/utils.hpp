@@ -15,12 +15,12 @@
  */
 #ifndef LIEF_PE_UTILS_H
 #define LIEF_PE_UTILS_H
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "LIEF/PE/enums.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
 namespace LIEF {
 class BinaryStream;

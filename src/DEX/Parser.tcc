@@ -17,14 +17,14 @@
 
 #include "LIEF/utils.hpp"
 
-#include "LIEF/DEX/Parser.hpp"
-#include "LIEF/DEX/Prototype.hpp"
-#include "LIEF/DEX/Method.hpp"
+#include "DEX/Structures.hpp"
 #include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/Type.hpp"
 #include "LIEF/DEX/Field.hpp"
 #include "LIEF/DEX/MapList.hpp"
-#include "DEX/Structures.hpp"
+#include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Parser.hpp"
+#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/Type.hpp"
 
 #include "Header.tcc"
 
@@ -636,7 +636,7 @@ void Parser::parse_field(size_t index, Class& cls, bool is_static) {
   field->parent_ = &cls;
   cls.fields_.push_back(field.get());
 
-  const auto range = class_field_map_.equal_range(cls.fullname());
+  const auto range = class_field_map_.equal_range(std::string(cls.fullname()));
   for (auto it = range.first; it != range.second;) {
     if (it->second == field.get()) {
       it = class_field_map_.erase(it);
@@ -677,7 +677,7 @@ void Parser::parse_method(size_t index, Class& cls, bool is_virtual) {
   method->parent_ = &cls;
   cls.methods_.push_back(method.get());
 
-  const auto range = class_method_map_.equal_range(cls.fullname());
+  const auto range = class_method_map_.equal_range(std::string(cls.fullname()));
   for (auto it = range.first; it != range.second;) {
     if (it->second == method.get()) {
       it = class_method_map_.erase(it);

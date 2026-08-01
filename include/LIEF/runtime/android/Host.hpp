@@ -15,25 +15,24 @@
  */
 #ifndef LIEF_RUNTIME_ANDROID_HOST_H
 #define LIEF_RUNTIME_ANDROID_HOST_H
-#include <LIEF/visibility.h>
-#include <LIEF/optional.hpp>
+#include "LIEF/visibility.h"
+#include <optional>
 
 #include <cstdint>
 
-namespace LIEF {
-namespace runtime {
-namespace android {
+
+namespace LIEF::runtime::android {
 
 /// This class exposes Android-specific host information.
 class LIEF_API Host {
   public:
   /// Return the Android SDK/API level of the device (e.g. `34` for Android
   /// 14).
-  static optional<uint32_t> sdk_version();
+  static std::optional<uint32_t> sdk_version();
 };
 
 
 }
-}
-}
+
+
 #endif

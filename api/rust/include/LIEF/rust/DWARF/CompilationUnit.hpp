@@ -18,11 +18,11 @@
 #include "LIEF/rust/DWARF/Function.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
 
+#include "LIEF/rust/DebugDeclOpt.hpp"
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/range.hpp"
-#include "LIEF/rust/DebugDeclOpt.hpp"
 
 struct imported_t {};
 struct implemented_t {};

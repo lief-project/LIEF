@@ -16,8 +16,8 @@
 
 #include <jni_bind.h>
 
-#include "jni/lief/pe/RuntimeFunctionAArch64.hpp"
 #include "jni/buffer.hpp"
+#include "jni/lief/pe/RuntimeFunctionAArch64.hpp"
 
 #include <LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp>
 

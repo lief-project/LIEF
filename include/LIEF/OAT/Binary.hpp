@@ -19,9 +19,9 @@
 
 #include "LIEF/visibility.h"
 
+#include "LIEF/DEX/deopt.hpp"
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/OAT/Header.hpp"
-#include "LIEF/DEX/deopt.hpp"
 
 namespace LIEF {
 namespace DEX {

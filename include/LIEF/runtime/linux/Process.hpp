@@ -15,13 +15,12 @@
  */
 #ifndef LIEF_RUNTIME_LINUX_PROCESS_H
 #define LIEF_RUNTIME_LINUX_PROCESS_H
-#include <LIEF/visibility.h>
-#include <LIEF/runtime/Process.hpp>
+#include "LIEF/runtime/Process.hpp"
+#include "LIEF/visibility.h"
 #include <string>
 
-namespace LIEF {
-namespace runtime {
-namespace Linux {
+
+namespace LIEF::runtime::Linux {
 
 /// This class exposes Linux-specific API for the current process
 class LIEF_API Process : public runtime::Process {
@@ -43,6 +42,6 @@ class LIEF_API Process : public runtime::Process {
 };
 
 }
-}
-}
+
+
 #endif

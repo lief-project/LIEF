@@ -14,11 +14,11 @@
  */
 #include <binaryninja/binaryninjaapi.h>
 
-#include <LIEF/utils.hpp>
-#include <LIEF/version.h>
+#include "binaryninja/dwarf-export/DwarfExport.hpp"
 #include "binaryninja/dwarf-export/commands.hpp"
 #include "binaryninja/dwarf-export/log.hpp"
-#include "binaryninja/dwarf-export/DwarfExport.hpp"
+#include <LIEF/utils.hpp>
+#include <LIEF/version.h>
 
 namespace bn = BinaryNinja;
 

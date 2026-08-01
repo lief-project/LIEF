@@ -18,10 +18,8 @@
 #include "LIEF/asm/ebpf/Operand.hpp"
 #include "LIEF/asm/ebpf/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace ebpf {
-namespace operands {
+
+namespace LIEF::assembly::ebpf::operands {
 
 /// This class represents a register operand.
 ///
@@ -45,7 +43,6 @@ class LIEF_API Register : public Operand {
   ~Register() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

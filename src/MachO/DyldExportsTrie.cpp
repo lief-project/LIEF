@@ -18,9 +18,9 @@
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/DyldExportsTrie.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "MachO/Structures.hpp"
 #include "MachO/exports_trie.hpp"

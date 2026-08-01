@@ -16,8 +16,8 @@
 
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/rust/Span.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class ELF_Section : public AbstractSection {
   public:

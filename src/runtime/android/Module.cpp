@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 #include "LIEF/runtime/android/Module.hpp"
-#include "LIEF/ELF/ParserConfig.hpp"
-#include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/ParserConfig.hpp"
 
-#include <elf.h>
-#include <unistd.h>
-#include <climits>
-#include <link.h>
 #include <cstring>
 #include <dlfcn.h>
+#include <elf.h>
+#include <link.h>
+#include <unistd.h>
 
 #include "logging.hpp"
 

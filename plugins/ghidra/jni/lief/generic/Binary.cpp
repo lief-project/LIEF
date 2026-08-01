@@ -17,8 +17,8 @@
 #include "jni/lief/generic/Binary.hpp"
 #include "jni/lief/generic/Relocation.hpp"
 
-#include "jni/log.hpp"
 #include "jni/jni_utils.hpp"
+#include "jni/log.hpp"
 
 namespace lief_jni::generic {
 

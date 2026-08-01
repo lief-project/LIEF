@@ -16,11 +16,11 @@
 #ifndef LIEF_VDEX_HASH_H
 #define LIEF_VDEX_HASH_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace VDEX {
+
+namespace LIEF::VDEX {
 class File;
 class Header;
 
@@ -40,6 +40,6 @@ class LIEF_API Hash : public LIEF::Hash {
 };
 
 }
-}
+
 
 #endif

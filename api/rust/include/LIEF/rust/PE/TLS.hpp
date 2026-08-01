@@ -16,9 +16,9 @@
 #include <cstdint>
 
 #include "LIEF/PE/TLS.hpp"
-#include "LIEF/rust/PE/Section.hpp"
-#include "LIEF/rust/PE/DataDirectories.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/PE/DataDirectories.hpp"
+#include "LIEF/rust/PE/Section.hpp"
 #include "LIEF/rust/Span.hpp"
 
 class PE_TLS : public Mirror<LIEF::PE::TLS> {

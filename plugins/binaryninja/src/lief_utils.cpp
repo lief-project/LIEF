@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
-#include <fstream>
 #include <filesystem>
+#include <fstream>
+#include <sstream>
 
 #include "binaryninja/lief_utils.hpp"
 #include "binaryninja/log_core.hpp"
@@ -22,15 +22,15 @@
 #include <binaryninja/binaryninjaapi.h>
 #include <binaryninja/binaryninjacore.h>
 
-#include <LIEF/MachO/utils.hpp>
-#include <LIEF/MachO/Parser.hpp>
+#include <LIEF/COFF/utils.hpp>
+#include <LIEF/DyldSharedCache/utils.hpp>
+#include <LIEF/ELF/utils.hpp>
 #include <LIEF/MachO/Binary.hpp>
 #include <LIEF/MachO/FatBinary.hpp>
 #include <LIEF/MachO/Header.hpp>
-#include <LIEF/ELF/utils.hpp>
+#include <LIEF/MachO/Parser.hpp>
+#include <LIEF/MachO/utils.hpp>
 #include <LIEF/PE/utils.hpp>
-#include <LIEF/COFF/utils.hpp>
-#include <LIEF/DyldSharedCache/utils.hpp>
 
 namespace binaryninja {
 

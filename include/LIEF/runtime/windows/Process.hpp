@@ -17,12 +17,11 @@
 #define LIEF_RUNTIME_WINDOWS_PROCESS_H
 #include <memory>
 
-#include <LIEF/visibility.h>
-#include <LIEF/runtime/Process.hpp>
+#include "LIEF/runtime/Process.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace runtime {
-namespace windows {
+
+namespace LIEF::runtime::windows {
 class PEB;
 
 /// This class exposes Windows-specific API for the current process
@@ -39,6 +38,6 @@ class LIEF_API Process : public runtime::Process {
 };
 
 }
-}
-}
+
+
 #endif

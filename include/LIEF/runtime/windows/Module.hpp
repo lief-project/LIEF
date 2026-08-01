@@ -26,8 +26,8 @@ class Binary;
 struct ParserConfig;
 }
 
-namespace runtime {
-namespace windows {
+
+namespace runtime::windows {
 
 /// This class exposes a Windows-specific API for a module
 class LIEF_API Module : public runtime::Module {
@@ -84,7 +84,6 @@ LIEF_API std::unique_ptr<Module> dlopen(const std::string& name);
 ///       LIEF::runtime::module_from_name
 LIEF_API std::unique_ptr<Module> find_module(const std::string& name);
 
-}
 }
 }
 #endif

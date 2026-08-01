@@ -23,14 +23,14 @@
 #include "LIEF/Abstract/Header.hpp"
 
 #include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/UUIDCommand.hpp"
-#include "LIEF/MachO/ExportInfo.hpp"
 
 #include "Object.tcc"
 
-#include "MachO/Builder.tcc"
 #include "MachO/Binary.tcc"
+#include "MachO/Builder.tcc"
 
 namespace LIEF::MachO {
 

@@ -20,8 +20,8 @@
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "LIEF/ELF/utils.hpp"
 #include "ELF/Structures.hpp"
+#include "LIEF/ELF/utils.hpp"
 
 
 namespace LIEF::ELF {
@@ -90,4 +90,4 @@ uint32_t dl_new_hash(const char* name) {
   return h & 0xffffffff;
 }
 
-} // namespace LIEF::ELF
+}

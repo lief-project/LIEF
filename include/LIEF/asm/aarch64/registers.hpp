@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_ASM_AARCH64_REGISTER_H
 #define LIEF_ASM_AARCH64_REGISTER_H
-namespace LIEF {
-namespace assembly {
-namespace aarch64 {
+
+
+namespace LIEF::assembly::aarch64 {
 enum class REG;
 enum class SYSREG;
 const char* get_register_name(REG r);
@@ -2554,6 +2554,6 @@ enum class SYSREG {
   NUM_TARGET_SYSREGS = 1665,
 };
 }
-}
-}
+
+
 #endif

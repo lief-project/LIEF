@@ -15,20 +15,18 @@
 #ifndef LIEF_DWARF_SET_TYPE_H
 #define LIEF_DWARF_SET_TYPE_H
 
-#include "LIEF/visibility.h"
-#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/DWARF/Type.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
-namespace types {
+
+namespace LIEF::dwarf::types {
 
 /// This class represents a `DW_TAG_set_type`
 class LIEF_API SetTy : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   SetTy(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -60,6 +58,6 @@ class LIEF_API SetTy : public Type {
 };
 
 }
-}
-}
+
+
 #endif

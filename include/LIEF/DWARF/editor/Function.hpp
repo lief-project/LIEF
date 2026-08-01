@@ -16,15 +16,14 @@
 #define LIEF_DWARF_EDITOR_FUNCTION_H
 #include <cstdint>
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace dwarf {
-namespace editor {
+
+namespace LIEF::dwarf::editor {
 class Type;
 class Variable;
 
@@ -159,6 +158,6 @@ class LIEF_API Function {
 };
 
 }
-}
-}
+
+
 #endif

@@ -15,8 +15,10 @@
  */
 #ifndef LIEF_ASM_RISCV_OPERANDS_H
 #define LIEF_ASM_RISCV_OPERANDS_H
-#include <LIEF/asm/riscv/operands/Register.hpp>
-#include <LIEF/asm/riscv/operands/Immediate.hpp>
-#include <LIEF/asm/riscv/operands/PCRelative.hpp>
-#include <LIEF/asm/riscv/operands/Memory.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/asm/riscv/operands/Immediate.hpp"
+#include "LIEF/asm/riscv/operands/Memory.hpp"
+#include "LIEF/asm/riscv/operands/PCRelative.hpp"
+#include "LIEF/asm/riscv/operands/Register.hpp"
+// IWYU pragma: end_exports
 #endif

@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <spdlog/fmt/fmt.h>
 #include <algorithm>
 #include <iterator>
-#include <spdlog/fmt/fmt.h>
 
+#include "PE/Structures.hpp"
 #include "frozen.hpp"
 #include "logging.hpp"
-#include "PE/Structures.hpp"
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/Visitor.hpp"
 
-#include "LIEF/PE/Section.hpp"
 #include "LIEF/COFF/String.hpp"
+#include "LIEF/PE/Section.hpp"
 
 
 namespace LIEF::PE {

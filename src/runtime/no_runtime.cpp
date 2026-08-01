@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/runtime/Process.hpp"
-#include "LIEF/runtime/Module.hpp"
-#include "LIEF/runtime/Memory.hpp"
 #include "LIEF/runtime/Host.hpp"
+#include "LIEF/runtime/Memory.hpp"
+#include "LIEF/runtime/Module.hpp"
+#include "LIEF/runtime/Process.hpp"
 
 #include "internal_utils.hpp"
 #include "logging.hpp"
@@ -74,8 +74,8 @@ uint32_t Process::page_size() {
   return 0;
 }
 
-optional<std::string> Process::get_env(const std::string& /*key*/) {
-  return nullopt();
+std::optional<std::string> Process::get_env(const std::string& /*key*/) {
+  return std::nullopt;
 }
 
 Process::EnvVars Process::get_envs() {
@@ -179,10 +179,10 @@ std::string Memory::Chunk::to_string() const {
   return "";
 }
 
-optional<Memory::Chunk> Memory::mmap(size_t /*size*/, uint32_t /*flags*/,
-                                     uint32_t /*permissions*/) {
+std::optional<Memory::Chunk> Memory::mmap(size_t /*size*/, uint32_t /*flags*/,
+                                          uint32_t /*permissions*/) {
   LIEF_ERR(LIEF_NEEDS_RUNTIME_MSG);
-  return nullopt();
+  return std::nullopt;
 }
 
 ok_error_t Memory::munmap(Chunk& /*C*/) {

@@ -17,21 +17,21 @@
 
 #include "spdlog/fmt/fmt.h"
 
-#include "logging.hpp"
 #include "frozen.hpp"
+#include "logging.hpp"
 
 #include "ELF/NoteDetails/properties/common.hpp"
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
-#include "LIEF/ELF/NoteDetails/properties/Generic.hpp"
 #include "LIEF/ELF/NoteDetails/properties/AArch64Feature.hpp"
 #include "LIEF/ELF/NoteDetails/properties/AArch64PAuth.hpp"
+#include "LIEF/ELF/NoteDetails/properties/Generic.hpp"
+#include "LIEF/ELF/NoteDetails/properties/Needed.hpp"
+#include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
 #include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
 #include "LIEF/ELF/NoteDetails/properties/X86Feature.hpp"
 #include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"
-#include "LIEF/ELF/NoteDetails/properties/Needed.hpp"
-#include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
+#include "LIEF/Visitor.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
@@ -198,4 +198,4 @@ void NoteGnuProperty::Property::dump(std::ostream& os) const {
   os << to_string(this->type());
 }
 
-} // namespace LIEF::ELF
+}

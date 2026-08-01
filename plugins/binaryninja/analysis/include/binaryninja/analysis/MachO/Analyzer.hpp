@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include <memory>
 #include "binaryninja/analysis/Analyzer.hpp"
+#include <memory>
 
 #include "LIEF/MachO.hpp"
 

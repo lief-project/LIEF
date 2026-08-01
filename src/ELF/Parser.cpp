@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <memory>
 #include <algorithm>
 #include <cstring>
+#include <memory>
 
 #include "logging.hpp"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
-#include "LIEF/BinaryStream/MemoryStream.hpp"
 #include "LIEF/BinaryStream/DumpStream.hpp"
+#include "LIEF/BinaryStream/MemoryStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
-#include "LIEF/utils.hpp"
-#include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
-#include "LIEF/ELF/SymbolVersion.hpp"
-#include "LIEF/ELF/Segment.hpp"
-#include "LIEF/ELF/Section.hpp"
-#include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/Note.hpp"
+#include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
+#include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
+#include "LIEF/ELF/utils.hpp"
+#include "LIEF/utils.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/elf_utils.hpp"
@@ -659,7 +659,7 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   while (*stream_ && stream_->pos() < last_offset) {
     const auto current_pos = static_cast<int64_t>(stream_->pos());
     const Section* sec = binary_->section_from_offset(current_pos);
-    std::string sec_name = sec != nullptr ? sec->name() : "";
+    std::string sec_name = sec != nullptr ? std::string{sec->name()} : "";
 
     std::unique_ptr<Note> note =
         Note::create(*stream_, std::move(sec_name), binary_->header().file_type(),

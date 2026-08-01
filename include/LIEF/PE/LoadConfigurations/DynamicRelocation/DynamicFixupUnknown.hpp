@@ -15,14 +15,15 @@
  */
 #ifndef LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_UNKNOWN_H
 #define LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_FIXUP_UNKNOWN_H
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/span.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
 
+#include <memory>
 #include <vector>
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// This class represents a special dynamic relocation where the format of the
 /// fixups is not supported by LIEF.
@@ -39,7 +40,7 @@ class LIEF_API DynamicFixupUnknown : public DynamicFixup {
   DynamicFixupUnknown& operator=(DynamicFixupUnknown&&) = default;
 
   std::unique_ptr<DynamicFixup> clone() const override {
-    return std::unique_ptr<DynamicFixupUnknown>(new DynamicFixupUnknown(*this));
+    return std::make_unique<DynamicFixupUnknown>(*this);
   }
 
   static bool classof(const DynamicFixup* fixup) {
@@ -67,6 +68,6 @@ class LIEF_API DynamicFixupUnknown : public DynamicFixup {
 
 
 }
-}
+
 
 #endif

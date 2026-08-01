@@ -20,14 +20,13 @@
 #include <ostream>
 #include <string>
 
-#include <LIEF/visibility.h>
-#include <LIEF/compiler_attributes.hpp>
-#include <LIEF/iterators.hpp>
-#include <LIEF/optional.hpp>
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
+#include <optional>
 
-namespace LIEF {
-namespace runtime {
-namespace windows {
+
+namespace LIEF::runtime::windows {
 
 namespace details {
 class ldr_entry;
@@ -139,79 +138,79 @@ class LIEF_API LdrDataTableEntry {
   /// Address of the dependency-graph node of the module (`DdagNode`).
   ///
   /// \note Available on Windows 8 and later.
-  optional<uintptr_t> ddag_node() const;
+  std::optional<uintptr_t> ddag_node() const;
 
   /// Address of the loader context used while the module is being snapped
   ///
   /// \note Available on Windows 8 and later.
-  optional<uintptr_t> load_context() const;
+  std::optional<uintptr_t> load_context() const;
 
   /// Base address of the module that triggered the load of this one.
   ///
   /// \note Available on Windows 8 and later.
-  optional<uintptr_t> parent_dll_base() const;
+  std::optional<uintptr_t> parent_dll_base() const;
 
   /// Address of the CHPE switch-back context.
   ///
   /// \note Available on Windows 8 and later.
-  optional<uintptr_t> switch_back_context() const;
+  std::optional<uintptr_t> switch_back_context() const;
 
   /// Preferred base address recorded in the PE headers
   ///
   /// \note Available on Windows 8 and later.
-  optional<uintptr_t> original_base() const;
+  std::optional<uintptr_t> original_base() const;
 
   /// Time at which the module was loaded.
   ///
   /// \note Available on Windows 8 and later.
-  optional<int64_t> load_time() const;
+  std::optional<int64_t> load_time() const;
 
   /// Hash of the module's base name used to index the loader tables
   ///
   /// \note Available on Windows 8 and later.
-  optional<uint32_t> base_name_hash_value() const;
+  std::optional<uint32_t> base_name_hash_value() const;
 
   /// Reason why the module was loaded, as a `LDR_DLL_LOAD_REASON` value
   ///
   /// \note Available on Windows 8 and later.
-  optional<int32_t> load_reason() const;
+  std::optional<int32_t> load_reason() const;
 
   /// Path-search options implied when the module was resolved
   ///
   /// \note Available on Windows 8 and later.
-  optional<uint32_t> implicit_path_options() const;
+  std::optional<uint32_t> implicit_path_options() const;
 
   /// Number of references currently held on the module.
   ///
   /// \note Available on Windows 8 and later.
-  optional<uint32_t> reference_count() const;
+  std::optional<uint32_t> reference_count() const;
 
   /// Flags controlling how the statically-linked dependencies of the module
   /// are loaded.
   ///
   /// \note Available on Windows 8 and later.
-  optional<uint32_t> dependent_load_flags() const;
+  std::optional<uint32_t> dependent_load_flags() const;
 
   /// Signing level of the module's image, as a `SE_SIGNING_LEVEL` value
   ///
   /// \note Available on Windows 10 and later.
-  optional<uint8_t> signing_level() const;
+  std::optional<uint8_t> signing_level() const;
 
   /// Image checksum cached by the loader
   ///
   /// \note Available on Windows 10 and later.
-  optional<uint32_t> check_sum() const;
+  std::optional<uint32_t> check_sum() const;
 
   /// Base address of the active hot-patch image, if any.
   ///
   /// \note Available on Windows 11 and later.
-  optional<uintptr_t> active_patch_image_base() const;
+  std::optional<uintptr_t> active_patch_image_base() const;
 
   /// State of the hot-patch engine for this module, as a `LDR_HOT_PATCH_STATE`
   /// value.
   ///
   /// \note Available on Windows 11 and later.
-  optional<uint32_t> hot_patch_state() const;
+  std::optional<uint32_t> hot_patch_state() const;
 
   /// Pretty-printed representation of this entry.
   std::string to_string() const;
@@ -229,6 +228,6 @@ class LIEF_API LdrDataTableEntry {
 };
 
 }
-}
-}
+
+
 #endif

@@ -16,8 +16,8 @@
 #pragma once
 #include "LIEF/MachO/Stub.hpp"
 
-#include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/error.hpp"
 
 class MachO_Stub : public Mirror<LIEF::MachO::Stub> {

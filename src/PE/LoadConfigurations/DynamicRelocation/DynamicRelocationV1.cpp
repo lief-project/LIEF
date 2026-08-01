@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/Relocation.hpp"
-#include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationV1.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationV1.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/FunctionOverride.hpp"
+#include "LIEF/PE/Relocation.hpp"
 
 #include "PE/Structures.hpp"
 
 #include "logging.hpp"
-#include "internal_utils.hpp"
 
 namespace LIEF::PE {
 

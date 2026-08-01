@@ -18,19 +18,18 @@
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-#include "LIEF/span.hpp"
-#include "LIEF/iterators.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
 
 #include "LIEF/MachO/Header.hpp"
 
-#include <vector>
 #include <cstdint>
 #include <ostream>
+#include <vector>
 
 
-namespace LIEF {
-namespace MachO {
+namespace LIEF::MachO {
 
 class Binary;
 class Section;
@@ -163,5 +162,5 @@ class LIEF_API Stub {
 };
 
 }
-}
+
 #endif

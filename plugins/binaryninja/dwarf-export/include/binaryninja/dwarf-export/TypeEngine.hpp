@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
-#include <unordered_map>
 #include <LIEF/DWARF/editor/CompilationUnit.hpp>
 #include <binaryninja/binaryninjaapi.h>
+#include <unordered_map>
 
 namespace dwarf_plugin {
 class TypeEngine {

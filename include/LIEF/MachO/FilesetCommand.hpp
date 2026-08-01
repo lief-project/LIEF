@@ -15,15 +15,17 @@
  */
 #ifndef LIEF_MACHO_FILESET_COMMAND_H
 #define LIEF_MACHO_FILESET_COMMAND_H
+#include <string_view>
+#include <memory>
 #include <ostream>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
 
-namespace LIEF {
-namespace MachO {
+namespace LIEF::MachO {
 class Binary;
 class BinaryParser;
 
@@ -48,13 +50,13 @@ class LIEF_API FilesetCommand : public LoadCommand {
   void swap(FilesetCommand& other) noexcept;
 
   std::unique_ptr<LoadCommand> clone() const override {
-    return std::unique_ptr<FilesetCommand>(new FilesetCommand(*this));
+    return std::make_unique<FilesetCommand>(*this);
   }
 
   ~FilesetCommand() override = default;
 
   /// Name of the underlying MachO binary (e.g. ``com.apple.security.quarantine``)
-  const std::string& name() const {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -103,5 +105,5 @@ class LIEF_API FilesetCommand : public LoadCommand {
 };
 
 }
-}
+
 #endif

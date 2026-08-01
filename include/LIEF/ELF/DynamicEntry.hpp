@@ -16,16 +16,16 @@
 #ifndef LIEF_ELF_DYNAMIC_ENTRY_H
 #define LIEF_ELF_DYNAMIC_ENTRY_H
 
-#include <ostream>
-#include <memory>
 #include <cstdint>
+#include <memory>
+#include <ostream>
 
-#include "LIEF/visibility.h"
-#include "LIEF/Object.hpp"
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 namespace details {
 struct Elf64_Dyn;
 struct Elf32_Dyn;
@@ -244,7 +244,7 @@ class LIEF_API DynamicEntry : public Object {
   }
 
   virtual std::unique_ptr<DynamicEntry> clone() const {
-    return std::unique_ptr<DynamicEntry>(new DynamicEntry(*this));
+    return std::make_unique<DynamicEntry>(*this);
   }
 
   /// Tag of the current entry. The most common tags are:
@@ -282,7 +282,7 @@ class LIEF_API DynamicEntry : public Object {
 
   template<class T>
   const T* cast() const {
-    static_assert(std::is_base_of<DynamicEntry, T>::value,
+    static_assert(std::is_base_of_v<DynamicEntry, T>,
                   "Require DynamicEntry inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
@@ -303,5 +303,5 @@ class LIEF_API DynamicEntry : public Object {
 LIEF_API const char* to_string(DynamicEntry::TAG e);
 
 }
-}
+
 #endif

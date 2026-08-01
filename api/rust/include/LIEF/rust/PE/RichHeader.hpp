@@ -17,8 +17,8 @@
 #include <memory>
 
 #include "LIEF/PE/RichHeader.hpp"
-#include "LIEF/rust/PE/RichEntry.hpp"
 #include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/PE/RichEntry.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 class PE_RichHeader : Mirror<LIEF::PE::RichHeader> {

@@ -15,9 +15,9 @@
 #pragma once
 #include <memory>
 
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/PE/debug/Debug.hpp"
 #include "LIEF/rust/PE/debug/PogoEntry.hpp"
-#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/helpers.hpp"
 
 #include "LIEF/PE/debug/Pogo.hpp"

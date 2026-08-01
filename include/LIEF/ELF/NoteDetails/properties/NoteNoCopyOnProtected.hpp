@@ -18,8 +18,8 @@
 
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 
 /// This class provides an interface over the `GNU_PROPERTY_NO_COPY_ON_PROTECTED`
 /// property. This property indicates that the linker shouldn't copy relocations
@@ -43,6 +43,6 @@ class NoteNoCopyOnProtected : public NoteGnuProperty::Property {
     ) {}
 };
 }
-}
+
 
 #endif

@@ -18,11 +18,11 @@
 
 #include <memory>
 
-#include "LIEF/visibility.h"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 
 /// This auxiliary symbol exposes information about the associated section.
 ///
@@ -56,9 +56,7 @@ class LIEF_API AuxiliarySectionDefinition : public AuxiliarySymbol {
   AuxiliarySectionDefinition& operator=(AuxiliarySectionDefinition&&) = default;
 
   std::unique_ptr<AuxiliarySymbol> clone() const override {
-    return std::unique_ptr<AuxiliarySectionDefinition>(
-        new AuxiliarySectionDefinition{*this}
-    );
+    return std::make_unique<AuxiliarySectionDefinition>(*this);
   }
 
   /// Values for the AuxiliarySectionDefinition::selection attribute
@@ -164,5 +162,5 @@ class LIEF_API AuxiliarySectionDefinition : public AuxiliarySymbol {
 LIEF_API const char* to_string(AuxiliarySectionDefinition::COMDAT_SELECTION e);
 
 }
-}
+
 #endif

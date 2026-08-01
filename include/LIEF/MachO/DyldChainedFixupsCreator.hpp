@@ -15,18 +15,18 @@
  */
 #ifndef LIEF_MACHO_DYLD_CHAINED_FIXUPS_CREATOR_H
 #define LIEF_MACHO_DYLD_CHAINED_FIXUPS_CREATOR_H
-#include "LIEF/visibility.h"
-#include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "LIEF/MachO/DyldChainedFixups.hpp"
+#include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/visibility.h"
 
-#include <vector>
-#include <string>
 #include <unordered_map>
 #include <cstdint>
+#include <string>
+#include <vector>
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 class RelocationFixup;
 class Symbol;
 class Binary;
@@ -165,5 +165,5 @@ class LIEF_LOCAL DyldChainedFixupsCreator {
   std::unordered_map<std::string, size_t> lib2ord_;
 };
 }
-}
+
 #endif

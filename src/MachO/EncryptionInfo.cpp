@@ -15,8 +15,8 @@
  */
 #include <spdlog/fmt/fmt.h>
 
-#include "LIEF/Visitor.hpp"
 #include "LIEF/MachO/EncryptionInfo.hpp"
+#include "LIEF/Visitor.hpp"
 #include "MachO/Structures.hpp"
 
 

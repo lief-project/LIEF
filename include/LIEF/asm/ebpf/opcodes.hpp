@@ -17,9 +17,8 @@
 
 /* Generated from LLVM: 22.1.8 */
 
-namespace LIEF {
-namespace assembly {
-namespace ebpf {
+
+namespace LIEF::assembly::ebpf {
 enum class OPCODE {
   PHI = 0,
   INLINEASM = 1,
@@ -547,6 +546,6 @@ enum class OPCODE {
   INSTRUCTION_LIST_END = 523,
 };
 }
-}
-}
+
+
 #endif

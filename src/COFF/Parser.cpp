@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/COFF/Parser.hpp"
-#include "LIEF/COFF/Binary.hpp"
-#include "LIEF/COFF/RegularHeader.hpp"
-#include "LIEF/COFF/Section.hpp"
-#include "LIEF/COFF/Relocation.hpp"
-#include "LIEF/COFF/Symbol.hpp"
-#include "LIEF/COFF/String.hpp"
-#include "LIEF/COFF/utils.hpp"
+#include <memory>
+
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliaryCLRToken.hpp"
+#include "LIEF/COFF/Binary.hpp"
+#include "LIEF/COFF/Parser.hpp"
+#include "LIEF/COFF/RegularHeader.hpp"
+#include "LIEF/COFF/Relocation.hpp"
+#include "LIEF/COFF/Section.hpp"
+#include "LIEF/COFF/String.hpp"
+#include "LIEF/COFF/Symbol.hpp"
+#include "LIEF/COFF/utils.hpp"
 
-#include "LIEF/BinaryStream/VectorStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/BinaryStream/VectorStream.hpp"
 
 #include "COFF/structures.hpp"
 
@@ -61,8 +63,7 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
 std::unique_ptr<Binary> Parser::parse(const std::string& file,
                                       const ParserConfig& config) {
   if (auto strm = VectorStream::from_file(file)) {
-    return parse(std::unique_ptr<VectorStream>(new VectorStream(std::move(*strm))),
-                 config);
+    return parse(std::make_unique<VectorStream>(std::move(*strm)), config);
   }
   return nullptr;
 }
@@ -157,9 +158,9 @@ ok_error_t Parser::parse_sections() {
       sec->symbols_.push_back(it->symbol);
     }
 
-    if (const std::string& name = sec->name(); name.size() > 1 && name[0] == '/') {
+    if (std::string_view name = sec->name(); name.size() > 1 && name[0] == '/') {
       char* endptr = nullptr;
-      uint32_t offset = std::strtol(name.c_str() + 1, &endptr, /*base=*/10);
+      uint32_t offset = std::strtol(name.data() + 1, &endptr, /*base=*/10);
       if (String* coff_str = bin_->find_string(offset)) {
         sec->coff_string_ = coff_str;
       }

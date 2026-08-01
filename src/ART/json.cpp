@@ -51,4 +51,4 @@ void JsonVisitor::visit(const Header& header) {
   node_["data_size"] = header.data_size();
 }
 
-} // namespace LIEF::ART
+}

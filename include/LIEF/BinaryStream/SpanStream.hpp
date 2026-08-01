@@ -16,23 +16,23 @@
 #ifndef LIEF_SPAN_STREAM_H
 #define LIEF_SPAN_STREAM_H
 
-#include <cstdint>
-#include <vector>
 #include <array>
 #include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <vector>
 
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 class VectorStream;
 class LIEF_API SpanStream : public BinaryStream {
   public:
-  using BinaryStream::p;
   using BinaryStream::end;
+  using BinaryStream::p;
   using BinaryStream::start;
 
   static result<SpanStream> from_vector(const std::vector<uint8_t>& data) {
@@ -58,7 +58,7 @@ class LIEF_API SpanStream : public BinaryStream {
     SpanStream(data.data(), data.size()) {}
 
   std::unique_ptr<SpanStream> clone() const {
-    return std::unique_ptr<SpanStream>(new SpanStream(*this));
+    return std::make_unique<SpanStream>(*this);
   }
 
   SpanStream() = delete;

@@ -14,9 +14,9 @@
  */
 #include <array>
 
+#include "jni/jni_utils.hpp"
 #include "jni/lief/dwarf/editor/Type.hpp"
 #include "jni/log.hpp"
-#include "jni/jni_utils.hpp"
 
 #include "jni/lief/dwarf/editor/PointerType.hpp"
 

@@ -15,15 +15,15 @@
  */
 
 
-#include "LIEF/ELF/hash.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/ELF/hash.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/iostream.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 
+#include "ELF/Structures.hpp"
 #include "frozen.hpp"
 #include "spdlog/fmt/fmt.h"
-#include "ELF/Structures.hpp"
 
 
 namespace LIEF::ELF {
@@ -167,4 +167,4 @@ const char* to_string(CoreAuxv::TYPE type) {
   return "UNKNOWN";
 }
 
-} // namespace LIEF::ELF
+}

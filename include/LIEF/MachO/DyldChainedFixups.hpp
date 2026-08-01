@@ -15,16 +15,16 @@
  */
 #ifndef LIEF_MACHO_DYLD_CHAINED_FIXUPS_H
 #define LIEF_MACHO_DYLD_CHAINED_FIXUPS_H
-#include <memory>
-#include "LIEF/span.hpp"
-#include "LIEF/iterators.hpp"
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/MachO/LoadCommand.hpp"
 #include "LIEF/MachO/DyldChainedFormat.hpp"
+#include "LIEF/MachO/LoadCommand.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
+#include <memory>
 
-namespace LIEF {
-namespace MachO {
+
+namespace LIEF::MachO {
 
 class Binary;
 class BinaryParser;
@@ -291,5 +291,5 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
 };
 
 }
-}
+
 #endif

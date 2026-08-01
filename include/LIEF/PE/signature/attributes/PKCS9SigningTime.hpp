@@ -18,11 +18,11 @@
 #define LIEF_PE_ATTRIBUTES_PKCS9_SIGNING_TIME_H
 #include <array>
 
-#include "LIEF/visibility.h"
 #include "LIEF/PE/signature/Attribute.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 /// Interface over the structure described by the OID ``1.2.840.113549.1.9.5``
 /// (PKCS #9)
@@ -83,6 +83,6 @@ class LIEF_API PKCS9SigningTime : public Attribute {
 };
 
 }
-}
+
 
 #endif

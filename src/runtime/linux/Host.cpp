@@ -17,10 +17,10 @@
 #include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/linux/Host.hpp"
 
-#include <array>
-#include <unistd.h>
-#include <climits>
 #include <sys/utsname.h>
+#include <array>
+#include <climits> // IWYU pragma: keep
+#include <unistd.h>
 
 namespace LIEF::runtime {
 std::string Host::name() {

@@ -21,9 +21,9 @@
 
 #include "mbedtls_wraps.h"
 
-#include <mbedtls/platform.h>
 #include <mbedtls/asn1.h>
 #include <mbedtls/error.h>
+#include <mbedtls/platform.h>
 #include <mbedtls/x509_crt.h>
 
 extern "C" {

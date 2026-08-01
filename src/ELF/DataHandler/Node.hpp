@@ -16,8 +16,8 @@
 #ifndef LIEF_ELF_DATA_HANDLER_NODE_H
 #define LIEF_ELF_DATA_HANDLER_NODE_H
 
-#include <cstdint>
 #include "LIEF/visibility.h"
+#include <cstdint>
 
 namespace LIEF::ELF::DataHandler {
 
@@ -82,6 +82,6 @@ class LIEF_LOCAL Node {
   Type type_ = Type::UNKNOWN;
 };
 
-} // namespace LIEF::ELF::DataHandler
+}
 
 #endif

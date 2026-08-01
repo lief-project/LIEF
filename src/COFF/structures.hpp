@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_COFF_STRUCTURES_H
 #define LIEF_COFF_STRUCTURES_H
-#include <cstdint>
 #include <array>
+#include <cstdint>
 
 namespace LIEF::COFF::details {
 

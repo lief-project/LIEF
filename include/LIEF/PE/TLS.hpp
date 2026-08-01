@@ -16,16 +16,16 @@
 #ifndef LIEF_PE_TLS_H
 #define LIEF_PE_TLS_H
 
-#include <vector>
 #include <ostream>
+#include <vector>
 
-#include "LIEF/span.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/span.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Parser;
 class Builder;
@@ -190,5 +190,5 @@ class LIEF_API TLS : public Object {
   std::vector<uint8_t> data_template_;
 };
 }
-}
+
 #endif

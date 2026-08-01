@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 #include <cstring>
-#include <map>
 #include <fstream>
+#include <map>
 #include <memory>
 
-#include <mbedtls/platform.h>
-#include <mbedtls/x509_crt.h>
 #include <mbedtls/asn1.h>
 #include <mbedtls/asn1write.h>
 #include <mbedtls/error.h>
+#include <mbedtls/platform.h>
+#include <mbedtls/x509_crt.h>
 
-#include "logging.hpp"
 #include "frozen.hpp"
 #include "internal_utils.hpp"
+#include "logging.hpp"
 
 #include "LIEF/Visitor.hpp"
 
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/ASN1Reader.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "LIEF/PE/signature/x509.hpp"
-#include "LIEF/PE/signature/RsaInfo.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/signature/OIDToString.hpp"
+#include "LIEF/PE/signature/RsaInfo.hpp"
+#include "LIEF/PE/signature/x509.hpp"
 
 #include "mbedtls_wraps.h"
 

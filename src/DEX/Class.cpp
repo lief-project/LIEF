@@ -16,7 +16,6 @@
  */
 
 #include <utility>
-#include <climits>
 
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Field.hpp"
@@ -72,7 +71,7 @@ std::string Class::fullname_normalized(const std::string& pkg_cls) {
   return package_normalized;
 }
 
-const std::string& Class::fullname() const {
+std::string_view Class::fullname() const {
   return fullname_;
 }
 
@@ -170,7 +169,7 @@ size_t Class::index() const {
   return original_index_;
 }
 
-const std::string& Class::source_filename() const {
+std::string_view Class::source_filename() const {
   return source_filename_;
 }
 

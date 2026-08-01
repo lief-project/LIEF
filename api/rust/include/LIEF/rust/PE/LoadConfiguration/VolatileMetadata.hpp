@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/Mirror.hpp"
-#include "LIEF/rust/Iterator.hpp"
-#include "LIEF/rust/helpers.hpp"
 #include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
+#include "LIEF/rust/Iterator.hpp"
+#include "LIEF/rust/Mirror.hpp"
+#include "LIEF/rust/helpers.hpp"
 
 class PE_VolatileMetadata_range_t
   : public Mirror<LIEF::PE::VolatileMetadata::range_t> {

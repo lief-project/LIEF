@@ -58,7 +58,7 @@ class python_base_sink final : public base_sink<details::null_mutex> {
 
 using python_stderr_sink_mt = python_base_sink<nanobind::ft_mutex, py_stderr_tag>;
 using python_stderr_sink_st = python_base_sink<details::null_mutex, py_stderr_tag>;
-} // namespace sinks
+}
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> stderr_python_mt(const std::string& logger_name)

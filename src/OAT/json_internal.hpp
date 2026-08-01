@@ -17,7 +17,6 @@
 #define LIEF_OAT_JSON_INTERNAL_H
 
 
-#include "LIEF/visibility.h"
 #include "visitors/json.hpp"
 
 

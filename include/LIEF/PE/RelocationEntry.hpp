@@ -16,17 +16,17 @@
 #ifndef LIEF_PE_RELOCATION_ENTRY_H
 #define LIEF_PE_RELOCATION_ENTRY_H
 
-#include <ostream>
 #include <cassert>
+#include <ostream>
 
 #include "LIEF/Abstract/Relocation.hpp"
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/PE/Header.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Relocation;
 
@@ -233,5 +233,5 @@ class LIEF_API RelocationEntry : public LIEF::Relocation {
 LIEF_API const char* to_string(RelocationEntry::BASE_TYPES e);
 
 }
-}
+
 #endif

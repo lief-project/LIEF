@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/utils.hpp>
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
-#include <LIEF/utils.hpp>
 using namespace LIEF;
 
 TEST_CASE("lief.test.utils", "[lief][test][utils]") {

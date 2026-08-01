@@ -20,8 +20,8 @@
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 enum class PE_TYPE : uint16_t;
 enum class ALGORITHMS : uint32_t;
@@ -29,6 +29,6 @@ enum class ALGORITHMS : uint32_t;
 LIEF_API const char* to_string(PE_TYPE e);
 LIEF_API const char* to_string(ALGORITHMS e);
 
-} // namespace PE
-} // namespace LIEF
+}
+
 #endif

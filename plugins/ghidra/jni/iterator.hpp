@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 #pragma once
-#include <jni_bind.h>
 #include <LIEF/MachO/Binary.hpp>
+#include <jni_bind.h>
 
 namespace lief_jni {
 template<class T, class V, class J,

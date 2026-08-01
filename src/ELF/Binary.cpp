@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 #include <algorithm>
+#include <cctype>
 #include <iterator>
 #include <numeric>
 #include <sstream>
-#include <cctype>
 
 #include "LIEF/DWARF/enums.hpp"
 
@@ -27,26 +27,26 @@
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include "LIEF/ELF/utils.hpp"
-#include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
-#include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
+#include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/Builder.hpp"
+#include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
-#include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
-#include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 #include "LIEF/ELF/hash.hpp"
+#include "LIEF/ELF/utils.hpp"
 
 #include "ELF/DataHandler/Handler.hpp"
 #include "ELF/SizingInfo.hpp"
@@ -94,7 +94,7 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   functions_t result;
   for (const Symbol& symbol : exported_symbols()) {
     if (symbol.type() == Symbol::TYPE::FUNC) {
-      result.emplace_back(symbol.name(), symbol.value(),
+      result.emplace_back(std::string(symbol.name()), symbol.value(),
                           Function::FLAGS::EXPORTED);
     }
   }
@@ -106,7 +106,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   functions_t result;
   for (const Symbol& symbol : imported_symbols()) {
     if (symbol.type() == Symbol::TYPE::FUNC) {
-      result.emplace_back(symbol.name(), symbol.value(),
+      result.emplace_back(std::string(symbol.name()), symbol.value(),
                           Function::FLAGS::IMPORTED);
     }
   }
@@ -118,7 +118,7 @@ std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const DynamicEntry& entry : dynamic_entries()) {
     if (const auto* lib = entry.cast<DynamicEntryLibrary>()) {
-      result.push_back(lib->name());
+      result.emplace_back(lib->name());
     }
   }
   return result;
@@ -266,11 +266,11 @@ int64_t Binary::symtab_idx(const std::string& name) const {
 }
 
 int64_t Binary::symtab_idx(const Symbol& sym) const {
-  return symtab_idx(sym.name());
+  return symtab_idx(std::string(sym.name()));
 }
 
 int64_t Binary::dynsym_idx(const Symbol& sym) const {
-  return dynsym_idx(sym.name());
+  return dynsym_idx(std::string(sym.name()));
 }
 
 int64_t Binary::dynsym_idx(const std::string& name) const {
@@ -678,7 +678,7 @@ Relocation& Binary::add_dynamic_relocation(const Relocation& relocation) {
   // Add symbol
   const Symbol* associated_sym = relocation.symbol();
   if (associated_sym != nullptr) {
-    Symbol* inner_sym = get_dynamic_symbol(associated_sym->name());
+    Symbol* inner_sym = get_dynamic_symbol(std::string(associated_sym->name()));
     if (inner_sym == nullptr) {
       inner_sym = &(add_dynamic_symbol(*associated_sym));
     }
@@ -742,7 +742,7 @@ Relocation& Binary::add_pltgot_relocation(const Relocation& relocation) {
   // Add symbol
   const Symbol* associated_sym = relocation.symbol();
   if (associated_sym != nullptr) {
-    Symbol* inner_sym = get_dynamic_symbol(associated_sym->name());
+    Symbol* inner_sym = get_dynamic_symbol(std::string(associated_sym->name()));
     if (inner_sym == nullptr) {
       inner_sym = &(add_dynamic_symbol(*associated_sym));
     }
@@ -844,7 +844,7 @@ LIEF::Binary::symbols_t Binary::get_abstract_symbols() {
   return symbols;
 }
 
-const Section* Binary::get_section(const std::string& name) const {
+const Section* Binary::get_section(std::string_view name) const {
   const auto it_section =
       std::find_if(sections_.begin(), sections_.end(),
                    [&name](const std::unique_ptr<Section>& section) {
@@ -2691,7 +2691,7 @@ LIEF::Binary::functions_t Binary::functions() const {
 
   for (const Symbol& s : symbols()) {
     if (s.type() == Symbol::TYPE::FUNC && s.value() > 0) {
-      Function f{s.name(), s.value()};
+      Function f{std::string(s.name()), s.value()};
       f.size(s.size());
       functions_set.insert(f);
     }
@@ -2748,7 +2748,7 @@ uint64_t Binary::eof_offset() const {
   return last_offset;
 }
 
-std::string Binary::shstrtab_name() const {
+std::string_view Binary::shstrtab_name() const {
   const Header& hdr = header();
   const size_t shstrtab_idx = hdr.section_name_table_idx();
   if (shstrtab_idx < sections_.size()) {
@@ -3394,7 +3394,7 @@ bool Binary::is_targeting_android() const {
     return true;
   }
 
-  const std::string& interp = interpreter();
+  std::string_view interp = interpreter();
 
   if (interp == "/system/bin/linker64" || interp == "/system/bin/linker") {
     return true;
@@ -3473,7 +3473,7 @@ bool Binary::remove_version_requirement(const std::string& libname) {
   auto aux = sym_ver_req->auxiliary_symbols();
   std::transform(aux.begin(), aux.end(), std::inserter(versions, versions.begin()),
                  [](const SymbolVersionAuxRequirement& req) {
-                   return req.name();
+                   return std::string(req.name());
                  });
 
   for (Symbol& sym : dynamic_symbols()) {
@@ -3483,7 +3483,7 @@ bool Binary::remove_version_requirement(const std::string& libname) {
     }
 
     if (const SymbolVersionAux* vers = symver->symbol_version_auxiliary();
-        vers != nullptr && versions.count(vers->name()))
+        vers != nullptr && versions.count(std::string(vers->name())))
     {
       symver->as_global();
     }

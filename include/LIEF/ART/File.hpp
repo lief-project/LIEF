@@ -19,11 +19,11 @@
 
 #include "LIEF/ART/Header.hpp"
 
-#include "LIEF/visibility.h"
 #include "LIEF/Object.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ART {
+
+namespace LIEF::ART {
 class Parser;
 
 class LIEF_API File : public Object {
@@ -50,6 +50,6 @@ class LIEF_API File : public Object {
 };
 
 }
-}
+
 
 #endif

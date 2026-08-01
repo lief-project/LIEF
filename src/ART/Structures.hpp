@@ -16,10 +16,10 @@
 #ifndef LIEF_ART_STRUCTURES_H
 #define LIEF_ART_STRUCTURES_H
 
-#include "LIEF/types.hpp"
 #include "LIEF/ART/enums.hpp"
-#include "LIEF/ART/types.hpp"
 #include "LIEF/ART/java_structures.hpp"
+#include "LIEF/ART/types.hpp"
+#include "LIEF/types.hpp"
 
 
 // ======================

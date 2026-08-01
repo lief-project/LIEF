@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 #include <algorithm>
-#include <set>
 #include <fstream>
 #include <iterator>
+#include <set>
 
 #include "LIEF/ELF/Builder.hpp"
 
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Symbol.hpp"
-#include "LIEF/ELF/Note.hpp"
 
 
 #include "Builder.tcc"

@@ -16,17 +16,19 @@
 #ifndef LIEF_RUNTIME_H
 #define LIEF_RUNTIME_H
 
-#include <LIEF/runtime/Module.hpp>
-#include <LIEF/runtime/Process.hpp>
-#include <LIEF/runtime/Memory.hpp>
-#include <LIEF/runtime/Host.hpp>
-#include <LIEF/runtime/utils.hpp>
-#include <LIEF/runtime/disassembler.hpp>
-#include <LIEF/runtime/assembler.hpp>
+// IWYU pragma: begin_exports
+#include "LIEF/runtime/Host.hpp"
+#include "LIEF/runtime/Memory.hpp"
+#include "LIEF/runtime/Module.hpp"
+#include "LIEF/runtime/Process.hpp"
+#include "LIEF/runtime/assembler.hpp"
+#include "LIEF/runtime/disassembler.hpp"
+#include "LIEF/runtime/utils.hpp"
 
-#include <LIEF/runtime/linux.hpp>
-#include <LIEF/runtime/windows.hpp>
-#include <LIEF/runtime/android.hpp>
-#include <LIEF/runtime/osx.hpp>
+#include "LIEF/runtime/android.hpp"
+#include "LIEF/runtime/linux.hpp"
+#include "LIEF/runtime/osx.hpp"
+#include "LIEF/runtime/windows.hpp"
+// IWYU pragma: end_exports
 
 #endif

@@ -16,11 +16,9 @@
 #define LIEF_ASM_EBPF_OPERAND_IMM_H
 #include "LIEF/asm/ebpf/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace ebpf {
+
 /// Namespace that wraps the different eBPF operands
-namespace operands {
+namespace LIEF::assembly::ebpf::operands {
 
 
 /// This class represents an immediate operand (i.e. a constant)
@@ -43,7 +41,6 @@ class LIEF_API Immediate : public Operand {
   ~Immediate() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

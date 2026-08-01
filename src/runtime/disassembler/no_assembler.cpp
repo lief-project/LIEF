@@ -2,8 +2,8 @@
 #include "LIEF/asm/Instruction.hpp"
 #include "LIEF/runtime/assembler.hpp"
 
-#include "messages.hpp"
 #include "logging.hpp"
+#include "messages.hpp"
 
 namespace LIEF::runtime {
 std::vector<uint8_t> assemble(uint64_t /*addr*/, const std::string& /*Asm*/,

@@ -15,14 +15,15 @@
 #ifndef LIEF_DWARF_TYPE_ENUM_H
 #define LIEF_DWARF_TYPE_ENUM_H
 
+#include "LIEF/DWARF/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/optional.hpp"
-#include "LIEF/DWARF/Type.hpp"
+#include <cstdint>
+#include <optional>
+#include <string>
 
-namespace LIEF {
-namespace dwarf {
-namespace types {
+
+namespace LIEF::dwarf::types {
 
 namespace details {
 class EnumEntry;
@@ -32,8 +33,7 @@ class EnumEntry;
 class LIEF_API Enum : public Type {
   public:
   template<typename... Args,
-           typename = typename std::
-               enable_if<std::is_constructible<Type, Args&&...>::value>::type>
+           typename = std::enable_if_t<std::is_constructible_v<Type, Args&&...>>>
   Enum(Args&&... args) :
     Type(std::forward<Args>(args)...) {}
 
@@ -58,7 +58,7 @@ class LIEF_API Enum : public Type {
     std::string name() const;
 
     /// Enum entry's value (if any)
-    optional<int64_t> value() const;
+    std::optional<int64_t> value() const;
 
     ~Entry();
 
@@ -73,7 +73,7 @@ class LIEF_API Enum : public Type {
   const Type* underlying_type() const LIEF_LIFETIMEBOUND;
 
   /// Try to find the enum matching the given value
-  optional<Entry> find_entry(int64_t value) const LIEF_LIFETIMEBOUND;
+  std::optional<Entry> find_entry(int64_t value) const LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type) {
     return type->kind() == Type::KIND::ENUM;
@@ -86,6 +86,6 @@ class LIEF_API Enum : public Type {
 };
 
 }
-}
-}
+
+
 #endif

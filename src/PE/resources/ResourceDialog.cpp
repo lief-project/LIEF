@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/resources/ResourceDialog.hpp"
-#include "LIEF/PE/resources/ResourceDialogRegular.hpp"
+#include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/resources/ResourceDialogExtended.hpp"
+#include "LIEF/PE/resources/ResourceDialogRegular.hpp"
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/utils.hpp"
 
-#include "logging.hpp"
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
+#include "logging.hpp"
 
 #include "PE/resources/styles_array.hpp"
 

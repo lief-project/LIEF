@@ -15,10 +15,10 @@
  */
 #include <map>
 
+#include "ART/Structures.hpp"
+#include "LIEF/ART/utils.hpp"
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/ART/utils.hpp"
-#include "ART/Structures.hpp"
 
 #include "internal_utils.hpp"
 

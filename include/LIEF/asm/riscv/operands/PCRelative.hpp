@@ -16,10 +16,8 @@
 #define LIEF_ASM_RISCV_OPERAND_PCREL_H
 #include "LIEF/asm/riscv/Operand.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace riscv {
-namespace operands {
+
+namespace LIEF::assembly::riscv::operands {
 
 /// This class represents a PC-relative operand.
 ///
@@ -41,7 +39,6 @@ class LIEF_API PCRelative : public Operand {
   ~PCRelative() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

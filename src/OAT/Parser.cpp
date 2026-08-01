@@ -18,12 +18,12 @@
 
 #include "LIEF/BinaryStream/VectorStream.hpp"
 
-#include "LIEF/OAT/Parser.hpp"
 #include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/Parser.hpp"
 #include "LIEF/OAT/utils.hpp"
 
-#include "LIEF/VDEX/utils.hpp"
 #include "LIEF/VDEX/Parser.hpp"
+#include "LIEF/VDEX/utils.hpp"
 
 #include "OAT/Structures.hpp"
 
@@ -160,4 +160,4 @@ void Parser::init() {
   }
 }
 
-} // namespace LIEF::OAT
+}

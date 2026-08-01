@@ -17,10 +17,8 @@
 #include "LIEF/asm/aarch64/Operand.hpp"
 #include "LIEF/asm/aarch64/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace aarch64 {
-namespace operands {
+
+namespace LIEF::assembly::aarch64::operands {
 
 /// This class represents a memory operand.
 ///
@@ -97,7 +95,6 @@ class LIEF_API Memory : public Operand {
   ~Memory() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

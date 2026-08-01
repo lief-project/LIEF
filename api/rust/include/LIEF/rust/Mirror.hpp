@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 #pragma once
-#include <string>
-#include <sstream>
-#include <vector>
-#include <memory>
-#include "LIEF/errors.hpp"
-#include "LIEF/optional.hpp"
 #include "LIEF/canbe_unique.hpp"
+#include "LIEF/errors.hpp"
+#include <memory>
+#include <optional>
+#include <sstream>
+#include <string>
+#include <vector>
 
 template<class T>
 class Mirror {
@@ -81,7 +81,7 @@ inline std::unique_ptr<T> try_unique(std::unique_ptr<const V> value) {
 }
 
 template<class T, class V>
-inline std::unique_ptr<T> try_unique(LIEF::optional<V> value) {
+inline std::unique_ptr<T> try_unique(std::optional<V> value) {
   return value ? std::make_unique<T>(std::move(*value)) : nullptr;
 }
 

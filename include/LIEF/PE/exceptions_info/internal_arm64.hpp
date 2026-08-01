@@ -15,8 +15,8 @@
  */
 #ifndef LIEF_PE_UNWIND_CODE_ARM64_INTERNAL_H
 #define LIEF_PE_UNWIND_CODE_ARM64_INTERNAL_H
-#include <cstdint>
 #include <array>
+#include <cstdint>
 
 namespace LIEF::PE::details {
 inline uint32_t xdata_unpacked_rva(uint32_t value) {

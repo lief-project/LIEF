@@ -17,13 +17,14 @@
 
 #include "logging.hpp"
 
-#include "Object.tcc"
 #include "Binary.tcc"
+#include "Object.tcc"
 
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 
+#include "LIEF/MachO/AtomInfo.hpp"
 #include "LIEF/MachO/Binary.hpp"
 #include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/Builder.hpp"
@@ -42,11 +43,10 @@
 #include "LIEF/MachO/EncryptionInfo.hpp"
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/FunctionStarts.hpp"
-#include "LIEF/MachO/FunctionVariants.hpp"
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp"
+#include "LIEF/MachO/IndirectBindingInfo.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/LazyLoadDylibInfo.hpp"
-#include "LIEF/MachO/AtomInfo.hpp"
-#include "LIEF/MachO/IndirectBindingInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
 #include "LIEF/MachO/MainCommand.hpp"
@@ -227,7 +227,8 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   it_const_exported_symbols syms = exported_symbols();
   std::transform(syms.begin(), syms.end(), std::back_inserter(result),
                  [](const Symbol& s) {
-                   return Function(s.name(), s.value(), Function::FLAGS::EXPORTED);
+                   return Function(std::string(s.name()), s.value(),
+                                   Function::FLAGS::EXPORTED);
                  });
   return result;
 }
@@ -237,7 +238,8 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   it_const_imported_symbols syms = imported_symbols();
   std::transform(syms.begin(), syms.end(), std::back_inserter(result),
                  [](const Symbol& s) {
-                   return Function(s.name(), s.value(), Function::FLAGS::IMPORTED);
+                   return Function(std::string(s.name()), s.value(),
+                                   Function::FLAGS::IMPORTED);
                  });
   return result;
 }
@@ -246,7 +248,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
 std::vector<std::string> Binary::get_abstract_imported_libraries() const {
   std::vector<std::string> result;
   for (const DylibCommand& lib : libraries()) {
-    result.push_back(lib.name());
+    result.emplace_back(lib.name());
   }
   return result;
 }
@@ -1410,7 +1412,7 @@ void Binary::remove_section(const std::string& name, bool clear) {
     return;
   }
 
-  remove_section(segment->name(), name, clear);
+  remove_section(std::string(segment->name()), name, clear);
 }
 
 void Binary::remove_section(const std::string& segname, const std::string& secname,
@@ -1994,7 +1996,7 @@ uint64_t Binary::imagebase() const {
   return 0;
 }
 
-std::string Binary::loader() const {
+std::string_view Binary::loader() const {
   if (const DylinkerCommand* cmd = dylinker()) {
     return cmd->name();
   }
@@ -2616,7 +2618,7 @@ ExportInfo* Binary::add_exported_function(uint64_t address,
 const DylibCommand* Binary::find_library(const std::string& name) const {
   auto it = std::find_if(libraries_.begin(), libraries_.end(),
                          [&name](const DylibCommand* cmd) {
-                           const std::string& libpath = cmd->name();
+                           std::string_view libpath = cmd->name();
                            return libpath == name ||
                                   libname(libpath).value_or("") == name;
                          });

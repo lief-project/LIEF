@@ -18,19 +18,19 @@
 #include <memory>
 #include <string>
 
-#include "LIEF/visibility.h"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/iterators.hpp"
-#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
-#include "LIEF/range.hpp"
-#include "LIEF/DWARF/Variable.hpp"
-#include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/LexicalBlock.hpp"
+#include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/asm/Instruction.hpp"
+#include "LIEF/range.hpp"
 
-namespace LIEF {
-namespace dwarf {
+
+namespace LIEF::dwarf {
 
 class Scope;
 class Parameter;
@@ -182,5 +182,5 @@ class LIEF_API Function {
 };
 
 }
-}
+
 #endif

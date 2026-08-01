@@ -16,10 +16,10 @@
 
 #include <fstream>
 
-#include "logging.hpp"
-#include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/Abstract/Binary.hpp"
+#include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "logging.hpp"
 
 
 #if defined(LIEF_OAT_SUPPORT)
@@ -29,22 +29,22 @@
 #endif
 
 #if defined(LIEF_ELF_SUPPORT)
-  #include "LIEF/ELF/utils.hpp"
-  #include "LIEF/ELF/Parser.hpp"
   #include "LIEF/ELF/Binary.hpp"
+  #include "LIEF/ELF/Parser.hpp"
+  #include "LIEF/ELF/utils.hpp"
 #endif
 
 #if defined(LIEF_PE_SUPPORT)
-  #include "LIEF/PE/utils.hpp"
-  #include "LIEF/PE/Parser.hpp"
   #include "LIEF/PE/Binary.hpp"
+  #include "LIEF/PE/Parser.hpp"
+  #include "LIEF/PE/utils.hpp"
 #endif
 
 #if defined(LIEF_MACHO_SUPPORT)
-  #include "LIEF/MachO/utils.hpp"
-  #include "LIEF/MachO/Parser.hpp"
-  #include "LIEF/MachO/FatBinary.hpp"
   #include "LIEF/MachO/Binary.hpp"
+  #include "LIEF/MachO/FatBinary.hpp"
+  #include "LIEF/MachO/Parser.hpp"
+  #include "LIEF/MachO/utils.hpp"
 #endif
 
 

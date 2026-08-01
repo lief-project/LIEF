@@ -18,10 +18,8 @@
 #include "LIEF/asm/x86/Operand.hpp"
 #include "LIEF/asm/x86/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace x86 {
-namespace operands {
+
+namespace LIEF::assembly::x86::operands {
 
 /// This class represents a register operand.
 ///
@@ -45,7 +43,6 @@ class LIEF_API Register : public Operand {
   ~Register() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
   // Modify RUNPATH to add a custom library search directory
   for (DynamicEntry& entry : binary->dynamic_entries()) {
     if (auto* runpath = entry.cast<DynamicEntryRunPath>()) {
-      std::string current = runpath->runpath();
+      std::string current{runpath->runpath()};
       if (!current.empty()) {
         current += ':';
       }

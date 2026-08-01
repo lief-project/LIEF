@@ -14,8 +14,8 @@
  */
 #pragma once
 #include "LIEF/PE/Section.hpp"
-#include "LIEF/rust/COFF/String.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
+#include "LIEF/rust/COFF/String.hpp"
 #include "LIEF/rust/Span.hpp"
 
 class PE_Binary;

@@ -14,8 +14,8 @@
  */
 #pragma once
 
-#include <jni_bind.h>
 #include "jni/lief/generic/Relocation.hpp"
+#include <jni_bind.h>
 
 #include <LIEF/ELF/Relocation.hpp>
 

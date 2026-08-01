@@ -18,16 +18,14 @@
 #include "LIEF/Visitor.hpp"
 #include "LIEF/config.h"
 
-#include "logging.hpp"
 #include "frozen.hpp"
 #include "paging.hpp"
 
+#include "LIEF/Abstract/DebugInfo.hpp"
 #include "LIEF/Abstract/Section.hpp"
 #include "LIEF/Abstract/Symbol.hpp"
-#include "LIEF/Abstract/DebugInfo.hpp"
 
 #include "LIEF/asm/Engine.hpp"
-#include "LIEF/asm/Instruction.hpp"
 
 namespace LIEF {
 

@@ -13,20 +13,20 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 #include "LIEF/rust/ELF/Note.hpp"
+#include "LIEF/rust/Iterator.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/rust/Iterator.hpp"
-#include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
 
 #include "LIEF/ELF/NoteDetails/properties/AArch64Feature.hpp"
 #include "LIEF/ELF/NoteDetails/properties/AArch64PAuth.hpp"
+#include "LIEF/ELF/NoteDetails/properties/Generic.hpp"
 #include "LIEF/ELF/NoteDetails/properties/Needed.hpp"
 #include "LIEF/ELF/NoteDetails/properties/NoteNoCopyOnProtected.hpp"
-#include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"
 #include "LIEF/ELF/NoteDetails/properties/StackSize.hpp"
 #include "LIEF/ELF/NoteDetails/properties/X86Feature.hpp"
-#include "LIEF/ELF/NoteDetails/properties/Generic.hpp"
+#include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"
 
 class ELF_NoteGnuProperty_Property
   : public Mirror<LIEF::ELF::NoteGnuProperty::Property> {

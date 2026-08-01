@@ -16,10 +16,12 @@
 #ifndef LIEF_PE_LOAD_CONFIGURATIONS_H
 #define LIEF_PE_LOAD_CONFIGURATIONS_H
 
-#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+// IWYU pragma: begin_exports
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation.hpp"
 #include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
 #include "LIEF/PE/LoadConfigurations/VolatileMetadata.hpp"
+// IWYU pragma: end_exports
 
 #endif

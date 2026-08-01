@@ -14,9 +14,9 @@
  */
 #pragma once
 
+#include "LIEF/runtime/Process.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
-#include "LIEF/runtime/Process.hpp"
 
 class runtime_Process : private Mirror<LIEF::runtime::Process> {
   public:

@@ -15,21 +15,21 @@
  */
 #include <ostream>
 
+#include "LIEF/MachO/hash.hpp"
 #include "frozen.hpp"
 #include <spdlog/fmt/fmt.h>
-#include "LIEF/MachO/hash.hpp"
 
 #include "LIEF/MachO/LoadCommand.hpp"
 
-#include "LIEF/MachO/DyldInfo.hpp"
-#include "LIEF/MachO/DyldExportsTrie.hpp"
-#include "LIEF/MachO/DyldChainedFixups.hpp"
-#include "LIEF/MachO/DynamicSymbolCommand.hpp"
-#include "LIEF/MachO/SegmentSplitInfo.hpp"
-#include "LIEF/MachO/FunctionStarts.hpp"
-#include "LIEF/MachO/DataInCode.hpp"
-#include "LIEF/MachO/SymbolCommand.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
+#include "LIEF/MachO/DataInCode.hpp"
+#include "LIEF/MachO/DyldChainedFixups.hpp"
+#include "LIEF/MachO/DyldExportsTrie.hpp"
+#include "LIEF/MachO/DyldInfo.hpp"
+#include "LIEF/MachO/DynamicSymbolCommand.hpp"
+#include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/SegmentSplitInfo.hpp"
+#include "LIEF/MachO/SymbolCommand.hpp"
 
 #include "MachO/Structures.hpp"
 

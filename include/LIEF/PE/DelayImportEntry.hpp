@@ -17,14 +17,14 @@
 #define LIEF_PE_DELAY_IMPORT_ENTRY_H
 #include <ostream>
 
+#include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/Abstract/Symbol.hpp"
 
 #include "LIEF/PE/enums.hpp"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class Parser;
 class Builder;
 
@@ -106,6 +106,6 @@ class LIEF_API DelayImportEntry : public LIEF::Symbol {
 };
 
 }
-}
+
 
 #endif

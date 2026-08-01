@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <format>
+#include <optional>
 #include <ranges>
 #include <string>
-#include <string_view>
-#include <format>
 
+#include <LIEF/ELF.hpp>
+#include <LIEF/logging.hpp>
 #include <LIEF/runtime.hpp>
 #include <LIEF/runtime/android.hpp>
-#include <LIEF/runtime/config.h>
 #include <LIEF/runtime/assembler.hpp>
-#include <LIEF/logging.hpp>
-#include <LIEF/ELF.hpp>
+#include <LIEF/runtime/config.h>
 
 #if defined(LIEF_RUNTIME_PLATFORM_ANDROID)
   #include <android/log.h>
@@ -157,18 +158,18 @@ void memory_example() {
   }
 
   struct Config : LIEF::assembly::AssemblerConfig {
-    LIEF::optional<uint64_t> resolve_symbol(const std::string& name) override {
+    std::optional<uint64_t> resolve_symbol(const std::string& name) override {
       std::unique_ptr<LIEF::runtime::android::Module> libc =
           LIEF::runtime::android::dlopen("libc.so");
       if (libc == nullptr) {
         err("Failed to dlopen libc.so");
-        return LIEF::nullopt();
+        return std::nullopt;
       }
 
       if (name == "write") {
         return reinterpret_cast<uintptr_t>(libc->dlsym("write"));
       }
-      return LIEF::nullopt();
+      return std::nullopt;
     }
   } config;
 

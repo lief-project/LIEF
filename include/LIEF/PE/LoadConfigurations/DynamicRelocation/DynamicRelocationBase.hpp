@@ -16,15 +16,15 @@
 #ifndef LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_RELOCATION_H
 #define LIEF_PE_LOAD_CONFIGURATION_DYNAMIC_RELOCATION_H
 
-#include <ostream>
 #include <cstdint>
 #include <memory>
+#include <ostream>
 #include <string>
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class DynamicFixup;
 
 /// This is the base class for any `IMAGE_DYNAMIC_RELOCATION32`,
@@ -104,7 +104,7 @@ class LIEF_API DynamicRelocation {
 
   template<class T>
   T* as() {
-    static_assert(std::is_base_of<DynamicRelocation, T>::value,
+    static_assert(std::is_base_of_v<DynamicRelocation, T>,
                   "Require DynamicRelocation inheritance");
     if (T::classof(this)) {
       return static_cast<T*>(this);
@@ -134,6 +134,6 @@ class LIEF_API DynamicRelocation {
 LIEF_API const char* to_string(DynamicRelocation::IMAGE_DYNAMIC_RELOCATION e);
 
 }
-}
+
 
 #endif

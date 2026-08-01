@@ -16,8 +16,8 @@
 #include "LIEF/ELF/NoteDetails/properties/X86Feature.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
-#include "frozen.hpp"
 #include "fmt_formatter.hpp"
+#include "frozen.hpp"
 
 #include "ELF/NoteDetails/properties/common.hpp"
 

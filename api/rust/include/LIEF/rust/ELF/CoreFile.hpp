@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "LIEF/rust/ELF/Note.hpp"
 #include "LIEF/rust/Iterator.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 
 class ELF_CoreFile_entry : public Mirror<LIEF::ELF::CoreFile::entry_t> {
   public:

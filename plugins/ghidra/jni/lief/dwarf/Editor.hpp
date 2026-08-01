@@ -14,12 +14,12 @@
  */
 #pragma once
 
-#include "jni/mirror.hpp"
 #include "jni/log.hpp"
+#include "jni/mirror.hpp"
 
-#include <jni_bind.h>
 #include <LIEF/Abstract/Binary.hpp>
 #include <LIEF/DWARF/Editor.hpp>
+#include <jni_bind.h>
 
 namespace lief_jni::dwarf {
 

@@ -2,7 +2,7 @@
 #include "DWARF/pyDwarf.hpp"
 #include "pyErr.hpp"
 
-#include "nanobind/extra/stl/lief_optional.h"
+#include <nanobind/stl/optional.h>
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>

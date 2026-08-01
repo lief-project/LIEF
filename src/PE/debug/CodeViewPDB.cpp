@@ -15,9 +15,9 @@
  */
 #include <sstream>
 
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
 #include "LIEF/Visitor.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "internal_utils.hpp"
 
 #include "spdlog/fmt/fmt.h"

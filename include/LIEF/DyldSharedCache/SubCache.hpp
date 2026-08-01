@@ -15,16 +15,16 @@
  */
 #ifndef LIEF_DSC_SUBCACHE_H
 #define LIEF_DSC_SUBCACHE_H
-#include "LIEF/compiler_attributes.hpp"
-#include "LIEF/visibility.h"
-#include "LIEF/iterators.hpp"
 #include "LIEF/DyldSharedCache/uuid.hpp"
+#include "LIEF/compiler_attributes.hpp"
+#include "LIEF/iterators.hpp"
+#include "LIEF/visibility.h"
 
 #include <memory>
 #include <string>
 
-namespace LIEF {
-namespace dsc {
+
+namespace LIEF::dsc {
 class DyldSharedCache;
 
 namespace details {
@@ -111,5 +111,5 @@ class LIEF_API SubCache {
 };
 
 }
-}
+
 #endif

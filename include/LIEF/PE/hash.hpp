@@ -16,11 +16,11 @@
 #ifndef LIEF_PE_HASH_H
 #define LIEF_PE_HASH_H
 
-#include "LIEF/visibility.h"
 #include "LIEF/hash.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 
 class Binary;
 class DosHeader;
@@ -86,8 +86,8 @@ class LIEF_API Hash : public LIEF::Hash {
   public:
   using LIEF::Hash::Hash;
   using LIEF::Hash::hash;
-  using LIEF::Hash::visit;
   using LIEF::Hash::process;
+  using LIEF::Hash::visit;
 
   public:
   void visit(const Binary& Binary) override;
@@ -152,6 +152,6 @@ class LIEF_API Hash : public LIEF::Hash {
 };
 
 }
-}
+
 
 #endif

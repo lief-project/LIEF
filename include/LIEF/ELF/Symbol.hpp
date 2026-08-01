@@ -16,15 +16,15 @@
 #ifndef LIEF_ELF_SYMBOL_H
 #define LIEF_ELF_SYMBOL_H
 
-#include <string>
 #include <ostream>
+#include <string>
 
-#include "LIEF/visibility.h"
 #include "LIEF/Abstract/Symbol.hpp"
 #include "LIEF/ELF/enums.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 class Parser;
 class Binary;
 class SymbolVersion;
@@ -274,5 +274,5 @@ LIEF_API const char* to_string(Symbol::BINDING binding);
 LIEF_API const char* to_string(Symbol::TYPE type);
 LIEF_API const char* to_string(Symbol::VISIBILITY viz);
 }
-}
+
 #endif

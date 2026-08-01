@@ -37,10 +37,10 @@ static_assert(sizeof(Thunk64) == 24);
 static_assert(sizeof(Thunk32) == 12);
 
 template<class T>
-optional<ThreadLocalVariables::Thunk> get_impl(size_t idx,
-                                               span<const uint8_t> buffer) {
+std::optional<ThreadLocalVariables::Thunk> get_impl(size_t idx,
+                                                    span<const uint8_t> buffer) {
   if (idx >= buffer.size() / sizeof(T)) {
-    return nullopt();
+    return std::nullopt;
   }
 
   const uint64_t offset = idx * sizeof(T);
@@ -84,7 +84,8 @@ ThreadLocalVariables::ThreadLocalVariables() :
   type(TYPE::THREAD_LOCAL_VARIABLES);
 }
 
-optional<ThreadLocalVariables::Thunk> ThreadLocalVariables::get(size_t idx) const {
+std::optional<ThreadLocalVariables::Thunk>
+    ThreadLocalVariables::get(size_t idx) const {
   return is_32bit(*this) ? details::get_impl<details::Thunk32>(idx, content()) :
                            details::get_impl<details::Thunk64>(idx, content());
 }

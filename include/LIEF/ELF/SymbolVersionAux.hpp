@@ -16,14 +16,16 @@
 #ifndef LIEF_ELF_SYMBOL_VERSION_AUX_H
 #define LIEF_ELF_SYMBOL_VERSION_AUX_H
 
-#include <string>
+#include <string_view>
 #include <ostream>
+#include <string>
 
 #include "LIEF/Object.hpp"
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace ELF {
+
+namespace LIEF::ELF {
 class Parser;
 
 /// Class which represents an Auxiliary Symbol version
@@ -40,7 +42,7 @@ class LIEF_API SymbolVersionAux : public Object {
   SymbolVersionAux(const SymbolVersionAux&) = default;
 
   /// Symbol's aux name (e.g. ``GLIBC_2.2.5``)
-  const std::string& name() const {
+  std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
 
@@ -61,5 +63,5 @@ class LIEF_API SymbolVersionAux : public Object {
 };
 
 }
-}
+
 #endif

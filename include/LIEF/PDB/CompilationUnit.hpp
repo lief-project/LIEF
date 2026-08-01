@@ -15,18 +15,18 @@
 #ifndef LIEF_PDB_COMPILATION_UNIT_H
 #define LIEF_PDB_COMPILATION_UNIT_H
 #include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
-#include <ostream>
 
-#include "LIEF/iterators.hpp"
 #include "LIEF/DebugDeclOpt.hpp"
 #include "LIEF/PDB/Function.hpp"
+#include "LIEF/iterators.hpp"
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace pdb {
+
+namespace LIEF::pdb {
 class BuildMetadata;
 
 namespace details {
@@ -134,5 +134,5 @@ class LIEF_API CompilationUnit {
 };
 
 }
-}
+
 #endif

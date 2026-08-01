@@ -15,10 +15,11 @@
  */
 #ifndef LIEF_MACHO_CHAINED_PTR_ANALYSIS_H
 #define LIEF_MACHO_CHAINED_PTR_ANALYSIS_H
+#include <cstring>
+#include <functional>
 #include <memory>
 #include <ostream>
-#include <functional>
-#include <cstring>
+#include <variant>
 
 #include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "LIEF/errors.hpp"
@@ -284,9 +285,7 @@ class LIEF_API ChainedPointerAnalysis {
 
   static std::unique_ptr<ChainedPointerAnalysis> from_value(uint64_t value,
                                                             size_t size) {
-    return std::unique_ptr<ChainedPointerAnalysis>(
-        new ChainedPointerAnalysis(value, size)
-    );
+    return std::make_unique<ChainedPointerAnalysis>(value, size);
   }
 
   static size_t stride(DYLD_CHAINED_PTR_FORMAT fmt) {
@@ -453,27 +452,35 @@ class LIEF_API ChainedPointerAnalysis {
   }
 
   struct union_pointer_t {
-    PTR_TYPE type = PTR_TYPE::UNKNOWN;
-    union {
-      dyld_chained_ptr_arm64e_rebase_t arm64e_rebase{};
-      dyld_chained_ptr_arm64e_bind_t arm64e_bind;
-      dyld_chained_ptr_arm64e_auth_rebase_t arm64e_auth_rebase;
-      dyld_chained_ptr_arm64e_auth_bind_t arm64e_auth_bind;
-      dyld_chained_ptr_64_rebase_t ptr_64_rebase;
-      dyld_chained_ptr_arm64e_bind24_t arm64e_bind24;
-      dyld_chained_ptr_arm64e_auth_bind24_t arm64e_auth_bind24;
-      dyld_chained_ptr_64_bind_t ptr_64_bind;
-      dyld_chained_ptr_64_kernel_cache_rebase_t ptr_64_kernel_cache_rebase;
-      dyld_chained_ptr_32_rebase_t ptr_32_rebase;
-      dyld_chained_ptr_32_bind_t ptr_32_bind;
-      dyld_chained_ptr_32_cache_rebase_t ptr_32_cache_rebase;
-      dyld_chained_ptr_32_firmware_rebase_t ptr_32_firmware_rebase;
+    using content_t = std::variant<
+        // clang-format off
+        std::monostate,
+        dyld_chained_ptr_arm64e_rebase_t,
+        dyld_chained_ptr_arm64e_bind_t,
+        dyld_chained_ptr_arm64e_auth_rebase_t,
+        dyld_chained_ptr_arm64e_auth_bind_t,
+        dyld_chained_ptr_64_rebase_t,
+        dyld_chained_ptr_arm64e_bind24_t,
+        dyld_chained_ptr_arm64e_auth_bind24_t,
+        dyld_chained_ptr_64_bind_t,
+        dyld_chained_ptr_64_kernel_cache_rebase_t,
+        dyld_chained_ptr_32_rebase_t,
+        dyld_chained_ptr_32_bind_t,
+        dyld_chained_ptr_32_cache_rebase_t,
+        dyld_chained_ptr_32_firmware_rebase_t,
+        dyld_chained_ptr_arm64e_segmented_rebase_t,
+        dyld_chained_ptr_arm64e_auth_segmented_rebase_t
+        // clang-format on
+    >;
 
-      dyld_chained_ptr_arm64e_segmented_rebase_t ptr_arm64e_segmented_rebase;
-      dyld_chained_ptr_arm64e_auth_segmented_rebase_t
-          ptr_arm64e_auth_segmented_rebase;
-      uint64_t raw;
-    };
+    content_t content;
+    uint64_t raw = 0;
+
+    /// The kind of chained pointer derived from the active alternative.
+    PTR_TYPE type() const {
+      return static_cast<PTR_TYPE>(content.index());
+    }
+
     uint32_t next() const;
 
     result<uint32_t> ordinal() const;
@@ -487,8 +494,6 @@ class LIEF_API ChainedPointerAnalysis {
     friend LIEF_API std::ostream& operator<<(std::ostream& os,
                                              const union_pointer_t& ptr);
   };
-
-  static_assert(sizeof(union_pointer_t) == 16, "Wrong sizeof");
 
   union_pointer_t get_as(DYLD_CHAINED_PTR_FORMAT fmt) const;
 

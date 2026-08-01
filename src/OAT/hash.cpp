@@ -22,9 +22,9 @@
 #include "LIEF/OAT/Header.hpp"
 #include "LIEF/OAT/Method.hpp"
 
-#include "LIEF/DEX/File.hpp"
-#include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/Class.hpp"  // IWYU pragma: keep
+#include "LIEF/DEX/File.hpp"   // IWYU pragma: keep
+#include "LIEF/DEX/Method.hpp" // IWYU pragma: keep
 #include "LIEF/DEX/hash.hpp"
 
 
@@ -107,4 +107,4 @@ void Hash::visit(const Method& meth) {
 }
 
 
-} // namespace LIEF::OAT
+}

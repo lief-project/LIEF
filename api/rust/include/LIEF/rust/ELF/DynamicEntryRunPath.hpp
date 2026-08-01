@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 #pragma once
-#include "LIEF/rust/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
+#include "LIEF/rust/ELF/DynamicEntry.hpp"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 class ELF_DynamicEntryRunPath : public ELF_DynamicEntry {
   public:

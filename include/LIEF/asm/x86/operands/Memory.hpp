@@ -19,10 +19,8 @@
 #include "LIEF/asm/x86/Operand.hpp"
 #include "LIEF/asm/x86/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace x86 {
-namespace operands {
+
+namespace LIEF::assembly::x86::operands {
 
 /// This class represents a memory operand.
 ///
@@ -73,7 +71,6 @@ class LIEF_API Memory : public Operand {
   ~Memory() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

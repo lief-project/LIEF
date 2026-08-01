@@ -14,18 +14,16 @@
  */
 #ifndef LIEF_ASM_MIPS_INST_H
 #define LIEF_ASM_MIPS_INST_H
-#include "LIEF/visibility.h"
 #include "LIEF/compiler_attributes.hpp"
+#include "LIEF/visibility.h"
 
 #include "LIEF/asm/Instruction.hpp"
-#include "LIEF/asm/mips/opcodes.hpp"
 #include "LIEF/asm/mips/Operand.hpp"
+#include "LIEF/asm/mips/opcodes.hpp"
 
-namespace LIEF {
-namespace assembly {
 
 /// Mips architecture-related namespace
-namespace mips {
+namespace LIEF::assembly::mips {
 
 /// This class represents a Mips instruction (including mips64, mips32)
 class LIEF_API Instruction : public assembly::Instruction {
@@ -46,6 +44,6 @@ class LIEF_API Instruction : public assembly::Instruction {
   ~Instruction() override = default;
 };
 }
-}
-}
+
+
 #endif

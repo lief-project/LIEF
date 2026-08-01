@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 #include "LIEF/PE/ExceptionInfo.hpp"
-#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionAArch64.hpp"
+#include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Parser.hpp"
 
 namespace LIEF::PE {
 

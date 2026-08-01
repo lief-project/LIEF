@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include "spdlog/fmt/fmt.h"
+#include <sstream>
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 

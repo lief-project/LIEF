@@ -16,20 +16,20 @@
 #ifndef LIEF_VECTOR_STREAM_H
 #define LIEF_VECTOR_STREAM_H
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
+#include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
 
 namespace LIEF {
 class SpanStream;
 class LIEF_API VectorStream : public BinaryStream {
   public:
-  using BinaryStream::p;
   using BinaryStream::end;
+  using BinaryStream::p;
   using BinaryStream::start;
 
   static result<VectorStream> from_file(const std::string& file);

@@ -17,10 +17,8 @@
 #include "LIEF/asm/mips/Operand.hpp"
 #include "LIEF/asm/mips/registers.hpp"
 
-namespace LIEF {
-namespace assembly {
-namespace mips {
-namespace operands {
+
+namespace LIEF::assembly::mips::operands {
 
 /// This class represents a memory operand.
 ///
@@ -76,7 +74,6 @@ class LIEF_API Memory : public Operand {
   ~Memory() override = default;
 };
 }
-}
-}
-}
+
+
 #endif

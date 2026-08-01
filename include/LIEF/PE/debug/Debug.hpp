@@ -17,15 +17,15 @@
 #ifndef LIEF_PE_DEBUG_H
 #define LIEF_PE_DEBUG_H
 #include <cstdint>
-#include <ostream>
 #include <memory>
+#include <ostream>
 
 #include "LIEF/Object.hpp"
-#include "LIEF/visibility.h"
 #include "LIEF/span.hpp"
+#include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace PE {
+
+namespace LIEF::PE {
 class Parser;
 class Builder;
 class Section;
@@ -122,7 +122,7 @@ class LIEF_API Debug : public Object {
   ~Debug() override = default;
 
   virtual std::unique_ptr<Debug> clone() const {
-    return std::unique_ptr<Debug>(new Debug(*this));
+    return std::make_unique<Debug>(*this);
   }
 
   /// Reserved should be 0
@@ -211,7 +211,7 @@ class LIEF_API Debug : public Object {
 
   template<class T>
   const T* as() const {
-    static_assert(std::is_base_of<Debug, T>::value, "Require Debug inheritance");
+    static_assert(std::is_base_of_v<Debug, T>, "Require Debug inheritance");
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }
@@ -248,5 +248,5 @@ class LIEF_API Debug : public Object {
 LIEF_API const char* to_string(Debug::TYPES e);
 
 }
-}
+
 #endif

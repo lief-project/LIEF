@@ -18,12 +18,12 @@
 
 #include <memory>
 
+#include "LIEF/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
-#include "LIEF/COFF/AuxiliarySymbol.hpp"
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 class Symbol;
 class Parser;
 
@@ -53,7 +53,7 @@ class LIEF_API AuxiliaryCLRToken : public AuxiliarySymbol {
   AuxiliaryCLRToken& operator=(AuxiliaryCLRToken&&) = default;
 
   std::unique_ptr<AuxiliarySymbol> clone() const override {
-    return std::unique_ptr<AuxiliaryCLRToken>(new AuxiliaryCLRToken{*this});
+    return std::make_unique<AuxiliaryCLRToken>(*this);
   }
 
   /// `IMAGE_AUX_SYMBOL_TYPE` which should be `IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF` (1)
@@ -102,5 +102,5 @@ class LIEF_API AuxiliaryCLRToken : public AuxiliarySymbol {
 };
 
 }
-}
+
 #endif

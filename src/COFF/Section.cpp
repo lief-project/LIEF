@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
-#include <spdlog/fmt/fmt.h>
 #include "LIEF/COFF/Section.hpp"
-#include "LIEF/COFF/String.hpp"
-#include "LIEF/COFF/Symbol.hpp"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/COFF/AuxiliarySymbols/AuxiliarySectionDefinition.hpp"
+#include "LIEF/COFF/String.hpp"
+#include "LIEF/COFF/Symbol.hpp"
+#include <spdlog/fmt/fmt.h>
+#include <sstream>
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
@@ -61,42 +61,42 @@ void Section::name(std::string name) {
   name_ = std::move(name);
 }
 
-optional<Section::ComdatInfo> Section::comdat_info() const {
+std::optional<Section::ComdatInfo> Section::comdat_info() const {
   // Implementation following MS documentation:
   // https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#comdat-sections-object-only
   if (!has_characteristic(Section::CHARACTERISTICS::LNK_COMDAT)) {
-    return nullopt();
+    return std::nullopt;
   }
 
   // [...] The first symbol that has the section value of the COMDAT section
   // must be the section symbol
   if (symbols_.size() < 2) {
-    return nullopt();
+    return std::nullopt;
   }
 
   ComdatInfo info;
   {
     const Symbol* sym = symbols_[0];
     if (sym->value() != 0) {
-      return nullopt();
+      return std::nullopt;
     }
 
     if (sym->base_type() != Symbol::BASE_TYPE::TY_NULL) {
-      return nullopt();
+      return std::nullopt;
     }
 
     if (sym->storage_class() != Symbol::STORAGE_CLASS::STATIC) {
-      return nullopt();
+      return std::nullopt;
     }
 
     if (sym->auxiliary_symbols().empty()) {
-      return nullopt();
+      return std::nullopt;
     }
 
     const AuxiliarySymbol& aux = sym->auxiliary_symbols()[0];
     const auto* aux_secdef = aux.as<AuxiliarySectionDefinition>();
     if (aux_secdef == nullptr) {
-      return nullopt();
+      return std::nullopt;
     }
     info.kind = aux_secdef->selection();
   }

@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 #pragma once
-#include <cstdint>
-#include <memory>
 #include "LIEF/PE/Factory.hpp"
 #include "LIEF/rust/PE/Binary.hpp"
 #include "LIEF/rust/PE/Section.hpp"
+#include <cstdint>
+#include <memory>
 
 class PE_Factory {
   public:

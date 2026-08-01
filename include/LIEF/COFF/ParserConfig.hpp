@@ -18,8 +18,8 @@
 
 #include "LIEF/visibility.h"
 
-namespace LIEF {
-namespace COFF {
+
+namespace LIEF::COFF {
 /// Class used to configure the COFF parser
 class LIEF_API ParserConfig {
   public:
@@ -34,5 +34,5 @@ class LIEF_API ParserConfig {
   }
 };
 }
-}
+
 #endif
