@@ -112,7 +112,7 @@ void modules_info() {
   // library from its filepath as the library does not exist on the disk
   std::unique_ptr<LIEF::MachO::Binary> macho_on_disk;
   {
-    LIEF::logging::Scoped disable_logger(LIEF::logging::LEVEL::OFF);
+    LIEF::logging::Scoped disable_logger(LIEF::logging::Level::Off);
     macho_on_disk = libsystem->parse_from_path();
   }
   if (macho_on_disk == nullptr) {
@@ -233,7 +233,7 @@ void memory_example() {
 }
 
 int main(int /*argc*/, char** /*argv*/) {
-  LIEF::logging::Scoped scope(LEVEL::INFO);
+  LIEF::logging::Scoped scope(Level::Info);
   if (!LIEF::runtime::is_enabled()) {
     err("LIEF's runtime is not enabled");
     return EXIT_SUCCESS;

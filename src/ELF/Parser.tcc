@@ -822,7 +822,7 @@ ok_error_t Parser::parse_sections() {
   const bool is_memory_stream = memory_address_ > 0;
   // Sections are usually not mapped so logging errors is not relevant for
   // in-memory parsing
-  logging::Scoped scope(is_memory_stream ? logging::LEVEL::OFF :
+  logging::Scoped scope(is_memory_stream ? logging::Level::Off :
                                            logging::get_level());
 
   stream_->setpos(shdr_offset);

@@ -77,7 +77,7 @@ def modules_info():
     # dyld-shared-cache. Therefore, it's pointless to try to parse the library
     # from its filepath as the library does not exist on the disk.
     macho_on_disk: lief.MachO.Binary | None = None
-    with lief.logging.level_scope(lief.logging.LEVEL.OFF):
+    with lief.logging.level_scope(lief.logging.Level.Off):
         macho_on_disk = libsystem.parse_from_path()
 
     if macho_on_disk is None:

@@ -273,7 +273,7 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
 
         uint64_t __auth_got = bin->get_section("__auth_got")->virtual_address();
         {
-          logging::Scoped Scope(logging::LEVEL::WARN);
+          logging::Scoped Scope(logging::Level::Warn);
           MachO::DyldChainedFixupsCreator()
               .add_binding(__auth_got + 0 * sizeof(uint64_t), "_calloc")
               .add_relocation(__auth_got + 2 * sizeof(uint64_t),

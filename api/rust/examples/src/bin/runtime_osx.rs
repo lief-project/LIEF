@@ -98,7 +98,7 @@ fn modules_info() {
     // the dyld-shared-cache. Therefore, it's pointless to try to parse the
     // library from its filepath as the library does not exist on the disk.
     let macho_on_disk = {
-        let _scoped = lief::logging::Scoped::new(lief::logging::Level::OFF);
+        let _scoped = lief::logging::Scoped::new(lief::logging::Level::Off);
         libsystem.parse_from_path()
     };
     if macho_on_disk.is_none() {

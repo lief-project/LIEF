@@ -6,8 +6,8 @@
 //! ```
 //! use lief::logging;
 //!
-//! logging::set_level(logging::Level::DEBUG);
-//! logging::log(logging::Level::DEBUG, "Hi!");
+//! logging::set_level(logging::Level::Debug);
+//! logging::log(logging::Level::Debug, "Hi!");
 //! ```
 
 use lief_ffi as ffi;
@@ -15,31 +15,30 @@ use lief_ffi as ffi;
 use std::convert::{From, Into};
 use std::path::Path;
 
-#[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 /// The different levels of log
 pub enum Level {
-    OFF,
-    TRACE,
-    DEBUG,
-    INFO,
-    WARN,
-    ERR,
-    CRITICAL,
-    UNKNOWN(u32),
+    Off,
+    Trace,
+    Debug,
+    Info,
+    Warn,
+    Err,
+    Critical,
+    Unknown(u32),
 }
 
 impl From<u32> for Level {
     fn from(value: u32) -> Self {
         match value {
-            0x00000000 => Level::OFF,
-            0x00000001 => Level::TRACE,
-            0x00000002 => Level::DEBUG,
-            0x00000003 => Level::INFO,
-            0x00000004 => Level::WARN,
-            0x00000005 => Level::ERR,
-            0x00000006 => Level::CRITICAL,
-            _ => Level::UNKNOWN(value),
+            0x00000000 => Level::Off,
+            0x00000001 => Level::Trace,
+            0x00000002 => Level::Debug,
+            0x00000003 => Level::Info,
+            0x00000004 => Level::Warn,
+            0x00000005 => Level::Err,
+            0x00000006 => Level::Critical,
+            _ => Level::Unknown(value),
         }
     }
 }
@@ -47,14 +46,14 @@ impl From<u32> for Level {
 impl From<Level> for u32 {
     fn from(value: Level) -> Self {
         match value {
-            Level::OFF => 0x00000000,
-            Level::TRACE => 0x00000001,
-            Level::DEBUG => 0x00000002,
-            Level::INFO => 0x00000003,
-            Level::WARN => 0x00000004,
-            Level::ERR => 0x00000005,
-            Level::CRITICAL => 0x00000006,
-            Level::UNKNOWN(_) => 0x00000003, // INFO
+            Level::Off => 0x00000000,
+            Level::Trace => 0x00000001,
+            Level::Debug => 0x00000002,
+            Level::Info => 0x00000003,
+            Level::Warn => 0x00000004,
+            Level::Err => 0x00000005,
+            Level::Critical => 0x00000006,
+            Level::Unknown(_) => 0x00000003, // Info
         }
     }
 }
@@ -77,7 +76,7 @@ pub fn enable() {
 /// Change the logging level
 ///
 /// ```
-/// set_level(Level::INFO)
+/// set_level(Level::Info)
 /// ```
 pub fn set_level(level: Level) {
     ffi::LIEF_Logging::set_level(level.into())
@@ -111,13 +110,13 @@ pub fn get_level() -> Level {
 /// ```
 /// use lief::logging;
 ///
-/// logging::set_level(logging::Level::INFO);
+/// logging::set_level(logging::Level::Info);
 ///
 /// {
-///     let _scoped = logging::Scoped::new(logging::Level::DEBUG);
-///     // Log level is now DEBUG
+///     let _scoped = logging::Scoped::new(logging::Level::Debug);
+///     // Log level is now Debug
 /// }
-/// // Log level is restored to INFO
+/// // Log level is restored to Info
 /// ```
 pub struct Scoped {
     inner: cxx::UniquePtr<ffi::LIEF_Logging_Scoped>,
@@ -158,27 +157,27 @@ macro_rules! __lief_log {
 #[macro_export]
 macro_rules! log_dbg {
     ($($args:tt)*) => {
-        $crate::__lief_log!(lief::logging::Level::DEBUG, $($args)*)
+        $crate::__lief_log!(lief::logging::Level::Debug, $($args)*)
     };
 }
 
 #[macro_export]
 macro_rules! log_info {
     ($($args:tt)*) => {
-        $crate::__lief_log!(lief::logging::Level::INFO, $($args)*)
+        $crate::__lief_log!(lief::logging::Level::Info, $($args)*)
     };
 }
 
 #[macro_export]
 macro_rules! log_warn {
     ($($args:tt)*) => {
-        $crate::__lief_log!(lief::logging::Level::WARN, $($args)*)
+        $crate::__lief_log!(lief::logging::Level::Warn, $($args)*)
     };
 }
 
 #[macro_export]
 macro_rules! log_err {
     ($($args:tt)*) => {
-        $crate::__lief_log!(lief::logging::Level::ERR, $($args)*)
+        $crate::__lief_log!(lief::logging::Level::Err, $($args)*)
     };
 }

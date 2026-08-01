@@ -62,7 +62,7 @@ impl PatchContext {
     pub fn process(&mut self) -> Result<()> {
         if self.options.get_flag("no-sort") {
             lief::logging::log(
-                lief::logging::Level::WARN,
+                lief::logging::Level::Warn,
                 "--no-sort is not supported by LIEF",
             )
         }
@@ -271,7 +271,7 @@ impl PatchContext {
                         .any(|e| path == e || path.starts_with(e.as_str()))
                 {
                     lief::logging::log(
-                        lief::logging::Level::DEBUG,
+                        lief::logging::Level::Debug,
                         &format!(
                             "removing directory '{path}' from RPATH because of non-allowed prefix"
                         ),
@@ -475,7 +475,7 @@ impl PatchContext {
                     self.modified = true;
                 } else {
                     lief::logging::log(
-                        lief::logging::Level::WARN,
+                        lief::logging::Level::Warn,
                         &format!("Library '{original}' not found"),
                     );
                 }
@@ -490,7 +490,7 @@ impl PatchContext {
             for symname in sym_clear {
                 if let Some(dynsym) = self.elf.dynamic_symbol_by_name(symname) {
                     lief::logging::log(
-                        lief::logging::Level::DEBUG,
+                        lief::logging::Level::Debug,
                         &format!("clearing symbol version for {symname}"),
                     );
                     if let Some(mut symver) = dynsym.symbol_version() {
@@ -499,7 +499,7 @@ impl PatchContext {
                     }
                 } else {
                     lief::logging::log(
-                        lief::logging::Level::INFO,
+                        lief::logging::Level::Info,
                         &format!("Symbol {symname} not found"),
                     );
                 }
@@ -529,13 +529,13 @@ impl PatchContext {
                         self.modified = true;
                     } else {
                         lief::logging::log(
-                            lief::logging::Level::ERR,
+                            lief::logging::Level::Err,
                             &format!("Can't remove {version} in {libname}"),
                         );
                     }
                 } else {
                     lief::logging::log(
-                        lief::logging::Level::ERR,
+                        lief::logging::Level::Err,
                         &format!("Can't find library {libname}"),
                     );
                 }
@@ -992,10 +992,10 @@ fn main() -> Result<()> {
 
     let filenames = filenames.collect::<Vec<_>>();
 
-    lief::logging::set_level(lief::logging::Level::WARN);
+    lief::logging::set_level(lief::logging::Level::Warn);
 
     if matches.get_flag("debug") {
-        lief::logging::set_level(lief::logging::Level::DEBUG);
+        lief::logging::set_level(lief::logging::Level::Debug);
     }
 
     let mut _parser_config = lief::elf::parser_config::Config::default();

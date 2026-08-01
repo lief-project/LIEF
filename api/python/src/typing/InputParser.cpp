@@ -48,7 +48,7 @@ std::unique_ptr<BinaryStream> InputParser::into_stream() {
     return std::make_unique<PyIOStream>(std::move(*stream));
   }
 
-  logging::log(logging::LEVEL::ERR,
+  logging::log(logging::Level::Err,
                "LIEF parser interface does not support this Python object: " +
                type2str(*this));
   return nullptr;

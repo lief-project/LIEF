@@ -3,20 +3,20 @@ import os
 from typing import Iterator, Optional, Union, overload
 
 
-class LEVEL(enum.Enum):
-    OFF = 0
+class Level(enum.Enum):
+    Off = 0
 
-    TRACE = 1
+    Trace = 1
 
-    DEBUG = 2
+    Debug = 2
 
-    CRITICAL = 6
+    Critical = 6
 
-    ERROR = 5
+    Err = 5
 
-    WARN = 4
+    Warn = 4
 
-    INFO = 3
+    Info = 3
 
 class Scoped:
     def __enter__(self) -> Scoped | None: ...
@@ -27,19 +27,19 @@ def disable() -> None: ...
 
 def enable() -> None: ...
 
-def set_level(level: LEVEL) -> None: ...
+def set_level(level: Level) -> None: ...
 
 @overload
-def level_scope(level: LEVEL) -> Scoped: ...
+def level_scope(level: Level) -> Scoped: ...
 
 @overload
-def level_scope(name: str, lvl: LEVEL) -> Scoped: ...
+def level_scope(name: str, lvl: Level) -> Scoped: ...
 
-def get_level() -> LEVEL: ...
+def get_level() -> Level: ...
 
 def set_path(path: Union[str | os.PathLike]) -> None: ...
 
-def log(level: LEVEL, msg: str) -> None: ...
+def log(level: Level, msg: str) -> None: ...
 
 def debug(*msg) -> None: ...
 

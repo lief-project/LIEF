@@ -73,19 +73,19 @@ static std::shared_ptr<spdlog::logger>
   return sink;
 }
 
-LEVEL Logger::get_level() {
+Level Logger::get_level() {
   spdlog::level::level_enum lvl = sink_->level();
   switch (lvl) {
     default:
-    case spdlog::level::level_enum::off: return LEVEL::OFF;
-    case spdlog::level::level_enum::trace: return LEVEL::TRACE;
-    case spdlog::level::level_enum::debug: return LEVEL::DEBUG;
-    case spdlog::level::level_enum::info: return LEVEL::INFO;
-    case spdlog::level::level_enum::warn: return LEVEL::WARN;
-    case spdlog::level::level_enum::err: return LEVEL::ERR;
-    case spdlog::level::level_enum::critical: return LEVEL::CRITICAL;
+    case spdlog::level::level_enum::off: return Level::Off;
+    case spdlog::level::level_enum::trace: return Level::Trace;
+    case spdlog::level::level_enum::debug: return Level::Debug;
+    case spdlog::level::level_enum::info: return Level::Info;
+    case spdlog::level::level_enum::warn: return Level::Warn;
+    case spdlog::level::level_enum::err: return Level::Err;
+    case spdlog::level::level_enum::critical: return Level::Critical;
   }
-  return LEVEL::TRACE;
+  return Level::Trace;
 }
 
 
@@ -124,47 +124,47 @@ void Logger::set_logger(std::shared_ptr<spdlog::logger> logger) {
   sink_->flush_on(spdlog::level::warn);
 }
 
-const char* to_string(LEVEL e) {
+const char* to_string(Level e) {
   switch (e) {
-    case LEVEL::OFF: return "OFF";
-    case LEVEL::TRACE: return "TRACE";
-    case LEVEL::DEBUG: return "DEBUG";
-    case LEVEL::INFO: return "INFO";
-    case LEVEL::ERR: return "ERROR";
-    case LEVEL::WARN: return "WARN";
-    case LEVEL::CRITICAL: return "CRITICAL";
-    default: return "UNDEFINED";
+    case Level::Off: return "Off";
+    case Level::Trace: return "Trace";
+    case Level::Debug: return "Debug";
+    case Level::Info: return "Info";
+    case Level::Err: return "Err";
+    case Level::Warn: return "Warn";
+    case Level::Critical: return "Critical";
+    default: return "Undefined";
   }
-  return "UNDEFINED";
+  return "Undefined";
 }
 
-void Logger::set_level(LEVEL level) {
+void Logger::set_level(Level level) {
   if constexpr (!lief_logging_support) {
     return;
   }
   switch (level) {
-    case LEVEL::OFF:
+    case Level::Off:
     {
       sink_->set_level(spdlog::level::off);
       sink_->flush_on(spdlog::level::off);
       break;
     }
 
-    case LEVEL::TRACE:
+    case Level::Trace:
     {
       sink_->set_level(spdlog::level::trace);
       sink_->flush_on(spdlog::level::trace);
       break;
     }
 
-    case LEVEL::DEBUG:
+    case Level::Debug:
     {
       sink_->set_level(spdlog::level::debug);
       sink_->flush_on(spdlog::level::debug);
       break;
     }
 
-    case LEVEL::INFO:
+    case Level::Info:
     {
       sink_->set_level(spdlog::level::info);
       sink_->flush_on(spdlog::level::info);
@@ -172,21 +172,21 @@ void Logger::set_level(LEVEL level) {
     }
 
     default:
-    case LEVEL::WARN:
+    case Level::Warn:
     {
       sink_->set_level(spdlog::level::warn);
       sink_->flush_on(spdlog::level::warn);
       break;
     }
 
-    case LEVEL::ERR:
+    case Level::Err:
     {
       sink_->set_level(spdlog::level::err);
       sink_->flush_on(spdlog::level::err);
       break;
     }
 
-    case LEVEL::CRITICAL:
+    case Level::Critical:
     {
       sink_->set_level(spdlog::level::critical);
       sink_->flush_on(spdlog::level::critical);
@@ -205,7 +205,7 @@ void enable() {
   Logger::instance().enable();
 }
 
-void set_level(LEVEL level) {
+void set_level(Level level) {
   Logger::instance().set_level(level);
 }
 
@@ -221,31 +221,31 @@ void reset() {
   Logger::instance().reset();
 }
 
-LEVEL get_level() {
+Level get_level() {
   return Logger::instance().get_level();
 }
 
-void log(LEVEL level, const std::string& msg) {
+void log(Level level, const std::string& msg) {
   switch (level) {
-    case LEVEL::OFF: break;
-    case LEVEL::TRACE:
-    case LEVEL::DEBUG:
+    case Level::Off: break;
+    case Level::Trace:
+    case Level::Debug:
     {
       LIEF_DEBUG("{}", msg);
       break;
     }
-    case LEVEL::INFO:
+    case Level::Info:
     {
       LIEF_INFO("{}", msg);
       break;
     }
-    case LEVEL::WARN:
+    case Level::Warn:
     {
       LIEF_WARN("{}", msg);
       break;
     }
-    case LEVEL::CRITICAL:
-    case LEVEL::ERR:
+    case Level::Critical:
+    case Level::Err:
     {
       LIEF_ERR("{}", msg);
       break;
@@ -253,7 +253,7 @@ void log(LEVEL level, const std::string& msg) {
   }
 }
 
-void log(LEVEL level, const std::string& fmt,
+void log(Level level, const std::string& fmt,
          const std::vector<std::string>& args) {
   fmt::dynamic_format_arg_store<fmt::format_context> store;
   for (const std::string& arg : args) {
@@ -264,7 +264,7 @@ void log(LEVEL level, const std::string& fmt,
 }
 
 namespace named {
-LEVEL get_level(const char* name) {
+Level get_level(const char* name) {
   return Logger::instance(name).get_level();
 }
 
@@ -276,7 +276,7 @@ void enable(const char* name) {
   Logger::instance(name).enable();
 }
 
-void set_level(const char* name, LEVEL level) {
+void set_level(const char* name, Level level) {
   Logger::instance(name).set_level(level);
 }
 
@@ -284,15 +284,15 @@ void set_path(const char* name, const std::string& path) {
   Logger::instance(name).set_log_path(path);
 }
 
-void log(const char* name, LEVEL level, const std::string& msg) {
+void log(const char* name, Level level, const std::string& msg) {
   switch (level) {
-    case LEVEL::OFF: return;
-    case LEVEL::TRACE:
-    case LEVEL::DEBUG: return Logger::instance(name).debug("{}", msg);
-    case LEVEL::INFO: return Logger::instance(name).info("{}", msg);
-    case LEVEL::WARN: return Logger::instance(name).warn("{}", msg);
-    case LEVEL::ERR: return Logger::instance(name).err("{}", msg);
-    case LEVEL::CRITICAL: return Logger::instance(name).critial("{}", msg);
+    case Level::Off: return;
+    case Level::Trace:
+    case Level::Debug: return Logger::instance(name).debug("{}", msg);
+    case Level::Info: return Logger::instance(name).info("{}", msg);
+    case Level::Warn: return Logger::instance(name).warn("{}", msg);
+    case Level::Err: return Logger::instance(name).err("{}", msg);
+    case Level::Critical: return Logger::instance(name).critial("{}", msg);
   }
 }
 

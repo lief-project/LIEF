@@ -55,7 +55,7 @@ def test_load_library(tmp_path: Path, fix: MemoryFix):
 
     assert mod.imagebase == lief_module[0].imagebase
 
-    with lief.logging.level_scope(lief.logging.LEVEL.INFO):
+    with lief.logging.level_scope(lief.logging.Level.Info):
         lief.logging.info(f"Imagebase: {mod.imagebase:#010x}")
 
     config = lief.PE.ParserConfig()

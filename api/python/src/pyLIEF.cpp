@@ -110,7 +110,7 @@ void init_python_sink() {
   LIEF::logging::set_logger(spdlog::stderr_python_mt("LIEF"));
 }
 
-template<LIEF::logging::LEVEL lvl>
+template<LIEF::logging::Level lvl>
 void log_impl(nb::args args) {
   std::string msg;
   for (size_t i = 0; i < args.size(); ++i) {
@@ -131,14 +131,14 @@ void init_logger(nb::module_& m) {
   nb::module_ logging = m.def_submodule("logging");
 
   #define PY_ENUM(x) LIEF::logging::to_string(x), x
-  nb::enum_<logging::LEVEL>(logging, "LEVEL")
-    .value(PY_ENUM(logging::LEVEL::OFF))
-    .value(PY_ENUM(logging::LEVEL::TRACE))
-    .value(PY_ENUM(logging::LEVEL::DEBUG))
-    .value(PY_ENUM(logging::LEVEL::CRITICAL))
-    .value(PY_ENUM(logging::LEVEL::ERR))
-    .value(PY_ENUM(logging::LEVEL::WARN))
-    .value(PY_ENUM(logging::LEVEL::INFO));
+  nb::enum_<logging::Level>(logging, "Level")
+    .value(PY_ENUM(logging::Level::Off))
+    .value(PY_ENUM(logging::Level::Trace))
+    .value(PY_ENUM(logging::Level::Debug))
+    .value(PY_ENUM(logging::Level::Critical))
+    .value(PY_ENUM(logging::Level::Err))
+    .value(PY_ENUM(logging::Level::Warn))
+    .value(PY_ENUM(logging::Level::Info));
   #undef PY_ENUM
 
   nb::class_<logging::Scoped>(logging, "Scoped")
@@ -156,22 +156,22 @@ void init_logger(nb::module_& m) {
   logging.def("enable", nb::overload_cast<>(&logging::enable),
               "Enable the logger globally"_doc);
 
-  logging.def("set_level", nb::overload_cast<logging::LEVEL>(&logging::set_level),
+  logging.def("set_level", nb::overload_cast<logging::Level>(&logging::set_level),
               "Change logging level", "level"_a);
 
   logging.def("level_scope",
-    [] (logging::LEVEL lvl) {
+    [] (logging::Level lvl) {
       return std::make_unique<logging::Scoped>(lvl);
     },
     "level"_a, nb::rv_policy::take_ownership,
-    nb::sig("def level_scope(level: LEVEL) -> Scoped")
+    nb::sig("def level_scope(level: Level) -> Scoped")
   );
 
   logging.def("level_scope",
-    [] (const std::string& name, logging::LEVEL lvl) {
+    [] (const std::string& name, logging::Level lvl) {
       return std::make_unique<logging::Scoped>(lvl, name);
     }, "name"_a, "lvl"_a, nb::rv_policy::take_ownership,
-    nb::sig("def level_scope(name: str, lvl: LEVEL) -> Scoped")
+    nb::sig("def level_scope(name: str, lvl: Level) -> Scoped")
   );
 
   logging.def("get_level", nb::overload_cast<>(&logging::get_level),
@@ -182,27 +182,27 @@ void init_logger(nb::module_& m) {
               "path"_a);
 
   logging.def("log",
-              static_cast<void(*)(LIEF::logging::LEVEL, const std::string&)>(&logging::log),
+              static_cast<void(*)(LIEF::logging::Level, const std::string&)>(&logging::log),
               "Log a message with the LIEF's logger"_doc,
               "level"_a, "msg"_a);
 
-  logging.def("debug", &log_impl<logging::LEVEL::DEBUG>,
-    "Log a :attr:`~.LEVEL.DEBUG` message"_doc, "msg"_a);
+  logging.def("debug", &log_impl<logging::Level::Debug>,
+    "Log a :attr:`~.Level.Debug` message"_doc, "msg"_a);
 
-  logging.def("info", &log_impl<logging::LEVEL::INFO>,
-      "Log an :attr:`~.LEVEL.INFO` message"_doc, "args"_a);
+  logging.def("info", &log_impl<logging::Level::Info>,
+      "Log an :attr:`~.Level.Info` message"_doc, "args"_a);
 
-  logging.def("warn", &log_impl<logging::LEVEL::WARN>,
-    "Log a :attr:`~.LEVEL.WARN` message"_doc, "msg"_a);
+  logging.def("warn", &log_impl<logging::Level::Warn>,
+    "Log a :attr:`~.Level.Warn` message"_doc, "msg"_a);
 
-  logging.def("err", &log_impl<logging::LEVEL::ERR>,
-    "Log an :attr:`~.LEVEL.ERROR` message"_doc, "msg"_a);
+  logging.def("err", &log_impl<logging::Level::Err>,
+    "Log an :attr:`~.Level.Err` message"_doc, "msg"_a);
 
-  logging.def("critical", &log_impl<logging::LEVEL::CRITICAL>,
-    "Log an :attr:`~.LEVEL.CRITICAL` message"_doc, "msg"_a);
+  logging.def("critical", &log_impl<logging::Level::Critical>,
+    "Log an :attr:`~.Level.Critical` message"_doc, "msg"_a);
 
   logging.def("enable_debug", nb::overload_cast<>(&logging::enable_debug),
-              "Enable :attr:`~.LEVEL.DEBUG` log level"_doc);
+              "Enable :attr:`~.Level.Debug` log level"_doc);
 
   logging.def("reset", [] {
     logging::reset();

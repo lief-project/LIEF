@@ -23,6 +23,14 @@
     :rust:method:`lief::Binary::from [enum]`
     :py:func:`lief.parse`
 
+.. Logging =====================================================================
+
+.. |lief-logging-level| lief-api:: lief.logging.Level
+
+    :rust:enum:`lief::logging::Level`
+    :py:class:`lief.logging.Level`
+    :cpp:enum:`LIEF::logging::Level`
+
 .. ObjC ==========================================================================
 
 .. |lief-objc-metadata| lief-api:: lief.ObjC.Metadata

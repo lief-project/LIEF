@@ -183,7 +183,7 @@ Header Header::from(const MachO::Binary& macho) {
 
   Header hdr;
   {
-    logging::Scoped scope(logging::LEVEL::OFF);
+    logging::Scoped scope(logging::Level::Off);
     // Disable warning messages when resolving the entrypoint
     hdr.entrypoint_ = macho.entrypoint();
   }

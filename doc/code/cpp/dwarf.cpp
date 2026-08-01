@@ -37,19 +37,19 @@ void iterate() {
   std::unique_ptr<LIEF::dwarf::DebugInfo> dbg;
 
   for (const LIEF::dwarf::CompilationUnit& CU : dbg->compilation_units()) {
-    log(LEVEL::INFO, "Producer: {}", CU.producer());
+    log(Level::Info, "Producer: {}", CU.producer());
     for (const LIEF::dwarf::Function& func : CU.functions()) {
-      log(LEVEL::INFO, "name={}, linkage={}, address={}", func.name(),
+      log(Level::Info, "name={}, linkage={}, address={}", func.name(),
           func.linkage_name(), std::to_string(func.address().value_or(0)));
     }
 
     for (const LIEF::dwarf::Variable& var : CU.variables()) {
-      log(LEVEL::INFO, "name={}, address={}", var.name(),
+      log(Level::Info, "name={}, address={}", var.name(),
           std::to_string(var.address().value_or(0)));
     }
 
     for (const LIEF::dwarf::Type& ty : CU.types()) {
-      log(LEVEL::INFO, "name={}, size={}", ty.name().value_or(""),
+      log(Level::Info, "name={}, size={}", ty.name().value_or(""),
           std::to_string(ty.size().value_or(0)));
     }
   }

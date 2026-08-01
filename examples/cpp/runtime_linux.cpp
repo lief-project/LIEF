@@ -206,7 +206,7 @@ void memory_example() {
 }
 
 int main(int /*argc*/, char** /*argv*/) {
-  LIEF::logging::Scoped scope(LEVEL::INFO);
+  LIEF::logging::Scoped scope(Level::Info);
   if (!LIEF::runtime::is_enabled()) {
     err("LIEF's runtime is not enabled");
     return EXIT_SUCCESS;

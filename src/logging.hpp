@@ -85,9 +85,9 @@ class Logger {
     }
   }
 
-  void set_level(LEVEL level);
+  void set_level(Level level);
 
-  LEVEL get_level();
+  Level get_level();
 
   Logger& set_log_path(const std::string& path);
 
@@ -156,12 +156,12 @@ class Logger {
 
 
 inline void critial(const char* msg) {
-  LIEF::logging::log(LIEF::logging::LEVEL::CRITICAL, msg);
+  LIEF::logging::log(LIEF::logging::Level::Critical, msg);
 }
 
 template<typename... Args>
 void critial(const char* fmt, const Args&... args) {
-  LIEF::logging::log(LIEF::logging::LEVEL::CRITICAL,
+  LIEF::logging::log(LIEF::logging::Level::Critical,
                      fmt::format(fmt::runtime(fmt), args...));
 }
 
@@ -188,39 +188,39 @@ inline void needs_lief_extended() {
 
 class Stream : public std::stringbuf {
   public:
-  Stream(LEVEL lvl) :
+  Stream(Level lvl) :
     lvl_(lvl) {}
 
   protected:
   int sync() override {
     switch (lvl_) {
-      case LEVEL::OFF: break;
+      case Level::Off: break;
 
-      case LEVEL::TRACE:
-      case LEVEL::DEBUG:
+      case Level::Trace:
+      case Level::Debug:
       {
         LIEF_DEBUG("{}", str());
         break;
       }
 
-      case LEVEL::INFO:
+      case Level::Info:
       {
         LIEF_INFO("{}", str());
         break;
       }
 
-      case LEVEL::WARN:
+      case Level::Warn:
       {
         LIEF_WARN("{}", str());
         break;
       }
-      case LEVEL::ERR:
+      case Level::Err:
       {
         LIEF_ERR("{}", str());
         break;
       }
 
-      case LEVEL::CRITICAL:
+      case Level::Critical:
       {
         critical("{}", str());
         break;
@@ -231,7 +231,7 @@ class Stream : public std::stringbuf {
   }
 
   protected:
-  LEVEL lvl_ = LEVEL::OFF;
+  Level lvl_ = Level::Off;
 };
 
 }

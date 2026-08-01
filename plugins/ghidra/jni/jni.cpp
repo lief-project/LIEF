@@ -37,8 +37,8 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 
   LIEF::logging::named::set_level(GHIDRA_LIEF_LOGGER_NAME,
                                   getenv("LIEF_JNI_DEBUG") != nullptr ?
-                                      LIEF::logging::LEVEL::DEBUG :
-                                      LIEF::logging::LEVEL::INFO);
+                                      LIEF::logging::Level::Debug :
+                                      LIEF::logging::Level::Info);
 
   JNIEnv* env = nullptr;
   if (int ret = vm->GetEnv((void**)&env, JNI_VERSION_1_6); ret == JNI_EDETACHED) {

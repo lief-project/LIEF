@@ -34,7 +34,7 @@ def test_load_library():
     module_name = lief_module[0].name
     assert module_name != ""
 
-    with lief.logging.level_scope(lief.logging.LEVEL.DEBUG):
+    with lief.logging.level_scope(lief.logging.Level.Debug):
         mod = lief.runtime.osx.dlopen(lief_module[0].path)
     assert mod is not None
 

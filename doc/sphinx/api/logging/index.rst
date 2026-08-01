@@ -21,15 +21,15 @@ C++
 
 .. doxygenfunction:: LIEF::logging::set_path
 
-.. doxygenfunction:: LIEF::logging::log(LEVEL level, const std::string &fmt, const Args&... args)
+.. doxygenfunction:: LIEF::logging::log(Level level, const std::string &fmt, const Args&... args)
 
-.. doxygenfunction:: LIEF::logging::log(LEVEL level, const std::string &fmt, const std::vector<std::string> &args)
+.. doxygenfunction:: LIEF::logging::log(Level level, const std::string &fmt, const std::vector<std::string> &args)
 
-.. doxygenfunction:: LIEF::logging::log(LEVEL level, const std::string &msg)
+.. doxygenfunction:: LIEF::logging::log(Level level, const std::string &msg)
 
 .. doxygenfunction:: LIEF::logging::reset
 
-.. doxygenenum:: LIEF::logging::LEVEL
+.. doxygenenum:: LIEF::logging::Level
 
 .. doxygenclass:: LIEF::logging::Scoped
 
@@ -60,7 +60,7 @@ Python
 .. autoclass:: lief.logging.Scoped
   :members:
 
-.. autoclass:: lief.logging.LEVEL
+.. autoclass:: lief.logging.Level
 
 Example
 ~~~~~~~

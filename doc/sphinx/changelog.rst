@@ -11,6 +11,8 @@
 
   - **C++17 Migration**: LIEF public headers, public API, and STL have been bumped from C++11 to **C++17**.
   - **C API Removal**: The legacy C API has been completely removed.
+  - **Logging Level Renaming**: |lief-logging-level| and its enumerators are now
+    written in ``CamelCase``
 
 :Assembly:
 

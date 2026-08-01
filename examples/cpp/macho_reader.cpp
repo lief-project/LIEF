@@ -63,7 +63,7 @@ void print_binary(const Binary& binary) {
 }
 
 int main(int argc, char** argv) {
-  LIEF::logging::set_level(LIEF::logging::LEVEL::DEBUG);
+  LIEF::logging::set_level(LIEF::logging::Level::Debug);
   std::cout << "MachO Reader" << '\n';
   if (argc != 2) {
     std::cerr << "Usage: " << argv[0] << " <MachO binary>" << '\n';

@@ -36,6 +36,6 @@
 namespace analysis_plugin {
 inline void enable_debug_log() {
   binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)
-      .set_level(binaryninja::core::Logger::LEVEL::DEBUG);
+      .set_level(binaryninja::core::Logger::Level::Debug);
 }
 }

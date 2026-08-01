@@ -61,7 +61,7 @@ def main() -> int:
     parser.add_argument("file", help="Path to the Mach-O binary")
     args = parser.parse_args()
 
-    lief.logging.set_level(lief.logging.LEVEL.WARN)
+    lief.logging.set_level(lief.logging.Level.Warn)
     return process(args.file, args.skip_protocols, args.output)
 
 

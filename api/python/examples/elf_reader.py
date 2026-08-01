@@ -693,45 +693,45 @@ def main():
         "--debug",
         dest="main_verbosity",
         action="store_const",
-        const=lief.logging.LEVEL.DEBUG,
+        const=lief.logging.Level.Debug,
     )
 
     verbosity.add_argument(
         "--trace",
         dest="main_verbosity",
         action="store_const",
-        const=lief.logging.LEVEL.TRACE,
+        const=lief.logging.Level.Trace,
     )
 
     verbosity.add_argument(
         "--info",
         dest="main_verbosity",
         action="store_const",
-        const=lief.logging.LEVEL.INFO,
+        const=lief.logging.Level.Info,
     )
 
     verbosity.add_argument(
         "--warn",
         dest="main_verbosity",
         action="store_const",
-        const=lief.logging.LEVEL.WARN,
+        const=lief.logging.Level.Warn,
     )
 
     verbosity.add_argument(
         "--err",
         dest="main_verbosity",
         action="store_const",
-        const=lief.logging.LEVEL.ERROR,
+        const=lief.logging.Level.Err,
     )
 
     verbosity.add_argument(
         "--critical",
         dest="main_verbosity",
         action="store_const",
-        const=lief.logging.LEVEL.CRITICAL,
+        const=lief.logging.Level.Critical,
     )
 
-    parser.set_defaults(main_verbosity=lief.logging.LEVEL.WARN)
+    parser.set_defaults(main_verbosity=lief.logging.Level.Warn)
 
     args = parser.parse_args()
 

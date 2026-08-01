@@ -30,6 +30,6 @@
 
 namespace binaryninja::core {
 inline void enable_debug_log() {
-  Logger::instance(BN_PLUGIN_LOG_NAME).set_level(Logger::LEVEL::DEBUG);
+  Logger::instance(BN_PLUGIN_LOG_NAME).set_level(Logger::Level::Debug);
 }
 }

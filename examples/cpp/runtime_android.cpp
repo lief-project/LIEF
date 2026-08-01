@@ -251,7 +251,7 @@ int main(int /*argc*/, char** /*argv*/) {
 #if defined(LIEF_RUNTIME_PLATFORM_ANDROID)
   __android_log_set_logger(__android_log_stderr_logger);
 #endif
-  LIEF::logging::Scoped scope(LEVEL::INFO);
+  LIEF::logging::Scoped scope(Level::Info);
   if (!LIEF::runtime::is_enabled()) {
     err("LIEF's runtime is not enabled");
     return EXIT_SUCCESS;

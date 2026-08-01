@@ -284,7 +284,7 @@ def test_threaded_opcodes(tmp_path: Path):
     assert bindings[81].library.name == "/usr/lib/libSystem.B.dylib"
 
     output_path = f"{tmp_path}/{bin_path.name}"
-    with lief.logging.level_scope(lief.logging.LEVEL.DEBUG):
+    with lief.logging.level_scope(lief.logging.Level.Debug):
         target.write(output_path)
 
     lief.logging.info(output_path)

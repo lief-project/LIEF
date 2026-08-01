@@ -437,13 +437,13 @@ def disable_logging(func):
 
     @wraps(func)
     def without_logging(*args, **kwargs):
-        with lief.logging.level_scope(lief.logging.LEVEL.OFF):
+        with lief.logging.level_scope(lief.logging.Level.Off):
             return func(*args, **kwargs)
 
     return without_logging
 
 
-def lief_logging(level: lief.logging.LEVEL):
+def lief_logging(level: lief.logging.Level):
     """
     Decorator to change the log level within the scope of the function
     """

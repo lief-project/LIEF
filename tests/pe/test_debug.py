@@ -164,7 +164,7 @@ def test_code_view_pdb():
     assert cv1.copy() != cv2
 
 
-@lief_logging(lief.logging.LEVEL.DEBUG)
+@lief_logging(lief.logging.Level.Debug)
 def test_repro():
     path = get_sample("PE/test.debug.repro.exe")
 

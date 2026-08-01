@@ -30,14 +30,14 @@ class LIEF_Logging {
     LIEF::logging::enable();
   }
   static auto set_level(uint32_t lvl) {
-    LIEF::logging::set_level(LIEF::logging::LEVEL(lvl));
+    LIEF::logging::set_level(LIEF::logging::Level(lvl));
   }
   static auto set_path(const std::string& path) {
     LIEF::logging::set_path(path);
   }
 
   static auto log(uint32_t lvl, const std::string& msg) {
-    LIEF::logging::log(LIEF::logging::LEVEL(lvl), msg);
+    LIEF::logging::log(LIEF::logging::Level(lvl), msg);
   }
 
   static auto get_level() {
@@ -56,7 +56,7 @@ class LIEF_Logging_Scoped {
   }
 
   auto set_level(uint32_t lvl) const {
-    scoped_.set_level(LIEF::logging::LEVEL(lvl));
+    scoped_.set_level(LIEF::logging::Level(lvl));
   }
 
   auto reset() {
@@ -67,7 +67,7 @@ class LIEF_Logging_Scoped {
 
   private:
   explicit LIEF_Logging_Scoped(uint32_t lvl) :
-    scoped_(LIEF::logging::LEVEL(lvl)) {}
+    scoped_(LIEF::logging::Level(lvl)) {}
 
-  LIEF::logging::Scoped scoped_{LIEF::logging::LEVEL::INFO};
+  LIEF::logging::Scoped scoped_{LIEF::logging::Level::Info};
 };
