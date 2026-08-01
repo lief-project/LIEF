@@ -38,6 +38,26 @@ class LIEF_API Instruction : public assembly::Instruction {
   /// Iterator over the operands of the current instruction
   operands_it operands() const LIEF_LIFETIMEBOUND;
 
+  /// True if this instruction has a `LOCK` prefix
+  bool has_lock_prefix() const;
+
+  /// True if the `LOCK` prefix is architecturally valid on this instruction
+  bool is_lockable() const;
+
+  /// True if this instruction executes as an atomic read-modify-write
+  bool is_atomic() const;
+
+  /// Re-encoded copy of this instruction with a `LOCK` prefix added.
+  ///
+  /// If the instruction already has a `LOCK` prefix, it returns a plain copy.
+  std::unique_ptr<Instruction> lock() const;
+
+  /// Re-encoded copy of this instruction with the `LOCK` prefix removed.
+  ///
+  /// If the instruction does not have a `LOCK` prefix, it returns a plain copy
+  /// or a nullptr if the `LOCK` semantic can't be removed.
+  std::unique_ptr<Instruction> unlock() const;
+
   /// True if `inst` is an **effective** instance of x86::Instruction
   static bool classof(const assembly::Instruction* inst);
 

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import lief
 
 
@@ -90,3 +88,14 @@ def dwarf_function() -> None:
     for inst in main.instructions:
         print(inst)
     # lief-doc: dwarf-func-end
+
+
+def x86_lock(inst: lief.assembly.x86.Instruction) -> None:
+    # lief-doc: x86-lock-start
+    inst: lief.assembly.x86.Instruction
+
+    if inst.has_lock_prefix or inst.is_atomic:
+        print(f"{inst} is atomic")
+    elif inst.is_lockable and (locked := inst.lock() is not None):
+        print(f"atomic version of {inst}: {locked}")
+    # lief-doc: x86-lock-end

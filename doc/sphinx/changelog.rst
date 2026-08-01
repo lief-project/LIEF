@@ -12,6 +12,16 @@
   - **C++17 Migration**: LIEF public headers, public API, and STL have been bumped from C++11 to **C++17**.
   - **C API Removal**: The legacy C API has been completely removed.
 
+:Assembly:
+
+  * Add API to inspect and rewrite the ``LOCK`` prefix of x86 instructions:
+
+    - |lief-assembly-x86-Instruction-has_lock_prefix|
+    - |lief-assembly-x86-Instruction-is_lockable|
+    - |lief-assembly-x86-Instruction-is_atomic|
+    - |lief-assembly-x86-Instruction-lock|
+    - |lief-assembly-x86-Instruction-unlock|
+
 1.0.0 - July 12th, 2026
 -----------------------
 

@@ -12,6 +12,11 @@ pub mod ffi {
         fn classof(inst: &asm_Instruction) -> bool;
         fn opcode(self: &asm_x86_Instruction) -> u64;
         fn operands(self: &asm_x86_Instruction) -> UniquePtr<asm_x86_Instruction_it_operands>;
+        fn has_lock_prefix(self: &asm_x86_Instruction) -> bool;
+        fn is_lockable(self: &asm_x86_Instruction) -> bool;
+        fn is_atomic(self: &asm_x86_Instruction) -> bool;
+        fn lock(self: &asm_x86_Instruction) -> UniquePtr<asm_x86_Instruction>;
+        fn unlock(self: &asm_x86_Instruction) -> UniquePtr<asm_x86_Instruction>;
 
         type asm_x86_Instruction_it_operands;
 

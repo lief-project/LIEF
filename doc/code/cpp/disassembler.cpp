@@ -8,6 +8,7 @@
 #include <LIEF/PE.hpp>
 #include <LIEF/asm/Instruction.hpp>
 #include <LIEF/asm/riscv/Instruction.hpp>
+#include <LIEF/asm/x86/Instruction.hpp>
 
 void disassemble() {
   // lief-doc: disassemble-start
@@ -50,4 +51,18 @@ void dwarf_function() {
     }
   }
   // lief-doc: dwarf-func-end
+}
+
+void x86_lock() {
+  // lief-doc: x86-lock-start
+  std::unique_ptr<LIEF::assembly::x86::Instruction> inst;
+
+  if (inst->has_lock_prefix() || inst->is_atomic()) {
+    std::cout << inst->to_string() << " is atomic\n";
+  } else if (inst->is_lockable()) {
+    if (auto locked = inst->lock()) {
+      std::cout << "atomic version: " << locked->to_string() << '\n';
+    }
+  }
+  // lief-doc: x86-lock-end
 }

@@ -51,6 +51,18 @@ fn process_instruction(inst: &lief::assembly::Instructions) {
         Instructions::X86(variant) => {
             //println!("{}", inst.to_string());
             format!("{:?}", variant.opcode());
+            format!(
+                "{:?} {:?} {:?}",
+                variant.has_lock_prefix(),
+                variant.is_lockable(),
+                variant.is_atomic()
+            );
+            if let Some(locked) = variant.lock() {
+                format!("{}", locked.to_string());
+            }
+            if let Some(unlocked) = variant.unlock() {
+                format!("{}", unlocked.to_string());
+            }
             for op in variant.operands() {
                 format!("{}", op.to_string());
                 match op {

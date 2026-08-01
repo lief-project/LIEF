@@ -2,7 +2,7 @@ use lief_ffi as ffi;
 
 use super::Opcode;
 use crate::assembly;
-use crate::common::FromFFI;
+use crate::common::{FromFFI, into_optional};
 
 use crate::assembly::x86;
 use crate::declare_fwd_iterator;
@@ -40,6 +40,36 @@ impl Instruction {
     /// Return an iterator over the [`x86::Operands`] operands
     pub fn operands(&self) -> Operands<'_> {
         Operands::new(self.ptr.operands())
+    }
+
+    /// True if this instruction has a `LOCK` prefix
+    pub fn has_lock_prefix(&self) -> bool {
+        self.ptr.has_lock_prefix()
+    }
+
+    /// True if the `LOCK` prefix is architecturally valid on this instruction
+    pub fn is_lockable(&self) -> bool {
+        self.ptr.is_lockable()
+    }
+
+    /// True if this instruction executes as an atomic read-modify-write
+    pub fn is_atomic(&self) -> bool {
+        self.ptr.is_atomic()
+    }
+
+    /// Re-encoded copy of this instruction with a `LOCK` prefix added.
+    ///
+    /// If the instruction already has a `LOCK` prefix, it returns a plain copy.
+    pub fn lock(&self) -> Option<Instruction> {
+        into_optional(self.ptr.lock())
+    }
+
+    /// Re-encoded copy of this instruction with the `LOCK` prefix removed.
+    ///
+    /// If the instruction does not have a `LOCK` prefix, it returns a plain
+    /// copy or `None` if the `LOCK` semantic can't be removed.
+    pub fn unlock(&self) -> Option<Instruction> {
+        into_optional(self.ptr.unlock())
     }
 }
 

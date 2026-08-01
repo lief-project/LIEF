@@ -124,6 +124,45 @@ over an instruction's operands:
 You can check the documentation of these architectures for more details about
 the exposed API.
 
+x86/x86-64
+**********
+
+On x86/x86-64, |lief-asm-x86-instruction| also exposes an API to inspect and
+rewrite the ``LOCK`` prefix of an instruction:
+
+- |lief-assembly-x86-Instruction-has_lock_prefix|
+- |lief-assembly-x86-Instruction-is_lockable|
+- |lief-assembly-x86-Instruction-is_atomic|
+- |lief-assembly-x86-Instruction-lock|
+- |lief-assembly-x86-Instruction-unlock|
+
+.. tabs::
+
+   .. tab:: :fa:`brands fa-python` Python
+
+      .. literalinclude:: ../../../code/python/disassembler.py
+        :language: python
+        :prepend: import lief
+        :start-after: lief-doc: x86-lock-start
+        :end-before: lief-doc: x86-lock-end
+        :dedent:
+
+   .. tab:: :fa:`regular fa-file-code` C++
+
+      .. literalinclude:: ../../../code/cpp/disassembler.cpp
+        :language: cpp
+        :start-after: lief-doc: x86-lock-start
+        :end-before: lief-doc: x86-lock-end
+        :dedent:
+
+   .. tab:: :fa:`brands fa-rust` Rust
+
+      .. literalinclude:: ../../../code/rust/src/disassembler.rs
+        :language: rust
+        :start-after: lief-doc: x86-lock-start
+        :end-before: lief-doc: x86-lock-end
+        :dedent:
+
 Use Cases
 *********
 

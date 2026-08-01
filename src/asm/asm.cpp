@@ -405,6 +405,26 @@ x86::OPCODE x86::Instruction::opcode() const {
   return x86::OPCODE::INSTRUCTION_LIST_END;
 }
 
+bool x86::Instruction::has_lock_prefix() const {
+  return false;
+}
+
+bool x86::Instruction::is_lockable() const {
+  return false;
+}
+
+bool x86::Instruction::is_atomic() const {
+  return false;
+}
+
+std::unique_ptr<x86::Instruction> x86::Instruction::lock() const {
+  return nullptr;
+}
+
+std::unique_ptr<x86::Instruction> x86::Instruction::unlock() const {
+  return nullptr;
+}
+
 bool x86::Instruction::classof(const assembly::Instruction*) {
   return false;
 }

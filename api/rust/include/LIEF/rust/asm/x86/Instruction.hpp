@@ -23,6 +23,7 @@
 class asm_x86_Instruction : public asm_Instruction {
   public:
   using lief_t = LIEF::assembly::x86::Instruction;
+  using asm_Instruction::asm_Instruction;
 
   class it_operands
     : public ForwardIterator<asm_x86_Operand,
@@ -45,6 +46,30 @@ class asm_x86_Instruction : public asm_Instruction {
 
   auto operands() const {
     return std::make_unique<it_operands>(impl());
+  }
+
+  auto has_lock_prefix() const {
+    return impl().has_lock_prefix();
+  }
+
+  auto is_lockable() const {
+    return impl().is_lockable();
+  }
+
+  auto is_atomic() const {
+    return impl().is_atomic();
+  }
+
+  auto lock() const {
+    return details::try_unique<asm_x86_Instruction>(
+        impl().lock()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
+  auto unlock() const {
+    return details::try_unique<asm_x86_Instruction>(
+        impl().unlock()
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
   }
 
   static auto classof(const asm_Instruction& inst) {

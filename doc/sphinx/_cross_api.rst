@@ -1371,6 +1371,36 @@
     :py:attr:`lief.assembly.riscv.Instruction.operands`
     :cpp:func:`LIEF::assembly::riscv::Instruction::operands`
 
+.. |lief-assembly-x86-Instruction-has_lock_prefix| lief-api:: lief.assembly.x86.Instruction.has_lock_prefix()
+
+    :rust:method:`lief::assembly::x86::Instruction::has_lock_prefix [struct]`
+    :py:attr:`lief.assembly.x86.Instruction.has_lock_prefix`
+    :cpp:func:`LIEF::assembly::x86::Instruction::has_lock_prefix`
+
+.. |lief-assembly-x86-Instruction-is_lockable| lief-api:: lief.assembly.x86.Instruction.is_lockable()
+
+    :rust:method:`lief::assembly::x86::Instruction::is_lockable [struct]`
+    :py:attr:`lief.assembly.x86.Instruction.is_lockable`
+    :cpp:func:`LIEF::assembly::x86::Instruction::is_lockable`
+
+.. |lief-assembly-x86-Instruction-is_atomic| lief-api:: lief.assembly.x86.Instruction.is_atomic()
+
+    :rust:method:`lief::assembly::x86::Instruction::is_atomic [struct]`
+    :py:attr:`lief.assembly.x86.Instruction.is_atomic`
+    :cpp:func:`LIEF::assembly::x86::Instruction::is_atomic`
+
+.. |lief-assembly-x86-Instruction-lock| lief-api:: lief.assembly.x86.Instruction.lock()
+
+    :rust:method:`lief::assembly::x86::Instruction::lock [struct]`
+    :py:meth:`lief.assembly.x86.Instruction.lock`
+    :cpp:func:`LIEF::assembly::x86::Instruction::lock`
+
+.. |lief-assembly-x86-Instruction-unlock| lief-api:: lief.assembly.x86.Instruction.unlock()
+
+    :rust:method:`lief::assembly::x86::Instruction::unlock [struct]`
+    :py:meth:`lief.assembly.x86.Instruction.unlock`
+    :cpp:func:`LIEF::assembly::x86::Instruction::unlock`
+
 .. Runtime ====================================================================
 
 .. |lief-runtime-host| lief-api:: lief.runtime.Host

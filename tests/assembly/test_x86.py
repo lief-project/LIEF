@@ -214,3 +214,79 @@ def test_x86_semnatic_info():
     inst = next(pe.disassemble_from_bytes(pe.assemble(0x140200000, "movq mm1, mm2")))
     assert inst is not None
     assert inst.is_bitcast
+
+
+def test_x86_lock_prefix():
+    pe = parse_pe("PE/ntoskrnl.exe")
+
+    def disassemble(asm: str) -> lief.assembly.x86.Instruction:
+        inst = next(
+            pe.disassemble_from_bytes(pe.assemble(0x140200000, asm), 0x140200000)
+        )
+        assert isinstance(inst, lief.assembly.x86.Instruction)
+        return inst
+
+    inst = disassemble("add dword ptr [rax], ebx")
+    assert not inst.has_lock_prefix
+    assert inst.is_lockable
+    assert not inst.is_atomic
+
+    locked = inst.lock()
+    assert locked is not None
+    assert isinstance(locked, lief.assembly.x86.Instruction)
+    assert locked.has_lock_prefix
+    assert locked.is_atomic
+    assert locked.to_string() == "0x140200000: lock add dword ptr [rax], ebx"
+    assert bytes(locked.raw) == b"\xf0\x01\x18"
+
+    unlocked = inst.unlock()
+    assert unlocked is not None
+    assert not unlocked.has_lock_prefix
+    assert bytes(unlocked.raw) == bytes(inst.raw)
+
+    inst = next(pe.disassemble_from_bytes(b"\xf0\x01\x18", 0x140200000))
+    assert inst is not None
+    assert isinstance(inst, lief.assembly.x86.Instruction)
+    assert inst.to_string() == "0x140200000: lock add dword ptr [rax], ebx"
+    assert inst.has_lock_prefix
+    assert inst.is_lockable
+    assert inst.is_atomic
+
+    relocked = inst.lock()
+    assert relocked is not None
+    assert relocked.has_lock_prefix
+    assert bytes(relocked.raw) == bytes(inst.raw)
+
+    unlocked = inst.unlock()
+    assert unlocked is not None
+    assert not unlocked.has_lock_prefix
+    assert not unlocked.is_atomic
+    assert unlocked.to_string() == "0x140200000: add dword ptr [rax], ebx"
+    assert bytes(unlocked.raw) == b"\x01\x18"
+
+    inst = disassemble("xchg dword ptr [rax], ebx")
+    assert not inst.has_lock_prefix
+    assert inst.is_lockable
+    assert inst.is_atomic
+
+    inst = disassemble("xchg ebx, ecx")
+    assert not inst.has_lock_prefix
+    assert not inst.is_lockable
+    assert not inst.is_atomic
+    assert inst.lock() is None
+
+    inst = disassemble("cmpxchg qword ptr [rdi], rcx")
+    assert not inst.has_lock_prefix
+    assert inst.is_lockable
+    assert not inst.is_atomic
+
+    locked = inst.lock()
+    assert locked is not None
+    assert locked.is_atomic
+    assert bytes(locked.raw) == b"\xf0\x48\x0f\xb1\x0f"
+
+    inst = disassemble("mov rax, rbx")
+    assert not inst.has_lock_prefix
+    assert not inst.is_lockable
+    assert not inst.is_atomic
+    assert inst.lock() is None
