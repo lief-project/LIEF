@@ -4,6 +4,7 @@
 #include "logging.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/Segment.hpp"
 

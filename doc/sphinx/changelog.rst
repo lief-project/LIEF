@@ -24,6 +24,20 @@
     - |lief-assembly-x86-Instruction-lock|
     - |lief-assembly-x86-Instruction-unlock|
 
+:ELF:
+
+  * Fix the layout of the segments added by LIEF for the architectures that
+    can use pages larger than 4K (:issue:`1366`)
+  * Fix the modification of binaries that have already been modified by LIEF.
+    The segment table was relocated a second time which, for the non-PIE
+    binaries, shifted the sections without shifting the segments nor the
+    dynamic entries. It resulted in a ``DT_STRTAB`` that was no longer pointing
+    to ``.dynstr`` (i.e. garbage ``DT_NEEDED``/``DT_RUNPATH`` names) and in a
+    ``PT_PHDR`` that was not wrapped by a ``PT_LOAD`` segment (:issue:`1366`).
+  * |lief-elf-check_layout| now reports the ``PT_LOAD`` segments that can't be
+    mapped independently because they share the same page. It also report
+    mismatch between ``.dynstr`` virtual address and ``DT_STRTAB``.
+
 :COFF:
 
   * Add |lief-coff-binary-get_section| to look up a section by its name. Names

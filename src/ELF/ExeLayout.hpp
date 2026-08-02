@@ -851,10 +851,51 @@ class LIEF_LOCAL ExeLayout : public Layout {
   }
 
   result<bool> relocate() {
+    const bool needs_interp =
+        interp_size_ > 0 && !binary_->has(Segment::TYPE::INTERP);
+
+    uint64_t read_segment = interp_size_ + sysv_size_ + dynsym_size_ + sver_size_ +
+                            sverd_size_ + sverr_size_ + dynamic_reloc_size_ +
+                            pltgot_reloc_size_;
+    if (relocate_relr_) {
+      read_segment += raw_relr_.size();
+    }
+
+    if (relocate_android_rela_) {
+      read_segment += raw_android_rela_.size();
+    }
+
+    if (relocate_notes_) {
+      read_segment += raw_notes_.size();
+    }
+
+    if (relocate_dynstr_) {
+      read_segment += raw_dynstr_.size();
+    }
+
+    if (relocate_gnu_hash_) {
+      read_segment += raw_gnu_hash_.size();
+    }
+
+    const uint64_t read_write_segment =
+        init_size_ + preinit_size_ + fini_size_ + dynamic_size_;
+
+    const size_t required_segments = static_cast<size_t>(needs_interp) +
+                                     static_cast<size_t>(read_segment > 0) +
+                                     static_cast<size_t>(read_write_segment > 0);
+    if (required_segments > 0 &&
+        binary_->relocate_phdr_table_auto(required_segments) == 0)
+    {
+      LIEF_ERR("Unable to reserve {} program headers before relocating the "
+               "executable layout",
+               required_segments);
+      return make_error_code(lief_errors::build_error);
+    }
+
     /* PT_INTERP segment (optional)
      *
      */
-    if (interp_size_ > 0 && !binary_->has(Segment::TYPE::INTERP)) {
+    if (needs_interp) {
       Segment interp_segment;
       interp_segment.alignment(0x8);
       interp_segment.type(Segment::TYPE::INTERP);
@@ -883,29 +924,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
      *    .relr.dyn
      * Perm: READ ONLY
      */
-    uint64_t read_segment = interp_size_ + sysv_size_ + dynsym_size_ + sver_size_ +
-                            sverd_size_ + sverr_size_ + dynamic_reloc_size_ +
-                            pltgot_reloc_size_;
-    if (relocate_relr_) {
-      read_segment += raw_relr_.size();
-    }
-
-    if (relocate_android_rela_) {
-      read_segment += raw_android_rela_.size();
-    }
-
-    if (relocate_notes_) {
-      read_segment += raw_notes_.size();
-    }
-
-    if (relocate_dynstr_) {
-      read_segment += raw_dynstr_.size();
-    }
-
-    if (relocate_gnu_hash_) {
-      read_segment += raw_gnu_hash_.size();
-    }
-
     Segment* new_rsegment = nullptr;
 
     if (read_segment > 0) {
@@ -933,9 +951,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
      *  .got.plt
      * Perm: READ | WRITE
      */
-    const uint64_t read_write_segment =
-        init_size_ + preinit_size_ + fini_size_ + dynamic_size_;
-
     Segment* new_rwsegment = nullptr;
     Segment rwsegment;
     if (read_write_segment > 0) {

@@ -40,7 +40,8 @@ def test_issue_671(tmp_path: Path):
     phdr_seg = built.get(lief.ELF.Segment.TYPE.PHDR)
     assert phdr_seg is not None
     assert phdr_seg.file_offset == 0x3000
-    assert phdr_seg.physical_size == 0x1F8
+    # PT_PHDR describes the whole area reserved for the segment table
+    assert phdr_seg.physical_size == 0x460
     assert phdr_seg.virtual_address == 0x403000
 
     if is_linux() and is_x86_64():

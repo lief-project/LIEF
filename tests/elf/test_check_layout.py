@@ -1,5 +1,11 @@
+import subprocess
+import sys
+from pathlib import Path
+from textwrap import dedent
+
 import lief
-from utils import get_sample
+import pytest
+from utils import get_sample, parse_elf
 
 
 def test_basic():
@@ -52,6 +58,28 @@ def test_dynamic_relasz():
         )  # depending on which check hits first
 
 
+def test_page_sharing():
+    # This binary has a layout for 64KB pages: two PT_LOAD segments that end up
+    # in the same 64KB page can't be mapped independently (cf. issue #1366)
+    elf = parse_elf("ELF/hello_aarch64_attr")
+    res, err = lief.ELF.check_layout(elf)
+    assert res, err
+
+    loads = [s for s in elf.segments if s.type == lief.ELF.Segment.TYPE.LOAD]
+
+    assert loads[0].alignment == 0x10000
+    assert loads[0].virtual_address + loads[0].virtual_size < 0x10000
+    assert loads[1].virtual_address > 0x10000
+
+    # Expand the first segment in the page of the second one. Note that both
+    # are still disjoint in memory.
+    loads[0].virtual_size = 0x10100
+
+    res, err = lief.ELF.check_layout(elf)
+    assert not res
+    assert "share the same page" in err
+
+
 def test_pt_phdr_wrap():
     sample = get_sample("ELF/ELF64_x86-64_binary_ls.bin")
     elf = lief.ELF.parse(sample)
@@ -63,3 +91,20 @@ def test_pt_phdr_wrap():
         res, err = lief.ELF.check_layout(elf)
         assert not res
         assert "PT_PHDR segment is not wrapped" in err
+
+
+@pytest.mark.private
+def test_many_load_segments_perfs():
+    sample = Path(get_sample("private/ELF/load_segments_scaling.elf")).absolute()
+
+    code = dedent("""\
+        import lief
+        import sys
+        elf = lief.ELF.parse(sys.argv[1])
+        assert elf is not None
+        assert len(elf.segments) == 8192
+        elf.header.numberof_segments = 1
+        valid, error = lief.ELF.check_layout(elf)
+        assert valid, error""")
+
+    subprocess.check_call([sys.executable, "-c", code, str(sample)], timeout=30)

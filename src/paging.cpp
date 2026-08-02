@@ -116,6 +116,16 @@ uint32_t get_pagesize(const MachO::Binary& macho) {
 }
 #endif
 
+uint32_t get_max_pagesize(const Binary& bin) {
+#if defined(LIEF_ELF_SUPPORT)
+  if (ELF::Binary::classof(&bin)) {
+    const auto& [common, max] = get_pagesize(*bin.as<ELF::Binary>());
+    return max;
+  }
+#endif
+  return get_pagesize(bin);
+}
+
 uint32_t get_pagesize(const Binary& bin) {
 
 #if defined(LIEF_ELF_SUPPORT)

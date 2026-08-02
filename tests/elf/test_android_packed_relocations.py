@@ -79,17 +79,17 @@ def test_chrome_arm64(tmp_path: Path):
     ]
     assert len(mod_packed_relocs) == 145599
 
-    assert mod_packed_relocs[0].address == 0x6426910 + 0x1000
-    assert mod_packed_relocs[0].addend == 0x6426910 + 0x1000
+    assert mod_packed_relocs[0].address == 0x6426910 + 0x4000
+    assert mod_packed_relocs[0].addend == 0x6426910 + 0x4000
     assert mod_packed_relocs[0].type == lief.ELF.Relocation.TYPE.AARCH64_RELATIVE
 
-    assert mod_packed_relocs[145576].address == 0x65E3598 + 0x1000
+    assert mod_packed_relocs[145576].address == 0x65E3598 + 0x4000
     assert mod_packed_relocs[145576].addend == 0
     assert mod_packed_relocs[145576].symbol is not None
     assert mod_packed_relocs[145576].symbol.name == "memfd_create"
     assert mod_packed_relocs[145576].type == lief.ELF.Relocation.TYPE.AARCH64_GLOB_DAT
 
-    assert mod_packed_relocs[145598].address == 0x6646A48 + 0x1000
+    assert mod_packed_relocs[145598].address == 0x6646A48 + 0x4000
     assert mod_packed_relocs[145598].addend == 0
     assert mod_packed_relocs[145598].symbol is not None
     assert mod_packed_relocs[145598].symbol.name == "ioctl"

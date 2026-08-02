@@ -23,6 +23,7 @@
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 #include "LIEF/ELF/utils.hpp"
+#include "LIEF/utils.hpp"
 
 #include <spdlog/fmt/fmt.h>
 #include <algorithm>
@@ -45,6 +46,7 @@ class LayoutChecker {
   bool check_dynamic();
   bool check_notes();
   bool check_tls();
+  bool check_dyn_strtab();
   bool check_mips_rld_map();
 
   bool check() {
@@ -67,6 +69,9 @@ class LayoutChecker {
       return false;
     }
     if (!check_tls()) {
+      return false;
+    }
+    if (!check_dyn_strtab()) {
       return false;
     }
     return true;
@@ -184,6 +189,9 @@ bool LayoutChecker::check_segments() {
   bool has_pt_load = false;
   auto segments = elf.segments();
 
+  // Granularity at which the loader could map the PT_LOAD segments
+  const uint64_t pagesize = elf.layout_pagesize();
+
   const Segment* pt_phdr = nullptr;
 
   for (size_t i = 0; i < segments.size(); ++i) {
@@ -245,6 +253,30 @@ bool LayoutChecker::check_segments() {
         if (std::max(start1, start2) < std::min(end1, end2)) {
           return error("Segment[{}] and Segment[{}] (PT_LOAD) overlap in memory",
                        i, j);
+        }
+
+        /* The loader maps the segments with a page size granularity, so two
+         * PT_LOAD segments sharing the same page can't be mapped independently:
+         * the last mapping overwrite the previous one.
+         *
+         * This is only checked for the binaries that claim to support pages
+         * larger than the common page size of the architecture. Sharing a
+         * regular page can be intentional for the binaries that are not
+         * demand-paged (e.g. bare-metal images).
+         */
+        if (pagesize > elf.page_size()) {
+          const uint64_t page_start1 = align_down(start1, pagesize);
+          const uint64_t page_end1 = align(end1, pagesize);
+
+          const uint64_t page_start2 = align_down(start2, pagesize);
+          const uint64_t page_end2 = align(end2, pagesize);
+
+          if (std::max(page_start1, page_start2) < std::min(page_end1, page_end2))
+          {
+            return error("Segment[{}] ({:#x}) and Segment[{}] ({:#x}) (PT_LOAD) "
+                         "share the same page (page size: {:#x})",
+                         i, start1, j, start2, pagesize);
+          }
         }
       }
     }
@@ -654,6 +686,24 @@ bool LayoutChecker::check_tls() {
                    "([{:#010x}, {:#010x}])",
                    sym.value(), sym.name(), 0, tls_seg->virtual_size());
     }
+  }
+
+  return true;
+}
+
+
+bool LayoutChecker::check_dyn_strtab() {
+  const DynamicEntry* dt_strtab = elf.get(DynamicEntry::TAG::STRTAB);
+  const Section* dynstr = elf.get_section(".dynstr");
+
+  if (dt_strtab == nullptr || dynstr == nullptr) {
+    return true;
+  }
+  if (dt_strtab->value() != dynstr->virtual_address()) {
+    return error(
+        "DT_STRTAB ({:#06x}) does not match the address of .dynstr ({:#06x})",
+        dt_strtab->value(), dynstr->virtual_address()
+    );
   }
 
   return true;
