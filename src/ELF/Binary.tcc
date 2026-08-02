@@ -516,14 +516,19 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
   uint64_t last_offset =
       std::max<uint64_t>(last_offset_sections, last_offset_segments);
 
-  const auto psize = page_size();
+  const auto psize = layout_pagesize();
   const uint64_t last_offset_aligned = align(last_offset, psize);
   new_segment->file_offset(last_offset_aligned);
 
   init_alignment(*this, *new_segment, this->ptr_size());
 
   if (base == 0) {
-    base = align(next_virtual_address(), new_segment->alignment());
+    uint64_t address_alignment = new_segment->alignment();
+    if (new_segment->is_load()) {
+      address_alignment = std::max<uint64_t>(psize, new_segment->alignment());
+    }
+
+    base = align(next_virtual_address(), address_alignment);
   }
 
   if (segment.virtual_address() == 0) {
@@ -587,9 +592,19 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
 template<>
 Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
                                                      uint64_t base) {
-  const auto psize = page_size();
+  const auto psize = layout_pagesize();
   const auto ptr_size = this->ptr_size();
-  /*const uint64_t new_phdr_offset = */ relocate_phdr_table_auto();
+  const uint64_t new_phdr_offset = relocate_phdr_table_auto();
+
+  if (new_phdr_offset == 0) {
+    LIEF_ERR("Failed to relocate the PHDR table for this binary");
+    return nullptr;
+  }
+
+  if (phdr_reloc_info_.nb_segments == 0) {
+    LIEF_ERR("The segment table is full. We can't add segment");
+    return nullptr;
+  }
 
   std::vector<uint8_t> content = as_vector(segment.content());
 
@@ -622,8 +637,14 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
 
   new_segment->file_offset(last_offset_aligned);
   if (base == 0) {
-    const uint64_t alignment = new_segment->alignment();
-    const uint64_t next_va = next_virtual_address();
+    uint64_t alignment = new_segment->alignment();
+    uint64_t next_va = next_virtual_address();
+
+    if (new_segment->is_load()) {
+      alignment = std::max<uint64_t>(psize, new_segment->alignment());
+      next_va = align(next_virtual_address(), psize);
+    }
+
     uint64_t virtual_address =
         align_down(next_va, alignment) + new_segment->file_offset() % alignment;
     if (virtual_address < next_va) {
@@ -673,6 +694,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
     seg_ptr =
         segments_.insert(segments_.begin() + idx, std::move(new_segment))->get();
   }
+  phdr_reloc_info_.nb_segments--;
   assert(seg_ptr != nullptr);
   return seg_ptr;
 }

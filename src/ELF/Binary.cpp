@@ -54,6 +54,7 @@
 #include "Binary.tcc"
 #include "Object.tcc"
 #include "internal_utils.hpp"
+#include "paging.hpp"
 
 
 namespace LIEF::ELF {
@@ -2767,10 +2768,70 @@ uint64_t Binary::relocate_phdr_table(PHDR_RELOC type) {
   }
 }
 
-uint64_t Binary::relocate_phdr_table_auto() {
-  if (phdr_reloc_info_.new_offset > 0) {
-    // Already relocated
+/* If the segment table has already been relocated (which is the case for the
+ * binaries already processed by LIEF), this area can still have room for the
+ * segments we need to add.
+ */
+uint64_t Binary::reuse_phdr_table() {
+  const Segment* pt_phdr = get(Segment::TYPE::PHDR);
+  if (pt_phdr == nullptr) {
+    return 0;
+  }
+
+  const uint64_t phdr_offset = header_.program_headers_offset();
+
+  // PT_PHDR must describe the current location of the segment table
+  if (pt_phdr->file_offset() != phdr_offset || phdr_offset == 0) {
+    return 0;
+  }
+
+  const uint64_t phdr_size = type() == Header::CLASS::ELF32 ?
+                                 sizeof(details::ELF32::Elf_Phdr) :
+                                 sizeof(details::ELF64::Elf_Phdr);
+
+  const uint64_t used = (uint64_t)header_.numberof_segments() * phdr_size;
+  const uint64_t reserved = pt_phdr->physical_size();
+
+  if (reserved <= used) {
+    return 0;
+  }
+
+  const size_t available = (reserved - used) / phdr_size;
+
+  // The reserved area must be loaded, otherwise the new segments would not be
+  // mapped by the loader
+  const uint64_t phdr_end = phdr_offset + reserved;
+  const bool wrapped =
+      std::any_of(segments_.begin(), segments_.end(),
+                  [phdr_offset, phdr_end](const std::unique_ptr<Segment>& s) {
+                    return s->is_load() && s->file_offset() <= phdr_offset &&
+                           phdr_end <= (s->file_offset() + s->physical_size());
+                  });
+
+  if (!wrapped) {
+    return 0;
+  }
+
+  LIEF_DEBUG("Reusing the current segment table location ({:#x}) which can "
+             "still hold {} segments",
+             phdr_offset, available);
+
+  phdr_reloc_info_.new_offset = phdr_offset;
+  phdr_reloc_info_.nb_segments = available;
+  return phdr_offset;
+}
+
+uint64_t Binary::relocate_phdr_table_auto(size_t required_segments) {
+  if (phdr_reloc_info_.new_offset > 0 &&
+      phdr_reloc_info_.nb_segments >= required_segments)
+  {
     return phdr_reloc_info_.new_offset;
+  }
+
+  if (uint64_t offset = reuse_phdr_table();
+      offset > 0 && phdr_reloc_info_.nb_segments >= required_segments)
+  {
+    return offset;
   }
 
   const bool has_phdr_s = has(Segment::TYPE::PHDR);
@@ -2782,7 +2843,9 @@ uint64_t Binary::relocate_phdr_table_auto() {
 
   uint64_t offset = 0;
   if (is_dyn && (has_phdr_s || has_interp_s || has_soname)) {
-    if (offset = relocate_phdr_table_pie(); offset > 0) {
+    if (offset = relocate_phdr_table_pie();
+        offset > 0 && phdr_reloc_info_.nb_segments >= required_segments)
+    {
       return offset;
     }
     LIEF_ERR("Failed to relocate PHDR table for this PIE binary");
@@ -2790,7 +2853,9 @@ uint64_t Binary::relocate_phdr_table_auto() {
 
   if (is_dyn && !(has_phdr_s || has_interp_s) && !has_ep) {
     // See libm-ubuntu24.so
-    if (offset = relocate_phdr_table_pie(); offset > 0) {
+    if (offset = relocate_phdr_table_pie();
+        offset > 0 && phdr_reloc_info_.nb_segments >= required_segments)
+    {
       return offset;
     }
   }
@@ -2801,7 +2866,7 @@ uint64_t Binary::relocate_phdr_table_auto() {
   if (is_valid_for_v3) {
     LIEF_DEBUG("Try v3 relocator");
     offset = relocate_phdr_table_v3();
-    if (offset > 0) {
+    if (offset > 0 && phdr_reloc_info_.nb_segments >= required_segments) {
       return offset;
     }
   }
@@ -2815,9 +2880,13 @@ uint64_t Binary::relocate_phdr_table_auto() {
       return 0;
     }
   }
-  return offset;
+  if (phdr_reloc_info_.new_offset == 0 ||
+      phdr_reloc_info_.nb_segments < required_segments)
+  {
+    return 0;
+  }
+  return phdr_reloc_info_.new_offset;
 }
-
 
 uint64_t Binary::relocate_phdr_table_pie() {
 
@@ -2861,7 +2930,12 @@ uint64_t Binary::relocate_phdr_table_pie() {
    * header_.numberof_segments();
    * }
    */
-  static constexpr size_t shift = 0x1000;
+  static constexpr uint64_t DEFAULT_SHIFT = 0x1000;
+
+  const uint64_t pagesize = layout_pagesize();
+  const uint64_t shift = align(DEFAULT_SHIFT, pagesize);
+
+  LIEF_DEBUG("Shift: {:#x} (default: {:#x})", shift, DEFAULT_SHIFT);
 
   phdr_reloc_info_.new_offset = from;
   phdr_reloc_info_.nb_segments = shift / phdr_size - header_.numberof_segments();
@@ -2871,8 +2945,6 @@ uint64_t Binary::relocate_phdr_table_pie() {
     LIEF_ERR("Allocation failed");
     return 0;
   }
-
-  LIEF_DEBUG("Header shift: {:#x}", shift);
 
   header().section_headers_offset(header().section_headers_offset() + shift);
 
@@ -2922,7 +2994,8 @@ uint64_t Binary::relocate_phdr_table_v3() {
           std::max(last_off, segment->physical_size() + segment->file_offset());
     }
   }
-  uint64_t last_off_aligned = align(last_off, page_size());
+  const uint64_t pagesize = layout_pagesize();
+  uint64_t last_off_aligned = align(last_off, pagesize);
 
   if (phdr_reloc_info_.new_offset > 0) {
     return phdr_reloc_info_.new_offset;
@@ -2962,9 +3035,12 @@ uint64_t Binary::relocate_phdr_table_v3() {
   phdr_load_segment->file_offset(phdr_reloc_info_.new_offset);
   phdr_load_segment->physical_size(new_segtbl_sz);
   phdr_load_segment->virtual_size(new_segtbl_sz);
-  phdr_load_segment->virtual_address(imagebase() + virtual_size());
+  // This segment must not share a page with the last PT_LOAD segment, otherwise
+  // the loader would map both at the same address (cf. issue #1366)
+  phdr_load_segment->virtual_address(align(imagebase() + virtual_size(),
+                                           pagesize));
   phdr_load_segment->physical_address(phdr_load_segment->virtual_address());
-  phdr_load_segment->alignment(0x1000);
+  phdr_load_segment->alignment(pagesize);
   phdr_load_segment->add(Segment::FLAGS::R);
   phdr_load_segment->datahandler_ = datahandler_.get();
 
@@ -3073,10 +3149,15 @@ uint64_t Binary::relocate_phdr_table_v2() {
    * LOAD_2.virtual_size
    *                 \                                         /
    *                  ------------ Offset --------------------/
-   * which should be aligned on a page size to avoid error.
+   * which should be aligned on the page size for which the binary has been
+   * laid out to avoid error. Aligning on a smaller value would let this new
+   * segment share a page with the bss-like segment, which the loader can't map
+   * independently (cf. issue #1366).
    *
-   * The issue https://github.com/lief-project/LIEF/issues/671
-   * is a good example of what could go wrong.
+   * The issues
+   * - https://github.com/lief-project/LIEF/issues/671
+   * - https://github.com/lief-project/LIEF/issues/1366
+   * are a good example of what could go wrong.
    *
    * |WARNING|
    *  This modification can increase the binary size drastically
@@ -3094,7 +3175,7 @@ uint64_t Binary::relocate_phdr_table_v2() {
   const uint64_t new_phdr_offset =
       align(bss_segment->virtual_address() - imagebase() +
                 bss_segment->virtual_size(),
-            0x1000);
+            layout_pagesize());
 
   const size_t nb_segments = header.numberof_segments() +
                              /* custom PT_LOAD */ 1 + USER_SEGMENTS;
@@ -3158,6 +3239,11 @@ uint64_t Binary::relocate_phdr_table_v2() {
     phdr_segment->file_offset(nsegment_addr->file_offset());
     phdr_segment->virtual_address(nsegment_addr->virtual_address());
     phdr_segment->physical_address(nsegment_addr->physical_address());
+    // PT_PHDR must describe the area we just reserved. Otherwise, it would
+    // keep the size of its previous location which is likely to no longer be
+    // wrapped by a PT_LOAD segment.
+    phdr_segment->physical_size(nsegment_addr->physical_size());
+    phdr_segment->virtual_size(nsegment_addr->virtual_size());
     phdr_segment->clear();
   }
 
@@ -3437,6 +3523,27 @@ uint64_t Binary::page_size() const {
     return pagesize_;
   }
   return LIEF::Binary::page_size();
+}
+
+uint64_t Binary::layout_pagesize() const {
+  uint64_t alignment = 0;
+  for (const Segment& segment : segments()) {
+    if (segment.is_load()) {
+      alignment = std::max(alignment, segment.alignment());
+    }
+  }
+
+  const uint64_t page_size = this->page_size();
+
+  // Check that the alignment used by the PT_LOAD segment is valid.
+  // Otherwise, default to the page_size
+  if (alignment == 0 || (alignment & (alignment - 1)) != 0) {
+    alignment = page_size;
+  }
+
+  return std::max<uint64_t>(
+      page_size, std::min<uint64_t>(alignment, get_max_pagesize(*this))
+  );
 }
 
 const SymbolVersionRequirement*

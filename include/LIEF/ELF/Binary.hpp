@@ -1093,6 +1093,8 @@ class LIEF_API Binary : public LIEF::Binary {
 
   uint64_t page_size() const override;
 
+  uint64_t layout_pagesize() const;
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::ELF ||
            bin->format() == Binary::FORMATS::OAT;
@@ -1236,7 +1238,8 @@ class LIEF_API Binary : public LIEF::Binary {
   LIEF_LOCAL Segment* add_segment(const Segment& segment,
                                   uint64_t base) LIEF_LIFETIMEBOUND;
 
-  LIEF_LOCAL uint64_t relocate_phdr_table_auto();
+  LIEF_LOCAL uint64_t relocate_phdr_table_auto(size_t required_segments = 1);
+  LIEF_LOCAL uint64_t reuse_phdr_table();
   LIEF_LOCAL uint64_t relocate_phdr_table_pie();
   LIEF_LOCAL uint64_t relocate_phdr_table_v1();
   LIEF_LOCAL uint64_t relocate_phdr_table_v2();

@@ -548,3 +548,52 @@ def test_extend_load_segment(tmp_path: Path):
     out_path.chmod(out_path.stat().st_mode | stat.S_IEXEC)
 
     _run(out_path)
+
+
+@pytest.mark.parametrize(
+    "sample",
+    [
+        "ELF/ELF32_x86_binary_ls.bin",
+        "ELF/ELF32_x86_binary_cmake.bin",
+        "ELF/ELF32_x86_binary_gcc.bin",
+        "ELF/elf_reader.ppc64le.elf",
+        "ELF/echo.mips_r3000.bin",
+    ],
+)
+def test_repatch_non_pie(tmp_path: Path, sample: str):
+    """
+    Patching a non-PIE binary that has already been patched must not relocate
+    the segment table a second time: the segment table area which has been
+    reserved by the first run still has room for the new segments.
+    """
+    new_interpreter = "/root/lief/ld-linux-aarch64.so.1"
+
+    new_runpath = "${ORIGIN}:${ORIGIN}/../dep"
+
+    output = tmp_path / "patched.elf"
+
+    elf = parse_elf(sample)
+    check_layout(elf)
+
+    elf.add(lief.ELF.DynamicEntryRunPath(new_runpath))
+    elf.write(str(output))
+
+    elf = parse_elf(output)
+    check_layout(elf)
+    phdr_offset = elf.header.program_header_offset
+
+    elf.interpreter = new_interpreter
+    elf.write(str(output))
+
+    elf = parse_elf(output)
+    check_layout(elf)
+
+    # The segment table must not have been relocated again
+    assert elf.header.program_header_offset == phdr_offset
+
+    runpath = elf.get(lief.ELF.DynamicEntry.TAG.RUNPATH)
+    assert isinstance(runpath, lief.ELF.DynamicEntryRunPath)
+    assert runpath.runpath == new_runpath
+
+    assert elf.has_interpreter
+    assert elf.interpreter == new_interpreter
