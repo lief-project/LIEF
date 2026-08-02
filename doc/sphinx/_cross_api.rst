@@ -823,6 +823,22 @@
     :py:meth:`lief.Binary.load_debug_info`
     :cpp:func:`LIEF::Binary::load_debug_info`
 
+.. |lief-abstract-binary-patch_address| lief-api:: lief.abstract.Binary.patch_address()
+
+    :rust:method:`lief::generic::Binary::patch_address [trait]`
+    :py:meth:`lief.Binary.patch_address`
+    :cpp:func:`LIEF::Binary::patch_address`
+
+.. |lief-abstract-binary-get_content_from_virtual_address| lief-api:: lief.abstract.Binary.get_content_from_virtual_address()
+
+    :py:meth:`lief.Binary.get_content_from_virtual_address`
+    :cpp:func:`LIEF::Binary::get_content_from_virtual_address`
+
+.. |lief-abstract-section-search| lief-api:: lief.abstract.Section.search()
+
+    :py:meth:`lief.Section.search`
+    :cpp:func:`LIEF::Section::search`
+
 .. ELF =========================================================================
 
 .. |lief-elf-symbol-demangled_name| lief-api:: lief.ELF.Symbol.demangled_name()
@@ -936,6 +952,12 @@
     :rust:struct:`lief::elf::dynamic::RunPath`
     :py:class:`lief.ELF.DynamicEntryRunPath`
     :cpp:class:`LIEF::ELF::DynamicEntryRunPath`
+
+.. |lief-elf-DynamicEntryRunPath-insert| lief-api:: lief.ELF.DynamicEntryRunPath.insert()
+
+    :rust:method:`lief::elf::dynamic::RunPath::insert [struct]`
+    :py:meth:`lief.ELF.DynamicEntryRunPath.insert`
+    :cpp:func:`LIEF::ELF::DynamicEntryRunPath::insert`
 
 .. Mach-O ======================================================================
 
