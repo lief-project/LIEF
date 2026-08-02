@@ -37,6 +37,23 @@ impl Binary {
         Sections::new(self.ptr.sections())
     }
 
+    /// Find the section matching the given name.
+    ///
+    /// Section names that do not fit in the 8 bytes allocated by the COFF format are stored
+    /// in the COFF string table while the section itself only holds a `/<offset>` placeholder.
+    /// This function transparently resolves both forms, so a long name can be looked up with
+    /// its **regular** value:
+    ///
+    /// ```
+    /// let section = binary.section_by_name(".debug_rnglists").unwrap();
+    /// assert_eq!(section.name(), "/18");
+    /// assert_eq!(section.coff_string().unwrap().str(), ".debug_rnglists");
+    /// ```
+    pub fn section_by_name(&self, name: &str) -> Option<Section<'_>> {
+        cxx::let_cxx_string!(__cxx_s = name);
+        into_optional(self.ptr.section_by_name(&__cxx_s))
+    }
+
     /// Iterator over **all** the relocations used by this COFF binary
     pub fn relocations(&self) -> Relocations<'_> {
         Relocations::new(self.ptr.relocations())

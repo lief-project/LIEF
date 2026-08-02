@@ -14,6 +14,7 @@
  */
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 
@@ -66,6 +67,25 @@ void create<Binary>(nb::module_& m) {
       nb::overload_cast<>(&Binary::sections),
       "Iterator over the different sections located in this COFF binary"_doc,
       nb::keep_alive<0, 1>()
+    )
+
+    .def("get_section",
+      nb::overload_cast<std::string_view>(&Binary::get_section),
+      R"doc(
+      Return the :class:`~lief.COFF.Section` matching the given name.
+
+      Section names that do not fit in the 8 bytes allocated by the COFF format
+      are stored in the COFF string table while the section itself only holds a
+      ``/<offset>`` placeholder. This function transparently resolves both
+      forms, so a long name can be looked up with its **regular** value:
+
+      .. code-block:: python
+
+        sec = binary.get_section(".debug_rnglists")
+        sec.name               # '/18'
+        sec.coff_string.string # '.debug_rnglists'
+      )doc"_doc, "name"_a,
+      nb::rv_policy::reference_internal
     )
 
     .def_prop_ro("relocations",

@@ -21,6 +21,7 @@ pub mod ffi {
         fn symbols(self: &COFF_Binary) -> UniquePtr<COFF_Binary_it_symbols>;
         fn relocations(self: &COFF_Binary) -> UniquePtr<COFF_Binary_it_relocations>;
         fn string_table(self: &COFF_Binary) -> UniquePtr<COFF_Binary_it_strings>;
+        fn section_by_name(self: &COFF_Binary, name: &CxxString) -> UniquePtr<COFF_Section>;
         fn find_string(self: &COFF_Binary, offset: u32) -> UniquePtr<COFF_String>;
         fn find_function(self: &COFF_Binary, name: &CxxString) -> UniquePtr<COFF_Symbol>;
         fn find_demangled_function(self: &COFF_Binary, name: &CxxString) -> UniquePtr<COFF_Symbol>;

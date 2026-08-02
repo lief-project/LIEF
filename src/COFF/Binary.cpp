@@ -41,6 +41,20 @@ Binary::it_functions Binary::functions() {
           [](const std::unique_ptr<Symbol>& sym) { return sym->is_function(); }};
 }
 
+const Section* Binary::get_section(std::string_view name) const {
+  for (const Section& section : sections()) {
+    if (section.name() == name) {
+      return &section;
+    }
+
+    const String* coff_str = section.coff_string();
+    if (coff_str != nullptr && coff_str->str() == name) {
+      return &section;
+    }
+  }
+  return nullptr;
+}
+
 const Symbol* Binary::find_function(const std::string& name) const {
   for (const Symbol& func : functions()) {
     if (func.name() == name) {

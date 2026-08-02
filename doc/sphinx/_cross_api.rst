@@ -1346,6 +1346,12 @@
     :py:meth:`lief.COFF.Binary.disassemble_from_bytes`
     :cpp:func:`LIEF::COFF::Binary::disassemble`
 
+.. |lief-coff-binary-get_section| lief-api:: lief.COFF.Binary.get_section()
+
+    :rust:method:`lief::coff::Binary::section_by_name [struct]`
+    :py:meth:`lief.COFF.Binary.get_section`
+    :cpp:func:`LIEF::COFF::Binary::get_section`
+
 .. |lief-elf-DynamicEntryAuxiliary| lief-api:: lief.ELF.DynamicEntryAuxiliary
 
     :py:class:`lief.ELF.DynamicEntryAuxiliary`

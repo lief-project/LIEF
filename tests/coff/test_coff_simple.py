@@ -144,6 +144,29 @@ def test_simple_coff():
     _ = coff.find_demangled_function("NONE")
 
 
+def test_get_section():
+    coff = parse_coff("COFF/arm64_debug_cl.obj")
+
+    assert coff.get_section("<not-a-section>") is None
+    assert coff.get_section("") is None
+
+    section = coff.get_section(".drectve")
+    assert section is not None
+    assert section.name == ".drectve"
+    assert section.sizeof_raw_data == 0x91
+    assert section.coff_string is None
+
+    # When several sections share the same name, the first one is returned
+    assert coff.sections[3].name == ".text$mn"
+    text = coff.get_section(".text$mn")
+    assert text is not None
+    assert text.pointerto_raw_data == coff.sections[3].pointerto_raw_data
+
+    # The section must be mutable through the non-const overload
+    text.characteristics = 0
+    assert coff.sections[3].characteristics == 0
+
+
 def test_bigobj_coff():
     assert lief.is_coff(get_sample("COFF/x64_debug_cl_bigobj.obj"))
     coff = parse_coff("COFF/x64_debug_cl_bigobj.obj")

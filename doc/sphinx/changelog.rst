@@ -24,6 +24,23 @@
     - |lief-assembly-x86-Instruction-lock|
     - |lief-assembly-x86-Instruction-unlock|
 
+:COFF:
+
+  * Add |lief-coff-binary-get_section| to look up a section by its name. Names
+    that are stored in the COFF string table (i.e. longer than 8 bytes) can be
+    resolved either from their regular value or from their ``/<offset>``
+    placeholder:
+
+    .. code-block:: python
+
+      import lief
+
+      coff = lief.COFF.parse("dwarf.obj")
+
+      section = coff.get_section(".debug_rnglists")
+      section.name               # '/18'
+      section.coff_string.string # '.debug_rnglists'
+
 1.0.0 - July 12th, 2026
 -----------------------
 

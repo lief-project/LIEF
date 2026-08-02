@@ -39,3 +39,34 @@ def test_coff_sec_string():
         Number of lines          0x0
         Characteristics          CNT_INITIALIZED_DATA, ALIGN_1BYTES, ALIGN_4BYTES, ALIGN_16BYTES, ALIGN_64BYTES, ALIGN_256BYTES, ALIGN_1024BYTES, ALIGN_4096BYTES, MEM_DISCARDABLE, MEM_READ""")
     )
+
+
+def test_get_section_long_name():
+    """Long section names are resolved through the COFF string table"""
+    coff = parse_coff("COFF/dwarf.obj")
+
+    for name in (".debug_rnglists", ".debug_info", ".debug_str", ".debug_abbrev"):
+        section = coff.get_section(name)
+        assert section is not None, name
+        # The raw name only holds the `/<offset>` placeholder
+        assert section.name != name
+        assert section.coff_string is not None
+        assert section.coff_string.string == name
+
+    assert coff.get_section(".debug_line") is None
+
+    # The `/<offset>` placeholder is also a valid lookup key
+    placeholder = coff.get_section("/18")
+    assert placeholder is not None
+    assert placeholder.coff_string is not None
+    assert placeholder.coff_string.string == ".debug_rnglists"
+
+
+@pytest.mark.private
+def test_get_section_unresolved_long_name():
+    """A long name whose string table entry is missing is only reachable
+    through its `/<offset>` placeholder"""
+    coff = parse_coff("private/COFF/coff_strtab_overflow.obj")
+
+    assert coff.sections[0].coff_string is None
+    assert coff.get_section("/18") is not None

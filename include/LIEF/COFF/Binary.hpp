@@ -23,8 +23,10 @@
 
 #include "LIEF/asm/Instruction.hpp"
 
+#include <string_view>
 #include <unordered_map>
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace LIEF {
@@ -227,6 +229,29 @@ class LIEF_API Binary {
                               uint64_t address = 0) const {
     return disassemble(buffer.data(), buffer.size(), address);
   }
+
+  /// Return the section matching the given name or a nullptr if it can't be
+  /// found.
+  ///
+  /// Section names that do not fit in the 8 bytes allocated by the COFF format
+  /// are stored in the COFF string table while the section itself only holds a
+  /// `/<offset>` placeholder. This function transparently resolves both forms,
+  /// so a long name can be looked up with its **regular** value:
+  ///
+  /// ```cpp
+  /// const Section* sec = binary->get_section(".debug_rnglists");
+  /// sec->name();                 // "/18"
+  /// sec->coff_string()->str();   // ".debug_rnglists"
+  /// ```
+  ///
+  /// @param[in] name Name of the section
+  Section* get_section(std::string_view name) LIEF_LIFETIMEBOUND {
+    return const_cast<Section*>(
+        static_cast<const Binary*>(this)->get_section(name)
+    );
+  }
+
+  const Section* get_section(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   std::string to_string() const;
 

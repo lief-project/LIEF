@@ -142,6 +142,12 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     return std::make_unique<it_strings>(get());
   }
 
+  auto section_by_name(const std::string& name) const {
+    return details::try_unique<COFF_Section>(
+        get().get_section(name)
+    ); // NOLINT(clang-analyzer-cplusplus.NewDeleteLeaks)
+  }
+
   auto find_string(uint32_t offset) const {
     return details::try_unique<COFF_String>(get().find_string(offset));
   }
