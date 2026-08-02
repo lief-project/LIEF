@@ -15,6 +15,7 @@
  */
 #include <algorithm>
 #include <cstring>
+#include <limits>
 #include <memory>
 
 #include "logging.hpp"
@@ -648,8 +649,12 @@ ok_error_t Parser::parse_symbol_sysv_hash(uint64_t offset) {
 ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   static constexpr auto ERROR_THRESHOLD = 6;
   LIEF_DEBUG("Parsing note segment");
+  if (size > std::numeric_limits<uint64_t>::max() - offset) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
   stream_->setpos(offset);
-  uint64_t last_offset = offset + size;
+  const uint64_t last_offset = offset + size;
   size_t error_count = 0;
 
   if (!*stream_) {
@@ -657,7 +662,7 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
   }
 
   while (*stream_ && stream_->pos() < last_offset) {
-    const auto current_pos = static_cast<int64_t>(stream_->pos());
+    const auto current_pos = (int64_t)stream_->pos();
     const Section* sec = binary_->section_from_offset(current_pos);
     std::string sec_name = sec != nullptr ? std::string{sec->name()} : "";
 
@@ -667,13 +672,7 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
                      binary_->header().identity_class());
 
     if (note != nullptr) {
-      const auto it_note =
-          std::find_if(binary_->notes_.begin(), binary_->notes_.end(),
-                       [&note](const std::unique_ptr<Note>& n) {
-                         return *n == *note;
-                       });
-
-      if (it_note == binary_->notes_.end()) { // Not already present
+      if (notes_offset_.insert(current_pos).second) {
         binary_->notes_.push_back(std::move(note));
       }
     } else {

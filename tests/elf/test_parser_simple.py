@@ -140,23 +140,8 @@ def test_notes():
     assert isinstance(note_abi, lief.ELF.NoteAbi)
     assert note_abi.abi == lief.ELF.NoteAbi.ABI.LINUX
     assert list(notes[0].description) == [
-        0,
-        0,
-        0,
-        0,
-        3,
-        0,
-        0,
-        0,
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-    ]
+        0, 0, 0, 0, 3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+    ]  # fmt: off
     assert note_abi.name == "GNU"
     assert note_abi.type == lief.ELF.Note.TYPE.GNU_ABI_TAG
     assert note_abi.version == [3, 2, 0]

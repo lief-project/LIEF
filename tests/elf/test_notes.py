@@ -115,13 +115,13 @@ def test_issue_816(tmp_path: Path):
     elf = parse_elf("ELF/elf_notes_issue_816.bin")
     output = tmp_path / "elf_notes_issue_816"
 
-    assert len(elf.notes) == 40
+    assert len(elf.notes) == 272
 
     elf.write(output, CONFIG)
     new = lief.ELF.parse(output)
     assert new is not None
     check_layout(new)
-    assert len(new.notes) == 40
+    assert len(new.notes) == 272
 
 
 def test_crashpad():

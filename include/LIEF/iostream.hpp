@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_OSTREAM_H
 #define LIEF_OSTREAM_H
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdint>
@@ -87,8 +88,14 @@ class LIEF_API vector_iostream {
   vector_iostream& write(const std::u16string& s, bool with_null_char);
 
   vector_iostream& write(size_t count, uint8_t value) {
+    size_t pos = 0;
+    if (!checked_write_pos(count, pos) || count > raw_->max_size() - raw_->size())
+    {
+      return *this;
+    }
+
     raw_->insert(raw_->end(), count, value);
-    current_pos_ += count;
+    current_pos_ = (off_type)(pos + count);
     return *this;
   }
   vector_iostream& write_sized_int(uint64_t value, size_t size) {
@@ -103,9 +110,14 @@ class LIEF_API vector_iostream {
   template<class T, typename = std::enable_if_t<std::is_standard_layout_v<T> &&
                                                 std::is_trivial_v<T>>>
   vector_iostream& write(const T& t) {
-    const auto pos = static_cast<size_t>(tellp());
-    if (raw_->size() < (pos + sizeof(T))) {
-      raw_->resize(pos + sizeof(T));
+    size_t pos = 0;
+    if (!checked_write_pos(sizeof(T), pos)) {
+      return *this;
+    }
+
+    const size_t end = pos + sizeof(T);
+    if (raw_->size() < end) {
+      raw_->resize(end);
     }
     if (endian_swap_) {
       T tmp = t;
@@ -114,7 +126,7 @@ class LIEF_API vector_iostream {
     } else {
       memcpy(raw_->data() + pos, &t, sizeof(T));
     }
-    current_pos_ += sizeof(T);
+    current_pos_ = (off_type)end;
     return *this;
   }
 
@@ -175,6 +187,9 @@ class LIEF_API vector_iostream {
   }
 
   vector_iostream& seekp(pos_type p) {
+    if ((off_type)p < 0) {
+      return *this;
+    }
     current_pos_ = p;
     return *this;
   }
@@ -209,7 +224,7 @@ class LIEF_API vector_iostream {
   template<class T>
   vector_iostream& reloc(uint64_t offset, T shift, RELOC_OP op = RELOC_OP::ADD) {
     static_assert(std::numeric_limits<T>::is_integer, "Requires integer type");
-    if (offset > raw_->size() || (offset + sizeof(T) > raw_->size())) {
+    if (offset > raw_->size() || sizeof(T) > raw_->size() - offset) {
       return *this;
     }
     T& value = *reinterpret_cast<T*>(raw_->data() + offset);
@@ -255,16 +270,21 @@ class LIEF_API vector_iostream {
 
   template<class T>
   T* edit_as() {
-    const auto end = static_cast<size_t>(current_pos_) + sizeof(T);
-    if (raw_->size() < end) {
+    size_t pos = 0;
+    if (!checked_write_pos(sizeof(T), pos) || pos > raw_->size() ||
+        sizeof(T) > raw_->size() - pos)
+    {
       return nullptr;
     }
-    return reinterpret_cast<T*>(raw_->data() + current_pos_);
+    return reinterpret_cast<T*>(raw_->data() + pos);
   }
 
   template<class T>
   T* edit_as(size_t pos) {
-    seekp(pos);
+    if ((uintmax_t)pos > (uintmax_t)std::numeric_limits<off_type>::max()) {
+      return nullptr;
+    }
+    seekp((pos_type)pos);
     return edit_as<T>();
   }
 
@@ -309,6 +329,26 @@ class LIEF_API vector_iostream {
   }
 
   private:
+  bool checked_write_pos(size_t count, size_t& pos) const {
+    const auto offset = (off_type)current_pos_;
+    if (offset < 0) {
+      return false;
+    }
+
+    const auto unsigned_offset = (uintmax_t)offset;
+    const auto max_vector_pos = (uintmax_t)raw_->max_size();
+    const auto max_stream_pos = (uintmax_t)std::numeric_limits<off_type>::max();
+    const uintmax_t max_pos = std::min(max_vector_pos, max_stream_pos);
+
+    if (unsigned_offset > max_pos || (uintmax_t)count > max_pos - unsigned_offset)
+    {
+      return false;
+    }
+
+    pos = (size_t)unsigned_offset;
+    return true;
+  }
+
   std::vector<std::vector<uint64_t>> fixups_;
   pos_type current_pos_ = 0;
   std::vector<uint8_t> owned_;

@@ -74,6 +74,7 @@ DynamicEntryRunPath& DynamicEntryRunPath::insert(size_t pos,
 
   if (pos > paths.size()) {
     LIEF_ERR("Position {:d} is out of range", pos);
+    return *this;
   }
   paths.insert(paths.begin() + pos, path);
   this->paths(paths);

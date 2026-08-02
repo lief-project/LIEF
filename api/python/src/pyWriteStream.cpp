@@ -46,7 +46,12 @@ void init_writerstream(nb::module_& m) {
     })
 
     .def("seekp", [] (vector_iostream& self, uint64_t pos) {
-      return self.seekp(pos);
+      using off_type = vector_iostream::off_type;
+      using pos_type = vector_iostream::pos_type;
+      if (pos > (uint64_t)std::numeric_limits<off_type>::max()) {
+        throw std::overflow_error("WriteStream position is out of range");
+      }
+      return self.seekp((pos_type)pos);
     }, "pos"_a, nb::rv_policy::reference_internal)
 
     .def("seek_end", &vector_iostream::seek_end,

@@ -667,11 +667,10 @@ class LIEF_API Binary : public LIEF::Binary {
   /// If negative (default), the import is appended to the end of the list.
   Import& add_import(const std::string& name,
                      int32_t pos = -1) LIEF_LIFETIMEBOUND {
-    if (pos < 0) {
+    if (pos < 0 || (size_t)pos >= imports_.size()) {
       imports_.push_back(std::make_unique<Import>(name));
       return *imports_.back();
     }
-    assert(pos >= 0);
     return **imports_.insert(imports_.begin() + pos,
                              std::make_unique<Import>(name));
   }

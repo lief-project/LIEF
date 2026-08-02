@@ -59,6 +59,10 @@ size_t Section::search(uint64_t integer, size_t pos, size_t size) const {
 size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
   span<const uint8_t> content = this->content();
 
+  if (pos >= content.size()) {
+    return npos;
+  }
+
   const auto* it_found = std::search(content.begin() + pos, content.end(),
                                      pattern.begin(), pattern.end());
 

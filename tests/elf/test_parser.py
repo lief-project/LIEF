@@ -1,9 +1,29 @@
+import subprocess
+import sys
 from pathlib import Path
+from textwrap import dedent
 from typing import cast
 
 import lief
 import pytest
-from utils import get_sample, is_64bits_platform, parse_elf
+from utils import address_space_limiter, get_sample, is_64bits_platform, parse_elf
+
+
+def _check_notes(path: Path, expected: int, timeout: float = 10.0) -> None:
+    code = dedent(f"""\
+    import lief
+    import sys
+    lief.logging.disable()
+    binary = lief.ELF.parse(sys.argv[1])
+    assert binary is not None
+    assert len(binary.notes) == {expected}
+    """)
+
+    subprocess.check_call(
+        [sys.executable, "-c", code, str(path.absolute())],
+        timeout=timeout,
+        preexec_fn=address_space_limiter(),
+    )
 
 
 def test_symbol_count():
@@ -326,3 +346,43 @@ def test_aarch64_attrs():
         lief.ELF.AArch64Feature.FEATURE.BTI,
         lief.ELF.AArch64Feature.FEATURE.PAC,
     ]
+
+
+@pytest.mark.private
+def test_dynamic_offset_signed_overflow():
+    elf = parse_elf("private/ELF/dynamic_signed_overflow.elf")
+    assert len(elf.segments) == 2
+    assert len(elf.dynamic_entries) == 0
+
+
+@pytest.mark.private
+def test_note_deduplication():
+    path = Path(get_sample("private/ELF/many-notes.elf"))
+    _check_notes(path, expected=20_000)
+
+
+@pytest.mark.private
+def test_notes_range_once():
+    path = Path(get_sample("private/ELF/duplicate-note-ranges.elf"))
+    _check_notes(path, expected=1_000)
+
+
+@pytest.mark.private
+def test_large_verdef_auxiliary():
+    path = Path(get_sample("private/ELF/shared-verdef-chain.elf")).absolute()
+
+    numberof_definitions = 200_000
+    code = dedent(f"""\
+    import lief
+    import sys
+    lief.logging.disable()
+    binary = lief.ELF.parse(sys.argv[1])
+    assert binary is not None
+    assert len(binary.symbols_version_definition) == {numberof_definitions}
+    """)
+
+    subprocess.check_call(
+        [sys.executable, "-c", code, str(path)],
+        timeout=10.0,
+        preexec_fn=address_space_limiter(),
+    )

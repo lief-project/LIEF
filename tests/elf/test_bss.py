@@ -1,12 +1,22 @@
 import os
 import stat
 import subprocess
+import sys
 from pathlib import Path
 from subprocess import Popen
+from textwrap import dedent
 
 import lief
 import pytest
-from utils import check_layout, is_64bits_platform, is_linux, is_x86_64, parse_elf
+from utils import (
+    address_space_limiter,
+    check_layout,
+    get_sample,
+    is_64bits_platform,
+    is_linux,
+    is_x86_64,
+    parse_elf,
+)
 
 
 def test_issue_671(tmp_path: Path):
@@ -88,3 +98,28 @@ def test_all(tmp_path: Path):
     lib = new.get_library("libcap.so.2")
     assert lib is not None
     assert lib.name == "libcap.so.2"
+
+
+@pytest.mark.private
+def test_patch_address_out_of_segment():
+    GAP = 0x20_000_000
+    sample = Path(get_sample("private/ELF/bss_issue.elf")).absolute()
+
+    code = dedent(f"""\
+    import lief
+    import sys
+    lief.logging.disable()
+    elf = lief.ELF.parse(sys.argv[1])
+    seg = next(s for s in elf.segments
+               if s.type == lief.ELF.Segment.TYPE.LOAD and s.virtual_size > s.physical_size)
+    addr = seg.virtual_address + seg.physical_size + {GAP // 2}
+    elf.patch_address(addr, 0x4141414141414141, 8)
+    print("OK")""")
+
+    stdout = subprocess.check_output(
+        [sys.executable, "-c", code, str(sample)],
+        timeout=60.0,
+        preexec_fn=address_space_limiter(),
+    )
+
+    assert b"OK" in stdout
