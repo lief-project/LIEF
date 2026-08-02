@@ -40,21 +40,37 @@ size_t vector_iostream::sleb128_size(int64_t value) {
 }
 
 vector_iostream& vector_iostream::put(uint8_t c) {
-  if (raw_->size() < (static_cast<size_t>(tellp()) + 1)) {
-    raw_->resize(static_cast<size_t>(tellp()) + 1);
+  size_t pos = 0;
+  if (!checked_write_pos(1, pos)) {
+    return *this;
   }
-  (*raw_)[tellp()] = c;
-  current_pos_ += 1;
+
+  const size_t end = pos + 1;
+  if (raw_->size() < end) {
+    raw_->resize(end);
+  }
+  (*raw_)[pos] = c;
+  current_pos_ = (off_type)end;
   return *this;
 }
 
 vector_iostream& vector_iostream::write(const uint8_t* s, std::streamsize n) {
-  const auto pos = static_cast<size_t>(tellp());
-  if (raw_->size() < (pos + n)) {
-    raw_->resize(pos + n);
+  if (n < 0) {
+    return *this;
   }
-  std::copy(s, s + n, raw_->data() + pos);
-  current_pos_ += n;
+
+  const auto count = (size_t)n;
+  size_t pos = 0;
+  if (!checked_write_pos(count, pos)) {
+    return *this;
+  }
+
+  const size_t end = pos + count;
+  if (raw_->size() < end) {
+    raw_->resize(end);
+  }
+  std::copy(s, s + count, raw_->data() + pos);
+  current_pos_ = (off_type)end;
 
   return *this;
 }
@@ -97,12 +113,21 @@ vector_iostream& vector_iostream::write_sleb128(int64_t value) {
   return *this;
 }
 
-vector_iostream& vector_iostream::seekp(vector_iostream::off_type p,
-                                        std::ios_base::seekdir dir) {
+vector_iostream& vector_iostream::seekp(off_type p, std::ios_base::seekdir dir) {
   switch (dir) {
-    case std::ios_base::beg: current_pos_ = p; return *this;
+    case std::ios_base::beg: return seekp((pos_type)p);
     case std::ios_base::end: return *this;
-    case std::ios_base::cur: current_pos_ += p; return *this;
+    case std::ios_base::cur:
+    {
+      const auto current = (off_type)current_pos_;
+      if (current < 0 ||
+          (p > 0 && current > std::numeric_limits<off_type>::max() - p) ||
+          (p < 0 && p < -current))
+      {
+        return *this;
+      }
+      return seekp((pos_type)(current + p));
+    }
     default: return *this;
   }
 
@@ -112,15 +137,30 @@ vector_iostream& vector_iostream::seekp(vector_iostream::off_type p,
 vector_iostream& vector_iostream::write(const std::u16string& s,
                                         bool with_null_char) {
   const size_t nullchar = with_null_char ? 1 : 0;
-  const auto pos = static_cast<size_t>(tellp());
-  if (raw_->size() < pos + (s.size() + nullchar) * sizeof(char16_t)) {
-    raw_->resize(pos + (s.size() + nullchar) * sizeof(char16_t));
+  if (s.size() > std::numeric_limits<size_t>::max() - nullchar) {
+    return *this;
+  }
+
+  const size_t char_count = s.size() + nullchar;
+  if (char_count > std::numeric_limits<size_t>::max() / sizeof(char16_t)) {
+    return *this;
+  }
+
+  const size_t count = char_count * sizeof(char16_t);
+  size_t pos = 0;
+  if (!checked_write_pos(count, pos)) {
+    return *this;
+  }
+
+  const size_t end = pos + count;
+  if (raw_->size() < end) {
+    raw_->resize(end);
   }
 
   std::copy(reinterpret_cast<const char16_t*>(s.data()),
             reinterpret_cast<const char16_t*>(s.data()) + s.size(),
-            reinterpret_cast<char16_t*>(raw_->data() + current_pos_));
-  current_pos_ += (s.size() + nullchar) * sizeof(char16_t);
+            reinterpret_cast<char16_t*>(raw_->data() + pos));
+  current_pos_ = (off_type)end;
   return *this;
 }
 

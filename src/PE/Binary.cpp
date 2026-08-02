@@ -1109,6 +1109,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
   if (offset > content.size() || (offset + size) > content.size()) {
     LIEF_ERR("Patch value ({} bytes @{:#x}) out of section bounds (limit: {:#x})",
              size, offset, content.size());
+    return;
   }
   switch (size) {
     case sizeof(uint8_t):
@@ -1169,15 +1170,13 @@ span<const uint8_t> Binary::get_content_from_virtual_address(
   }
   span<const uint8_t> content = section->content();
   const uint64_t offset = rva - section->virtual_address();
-  uint64_t checked_size = size;
-  if ((offset + checked_size) > content.size()) {
-    uint64_t delta_off = offset + checked_size - content.size();
-    if (checked_size < delta_off) {
-      LIEF_ERR("Section end overflow prevents data access");
-      return {};
-    }
-    checked_size = checked_size - delta_off;
+
+  if (offset >= content.size()) {
+    LIEF_ERR("Section end overflow prevents data access");
+    return {};
   }
+
+  const auto checked_size = std::min<uint64_t>(size, content.size() - offset);
 
   return {content.data() + offset, static_cast<size_t>(checked_size)};
 }

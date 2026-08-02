@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_PARSER_H
 #define LIEF_ELF_PARSER_H
 #include <unordered_map>
+#include <unordered_set>
 
 #include "LIEF/visibility.h"
 #include "LIEF/utils.hpp"
@@ -335,6 +336,7 @@ class LIEF_API Parser : public LIEF::Parser {
    */
   std::unordered_map<size_t, Section*> sections_idx_;
   uint64_t memory_address_ = 0;
+  std::unordered_set<uint64_t> notes_offset_;
 };
 
 } // namespace ELF

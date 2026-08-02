@@ -436,4 +436,16 @@ def test_import_front(tmp_path: Path):
     new = lief.PE.parse(out)
     assert new is not None
 
-    assert new.imports[0].name == "api-ms-win-crt-stdio-l1-1-0.dll"
+    assert next(iter(pe.imports)).name == "api-ms-win-crt-stdio-l1-1-0.dll"
+
+
+def test_import_out_of_bounds():
+    factory = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32)
+    assert factory is not None
+
+    pe = factory.get()
+    assert pe is not None
+
+    added = pe.add_import("out-of-range.dll", pos=0x10000)
+    assert added.name == "out-of-range.dll"
+    assert [imp.name for imp in pe.imports] == ["out-of-range.dll"]

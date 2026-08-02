@@ -415,3 +415,20 @@ def test_dyld_chained_fixups_underflow():
     target = fat.at(0)
     assert target is not None
     assert {s.name for s in target.segments} == {"__TEXT", "__LINKEDIT"}
+
+
+def test_va_out_of_segment():
+    fat = parse_macho(
+        "MachO/42d4f6b799d5d3ff88c50d4c6966773d269d19793226724b5e893212091bf737_dyld.macho"
+    )
+    macho = fat.at(0)
+    assert macho is not None
+
+    segment = next(s for s in macho.segments if s.virtual_size > len(s.content) > 0)
+
+    address = segment.virtual_address + len(segment.content) + 0x100
+    assert len(macho.get_content_from_virtual_address(address, 16)) == 0
+
+    # a valid address still returns data, truncated to what is available
+    valid = segment.virtual_address + len(segment.content) - 4
+    assert len(macho.get_content_from_virtual_address(valid, 16)) == 4

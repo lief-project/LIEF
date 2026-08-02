@@ -364,7 +364,7 @@ fn test_gnu_property_notes() {
 fn test_notes_issue_816() {
     let elf = parse_elf("elf_notes_issue_816.bin");
     let notes: Vec<Notes<'_>> = elf.notes().collect();
-    assert_eq!(notes.len(), 40);
+    assert_eq!(notes.len(), 272);
 
     for note_entry in &notes {
         let dbg = format!("{note_entry:?}");

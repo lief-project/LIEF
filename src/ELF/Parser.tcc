@@ -204,14 +204,15 @@ ok_error_t Parser::parse_dyn_table(Segment& pt_dyn) {
       continue;
     }
     const uint64_t dyn_start = pt_dyn.virtual_address();
-    const uint64_t dyn_end = dyn_start + pt_dyn.virtual_size();
+    const uint64_t dyn_size = pt_dyn.virtual_size();
     const uint64_t load_start = segment->virtual_address();
-    const uint64_t load_end = load_start + segment->virtual_size();
-    if (!(load_start <= dyn_start && dyn_start < load_end)) {
+    const uint64_t load_size = segment->virtual_size();
+    if (dyn_size == 0 || dyn_start < load_start) {
       continue;
     }
 
-    if (!(load_start < dyn_end && dyn_end <= load_end)) {
+    const uint64_t rel_offset = dyn_start - load_start;
+    if (rel_offset >= load_size || dyn_size > load_size - rel_offset) {
       continue;
     }
     segments.push_back(segment.get());
@@ -241,9 +242,14 @@ ok_error_t Parser::parse_dyn_table(Segment& pt_dyn) {
     return make_error_code(lief_errors::corrupted);
   }
 
-  int64_t rel_offset =
-      (int64_t)pt_dyn.virtual_address() - (int64_t)load_seg.virtual_address();
-  if (rel_offset < 0 || (uint64_t)rel_offset >= seg_content.size()) {
+  const uint64_t dyn_address = pt_dyn.virtual_address();
+  const uint64_t load_address = load_seg.virtual_address();
+  if (dyn_address < load_address) {
+    return make_error_code(lief_errors::corrupted);
+  }
+
+  const uint64_t rel_offset = dyn_address - load_address;
+  if (rel_offset >= seg_content.size()) {
     return make_error_code(lief_errors::corrupted);
   }
 
@@ -1914,6 +1920,8 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset,
   const uint64_t string_offset = get_dynamic_string_table();
   ScopedStream verdef_stream(*stream_, offset);
   uint64_t def_size = 0;
+  uint32_t nb_aux_parsed = 0;
+  bool warned_aux_limit = false;
 
   for (size_t i = 0; i < nb_entries; ++i) {
     const auto svd_header = verdef_stream->peek<Elf_Verdef>();
@@ -1925,7 +1933,18 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset,
 
     auto symbol_version_definition =
         std::make_unique<SymbolVersionDefinition>(*svd_header);
-    uint32_t nb_aux_symbols = svd_header->vd_cnt;
+    const uint32_t requested_aux_symbols = svd_header->vd_cnt;
+    const uint32_t remaining_aux_symbols = NB_MAX_SYMBOLS - nb_aux_parsed;
+    const uint32_t nb_aux_symbols =
+        std::min(requested_aux_symbols, remaining_aux_symbols);
+
+    if (requested_aux_symbols > nb_aux_symbols && !warned_aux_limit) {
+      LIEF_WARN("The number of symbol version auxiliaries is larger than the "
+                "limit ({})",
+                NB_MAX_SYMBOLS);
+      warned_aux_limit = true;
+    }
+
     {
       ScopedStream aux_stream(*stream_, verdef_stream->pos() + svd_header->vd_aux);
       for (size_t j = 0; j < nb_aux_symbols; ++j) {
@@ -1935,6 +1954,7 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset,
         if (!svda_header) {
           break;
         }
+        ++nb_aux_parsed;
 
         if (string_offset != 0) {
           auto name =

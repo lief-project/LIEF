@@ -1383,6 +1383,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
           "Patch value ({} bytes @{:#x}) exceeds segment bounds (limit: {:#x})",
           size, offset, content.size()
       );
+      return;
     }
 
     switch (size) {
@@ -1436,6 +1437,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
   if (offset > content.size() || (offset + size) > content.size()) {
     LIEF_ERR("Patch value ({} bytes @{:#x}) exceeds segment bounds (limit: {:#x})",
              size, offset, content.size());
+    return;
   }
   switch (size) {
     case sizeof(uint8_t):
@@ -1733,15 +1735,12 @@ span<const uint8_t>
 
   span<const uint8_t> content = segment->content();
   const uint64_t offset = virtual_address - segment->virtual_address();
-  uint64_t checked_size = size;
 
   if (offset >= content.size()) {
     return {};
   }
 
-  if ((offset + checked_size) > content.size()) {
-    checked_size = checked_size - (offset + checked_size - content.size());
-  }
+  const auto checked_size = std::min<uint64_t>(size, content.size() - offset);
 
   return {content.data() + offset, static_cast<size_t>(checked_size)};
 }

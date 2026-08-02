@@ -1,4 +1,5 @@
 import lief
+import pytest
 from utils import get_sample
 
 
@@ -57,3 +58,15 @@ def test_file_stream():
 def test_file_stream_error():
     fs = lief.FileStream.from_file("/does/not/exist/at/all")
     assert fs is lief.lief_errors.read_error
+
+
+def test_write_stream_seek_overflow():
+    stream = lief.WriteStream()
+    stream.pad(16, 0x42)
+    original = bytes(stream)
+
+    with pytest.raises(OverflowError):
+        stream.seekp((1 << 64) - 1)
+
+    assert stream.tellp == 0
+    assert bytes(stream) == original

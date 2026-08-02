@@ -1,11 +1,20 @@
 import subprocess
+import sys
 from pathlib import Path
 from subprocess import Popen
+from textwrap import dedent
 from typing import cast
 
 import lief
 import pytest
-from utils import check_layout, is_linux, is_x86_64, parse_elf
+from utils import (
+    address_space_limiter,
+    check_layout,
+    get_sample,
+    is_linux,
+    is_x86_64,
+    parse_elf,
+)
 
 
 def test_issue_863(tmp_path: Path):
@@ -216,3 +225,56 @@ def test_issue_1342(tmp_path: Path):
     assert dt_relrsz is not None
     assert dt_relrsz.value == 0x18
     assert any(r.address == 0x10EA0 for r in relr_relocations)
+
+
+def test_runpath_insert_out_of_range():
+    sample = Path(get_sample("ELF/elf-HPUX-ia64-bash")).absolute()
+
+    code = dedent("""\
+    import lief
+    import sys
+    lief.logging.disable()
+    elf = lief.ELF.parse(sys.argv[1])
+    entry = next(e for e in elf.dynamic_entries
+                if isinstance(e, lief.ELF.DynamicEntryRunPath))
+    original = list(entry.paths)
+
+    entry.insert(len(original) + 1, "/tmp/lief")
+    entry.insert(0x10000, "/tmp/lief")
+    assert list(entry.paths) == original
+
+    # in-range insertion still works
+    entry.insert(1, "/tmp/lief")
+    assert list(entry.paths) == original[:1] + ["/tmp/lief"] + original[1:]
+    print("OK")""")
+
+    stdout = subprocess.check_output(
+        [sys.executable, "-c", code, str(sample)],
+        timeout=60.0,
+        preexec_fn=address_space_limiter(),
+    )
+    assert b"OK" in stdout
+
+
+def test_section_search_out_of_range():
+    """Section.search() with a starting position beyond the section content
+    must return None instead of reading out of bounds."""
+    sample = Path(get_sample("ELF/ELF64_x86-64_binary_ls.bin")).absolute()
+
+    code = dedent("""\
+    import lief
+    import sys
+
+    lief.logging.disable()
+    elf = lief.ELF.parse(sys.argv[1])
+    section = elf.get_section(".text")
+    assert section.search(b"\\xff\\xff\\xff\\xff", len(section.content)) is None
+    assert section.search(b"\\xff\\xff\\xff\\xff", 0x40000000) is None
+    print("OK")""")
+
+    stdout = subprocess.check_output(
+        [sys.executable, "-c", code, str(sample)],
+        timeout=60.0,
+        preexec_fn=address_space_limiter(),
+    )
+    assert b"OK" in stdout
