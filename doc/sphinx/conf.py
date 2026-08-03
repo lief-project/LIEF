@@ -1,27 +1,24 @@
-#!/usr/bin/env python
-
 import sys
 from pathlib import Path
 
 sys.path.insert(0, Path(__file__).parent.as_posix())
 
-from typing import TYPE_CHECKING
-
+from sphinx.application import Sphinx
 from sphinx_lief_doc.config import init_config as lief_init_config
 from sphinx_lief_doc.img_comparison import setup as setup_img_comparison
 from sphinx_lief_doc.inheritance_diagram import LIEFInheritanceDiagram
 from sphinx_lief_doc.lief_api import setup as setup_lief_api
+from sphinx_lief_doc.literalinclude import LiteralInclude
 from sphinx_lief_doc.plugin_package import setup as setup_plugin_packages
 from sphinx_lief_doc.python_typing import setup as setup_python_typing
 from sphinx_lief_doc.roles import setup as setup_roles
 from sphinx_lief_doc.rust_domain import RustDomain
 from sphinx_lief_doc.sdk_package import setup as setup_sdk_packages
+from sphinx_lief_doc.seo import setup as setup_seo
 from sphinx_lief_doc.writers.html5 import HTML5Translator
 
-if TYPE_CHECKING:
-    from sphinx.application import Sphinx
-
 extensions = [
+    "myst_parser",
     "sphinx.ext.mathjax",
     "sphinx.ext.autodoc",
     "sphinx.ext.extlinks",
@@ -33,7 +30,19 @@ extensions = [
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
-source_suffix = {".rst": "restructuredtext"}
+source_suffix = {".md": "markdown"}
+exclude_patterns = ["_cross_api.md"]
+
+myst_enable_extensions = [
+    "colon_fence",
+    "substitution",
+]
+myst_all_links_external = True
+myst_footnote_sort = False
+myst_substitutions = {
+    "cross_api": "```{include} /_cross_api.md\n```",
+    "literalinclude": LiteralInclude(),
+}
 
 extlinks = {
     "github-ref": ("https://github.com/%s", "%s"),
@@ -66,15 +75,15 @@ autodoc_default_options = {
 
 # exclude_patterns = [
 #    "api",
-#    "tutorials/*.rst",
-#    "changelog/*.rst",
+#    "tutorials/*.md",
+#    "changelog/*.md",
 #    "extended",
 #    "formats",
-#    "changelog.rst",
-#    "references.rst",
-#    "intro.rst",
-#    "installation.rst",
-#    "compilation.rst",
+#    "changelog.md",
+#    "references.md",
+#    "intro.md",
+#    "installation.md",
+#    "compilation.md",
 # ]
 
 
@@ -90,6 +99,7 @@ def setup(app: Sphinx):
     setup_img_comparison(app)
     setup_plugin_packages(app)
     setup_sdk_packages(app)
+    setup_seo(app)
 
     app.add_directive("lief-inheritance", LIEFInheritanceDiagram)
     app.set_translator("html", HTML5Translator)

@@ -228,7 +228,7 @@ class RustDomain(Domain):
     def resolve_any_xref(self, env: BuildEnvironment, fromdocname: str, builder: Builder,
                          target: str, node: pending_xref, contnode: Element,
                          ) -> list[tuple[str, Element]]:
-        raise NotImplementedError()
+        return []
 
     def get_objects(self) -> Iterator[tuple[str, str, str, str, str, int]]:
         return

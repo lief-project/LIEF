@@ -1,0 +1,2550 @@
+(changelog-ref)=
+
+# {fa}`solid fa-code-compare` Changelog
+
+## 2.0.0 - Not Released Yet
+
+:::{admonition} Breaking Changes
+:class: warning
+
+- **C++17 Migration**: LIEF public headers, public API, and STL have been bumped from C++11 to **C++17**.
+- **C API Removal**: The legacy C API has been completely removed.
+- **Logging Level Renaming**: {sub-ref}`lief-logging-level` and its enumerators are now
+  written in `CamelCase`
+:::
+
+```{eval-rst}
+
+:Assembly:
+
+  * Add API to inspect and rewrite the ``LOCK`` prefix of x86 instructions:
+
+    - |lief-assembly-x86-Instruction-has_lock_prefix|
+    - |lief-assembly-x86-Instruction-is_lockable|
+    - |lief-assembly-x86-Instruction-is_atomic|
+    - |lief-assembly-x86-Instruction-lock|
+    - |lief-assembly-x86-Instruction-unlock|
+
+:ELF:
+
+  * Fix the layout of the segments added by LIEF for the architectures that
+    can use pages larger than 4K (:issue:`1366`)
+  * Fix the modification of binaries that have already been modified by LIEF.
+    The segment table was relocated a second time which, for the non-PIE
+    binaries, shifted the sections without shifting the segments nor the
+    dynamic entries. It resulted in a ``DT_STRTAB`` that was no longer pointing
+    to ``.dynstr`` (i.e. garbage ``DT_NEEDED``/``DT_RUNPATH`` names) and in a
+    ``PT_PHDR`` that was not wrapped by a ``PT_LOAD`` segment (:issue:`1366`).
+  * |lief-elf-check_layout| now reports the ``PT_LOAD`` segments that can't be
+    mapped independently because they share the same page. It also report
+    mismatch between ``.dynstr`` virtual address and ``DT_STRTAB``.
+
+:COFF:
+
+  * Add |lief-coff-binary-get_section| to look up a section by its name. Names
+    that are stored in the COFF string table (i.e. longer than 8 bytes) can be
+    resolved either from their regular value or from their ``/<offset>``
+    placeholder:
+
+    .. code-block:: python
+
+      import lief
+
+      coff = lief.COFF.parse("dwarf.obj")
+
+      section = coff.get_section(".debug_rnglists")
+      section.name               # '/18'
+      section.coff_string.string # '.debug_rnglists'
+```
+
+## 1.0.0 - July 12th, 2026
+
+:::{admonition} Runtime
+:class: tip
+
+LIEF now provides runtime features as described here: {ref}`Runtime <runtime-intro>`
+:::
+
+```{eval-rst}
+
+:BinaryNinja:
+
+  * Add :ref:`Android JNI Analyzer <plugins-binaryninja-analyzers-android-jni>`
+  * The DWARF import plugin now supports comments
+
+:Ghidra:
+
+  * Add support for generating DWARF from firmware or binaries without
+    a precise format or architecture (:issue:`1249`)
+
+:DWARF:
+
+  * Add support for accessing the bit size of bit-field declarations (:issue:`1265`)
+  * Add support for accessing Enum entries: |lief-dwarf-types-Enum-entries|
+  * Add support for reading from or assigning a register to a function parameter
+  * Add support for reading from or assigning a description (``DW_AT_description``)
+    to a |lief-dwarf-function|, |lief-dwarf-variable|, or |lief-dwarf-lexical-block|:
+
+    - |lief-dwarf-function-description|
+    - |lief-dwarf-variable-description|
+    - |lief-dwarf-lexical-block-description|
+
+  * Enable the creation of nested |lief-dwarf-editor-Function-lexical-block|
+  * Add support for generating a C/C++ definition for a whole
+    |lief-dwarf-CompilationUnit| (|lief-dwarf-cu-to_decl|). The output of the
+    following ``to_decl()`` functions can now be configured through the new
+    |lief-declopt| structure:
+
+    - |lief-dwarf-function-to_decl|
+    - |lief-dwarf-variable-to_decl|
+    - |lief-dwarf-type-to_decl|
+    - |lief-dwarf-cu-to_decl|
+
+    .. code-block:: python
+
+      import lief
+
+      dbg = lief.dwarf.load("/bin/with_debug")
+
+      opt = lief.DeclOpt()
+      opt.is_cpp = True
+      opt.indentation = 4
+
+      for cu in dbg.compilation_units:
+          print(cu.to_decl(opt))
+
+:PDB:
+
+  * Improve support and the API for ``LF_ENUM``: |lief-pdb-types-Enum|
+  * Improve support and the API for ``LF_PROCEDURE``: |lief-pdb-types-Function|
+  * Improve support and the API for ``LF_ARRAY``: |lief-pdb-types-Array|
+  * Improve support and the API for *simple* types: |lief-pdb-types-Simple|
+  * Improve support and the API for ``LF_ONEMETHOD``: |lief-pdb-types-Method|
+  * Add support for generating a C/C++ definition for a |lief-pdb-Function|
+    (|lief-pdb-function-to_decl|) and a |lief-pdb-CompilationUnit|
+    (|lief-pdb-cu-to_decl|), configurable with the new |lief-declopt| structure.
+
+:ELF:
+
+  * Add support for ``DT_AUXILIARY`` tag: |lief-elf-DynamicEntryAuxiliary|
+    (:issue:`1159`).
+  * Add support for ``DT_FILTER`` tag: |lief-elf-DynamicEntryFilter|
+  * Add |lief-elf-parse_from_dump| to parse an ELF binary from a memory dump
+
+:COFF:
+
+  * Add |lief-coff-section-coff_string| for accessing the full section name when
+    this name does not fit in 8 bytes.
+
+:Mach-O:
+
+  * Add support for writing big-endian Mach-O binaries (:issue:`1236`)
+  * Introduce an API for selecting a specific Mach-O binary by architecture
+    from a FAT binary (:pr:`1283`)
+  * Add |lief-macho-fatbinary-create| to create a FAT binary from
+    a list of |lief-macho-binary| objects targeting different architectures
+  * Add support for |lief-macho-threadlocalvariables|
+  * Fix an extra byte being written after the thread state of an
+    ``LC_UNIXTHREAD``/``LC_THREAD`` command, which shifted the following
+    load commands by one byte (:issue:`1344`)
+  * Add support for editing the runtime tables of the ``LC_FUNCTION_VARIANTS``
+    command and committing the changes on write:
+    |lief-macho-function-variants-command|
+  * Add a structured parser, editing API and writer for the
+    ``LC_FUNCTION_VARIANT_FIXUPS`` command:
+    |lief-macho-function-variant-fixups-command|
+  * Add support for the ``LC_LAZY_LOAD_DYLIB_INFO`` command:
+    |lief-macho-lazy-load-dylib-info-command|
+  * Add |lief-macho-parse_from_dump| to parse a Mach-O binary from a memory dump
+
+:PE:
+
+  * Add setters for |lief-pe-importentry-iat-value| and |lief-pe-importentry-ilt-value|
+  * Add |lief-pe-binary-offset_to_rva| to convert a raw offset into a RVA
+  * Add |lief-pe-parse_from_dump| to parse a PE binary from a memory dump
+  * Update |lief-binary-offset_to_virtual_address| for PE binaries to
+    return an **absolute** virtual address instead of a RVA (:issue:`1318`)
+  * Add support for adding an |lief-pe-import| at a specific position:
+    |lief-pe-binary-add-import| (:pr:`1298`)
+  * Improve support for EFI binaries, such as ``bzImage`` (:pr:`1293`)
+
+:ObjC:
+
+  * Add support for Objective-C categories (:issue:`1353`): |lief-objc-category|,
+    accessible through |lief-objc-metadata-categories|
+
+:Assembly:
+
+  * Add support for iterating over the operands of MIPS, PowerPC, eBPF and
+    RISC-V instructions (``Register``, ``Immediate``, ``Memory`` and
+    ``PCRelative``):
+
+    - |lief-assembly-mips-Instruction-operands|
+    - |lief-assembly-powerpc-Instruction-operands|
+    - |lief-assembly-ebpf-Instruction-operands|
+    - |lief-assembly-riscv-Instruction-operands|
+
+:Rust:
+
+  .. warning::
+
+    The Minimum Supported Rust Version (MSRV) is now ``1.85.0`` (previously
+    ``1.74.0``).
+
+  * The Rust FFI no longer relies on ``autocxx`` and ``bindgen``. It is now
+    built on top of plain ``cxx``, which simplifies the bindings and reduces
+    the iteration time
+  * The Rust bindings directory has been renamed from ``api/rust/cargo/`` to
+    ``api/rust/crates/``
+  * Add support for the ``aarch64-linux-android`` and ``x86_64-linux-android``
+    targets
+
+:C++:
+
+  * Add ``LIEF_LIFETIMEBOUND`` annotations wrapping ``[[clang::lifetimebound]]``
+    to leverage Clang's `lifetime analysis <https://clang.llvm.org/docs/LifetimeSafety.html>`_.
+    This helps detect dangling references at compile time for methods that return
+    references or iterators tied to an object's lifetime:
+
+    .. code-block:: cpp
+
+      // Clang can now warn about this dangling reference:
+      auto& hdr = LIEF::ELF::Parser::parse("a.out")->header();
+      LIEF_INFO("{}", hdr.header_size());
+      // /src/src/ELF/Binary.cpp:63:15: error: object whose reference is captured
+      // does not live long enough [-Werror,-Wlifetime-safety-use-after-scope]
+      //    63 |   auto& hdr = LIEF::ELF::Parser::parse("a.out")->header();
+      //       |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // /src/src/ELF/Binary.cpp:63:47: note: destroyed here
+      //    63 |   auto& hdr = LIEF::ELF::Parser::parse("a.out")->header();
+      //       |                                               ^
+      // /src/src/ELF/Binary.cpp:64:19: note: later used here
+      //    64 |   LIEF_INFO("{}", hdr.header_size());
+
+:Dependencies:
+
+  * Update nanobind to version ``v2.13.x``
+  * Update tl-expected to version ``1.3.1``
+  * Update utfcpp to version ``4.0.9``
+  * Update frozen to commit ``61dce5a``
+  * Update spdlog to version ``1.17.0``
+  * Update mbedtls to version ``4.0.0``
+
+:Extended:
+
+  * Use LLVM ``22.x``
+  * Add support to directly download a package from the **History**:
+
+  .. image:: ./_static/lief-extended-history-link.webp
+    :scale: 50 %
+
+:Python:
+
+  * Python 3.8 is no longer supported
+  * Add support for the free-threaded Python builds.
+    The C++ core is now thread-safe with respect to its few static variables,
+    and can be used when the GIL is disabled (:issue:`1255`):
+
+    .. code-block:: python
+
+      from concurrent.futures import ThreadPoolExecutor
+      import lief
+
+      def strip(path: str) -> None:
+          binary = lief.ELF.parse(path)
+          binary.strip()
+          binary.write(f"{path}.stripped")
+
+      with ThreadPoolExecutor() as pool:
+          pool.map(strip, ["/bin/ls", "/bin/cat", "/bin/echo"])
+```
+
+## 0.17.6 - March 18th, 2026
+
+```{eval-rst}
+
+:ELF:
+
+  * Fix alignment for ``PHDR/SHDR`` and improve ``TLS/RELR`` handling (:issue:`1315`)
+  * Skip ``NOBITS`` sections in layout calculations and improve index retrieval
+    (related to :issue:`1315`)
+
+:PE:
+
+  * Fix IAT parsing issue by :github_user:`itamarga` in PR :pr:`1314`)
+```
+
+## 0.17.5 - March 8th, 2026
+
+```{eval-rst}
+
+:ELF:
+
+  * Add missing segments in X86_64 coredump parser (:issue:`1278`)
+  * Add TLSDESC_PLT and TLSDESC_GOT to ELF dynamic tags (:issue:`1311`)
+  * Fix dynamic entry shifting for Android relocations (:issue:`1309`)
+
+:MachO:
+
+  * Fix ``DyldInfo::show_bindings`` integer overflow (:issue:`1313`)
+```
+
+## 0.17.4 - February 21st, 2026
+
+```{eval-rst}
+
+:PE:
+
+  * Fixed the address type in the TLS builder (by :github_user:`Immortalety`
+    in PR :pr:`1296`)
+
+:MachO:
+
+  * Fixed |lief-macho-binary-virtual_address_to_offset| to properly handle
+    non-file-backed segments, such as ``__DATA`` segments containing only
+    ``ZEROFILL`` sections like ``__bss`` (by :github_user:`jalopezg-git`
+    in PR :pr:`1301`, fixing :issue:`1299`).
+
+  * Fixed ``patch_relocation()`` to correctly process tagged pointers
+    (by :github_user:`jalopezg-git` in PR :pr:`1302`, fixing :issue:`1300`).
+
+:COFF:
+
+  * Resolved a compilation conflict with the Windows ``minwindef.h`` macro
+    ``#define max``.
+
+:CMake:
+
+  * Fixed compiler flag issues on Windows when compiling with ``clang-cl``
+    (by :github_user:`sigewinnefish` in PR :pr:`1306`).
+
+:Python:
+
+  * Bumped various Python backend build dependencies in
+    ``api/python/build-requirements.txt`` to support Python ``3.14`` when
+    compiling from sources (:issue:`1304`).
+```
+
+## 0.17.3 - January 24th, 2026
+
+```{eval-rst}
+
+:PE:
+
+  * Fixed bug with resources (:issue:`1281`).
+  * Fixed VA/RVA confusion in the PE builder (:issue:`1284`).
+```
+
+## 0.17.2 - January 3rd, 2026
+
+```{eval-rst}
+
+:Mach-O:
+
+  * Differentiate Mach-O FAT magic bytes and Java classes
+    (by :github_user:`wangmot`, :issue:`1215`).
+
+:Compilation:
+
+  * Fixed MinGW compilation for some configurations
+    (by :github_user:`TheBrokenRail`, :commit:`dabbb72`).
+
+:PE:
+
+  * Fixed alignment issue when rebuilding PE relocations (:issue:`1261`).
+  * Fixed infinite loop when processing v2 dynamic relocations
+    (by :github_user:`chengyongru`, fixing :issue:`1273`).
+
+:ELF:
+
+  * Ensure that added DYN ELF sections are properly aligned
+    (by :github_user:`schmchrt`, fixing :issue:`1261`).
+  * Fixed GnuHash null dereference (:issue:`1277`).
+
+:Mach-O:
+
+  * Fixed major performance issue when parsing certain Mach-O files
+    (by :github_user:`trevor-e`, fixing :issue:`1262`).
+```
+
+## 0.17.1 - October 25th, 2025
+
+```{eval-rst}
+
+:ELF:
+
+  * Fixed :issue:`1251`.
+
+:Compilation:
+
+  * Fixed missing visibility (:pr:`1254`).
+  * Fixed incorrect paging computations that occurred when only a subset
+    of formats was enabled.
+  * Fixed include issue with the COFF format.
+```
+
+## 0.17.0 - September 14th, 2025
+
+:::{admonition} BinaryNinja & Ghidra Plugins
+:class: tip
+
+LIEF-based plugins for Binary Ninja and Ghidra have been bootstrapped here:
+
+- {ref}`Ghidra plugin <plugins-ghidra>`
+- {ref}`BinaryNinja plugin <plugins-binaryninja>`
+:::
+
+:::{admonition} LIEF Tools
+:class: tip
+
+I initiated a `Tools` section which aims at providing utilities based on LIEF (mostly
+CLI):
+
+- {ref}`lief-patchelf <tools-lief-patchelf>`
+:::
+
+```{eval-rst}
+
+:Assembler:
+
+  * Add support for :ref:`Contextual Assembly Patching <extended-assembler-contextual-patching>`
+
+:DSC:
+
+  * Add enum for the latest dyld shared cache version introducing
+    changes in the header layout (``dyld-1284.13 - 2025-04-25``)
+
+    .. code-block:: diff
+
+         uint64_t    dynamicDataOffset;
+         uint64_t    dynamicDataMaxSize;
+         uint32_t    tproMappingsOffset;
+         uint32_t    tproMappingsCount;
+      +  uint64_t    functionVariantInfoAddr;
+      +  uint64_t    functionVariantInfoSize;
+      +  uint64_t    prewarmingDataOffset;
+      +  uint64_t    prewarmingDataSize;
+      };
+
+  * Add enum for the latest dyld shared cache version introducing
+    changes in the header layout (``dyld-1231.3 - 2024-09-24``)
+
+    .. code-block:: diff
+
+         uint64_t    dynamicDataOffset;
+         uint64_t    dynamicDataMaxSize;
+      +  uint32_t    tproMappingsOffset;
+      +  uint32_t    tproMappingsCount;
+      };
+
+  * Fix symbol resolution issue: :issue:`1127`
+
+:PE:
+
+  * Please check :ref:`LIEF 0.17.0 - PE changelog <pe_0170_changelog>`
+  * :github_user:`luadebug` added support for pretty printing OID value and
+    non-roman characters in X509 certificates (see: :pr:`1226`, :issue:`1219`)
+
+:COFF:
+
+  * Initial support for the COFF format: see the :ref:`COFF section <format-coff>`
+
+:Mach-O:
+
+  * Initial support for |lief-macho-function-variants-command| and
+    |lief-macho-function-variant-fixups-command| commands (``LC_FUNCTION_VARIANTS, LC_FUNCTION_VARIANT_FIXUPS``)
+  * Add support for |lief-macho-note-command| command (``LC_NOTE``)
+  * Add support for |lief-macho-atom-info| command (``LC_ATOM_INFO``)
+  * Add support for modifying Mach-O commands that embed variable-length data
+    (:issue:`1204`, :issue:`1125`). See: :ref:`RPath and Library Path Modification <format-macho-rpath>`.
+
+    .. code-block:: python
+
+      # Change library name
+      for lib in macho.libraries:
+          lib.name += "/some/path/lib.dylib"
+
+      # Change rpath
+      for rpath in macho.rpaths:
+          rpath.path += '/a/very/long/path/that/needs/expansion'
+
+  * Add |lief-macho-binary-find_library|
+  * To void ``#define`` conflicts with Apple SDK, the following enums have been renamed:
+
+    .. tabs::
+
+       .. tab:: :fa:`brands fa-python` Python
+
+          .. code-block:: diff
+
+            - lief.MachO.FAT_MAGIC
+            + lief.MachO.MAGIC_FAT
+
+            - lief.MachO.FAT_CIGAM
+            + lief.MachO.CIGAM_FAT
+
+            - lief.MachO.Symbol.ORIGIN.LC_SYMTAB
+            + lief.MachO.Symbol.ORIGIN.SYMTAB
+
+            - lief.MachO.Section.TYPE.S_4BYTE_LITERALS
+            + lief.MachO.Section.TYPE.IS_4BYTE_LITERALS
+
+            - lief.MachO.Section.TYPE.S_8BYTE_LITERALS
+            + lief.MachO.Section.TYPE.IS_8BYTE_LITERALS
+
+            - lief.MachO.Section.TYPE.S_16BYTE_LITERALS
+            + lief.MachO.Section.TYPE.IS_16BYTE_LITERALS
+
+
+       .. tab:: :fa:`regular fa-file-code` C++
+
+          .. code-block:: diff
+
+            - MACHO_TYPES::MH_MAGIC
+            - MACHO_TYPES::MH_CIGAM
+            - MACHO_TYPES::MH_MAGIC_64
+            - MACHO_TYPES::MH_CIGAM_64
+            - MACHO_TYPES::FAT_MAGIC
+            - MACHO_TYPES::FAT_CIGAM
+
+            + MACHO_TYPES::MAGIC
+            + MACHO_TYPES::CIGAM
+            + MACHO_TYPES::MAGIC_64
+            + MACHO_TYPES::CIGAM_64
+            + MACHO_TYPES::MAGIC_FAT
+            + MACHO_TYPES::CIGAM_FAT
+
+            - Section::TYPE::S_16BYTE_LITERALS
+            + Section::TYPE::IS_16BYTE_LITERALS
+
+            - Section::TYPE::S_4BYTE_LITERALS
+            + Section::TYPE::IS_4BYTE_LITERALS
+
+            - Section::TYPE::S_8BYTE_LITERALS
+            + Section::TYPE::IS_8BYTE_LITERALS
+
+            - Symbol::ORIGIN::LC_SYMTAB
+            + Symbol::ORIGIN::SYMTAB
+
+:ELF:
+
+  * LIEF newly-inserted sections are now compatible with a ``strip`` after the
+    modification of the binary (see: :ref:`Adding a section/segment <format-elf-section-segment>`)
+  * Enhance support for IA64 architecture.
+  * Introduce :attr:`lief.ELF.Segment.raw_flags` to access the raw (integer)
+    value of the flag
+  * If an ELF binary uses a custom page size, its value can be defined in the
+    parser configuration: |lief-elf-parser-config-page_size|.
+  * Add support for SH4
+  * Add suport for x32/ILP32 ELF binaries (:issue:`1225`)
+  * Add support for S390x
+  * Better endianess support when writing back a binary.
+  * Enhance support for removing segments (:issue:`1233`): |lief-elf-binary-remove-segment|
+  * Enhance support for removing or modifying symbol versions (related to the
+    :ref:`lief-patchelf <tools-lief-patchelf>` initiative)
+  * New doc section: :ref:`Symbol Versions <format-elf-symbols-version>`
+  * New doc section: :ref:`R[UN]PATH Modification <format-elf-rpath-modification>`
+
+:DWARF:
+
+  * LIEF extended can now process DWARF debug info in PE binaries
+  * Add support for creating DWARF: :ref:`DWARF Editor <extended-dwarf-editor>`
+    (require extended version ``>= 0.17.0.2623``)
+
+:PDB:
+
+  * Add |lief-pdb-is_pdb|
+  * Add support for CodeView symbols: ``S_COMPILE3, S_COMPILE2, S_BUILDINFO, S_ENVBLOCK``.
+    These symbols are exposed through the interface |lief-pdb-buildmetadata|,
+    which can be accessed using |lief-pdb-compilationunit-buildmetadata|.
+    This metadata provides build time information such as:
+
+    .. code-block:: text
+
+        Module Name : * Linker *
+        Build Metadata:
+          Frontend Version: 0.0.0.0
+          Backend Version : 14.37.32825.0
+          Tool Version    : Microsoft (R) LINK
+          Language        : LINK
+          Target          : X64
+          Environment:
+            cwd: C:\Users\romai\dev\rust\ast-grep
+            exe: C:\Program Files\Microsoft Visual Studio\2022\Community\[...]
+            pdb: C:\Users\romai\dev\rust\ast-grep\target\debug\deps\ast_grep.pdb
+            cmd:  /NOLOGO /LIBPATH:C:\Users\romai\dev\rust\ast-grep\target\[...]
+
+
+        Module Name : std-4ee9ee8805e6ac55.std.ddad90bab7781587-cgu.0.rcgu.o
+        Object      : C:\Users\romai\scoop\persist\rustup\.rustup\toolchains\[...]
+        Build Metadata:
+          Frontend Version: 1.74.0.0
+          Backend Version : 17004.0.0.0
+          Tool Version    : clang LLVM (rustc version 1.74.0 (79e9716c9 2023-11-13))
+          Language        : RUST
+          Target          : X64
+          Build Info:
+            Current directory: /rustc/79e9716c980570bfd1f666e3b16ac583f0168962
+            Build tool       : C:\a\rust\rust\build\x86_64-pc-windows-msvc\stage1\bin\rustc.exe
+            Source file      : library\std\src\lib.rs\@\std.ddad90bab7781587-cgu.0
+            Command line     : "-cc1" "--crate-name" "std" "--edition=2021" [...]
+
+:OAT:
+
+  * Parsing Android OAT files requires to **explicitly** use :func:`lief.OAT.parse`
+
+  .. code-block:: python
+
+    import lief
+
+    # Before LIEF 0.17.0 this function returned a lief.OAT.Binary object
+    lief.parse("CallDeviceId.oat")
+
+    # Since LIEF 0.17.0 this function returns a lief.ELF.Binary object
+    lief.parse("CallDeviceId.oat")
+
+    # Return a lief.OAT.Binary object
+    lief.OAT.parse("CallDeviceId.oat")
+
+:Abstraction:
+
+  * Expose |lief-abstract-binary-page_size|
+  * Add |lief-abstract-binary-load_debug_info| to attach an external debug file
+    to a |lief-abstract-binary|. See these sections for more details:
+    :ref:`DWARF: Loading an external debug file <extended-dwarf-load-ext>`
+    :ref:`PDB: Loading an external debug file <extended-pdb-load-ext>`
+  * Add |lief-debug-info-find_function_address|
+
+:Extended:
+
+  * Fix issue in the Python bindings while trying to access ``lief.__LIEF_MAIN_COMMIT__``
+  * Fix CMake issue with ``find_package(lief-extended)``
+  * Use LLVM ``21.1.x``
+
+:Build System:
+
+  * LIEF is now available in `vcpkg <https://github.com/microsoft/vcpkg/tree/master/ports/lief>`_.
+    Many thanks to :github_user:`luadebug` for this support.
+
+:Dependencies:
+
+  * Move to tl-expected ``1.2.0``
+  * Move to utfcpp ``4.0.6``
+  * Move to mbedtls ``3.6.4``
+  * Move to spdlog ``1.15.3``
+  * Move to ``nlohmann/json`` ``3.12.0``
+  * Upgrade nanobind to version ``v2.8.x``
+
+:Utilities:
+
+  * Add |lief-dump|
+```
+
+## 0.16.7 - October 5th, 2025
+
+```{eval-rst}
+
+:Python:
+
+  * Add wheels for Python 3.14
+
+:Mach-O:
+
+  * Fix ``has_nx`` (:pr:`1218`)
+  * Fix :issue:`1228`
+
+:ELF:
+
+  * Fix :issue:`1241`
+
+:Other:
+
+  * :pr:`1220`
+```
+
+## 0.16.6 - May 29th, 2025
+
+```{eval-rst}
+
+:Compilation:
+
+  * Fix missing header (:issue:`1192`)
+  * Fix GCC 15 issue (:issue:`1203`)
+  * Fix :issue:`1210`
+
+:Mach-O:
+
+  * Fix use-after-move (:issue:`1212`)
+  * Fix :issue:`1206`
+
+:Python:
+
+  * Fix Python logger warning
+
+:Other:
+
+  * :issue:`1217`
+  * :pr:`1216`
+```
+
+## 0.16.5 - April 19th, 2025
+
+```{eval-rst}
+
+:ELF:
+
+  * Relax the condition over the ``DT_SYMENT`` entry (:issue:`1177`)
+
+:Mach-O:
+
+  * Modifications on |lief-macho-encryptioninfo| are now committed when doing a
+    ``write()``. See: :issue:`1173`
+
+:Compilation:
+
+  * Fix compilation issue when targeting Linux i386/i686 (:issue:`1189`)
+  * Better support for external ``fmt`` library
+  * Fix ``fmt`` unicode issue
+  * Fix missing ``cstdio`` (:issue:`1184`)
+
+:Packages:
+
+  * Add Python, Rust, SDK packages for Windows ARM64 (``aarch64-pc-windows-msvc``)
+  * Add Python, Rust, SDK packages for Linux Musl ARM64 (``aarch64-unknown-linux-musl``)
+  * Add Python, Rust, SDK packages for Linux Musl i686 (``i686-unknown-linux-musl``)
+```
+
+## 0.16.4 - February 23rd, 2025
+
+```{eval-rst}
+
+:Python:
+
+  * Relax checks on the enum verification. As described in :issue:`1170` and
+    :issue:`1172`, an invalid enum led to an unrecoverable error. The new
+    behavior now returns the raw ``int`` value if it can't be converted into the
+    given enum.
+
+  * Upgrade nanobind to version ``v2.5.0``
+
+:PE:
+
+  * Fix export forwarding issue (:issue:`1168`)
+
+:MachO:
+
+  * Fix truncated ``nlist_t.n_type`` when rewriting a Mach-O binary
+```
+
+## 0.16.3 - February 1st, 2025
+
+```{eval-rst}
+
+:ELF:
+
+  * Fix issue when parsing the dynamic table with an invalid offset (bug found
+    by :github_user:`lebr0nli`)
+  * Fix endianness issue with ``IA64`` binaries (:issue:`1164`)
+
+:PE:
+
+  * Fix missing original forwarded function name (:issue:`1166`)
+
+:Misc:
+
+  * Add support for spdlog compiled with ``SPDLOG_WCHAR_FILENAMES`` (:issue:`1147`)
+```
+
+## 0.16.2 - January 1st, 2025
+
+```{eval-rst}
+
+:Compilation:
+
+  * Fix broken ``aarch64`` Python wheel which is related to a toolchain issue
+    (:issue:`1146`)
+```
+
+## 0.16.1 - December 26th, 2024
+
+```{eval-rst}
+
+:MachO:
+
+  * Various fixes from :github_user:`DzenIsRich` & :github_user:`peledins-zimperium`
+    Thanks to them, Mach-O modification is more reliable.
+
+  * Fix issue when building with ``-DLIEF_MACHO=ON`` (see: :issue:`1138`)
+
+:Rust:
+
+  * Fix min-rustc version issue (see: :commit:`75a27f0e`)
+
+:Compilation:
+
+  * Fix missing ``LIEF_API`` visibility (:commit:`e01f92a0`, :pr:`1140`)
+```
+
+## 0.16.0 - December 10th, 2024
+
+```{eval-rst}
+
+:Abstraction:
+
+  * Add |get_int_from_virtual_address| to read an **integer** value
+    at a specific virtual address
+
+    **C++**
+
+    .. code-block:: cpp
+
+      LIEF::Binary& bin;
+
+      uint16_t short_value = bin.get_int_from_virtual_address<uint16_>(0x140002CC8);
+
+    **Python**
+
+    .. code-block:: python
+
+      some_bin: lief.Binary = ...
+      long_value = some_bin.get_int_from_virtual_address(0x140002CC8, 4)
+      # or
+      long_value = some_bin.get_int_from_virtual_address(0x140002CC8, ctypes.sizeof(ctypes.c_uint32))
+
+    **Rust**
+
+    .. code-block:: rust
+
+      elf: &lief::elf::Binary
+      let value: i16 = elf.get_int_from_virtual_address::<i16>(0x401126).unwrap();
+
+  * Global code cleaning (especially, |lief-header-architectures| and
+    |lief-header-modes| is now more meaningful)
+  * Re-scope ``lief.ARCHITECTURES`` into |lief-header-architectures|
+  * Re-scope ``lief.MODES`` into |lief-header-modes|
+  * Re-scope ``lief.OBJECT_TYPES`` into |lief-header-object-types|
+  * Re-scope ``lief.ENDIANNESS`` into |lief-header-endianness|
+
+
+:MachO:
+
+  * Fix endianness support (:issue:`1110`)
+  * Add helpers to determine the platform targeted by a Mach-O binary:
+
+    - |lief-macho-binary-is-ios|
+    - |lief-macho-binary-is-macos|
+    - |lief-macho-binary-platform|
+
+  * Expose an iterator over the stub entries located in ``__stubs,__auth_stubs,__symbol_stub,__picsymbolstub4``:
+
+    |lief-macho-binary-symbol_stubs| - |lief-macho-stub|
+
+  * Add support for the ``LC_SUBCLIENT`` command: |lief-macho-subclient|
+  * Add support for the ``LC_ROUTINE/LC_ROUTINE64`` command: |lief-macho-routine|
+  * Expose an iterator for the indirect symbols in |lief-macho-dynamicsymbolcommand|
+  * Add |lief-macho-binary-bindings|
+    to iterate over the bindings info located in |lief-macho-dyldinfo| or
+    |lief-macho-chainedbindinginfo|
+  * Add |lief-macho-indirectbindinginfo| to represent a binding operation
+    inferred from the indirect symbol table.
+
+    This can be handy if a Mach-O does not have the commands |lief-macho-dyldinfo|
+    or |lief-macho-chainedbindinginfo| (e.g. extracted shared cache library)
+
+:PE:
+
+  * Fix authenticode error while reading RSA PKCS#1 1.5 padding
+
+:ELF:
+
+  * Fix issue when multiple empty strings are present in the ``.symtab`` section
+    (:pr:`1124`)
+  * Add |lief-elf-relocation-resolve| to resolve the value of relocations
+  * Add support for eBPF relocations.
+  * Add support for ``GNU_PROPERTY_AARCH64_FEATURE_PAUTH`` GNU property note:
+    |lief-elf-aarch64pauth|.
+  * Add |lief-elf-binary-target-android| to check if an ELF targets Android
+  * Fix a critical error when rewriting ELF file with ``DT_RELR`` relocations.
+    This error leads to a crash of the modified binary.
+  * Fix error while (re)generating ELF's RELR relocations (:issue:`1097`)
+  * Add support for RISC-V architecture
+  * Fix bug when trying to remove a dynamic symbol that is associated with
+    multiple relocations (:issue:`1089`)
+
+:Rust:
+
+  * Mutable API are progressively introduced:
+
+    - ELF:
+
+      - :rust:method:`lief::elf::Binary::write [struct]`
+      - :rust:method:`lief::elf::Binary::write_with_config [struct]`
+      - :rust:method:`lief::elf::Binary::add_library [struct]`
+
+    - PE:
+
+      - :rust:method:`lief::pe::Binary::write [struct]`
+
+    - MachO:
+
+      - :rust:method:`lief::macho::Binary::write [struct]`
+      - :rust:method:`lief::macho::Binary::write_with_config [struct]`
+      - :rust:method:`lief::macho::Binary::add_library [struct]`
+
+  * Thanks to :github_user:`Huntragon` Rust bindings can be used without openssl (see: :pr:`1105`)
+  * Rust precompiled Linux packages are now supported for Debian 10 & Ubuntu 19.10.
+    Before, they require at least Debian 11 & Ubuntu 20.04
+  * Add support for the ``x86_64-unknown-linux-musl`` target which allows to
+    generate full static executable.
+  * Add :rust:enum:`lief::elf::header::Arch`
+  * Add :rust:struct:`lief::elf::dynamic::Flags`
+
+:ObjC:
+
+
+  * The header-like generation (|lief-objc-metadata-to_decl|) is now including
+    method's address as a comment:
+
+    **Before**
+
+    .. code-block:: objc
+
+      @interface GCKUIImageHints<NSCopying,NSSecureCoding> {
+          long long _imageType;
+          NSObject<NSSecureCoding> * _customData;
+          struct CGSize _imageSize;
+      }
+      + (bool)supportsSecureCoding:(GCKUIImageHints *)self :(SEL)id;
+      - (bool)isEqual:(GCKUIImageHints *)self :(SEL)id :(NSObject *)arg2;
+
+    **After**
+
+    .. code-block:: objc
+
+      @interface GCKUIImageHints<NSCopying,NSSecureCoding> {
+          long long _imageType;
+          NSObject<NSSecureCoding> * _customData;
+          struct CGSize _imageSize;
+      }
+      // Address: 0x00001aa448
+      + (bool)supportsSecureCoding:(GCKUIImageHints *)self :(SEL)id;
+      // Address: 0x00001aa5ec
+      - (bool)isEqual:(GCKUIImageHints *)self :(SEL)id :(NSObject *)arg2;
+
+  * Fix |lief-objc-method-address| for *small* methods.
+  * The output of |lief-objc-metadata-to_decl_opt| can now be configured with
+    |lief-objc-declopt|.
+
+:DWARF:
+
+  * Add |lief-dwarf-function-is-external|
+  * Add |lief-dwarf-cu-imported-functions|
+  * Add ``DW_TAG_typedef`` support
+
+:Extended:
+
+  .. note::
+
+    * `LIEF extended <https://extended.lief.re>`_ is now open to everyone
+    * C++ SDK is now available
+    * Rust package is now available
+
+  * Initial assembler support: :ref:`Assembler <extended-assembler>`
+  * Initial disassembler support: :ref:`Disassembler <extended-disassembler>`
+  * Linux Python wheels are now ``manylinux_2_27`` compliants. In other words,
+    they are working with a glibc from at least 2018.
+  * Support for :ref:`Dyld shared cache <extended-dsc>`
+  * |lief-elf-symbol-demangled_name| is working on **all** platforms
+    (not only unix-based builds)
+  * |lief-macho-symbol-demangled_name| is working on **all** platforms
+    (not only unix-based builds)
+  * |lief-pe-delayimportentry-demangled_name|
+  * |lief-pe-importentry-demangled_name|
+  * |lief-pe-exportentry-demangled_name|
+
+    .. code-block:: python
+
+        pe = lief.PE.parse("some.exe")
+
+        if exp := pe.get_export():
+            for entry in exp.entries:
+                # e.g.void __cdecl Platform::Details::EventSourceUninitialize(void **)
+                print(entry.demangled_name)
+
+        for imp in pe.imports:
+            for entry in imp.entries:
+                # e.g. void __cdecl std::_Xlength_error(char const *)
+                print(entry.demangled_name)
+
+  * Add |demangle| to demangle symbols (c.f. :issue:`1054`)
+  * The extended version is now using a versioning matching LIEF regular version
+
+:Python Bindings:
+
+  * Upgrade nanobind from ``1.8.0`` to ``2.4.0``
+  * ``*.pyi`` stubs are now generated by nanobind (replacing mypy's stugen)
+
+:Dependencies:
+
+  * Upgrade MbedTLS from ``3.2.1`` to ``3.6.1``
+
+:doc:
+
+  * Global restructuring of the documentation
+
+  * Add Sphinx cross-reference support for Rust. For instance, this link:
+    :rust:method:`lief::elf::Binary::debug_info [struct]` references the
+    documentation of ``debug_info`` in the Rust documentation page.
+
+  * Add cross-api menu directive. For instance, this *link*: |lief-dwarf-debug-info|
+    toggles a menu to access the documentation of DWARF's debug info for Rust,
+    Python & C++.
+```
+
+## 0.15.1 - July 23th, 2024
+
+```{eval-rst}
+
+:MachO:
+
+  * Fix missing commit for ``.hwx`` support
+```
+
+## 0.15.0 - July 21th, 2024
+
+```{eval-rst}
+
+:Extended:
+
+  .. note::
+
+    See: https://extended.lief.re and :ref:`extended-intro`
+
+  * Add support for DWARF: :ref:`extended-dwarf`
+  * Add support for PDB: :ref:`extended-pdb`
+  * Add support for Objective-C: :ref:`extended-objc`
+
+
+:Repo:
+  * ``master`` branch has been renamed ``main``
+
+:Rust:
+  * First (beta) release of the bindings (c.f. :ref:`lief_rust_bindings`)
+
+:ELF:
+  * Add support to create custom notes (:issue:`1026`):
+
+    .. code-block:: python
+
+      elf: lief.ELF.Binary = ...
+
+      elf += lief.ELF.Note.create(
+          name="my-custom-note",
+          original_type=lief.ELF.Note.TYPE.UNKNOWN,
+          description=list(b"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"),
+          section_name=".lief.note.custom"
+      )
+
+      config = lief.ELF.Builder.config_t()
+      config.notes = True
+      elf.write("/tmp/new-binary.elf", config)
+
+  * Add :meth:`lief.ELF.Binary.get_relocated_dynamic_array` which allows
+    to get a **relocated** view of the of init/fini entries. This function can
+    handy ELF init array/fini array functions are defined through relocations.
+    See: :issue:`1058`, :issue:`626`
+  * Add support for QNX Stack note (:issue:`1065`)
+  * The ``static_symbols`` API functions has been renamed in ``symtab_symbols``.
+
+    LIEF was naming symbols located in the ``.symtab`` sections as **static
+    symbols** in opposition to the ``.dynsym`` symbols. This naming can be
+    confusing since the concept of **static symbol** in a program is well
+    defined (i.e. ``static bool my_var``) and not applicable in this case.
+
+    **Therefore, the ``xxx_static_symbols`` API is has been renamed
+    ``xxx_symtab_symbol``.**
+
+  * Re-scope ``DYNAMIC_TAGS`` into :class:`lief.ELF.DynamicEntry.TAG`
+  * Re-scope ``E_TYPE`` into :class:`lief.ELF.Header.FILE_TYPE`
+  * Re-scope ``VERSION`` into :class:`lief.ELF.Header.VERSION`
+  * Re-scope ``ELF_CLASS`` into :class:`lief.ELF.Header.CLASS`
+  * Re-scope ``ELF_DATA`` into :class:`lief.ELF.Header.ELF_DATA`
+  * Re-scope ``OS_ABI`` into :class:`lief.ELF.Header.OS_ABI`
+  * Re-scope ``ELF_SECTION_TYPES`` into :class:`lief.ELF.Section.TYPE`
+  * Re-scope ``ELF_SECTION_FLAGS`` into :class:`lief.ELF.Section.FLAGS`
+  * Re-scope ``SYMBOL_BINDINGS`` into :class:`lief.ELF.Symbol.BINDING`
+  * Re-scope ``ELF_SYMBOL_TYPES`` into :class:`lief.ELF.Symbol.TYPE`
+  * Re-scope ``ELF_SYMBOL_VISIBILITY`` into :class:`lief.ELF.Symbol.VISIBILITY`
+  * Re-scope ``SEGMENT_TYPES`` into :class:`lief.ELF.Segment.TYPE`
+  * Re-scope ``ELF_SEGMENT_FLAGS`` into :class:`lief.ELF.Segment.FLAG`
+  * Re-scope ``DYNAMIC_FLAGS_1`` into :class:`lief.ELF.DynamicEntryFlags.FLAG`
+  * Re-scope ``DYNAMIC_FLAGS`` into :class:`lief.ELF.DynamicEntryFlags.FLAG`
+  * Re-scope ``DYNSYM_COUNT_METHODS`` into :class:`lief.ELF.ParserConfig.DYNSYM_COUNT`
+  * Re-scope ``RELOCATION_PURPOSES`` into :class:`lief.ELF.Relocation.PURPOSE`
+  * ``RELOC_x86_64``, ``RELOC_i386``, ... have been re-scoped **and merged**
+    into :class:`lief.ELF.Relocation.TYPE`
+
+  * Add support for Android packed relocation format (``DT_ANDROID_REL{A}``)
+  * Add support for relative relocation format (``DT_RELR``)
+
+:PE:
+  * Authenticode:
+    Add partial support for the following PKCS #7 attributes:
+
+      - ``1.3.6.1.4.1.311.3.3.1 - Ms-CounterSign`` (:class:`lief.PE.MsCounterSign`)
+      - ``1.3.6.1.4.1.311.10.3.28 - Ms-ManifestBinaryID`` (:class:`lief.PE.MsManifestBinaryID`)
+      - ``1.3.6.1.4.1.311.2.6.1 - SPC_RELAXED_PE_MARKER_CHECK_OBJID`` (:class:`lief.PE.SpcRelaxedPeMarkerCheck`)
+      - ``1.2.840.113549.1.9.16.2.47 - SIGNING_CERTIFICATE_V2`` (:class:`lief.PE.SigningCertificateV2`)
+
+    - ``1.2.840.113549.1.9.16.1.4 - PKCS#9 TSTInfo`` (:class:`lief.PE.PKCS9TSTInfo`)
+
+  * Add :attr:`lief.PE.CodeViewPDB.guid` attribute (:issue:`480`)
+  * Move ``lief.PE.OptionalHeader.computed_checksum`` to :meth:`lief.PE.Binary.compute_checksum`
+
+    In previous versions of LIEF, :attr:`lief.PE.OptionalHeader.checksum` was
+    re-computed (on purpose) in the parsing phase. On large
+    binaries, this re-computation can have a **strong impact** on the performances.
+    Thus, this computation has been deferred to a dedicated method :meth:`lief.PE.Binary.compute_checksum`
+
+    .. code-block:: python
+
+      pe = lief.PE.parse("...")
+      # Before:
+      computed = pe.optional_header.computed_checksum
+      # Now:
+      computed = pe.compute_checksum()
+
+:MachO:
+
+  * Add support to modify Mach-O rpath (see: :issue:`1074`)
+  * Add helper :attr:`lief.MachO.Binary.support_arm64_ptr_auth` to check if a
+    Mach-O binary is supporting ARM64 pointer authentication (arm64e)
+  * Fix **major performance issue when processing Mach-O binaries on Windows & macOS**
+  * Add generic :class:`lief.MachO.UnknownCommand` to support Apple private Load
+    commands not officially supported by LIEF.
+  * Re-scope ``LOAD_COMMAND_TYPES`` into :class:`lief.MachO.LoadCommand.TYPE`
+  * Re-scope ``FILE_TYPES`` into :class:`lief.MachO.Header.FILE_TYPE`
+  * Re-scope ``HEADER_FLAGS`` into :class:`lief.MachO.Header.FLAGS`
+  * Re-scope ``MACHO_SEGMENTS_FLAGS`` into :class:`lief.MachO.SegmentCommand.FLAGS`
+  * Re-scope ``MACHO_SECTION_TYPES`` into :class:`lief.MachO.Section.TYPE`
+  * Re-scope ``MACHO_SECTION_FLAGS`` into :class:`lief.MachO.Section.FLAGS`
+  * Re-scope ``REBASE_TYPES`` into :class:`lief.MachO.DyldInfo.REBASE_TYPE`
+  * Re-scope ``REBASE_OPCODES`` into :class:`lief.MachO.DyldInfo.REBASE_OPCODES`
+  * Re-scope ``BIND_OPCODES`` into :class:`lief.MachO.DyldInfo.BIND_OPCODES`
+  * Re-scope ``BINDING_CLASS`` into :class:`lief.MachO.DyldBindingInfo.CLASS`
+  * Re-scope ``BIND_TYPES`` into :class:`lief.MachO.DyldBindingInfo.TYPE`
+  * Re-scope ``EXPORT_SYMBOL_FLAGS`` into :class:`lief.MachO.ExportInfo.FLAGS`
+  * Re-scope ``EXPORT_SYMBOL_KINDS`` into :class:`lief.MachO.ExportInfo.KIND`
+  * Re-scope ``RELOCATION_ORIGINS`` into :class:`lief.MachO.Relocation.ORIGIN`
+  * Re-scope ``SYMBOL_ORIGINS`` into :class:`lief.MachO.Symbol.ORIGIN`
+  * Re-scope ``VM_PROTECTIONS`` into :class:`lief.MachO.SegmentCommand.VM_PROTECTIONS`
+  * Re-scope ``CPU_TYPES`` into :class:`lief.MachO.Header.CPU_TYPE`
+
+:CMake:
+
+  * ``LIEFConfig.cmake`` is now installed in ``<prefix>/lib/cmake/LIEF/``
+    instead of ``<prefix>/share/LIEF/cmake/``
+
+
+:Python Bindings:
+
+  * Add :func:`lief.disable_leak_warning` to disable Nanobind warning about "leaks".
+
+  .. warning::
+
+    These warnings does not necessarily mean that LIEF leak objects. These
+    warnings might happen in `Cyclic garbage collection <https://nanobind.readthedocs.io/en/latest/typeslots.html#cyclic-garbage-collection>`_.
+
+:Documentation:
+
+  * Add icons
+  * Include inheritance diagram for Python API (e.g. :class:`lief.ELF.Note`)
+```
+
+## 0.14.1 - February 11th, 2024
+
+```{eval-rst}
+
+:ELF:
+  * Fix regression in Symbol Version Definition processing (:issue:`1014`)
+
+:PE:
+  * Address :issue:`1016` by creating aliases:
+
+    - :attr:`lief.PE.ContentInfo.digest` to :attr:`lief.PE.SpcIndirectData.digest`
+    - :attr:`lief.PE.ContentInfo.digest_algorithm` to :attr:`lief.PE.SpcIndirectData.digest_algorithm`
+
+:Python:
+
+  * Fix regression in iterator's performances
+```
+
+## 0.14.0 - January 20, 2024
+
+```{eval-rst}
+
+:ELF:
+  * Add support for the GNU note properies (:issue:`975`).
+
+    :Example:
+
+      .. code-block:: python
+
+        elf = lief.ELF.parse("...")
+        note = elf.get(lief.ELF.Note.TYPE.GNU_PROPERTY_TYPE_0)
+        aarch64_feat: lief.ELF.AArch64Feature = note.find(lief.ELF.NoteGnuProperty.Property.TYPE.AARCH64_FEATURES)
+        if lief.ELF.AArch64Feature.FEATURE.BTI in aarch64_feat.features:
+            print("BTI supported")
+
+    See:
+
+    - :class:`lief.ELF.NoteGnuProperty`
+    - :class:`lief.ELF.AArch64Feature`
+    - :class:`lief.ELF.NoteNoCopyOnProtected`
+    - :class:`lief.ELF.StackSize`
+    - :class:`lief.ELF.X86Features`
+    - :class:`lief.ELF.X86ISA`
+
+
+  * Refactoring of the ELF note processing
+  * Fix relocation issue when using ``-Wl,--emit-relocs`` (c.f. :issue:`897` / :pr:`898` by :github_user:`adamjseitz`)
+  * Improve the computation of the dynamic symbols thanks to :github_user:`adamjseitz` (c.f. :issue:`922`)
+  * Add support for the LoongArch architecture thanks to :github_user:`loongson-zn` (c.f. :pr:`921`)
+
+  * Add a :class:`lief.ELF.ParserConfig` interface that can be used to tweak
+    which parts of the ELF format should be parsed.
+
+    :Example:
+
+      .. code-block:: python
+
+        config = lief.ELF.ParserConfig()
+
+        # Skip parsing static and dynamic symbols
+        config.parse_static_symbols = False
+        config.parse_dyn_symbols = False
+
+        elf = lief.ELF.parse("target.elf", config)
+
+:MachO:
+
+  * The *fileset name* is now stored in :attr:`lief.MachO.Binary.fileset_name`
+    (instead of `lief.MachO.Binary.name`)
+
+:PE:
+  * ``RESOURCE_SUBLANGS`` has been removed
+  * ``RESOURCE_LANGS`` is now defined in a dedicated header: ``LIEF/PE/resources/langs.hpp``
+  * ``RESOURCE_TYPES`` is now scoped in ``ResourcesManager::TYPE``
+  * ``GUARD_CF_FLAGS`` is now scoped as :class:`~lief.PE.LoadConfigurationV1.IMAGE_GUARD` in
+    :class:`lief.PE.LoadConfigurationV1`
+  * ``SECTION_CHARACTERISTICS`` is now scoped within the
+    :class:`~lief.PE.Section` class instead of being globally defined:
+
+    .. code-block:: python
+
+      # Before
+      lief.PE.SECTION_CHARACTERISTICS.CNT_CODE
+      # Now:
+      lief.PE.Section.CHARACTERISTICS.CNT_CODE
+  * ``DATA_DIRECTORY`` is now scoped within the
+    :class:`~lief.PE.DataDirectory` class instead of being globally defined:
+
+    .. code-block:: python
+
+      # Before
+      lief.PE.DATA_DIRECTORY.IAT
+      # Now:
+      lief.PE.DataDirectory.TYPES.IAT
+
+  * ``MACHINE_TYPES`` and ``HEADER_CHARACTERISTICS`` are now scoped within the
+    :class:`~lief.PE.Header` class instead of being globally defined:
+
+    .. code-block:: python
+
+      # Before
+      lief.PE.MACHINE_TYPES.AMD64
+      # Now:
+      lief.PE.Header.MACHINE_TYPES.AMD64
+
+  * :attr:`lief.PE.Header.characteristics` now returns a
+    `list`/`std::vector` instead of a ``set``.
+  * :attr:`lief.PE.OptionalHeader.dll_characteristics_lists` now returns a
+    ``list``/``std::vector`` instead of a ``set``.
+  * ``SUBSYSTEM`` and ``DLL_CHARACTERISTICS`` are now scoped within the
+    :class:`~lief.PE.OptionalHeader` class instead of being globally defined:
+
+    .. code-block:: python
+
+      # Before
+      lief.PE.SUBSYSTEM.NATIVE
+      # Now:
+      lief.PE.OptionalHeader.SUBSYSTEM.NATIVE
+  * :attr:`lief.PE.DosHeader.used_bytes_in_the_last_page` has been renamed in
+    :attr:`lief.PE.DosHeader.used_bytes_in_last_page`
+  * Refactoring of the Debug directory processing:
+    :class:`lief.PE.Debug` is now the root class of:
+    :class:`lief.PE.CodeView` / :class:`lief.PE.CodeView`, :class:`lief.PE.Pogo`,
+    :class:`lief.PE.Repro`.
+
+    The parsing logic has been cleaned and the tests updated.
+  * Add a :class:`lief.PE.ParserConfig` interface that can be used to tweak
+    which parts of the PE format should be parsed (:issue:`839`).
+
+    :Example:
+
+      .. code-block:: python
+
+        config = lief.PE.ParserConfig()
+
+        # Skip parsing PE authenticode
+        config.parse_signature = False
+
+        pe = lief.PE.parse("pe.exe", config)
+
+:Abstraction:
+
+    * ``LIEF::EXE_FORMATS`` is now scoped in ``LIEF::Binary::FORMATS``
+    * All the `Binary` classes now implement `classof`:
+
+      .. code-block:: cpp
+
+        std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse("...");
+        if (LIEF::PE::Binary::classof(bin.get())) {
+          auto& pe_file = static_cast<LIEF::PE::Binary&>(*bin);
+        }
+
+:General Design:
+
+  * Python parser functions (like: :func:`lief.PE.parse`) now accept `os.PathLike`
+    arguments like `pathlib.Path` (:issue:`974`).
+  * Remove the `lief.Binary.name` attribute
+  * LIEF is now compiled with C++17 (the API remains C++11 compliant)
+  * Switch to `nanobind <https://nanobind.readthedocs.io/en/latest/>`_ for the
+    Python bindings.
+  * CI are now more efficient.
+  * The Python documentation for properties now contains the type of the
+    property.
+```
+
+## 0.13.2 - June 17, 2023
+
+```{eval-rst}
+
+:PE:
+
+  Fix authenticode inconsitency (:issue:`932`)
+
+:ELF:
+
+     Fix missing undef (:issue:`929`)
+```
+
+## 0.13.1 - May 28, 2023
+
+```{eval-rst}
+
+:PE:
+
+  * Fix PE authenticode verification issue in the case of special characters (:issue:`912`)
+
+:Misc:
+
+  * Fix mypy stubs (:issue:`909`)
+  * Fix missing include (:issue:`918`)
+  * Fix C99 comments (:issue:`916`)
+  * Fix AArch64 docker image (:issue:`904`)
+```
+
+## 0.13.0 - April 9, 2023
+
+```{eval-rst}
+
+:ELF:
+
+  * Fix overflow issue in segments (c.f. :issue:`845` found by :github_user:`liyansong2018`)
+  * Fix missing relationship between symbols and sections (c.f. :issue:`841`)
+  * Fix coredump parsing issue (c.f. :issue:`830` found by :github_user:`Lan1keA`)
+  * Fix and (re)enable removing dynamic symbols (c.f. :issue:`828`)
+  * Add support for `NT_GNU_BUILD_ATTRIBUTE_OPEN` and `NT_GNU_BUILD_ATTRIBUTE_FUNC` (c.f. :issue:`816`)
+  * [CVE-2022-38497] Fix ELF core parsing issue (:issue:`766` found by :github_user:`CCWANG19`)
+  * [CVE-2022-38306] Fix a heap overflow found by :github_user:`CCWANG19` (:issue:`763`)
+  * :github_user:`aeflores` fixed an issue when there are multiple versions associated with a symbol
+    (see: :issue:`749` for the details).
+  * Handle binaries compiled with the `-static-pie` flag correctly (see: :issue:`747`)
+  * Add support for modifying section-less binaries. The ELF :class:`~lief.ELF.Section` objects gain
+    the :meth:`lief.ELF.Section.as_frame` method which defines the section as a *framed* section.
+
+    A framed section is a section that concretely does not wraps data and can be corrupted.
+
+    :Example:
+
+      .. code-block:: python
+
+        elf = lief.parse("/bin/ssh")
+        text = elf.get_section(".text").as_frame()
+
+        # We can now corrupt all the fields of the section
+        text.offset  = 0xdeadc0de
+        text.size    = 0xffffff
+        text.address = 0x123
+
+        elf.write("/tmp/out")
+
+  * Add API to precisely define how the segments table should be relocated.
+    One might want to enforce a certain ELF layout while adding sections/ segments.
+    It is now possible to call the method: :meth:`~lief.ELF.Binary.relocate_phdr_table`
+    to define how the segments table should be relocated for welcoming the
+    new sections/segments:
+
+    .. code-block:: python
+
+      elf = lief.parse("...")
+      # Enforce a specific relocation type:
+      # The new segments table will be shift at the end
+      # of the file
+      elf.relocate_phdr_table(Binary.PHDR_RELOC.FILE_END)
+
+      # Add sections/segments
+      # [...]
+      elf.write("out.elf")
+
+    See:
+
+      - :meth:`lief.ELF.Binary.relocate_phdr_table`
+      - :class:`lief.ELF.Binary.PHDR_RELOC`
+
+:MachO:
+
+  * Add :attr:`~lief.MachO.Binary.rpaths` iterator (:issue:`291`)
+  * Add support for parsing Mach-O in memory
+  * Fix a memory issue (found by :github_user:`bladchan` via :issue:`806`)
+  * [CVE-2022-40923] Fix parsing issue (:issue:`784` found by :github_user:`bladchan`)
+  * [CVE-2022-40922] Fix parsing issue (:issue:`781` found by :github_user:`bladchan`)
+  * [CVE-2022-38307] Fix a segfault when the Mach-O binary does not have segments (found by :github_user:`CCWANG19` via :issue:`764`)
+  * Enable to create exports
+  * Fix the layout of the binaries modified by LIEF such as they can be (re)signed.
+  * Add support for `LC_DYLD_CHAINED_FIXUPS` and `LC_DYLD_EXPORTS_TRIE`
+  * Global enhancement when modifying the `__LINKEDIT` content
+  * Add API to get a :class:`~lief.MachO.Section` from a specified segment's name and section's name.
+
+  :Example:
+
+    .. code-block:: python
+
+      sec = bin.get_section("__DATA", "__objc_metadata")
+
+  * Add API to remove a :class:`~lief.MachO.Section` from a specified segment's name and section's name.
+
+  :Example:
+
+    .. code-block:: python
+
+      sec = bin.remove_section("__DATA", "__objc_metadata")
+
+  * Add :attr:`lief.MachO.Binary.page_size`
+
+:PE:
+
+  * The Python API now returns `bytes` objects instead of `List[int]`
+  * Remove :meth:`lief.PE.ResourceNode.sort_by_id`
+  * Fix the ordering of children of :class:`~lief.PE.ResourceNode`
+  * Remove deprecated functions related to PE hooking.
+  * Add support for new PE LoadConfiguration structures.
+
+:DEX:
+
+  * Fix multiple parsing issues raised by :github_user:`bladchan`
+
+:Other:
+
+  * [CVE-2022-38497]: :issue:`765` found by :github_user:`CCWANG19`
+  * [CVE-2022-38495]: :issue:`767` found by :github_user:`CCWANG19`
+
+:General Design:
+
+  * :github_user:`ZehMatt` added the support to write LIEF binaries object through a `std::ostream` interface
+    (:commit:`9d55f538602989c69454639565910884c5c5ac7c`)
+  * Remove the exceptions
+  * The library contains less static initializers which should improve the loading time.
+
+:Python Bindings:
+
+  * Move to a build system compliant with ``pyproject.toml``
+  * Provide typing stubs: :issue:`650`
+  * PyPI releases no longer provide source distribution (`sdist`)
+
+:Dependencies:
+
+  * Move to spdlog 1.11.0
+  * Move to `Pybind11 - 2.10.1 <https://pybind11.readthedocs.io/en/stable/changelog.html#version-2-10-1-oct-31-2022>`_
+  * Move to nlohmann/json 3.11.2
+  * Move to MbedTLS 3.2.1
+  * Move to utfcpp 3.2.1
+```
+
+## 0.12.3 - November 1, 2022
+
+This release contains several security fixes:
+
+> - [CVE-2022-38497] Fix ELF core parsing issue ({issue}`766` found by {github_user}`CCWANG19`)
+> - [CVE-2022-38306] Fix a heap overflow found by {github_user}`CCWANG19` ({issue}`763`)
+> - Fix a memory issue (found by {github_user}`bladchan` via {issue}`806`)
+> - [CVE-2022-40923] Fix parsing issue ({issue}`784` found by {github_user}`bladchan`)
+> - [CVE-2022-40922] Fix parsing issue ({issue}`781` found by {github_user}`bladchan`)
+> - [CVE-2022-38307] Fix a segfault when the Mach-O binary does not have segments (found by {github_user}`CCWANG19` via {issue}`764`)
+
+## 0.12.1 - April 08, 2022
+
+```{eval-rst}
+
+:ELF:
+  * Fix section inclusion calculations (:pr:`692`)
+
+:PE:
+  * Fix parsing regressions (:issue:`689`, :issue:`687`, :issue:`686`, :issue:`685`, :issue:`691`, :issue:`693`)
+
+:Compilation:
+  * Nightly builds are now upload to Saleway's S3 server:
+
+    - https://lief.s3-website.fr-par.scw.cloud/latest/lief
+    - https://lief.s3-website.fr-par.scw.cloud/latest/sdk
+
+  * Fix `GLIBCXX_USE_CXX11_ABI=1` ABI issue (see: :issue:`683`)
+```
+
+## 0.12.0 - March 25, 2022
+
+```{eval-rst}
+
+:ELF:
+  * :github_user:`ahaensler` added the support to insert and assign a :class:`lief.ELF.SymbolVersionAuxRequirement` (see: :pr:`670`)
+  * Enhance the ELF parser to support corner cases described by `netspooky <https://n0.lol/>`_ in :
+
+    - https://tmpout.sh/2/14.html (*84 byte aarch64 ELF*)
+    - https://tmpout.sh/2/3.html (*Some ELF Parser Bugs*)
+
+  * New ELF Builder which is more efficient in terms of speed and
+    in terms of number of segments added when modifying binaries (see: https://lief-project.github.io/blog/2022-01-23-new-elf-builder/)
+
+  * :github_user:`Clcanny` improved (see :pr:`507` and :pr:`509`) the reconstruction of the dynamic symbol table
+    by sorting local symbols and non-exported symbols. It fixes the following warning when parsing
+    a modified binary with ``readelf``
+
+    .. code-block:: text
+
+      Warning: local symbol 29 found at index >= .dynsym's sh_info value of 1
+
+:MachO:
+  * Change the layout of the binaries generated by LIEF such as they are compliant with ``codesign`` checks
+  * The API to configure the MachO parser has been redesigned to provide a better granularity
+
+    .. code-block:: python
+
+      config = lief.MachO.ParserConfig()
+      config.parse_dyld_bindings = False
+      config.parse_dyld_exports  = True
+      config.parse_dyld_rebases  = False
+
+      lief.MachO.parse("/tmp/big.macho", config)
+
+  * :github_user:`LucaMoroSyn` added the support for the ``LC_FILESET_ENTRY``. This command is usually
+    found in kernel cache files
+  * ``LIEF::MachO::Binary::get_symbol`` now returns a pointer (instead of a reference). If the symbol
+    can't be found, it returns a nullptr.
+  * Add API to select a :class:`~lief.MachO.Binary` from a :class:`~lief.MachO.FatBinary` by its architecture. See:
+    :meth:`lief.MachO.FatBinary.take`.
+
+    .. code-block:: python
+
+      fat = lief.MachO.parse("/bin/ls")
+      fit = fat.take(lief.MachO.CPU_TYPES.x86_64)
+
+  * Handle the `0x0D` binding opcode (see: :issue:`524`)
+  * :github_user:`xhochy` fixed performances issues in the Mach-O parser (see :pr:`579`)
+
+:PE:
+  * Adding :attr:`lief.PE.OptionalHeader.computed_checksum` that re-computes the :attr:`lief.PE.OptionalHeader.checksum`
+    (c.f. issue :issue:`660`)
+  * Enable to recompute the :class:`~lief.PE.RichHeader` (issue: :issue:`587`)
+
+    - :meth:`~lief.PE.RichHeader.raw`
+    - :meth:`~lief.PE.RichHeader.hash`
+
+  * Add support for PE's delayed imports. see:
+
+    - :class:`~lief.PE.DelayImport` / :class:`~lief.PE.DelayImportEntry`
+    - :attr:`~lief.PE.Binary.delay_imports`
+
+  * :attr:`lief.PE.LoadConfiguration.reserved1` has been aliased to :attr:`lief.PE.LoadConfiguration.dependent_load_flags`
+  * :attr:`lief.PE.LoadConfiguration.characteristics` has been aliased to :attr:`lief.PE.LoadConfiguration.size`
+  * Thanks to :github_user:`gdesmar`, we updated the PE checks to support PE files that have a corrupted
+    :attr:`lief.PE.OptionalHeader.magic` (cf. :issue:`644`)
+
+:DEX:
+  * :github_user:`DanielFi` added support for DEX's fields (see: :pr:`547`)
+
+:Abstraction:
+  * Abstract binary imagebase for PE, ELF and Mach-O (:attr:`lief.Binary.imagebase`)
+  * Add :meth:`lief.Binary.offset_to_virtual_address`
+  * Add PE imports/exports as *abstracted* symbols
+
+:Compilation & Integration:
+  * :github_user:`ekilmer` updated and modernized the CMake integration files through the PR: :pr:`674`
+  * Enable to use a pre-compiled version of spdlog. This feature aims
+    at improving compilation time when developing on LIEF.
+
+    One can provide path to spdlog install through:
+
+    .. code-block:: console
+
+      $ python ./setup.py --spdlog-dir=path/to/lib/cmake/spdlog [...]
+      # or
+      $ cmake -DLIEF_EXTERNAL_SPDLOG=ON -Dspdlog_DIR=path/to/lib/cmake/spdlog ...
+
+  * Enable to feed LIEF's dependencies externally (c.f. :ref:`lief_third_party`)
+  * Replace the keywords ``and``, ``or``, ``not`` with ``&&``, ``||`` and ``!``.
+
+:Dependencies:
+  * Upgrade to MbedTLS 3.1.0
+  * Upgrade Catch2 to 2.13.8
+  * The different dependencies can be *linked* externally (cf. above and :ref:`lief_third_party`)
+
+:Documentation:
+  * New section about the errors handling (:ref:`err_handling`) and the upcoming
+    deprecation of the exceptions.
+  * New section about how to compile LIEF for debugging/developing. See: :ref:`lief_debug`
+
+:General Design:
+
+  :span:
+
+    LIEF now exposes Section/Segment's data through a `span` interface.
+    As `std::span` is available in the STL from C++20 and the LIEF public API aims at being
+    C++11 compliant, we expose this `span` thanks to `tcbrindle/span <https://github.com/tcbrindle/span>`_.
+    This new interface enables to avoid copies of ``std::vector<uint8_t>`` which can be costly.
+    With this new interface, the original ``std::vector<uint8_t>`` can be retrieved as follows:
+
+    .. code-block:: cpp
+
+      auto bin = LIEF::ELF::Parser::parse("/bin/ls");
+
+      if (const auto* section = bin->get_section(".text")) {
+        LIEF::span<const uint8_t> text_ref =  section->content();
+        std::vector<uint8_t> copy = {std::begin(text_ref), std::end(text_ref)};
+      }
+
+    In Python, span are wrapped by a **read-only** `memory view <https://docs.python.org/3/c-api/memoryview.html>`_.
+    The original *list of bytes* can be retrieved as follows:
+
+    .. code-block:: python
+
+      bin = lief.parse("/bin/ls")
+      section = bin.get_section(".text")
+
+      if section is not None:
+        memory_view = section.content
+        list_of_bytes = list(memory_view)
+
+  :Exceptions:
+
+    .. warning::
+
+      We started to refactor the API and the internal design to remove C++ exceptions.
+      These changes are described a the dedicated blog (`LIEF RTTI & Exceptions <https://lief-project.github.io/blog/2022-02-13-lief-rtti-exceptions/>`_)
+
+      To highlighting the content of the blog for the end users,
+      functions that returned a **reference and which threw an exception** in the case
+      of a failure are now returning a **pointer that is set to nullptr** in the case of a failure.
+
+      If we consider this original code:
+
+      .. code-block:: cpp
+
+        LIEF::MachO::Binary& bin = ...;
+
+        try {
+          LIEF::MachO::UUIDCommand& cmd = bin.uuid();
+          std::cout << cmd << "\n";
+        } catch (const LIEF::not_found&) {
+          // ... dedicated processing
+        }
+
+        // Other option with has_uuid()
+        if (bin.has_uuid()) {
+          LIEF::MachO::UUIDCommand& cmd = bin.uuid();
+          std::cout << cmd << "\n";
+        }
+
+      It can now be written as:
+
+      .. code-block:: cpp
+
+        LIEF::MachO::Binary& bin = ...;
+
+        if (LIEF::MachO::UUIDCommand* cmd = bin.uuid();) {
+          std::cout << *cmd << "\n";
+        } else {
+          // ... dedicated processing as it is a nullptr
+        }
+
+        // Other option with has_uuid()
+        if (bin.has_uuid()) { // It ensures that it is not a nullptr
+          LIEF::MachO::UUIDCommand& cmd = *bin.uuid();
+          std::cout << cmd << "\n";
+        }
+
+    .. seealso::
+
+      - :ref:`Error Handling section<err_handling>`
+      - `List of the functions that changed <https://gist.github.com/romainthomas/37da45b043c5f8b8db6be2767611f625>`_
+```
+
+## 0.11.X - Patch Releases
+
+(release-0115)=
+
+### 0.11.5 - May 22, 2021
+
+- Remove usage of `not` in public headers ({commit}`b8e825b464418de385146bb3f89ef6126f4de5d4`)
+
+```{eval-rst}
+
+:ELF:
+  * :github_user:`pdreiter` fixed the issue :issue:`418`
+
+:PE:
+  * Fix issue when computing :attr:`lief.PE.Binary.sizeof_headers` (:commit:`ab3f073ac0c60d8453070f83dd4dc04fe60aa0a5`)
+
+:MachO:
+  * Fix error on property :attr:`lief.MachO.BuildVersion.sdk` (see :issue:`533`)
+```
+
+(release-0114)=
+
+### 0.11.4 - March 09, 2021
+
+```{eval-rst}
+
+:PE:
+    * Fix missing bound check when computing the authentihash
+```
+
+(release-0113)=
+
+### 0.11.3 - March 03, 2021
+
+```{eval-rst}
+
+:PE:
+    * Add sanity check on the signature's length that could lead to a ``std::bad_alloc`` exception
+```
+
+(release-0112)=
+
+### 0.11.2 - February 24, 2021
+
+```{eval-rst}
+
+:PE:
+    * Fix regression in the behavior of the PE section's name. One can now access the full
+      section's name (with trailing bytes) through :attr:`lief.PE.Section.fullname` (see: :issue:`551`)
+```
+
+(release-0111)=
+
+### 0.11.1 - February 22, 2021
+
+```{eval-rst}
+
+:PE:
+    * :meth:`lief.PE.x509.is_trusted_by` and :meth:`lief.PE.x509.verify` now return
+      a better :attr:`lief.PE.x509.VERIFICATION_FLAGS` instead of just :attr:`lief.PE.x509.VERIFICATION_FLAGS.BADCERT_NOT_TRUSTED`
+      (see: :issue:`532`)
+    * Fix errors in the computation of the Authentihash
+```
+
+(release-0110)=
+
+## 0.11.0 - January 19, 2021
+
+```{eval-rst}
+
+:ELF:
+  * :github_user:`mkomet` updated enums related to Android (see: :commit:`9dd641d380a5defd0a71a9f42dde2fe9c9cb1dbd`)
+  * :github_user:`aeflores` added MIPS relocations support in the ELF parser
+  * Fix :meth:`~lief.ELF.Binary.extend` on a ELF section (cf. issue :issue:`477`)
+  * Fix issue when exporting symbols on empty-gnu-hash ELF binary (:commit:`1381f9a115e6e312ac0ab3deb46a78e481b81796`)
+  * Fix reconstruction issue when the binary is prelinked (cf. issue :issue:`466`)
+  * Add ``DF_1_PIE`` flag
+  * Fix parsing issue of the ``.eh_frame`` section when the base address is not 0.
+  * :github_user:`JanuszL` enhanced the algorithm that computes the string table.
+    It moves from a ``N^2`` algorithm to a ``Nlog(N)`` (:commit:`1e0c4e81d4a3fd7282713f111193e42f198f8967`).
+  * Fix ``.eh_frame`` parsing issue (:commit:`b57f32333a85d0f172206bc5d20aabe2d7942738`)
+  * :github_user:`aeflores` fixed parsing issue in ELF relocations (:commit:`6c53646bb790acf28f2999527eafad30db7d6b69`)
+  * Add ``PT_GNU_PROPERTY`` enum
+  * Bug fix in the symbols table reconstruction (ELF)
+
+:PE:
+  * Enhance PE Authenticode. See `PE Authenticode <https://lief.quarkslab.com/doc/latest/tutorials/13_pe_authenticode.html>`_
+  * :func:`~lief.PE.get_imphash` can now generate the same value as pefile and Virus Total (:issue:`299`)
+
+    .. code-block:: python
+
+      pe = lief.parse("example.exe")
+      vt_imphash = lief.PE.get_imphash(pe, lief.PE.IMPHASH_MODE.PEFILE)
+      lief_imphash = lief.PE.get_imphash(pe, lief.PE.IMPHASH_MODE.DEFAULT)
+
+    .. seealso::
+
+      :class:`lief.PE.IMPHASH_MODE` and :func:`lief.PE.get_imphash`
+  * Remove the padding entry (0) from the rich header
+  * ``lief.PE.LangCodeItem.items`` now returns a dictionary for which the values are **bytes** (instead of
+    ``str`` object). This change is related to ``utf-16`` support.
+  * :github_user:`kohnakagawa` fixed wrong enums values: :commit:`c03125045e32a9cd65c613585eb4d0385350c6d2`, :commit:`6ee808a1e4611d09c6cf0aea82a612be69584db9`, :commit:`cd05f34bae681fc8af4b5e7cc28eaef816802b6f`
+  * :github_user:`kohnakagawa` fixed a bug in the PE resources parser (:commit:`a7254d1ba935783f16effbc7faddf993c57e82f7`)
+  * Handle PE forwarded exports (issue :issue:`307`)
+
+:Mach-O:
+  * Add API to access either ``LC_CODE_SIGNATURE`` or ``DYLIB_CODE_SIGN_DRS`` (issue :issue:`476`)
+  * Fix issue when parsing twice a Mach-O file (issue :issue:`479`)
+
+:Dependencies:
+  * Replace ``easyloggingpp`` with `spdlog 1.8.1 <https://github.com/gabime/spdlog>`_
+  * Upgrade ``frozen`` to 1.0.0
+  * Upgrade ``json`` to 3.7.3
+  * Upgrade ``pybind11`` to 2.6.0
+  * Upgrade ``mbedtls`` to 2.16.6
+
+:Documentation:
+  * :github_user:`aguinet` updated the `bin2lib tutorial <tutorials/08_elf_bin2lib.html>`_ with the support
+    of the new glibc versions (:commit:`7884e57aa1d103f3bd37682e47f412bfe7a3aa34`)
+  * Global update and enable to build the documentation out-of-tree
+  * Changing the theme
+
+:Misc:
+  * Add Python 3.9 support
+  * ``FindLIEF.cmake`` deprecates ``LIEF_ROOT``. You should use ``LIEF_DIR`` instead.
+
+
+:Logging:
+
+  We changed the logging interface. The following log levels have been removed:
+
+  - LOG_GLOBAL
+  - LOG_FATAL
+  - LOG_VERBOSE
+  - LOG_UNKNOWN
+
+  We also moved from an class-interface based to functions.
+
+  Example:
+
+  .. code-block:: python
+
+    lief.logging.disable()
+    lief.logging.enable()
+    lief.logging.set_level(lief.logging.LEVEL.INFO)
+
+  See: :func:`lief.logging.set_level`
+
+  .. note::
+
+     The log functions now output on ``stderr`` instead of ``stdout``
+```
+
+## 0.10.1 - November 29, 2019
+
+- Fix regression in parsing Python `bytes`
+- Add Python API to demangle strings: `lief.demangle`
+
+## 0.10.0 - November 24, 2019
+
+```{eval-rst}
+
+:ELF:
+
+   * Add build support for ELF notes
+   * Add coredump support (:commit:`9fc3a8a43358f608cf18ddbe341e1d94b13cb9e0`)
+   * Enable to bind a relocation with a symbol (:commit:`a9f3cb8f9b4a1f2cdaa95eee4568ff0b162f77cd`)
+
+     :Example:
+
+      .. code-block:: python
+
+        relocation = "..."
+
+        symbol = lief.ELF.Symbol()
+        symbol.name = "printf123"
+        relocation.symbol = symbol
+
+   * Add constructors  (:commit:`67d924a2206c36cb9979d8b1b194b03b2d592e71`)
+   * Expose ELF destructors (:commit:`957384cd361c4a485470f877658af2bf052dbe0a`)
+   * Add ``remove_static_symbol`` (:commit:`c6779702b1fec3c67b0c19a36576830fe18bd9d9`)
+   * Add support for static relocation writing (:commit:`d1b98d69ade662e2471ce2905bf3fb247dfc3143`)
+   * Expose function to get strings located in the ``.rodata`` section (:commit:`02f4851c9f0c2bfa6fb4f51dab393a1db83b4851`)
+   * Export ELF ABI version (:commit:`8d7ec26a93800b0729c2c05be8c55c8318ba3b20`)
+
+:PE:
+
+   * Improve PE Authenticode parsing (:commit:`535623de3aa4f8ddc34536331b802e2cbdc44faf`)
+   * Fix alignment issue when removing a PE section (:commit:`04dddd371080d731fab965b127cb15a91c57d53c`)
+   * Parse PE debug data directory as a list of debug entries (by :github_user:`1orenz0` - :commit:`fcc75dd87982e52d77a1c7ee7e674741a199e41b`)
+   * Add support to parse POGO debug entries (by :github_user:`1orenz0` - :commit:`3537440b8d0da6c9c3d00c25f7da8a04f29154d2`)
+
+:Mach-O:
+
+   * Enhance Mach-O modifications by exposing an API to:
+
+     - Add load commands
+     - Add sections
+     - Add segments
+
+     See: :commit:`406115c8d097da0b61f00b2bb7b2442322ffc5d1`
+
+   * Enable ``write()`` on FAT Mach-O (:commit:`16595316fd588619ea39b942817d6527e0601fbd`)
+   * Introduce Mach-O Build Version command (:commit:`6f967238fcd369210839605ab08c30d647a09a65`)
+   * Enable to remove Mach-O symbols (:commit:`616d739da513092e9ab7446654414b0929d5d5cf`)
+   * Add support for adding ``LC_UNIXTHREAD`` commands in a MachO (by :github_user:`nezetic` - :commit:`64d2597284149441fc734b251648ca917cd816e3`)
+
+
+:Abstract Layer:
+
+   * Expose ``remove_section()`` in the abstract layer (:commit:`918438c6bee52c8421d809bc3b42974165e5fa0b`)
+   * Expose ``write()`` in the abstract layer (:commit:`af4d48ed2e1f1b96687644f2fc4661fcbdb979a6`)
+   * Expose API to list functions found in a binary (:commit:`b5a08463ad63811e9e9432812406aadd74ab8c09`)
+
+:Android:
+
+   * Add partial support for Android 9 (:commit:`bce9ebe17064b1ca16b00dc14eebb5d5dd440184`)
+
+
+:Misc:
+
+   * :github_user:`lkollar` added support for Python 3.8 in CI (Linux & OSX only)
+   * Update Pybind11 dependency to ``v2.4.3``
+   * Enhance Python install
+   * Thanks to :github_user:`lkollar`, Linux CI now produces **manylinux1-compliant wheels**
+```
+
+Many thanks to the contributors: {github_user}`recvfrom`, {github_user}`pbrunet`,
+{github_user}`mackncheesiest`, {github_user}`wisk`, {github_user}`nezetic`,
+{github_user}`lkollar`, {github_user}`jbremer`, {github_user}`DaLynX`, {github_user}`1orenz0`,
+{github_user}`breadchris`, {github_user}`0xbf00`, {github_user}`unratito`, {github_user}`strazzere`,
+{github_user}`aguinetqb`, {github_user}`mingwandroid`, {github_user}`serge-sans-paille-qb`, {github_user}`yrp604`,
+{github_user}`majin42`, {github_user}`KOLANICH`
+
+## 0.9.0 - June 11, 2018
+
+LIEF 0.9 comes with new formats related to Android: OAT, DEX, VDEX and ART. It also fixes bugs and thanks to
+{github_user}`yd0b0N`, ELF parser now supports big and little endian binaries. We also completed the JSON serialization of LIEF objects.
+
+### Features
+
+```{eval-rst}
+
+:MachO:
+
+  * Enable to configure the Mach-O parser for quick parsing: :commit:`880b99aeef825786dd65aed286d7c4d23b62f564`
+  * Add :class:`lief.MachO.EncryptionInfo` command: :commit:`f4e2d81bfe84238d463bdb65297c296635e783b1`
+  * Add :class:`lief.MachO.RPathCommand` command: :commit:`196994dc089885ff2f1268e51f5514f7fcbc5cff`
+  * Add :class:`lief.MachO.DataInCode` command: :commit:`a16e1c4d13c7071fabe6a5a46b6d6c0fd9565b72`
+  * Add :class:`lief.MachO.SubFramework` command: :commit:`9e3b5b45f78cc075f2192c245247af00b88b5e3c`
+  * Add :class:`lief.MachO.SegmentSplitInfo` command: :commit:`9e3b5b45f78cc075f2192c245247af00b88b5e3c`
+  * Add :class:`lief.MachO.DyldEnvironment` command: :commit:`9e3b5b45f78cc075f2192c245247af00b88b5e3c`
+  * API to show export-trie, rebase and binding opcodes: :commit:`5d56141061bfc27e3c971e9e474dc86fdaf0c6a9`
+
+
+:PE:
+
+  * Add PE Code View: :commit:`eab4a7614fdf6e9a180b1c638903310da0b83118`
+
+
+:ELF:
+
+  * Add support for ``.note.android.ident`` section: :commit:`d13db18214006ce654b723a882f70c3d7eabd20d`
+  * Enable to add unlimited number of dynamic entries: :commit:`a40da3e3b4b985b18a6e6026d594f524b7bae963`
+  * Add support for PPC relocations: :commit:`08b514191f661eeabbdf8ecacd1d7dd35a67ca54`
+  * Endianness support: :commit:`e794ac1502ee7636755bd441923368f88525a7d0`
+```
+
+### API
+
+> - {func}`lief.breakp` and {func}`lief.shell`
+> - {func}`lief.parse` now support `io` streams as input
+> - Parser now returns a `std::unique_ptr` instead of a raw pointer: {commit}`cd1cc457cf3d63cfc5faa945657887200cedb8b3`
+
+### Misc
+
+- Use [frozen](https://github.com/serge-sans-paille/frozen) for some internal `std::map` (If C++14 is supported by the compiler)
+
+### Acknowledgements
+
+- {github_user}`yd0b0N` for {pr}`162` and {pr}`166` (Endianness support and PPC relocations)
+- {github_user}`0xbf00` for {pr}`128` (`LC_RPATH` command)
+- {github_user}`illera88` for {pr}`118`
+
+## 0.8.3
+
+- [Mach-O] Fix typo on comparison operator - {commit}`abbc264833894973f601f700b3abcc109904f722`
+
+## 0.8.2
+
+- [ELF] Increase the upper limit of relocation number - {commit}`077bc329bdcc249cb8ed0b8bcb9630e1c9eede94`
+
+## 0.8.1 - October 18, 2017
+
+- Fix an alignment issue in the ELF builder. See {commit}`8db199c04e9e6bcdbda165ab5c42d88218a0beb6`
+- Add assertion on the setuptools version: {commit}`62e5825e27bb637c2f42f4d05690a100213beb03`
+
+## 0.8.0 - October 16, 2017
+
+LIEF 0.8.0 mainly improves the MachO parser and the ELF builder. It comes with [Dockerfiles](https://github.com/lief-project/Dockerlief) for [CentOS](https://github.com/lief-project/Dockerlief/blob/v0.1.0/dockerlief/dockerfiles/centos.docker) and [Android](https://github.com/lief-project/Dockerlief/blob/v0.1.0/dockerlief/dockerfiles/android.docker).
+
+[LibFuzzer](https://llvm.org/docs/LibFuzzer.html) has also been integrated in the project to enhance the parsers
+
+### Features
+
+```{eval-rst}
+
+:Abstract Layer:
+
+  * :class:`~lief.Relocation` are now abstracted from the 3 formats - :commit:`9503f2fc7b6c14bebd4c220bda4a243d87f14bd1`
+  * ``PIE`` and ``NX`` are abstracted through the :attr:`~lief.Binary.is_pie` and :attr:`~lief.Binary.has_nx` properties
+  * Add the :meth:`lief.Section.search` and :meth:`lief.Section.search_all` methods to look for patterns in the section's content.
+
+:ELF:
+
+  * ``DT_FLAGS`` and ``DT_FLAGS_1`` are now parsed into :class:`~lief.ELF.DynamicEntryFlags` - :commit:`754b8afa2b41993e6c37d2d9003cebdccc641d23`
+  * Handle relocations of object files (``.o``) - :commit:`483b8dc2eabee3da29ce5e5ff2e25c2a3c9ca297`
+
+  * Global enhancement of the ELF builder:
+
+    One can now add **multiple** :class:`~lief.ELF.Section` or :class:`~lief.ELF.Segment` into an ELF:
+
+    .. code-block:: python
+
+      elf = lief.parse("/bin/cat")
+
+      for i in range(3):
+        segment = Segment()
+        segment.type = SEGMENT_TYPES.LOAD
+        segment.content = [i & 0xFF] * 0x1000
+        elf += segment
+
+
+      for i in range(3):
+        section = Section("lief_{:02d}".format(i))
+        section.content = [i & 0xFF] * 0x1000
+        elf += section
+
+      elf.write("foo")
+
+    .. code-block:: console
+
+      $ readelf -l ./foo
+      PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040
+                     0x00000000000061f8 0x00000000000061f8  R E    0x8
+      INTERP         0x0000000000006238 0x0000000000006238 0x0000000000006238
+                     0x000000000000001c 0x000000000000001c  R      0x1
+          [Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+      LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
+                     0x000000000000d6d4 0x000000000000d6d4  R E    0x200000
+      LOAD           0x000000000000da90 0x000000000020da90 0x000000000020da90
+                     0x0000000000000630 0x00000000000007d0  RW     0x200000
+      LOAD           0x000000000000f000 0x000000000040f000 0x000000000040f000
+                     0x0000000000001000 0x0000000000001000         0x1000
+      LOAD           0x0000000000010000 0x0000000000810000 0x0000000000810000
+                     0x0000000000001000 0x0000000000001000         0x1000
+      LOAD           0x0000000000011000 0x0000000001011000 0x0000000001011000
+                     0x0000000000001000 0x0000000000001000         0x1000
+      ....
+
+      $ readelf -S ./foo
+      ...
+      [27] lief_00           PROGBITS         0000000002012000  00012000
+           0000000000001000  0000000000000000           0     0     4096
+      [28] lief_01           PROGBITS         0000000004013000  00013000
+           0000000000001000  0000000000000000           0     0     4096
+      [29] lief_02           PROGBITS         0000000008014000  00014000
+           0000000000001000  0000000000000000           0     0     4096
+
+    .. warning::
+
+      There are issues with executables statically linked with libraries that use ``TLS``
+
+      See: :issue:`98`
+
+
+
+
+    One can now add **multiple** entries in the dynamic table:
+
+    .. code-block:: python
+
+      elf = lief.parse("/bin/cat")
+
+      elf.add_library("libfoo.so")
+      elf.add(DynamicEntryRunPath("$ORIGIN"))
+      elf.add(DynamicEntry(DYNAMIC_TAGS.INIT, 123))
+      elf.add(DynamicSharedObject("libbar.so"))
+
+      elf.write("foo")
+
+    .. code-block:: console
+
+      $ readelf -d foo
+        0x0000000000000001 (NEEDED)  Shared library: [libfoo.so]
+        0x0000000000000001 (NEEDED)  Shared library: [libc.so.6]
+        0x000000000000000c (INIT)    0x7b
+        0x000000000000000c (INIT)    0x3600
+        ...
+        0x000000000000001d (RUNPATH) Bibliothèque runpath:[$ORIGIN]
+        0x000000000000000e (SONAME)  Bibliothèque soname: [libbar.so]
+
+    See :commit:`b94900ca7f500912bfe249cd534055942e28e34b`, :commit:`1e410e6c950c391f0d1a3f12cb6f8e4c9fb16539` for details.
+
+  * :commit:`b2d36940f60eacfa602c115cb542e11c70b6841c` enables modification of the ELF interpreter without **length restriction**
+
+    .. code-block:: python
+
+      elf = lief.parse("/bin/cat")
+      elf.interpreter = "/a/very/long/path/to/another/interpreter"
+      elf.write("foo")
+
+    .. code-block:: console
+
+      $ readelf -l foo
+      Program Headers:
+      Type           Offset             VirtAddr           PhysAddr
+                     FileSiz            MemSiz              Flags  Align
+      PHDR           0x0000000000000040 0x0000000000000040 0x0000000000000040
+                     0x00000000000011f8 0x00000000000011f8  R E    0x8
+      INTERP         0x000000000000a000 0x000000000040a000 0x000000000040a000
+                     0x0000000000001000 0x0000000000001000  R      0x1
+          [Requesting program interpreter: /a/very/long/path/to/another/interpreter]
+      ....
+
+  * Enhancement of the dynamic symbols counting - :commit:`985d1249b72494a0e62f34042b3c9cbfa0706e90`
+  * Enable editing ELF's notes:
+
+    .. code-block:: python
+
+      elf = lief.parse("/bin/ls")
+      build_id = elf[NOTE_TYPES.BUILD_ID]
+      build_id.description = [0xFF] * 20
+      elf.write("foo")
+
+    .. code-block:: console
+
+      $ readelf -n foo
+      Displaying notes found in: .note.gnu.build-id
+      Owner                 Data size Description
+      GNU                  0x00000014 NT_GNU_BUILD_ID (unique build ID bitstring)
+        Build ID: ffffffffffffffffffffffffffffffffffffffff
+
+    See commit :commit:`3be9dd0ff58ec68cb8813e01d6798c16b42dac22` for more details
+
+:PE:
+
+  * Add :func:`~lief.PE.get_imphash` and :func:`~lief.PE.resolve_ordinals` functions - :commit:`a89bc6df4f242d7641292acdb184927449d14fff`, :commit:`dfa8e985c0561427a20088750693a004de587b1c`
+  * Parse the *Load Config Table* into :class:`~lief.PE.LoadConfiguration` (up to Windows 10 SDK 15002 with *hotpatch_table_offset*)
+
+    .. code-block:: python
+
+      from lief import to_json
+      import json
+      pe = lief.parse("some.exe")
+      loadconfig = to_json(pe.load_configuration)) # Using the lief.to_json function
+      pprint(json.loads(to_json(loadconfig)))
+
+    .. code-block:: javascript
+
+      {'characteristics': 248,
+       'code_integrity': {'catalog': 0,
+                          'catalog_offset': 0,
+                          'flags': 0,
+                          'reserved': 0},
+       'critical_section_default_timeout': 0,
+       'csd_version': 0,
+       'editlist': 0,
+       ...
+       'guard_cf_check_function_pointer': 5368782848,
+       'guard_cf_dispatch_function_pointer': 5368782864,
+       'guard_cf_function_count': 15,
+       'guard_cf_function_table': 5368778752,
+       'guard_flags': 66816,
+       'guard_long_jump_target_count': 0,
+       'guard_long_jump_target_table': 0,
+       'guard_rf_failure_routine': 5368713280,
+       'guard_rf_failure_routine_function_pointer': 5368782880,
+       ...
+
+    For details, see commit: :commit:`0234e3b8bbb6f6f3490392f8c295fde284a99334`
+
+
+
+
+:MachO:
+
+  * The ``dyld`` structure is parsed (deeply) into :class:`~lief.MachO.DyldInfo`. It includes:
+
+    * Binding opcodes
+    * Rebases opcodes
+    * Export trie
+
+    See: :commit:`e2b81e0a8e187cae5f0f115241243a84ee7696b6`, :commit:`0e972d69ce35731867d82c047eef7eb9ea58e3ec`, :commit:`f7cc518dcfbb0557fd8d396144bf99a222d96705`, :commit:`782295bfb86d2a12584c5b16a37a26d56d1ee235`, :issue:`67`
+
+  * Section relocations are now parsed into :attr:`lief.MachO.Section.relocations` - :commit:`29c8157ecc3b308bd521cb1daee3c2e3a2cffb28`
+  * ``LC_FUNCTION_STARTS`` is parsed into :class:`~lief.MachO.FunctionStarts` (:commit:`18d89198a0cc63ff291ae9110f465354c3b8f1e6`)
+  * ``LC_SOURCE_VERSION``, ``LC_VERSION_MIN_MACOSX`` and ``LC_VERSION_MIN_IPHONEOS`` are
+    parsed into :class:`~lief.MachO.SourceVersion` and :class:`~lief.MachO.VersionMin` (:commit:`c359778194db874669884aaccb52a4b05546bc07`, :commit:`0b4bb7d56520cd0ea08bbcb9530e5e0c96ac14ae`, :commit:`5b993117ed391db18ba775cabefa5f3981b2f1cc`, :issue:`45`)
+  * ``LC_THREAD`` and ``LC_UNIXTHREAD`` are now parsed into :class:`~lief.MachO.ThreadCommand` - :commit:`23257830b291c40a3aed92360040f2b0b11ffa72`
+```
+
+### Fixes
+
+Fix enums conflicts({issue}`32`) - {commit}`66b4cd4550ecf6cf3adb4900e6ad7ac33f1f7f32`
+
+Fix most of the memory leaks: {commit}`88dafa8db6e752393f69d73f68d295e91963b8da`, {commit}`d9b1436730b5d33a753e7dfa4301697a0c676066`, {commit}`554fa153af943b97a16fc4a52ab8459a3d0a9bc7`, {commit}`3602643f5d02a1c78c4de609cc47f193f3a8840f`
+
+```{eval-rst}
+
+:ELF:
+
+  * Bug Fix when counting dynamic symbols from the GnuHash Table - :commit:`9036a2405dc44726f40cb77cab1bcbf371ab7a70`
+
+:PE:
+
+  * Fix nullptr dereference in resources - :commit:`e90fe1b6c6f6a605390bcd1026435ce7503e7e6a`
+  * Handle encoding issues in the Python API - `8c7ceaf <https://github.com/lief-project/LIEF/commit/8c7ceafa823bda508259bf3c7cdc05b865f13d5c>`_
+  * Sanitize DLL names
+
+:MachO:
+
+  * Fix :issue:`87`, :issue:`92`
+  * Fix memory leaks and *some* performance issues: :issue:`94`
+```
+
+### API
+
+In the C++ API `get_XXX()` getters have been renamed into `XXX()` (e.g. `get_header()` becomes `header()`) - {commit}`a4c69f7868da1de5d09aa26e977dedb720e36cbd`, {commit}`e805669865b130057413f456958a471d8f0ac0b1`
+
+```{eval-rst}
+
+:Abstract:
+
+  * :class:`lief.Binary` gains the :attr:`~lief.Binary.format` property - :commit:`9391238f114fe963890777c2d8b90f2caaa5510c`
+  * :func:`lief.parse` can now takes a list of integers - :commit:`f330fa887d14d47f0683144430ac9695d3136561`
+  * Add :meth:`~lief.Binary.has_symbol` and :meth:`~lief.Binary.get_symbol` to :class:`lief.Binary` - :commit:`f121af5ca61a22fd83acc5c7094b50ed1cda8226`
+  * [Python API] Enhance the access to the abstract layer through the :attr:`~lief.Binary.abstract` attribute - :commit:`07138549a46db87c7b924fd072356030b1d5c6bc`
+
+    One can now do:
+
+    .. code-block:: python
+
+      elf = lief.ELF.parse("/bin/ls") # Could be lief.MachO / lief.PE
+      abstract = elf.abstract # Return the lief.Binary object
+
+
+:ELF:
+
+  * Relocation gains the :attr:`~lief.ELF.Relocation.purpose` property - :commit:`b7b0bde4d51c54d8d226e5320b1b0d2cc48137c4`
+  * Add :attr:`lief.ELF.Binary.symbols` which return an iterator over **all** symbols (static and dynamic) - :commit:`af6ab65dc91169627f4fbb87cda92093eb699a1e`
+  * ``Header.sizeof_section_header`` has been renamed into :attr:`~lief.ELF.Header.section_header_size` - :commit:`d96971b0c3f8ff50add349957f571b8daa00708a`
+  * ``Segment.flag`` has been renamed into :attr:`~lief.ELF.Segment.flags` - :commit:`20a5f666deb89b06b79a1c4418ac938497fb658c`
+  * Add:
+
+    * :attr:`~lief.ELF.Header.arm_flags_list`,
+    * :attr:`~lief.ELF.Header.mips_flags_list`
+    * :attr:`~lief.ELF.Header.ppc64_flags_list`
+    * :attr:`~lief.ELF.Header.hexagon_flags_list`
+
+    to :class:`~lief.ELF.Header` - :commit:`730d045e05dca7ef3cd6a51d1175f280be356c70`
+
+    To check if a given flag is set, one can do:
+
+    .. code-block:: python
+
+      >>> if lief.ELF.ARM_EFLAGS.EABI_VER5 in lief.ELF.Header "yes" else "no"
+  * [Python] Segment flags: ``PF_X``, ``PF_W``, ``PF_X`` has been renamed into :attr:`~lief.ELF.SEGMENT_FLAGS.X`, :attr:`~lief.ELF.SEGMENT_FLAGS.W`, :attr:`~lief.ELF.SEGMENT_FLAGS.X` - :commit:`d70ef9ec2c42619434352dbd7b74a835ebad7569`
+  * Add :attr:`lief.ELF.Section.flags_list` - :commit:`4937b7193a5760df85d0ac1567afc011a22cdb98`
+  * Enhancement for :attr:`~lief.ELF.DynamicEntryRpath` and :attr:`~lief.ELF.DynamicEntryRunPath`: :commit:`c375a47da7c4c524e886f9238f8dd51a44501087`
+  * Enhancement for :attr:`~lief.ELF.DynamicEntryArray`: :commit:`81440ce00cdfc793161a0dc394ada345307dc24b`
+  * Add some *operators*  :commit:`3b200b30503847be4779447c76f5207d18daf77f`, :commit:`43bd06f8f32196454ee2305201f4e27b3a3c8a1e`
+
+
+
+:PE:
+  * Add some *operators* :commit:`5666351e07b7bf4a9624033f670d02b8806d2663`
+
+:MachO:
+
+  * :func:`lief.MachO.parse` can now takes a list of integers - :commit:`f330fa887d14d47f0683144430ac9695d3136561`
+  * :func:`lief.MachO.parse` now returns a :class:`~lief.MachO.FatBinary` instead of a ``list`` of :class:`~lief.MachO.Binary`. :class:`~lief.MachO.FatBinary` has a similar API as a list - :commit:`3602643f5d02a1c78c4de609cc47f193f3a8840f`
+  * Add some *operators*: :commit:`cbe835484751396daffe7f8d238cbb85d66470ab`
+
+:Logging:
+
+  Add an API to configure the logger - :commit:`4600c2ba8d7d17b5965c2b74faeb7e4d2128de17`
+
+  Example:
+
+  .. code-block:: python
+
+    from lief import Logger
+    Logger.disable()
+    Logger.enable()
+    Logger.set_level(lief.LEVEL.INFO)
+
+  See: :class:`lief.Logger`
+```
+
+### Build system
+
+- Add [FindLIEF.cmake](https://github.com/lief-project/LIEF/blob/e8ac976c994f6612e8dcca994032403c2d6f580f/scripts/FindLIEF.cmake) - {commit}`6dd8b10325e832a7520bf5ae3a588b9e022d0345`
+- Add ASAN, TSAN, USAN, LSAN - {commit}`7f6aeb0d0d74eae886f4b312e12e8f71e1d5da6a`
+- Add LibFuzzer - {commit}`7a0dc28ea29a30209e944ebcde27f7c0ab234651`
+
+### Documentation
+
+```{eval-rst}
+
+:References:
+
+  * recomposer, bearparser, IAT_patcher, PEframe, Manalyze, MachOView, elf-dissector
+```
+
+### Acknowledgements
+
+- {github_user}`alvarofe` for {pr}`47`
+- {github_user}`aguinet` for {pr}`55`, {pr}`61`, {pr}`65`, {pr}`77`
+- {github_user}`jevinskie` for {pr}`75`
+- {github_user}`liumuqing` for {pr}`80`
+- {github_user}`Manouchehri` for {pr}`106`
+
+## 0.7.0 - July 3, 2017
+
+### Features
+
+```{eval-rst}
+
+:Abstract Layer:
+
+  * Add bitness (32bits / 64bits)  - :commit:`78d1adb41e8b0d21a6f6fe94014753ce68e0ffa1`
+  * Add object type (Library, executable etc)  - :commit:`78d1adb41e8b0d21a6f6fe94014753ce68e0ffa1`
+  * Add *mode* Thumbs, 16bits etc - :commit:`78d1adb41e8b0d21a6f6fe94014753ce68e0ffa1`
+  * Add endianness - :commit:`7ea08f72c43212f2e3f401b5c2c2614bc9aab8de`, :issue:`29`
+
+:ELF:
+
+  * Enable dynamic symbols permutation - :commit:`2dea7cb6d631b69995567e056a97e526f588b8ff`
+  * Fully handle section-less binaries - :commit:`de40c068316b3334e4c8d81ecb3efc177ab24c3b`
+  * Parse ELF notes  - :commit:`241aac7bedaf18ab5e3f0c9775a8a51cb0b40a3e`
+  * Parse SYSV hash table  - :commit:`afa74cee88f730acef84fe6d9c984455a28463e7`, :issue:`36`
+  * Add relocation size - :commit:`f1766f2c297caed636c7f32730cd10b62bfcc757`
+
+:PE:
+
+  * Parse PE Overlay - :commit:`e0634c1cf6d12fbdc5bcc1745059005e46e5d805`
+  * Enable PE Hooking - :commit:`24f6b7213647469e269ead9441d78204162d08ec`
+  * Parse and rebuilt dos stub  - :commit:`3f0639712617007e2e0431cb5eeb9be204c5d74b`
+  * Add a *resources manager* to provide an enhanced API over the resources - :commit:`8473c8e126f2a8f14728ad3f8ebb59c45ac55d2d`
+  * Serialize PE objects into JSON - :commit:`673f5a36f0d339ad9390427292fa6e725b8fd907`, :issue:`18`
+  * Parse Rich Header - :commit:`0893bd9b08f2248ae8f656ccd81b1be12e8ae57e`, :issue:`15`
+```
+
+### Bug Fixes
+
+```{eval-rst}
+
+:ELF:
+
+  * Bug fix when a GNU hash has empty buckets - `21a6c30 <https://github.com/lief-project/LIEF/commit/21a6c3064bceead897392999ad66f14e03e5d530>`_
+
+:PE:
+
+  * Bug fix in the signature parser: :issue:`30`, :commit:`4af0256ce7c5577e0b1010c6f9b566634f0a3993`
+  * Bug fix in the resources parser: Infinite loop - :commit:`a569cc13d99354ff96932460f5b1fd859378f252`
+  * Add more *out-of-bounds* checks on relocations and exports - :commit:`9364f644e937a6a5d69c64c2ef4eaa1fbdd2cfad`
+  * Use ``min(SizeOfRawData, VirtualSize)`` for the section's size and truncate the size to the file size - :commit:`61bf14ba1182fe458453599ff014de5d71d25680`
+
+
+:MachO:
+
+  * Bug fix when a binary hasn't a ``LC_MAIN`` command - :commit:`957501fe76596e0396c66d08540884876cea049c`
+```
+
+### API
+
+```{eval-rst}
+
+:Abstract Layer:
+
+  * :attr:`lief.Header.is_32` and :attr:`lief.Header.is_64`
+  * :attr:`lief.Header.object_type`
+  * :attr:`lief.Header.modes`
+  * :attr:`lief.Header.endianness`
+
+
+:ELF:
+
+  * :meth:`lief.ELF.Binary.permute_dynamic_symbols`
+  * ``lief.ELF.Segment.data`` has been renamed to :attr:`lief.ELF.Segment.content`
+  * :func:`lief.ELF.parse` takes an optional parameters: symbol counting - :class:`lief.ELF.DYNSYM_COUNT_METHODS`
+  * :attr:`lief.ELF.Relocation.size`
+
+  :Notes:
+
+    * :class:`lief.ELF.Note`
+    * :attr:`lief.ELF.Binary.has_notes`
+    * :attr:`lief.ELF.Binary.notes`
+
+  :Hash Tables:
+
+    * :class:`lief.ELF.SysvHash`
+    * :attr:`lief.ELF.Binary.use_gnu_hash`
+    * :attr:`lief.ELF.Binary.use_sysv_hash`
+    * :attr:`lief.ELF.Binary.sysv_hash`
+
+:PE:
+
+  * :attr:`lief.PE.Symbol.has_section`
+  * :meth:`lief.PE.Binary.hook_function`
+  * :meth:`lief.PE.Binary.get_content_from_virtual_address` takes either an **Absolute** virtual address or a **Relative** virtual address
+  * ``lief.PE.Binary.section_from_virtual_address`` has been renamed to :meth:`lief.PE.Binary.section_from_rva`.
+  * ``lief.PE.parse_from_raw`` has been removed. One can use :func:`lief.PE.parse`.
+  * ``lief.PE.Section.data`` has been **removed**. Please use :attr:`lief.PE.Section.content`
+
+
+  :Dos Stub:
+
+    * :attr:`lief.PE.Binary.dos_stub`
+    * :attr:`lief.PE.Builder.build_dos_stub`
+
+  :Rich Header:
+
+    * :attr:`lief.PE.Binary.rich_header`
+    * :attr:`lief.PE.Binary.has_rich_header`
+    * :class:`lief.PE.RichHeader`
+    * :class:`lief.PE.RichEntry`
+
+  :Overlay:
+
+    * :attr:`lief.PE.Binary.overlay`
+    * :attr:`lief.PE.Builder.build_overlay`
+
+  :Imports:
+
+    * :attr:`lief.PE.Binary.has_import`
+    * :meth:`lief.PE.Binary.get_import`
+
+  :Resources:
+
+    * :attr:`lief.PE.Binary.resources`
+    * :class:`lief.PE.ResourceData`
+    * :class:`lief.PE.ResourceDirectory`
+    * :class:`lief.PE.ResourceNode`
+    * ``lief.PE.LangCodeItem``
+    * :class:`lief.PE.ResourceDialog`
+    * :class:`lief.PE.ResourceDialogItem`
+    * :class:`lief.PE.ResourceFixedFileInfo`
+    * :class:`lief.PE.ResourceIcon`
+    * :class:`lief.PE.ResourceStringFileInfo`
+    * :class:`lief.PE.ResourceVarFileInfo`
+    * :class:`lief.PE.ResourceVersion`
+
+:MachO:
+
+  * :attr:`lief.MachO.Binary.has_entrypoint`
+  * :attr:`lief.MachO.Symbol.demangled_name`
+
+  :UUID:
+
+    * :attr:`lief.MachO.Binary.has_uuid`
+    * :attr:`lief.MachO.Binary.uuid`
+    * :class:`lief.MachO.UUIDCommand`
+
+  :Main Command:
+
+    * :attr:`lief.MachO.Binary.has_main_command`
+    * :attr:`lief.MachO.Binary.main_command`
+    * :class:`lief.MachO.MainCommand`
+
+
+  :Dylinker:
+
+    * :attr:`lief.MachO.Binary.has_dylinker`
+    * :attr:`lief.MachO.Binary.dylinker`
+    * :class:`lief.MachO.DylinkerCommand`
+```
+
+### Documentation
+
+```{eval-rst}
+
+:References:
+
+  * elfsteem, pelook, PortEx, elfsharp, metasm, amoco, Goblin
+
+:Tutorials:
+
+  * `PE Hooking <tutorials/06_pe_hooking.html>`_, `Resources Manipulation <tutorials/07_pe_resource.html>`_
+
+:Integration:
+
+  * `XCode <installation.html#xcode-integration>`_, `CMake <installation.html#cmake-integration>`_
+```
+
+### Acknowledgements
+
+- [ek0](https://github.com/ek0): {pr}`24`
+- [ACSC-CyberLab](https://github.com/ACSC-CyberLab): {pr}`33`, {pr}`34`, {pr}`37`, {pr}`39`
+- Hyrum Anderson who pointed bugs in the PE parser
+- My collegues for the feedbacks and suggestions (Adrien, SebK, Pierrick)
+
+## 0.6.1 - April 6, 2017
+
+### Bug Fixes
+
+```{eval-rst}
+
+:ELF:
+
+  * Don't rely on :attr:`lief.ELF.Section.entry_size` to count symbols - :commit:`004c6769bec37e303bbe7aaceb49f4b05c8eec84`
+```
+
+### API
+
+```{eval-rst}
+
+:PE:
+
+  * :attr:`lief.PE.TLS.has_section`
+  * :attr:`lief.PE.TLS.has_data_directory`
+```
+
+### Documentation
+
+```{eval-rst}
+
+:Integration:
+
+  * `Visual Studio <installation.html#visual-studio-integration>`_
+```
+
+### Acknowledgements
+
+- [Philippe](https://github.com/doegox) for the proofreading.
+
+## 0.6.0 - March 30, 2017
+
+First public release
+
+```{eval-rst}
+.. toctree::
+   :hidden:
+
+   changelog/pe-0-17-0
+```
+
+{{ cross_api }}

@@ -3,6 +3,15 @@
   max-height: 500px;
 }
 
+html[data-theme="dark"] .highlight .hll {
+  margin-inline-start: -0.55rem;
+  padding-inline-start: 0.55rem;
+}
+
+html[data-theme="light"] .docs-content dt.sig .property {
+  color: #007681;
+}
+
 .center {
   text-align: center;
 }

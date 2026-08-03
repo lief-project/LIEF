@@ -1,0 +1,106 @@
+---
+description: LIEF documentation for parsing, inspecting, modifying, and writing ELF, PE, Mach-O, COFF, Android, and other executable formats in C++, Python, and Rust.
+---
+
+# LIEF Documentation
+
+LIEF is a cross-platform library for parsing, inspecting, modifying, and
+writing executable formats. Explore guides, tutorials, and API references for
+ELF, PE, Mach-O, COFF, Android formats, and more in C++, Python, and Rust.
+
+```{eval-rst}
+.. toctree::
+  :maxdepth: 2
+
+  intro
+  installation
+  compilation
+```
+
+```{eval-rst}
+.. toctree::
+  :caption: <i class="fa-solid fa-sitemap">&nbsp;</i>Formats
+  :maxdepth: 2
+
+  formats/elf/index
+  formats/macho/index
+  formats/pe/index
+  formats/coff/index
+  formats/android/index
+```
+
+```{eval-rst}
+.. toctree::
+  :caption: <i class="fa-solid fa-code">&nbsp;</i>API
+  :maxdepth: 1
+
+  api/binary_abstraction/index
+  api/utilities/index
+  api/error_handling/index
+  api/logging/index
+  api/cpp/index
+  api/rust/index
+  runtime/intro
+```
+
+```{eval-rst}
+.. toctree::
+  :caption: <i class="fa-solid fa-hat-wizard">&nbsp;</i>LIEF Extended
+  :maxdepth: 1
+
+  extended/intro
+  extended/debug_info/index
+  extended/dwarf/index
+  extended/pdb/index
+  extended/objc/index
+  extended/dsc/index
+  extended/disassembler/index
+  extended/assembler/index
+```
+
+```{eval-rst}
+.. toctree::
+  :caption: <i class="fa-solid fa-puzzle-piece">&nbsp;</i>Plugins
+  :maxdepth: 1
+
+  plugins/ghidra/index
+  plugins/binaryninja/index
+```
+
+```{eval-rst}
+.. toctree::
+  :caption: <i class="fa-solid fa-toolbox">&nbsp;</i>Tools
+  :maxdepth: 1
+
+  tools/lief-patchelf/index
+```
+
+```{eval-rst}
+.. toctree::
+  :caption: <i class="fa-solid fa-layer-group">&nbsp;</i>Tutorials
+  :maxdepth: 1
+
+  tutorials/01_play_with_formats
+  tutorials/02_pe_from_scratch
+  tutorials/03_elf_change_symbols
+  tutorials/04_elf_hooking
+  tutorials/05_elf_infect_plt_got
+  tutorials/06_pe_hooking
+  tutorials/07_pe_resource
+  tutorials/08_elf_bin2lib
+  tutorials/09_frida_lief
+  tutorials/10_android_formats
+  tutorials/11_macho_modification
+  tutorials/12_elf_coredump
+  tutorials/13_pe_authenticode
+```
+
+```{eval-rst}
+.. toctree::
+  :caption: <i class="fa-brands fa-space-awesome">&nbsp;</i>Extra Information
+  :maxdepth: 1
+
+  references
+  changelog
+
+```

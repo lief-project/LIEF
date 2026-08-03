@@ -1,0 +1,37 @@
+{% extends "!layout.html" %}
+
+{% block htmltitle %}
+  {% if seo_title %}
+    <title>{{ seo_title|e }}</title>
+  {% else %}
+    {{ super() }}
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+  {{ super() }}
+  {% if seo_noindex %}
+    <meta name="robots" content="noindex,follow">
+  {% endif %}
+  {% if canonical_url and seo_title and seo_description %}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="LIEF Documentation">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="{{ seo_title|e }}">
+    <meta property="og:description" content="{{ seo_description|e }}">
+    <meta property="og:url" content="{{ canonical_url|e }}">
+    <meta property="og:image" content="{{ seo_image_url|e }}">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="412">
+    <meta property="og:image:height" content="415">
+    <meta property="og:image:alt" content="LIEF documentation logo">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ seo_title|e }}">
+    <meta name="twitter:description" content="{{ seo_description|e }}">
+    <meta name="twitter:image" content="{{ seo_image_url|e }}">
+    <meta name="twitter:image:alt" content="LIEF documentation logo">
+  {% endif %}
+  {% if seo_breadcrumb_json %}
+    <script type="application/ld+json">{{ seo_breadcrumb_json|safe }}</script>
+  {% endif %}
+{% endblock %}

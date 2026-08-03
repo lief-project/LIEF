@@ -9,12 +9,12 @@ from versioning import Versioning
 
 
 def dynamic_metadata(
-    settings: Mapping[str, Any],
-    project: Mapping[str, Any],
+    _settings: Mapping[str, Any],
+    _project: Mapping[str, Any],
 ) -> dict[str, Any]:
     version = Versioning().get_version()
     rich_print("{green}LIEF Version: {version}", version=version)
     return {
         "version": version,
-        "readme": (BINDING_DIR / "README.rst").as_posix(),
+        "readme": (BINDING_DIR / "README.md").as_posix(),
     }

@@ -1580,7 +1580,7 @@ LoadCommand* Binary::add(const SegmentCommand& segment) {
    *
    * For #1, the logic is to shift all the content after the end of the load
    * command table. This modification is described in
-   * doc/sphinx/tutorials/11_macho_modification.rst.
+   * doc/sphinx/tutorials/11_macho_modification.md.
    *
    * For #2, the easiest way is to place the content at the end of the Mach-O file
    * and to make the LC_SEGMENT point to this area. It works as expected as long as

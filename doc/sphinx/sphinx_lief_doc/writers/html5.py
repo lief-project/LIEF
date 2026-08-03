@@ -1,13 +1,18 @@
 from docutils import nodes
 from docutils.nodes import title
-
+from sphinx.builders import Builder
 from sphinx.util import logging
 from sphinx.writers.html5 import HTML5Translator as BaseHTML5Translator
 from sphinx_lief_doc.lief_api import liefapi
 
 logger = logging.getLogger(__name__)
 
+
 class HTML5Translator(BaseHTML5Translator):
+    def __init__(self, document: nodes.document, builder: Builder) -> None:
+        super().__init__(document, builder)
+        self.meta = [tag for tag in self.meta if 'name="viewport"' not in tag]
+
     def visit_paragraph(self, node: nodes.paragraph):
         # We can't have <div></div> element in a <p> scope
         # NOT ALLOWED:
@@ -19,12 +24,12 @@ class HTML5Translator(BaseHTML5Translator):
         # defined by the class fixed-paragraph located in custom.css
         if any(isinstance(e, liefapi) for e in node.children):
             node.get("classes", []).append("fixed-paragraph")
-            self.body.append(self.starttag(node, 'div'))
+            self.body.append(self.starttag(node, "div"))
         else:
             super().visit_paragraph(node)
 
     def depart_paragraph(self, node: nodes.paragraph):
-        if 'fixed-paragraph' in node.get("classes", []):
+        if "fixed-paragraph" in node.get("classes", []):
             self.body.append("</div>")
         else:
             super().depart_paragraph(node)

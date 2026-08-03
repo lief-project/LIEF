@@ -1,8 +1,8 @@
-import lief
 import os
-from typing import Any
 from pathlib import Path
+from typing import Any
 
+import lief
 from docutils import nodes
 from sphinx.application import Sphinx
 from sphinx.transforms import SphinxTransform
@@ -10,49 +10,89 @@ from sphinx.util import logging
 
 logger = logging.getLogger(__name__)
 
-_LIEF_VERSION_ENV_KEY  = "LIEF_VERSION"
+_LIEF_VERSION_ENV_KEY = "LIEF_VERSION"
 _LIEF_RUST_DOC_ENV_KEY = "LIEF_RUST_DOC_CHECK_PATH"
-_LIEF_RELEASE_ENV_KEY  = "LIEF_DOC_IS_RELEASE"
+_LIEF_RELEASE_ENV_KEY = "LIEF_DOC_IS_RELEASE"
+
+
+class RegisterNestedTargets(SphinxTransform):
+    """Register targets parsed inside MyST ``eval-rst`` blocks."""
+
+    default_priority = 190
+
+    def apply(self, **_kwargs: Any) -> None:
+        for element in self.document.findall(nodes.Element):
+            if isinstance(element, nodes.substitution_definition):
+                continue
+
+            ids = element.get("ids", ())
+            names = element.get("names", ())
+            if not ids and not names:
+                continue
+
+            if names and not any(name in self.document.nameids for name in names):
+                self.document.note_explicit_target(element)
+            elif ids and not all(id_ in self.document.ids for id_ in ids):
+                self.document.set_id(element)
+
+
+class RegisterSubstitutions(SphinxTransform):
+    """Register substitution definitions parsed inside MyST ``eval-rst`` blocks."""
+
+    default_priority = 200
+
+    def apply(self, **_kwargs: Any) -> None:
+        for definition in self.document.findall(nodes.substitution_definition):
+            for name in definition["names"]:
+                if self.document.nameids.get(name) in definition["ids"]:
+                    self.document.nameids.pop(name)
+                    self.document.nametypes.pop(name)
+                if name not in self.document.substitution_defs:
+                    self.document.note_substitution_def(definition, name)
+
 
 class Substitutions(SphinxTransform):
     default_priority = 210
 
-    def apply(self, **kwargs: Any) -> None:
+    def apply(self, **_kwargs: Any) -> None:
         for ref in self.document.findall(nodes.substitution_reference):
-            refname = ref['refname']
+            refname = ref["refname"]
             text = None
-            if refname == 'lief-extended-url':
+            if refname == "lief-extended-url":
                 text = self.config.lief_extended_url
-            elif refname == 'lief-rust-doc-nightly':
+            elif refname == "lief-rust-doc-nightly":
                 text = self.config.lief_rust_doc_nightly
-            elif refname == 'lief-rust-doc':
+            elif refname == "lief-rust-doc":
                 text = self.config.lief_rust_doc
-            elif refname == 'lief-extended-email':
+            elif refname == "lief-extended-email":
                 text = self.config.lief_extended_email
-            elif refname == 'lief-llvm-version':
+            elif refname == "lief-llvm-version":
                 text = self.config.lief_llvm_version
-            elif refname == 'lief-discord':
+            elif refname == "lief-discord":
                 text = self.config.lief_discord
-            elif refname == 'lief-plugin-url':
+            elif refname == "lief-plugin-url":
                 text = f"{self.config.lief_plugin_url}/index.html"
-            elif refname == 'lief-sdk-url':
+            elif refname == "lief-sdk-url":
                 text = f"{self.config.lief_sdk_url}/index.html"
 
             if text is None:
                 continue
 
-            if text.startswith("http://") or text.startswith("https://"):
+            if text.startswith(("http://", "https://")):
                 ref.replace_self(nodes.reference(text, text, refuri=text))
             else:
                 ref.replace_self(nodes.Text(text))
+
 
 def get_version() -> str:
     return os.getenv(_LIEF_VERSION_ENV_KEY) or (
         lief.__tag__ if lief.__is_tagged__ else lief.__version__
     )
 
+
 def get_release() -> str:
     return os.getenv(_LIEF_VERSION_ENV_KEY) or lief.__version__
+
 
 def get_rust_doc_check() -> Path | None:
     value = os.getenv(_LIEF_RUST_DOC_ENV_KEY)
@@ -60,12 +100,14 @@ def get_rust_doc_check() -> Path | None:
         return Path(value).resolve().absolute()
     return None
 
+
 def setup(app: Sphinx):
     app.config.version = get_version()
     app.config.release = get_release()
 
-    app.config.lief_is_release = os.getenv(_LIEF_RELEASE_ENV_KEY) is not None or \
-                                 lief.__is_tagged__
+    app.config.lief_is_release = (
+        os.getenv(_LIEF_RELEASE_ENV_KEY) is not None or lief.__is_tagged__
+    )
 
     app.config.lief_commit = os.getenv("LIEF_COMMIT") or lief.__commit__
     app.config.lief_public_website = "https://lief.re"
@@ -86,12 +128,18 @@ def setup(app: Sphinx):
     app.config.lief_rust_s3_url_prefix = "https://lief-rs.s3.fr-par.scw.cloud"
     app.config.lief_s3_url_prefix = "https://lief.s3.fr-par.scw.cloud"
 
-    app.config.lief_rust_doc_nightly_base_url = f"{app.config.lief_rust_s3_url_prefix}/doc/latest"
-    app.config.lief_rust_doc_nightly = f"{app.config.lief_rust_doc_nightly_base_url}/lief/index.html"
+    app.config.lief_rust_doc_nightly_base_url = (
+        f"{app.config.lief_rust_s3_url_prefix}/doc/latest"
+    )
+    app.config.lief_rust_doc_nightly = (
+        f"{app.config.lief_rust_doc_nightly_base_url}/lief/index.html"
+    )
 
     app.config.lief_rust_doc_check = get_rust_doc_check()
 
     app.config.lief_plugin_url = f"{app.config.lief_s3_url_prefix}/latest/plugins"
     app.config.lief_sdk_url = f"{app.config.lief_s3_url_prefix}/latest/sdk"
 
+    app.add_transform(RegisterNestedTargets)
+    app.add_transform(RegisterSubstitutions)
     app.add_transform(Substitutions)
