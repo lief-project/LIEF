@@ -1,6 +1,6 @@
 # LIEF Rust Bindings
 
-These are the offical rust bindings for LIEF.
+These are the official Rust bindings for LIEF.
 
 ![LIEF Architecture](https://raw.githubusercontent.com/lief-project/LIEF/main/.github/images/architecture.png)
 

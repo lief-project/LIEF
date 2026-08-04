@@ -87,7 +87,7 @@ class LIEF_API Dylib {
 
   public:
   /// This structure is used to tweak the extraction process while calling
-  /// Dylib::get. These options allow to deoptimize the dylib and get an
+  /// Dylib::get. These options allow deoptimizing the dylib to get an
   /// accurate representation of the origin Mach-O binary.
   struct LIEF_API extract_opt_t {
     extract_opt_t();

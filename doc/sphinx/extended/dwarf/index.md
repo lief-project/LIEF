@@ -103,7 +103,7 @@ defined in the debug file previously loaded:
 Additionally, you may also want to explore the
 {ref}`BinaryNinja <plugins-binaryninja-dwarf>` and
 {ref}`Ghidra <plugins-ghidra-dwarf>` DWARF export plugins, which generate
-debug information based on the analyses performed by these frameworks.
+debug information based on the analysis performed by these frameworks.
 
 (extended-dwarf-to-decl)=
 

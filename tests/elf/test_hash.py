@@ -92,7 +92,7 @@ def test_simple(tmp_path: Path, flag: str):
     libadd_dynsym = libadd.dynamic_symbols
     binadd_dynsym = binadd.dynamic_symbols
 
-    # Change add in the libary
+    # Change add in the library
     for sym in libadd_dynsym:
         if sym.name == "add":
             sym.name = "abc"

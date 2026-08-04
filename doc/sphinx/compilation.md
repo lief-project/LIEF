@@ -239,4 +239,4 @@ script, to see how LIEF is compiled (and cross-compiled) for these platforms.
 
 ## Docker
 
-See [liefproject](https://hub.docker.com/u/liefproject) on Dockerhub
+See [liefproject](https://hub.docker.com/u/liefproject) on Docker Hub

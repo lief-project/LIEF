@@ -21,6 +21,7 @@
 // Rename the first section name.
 // Ex: ./tools/ELFSectionRename /bin/ls ./lsRename
 //
+// ```
 // $ readelf -S /bin/ls
 //
 //  [Nr] Nom               Type             Adresse           Décalage
@@ -44,8 +45,7 @@
 //  [ 2] .note.ABI-tag     NOTE             0000000000400254  00000254
 //       0000000000000020  0000000000000000   A       0     0     4
 //  ....
-//
-//
+// ```
 //
 int main(int argc, char** argv) {
   std::cout << "ELF Section rename" << '\n';

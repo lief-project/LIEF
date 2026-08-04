@@ -51,7 +51,7 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
     TRANS         = BASE + 0x000000200,
     INTERPOSE     = BASE + 0x000000400, /**< Object is used to interpose. */
     NODEFLIB      = BASE + 0x000000800, /**< Ignore default lib search path. */
-    NODUMP        = BASE + 0x000001000, /**< Object can't be dldump'ed. */
+    NODUMP        = BASE + 0x000001000, /**< Object can't be dumped with dldump(). */
     CONFALT       = BASE + 0x000002000, /**< Configuration alternative created. */
     ENDFILTEE     = BASE + 0x000004000, /**< Filtee terminates filters search. */
     DISPRELDNE    = BASE + 0x000008000, /**< Disp reloc applied at build time. */

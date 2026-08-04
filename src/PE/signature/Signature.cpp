@@ -408,7 +408,7 @@ Signature::VERIFICATION_FLAGS Signature::check(VERIFICATION_CHECKS checks) const
   }
   if (should_check_cert_time) {
     /*
-     * Verify certificate validities
+     * Verify certificate validity periods
      */
     if (x509::time_is_past(cert.valid_to())) {
       return flags | VERIFICATION_FLAGS::CERT_EXPIRED;

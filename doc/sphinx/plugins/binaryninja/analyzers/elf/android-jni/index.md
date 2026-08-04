@@ -44,4 +44,4 @@ updated to expose the correct type in the first two arguments:
 
 {{ cross_api }}
 
-[^f1]: On a given function, right click: `Tags and Bookmarks > Add Tag ... > LIEF - Android JNI Function`
+[^f1]: On a given function, right-click: `Tags and Bookmarks > Add Tag ... > LIEF - Android JNI Function`

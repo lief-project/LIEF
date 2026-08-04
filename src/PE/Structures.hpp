@@ -48,7 +48,7 @@ static_assert(sizeof(delay_imports) == 32, "Wrong sizeof(delay_imports)");
 
 #include "structures.inc"
 
-// From Virtualbox - include/iprt/formats/pecoff.h
+// From VirtualBox - include/iprt/formats/pecoff.h
 template<typename T>
 struct load_configuration {
   uint32_t Characteristics;
@@ -236,7 +236,7 @@ class PE64 {
 }
 
 
-// end namesapce PE
+// end namespace PE
 
 
 #endif

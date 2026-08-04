@@ -135,7 +135,7 @@ class LIEF_API ResourceNode : public Object {
 
   /// `True` if the current entry is a ResourceDirectory.
   ///
-  /// It can be safely casted with:
+  /// It can be safely cast with:
   ///
   /// ```cpp
   /// const auto* dir_node = node.cast<ResourceDirectory>();
@@ -146,7 +146,7 @@ class LIEF_API ResourceNode : public Object {
 
   /// `True` if the current entry is a ResourceData.
   ///
-  /// It can be safely casted with:
+  /// It can be safely cast with:
   ///
   /// ```cpp
   /// const auto* data_node = node.cast<ResourceData>();

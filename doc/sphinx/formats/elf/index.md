@@ -332,8 +332,8 @@ These versioning requirements can be problematic when creating executables or
 libraries intended for a wide range of Linux distributions.
 
 The **best way** to ensure maximum compatibility is to target the minimum
-supported version of Glibc. For instance, if you aim to support Linux
-distributions with at least Glibc version `2.28` (released in 2018), you
+supported version of glibc. For instance, if you aim to support Linux
+distributions with at least glibc version `2.28` (released in 2018), you
 should specifically provide that version of `libc.so` during linking:
 
 ```console

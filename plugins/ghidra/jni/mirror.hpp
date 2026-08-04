@@ -31,7 +31,7 @@ template<class T>
 decltype(static_cast<void>(*std::declval<T>()),
          std::true_type{}) can_be_dereferenced_impl(int);
 
-// Otherwise the less specific function is selected,
+// Otherwise, the less specific function is selected,
 // and the return type is `std::false_type`
 template<class>
 std::false_type can_be_dereferenced_impl(...);

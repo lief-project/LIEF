@@ -1977,7 +1977,7 @@ LIEF 0.9 comes with new formats related to Android: OAT, DEX, VDEX and ART. It a
 
 - Use [frozen](https://github.com/serge-sans-paille/frozen) for some internal `std::map` (If C++14 is supported by the compiler)
 
-### Acknowledgements
+### Acknowledgments
 
 - {github_user}`yd0b0N` for {pr}`162` and {pr}`166` (Endianness support and PPC relocations)
 - {github_user}`0xbf00` for {pr}`128` (`LC_RPATH` command)
@@ -2301,7 +2301,7 @@ In the C++ API `get_XXX()` getters have been renamed into `XXX()` (e.g. `get_hea
 
 ### Build system
 
-- Add [FindLIEF.cmake](https://github.com/lief-project/LIEF/blob/e8ac976c994f6612e8dcca994032403c2d6f580f/scripts/FindLIEF.cmake) - {commit}`6dd8b10325e832a7520bf5ae3a588b9e022d0345`
+- Add [`FindLIEF.cmake`](https://github.com/lief-project/LIEF/blob/e8ac976c994f6612e8dcca994032403c2d6f580f/scripts/FindLIEF.cmake) - {commit}`6dd8b10325e832a7520bf5ae3a588b9e022d0345`
 - Add ASAN, TSAN, USAN, LSAN - {commit}`7f6aeb0d0d74eae886f4b312e12e8f71e1d5da6a`
 - Add LibFuzzer - {commit}`7a0dc28ea29a30209e944ebcde27f7c0ab234651`
 
@@ -2314,7 +2314,7 @@ In the C++ API `get_XXX()` getters have been renamed into `XXX()` (e.g. `get_hea
   * recomposer, bearparser, IAT_patcher, PEframe, Manalyze, MachOView, elf-dissector
 ```
 
-### Acknowledgements
+### Acknowledgments
 
 - {github_user}`alvarofe` for {pr}`47`
 - {github_user}`aguinet` for {pr}`55`, {pr}`61`, {pr}`65`, {pr}`77`
@@ -2495,12 +2495,12 @@ In the C++ API `get_XXX()` getters have been renamed into `XXX()` (e.g. `get_hea
   * `XCode <installation.html#xcode-integration>`_, `CMake <installation.html#cmake-integration>`_
 ```
 
-### Acknowledgements
+### Acknowledgments
 
 - [ek0](https://github.com/ek0): {pr}`24`
 - [ACSC-CyberLab](https://github.com/ACSC-CyberLab): {pr}`33`, {pr}`34`, {pr}`37`, {pr}`39`
 - Hyrum Anderson who pointed bugs in the PE parser
-- My collegues for the feedbacks and suggestions (Adrien, SebK, Pierrick)
+- My colleagues for the feedback and suggestions (Adrien, SebK, Pierrick)
 
 ## 0.6.1 - April 6, 2017
 
@@ -2532,7 +2532,7 @@ In the C++ API `get_XXX()` getters have been renamed into `XXX()` (e.g. `get_hea
   * `Visual Studio <installation.html#visual-studio-integration>`_
 ```
 
-### Acknowledgements
+### Acknowledgments
 
 - [Philippe](https://github.com/doegox) for the proofreading.
 

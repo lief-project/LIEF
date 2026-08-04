@@ -97,7 +97,7 @@ class LIEF_API AuxiliarySectionDefinition : public AuxiliarySymbol {
     /// COMDAT_SELECTION::ASSOCIATIVE set.
     ASSOCIATIVE,
 
-    /// The linker chooses the largest definition from among all of the definitions
+    /// The linker chooses the largest definition from among all the definitions
     /// for this symbol. If multiple definitions have this size, the choice
     /// between them is arbitrary.
     LARGEST,

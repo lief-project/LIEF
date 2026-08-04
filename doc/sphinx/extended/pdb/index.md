@@ -72,7 +72,7 @@ Note that {sub-ref}`lief-abstract-binary-load_debug_info` can also attach an ext
 DWARF file to a PE binary, even though this is not a typical use case.
 For instance, the {ref}`BinaryNinja <plugins-binaryninja-dwarf>` and
 {ref}`Ghidra <plugins-ghidra-dwarf>` DWARF export plugins can generate
-a DWARF file for a PE binary based on analyses performed by these frameworks.
+a DWARF file for a PE binary based on analysis performed by these frameworks.
 
 This external loading API is useful for adding debug information that might not
 already be present in the binary. For instance, the {sub-ref}`lief-disassemble` function

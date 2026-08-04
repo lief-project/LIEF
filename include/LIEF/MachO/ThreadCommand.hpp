@@ -83,7 +83,7 @@ class LIEF_API ThreadCommand : public LoadCommand {
   }
 
   /// The actual thread state as a vector of bytes. Depending on the
-  /// architecture(), these data can be casted into x86_thread_state_t,
+  /// architecture(), these data can be cast into x86_thread_state_t,
   /// x86_thread_state64_t, ...
   span<const uint8_t> state() const LIEF_LIFETIMEBOUND {
     return state_;

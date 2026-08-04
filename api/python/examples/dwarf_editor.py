@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Create a companion DWARF file from a PE binary.
 
-Demonstrates the DWARF editor API: loads a PE binary, synthesises a
+Demonstrates the DWARF editor API: loads a PE binary, synthesizes a
 compilation unit with one function returning a pointer to a
 structure and a stack variable, then writes the result to
 ``/tmp/out.debug``.

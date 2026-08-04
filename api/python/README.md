@@ -1,11 +1,11 @@
 # About
 
-The purpose of this project is to provide a cross platform library that can parse, modify and
+The purpose of this project is to provide a cross-platform library that can parse, modify and
 abstract ELF, PE and MachO formats.
 
 Main features:
 
-> - **Parsing**: LIEF can parse ELF, PE, MachO, OAT, DEX, VDEX, ART and provides an user-friendly API to access to format internals.
+> - **Parsing**: LIEF can parse ELF, PE, MachO, OAT, DEX, VDEX, ART and provides a user-friendly API to access format internals.
 > - **Modify**: LIEF enables to modify some parts of these formats
 > - **Abstract**: Three formats have common features like sections, symbols, entry point... LIEF factors them.
 > - **API**: LIEF can be used in C++, Python and Rust

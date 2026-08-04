@@ -1525,7 +1525,7 @@ ok_error_t Builder::build_android_relocations() {
   }
 
   /* The relocations might have been updated when adding the new segment
-   * (->relocate()). Thus the cache might be invalidated.
+   * (->relocate()). Thus, the cache might be invalidated.
    */
   auto& layout = static_cast<ExeLayout&>(*layout_);
   const size_t computed_size = layout.android_relocations_size<ELF_T>();
@@ -1564,7 +1564,7 @@ ok_error_t Builder::build_relative_relocations() {
     return ok();
   }
   /* The relocations might have been updated when adding the new segment
-   * (->relocate()). Thus the cache might be invalidated.
+   * (->relocate()). Thus, the cache might be invalidated.
    */
   auto& layout = static_cast<ExeLayout&>(*layout_);
   const size_t computed_size = layout.relative_relocations_size<ELF_T>();

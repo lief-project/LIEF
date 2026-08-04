@@ -144,7 +144,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   ///   symbol. That is, `value` is an
   ///     offset from the beginning of the section associated with this symbol.
   ///   * In executable and shared object files, `value` holds a virtual address.
-  ///   To make these files's
+  ///   To make these files'
   ///     symbols more useful for the dynamic linker, the section offset (file
   ///     interpretation) gives way to a virtual address (memory interpretation)
   ///     for which the section number is irrelevant.

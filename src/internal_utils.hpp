@@ -103,7 +103,7 @@ std::vector<std::string>
   string_table_optimized.reserve(container.size());
 
   // reverse all symbol names and sort them so we can merge them in the linear
-  // time: aaa, aadd, aaaa, cca, ca -> aaaa, aaa, acc, ac ddaa
+  // time: `aaa, aadd, aaaa, cca, ca` -> `aaaa, aaa, acc, ac ddaa`
   std::transform(container.begin(), container.end(),
                  std::inserter(string_table, string_table.end()), getter);
 

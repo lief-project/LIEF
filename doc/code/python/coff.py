@@ -36,7 +36,7 @@ def parse_forms() -> lief.COFF.Binary | None:
         pathlib.Path(r"C:\Users\romain\test.obj")
     )
 
-    # Using a io object
+    # Using an io object
     with open("/tmp/test.ob", "rb") as f:
         coff: lief.COFF.Binary | None = lief.COFF.parse(f)
     # lief-doc: parse-end

@@ -64,7 +64,7 @@ class LIEF_API SpcSpOpusInfo : public Attribute {
     return program_name_;
   }
 
-  /// Other information such as an url
+  /// Other information such as a URL
   std::string_view more_info() const LIEF_LIFETIMEBOUND {
     return more_info_;
   }

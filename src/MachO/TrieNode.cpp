@@ -26,7 +26,7 @@
 namespace LIEF::MachO {
 
 
-// Mainly inspired from LLVM:
+// Mainly inspired by LLVM:
 // lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp
 TrieNode::node_list_t TrieNode::add_symbol(const ExportInfo& info) {
   node_list_t nodes;
@@ -108,7 +108,7 @@ TrieNode::node_list_t TrieNode::add_symbol(const ExportInfo& info) {
 }
 
 
-// Mainly inspired from LLVM:
+// Mainly inspired by LLVM:
 // lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp - addOrderedNodes
 // Add info in nodes making sure every parent node is inserted before
 std::vector<TrieNode*> TrieNode::add_ordered_nodes(const ExportInfo& info) {
@@ -138,7 +138,7 @@ std::vector<TrieNode*> TrieNode::add_ordered_nodes(const ExportInfo& info) {
 }
 
 
-// Mainly inspired from LLVM:
+// Mainly inspired by LLVM:
 // lld/lib/ReaderWriter/MachO/MachONormalizedFileBinaryWriter.cpp - updateOffset
 bool TrieNode::update_offset(uint32_t& offset) {
   uint32_t node_size = 1;

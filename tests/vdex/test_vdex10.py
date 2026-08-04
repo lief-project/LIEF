@@ -11,7 +11,7 @@ def test_vdex10():
     telecom = lief.VDEX.parse(get_sample("VDEX/VDEX_10_AArch64_Telecom.vdex"))
     assert telecom is not None
 
-    # 1 Dex File registred
+    # 1 Dex File registered
     assert len(telecom.dex_files) == 1
 
     dex_file = telecom.dex_files[0]

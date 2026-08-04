@@ -103,7 +103,7 @@ class LIEF_API Section : public LIEF::Section {
     _AARCH64_ID_ = 5LLU,
 
     ARM_EXIDX          = 0x70000001U + (_ARM_ID_ << _ID_SHIFT_), /**< Exception Index table */
-    ARM_PREEMPTMAP     = 0x70000002U + (_ARM_ID_ << _ID_SHIFT_), /**< BPABI DLL dynamic linking pre-emption map */
+    ARM_PREEMPTMAP     = 0x70000002U + (_ARM_ID_ << _ID_SHIFT_), /**< BPABI DLL dynamic linking preemption map */
     ARM_ATTRIBUTES     = 0x70000003U + (_ARM_ID_ << _ID_SHIFT_), /**< Object file compatibility attributes */
     ARM_DEBUGOVERLAY   = 0x70000004U + (_ARM_ID_ << _ID_SHIFT_),
     ARM_OVERLAYSECTION = 0x70000005U + (_ARM_ID_ << _ID_SHIFT_),

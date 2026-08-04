@@ -29,7 +29,7 @@
 namespace LIEF::runtime {
 
 namespace details {
-// The concrete implementation of a Android module
+// The concrete implementation of an Android module
 class Module {
   public:
   virtual uint64_t imagebase() const = 0;

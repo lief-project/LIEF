@@ -18,7 +18,7 @@ def test_without_imports():
 
 def test_casse():
     """
-    Test that casse doesn't change the hash
+    Test that case doesn't change the hash
     """
     factory_lhs = lief.PE.Factory.create(lief.PE.PE_TYPE.PE32)
     assert factory_lhs is not None

@@ -108,7 +108,7 @@ class LIEF_API Signature : public Object {
     /// [WTD_LIFETIME_SIGNING_FLAG](https://docs.microsoft.com/en-us/windows/win32/api/wintrust/ns-wintrust-wintrust_data#WTD_LIFETIME_SIGNING_FLAG)
     LIFETIME_SIGNING = 1 << 2,
 
-    /// Skip the verification of the certificates time validities so that even
+    /// Skip the verification of the certificate validity periods so that even
     /// though a certificate expired, it returns VERIFICATION_FLAGS::OK
     SKIP_CERT_TIME = 1 << 3,
   };

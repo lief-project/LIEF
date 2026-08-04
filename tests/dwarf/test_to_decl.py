@@ -128,5 +128,5 @@ def test_show_field_offsets():
     assert "/* 0x00 */ int r_version;" in decorated
     assert "/* 0x08 */ struct link_map *r_map;" in decorated
     assert "/* 0x20 */ Elf64_Addr r_ldbase;" in decorated
-    # The offset is emitted for every member which includes paddings
+    # The offset is emitted for every member which includes padding
     assert decorated.count("/* 0x") >= 5

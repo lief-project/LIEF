@@ -1318,13 +1318,14 @@ bool Binary::extend_section(Section& section, size_t size) {
   // it to the "left", so that we create a gap of at least `size` wide after the
   // current `section`. Finally, we assign new size to the `section`.
   //
-  // Let's say we are extending section S.
-  // There might be sections P that come prior S, and there might be sections A
-  // that come after S. We try to keep relative relationships between sections in
-  // groups P and A, such that relative offsets from one section to another one are
-  // unchanged, however preserving the same relationship between sections from
-  // different groups is impossible. We achieve this by shifting P and S to the
-  // left by size rounded up to the maximum common alignment factor.
+  // Let's say we are extending section `S`.
+  // There might be sections `P` that come prior `S`, and there might be
+  // sections `A` that come after `S`. We try to keep relative relationships
+  // between sections in groups `P` and `A`, such that relative offsets from one
+  // section to another one are unchanged, however preserving the same
+  // relationship between sections from different groups is impossible. We
+  // achieve this by shifting `P` and `S` to the left by size rounded up to the
+  // maximum common alignment factor.
 
   const uint64_t loadcommands_start =
       is64_ ? sizeof(details::mach_header_64) : sizeof(details::mach_header);
@@ -1541,7 +1542,7 @@ Section* Binary::add_section(const SegmentCommand& segment,
     available_command_space_ = new_offset - loadcommands_end;
   }
 
-  // Compute offset, virtual address etc for the new section
+  // Compute offset, virtual address etc. for the new section
   // =======================================================
   if (section.size() == 0) {
     new_section->size(content.size());

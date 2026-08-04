@@ -64,7 +64,7 @@ class LIEF_API PKCS9MessageDigest : public Attribute {
     return std::unique_ptr<Attribute>(new PKCS9MessageDigest{*this});
   }
 
-  /// Message digeset as a blob of bytes as described in the RFC
+  /// Message digest as a blob of bytes as described in the RFC
   span<const uint8_t> digest() const LIEF_LIFETIMEBOUND {
     return digest_;
   }

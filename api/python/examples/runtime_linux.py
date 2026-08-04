@@ -144,7 +144,7 @@ def memory_example():
         """,
     )
 
-    # Ensure the assembly is correctly JITed at the beggining of the allocated
+    # Ensure the assembly is correctly JITed at the beginning of the allocated
     # memory
     for inst in islice(lief.runtime.disassemble(chunk.addr), 7):
         print(inst)

@@ -194,7 +194,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   ///    <seg-index, seg-offset, type>
   /// The opcodes are a compressed way to encode the table by only
   /// encoding when a column changes.  In addition simple patterns
-  /// like "every n'th offset for m times" can be encoded in a few
+  /// like "every nth offset for m times" can be encoded in a few
   /// bytes.
   ///
   /// @see ``/usr/include/mach-o/loader.h``
@@ -286,10 +286,10 @@ class LIEF_API DyldInfo : public LoadCommand {
   /// *Lazy Bind* information
   ///
   /// Some uses of external symbols do not need to be bound immediately.
-  /// Instead they can be lazily bound on first use.  The lazy_bind
+  /// Instead, they can be lazily bound on first use.  The lazy_bind
   /// area contains a stream of BIND opcodes to bind all lazy symbols.
   /// Normal use is that dyld ignores the lazy_bind section when
-  /// loading an image.  Instead the static linker arranged for the
+  /// loading an image.  Instead, the static linker arranged for the
   /// lazy pointer to initially point to a helper function which
   /// pushes the offset into the lazy_bind area for the symbol
   /// needing to be bound, then jumps to dyld which simply adds

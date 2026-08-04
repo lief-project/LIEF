@@ -123,7 +123,7 @@ class LIEF_API Section : public LIEF::Section {
     /// Section contains coalesced symbols that are not to be in a ranlib
     /// table of contents.
     NO_TOC = 0x40000000u,
-    /// Ok to strip static symbols in this section in files with the
+    /// Okay to strip static symbols in this section in files with the
     /// MY_DYLDLINK flag.
     STRIP_STATIC_SYMS = 0x20000000u,
     /// No dead stripping.

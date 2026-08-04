@@ -134,7 +134,7 @@ def _get_hooked_config(is_editable: bool) -> dict[str, str | list[str]] | None:
 def _get_build_requirements(is_editable: bool) -> list[str]:
     build_req_file = BINDING_DIR / "build-requirements.txt"
     if not build_req_file.is_file() and not (BINDING_DIR / "src").is_dir():
-        # By convention this is an mocked sdist
+        # By convention this is a mocked sdist
         impl = sys.implementation.name
         version = "{0.major}.{0.minor}.{0.micro}".format(sys.version_info)
         free_threaded = bool(sysconfig.get_config_var("Py_GIL_DISABLED"))

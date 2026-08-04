@@ -203,7 +203,7 @@ def parse_forms() -> lief.ELF.Binary | None:
     # Using a Path from pathlib
     elf: lief.ELF.Binary | None = lief.ELF.parse(pathlib.Path(r"C:\Users\test.elf"))
 
-    # Using a io object
+    # Using an io object
     with open("/bin/ssh", "rb") as f:
         elf: lief.ELF.Binary | None = lief.ELF.parse(f)
     # lief-doc: parse-end

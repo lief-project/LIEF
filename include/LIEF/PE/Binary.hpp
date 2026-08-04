@@ -613,7 +613,7 @@ class LIEF_API Binary : public LIEF::Binary {
     return imports_;
   }
 
-  /// Return the Import matching the provided name (case sensitive)
+  /// Return the Import matching the provided name (case-sensitive)
   ///
   /// If the import can't be found, it returns a nullptr
   Import* get_import(const std::string& import_name) LIEF_LIFETIMEBOUND {

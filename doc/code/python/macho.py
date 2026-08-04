@@ -83,7 +83,7 @@ def parse_forms() -> lief.MachO.FatBinary | None:
         pathlib.Path(r"C:\Users\test.macho")
     )
 
-    # Using a io object
+    # Using an io object
     with open("/bin/ssh", "rb") as f:
         macho: lief.MachO.FatBinary | None = lief.MachO.parse(f)
     # lief-doc: parse-end

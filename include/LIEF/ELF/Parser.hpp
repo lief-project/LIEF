@@ -293,7 +293,7 @@ class LIEF_API Parser : public LIEF::Parser {
   /// @see http://dev.gentoo.org/~solar/elf/symbol-versioning
   LIEF_LOCAL ok_error_t parse_symbol_version(uint64_t symbol_version_offset);
 
-  /// Parse Symbols's GNU hash
+  /// Parse the symbols' GNU hash
   ///
   /// @see https://blogs.oracle.com/ali/entry/gnu_hash_elf_sections
   template<typename ELF_T>
@@ -305,7 +305,7 @@ class LIEF_API Parser : public LIEF::Parser {
   LIEF_LOCAL std::unique_ptr<Note> get_note(uint32_t type, std::string name,
                                             std::vector<uint8_t> desc_bytes);
 
-  /// Parse Symbols's SYSV hash
+  /// Parse the symbols' SYSV hash
   LIEF_LOCAL ok_error_t parse_symbol_sysv_hash(uint64_t offset);
 
   LIEF_LOCAL ok_error_t parse_overlay();

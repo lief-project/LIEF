@@ -32,7 +32,7 @@ class Relocation;
 
 /// Class which represents an entry of the PE relocation table
 ///
-/// It extends the LIEF::Relocation object to provide an uniform API across the
+/// It extends the LIEF::Relocation object to provide a uniform API across the
 /// file formats
 class LIEF_API RelocationEntry : public LIEF::Relocation {
 

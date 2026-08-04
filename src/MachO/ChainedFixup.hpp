@@ -67,7 +67,7 @@ static_assert(sizeof(dyld_chained_starts_in_segment) == 22,
 // DYLD_CHAINED_PTR_ARM64E
 struct dyld_chained_ptr_arm64e_rebase {
   uint64_t target : 43, high8 : 8,
-      next : 11, // 4 or 8-byte stide
+      next : 11, // 4 or 8-byte stride
       bind : 1,  // == 0
       auth : 1;  // == 0
 };
@@ -76,7 +76,7 @@ struct dyld_chained_ptr_arm64e_rebase {
 struct dyld_chained_ptr_arm64e_bind {
   uint64_t ordinal : 16, zero : 16,
       addend : 19, // +/-256K
-      next : 11,   // 4 or 8-byte stide
+      next : 11,   // 4 or 8-byte stride
       bind : 1,    // == 1
       auth : 1;    // == 0
 };
@@ -85,7 +85,7 @@ struct dyld_chained_ptr_arm64e_bind {
 struct dyld_chained_ptr_arm64e_auth_rebase {
   uint64_t target : 32, // runtimeOffset
       diversity : 16, addr_div : 1, key : 2,
-      next : 11, // 4 or 8-byte stide
+      next : 11, // 4 or 8-byte stride
       bind : 1,  // == 0
       auth : 1;  // == 1
 };
@@ -93,7 +93,7 @@ struct dyld_chained_ptr_arm64e_auth_rebase {
 // DYLD_CHAINED_PTR_ARM64E
 struct dyld_chained_ptr_arm64e_auth_bind {
   uint64_t ordinal : 16, zero : 16, diversity : 16, addr_div : 1, key : 2,
-      next : 11, // 4 or 8-byte stide
+      next : 11, // 4 or 8-byte stride
       bind : 1,  // == 1
       auth : 1;  // == 1
 };
@@ -115,7 +115,7 @@ struct dyld_chained_ptr_64_rebase {
 struct dyld_chained_ptr_arm64e_bind24 {
   uint64_t ordinal : 24, zero : 8,
       addend : 19, // +/-256K
-      next : 11,   // 8-byte stide
+      next : 11,   // 8-byte stride
       bind : 1,    // == 1
       auth : 1;    // == 0
 };
@@ -123,7 +123,7 @@ struct dyld_chained_ptr_arm64e_bind24 {
 // DYLD_CHAINED_PTR_ARM64E_USERLAND24
 struct dyld_chained_ptr_arm64e_auth_bind24 {
   uint64_t ordinal : 24, zero : 8, diversity : 16, addr_div : 1, key : 2,
-      next : 11, // 8-byte stide
+      next : 11, // 8-byte stride
       bind : 1,  // == 1
       auth : 1;  // == 1
 };
@@ -143,7 +143,7 @@ struct dyld_chained_ptr_64_kernel_cache_rebase {
       cache_level
       : 2, // what level of cache to bind to (indexes a mach_header array)
       diversity : 16, addr_div : 1, key : 2,
-      next : 12,   // 1 or 4-byte stide
+      next : 12,   // 1 or 4-byte stride
       is_auth : 1; // 0 -> not authenticated.  1 -> authenticated
 };
 
@@ -184,7 +184,7 @@ struct dyld_chained_ptr_arm64e_segmented_rebase {
   uint32_t target_seg_offset : 28, // offset in segment
       target_seg_index : 4;        // index into segment address table
   uint32_t padding : 19,
-      next : 12, // 4-byte stide
+      next : 12, // 4-byte stride
       auth : 1;  // == 0
 };
 
@@ -193,7 +193,7 @@ struct dyld_chained_ptr_arm64e_auth_segmented_rebase {
   uint32_t target_seg_offset : 28, // offset in segment
       target_seg_index : 4;        // index into segment address table
   uint32_t diversity : 16, addr_div : 1, key : 2,
-      next : 12, // 4-byte stide
+      next : 12, // 4-byte stride
       auth : 1;  // == 1
 };
 

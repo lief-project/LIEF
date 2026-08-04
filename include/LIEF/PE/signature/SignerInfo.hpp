@@ -129,7 +129,7 @@ class LIEF_API SignerInfo : public Object {
     return unauthenticated_attributes_;
   }
 
-  /// Return the authenticated or un-authenticated attribute matching the
+  /// Return the authenticated or unauthenticated attribute matching the
   /// given PE::SIG_ATTRIBUTE_TYPES.
   ///
   /// It returns **the first** entry that matches the given type. If it can't be
@@ -144,7 +144,7 @@ class LIEF_API SignerInfo : public Object {
   const Attribute*
       get_auth_attribute(Attribute::TYPE type) const LIEF_LIFETIMEBOUND;
 
-  /// Return the un-authenticated attribute matching the given
+  /// Return the unauthenticated attribute matching the given
   /// PE::SIG_ATTRIBUTE_TYPES.
   ///
   /// It returns **the first** entry that matches the given type. If it can't be

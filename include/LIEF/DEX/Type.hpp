@@ -72,19 +72,19 @@ class LIEF_API Type : public Object {
   const PRIMITIVES& primitive() const;
 
   /// **IF** the current type is a TYPES::CLASS, return the
-  /// associated DEX::CLASS. Otherwise the returned value is **undefined**.
+  /// associated DEX::CLASS. Otherwise, the returned value is **undefined**.
   Class& cls();
 
   /// **IF** the current type is a TYPES::ARRAY, return the
-  /// associated array. Otherwise the returned value is **undefined**.
+  /// associated array. Otherwise, the returned value is **undefined**.
   array_t& array();
 
   /// **IF** the current type is a TYPES::PRIMITIVE, return the
-  /// associated PRIMITIVES. Otherwise the returned value is **undefined**.
+  /// associated PRIMITIVES. Otherwise, the returned value is **undefined**.
   PRIMITIVES& primitive();
 
   /// Return the array dimension if the current type is
-  /// an array. Otherwise it returns 0
+  /// an array. Otherwise, it returns 0
   size_t dim() const;
 
   /// In the case of a TYPES::ARRAY, return the array's type

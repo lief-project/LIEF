@@ -105,7 +105,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       return raw_dynstr_.size();
     }
 
-    // Start with dynamic entries: NEEDED / SONAME etc
+    // Start with dynamic entries: NEEDED / SONAME etc.
     vector_iostream raw_dynstr(should_swap());
     raw_dynstr.write<uint8_t>(0);
 
@@ -291,7 +291,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
   template<class ELF_T>
   size_t symbol_gnu_hash_size() {
-    // Mainly inspired from
+    // Mainly inspired by
     // * https://github.com/llvm-mirror/lld/blob/master/ELF/SyntheticSections.cpp
     //
     // Checking is performed here:
@@ -680,7 +680,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
   template<class ELF_T>
   size_t relative_relocations_size(bool force = false) {
-    // This code is inspired from LLVM-lld:
+    // This code is inspired by LLVM-lld:
     // lld/ELF/SyntheticSections.cpp - RelrSection<ELFT>::updateAllocSize
     // https://github.com/llvm/llvm-project/blob/754a8add57098ef71e4a51a9caa0cc175e94377d/lld/ELF/SyntheticSections.cpp#L1997-L2078
     using Elf_Addr = typename ELF_T::Elf_Addr;
@@ -1058,7 +1058,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     if (dynamic_size_ > 0) {
       // Update .dynamic / PT_DYNAMIC
-      // Update relocations associated with .init_array etc
+      // Update relocations associated with .init_array etc.
       Segment* dynamic_segment = binary_->get(Segment::TYPE::DYNAMIC);
       if (dynamic_segment == nullptr) {
         LIEF_ERR("Dynamic section/segment not found");
@@ -1726,7 +1726,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
         std::string sec_name = *section_res;
 
         // If the binary has the note type but does not have
-        // the section (likly because the user added the note manually)
+        // the section (likely because the user added the note manually)
         // then, create the section
         if (const Section* nsec = binary_->get_section(*section_res);
             nsec == nullptr)

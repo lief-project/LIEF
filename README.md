@@ -70,7 +70,7 @@ modify and abstract ELF, PE and MachO formats.
 - [About](#about-1)
   - [Authors](#authors)
   - [License](#license)
-  - [Bibtex](#bibtex)
+  - [BibTeX](#bibtex)
 
 ## Downloads / Install
 
@@ -125,7 +125,7 @@ Here are guides to install or integrate LIEF:
 
   * [Python](https://lief.re/doc/latest/installation.html#python)
   * [Visual Studio](https://lief.re/doc/latest/installation.html#visual-studio-integration)
-  * [XCode](https://lief.re/doc/latest/installation.html#xcode-integration)
+  * [Xcode](https://lief.re/doc/latest/installation.html#xcode-integration)
   * [CMake](https://lief.re/doc/latest/installation.html#cmake-integration)
 
 ## Getting started
@@ -222,7 +222,7 @@ Romain Thomas ([@rh0main](https://www.romainthomas.fr/)) - Formerly at [Quarksla
 
 [Apache 2.0](https://github.com/lief-project/LIEF/blob/1.0.0/LICENSE).
 
-### Bibtex
+### BibTeX
 
 ```bibtex
 @MISC {LIEF,

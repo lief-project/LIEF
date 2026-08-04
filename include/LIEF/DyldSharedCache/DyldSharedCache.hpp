@@ -140,7 +140,7 @@ class LIEF_API DyldSharedCache {
   /// Name of the architecture targeted by this cache (`x86_64h`)
   std::string arch_name() const;
 
-  /// Platform targeted by this cache (e.g. vision-os)
+  /// Platform targeted by this cache (e.g. visionOS)
   DYLD_TARGET_PLATFORM platform() const;
 
   /// Architecture targeted by this cache
@@ -167,7 +167,7 @@ class LIEF_API DyldSharedCache {
   /// Return an iterator over the libraries embedded in this dyld shared cache.
   ///
   /// This iterator implements the *random access* trait. Thus, one can use
-  /// iterator_range::size, iterator_range::at, iterator_range::operator[] to a
+  /// iterator_range::size, iterator_range::at, iterator_range::operator[] to
   /// access Dylib at an arbitrary index:
   ///
   /// ```cpp
@@ -239,8 +239,8 @@ class LIEF_API DyldSharedCache {
   /// Return the stream associated with this dyld shared cache
   FileStream& stream() LIEF_LIFETIMEBOUND;
 
-  /// When enabled, this function allows to record and to keep in *cache*,
-  /// dyld shared cache information that are costly to access.
+  /// When enabled, this function records and keeps in *cache* the
+  /// dyld shared cache information that is costly to access.
   ///
   /// For instance, GOT symbols, rebases information, stub symbols, ...
   ///
@@ -273,7 +273,7 @@ class LIEF_API DyldSharedCache {
 ///
 /// In the case where multiple architectures are
 /// available in the @p path directory, the @p arch parameter can be used to
-/// define which architecture should be prefered.
+/// define which architecture should be preferred.
 ///
 /// **Example:**
 ///

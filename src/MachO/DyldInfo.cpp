@@ -1664,7 +1664,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(
     const DyldInfo::bind_container_t& bindings, vector_iostream& stream
 ) {
   // This function updates the standard bindings opcodes (i.e. not lazy and not
-  // weak). The following code is mainly inspired from LinkEdit.hpp:
+  // weak). The following code is mainly inspired by LinkEdit.hpp:
   // BindingInfoAtom<A>::encodeV1()
 
   std::vector<details::binding_instruction> instructions;

@@ -119,7 +119,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
     TY_FLOAT = 6,  ///< A 4-byte floating-point number.
     TY_DOUBLE = 7, ///< An 8-byte floating-point number.
     TY_STRUCT = 8, ///< A structure.
-    TY_UNION = 9,  ///< An union.
+    TY_UNION = 9,  ///< A union.
     TY_ENUM = 10,  ///< An enumerated type.
     TY_MOE = 11,   ///< A member of enumeration (a specific value).
     TY_BYTE = 12,  ///< A byte; unsigned 1-byte integer.

@@ -472,7 +472,7 @@ ok_error_t Parser::parse_data_directories() {
   // WARNING: The PE specifications require that the data directory table ends
   // with a null entry (RVA / Size, set to 0).
   //
-  // Nevertheless it seems that this requirement is not enforced by the PE loader.
+  // Nevertheless, it seems that this requirement is not enforced by the PE loader.
   // The binary bc203f2b6a928f1457e9ca99456747bcb7adbbfff789d1c47e9479aac11598af
   // contains a non-null final data directory (watermarking?)
   uint32_t nb_dir = binary_->optional_header().numberof_rva_and_size();

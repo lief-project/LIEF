@@ -65,9 +65,9 @@ LIEF_LOCAL result<PE_TYPE> get_type_from_stream(BinaryStream& stream);
 
 /// Compute the hash of imported functions
 ///
-/// By default, it generates an hash with the following properties:
+/// By default, it generates a hash with the following properties:
 ///   * Order agnostic
-///   * Casse agnostic
+///   * Case agnostic
 ///   * Ordinal (**in some extent**) agnostic
 ///
 /// If one needs the same output as Virus Total (i.e. pefile), you can pass
@@ -85,7 +85,7 @@ LIEF_API std::string get_imphash(const Binary& binary,
 /// by ordinal.
 ///
 /// The ``strict`` boolean parameter enables to throw an LIEF::not_found exception
-/// if the ordinal can't be resolved. Otherwise it skips the entry.
+/// if the ordinal can't be resolved. Otherwise, it skips the entry.
 ///
 /// @param[in] import Import to resolve
 /// @param[in] strict If set to ``true``, throw an exception if the import can't be

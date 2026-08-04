@@ -712,7 +712,7 @@ namespace LIEF {
 /// methods:
 ///
 /// Forward Iterators:
-///   (All of the following methods)
+///   (All the following methods)
 ///   - DerivedT &operator=(const DerivedT &R);
 ///   - bool operator==(const DerivedT &R) const;
 ///   - T &operator*() const;
@@ -773,7 +773,7 @@ class iterator_facade_base {
   /// A proxy object for computing a pointer via indirecting a copy of a
   /// reference. This is used in APIs which need to produce a pointer but for
   /// which the reference might be a temporary. The proxy preserves the
-  /// reference internally and exposes the pointer via a arrow operator.
+  /// reference internally and exposes the pointer via an arrow operator.
   class PointerProxy {
     friend iterator_facade_base;
 

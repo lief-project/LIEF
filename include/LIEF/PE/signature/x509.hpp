@@ -132,20 +132,20 @@ class LIEF_API x509 : public Object {
     /// The certificate is signed with an unacceptable hash.
     BADCERT_BAD_MD = 1 << 14,
 
-    /// The certificate is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+    /// The certificate is signed with an unacceptable PK alg (e.g. RSA vs ECDSA).
     BADCERT_BAD_PK = 1 << 15,
 
-    /// The certificate is signed with an unacceptable key (eg bad curve, RSA too
+    /// The certificate is signed with an unacceptable key (e.g. bad curve, RSA too
     /// short).
     BADCERT_BAD_KEY = 1 << 16,
 
     /// The CRL is signed with an unacceptable hash.
     BADCRL_BAD_MD = 1 << 17,
 
-    /// The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+    /// The CRL is signed with an unacceptable PK alg (e.g. RSA vs ECDSA).
     BADCRL_BAD_PK = 1 << 18,
 
-    /// The CRL is signed with an unacceptable key (eg bad curve, RSA too short).
+    /// The CRL is signed with an unacceptable key (e.g. bad curve, RSA too short).
     BADCRL_BAD_KEY = 1 << 19,
   };
 

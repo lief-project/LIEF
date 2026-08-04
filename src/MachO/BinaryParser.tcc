@@ -3480,7 +3480,7 @@ ok_error_t BinaryParser::do_chained_fixup(
   }
 
   // ---------- !auth && !bind ----------
-  // See comment for: dyld_chained_ptr_generic64
+  // See the comment for: dyld_chained_ptr_generic64
   const uint64_t target = ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_64 ?
                               fixup.unpack_target() :
                               fixup.unpack_target() + imagebase;
@@ -4437,7 +4437,7 @@ ok_error_t BinaryParser::post_process(LazyLoadDylibInfo& cmd) {
 
 /* This method is needed since the C++ copy constructor of ChainedBindingInfo
  * does not (on purpose) copy the pointers associated with the object.
- * Thus we need this helper to make sure that in the context of the parser,
+ * Thus, we need this helper to make sure that in the context of the parser,
  * the pointers are correctly copied.
  */
 void BinaryParser::copy_from(ChainedBindingInfo& to, ChainedBindingInfo& from) {

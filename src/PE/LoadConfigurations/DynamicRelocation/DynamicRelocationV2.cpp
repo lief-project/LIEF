@@ -76,7 +76,7 @@ std::unique_ptr<DynamicRelocationV2>
 
   {
     // Note(romain): As of now (2024-12) I couldn't find any PE that is using
-    // the v2 format. Hence this part is incomplete/not working.
+    // the v2 format. Hence, this part is incomplete/not working.
     stream.increment_pos(*HeaderSize).increment_pos(*FixupInfoSize);
   }
 }

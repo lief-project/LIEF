@@ -153,7 +153,7 @@ def test_api():
         "39:83:81:6a:7d:1c:62:96:25:40:ec:66:fa:87:90:fa:45:d1:06:3c:b2:3e:93:36:77:de:45:9f:0b:73:c5:77"
     )
 
-    # Check un-authenticated attributes
+    # Check unauthenticated attributes
     unauth_attrs = signer.unauthenticated_attributes
     assert len(unauth_attrs) == 1
 

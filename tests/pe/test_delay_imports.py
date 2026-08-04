@@ -19,7 +19,7 @@ def test_simple():
     assert len(binary.imported_functions) == 87
     assert len(binary.libraries) == 3
 
-    # Now check in depth the delay imports
+    # Now check the delay imports in depth
     shlwapi = binary.delay_imports[0]
     assert shlwapi.name == "SHLWAPI.dll"
     assert shlwapi.attribute == 1

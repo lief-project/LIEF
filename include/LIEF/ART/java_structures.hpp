@@ -293,7 +293,7 @@ struct ALIGNED_(4) jclass_t {
 
 
 // No changes in jstring structure but string can be
-// encoded as as char16_t or char (compressed)
+// encoded as char16_t or char (compressed)
 // count[0] (LSB) == 1 ----> compressed
 // count[0] (LSB) == 0 ----> chat16_t
 template<class T = no_brooks_read_barrier_t>

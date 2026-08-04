@@ -32,8 +32,8 @@ macOS to sign the binary after compilation by adding a custom command. The
 `LC_CODE_SIGNATURE` or `LC_DYLIB_CODE_SIGN_DRS` command in the padding
 area.
 
-Since load commands are the base unit of the Mach-O format—segments, shared
-libraries, entry points, etc., are all *commands*—the ability to add arbitrary
+Since load commands are the base unit of the Mach-O format (segments, shared
+libraries, entry points, etc., are all *commands*), the ability to add arbitrary
 commands to a binary enables interesting possibilities such as code injection,
 anti-analysis, etc.
 

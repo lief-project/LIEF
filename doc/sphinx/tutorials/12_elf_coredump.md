@@ -135,7 +135,7 @@ the [Triton](https://triton.quarkslab.com/) API:
 - [AArch64Cpu::setConcreteRegisterValue()](https://github.com/JonathanSalwan/Triton/blob/a61651ce331ac53ec09e1d8fef5eab744e98c9de/src/libtriton/arch/architecture.cpp#L343)
 - [AArch64Cpu::setConcreteMemoryAreaValue()](https://github.com/JonathanSalwan/Triton/blob/a61651ce331ac53ec09e1d8fef5eab744e98c9de/src/libtriton/arch/architecture.cpp#L329-L340)
 
-to map the coredump into Triton and then utilize its engines for taint
+to map the coredump into Triton and then use its engines for taint
 analysis and symbolic execution.
 
 ```{rubric} References

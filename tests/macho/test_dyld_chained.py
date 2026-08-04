@@ -84,7 +84,7 @@ def process_crypt_and_hash(path: str, delta: int = 0):
 
 def test_1():
     """
-    Simple test on the regular id binary comming from an Apple M1
+    Simple test on the regular id binary coming from an Apple M1
     This sample does not contains rebase fixups
     """
     fat = parse_macho(

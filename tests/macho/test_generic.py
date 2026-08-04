@@ -315,7 +315,7 @@ def test_segment_index():
     assert data_seg is not None
     original_data_index = data_seg.index
 
-    # Add a new segment (it should be placed right beore __LINKEDIT)
+    # Add a new segment (it should be placed right before __LINKEDIT)
     segment = lief.MachO.SegmentCommand("__LIEF", [0x60] * 0x100)
     segment = binary.add(segment)  # type: ignore[assignment]
     assert isinstance(segment, lief.MachO.SegmentCommand)

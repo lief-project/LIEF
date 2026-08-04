@@ -1347,7 +1347,7 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
   /*
    * Note(romain): Most of the logic that constructs this command
    *               is located in ld64/src/ld/LinkEdit.hpp -
-   * ChainedInfoAtom<A>::encode() The following code is highly inspired from the
+   * ChainedInfoAtom<A>::encode() The following code is highly inspired by the
    * Apple ld64 code
    */
   LIEF_DEBUG("[->] Writing DyldChainedFixups");

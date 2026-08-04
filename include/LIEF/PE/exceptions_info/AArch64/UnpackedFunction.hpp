@@ -106,7 +106,7 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
     return E() == 1 ? epilog_offset_ : uint16_t(-1);
   }
 
-  /// Number of 32-bit words needed to contain all of the unwind codes
+  /// Number of 32-bit words needed to contain all the unwind codes
   uint32_t code_words() const {
     return code_words_;
   }

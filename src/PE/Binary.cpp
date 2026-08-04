@@ -693,7 +693,7 @@ uint32_t Binary::compute_checksum() const {
     span<const uint8_t> pad = sec->padding();
     span<const uint8_t> content = sec->content();
     if (/* overlapping */ sec->offset() < position) {
-      // Trunc the beginning of the overlap
+      // Truncate the beginning of the overlap
       if (position <= sec->offset() + content.size()) {
         const uint64_t start_p = position - sec->offset();
         const uint64_t size = content.size() - start_p;
@@ -846,7 +846,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
                pad.size(), sec->offset(),
                sec->offset() + content.size() + pad.size());
     if (/* overlapping */ sec->offset() < position) {
-      // Trunc the beginning of the overlap
+      // Truncate the beginning of the overlap
       if (position <= sec->offset() + content.size()) {
         const uint64_t start_p = position - sec->offset();
         const uint64_t size = content.size() - start_p;
@@ -1481,4 +1481,4 @@ std::ostream& Binary::print(std::ostream& os) const {
   return os;
 }
 
-} // namesapce PE
+} // namespace PE
