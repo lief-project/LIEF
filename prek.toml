@@ -201,4 +201,19 @@ hooks = [
       ]
     },
   },
+  # ----------------------------------------------------------------------------
+  # Pre-push
+  # ----------------------------------------------------------------------------
+  {
+    id = "revgate",
+    name = "block private paths from being pushed",
+    language = "system",
+    entry = "revgate check",
+    args = [
+      "--config", "../revgate.toml",
+    ],
+    stages = ["pre-push"],
+    pass_filenames = false,
+    always_run = true,
+  },
 ]
