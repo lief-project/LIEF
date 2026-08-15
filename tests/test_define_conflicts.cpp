@@ -1,7 +1,7 @@
 #if defined(WIN32) || defined(_MSC_VER)
+  #include <windows.h>
   #include <WinBase.h>
   #include <minwindef.h>
-  #include <windows.h>
 #endif
 
 #if defined(__linux__)
@@ -14,7 +14,7 @@
   #include <mach-o/dyld_images.h>
 #endif
 
-#include "LIEF/LIEF.hpp"
+#include "LIEF/LIEF.hpp" // IWYU pragma: keep
 
 int main() {
   return 0;
