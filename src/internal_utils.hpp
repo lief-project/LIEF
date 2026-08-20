@@ -19,6 +19,7 @@
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
 #include <algorithm>
+#include <iosfwd>
 #include <memory>
 #include <set>
 #include <sstream>
@@ -276,6 +277,9 @@ inline std::optional<std::string_view> libname(std::string_view path,
   }
   return path.substr(pos + 1);
 }
+
+/// Return the number of bytes that can be read from the given input stream.
+result<size_t> istream_size(std::istream& stream);
 
 }
 

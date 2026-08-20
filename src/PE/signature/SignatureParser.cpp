@@ -72,11 +72,15 @@ result<Signature> SignatureParser::parse(const std::string& path) {
     return make_error_code(lief_errors::file_error);
   }
   binary.unsetf(std::ios::skipws);
-  binary.seekg(0, std::ios::end);
-  const auto size = static_cast<uint64_t>(binary.tellg());
-  binary.seekg(0, std::ios::beg);
-  std::vector<uint8_t> raw_blob(size, 0);
-  binary.read(reinterpret_cast<char*>(raw_blob.data()), size);
+  auto size = istream_size(binary);
+  if (!size) {
+    LIEF_ERR("Failed to determine the size of '{}'", path);
+    return make_error_code(lief_errors::file_error);
+  }
+
+  std::vector<uint8_t> raw_blob(*size, 0);
+  binary.read(reinterpret_cast<char*>(raw_blob.data()), raw_blob.size());
+  raw_blob.resize(static_cast<size_t>(binary.gcount()));
   return SignatureParser::parse(std::move(raw_blob));
 }
 

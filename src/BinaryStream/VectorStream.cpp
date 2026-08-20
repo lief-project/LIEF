@@ -20,6 +20,7 @@
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "internal_utils.hpp"
 #include "logging.hpp"
 
 namespace LIEF {
@@ -32,12 +33,20 @@ result<VectorStream> VectorStream::from_file(const std::string& file) {
   }
 
   ifs.unsetf(std::ios::skipws);
-  ifs.seekg(0, std::ios::end);
-  const auto size = static_cast<uint64_t>(ifs.tellg());
-  ifs.seekg(0, std::ios::beg);
-  std::vector<uint8_t> data;
-  data.resize(size, 0);
+  auto size = istream_size(ifs);
+  if (!size) {
+    LIEF_ERR("Failed to determine the size of '{}'", file);
+    return make_error_code(size.error());
+  }
+
+  std::vector<uint8_t> data(*size, 0);
   ifs.read(reinterpret_cast<char*>(data.data()), data.size());
+
+  if ((size_t)ifs.gcount() != *size) {
+    LIEF_ERR("Can't read the content of '{}'", file);
+    return make_error_code(lief_errors::read_error);
+  }
+
   return VectorStream{std::move(data)};
 }
 

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "internal_utils.hpp"
 #include "logging.hpp"
 
 #include "LIEF/BinaryStream/FileStream.hpp"
@@ -26,10 +27,13 @@ result<FileStream> FileStream::from_file(const std::string& file) {
   }
 
   ifs.unsetf(std::ios::skipws);
-  ifs.seekg(0, std::ios::end);
-  const auto size = static_cast<uint64_t>(ifs.tellg());
-  ifs.seekg(0, std::ios::beg);
-  return {tl::in_place, std::move(ifs), size};
+  auto size = istream_size(ifs);
+  if (!size) {
+    LIEF_ERR("Failed to determine the size of '{}'", file);
+    return make_error_code(size.error());
+  }
+
+  return {tl::in_place, std::move(ifs), *size};
 }
 
 

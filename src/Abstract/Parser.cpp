@@ -19,6 +19,7 @@
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "internal_utils.hpp"
 #include "logging.hpp"
 
 
@@ -163,9 +164,11 @@ Parser::Parser(const std::string& filename) {
     return;
   }
   file.unsetf(std::ios::skipws);
-  file.seekg(0, std::ios::end);
-  binary_size_ = static_cast<uint64_t>(file.tellg());
-  file.seekg(0, std::ios::beg);
+  if (auto size = istream_size(file)) {
+    binary_size_ = *size;
+  } else {
+    LIEF_ERR("Failed determine the size of '{}'", filename);
+  }
 }
 
 }
