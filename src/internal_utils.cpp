@@ -16,6 +16,7 @@
 #include "internal_utils.hpp"
 #include <ctime>
 #include <chrono>
+#include <istream>
 #include <mutex>
 
 namespace LIEF {
@@ -86,6 +87,35 @@ std::string indent(const std::string& input, size_t level) {
   return output;
 }
 
+
+result<size_t> istream_size(std::istream& stream) {
+  static const uint64_t MAX_VECTOR_SIZE = std::vector<uint8_t>().max_size();
+
+  stream.seekg(0, std::ios::end);
+  const std::streamoff size = stream.tellg();
+
+  if (size < 0) {
+    stream.clear();
+    return make_error_code(lief_errors::read_error);
+  }
+
+  if ((uint64_t)size > MAX_VECTOR_SIZE) {
+    return make_error_code(lief_errors::data_too_large);
+  }
+
+  if (size > 0) {
+    char last = 0;
+    stream.seekg(size - 1, std::ios::beg);
+    stream.read(&last, 1);
+    if (stream.gcount() != 1) {
+      stream.clear();
+      return make_error_code(lief_errors::read_error);
+    }
+  }
+
+  stream.seekg(0, std::ios::beg);
+  return (size_t)size;
+}
 
 std::string ts_to_str(uint64_t timestamp) {
   using namespace std::chrono;

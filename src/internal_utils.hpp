@@ -15,6 +15,11 @@
  */
 #ifndef LIEF_INTERNAL_UTILS_HEADER
 #define LIEF_INTERNAL_UTILS_HEADER
+#include <unordered_map>
+#include "spdlog/fmt/fmt.h"
+#include "spdlog/fmt/ranges.h"
+#include <algorithm>
+#include <iosfwd>
 #include <memory>
 #include <string>
 #include <vector>
@@ -269,6 +274,9 @@ inline optional<std::string> libname(const std::string& path, char sep = '/') {
   }
   return path.substr(pos + 1);
 }
+
+/// Return the number of bytes that can be read from the given input stream.
+result<size_t> istream_size(std::istream& stream);
 
 }
 

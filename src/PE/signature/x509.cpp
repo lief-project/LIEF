@@ -212,12 +212,14 @@ x509::certificates_t x509::parse(const std::string& path) {
     return {};
   }
   cert_fs.unsetf(std::ios::skipws);
-  cert_fs.seekg(0, std::ios::end);
-  const size_t size = cert_fs.tellg();
-  cert_fs.seekg(0, std::ios::beg);
+  auto size = istream_size(cert_fs);
+  if (!size) {
+    LIEF_WARN("Failed to determine the size of {}", path);
+    return {};
+  }
 
-  std::vector<uint8_t> raw(size + 1, 0);
-  cert_fs.read(reinterpret_cast<char*>(raw.data()), raw.size());
+  std::vector<uint8_t> raw(*size + 1, 0);
+  cert_fs.read(reinterpret_cast<char*>(raw.data()), *size);
   return x509::parse(raw);
 }
 

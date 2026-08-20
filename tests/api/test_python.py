@@ -1,4 +1,5 @@
 import io
+import os
 import sys
 from io import open as io_open
 from pathlib import Path
@@ -6,7 +7,7 @@ from typing import Any, cast
 
 import lief
 import pytest
-from utils import get_sample, is_x86_64, parse_pe
+from utils import get_sample, is_x86_64, lief_samples_dir, parse_pe
 
 
 def test_wrong_obj(capsys):
@@ -126,6 +127,22 @@ def test_wrong_io():
     wrong = Wrong5()
     out = lief.parse(cast(Any, wrong))
     assert out is None
+
+
+def test_directory(tmp_path: Path):
+    assert lief.parse(b"/") is None
+
+    assert lief.parse(tmp_path) is None
+    assert lief.parse(str(tmp_path)) is None
+    assert lief.parse(os.fsencode(tmp_path)) is None
+
+    assert lief.parse(lief_samples_dir()) is None
+
+    assert lief.ELF.parse(tmp_path) is None
+    assert lief.PE.parse(tmp_path) is None
+    assert lief.MachO.parse(tmp_path) is None
+    assert lief.COFF.parse(tmp_path) is None
+    assert lief.PE.Signature.parse(str(tmp_path)) is None
 
 
 def test_platform():

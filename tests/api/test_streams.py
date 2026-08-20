@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import lief
 import pytest
 from utils import get_sample
@@ -46,6 +48,11 @@ def test_vector_stream_from_file_error():
     assert vs is lief.lief_errors.read_error
 
 
+def test_vector_stream_from_directory(tmp_path: Path):
+    vs = lief.VectorStream.from_file(str(tmp_path))
+    assert vs is lief.lief_errors.read_error
+
+
 def test_file_stream():
     path = get_sample("ELF/ELF64_x86-64_binary_ls.bin")
     fs = lief.FileStream.from_file(path)
@@ -57,6 +64,11 @@ def test_file_stream():
 
 def test_file_stream_error():
     fs = lief.FileStream.from_file("/does/not/exist/at/all")
+    assert fs is lief.lief_errors.read_error
+
+
+def test_file_stream_from_directory(tmp_path: Path):
+    fs = lief.FileStream.from_file(str(tmp_path))
     assert fs is lief.lief_errors.read_error
 
 

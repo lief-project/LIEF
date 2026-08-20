@@ -348,4 +348,14 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     auto vs = VectorStream::from_file("/does/not/exist/at/all");
     CHECK(!vs);
   }
+
+  SECTION("FileStream-from_file-directory") {
+    auto fstream = FileStream::from_file(test::get_sample_dir());
+    CHECK(!fstream);
+  }
+
+  SECTION("VectorStream-from_file-directory") {
+    auto vs = VectorStream::from_file(test::get_sample_dir());
+    CHECK(!vs);
+  }
 }
