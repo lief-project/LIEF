@@ -277,7 +277,7 @@ class LIEF_API vector_iostream {
 
   template<class T>
   T* edit_as(size_t pos) {
-    if ((uintmax_t)pos > (uintmax_t)std::numeric_limits<off_type>::max()) {
+    if ((uintmax_t)pos > (uintmax_t)((std::numeric_limits<off_type>::max)())) {
       return nullptr;
     }
     seekp((pos_type)pos);
@@ -333,8 +333,9 @@ class LIEF_API vector_iostream {
 
     const auto unsigned_offset = (uintmax_t)offset;
     const auto max_vector_pos = (uintmax_t)raw_->max_size();
-    const auto max_stream_pos = (uintmax_t)std::numeric_limits<off_type>::max();
-    const uintmax_t max_pos = std::min(max_vector_pos, max_stream_pos);
+    const auto max_stream_pos =
+        (uintmax_t)((std::numeric_limits<off_type>::max)());
+    const uintmax_t max_pos = (std::min)(max_vector_pos, max_stream_pos);
 
     if (unsigned_offset > max_pos || (uintmax_t)count > max_pos - unsigned_offset)
     {
