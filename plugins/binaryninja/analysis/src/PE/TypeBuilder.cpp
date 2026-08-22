@@ -151,7 +151,8 @@ Ref<Type> TypeBuilder::get_or_create(const std::string& name) {
 #if BN_BITFIELD_SUPPORT
     builder.SetPacked(true)
         .AddMemberAtBitOffset(u32(), "Type", /*bitOffset=*/0, /*bitWidth=*/2)
-        .AddMemberAtBitOffset(u32(), "RVA", /*bitOffset=*/2, /*bitWidth=*/30);
+        .AddMemberAtBitOffset(u32(), "RVA", /*bitOffset=*/2, /*bitWidth=*/30)
+        .AddMember(u32(), "Length");
 #else
     builder.AddMember(u32(), "RVAType").AddMember(u32(), "Length");
 #endif
@@ -219,6 +220,8 @@ Ref<Type> TypeBuilder::get_or_create(const std::string& name) {
         .AddMemberAtBitOffset(u32(), "ExtendedEpilogCount", /*bitOffset=*/0,
                               /*bitWidth=*/16)
         .AddMemberAtBitOffset(u32(), "ExtendedCodeWords", /*bitOffset=*/16,
+                              /*bitWidth=*/8)
+        .AddMemberAtBitOffset(u32(), "Reserved", /*bitOffset=*/24,
                               /*bitWidth=*/8);
 #else
     builder.AddMember(u32(), "ExtendedHeaderData");

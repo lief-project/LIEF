@@ -6,26 +6,18 @@
 #include "binaryninja/binaryninjaapi.h"
 
 
-// Bitfield support has been added in BinaryNinja 5.2 (Io)
-#if BN_VERSION_MAJOR >= 5 && BN_VERSION_MINOR >= 2
-  #define BN_BITFIELD_SUPPORT 1
-#else
-  #define BN_BITFIELD_SUPPORT 0
-#endif
+#define BN_VERSION_AT_LEAST(major, minor)                                         \
+  (BN_VERSION_MAJOR > (major) ||                                                  \
+   (BN_VERSION_MAJOR == (major) && BN_VERSION_MINOR >= (minor)))
 
-#if BN_VERSION_MAJOR >= 5 && BN_VERSION_MINOR >= 4
-  #define BN_FRAGMENT_TYPE_CLASS_SUPPORT 1
-#else
-  #define BN_FRAGMENT_TYPE_CLASS_SUPPORT 0
-#endif
+// Bitfield support has been added in BinaryNinja 5.2 (Io)
+#define BN_BITFIELD_SUPPORT            BN_VERSION_AT_LEAST(5, 2)
+
+#define BN_FRAGMENT_TYPE_CLASS_SUPPORT BN_VERSION_AT_LEAST(5, 4)
 
 // FunctionParameter switched from a flat `Variable location` to a `ValueLocation
 // location` in BinaryNinja 5.4
-#if BN_VERSION_MAJOR >= 5 && BN_VERSION_MINOR >= 4
-  #define BN_VALUE_LOCATION_SUPPORT 1
-#else
-  #define BN_VALUE_LOCATION_SUPPORT 0
-#endif
+#define BN_VALUE_LOCATION_SUPPORT      BN_VERSION_AT_LEAST(5, 4)
 
 
 namespace binaryninja::api_compat {

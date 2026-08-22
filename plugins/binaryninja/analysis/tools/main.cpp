@@ -32,7 +32,7 @@ int main(int argc, const char** argv) {
 
   analyzer->run();
 
-  fs::path file_path = bv->GetFile()->GetDatabase()->GetFile()->GetFilename();
+  fs::path file_path = bv->GetFile()->GetFilename();
   std::string filename = file_path.filename().string();
   fs::path new_bndb = file_path.parent_path() / ("updated_" + filename);
 

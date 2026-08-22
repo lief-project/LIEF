@@ -258,9 +258,9 @@ Ref<Type> LoadConfiguration::process(const LIEF::PE::CHPEMetadataARM64& arm64) {
   auto S = type_builder_.get_as<Structure>(ty);
   assert(S != nullptr);
 
-  uint64_t chpe_metadata_pointer =
-      translate_addr(*load_config_->chpe_metadata_pointer());
-  define_struct_at(chpe_metadata_pointer, ty, "__image_arm64ec_metadata");
+  if (std::optional<uint64_t> ptr = load_config_->chpe_metadata_pointer()) {
+    define_struct_at(translate_addr(*ptr), ty, "__image_arm64ec_metadata");
+  }
 
   if (arm64.code_map() > 0) {
     uint64_t code_map_addr = translate_addr(get_va(arm64.code_map()));
