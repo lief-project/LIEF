@@ -7,7 +7,7 @@
 
 #include "binaryninja/analysis/Analyzer.hpp"
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
 namespace fs = std::filesystem;
 
@@ -17,8 +17,8 @@ int main(int argc, const char** argv) {
     return 1;
   }
 
-  bn::InitPlugins();
-  bn::Ref<bn::BinaryView> bv = bn::Load(argv[1], /*updateAnalysis=*/false);
+  BN::InitPlugins();
+  BN::Ref<BN::BinaryView> bv = BN::Load(argv[1], /*updateAnalysis=*/false);
 
   if (!bv) {
     BN_ERR("Can't load: {}", argv[1]);

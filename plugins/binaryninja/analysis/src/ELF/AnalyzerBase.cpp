@@ -24,7 +24,7 @@
 
 using namespace LIEF::ELF;
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
 namespace analysis_plugin::elf {
 
@@ -152,7 +152,7 @@ void AnalyzerBase::define_relocated_type(const Relocation& R, uint64_t ttarget) 
       seg->flags() == (Segment::FLAGS::R | Segment::FLAGS::X))
   {
     // Likely a function. Check if it is defined
-    if (bn::Ref<bn::Symbol> sym = bv_.GetSymbolByAddress(ttarget)) {
+    if (BN::Ref<BN::Symbol> sym = bv_.GetSymbolByAddress(ttarget)) {
       if (sym->GetType() == BNSymbolType::FunctionSymbol) {
         define_type_at(taddr, type_builder_.generic_func_ptr_t(),
                        /*force=*/[](BinaryNinja::DataVariable& var) {

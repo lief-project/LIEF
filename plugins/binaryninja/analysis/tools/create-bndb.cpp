@@ -6,7 +6,7 @@
 
 #include "binaryninja/analysis/Analyzer.hpp"
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
 int main(int argc, const char** argv) {
   if (argc < 3) {
@@ -17,8 +17,8 @@ int main(int argc, const char** argv) {
   std::string target = argv[1];
   std::string output = argv[2];
 
-  bn::InitPlugins();
-  bn::Ref<bn::BinaryView> bv = bn::Load(target, /*updateAnalysis=*/true);
+  BN::InitPlugins();
+  BN::Ref<BN::BinaryView> bv = BN::Load(target, /*updateAnalysis=*/true);
 
   if (!bv) {
     BN_ERR("Can't load: {}", argv[1]);

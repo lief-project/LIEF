@@ -22,17 +22,17 @@
 
 #include "log.hpp"
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 namespace dw = LIEF::dwarf::editor;
 
 template<>
-class fmt::formatter<bn::InstructionTextToken> {
+class fmt::formatter<BN::InstructionTextToken> {
   public:
   constexpr auto parse(format_parse_context& ctx) {
     return ctx.begin();
   }
   template<typename Context>
-  constexpr auto format(const bn::InstructionTextToken& T, Context& ctx) const {
+  constexpr auto format(const BN::InstructionTextToken& T, Context& ctx) const {
     // or: format_to(ctx.out(), "{}", T.text);
     return detail::write(ctx.out(), T.text.c_str());
   }
@@ -42,8 +42,8 @@ namespace dwarf_plugin {
 
 using namespace binaryninja;
 
-dw::Function* FunctionEngine::add_function(bn::Function& func) {
-  bn::Ref<bn::Symbol> sym = func.GetSymbol();
+dw::Function* FunctionEngine::add_function(BN::Function& func) {
+  BN::Ref<BN::Symbol> sym = func.GetSymbol();
   const std::string& func_name = sym->GetShortName();
 
   std::unique_ptr<dw::Function> dw_func = unit_.create_function(func_name);
@@ -74,15 +74,15 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
   auto ret_type = func.GetReturnType();
   dw_func->set_return_type(types_.add_type(api_compat::get_type(ret_type)));
 
-  std::vector<bn::FunctionParameter> parameters = func.GetType()->GetParameters();
+  std::vector<BN::FunctionParameter> parameters = func.GetType()->GetParameters();
   for (size_t i = 0; i < parameters.size(); ++i) {
-    const bn::FunctionParameter& p = parameters[i];
+    const BN::FunctionParameter& p = parameters[i];
     std::string name = p.name.empty() ? fmt::format("arg_{}", i) : p.name;
     dw::Type& type = types_.add_type(api_compat::get_type(p.type));
     std::unique_ptr<dw::Function::Parameter> P =
         dw_func->add_parameter(name, type);
     if (std::optional<int64_t> reg = api_compat::get_parameter_register(p, i)) {
-      if (bn::Ref<bn::Platform> platform = func.GetPlatform()) {
+      if (BN::Ref<BN::Platform> platform = func.GetPlatform()) {
         std::string reg_name = platform->GetArchitecture()->GetRegisterName(*reg);
         if (!reg_name.empty()) {
           P->assign_register(reg_name);
@@ -92,7 +92,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
   }
 
   for (const auto& [addr, stack_var] : func.GetStackLayout()) {
-    for (const bn::VariableNameAndType& info : stack_var) {
+    for (const BN::VariableNameAndType& info : stack_var) {
       if (info.autoDefined) {
         continue;
       }
@@ -109,10 +109,10 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
   std::vector<uint64_t> commented_addresses = func.GetCommentedAddresses();
   std::stable_sort(commented_addresses.begin(), commented_addresses.end());
 
-  std::vector<bn::Ref<bn::BasicBlock>> blocks = func.GetBasicBlocks();
+  std::vector<BN::Ref<BN::BasicBlock>> blocks = func.GetBasicBlocks();
 
   if (blocks.size() > 1) {
-    for (const bn::Ref<bn::BasicBlock>& BB : blocks) {
+    for (const BN::Ref<BN::BasicBlock>& BB : blocks) {
       std::unique_ptr<dw::Function::LexicalBlock> LB =
           dw_func->add_lexical_block(BB->GetStart(), BB->GetEnd());
       if (LB == nullptr) {
@@ -151,7 +151,7 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
       }
     }
   } else if (blocks.size() == 1) {
-    const bn::Ref<bn::BasicBlock>& main_block = blocks[0];
+    const BN::Ref<BN::BasicBlock>& main_block = blocks[0];
     std::string comment = func.GetCommentForAddress(main_block->GetStart());
     if (!comment.empty()) {
       dw_func->add_description(comment);
@@ -198,12 +198,12 @@ dw::Function* FunctionEngine::add_function(bn::Function& func) {
 std::string FunctionEngine::get_hlil_for_addr(BinaryNinja::Function& F,
                                               uint64_t addr) {
   std::string out;
-  bn::Ref<bn::HighLevelILFunction> HLIL = F.GetHighLevelIL();
+  BN::Ref<BN::HighLevelILFunction> HLIL = F.GetHighLevelIL();
   if (HLIL == nullptr) {
     return out;
   }
-  HLIL->VisitAllExprs([&](const bn::HighLevelILInstruction& I) {
-    for (const bn::DisassemblyTextLine& T : HLIL->GetExprText(I)) {
+  HLIL->VisitAllExprs([&](const BN::HighLevelILInstruction& I) {
+    for (const BN::DisassemblyTextLine& T : HLIL->GetExprText(I)) {
       if (T.addr != addr) {
         continue;
       }

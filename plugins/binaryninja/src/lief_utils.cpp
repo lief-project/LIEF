@@ -34,7 +34,7 @@
 
 namespace binaryninja {
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
 namespace fs = std::filesystem;
 
@@ -67,7 +67,7 @@ FileFormat get_file_format(BinaryNinja::BinaryView& bv) {
 std::unique_ptr<LIEF::Binary> get_bin(BinaryNinja::BinaryView& bv) {
   std::string original_file = bv.GetFile()->GetOriginalFilename();
   if (LIEF::MachO::is_macho(original_file)) {
-    bn::Ref<bn::Architecture> arch = bv.GetDefaultArchitecture();
+    BN::Ref<BN::Architecture> arch = bv.GetDefaultArchitecture();
     std::unique_ptr<LIEF::MachO::FatBinary> fat =
         LIEF::MachO::Parser::parse(original_file);
     if (fat == nullptr) {
@@ -125,14 +125,14 @@ std::string to_string(const BinaryNinja::QualifiedName& name) {
 }
 
 std::string to_string(BinaryNinja::BinaryView& bv) {
-  auto settings = bn::DisassemblySettings::GetDefaultLinearSettings();
+  auto settings = BN::DisassemblySettings::GetDefaultLinearSettings();
 
-  auto disassembly = bn::LinearViewObject::CreateDisassembly(&bv, settings);
-  bn::LinearViewCursor cursor(BNCreateLinearViewCursor(disassembly->GetObject()));
+  auto disassembly = BN::LinearViewObject::CreateDisassembly(&bv, settings);
+  BN::LinearViewCursor cursor(BNCreateLinearViewCursor(disassembly->GetObject()));
   cursor.SeekToBegin();
   std::ostringstream oss;
   while (cursor.IsValid()) {
-    for (const bn::LinearDisassemblyLine& line : cursor.GetLines()) {
+    for (const BN::LinearDisassemblyLine& line : cursor.GetLines()) {
       oss << to_string(line) << '\n';
     }
     cursor.Next();
@@ -142,7 +142,7 @@ std::string to_string(BinaryNinja::BinaryView& bv) {
 
 std::string to_string(const BinaryNinja::LinearDisassemblyLine& line) {
   std::ostringstream oss;
-  for (const bn::InstructionTextToken& token : line.contents.tokens) {
+  for (const BN::InstructionTextToken& token : line.contents.tokens) {
     oss << token.text;
   }
   return oss.str();
@@ -157,7 +157,7 @@ void linear_export(BinaryNinja::BinaryView& bv, const std::string& file) {
 
 std::optional<std::string> find_typelib(const std::string& name) {
   std::vector<std::string> candidates;
-  for (const auto& path : {bn::GetUserDirectory(), bn::GetInstallDirectory()}) {
+  for (const auto& path : {BN::GetUserDirectory(), BN::GetInstallDirectory()}) {
     if (fs::path install_dir = path; fs::is_directory(install_dir)) {
       if (auto candidate = install_dir / name; fs::exists(candidate)) {
         return fs::absolute(candidate).string();

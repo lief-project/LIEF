@@ -20,11 +20,11 @@
 #include <LIEF/utils.hpp>
 #include <LIEF/version.h>
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
 namespace dwarf_plugin::commands {
 void register_commands() {
-  bn::PluginCommand::Register("LIEF\\Export as DWARF", "Generate a DWARF file",
+  BN::PluginCommand::Register("LIEF\\Export as DWARF", "Generate a DWARF file",
                               dwarf_export);
 
   BN_INFO("LIEF DWARF plugin registered");
@@ -42,17 +42,17 @@ void register_commands() {
 
 void dwarf_export(BinaryNinja::BinaryView* bv) {
   if (!LIEF::is_extended()) {
-    bn::ShowMessageBox("Error", "This feature requires LIEF extended.",
+    BN::ShowMessageBox("Error", "This feature requires LIEF extended.",
                        /*buttons=*/OKButtonSet, /*icon=*/ErrorIcon);
     return;
   }
   std::string result;
-  if (!bn::GetSaveFileNameInput(result, "Save Location")) {
+  if (!BN::GetSaveFileNameInput(result, "Save Location")) {
     return;
   }
   auto exporter = DwarfExport::from_bv(*bv);
   exporter->save(result);
-  bn::ShowMessageBox("Info", fmt::format("DWARF saved here: {}", result),
+  BN::ShowMessageBox("Info", fmt::format("DWARF saved here: {}", result),
                      /*buttons=*/OKButtonSet, /*icon=*/InformationIcon);
 }
 

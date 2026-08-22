@@ -29,31 +29,31 @@
 
 
 namespace binaryninja::api_compat {
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
-inline const bn::Type& get_type(const bn::Ref<bn::Type>& arg) {
+inline const BN::Type& get_type(const BN::Ref<BN::Type>& arg) {
   return *arg;
 }
 
-inline const bn::Type& get_type(const bn::Confidence<bn::Ref<bn::Type>>& arg) {
+inline const BN::Type& get_type(const BN::Confidence<BN::Ref<BN::Type>>& arg) {
   return get_type(arg.GetValue());
 }
 
-inline bool as_bool(const bn::Ref<bn::Type>& arg) {
+inline bool as_bool(const BN::Ref<BN::Type>& arg) {
   return arg && arg != nullptr;
 }
 
-inline bool as_bool(const bn::Confidence<bn::Ref<bn::Type>>& arg) {
+inline bool as_bool(const BN::Confidence<BN::Ref<BN::Type>>& arg) {
   return as_bool(arg.GetValue());
 }
 
 inline std::optional<int64_t>
-    get_parameter_register(const bn::FunctionParameter& param, size_t idx) {
+    get_parameter_register(const BN::FunctionParameter& param, size_t idx) {
 #if BN_VALUE_LOCATION_SUPPORT
   if (param.locationSource == BNValueLocationSource::DefaultLocationSource) {
     return std::nullopt;
   }
-  std::optional<bn::Variable> var = param.location.GetVariableForParameter(idx);
+  std::optional<BN::Variable> var = param.location.GetVariableForParameter(idx);
   if (!var || var->type != BNVariableSourceType::RegisterVariableSourceType) {
     return std::nullopt;
   }

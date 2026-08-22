@@ -6,7 +6,7 @@
 
 #include "binaryninja/analysis/Analyzer.hpp"
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
 int main(int argc, const char** argv) {
   if (argc < 4) {
@@ -17,8 +17,8 @@ int main(int argc, const char** argv) {
   std::string original_out = argv[2];
   std::string updated_out = argv[3];
 
-  bn::InitPlugins();
-  bn::Ref<bn::BinaryView> bv = bn::Load(argv[1], /*updateAnalysis=*/false);
+  BN::InitPlugins();
+  BN::Ref<BN::BinaryView> bv = BN::Load(argv[1], /*updateAnalysis=*/false);
 
   binaryninja::linear_export(*bv, original_out);
 

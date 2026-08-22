@@ -25,7 +25,7 @@
 
 #include "binaryninja/dwarf-export/log.hpp"
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 namespace dw = LIEF::dwarf;
 
 namespace dwarf_plugin {
@@ -134,7 +134,7 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
     {
       std::string struct_name = type.GetStructureName().GetString();
       BN_DEBUG("Adding {} as structure ({})", name_str, struct_name);
-      bn::Ref<bn::Structure> bn_struct = type.GetStructure();
+      BN::Ref<BN::Structure> bn_struct = type.GetStructure();
 
       if (bn_struct == nullptr) {
         BN_ERR("Can't get structure for type: {} ({})", struct_name, name_str);
@@ -180,7 +180,7 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
         );
       }
 
-      for (const bn::StructureMember& member : bn_struct->GetMembers()) {
+      for (const BN::StructureMember& member : bn_struct->GetMembers()) {
         BN_DEBUG(" Adding {} to {}", member.name, struct_name);
         add_member(member, *struct_type_ptr);
       }
@@ -196,7 +196,7 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
       BN_DEBUG("Adding {} as enum ({})", enum_name, name_str);
       std::unique_ptr<dw::editor::EnumType> enum_type =
           unit_.create_enum(enum_name);
-      bn::Ref<bn::Enumeration> bn_enum = type.GetEnumeration();
+      BN::Ref<BN::Enumeration> bn_enum = type.GetEnumeration();
       enum_type->set_size(type.GetWidth());
 
       switch (type.GetWidth()) {
@@ -239,7 +239,7 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
         default: break;
       }
 
-      for (const bn::EnumerationMember& e : type.GetEnumeration()->GetMembers()) {
+      for (const BN::EnumerationMember& e : type.GetEnumeration()->GetMembers()) {
         enum_type->add_value(e.name, e.value);
       }
 
@@ -252,9 +252,9 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
 
     case NamedTypeReferenceClass:
     {
-      bn::Ref<bn::NamedTypeReference> ntr = type.GetNamedTypeReference();
+      BN::Ref<BN::NamedTypeReference> ntr = type.GetNamedTypeReference();
       BN_DEBUG("Adding typedef: {} ({})", ntr->GetName(), ntr->GetTypeId());
-      bn::Ref<bn::Type> alias = bv_.GetTypeByRef(ntr);
+      BN::Ref<BN::Type> alias = bv_.GetTypeByRef(ntr);
 
       if (!alias) {
         BN_ERR("Can't resolve the typedef of {}", name_str);
@@ -337,7 +337,7 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
         func_type->set_return_type(add_type(api_compat::get_type(ret_type)));
       }
 
-      for (const bn::FunctionParameter& p : type.GetParameters()) {
+      for (const BN::FunctionParameter& p : type.GetParameters()) {
         func_type->add_parameter(add_type(api_compat::get_type(p.type)));
       }
 

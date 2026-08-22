@@ -41,7 +41,7 @@
 #include "binaryninja/dwarf-export/log.hpp"
 #include "log.hpp"
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
 namespace dw = LIEF::dwarf::editor;
 
@@ -59,11 +59,11 @@ DwarfExport::~DwarfExport() = default;
 DwarfExport::DwarfExport(BinaryNinja::BinaryView& bv) :
   bv_{&bv} {}
 
-std::pair<FORMAT, ARCH> get_fmt_arch(const bn::BinaryView& bv) {
+std::pair<FORMAT, ARCH> get_fmt_arch(const BN::BinaryView& bv) {
   FORMAT fmt = FORMAT::ELF;
   ARCH arch = ARCH::X64;
 
-  if (bn::Ref<bn::Platform> platform = bv.GetDefaultPlatform()) {
+  if (BN::Ref<BN::Platform> platform = bv.GetDefaultPlatform()) {
     const std::string& name = platform->GetName();
     if (startwith(name, "linux-") || startwith(name, "freebsd-")) {
       fmt = FORMAT::ELF;
@@ -77,7 +77,7 @@ std::pair<FORMAT, ARCH> get_fmt_arch(const bn::BinaryView& bv) {
   }
 
 
-  if (bn::Ref<bn::Architecture> target_arch = bv.GetDefaultArchitecture()) {
+  if (BN::Ref<BN::Architecture> target_arch = bv.GetDefaultArchitecture()) {
     const std::string& name = target_arch->GetName();
     if (name == "aarch64") {
       arch = ARCH::AARCH64;
@@ -114,7 +114,7 @@ dw::CompilationUnit* DwarfExport::create() {
   auto func_engine = FunctionEngine::create(*type_engine, *unit_, *bv_);
   auto var_engine = VarEngine::create(*type_engine, *unit_, *bv_);
 
-  for (bn::Function* func : bv_->GetAnalysisFunctionList()) {
+  for (BN::Function* func : bv_->GetAnalysisFunctionList()) {
     func_engine->add_function(*func);
   }
 

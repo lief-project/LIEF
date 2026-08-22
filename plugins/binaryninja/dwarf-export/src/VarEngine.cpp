@@ -21,14 +21,14 @@
 
 #include "log.hpp"
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 namespace dw = LIEF::dwarf::editor;
 
 namespace dwarf_plugin {
 
 using namespace binaryninja;
 
-dw::Variable* VarEngine::add_variable(const bn::DataVariable& var) {
+dw::Variable* VarEngine::add_variable(const BN::DataVariable& var) {
   if (auto it = vars_.find(var.address); it != vars_.end()) {
     return it->second.get();
   }
@@ -36,7 +36,7 @@ dw::Variable* VarEngine::add_variable(const bn::DataVariable& var) {
 
   std::string name = fmt::format("data_{:04x}", var.address);
   bool is_external = false;
-  if (bn::Ref<bn::Symbol> sym = bv_.GetSymbolByAddress(var.address)) {
+  if (BN::Ref<BN::Symbol> sym = bv_.GetSymbolByAddress(var.address)) {
     BNSymbolType type = sym->GetType();
     if (type == ExternalSymbol || type == ImportedFunctionSymbol ||
         type == FunctionSymbol || type == LibraryFunctionSymbol ||

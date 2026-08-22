@@ -21,11 +21,11 @@
 #include "binaryninja/analysis/commands.hpp"
 #include "log.hpp"
 
-namespace bn = BinaryNinja;
+namespace BN = BinaryNinja;
 
 namespace analysis_plugin::commands {
 void register_commands() {
-  bn::PluginCommand::Register(
+  BN::PluginCommand::Register(
       "LIEF\\Enhance Analysis",
       "Enhance the analysis of the current binary with LIEF", run_analysis
   );
