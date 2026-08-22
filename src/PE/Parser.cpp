@@ -760,6 +760,8 @@ ok_error_t Parser::parse_exceptions() {
     return make_error_code(lief_errors::corrupted);
   }
 
+  seed_exception_scopes_budget(pdata.size());
+
   [[maybe_unused]] size_t idx = 0;
   while (*stream) {
     auto ptr = ExceptionInfo::parse(*this, *stream);
@@ -826,6 +828,8 @@ ok_error_t Parser::parse_chpe_exceptions() {
   }
 
   uint64_t base_offset = binary_->rva_to_offset(arm64->extra_rfe_table());
+
+  seed_exception_scopes_budget(arm64->extra_rfe_table_size());
 
   Header::MACHINE_TYPES target_arch = bin().header().machine();
   switch (target_arch) {

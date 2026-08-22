@@ -176,10 +176,27 @@ class LIEF_API Parser : public LIEF::Parser {
 
   std::unique_ptr<SpanStream> stream_from_rva(uint32_t rva, size_t size = 0);
 
+  bool consume_exception_scopes(size_t count) {
+    if (count > exception_scopes_budget_) {
+      exception_scopes_budget_ = 0;
+      return false;
+    }
+    exception_scopes_budget_ -= count;
+    return true;
+  }
+
   void record_relocation(uint32_t rva, span<const uint8_t> data);
   ok_error_t record_delta_relocation(uint32_t rva, int64_t delta, size_t size);
 
   private:
+  // Caps total AArch64 epilog scopes to bound allocations on a malformed table
+  void seed_exception_scopes_budget(size_t table_size) {
+    static constexpr size_t PDATA_ENTRY_SIZE = 2 * sizeof(uint32_t);
+    static constexpr size_t MAX_SCOPES_PER_FUNCTION = 32;
+    exception_scopes_budget_ = (table_size / PDATA_ENTRY_SIZE) *
+                               MAX_SCOPES_PER_FUNCTION;
+  }
+
   struct relocation_t {
     uint64_t size = 0;
     uint64_t value = 0;
@@ -273,6 +290,7 @@ class LIEF_API Parser : public LIEF::Parser {
   std::map<uint32_t, ExceptionInfo*> memoize_exception_info_;
   std::map<uint32_t, relocation_t> dyn_hdr_relocs_;
   std::vector<std::pair<ExceptionInfo*, uint32_t>> unresolved_chains_;
+  size_t exception_scopes_budget_ = 0;
   ParserConfig config_;
 };
 
