@@ -1,5 +1,10 @@
 name: LIEF PR
-on: [pull_request, workflow_dispatch]
+on:
+  pull_request:
+    paths-ignore:
+      - "kotoba/**"
+      - ".github/workflows/kotoba*.yml"
+  workflow_dispatch:
 
 env:
   python-osx-version: '3.12'

@@ -5,6 +5,9 @@ on:
       - 'main'
     tags-ignore:
       - '**'
+    paths-ignore:
+      - "kotoba/**"
+      - ".github/workflows/kotoba*.yml"
 
 env:
   python-test-version: '3.13'
