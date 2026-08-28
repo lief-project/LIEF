@@ -73,6 +73,10 @@ bash checks.sh
 fixture, then instantiates the module (no imports) and asserts ident/header
 fields. It does not invent a pass.
 
+Fork CI for this tree is `.github/workflows/kotoba.yml` (`kotoba/**` and
+that workflow file). Native LIEF workflows path-ignore `kotoba/**` and
+`.github/workflows/kotoba*.yml`.
+
 Install the CLI from the v0.7.2 release tarball or
 `brew tap kotoba-lang/kotoba && brew install kotoba`.
 
