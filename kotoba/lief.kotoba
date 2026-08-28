@@ -1,0 +1,129 @@
+;; LIEF Kotoba v1: ELF identification + header type/machine.
+;;
+;; Licensed under the Apache License, Version 2.0
+;; (same license as this repository).
+;;
+;; In-language only. No FFI to LIEF C++. Kotoba CLI v0.7.2 wasm32 is
+;; i64-only (no IEEE floats, no nonempty bytes builtin). File prefixes
+;; are packed as little-endian i64 words: w0 = bytes 0-7, w1 = 8-15,
+;; w2 = 16-23. That is enough for e_ident[16] plus e_type and e_machine
+;; at +0x10 / +0x12 (same offsets on Elf32_Ehdr and Elf64_Ehdr).
+;;
+;; Not in v1: PE, Mach-O, COFF, relocations, sections, segments, or a
+;; full ELF parser.
+
+(ns lief
+  (:export [main
+            ei-nident ei-class-idx ei-data-idx
+            elfclass32 elfclass64 elfdata2lsb elfdata2msb
+            et-rel et-exec et-dyn em-x86-64 em-arm
+            ident-byte ident-magic-ok ident-class ident-data ident-version
+            file-type machine-type
+            fixture-w0 fixture-w1 fixture-w2]))
+
+(defn ei-nident [] :i64 16)
+(defn ei-class-idx [] :i64 4)
+(defn ei-data-idx [] :i64 5)
+(defn elfclass32 [] :i64 1)
+(defn elfclass64 [] :i64 2)
+(defn elfdata2lsb [] :i64 1)
+(defn elfdata2msb [] :i64 2)
+(defn et-rel [] :i64 1)
+(defn et-exec [] :i64 2)
+(defn et-dyn [] :i64 3)
+(defn em-x86-64 [] :i64 62)
+(defn em-arm [] :i64 40)
+
+;; Vendored fixtures/tiny64le.elf (ELF64 LSB x86-64 ET_DYN header).
+(defn fixture-w0 [] :i64 282584257676671)
+(defn fixture-w1 [] :i64 0)
+(defn fixture-w2 [] :i64 4299030531)
+
+(defn p256 [p :i64] :i64
+  (if (< p 1) 1
+    (if (< p 2) 256
+      (if (< p 3) 65536
+        (if (< p 4) 16777216
+          (if (< p 5) 4294967296
+            (if (< p 6) 1099511627776
+              (if (< p 7) 281474976710656
+                72057594037927936))))))))
+
+(defn word-byte [word :i64 p :i64] :i64
+  (let [mul (p256 p)
+        q (quot word mul)
+        r (- q (* (quot q 256) 256))]
+    (if (< r 0) (+ r 256) r)))
+
+(defn ident-byte [w0 :i64 w1 :i64 i :i64] :i64
+  (if (< i 0)
+    0
+    (if (>= i 16)
+      0
+      (if (< i 8)
+        (word-byte w0 i)
+        (word-byte w1 (- i 8))))))
+
+(defn ident-magic-ok [w0 :i64] :i64
+  (if (and (= (word-byte w0 0) 127)
+           (and (= (word-byte w0 1) 69)
+                (and (= (word-byte w0 2) 76)
+                     (= (word-byte w0 3) 70))))
+    1
+    0))
+
+(defn ident-class [w0 :i64] :i64
+  (word-byte w0 4))
+
+(defn ident-data [w0 :i64] :i64
+  (word-byte w0 5))
+
+(defn ident-version [w0 :i64] :i64
+  (word-byte w0 6))
+
+(defn u16 [b0 :i64 b1 :i64 data :i64] :i64
+  (if (= data 2)
+    (+ (* b0 256) b1)
+    (+ b0 (* b1 256))))
+
+(defn file-type [w0 :i64 w2 :i64] :i64
+  (u16 (word-byte w2 0) (word-byte w2 1) (ident-data w0)))
+
+(defn machine-type [w0 :i64 w2 :i64] :i64
+  (u16 (word-byte w2 2) (word-byte w2 3) (ident-data w0)))
+
+(defn fixture-ok [] :i64
+  (let [w0 (fixture-w0)
+        w1 (fixture-w1)
+        w2 (fixture-w2)]
+    (if (and (= (ident-magic-ok w0) 1)
+             (and (= (ident-class w0) 2)
+                  (and (= (ident-data w0) 1)
+                       (and (= (ident-version w0) 1)
+                            (and (= (ident-byte w0 w1 7) 0)
+                                 (and (= (file-type w0 w2) 3)
+                                      (= (machine-type w0 w2) 62)))))))
+      1
+      0)))
+
+;; Synthetic ELF32 MSB ARM ET_EXEC prefix (not a second vendored file).
+(defn be32-ok [] :i64
+  (let [w0 283679474337151
+        w2 72057594709017088]
+    (if (and (= (ident-magic-ok w0) 1)
+             (and (= (ident-class w0) 1)
+                  (and (= (ident-data w0) 2)
+                       (and (= (file-type w0 w2) 2)
+                            (= (machine-type w0 w2) 40)))))
+      1
+      0)))
+
+(defn reject-bad-magic [] :i64
+  (if (= (ident-magic-ok 0) 0) 1 0))
+
+(defn main [] :i64
+  (if (and (= (fixture-ok) 1)
+           (and (= (be32-ok) 1)
+                (= (reject-bad-magic) 1)))
+    0
+    1))
