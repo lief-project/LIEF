@@ -125,7 +125,7 @@ def test_arm64_operands():
 
     inst = _create_inst(elf, 0x18A5000, "str x3, [x2], #8")
     operands = list(inst.operands)
-    assert len(operands) == 4
+    assert len(operands) == 3
     assert isinstance(operands[0], lief.assembly.aarch64.operands.Register)
     assert operands[0].value == lief.assembly.aarch64.REG.X2
 
@@ -135,11 +135,8 @@ def test_arm64_operands():
     assert isinstance(operands[2], lief.assembly.aarch64.operands.Memory)
     mem_info: lief.assembly.aarch64.operands.Memory = operands[2]
     assert mem_info.base == lief.assembly.aarch64.REG.X2
-    assert mem_info.offset is None
+    assert mem_info.offset == 8
     assert mem_info.shift.value == -1
-
-    assert isinstance(operands[3], lief.assembly.aarch64.operands.Immediate)
-    assert operands[3].value == 8
 
     inst = _create_inst(elf, 0x18A5000, "str x3, [x2, #8]")
     operands = list(inst.operands)
