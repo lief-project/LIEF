@@ -13,6 +13,7 @@ pub mod ffi {
         fn identity_os_abi(self: &ELF_Header) -> u32;
         fn identity_version(self: &ELF_Header) -> u32;
         fn identity_data(self: &ELF_Header) -> u32;
+        fn is_mips_n64(self: &ELF_Header) -> bool;
         fn identity_abi_version(self: &ELF_Header) -> u32;
         fn program_headers_offset(self: &ELF_Header) -> u64;
         fn section_headers_offset(self: &ELF_Header) -> u64;

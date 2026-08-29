@@ -1222,6 +1222,9 @@ class Header(lief.Object):
 
     machine_type: ARCH
 
+    @property
+    def is_mips_n64(self) -> bool: ...
+
     object_file_version: Header.VERSION
 
     entrypoint: int
@@ -4193,7 +4196,11 @@ class Relocation(lief.Relocation):
     @property
     def is_rel(self) -> bool: ...
 
-    def r_info(self, clazz: Header.CLASS) -> int: ...
+    @overload
+    def r_info(self, clazz: Header.CLASS, data: Header.ELF_DATA) -> int: ...
+
+    @overload
+    def r_info(self, header: Header) -> int: ...
 
     @property
     def is_relatively_encoded(self) -> bool: ...

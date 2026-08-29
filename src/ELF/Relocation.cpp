@@ -19,6 +19,7 @@
 #include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Relocation.hpp"
 #include "LIEF/ELF/Symbol.hpp"
+#include "LIEF/endianness_support.hpp"
 
 #include "ELF/Structures.hpp"
 
@@ -29,14 +30,18 @@ namespace LIEF::ELF {
 
 int32_t get_reloc_size(Relocation::TYPE type);
 
-template Relocation::Relocation(const details::Elf32_Rel&, PURPOSE, ENCODING,
-                                ARCH);
-template Relocation::Relocation(const details::Elf32_Rela&, PURPOSE, ENCODING,
-                                ARCH);
-template Relocation::Relocation(const details::Elf64_Rel&, PURPOSE, ENCODING,
-                                ARCH);
-template Relocation::Relocation(const details::Elf64_Rela&, PURPOSE, ENCODING,
-                                ARCH);
+template std::unique_ptr<Relocation> Relocation::create(const details::Elf32_Rel&,
+                                                        PURPOSE, ENCODING,
+                                                        const Header&);
+template std::unique_ptr<Relocation> Relocation::create(const details::Elf32_Rela&,
+                                                        PURPOSE, ENCODING,
+                                                        const Header&);
+template std::unique_ptr<Relocation> Relocation::create(const details::Elf64_Rel&,
+                                                        PURPOSE, ENCODING,
+                                                        const Header&);
+template std::unique_ptr<Relocation> Relocation::create(const details::Elf64_Rela&,
+                                                        PURPOSE, ENCODING,
+                                                        const Header&);
 
 Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
   static std::set<ARCH> ERR;
@@ -67,31 +72,47 @@ Relocation::TYPE Relocation::type_from(uint32_t value, ARCH arch) {
 }
 
 template<class T>
-Relocation::Relocation(const T& header, PURPOSE purpose, ENCODING enc, ARCH arch) :
-  LIEF::Relocation{header.r_offset, 0},
-  encoding_{enc},
-  architecture_{arch},
-  purpose_{purpose} {
+std::unique_ptr<Relocation> Relocation::create(const T& header, PURPOSE purpose,
+                                               ENCODING enc,
+                                               const Header& elf_hdr) {
+  uint64_t addr = header.r_offset;
+  TYPE type = TYPE::UNKNOWN;
+  uint32_t info = 0;
+  int64_t addend = 0;
+  DecodedMipsN64 mips_n64;
+  const ARCH arch = elf_hdr.machine_type();
+
   if constexpr (std::is_same_v<T, details::Elf32_Rel> ||
                 std::is_same_v<T, details::Elf32_Rela>)
   {
-    type_ = type_from(header.r_info & 0xff, arch);
-    info_ = static_cast<uint32_t>(header.r_info >> 8);
+    type = type_from(header.r_info & 0xff, arch);
+    info = uint32_t(header.r_info >> 8);
   }
 
   if constexpr (std::is_same_v<T, details::Elf64_Rel> ||
                 std::is_same_v<T, details::Elf64_Rela>)
   {
-    type_ = type_from(header.r_info & 0xffffffff, arch);
-    info_ = static_cast<uint32_t>(header.r_info >> 32);
+    if (elf_hdr.is_mips_n64() && enc != ENCODING::ANDROID_SLEB) {
+      mips_n64 = decode_mips_n64(header.r_info, elf_hdr.identity_data());
+
+      type = type_from(mips_n64.type_value, arch);
+      info = mips_n64.sym_idx;
+    } else {
+      type = type_from(header.r_info & 0xffffffff, arch);
+      info = uint32_t(header.r_info >> 32);
+    }
   }
 
   if constexpr (std::is_same_v<T, details::Elf32_Rela> ||
                 std::is_same_v<T, details::Elf64_Rela>)
   {
-    addend_ = header.r_addend;
+    addend = header.r_addend;
   }
+
+  return std::unique_ptr<Relocation>(new Relocation(addr, info, type, addend,
+                                                    purpose, enc, arch, mips_n64));
 }
+
 
 Relocation::Relocation(uint64_t address, TYPE type, ENCODING encoding) :
   LIEF::Relocation(address, 0),
@@ -292,6 +313,7 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
 
       /* MIPS { */
     case TYPE::MIPS_32: return (S + A) & 0xFFFFFFFF;
+    case TYPE::MIPS_REL32: return (info() == 0 ? B : S) + (is_rela() ? A : Q());
     case TYPE::MIPS_64: return S + A;
     case TYPE::MIPS_TLS_DTPREL64: return S + A - 0x8000;
     case TYPE::MIPS_PC32:
@@ -357,6 +379,10 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
 }
 
 size_t Relocation::size() const {
+  if (type() == TYPE::MIPS_REL32 && mips_n64_type2() == to_value(TYPE::MIPS_64)) {
+    return 64;
+  }
+
   return get_reloc_size(type_);
 }
 

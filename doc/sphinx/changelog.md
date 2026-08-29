@@ -38,6 +38,11 @@
   * |lief-elf-check_layout| now reports the ``PT_LOAD`` segments that can't be
     mapped independently because they share the same page. It also report
     mismatch between ``.dynstr`` virtual address and ``DT_STRTAB``.
+  * Add support for the MIPS n64 relocation encoding
+    (:pr:`1367` by :github_user:`plusls`).
+  * Add |lief-elf-header-is_mips_n64| to check whether a binary uses this
+    encoding.
+  * |lief-elf-relocation-resolve| now supports ``R_MIPS_REL32``.
 
 :COFF:
 

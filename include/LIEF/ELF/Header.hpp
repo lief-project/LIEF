@@ -223,6 +223,12 @@ class LIEF_API Header : public Object {
     return identity_[ELI_ABIVERSION];
   }
 
+  /// Check whether this header identifies a 64-bit MIPS ELF file whose
+  /// relocations use the MIPS-specific n64 encoding.
+  bool is_mips_n64() const {
+    return machine_type() == ARCH::MIPS && identity_class() == CLASS::ELF64;
+  }
+
   bool has(PROCESSOR_FLAGS flag) const;
 
   std::vector<PROCESSOR_FLAGS> flags_list() const;

@@ -45,6 +45,9 @@ class ELF_Header : public Mirror<LIEF::ELF::Header> {
   auto identity_data() const {
     return as_u32(get().identity_data());
   }
+  bool is_mips_n64() const {
+    return get().is_mips_n64();
+  }
   uint32_t identity_abi_version() const {
     return get().identity_abi_version();
   }

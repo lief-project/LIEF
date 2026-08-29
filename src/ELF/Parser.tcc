@@ -728,7 +728,14 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset,
     if (!reloc_entry) {
       break;
     }
-    idx = std::max(idx, static_cast<uint32_t>(reloc_entry->r_info >> shift));
+    auto sym_idx = static_cast<uint32_t>(reloc_entry->r_info >> shift);
+    if (binary_->header().is_mips_n64()) {
+      const Relocation::DecodedMipsN64 mips =
+          Relocation::decode_mips_n64(reloc_entry->r_info,
+                                      binary_->header().identity_data());
+      sym_idx = mips.sym_idx;
+    }
+    idx = std::max(idx, sym_idx);
   }
   return idx + 1;
 }
@@ -1099,7 +1106,6 @@ ok_error_t Parser::parse_packed_relocations(uint64_t offset, uint64_t size) {
   uint64_t nb_relocs = *res_nb_relocs;
   uint64_t r_offset = *res_rels_offset;
   uint64_t addend = 0;
-  const ARCH arch = binary_->header().machine_type();
 
   LIEF_DEBUG("Nb relocs: {}", nb_relocs);
 
@@ -1166,9 +1172,10 @@ ok_error_t Parser::parse_packed_relocations(uint64_t offset, uint64_t size) {
       R.r_info = info;
       R.r_addend = addend;
       R.r_offset = r_offset;
-      auto reloc = std::unique_ptr<Relocation>(new Relocation(
-          R, Relocation::PURPOSE::DYNAMIC, Relocation::ENCODING::ANDROID_SLEB, arch
-      ));
+      std::unique_ptr<Relocation> reloc =
+          Relocation::create(R, Relocation::PURPOSE::DYNAMIC,
+                             Relocation::ENCODING::ANDROID_SLEB,
+                             binary_->header());
       bind_symbol(*reloc);
       insert_relocation(std::move(reloc));
     }
@@ -1256,7 +1263,6 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset,
   binary_->relocations_.reserve(nb_entries);
 
   stream_->setpos(relocations_offset);
-  const ARCH arch = binary_->header().machine_type();
   const Relocation::ENCODING enc = std::is_same_v<REL_T, typename ELF_T::Elf_Rel> ?
                                        Relocation::ENCODING::REL :
                                        Relocation::ENCODING::RELA;
@@ -1267,9 +1273,9 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset,
       break;
     }
 
-    auto reloc = std::unique_ptr<Relocation>(new Relocation(
-        std::move(*raw_reloc), Relocation::PURPOSE::DYNAMIC, enc, arch
-    ));
+    std::unique_ptr<Relocation> reloc =
+        Relocation::create(std::move(*raw_reloc), Relocation::PURPOSE::DYNAMIC,
+                           enc, binary_->header());
     bind_symbol(*reloc);
     insert_relocation(std::move(reloc));
   }
@@ -1661,7 +1667,6 @@ ok_error_t Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
 
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
-  const ARCH arch = binary_->header_.machine_type();
   const Relocation::ENCODING enc = std::is_same_v<REL_T, typename ELF_T::Elf_Rel> ?
                                        Relocation::ENCODING::REL :
                                        Relocation::ENCODING::RELA;
@@ -1672,9 +1677,9 @@ ok_error_t Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
       break;
     }
 
-    auto reloc = std::unique_ptr<Relocation>(
-        new Relocation(std::move(*rel_hdr), Relocation::PURPOSE::PLTGOT, enc, arch)
-    );
+    std::unique_ptr<Relocation> reloc =
+        Relocation::create(std::move(*rel_hdr), Relocation::PURPOSE::PLTGOT, enc,
+                           binary_->header());
     bind_symbol(*reloc);
     insert_relocation(std::move(reloc));
   }
@@ -1741,8 +1746,6 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
 
   constexpr uint8_t shift = ELF_T::r_info_shift;
 
-  const ARCH arch = binary_->header_.machine_type();
-
   constexpr Relocation::ENCODING enc =
       std::is_same_v<REL_T, typename ELF_T::Elf_Rel> ? Relocation::ENCODING::REL :
                                                        Relocation::ENCODING::RELA;
@@ -1767,9 +1770,9 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
                 reloc_stream.pos(), section.name());
       break;
     }
-    auto reloc = std::unique_ptr<Relocation>(
-        new Relocation(*rel_hdr, Relocation::PURPOSE::NONE, enc, arch)
-    );
+    std::unique_ptr<Relocation> reloc =
+        Relocation::create(*rel_hdr, Relocation::PURPOSE::NONE, enc,
+                           binary_->header());
 
     reloc->section_ = applies_to;
     reloc->symbol_table_ = symbol_table;
@@ -1778,7 +1781,13 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
       reloc->purpose(Relocation::PURPOSE::OBJECT);
     }
 
-    const auto idx = static_cast<uint32_t>(rel_hdr->r_info >> shift);
+    auto idx = static_cast<uint32_t>(rel_hdr->r_info >> shift);
+    if (binary_->header().is_mips_n64()) {
+      const Relocation::DecodedMipsN64 mips =
+          Relocation::decode_mips_n64(rel_hdr->r_info,
+                                      binary_->header().identity_data());
+      idx = mips.sym_idx;
+    }
 
     const bool is_from_dynsym =
         idx > 0 && idx < binary_->dynamic_symbols_.size() &&

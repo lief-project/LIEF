@@ -1493,9 +1493,7 @@ ok_error_t Builder::build_section_relocations() {
         reloc->info(symidx);
       }
 
-      uint64_t r_info = reloc->r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                          Header::CLASS::ELF32 :
-                                          Header::CLASS::ELF64);
+      uint64_t r_info = reloc->r_info(binary_->header());
 
       if (is_rela) {
         Elf_Rela relahdr;
@@ -1681,9 +1679,7 @@ ok_error_t Builder::build_dynamic_relocations() {
       relocation.info(idx);
     }
 
-    uint64_t r_info = relocation.r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                            Header::CLASS::ELF32 :
-                                            Header::CLASS::ELF64);
+    uint64_t r_info = relocation.r_info(binary_->header());
     if (is_rela) {
       Elf_Rela relahdr;
       relahdr.r_offset = static_cast<Elf_Addr>(relocation.address());
@@ -1762,9 +1758,7 @@ ok_error_t Builder::build_pltgot_relocations() {
       relocation.info(idx);
     }
 
-    uint64_t r_info = relocation.r_info(std::is_same_v<ELF_T, details::ELF32> ?
-                                            Header::CLASS::ELF32 :
-                                            Header::CLASS::ELF64);
+    uint64_t r_info = relocation.r_info(binary_->header());
 
     if (is_rela) {
       Elf_Rela relahdr;

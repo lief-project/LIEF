@@ -924,6 +924,17 @@
     :py:func:`lief.ELF.Relocation.resolve`
     :cpp:func:`LIEF::ELF::Relocation::resolve`
 
+.. |lief-elf-relocation-r_info| lief-api:: lief.ELF.Relocation.r_info()
+
+    :py:meth:`lief.ELF.Relocation.r_info`
+    :cpp:func:`LIEF::ELF::Relocation::r_info`
+
+.. |lief-elf-header-is_mips_n64| lief-api:: lief.ELF.Header.is_mips_n64
+
+    :rust:method:`lief::elf::Header::is_mips_n64 [struct]`
+    :py:attr:`lief.ELF.Header.is_mips_n64`
+    :cpp:func:`LIEF::ELF::Header::is_mips_n64`
+
 .. |lief-elf-segment| lief-api:: lief.ELF.Segment
 
     :rust:struct:`lief::elf::Segment`

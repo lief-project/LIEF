@@ -127,10 +127,16 @@ void create<Relocation>(nb::module_& m) {
       &Relocation::is_rel,
       "``True`` if the relocation **doesn't use** the :attr:`~lief.ELF.Relocation.addend` property"_doc)
 
-    .def("r_info", &Relocation::r_info,
+    .def("r_info", nb::overload_cast<Header::CLASS, Header::ELF_DATA>(&Relocation::r_info, nb::const_),
       R"delim(
-      (re)Compute the raw ``r_info`` attribute based on the given ELF class
-      )delim"_doc, "clazz"_a)
+      (re)Compute the raw ``r_info`` attribute based on the given ELF class and
+      endianness
+      )delim"_doc, "clazz"_a, "data"_a)
+
+    .def("r_info", nb::overload_cast<const Header&>(&Relocation::r_info, nb::const_),
+      R"delim(
+      (re)Compute the raw ``r_info`` attribute based on the ELF Header
+      )delim"_doc, "header"_a)
 
     .def_prop_ro("is_relatively_encoded", &Relocation::is_relatively_encoded,
                  "True if the relocation is using the relative encoding"_doc)

@@ -516,10 +516,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         relative_from_arch(binary_->header().machine_type());
     const uint64_t raw_relative_reloc = Relocation::to_value(relative_reloc);
 
-    const Header::CLASS elf_class = std::is_same_v<ELF_T, details::ELF32> ?
-                                        Header::CLASS::ELF32 :
-                                        Header::CLASS::ELF64;
-
     if (force) {
       raw_android_rela_.clear();
     }
@@ -565,9 +561,10 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
 
     std::sort(non_relative_rels.begin(), non_relative_rels.end(),
-              [elf_class](const Relocation* lhs, const Relocation* rhs) {
-                if (lhs->r_info(elf_class) != rhs->r_info(elf_class)) {
-                  return lhs->r_info(elf_class) < rhs->r_info(elf_class);
+              [&hdr = binary_->header()](const Relocation* lhs,
+                                         const Relocation* rhs) {
+                if (lhs->r_info(hdr) != rhs->r_info(hdr)) {
+                  return lhs->r_info(hdr) < rhs->r_info(hdr);
                 }
                 if (lhs->addend() != rhs->addend()) {
                   return lhs->addend() < rhs->addend();
@@ -581,7 +578,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
     for (auto i = non_relative_rels.begin(), e = non_relative_rels.end(); i != e;)
     {
       auto j = i + 1;
-      while (j != e && (*i)->r_info(elf_class) == (*j)->r_info(elf_class) &&
+      while (j != e &&
+             (*i)->r_info(binary_->header()) == (*j)->r_info(binary_->header()) &&
              (!is_rela || (*i)->addend() == (*j)->addend()))
       {
         ++j;
@@ -654,7 +652,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     for (const std::vector<const Relocation*>& g : non_relative_group) {
       ios.write_sleb128(g.size());
       ios.write_sleb128(GROUPED_BY_INFO_FLAG);
-      ios.write_sleb128(static_cast<Elf_Xword>(g[0]->r_info(elf_class)));
+      ios.write_sleb128(static_cast<Elf_Xword>(g[0]->r_info(binary_->header())));
 
       for (const Relocation* R : g) {
         ios.write_sleb128(R->address() - offset);
@@ -669,7 +667,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       for (const Relocation* R : ungrouped_non_relative) {
         ios.write_sleb128(R->address() - offset);
         offset = R->address();
-        ios.write_sleb128(static_cast<Elf_Xword>(R->r_info(elf_class)));
+        ios.write_sleb128(static_cast<Elf_Xword>(R->r_info(binary_->header())));
         if (is_rela) {
           ios.write_sleb128(R->addend() - addend);
           addend = R->addend();

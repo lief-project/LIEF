@@ -16,14 +16,17 @@
 #ifndef LIEF_ELF_RELOCATION_H
 #define LIEF_ELF_RELOCATION_H
 
+#include <memory>
 #include <ostream>
 
 #include "LIEF/Object.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/logging.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Relocation.hpp"
 
+#include "LIEF/ELF/EnumToString.hpp"
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/enums.hpp"
 
@@ -155,6 +158,62 @@ class LIEF_API Relocation : public LIEF::Relocation {
 #undef ELF_RELOC
   };
 
+  /// Fields decoded from the MIPS-specific n64 `r_info` layout.
+  struct DecodedMipsN64 {
+    /// Primary relocation type.
+    uint32_t type_value = 0;
+
+    /// Index of the symbol associated with the relocation.
+    uint32_t sym_idx = 0;
+
+    /// Special symbol used by the second relocation operation.
+    uint8_t special_symbol = 0;
+
+    /// Second relocation type.
+    uint8_t type2 = 0;
+
+    /// Third relocation type.
+    uint8_t type3 = 0;
+  };
+
+  /// Decode `r_info` for MIPS n64.
+  static DecodedMipsN64 decode_mips_n64(uint64_t r_info, Header::ELF_DATA data) {
+    if (data == Header::ELF_DATA::LSB) {
+      return {
+          uint32_t(r_info >> 56), uint32_t(r_info & 0xffffffff),
+          uint8_t(r_info >> 32),  uint8_t(r_info >> 48),
+          uint8_t(r_info >> 40),
+      };
+    }
+    return {
+        uint32_t(r_info & 0xff), uint32_t(r_info >> 32), uint8_t(r_info >> 24),
+        uint8_t(r_info >> 8),    uint8_t(r_info >> 16),
+    };
+  }
+
+  /// Encode all the fields of a MIPS n64 relocation into a `r_info` value
+  static uint64_t encode_mips_n64(DecodedMipsN64 decoded, Header::ELF_DATA data) {
+    // clang-format off
+    if (data == Header::ELF_DATA::LSB) {
+      return (uint64_t(decoded.sym_idx)           <<  0) |
+             (uint64_t(decoded.special_symbol)    << 32) |
+             (uint64_t(decoded.type3)             << 40) |
+             (uint64_t(decoded.type2)             << 48) |
+             (uint64_t(decoded.type_value & 0xff) << 56);
+    }
+    return (uint64_t(decoded.sym_idx)           << 32) |
+           (uint64_t(decoded.special_symbol)    << 24) |
+           (uint64_t(decoded.type3)             << 16) |
+           (uint64_t(decoded.type2)             << 8)  |
+           (uint64_t(decoded.type_value & 0xff) << 0);
+    // clang-format on
+  }
+
+  static uint64_t encode_mips_n64(uint32_t type_value, uint32_t sym_idx,
+                                  Header::ELF_DATA data) {
+    return encode_mips_n64({type_value, sym_idx}, data);
+  }
+
   static TYPE type_from(uint32_t value, ARCH arch);
 
   static uint32_t to_value(TYPE type) {
@@ -179,7 +238,9 @@ class LIEF_API Relocation : public LIEF::Relocation {
     type_{other.type_},
     addend_{other.addend_},
     encoding_{other.encoding_},
-    architecture_{other.architecture_} {}
+    architecture_{other.architecture_},
+    metadata_{other.metadata_},
+    info_{other.info_} {}
 
   /// Copy assignment operator.
   ///
@@ -196,7 +257,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
     std::swap(encoding_, other.encoding_);
     std::swap(symbol_, other.symbol_);
     std::swap(architecture_, other.architecture_);
-    std::swap(purpose_, other.purpose_);
+    std::swap(metadata_, other.metadata_);
     std::swap(section_, other.section_);
     std::swap(symbol_table_, other.symbol_table_);
     std::swap(info_, other.info_);
@@ -240,8 +301,16 @@ class LIEF_API Relocation : public LIEF::Relocation {
     return info_;
   }
 
-  /// (re)Compute the *raw* `r_info` attribute based on the given ELF class
-  uint64_t r_info(Header::CLASS clazz) const {
+  /// (re)Compute the *raw* `r_info` attribute based on the given ELF class and
+  /// endianness.
+  uint64_t r_info(Header::CLASS clazz, Header::ELF_DATA data) const {
+    // Mips n64
+    if (architecture_ == ARCH::MIPS && clazz == Header::CLASS::ELF64 &&
+        !is_android_packed())
+    {
+      return encode_mips_n64(mips_n64_info(), data);
+    }
+
     if (clazz == Header::CLASS::NONE) {
       return 0;
     }
@@ -250,13 +319,23 @@ class LIEF_API Relocation : public LIEF::Relocation {
                uint64_t(info()) << 32 | (to_value(type()) & 0xffffffffL);
   }
 
+  /// (re)Compute the raw `r_info` attribute from the given ELF header.
+  uint64_t r_info(const Header& hdr) const {
+    if (hdr.machine_type() != architecture_) {
+      logging::err("Failed to compute r_info: architectures mismatch: {} vs {}",
+                   to_string(hdr.machine_type()), to_string(architecture_));
+      return 0;
+    }
+    return r_info(hdr.identity_class(), hdr.identity_data());
+  }
+
   /// Target architecture for this relocation
   ARCH architecture() const {
     return architecture_;
   }
 
   PURPOSE purpose() const {
-    return purpose_;
+    return PURPOSE(metadata_.purpose);
   }
 
   /// The encoding of the relocation
@@ -322,7 +401,7 @@ class LIEF_API Relocation : public LIEF::Relocation {
   }
 
   void purpose(PURPOSE purpose) {
-    purpose_ = purpose;
+    metadata_.purpose = uint32_t(purpose);
   }
 
   void info(uint32_t v) {
@@ -349,17 +428,55 @@ class LIEF_API Relocation : public LIEF::Relocation {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os,
                                            const Relocation& entry);
+  template<class T>
+  LIEF_LOCAL static std::unique_ptr<Relocation>
+      create(const T& header, PURPOSE purpose, ENCODING enc,
+             const Header& elf_hdr);
 
   private:
-  template<class T>
-  LIEF_LOCAL Relocation(const T& header, PURPOSE purpose, ENCODING enc, ARCH arch);
+  // clang-format off
+  struct Metadata {
+    uint32_t purpose        : 8,
+             special_symbol : 8,
+             type2          : 8,
+             type3          : 8;
+  };
+  // clang-format on
+
+  static_assert(sizeof(Metadata) == sizeof(uint32_t));
+
+  DecodedMipsN64 mips_n64_info() const {
+    return {
+        to_value(type()),
+        info(),
+        uint8_t(metadata_.special_symbol),
+        uint8_t(metadata_.type2),
+        uint8_t(metadata_.type3),
+    };
+  }
+
+  uint8_t mips_n64_type2() const {
+    return uint8_t(metadata_.type2);
+  }
+
+  LIEF_LOCAL Relocation(uint64_t addr, uint32_t info, TYPE type, int64_t addend,
+                        PURPOSE purpose, ENCODING enc, ARCH arch,
+                        DecodedMipsN64 mips_n64) :
+    LIEF::Relocation{addr, 0},
+    type_{type},
+    addend_{addend},
+    encoding_{enc},
+    architecture_{arch},
+    metadata_{uint32_t(purpose), mips_n64.special_symbol, mips_n64.type2,
+              mips_n64.type3},
+    info_{info} {}
 
   TYPE type_ = TYPE::UNKNOWN;
   int64_t addend_ = 0;
   ENCODING encoding_ = ENCODING::UNKNOWN;
   Symbol* symbol_ = nullptr;
   ARCH architecture_ = ARCH::NONE;
-  PURPOSE purpose_ = PURPOSE::NONE;
+  Metadata metadata_ = {};
   Section* section_ = nullptr;
   Section* symbol_table_ = nullptr;
   uint32_t info_ = 0;

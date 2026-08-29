@@ -267,6 +267,11 @@ impl Header<'_> {
         ElfData::from(self.ptr.identity_data())
     }
 
+    /// Whether this header uses the MIPS n64 ELF encoding.
+    pub fn is_mips_n64(&self) -> bool {
+        self.ptr.is_mips_n64()
+    }
+
     /// See: [`Header::object_file_version`]
     pub fn identity_version(&self) -> Version {
         Version::from(self.ptr.identity_version())
@@ -348,6 +353,7 @@ impl fmt::Debug for Header<'_> {
             .field("identity_class", &self.identity_class())
             .field("identity_os_abi", &self.identity_os_abi())
             .field("identity_data", &self.identity_data())
+            .field("is_mips_n64", &self.is_mips_n64())
             .field("identity_version", &self.identity_version())
             .field("file_type", &self.file_type())
             .field("machine_type", &self.machine_type())

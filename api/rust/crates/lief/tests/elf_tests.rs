@@ -285,3 +285,27 @@ fn test_mut_api() {
     let tmpfile = tempfile::NamedTempFile::new().unwrap();
     bin.write_with_config(tmpfile.path(), Config::default());
 }
+
+#[test]
+fn test_mips_n64() {
+    let path = utils::get_elf_sample("libtest_mips64el_n64.bin").unwrap();
+    let Binary::ELF(bin) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
+
+    assert!(bin.header().is_mips_n64());
+    let reloc = bin
+        .dynamic_relocations()
+        .find(|reloc| reloc.get_type() == relocation::Type::MIPS_REL32)
+        .unwrap();
+    assert_eq!(
+        reloc.resolve_with_base_address(0x1000_0000_0000).unwrap(),
+        0x1000_0000_07b8
+    );
+
+    let path = utils::get_elf_sample("elf_reader.mips.elf").unwrap();
+    let Binary::ELF(bin) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
+    assert!(!bin.header().is_mips_n64());
+}

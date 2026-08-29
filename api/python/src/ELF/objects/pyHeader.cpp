@@ -179,6 +179,9 @@ void create<Header>(nb::module_& m) {
         nb::overload_cast<ARCH>(&Header::machine_type),
         "Return the target architecture"_doc)
 
+    .def_prop_ro("is_mips_n64", &Header::is_mips_n64,
+        "Whether this header uses the MIPS n64 ELF encoding"_doc)
+
     .def_prop_rw("object_file_version",
         nb::overload_cast<>(&Header::object_file_version, nb::const_),
         nb::overload_cast<Header::VERSION>(&Header::object_file_version),
