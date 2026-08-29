@@ -43,6 +43,7 @@ Diagnostics:
       misc-non-private-member-variables-in-classes,
       misc-use-anonymous-namespace,
       misc-use-internal-linkage,
+      misc-static-assert,
       modernize-avoid-c-arrays,
       modernize-concat-nested-namespaces,
       modernize-make-unique,
