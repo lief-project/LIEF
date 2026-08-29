@@ -55,6 +55,14 @@
       section = coff.get_section(".debug_rnglists")
       section.name               # '/18'
       section.coff_string.string # '.debug_rnglists'
+
+:Dependencies:
+
+  * Update nanobind to version ``3.0.1``
+
+:Python:
+
+  * Python 3.9 is no longer supported. nanobind 3 requires Python 3.10 or newer.
 ```
 
 ## 1.0.0 - July 12th, 2026

@@ -1,6 +1,6 @@
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 import os
-from typing import Any, Final, Iterator, Optional, Union, overload
+from typing import Any, Final, Optional, Union, overload
 
 import lief
 import lief.PE
@@ -60,7 +60,7 @@ class Host:
 
         def __str__(self) -> str: ...
 
-    version: Final[version_t] = ...
+    version: Final[Host.version_t] = ...
 
 class LdrDataTableEntry:
     @property

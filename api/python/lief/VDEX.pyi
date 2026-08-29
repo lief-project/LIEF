@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 import io
 import os
-from typing import Iterator, Optional, Union, overload
+from typing import Optional, Union, overload
 
 import lief
 import lief.Android

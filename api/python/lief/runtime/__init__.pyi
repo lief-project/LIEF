@@ -1,15 +1,21 @@
-from collections.abc import Mapping
 import enum
-from typing import Any, Final, Iterator, Optional, Union, overload
+from collections.abc import Iterator, Mapping
+from typing import Any, Final, Optional, overload
 
-from . import (
-    android as android,
-    linux as linux,
-    osx as osx,
-    windows as windows
-)
 import lief
 import lief.assembly
+from lief.runtime import (
+    android as android,
+)
+from lief.runtime import (
+    linux as linux,
+)
+from lief.runtime import (
+    osx as osx,
+)
+from lief.runtime import (
+    windows as windows,
+)
 
 
 class ARCH(enum.Enum):
@@ -20,6 +26,7 @@ class ARCH(enum.Enum):
     ARM64 = 2
 
     RISCV64 = 3
+
 
 class PLATFORMS(enum.Enum):
     NONE = 0
@@ -34,11 +41,13 @@ class PLATFORMS(enum.Enum):
 
     IOS = 5
 
+
 enabled: bool = ...
 
 platform: PLATFORMS = ...
 
 arch: ARCH = ...
+
 
 class Host:
     name: Final[str] = ...
@@ -50,6 +59,7 @@ class Host:
     config_dir: Final[str] = ...
 
     cache_dir: Final[str] = ...
+
 
 class Process:
     class EnvVars:
@@ -72,7 +82,8 @@ class Process:
     @staticmethod
     def get_env(key: str) -> str | None: ...
 
-    envs: Final[EnvVars] = ...
+    envs: Final[Process.EnvVars] = ...
+
 
 class Module:
     @property
@@ -100,13 +111,18 @@ class Module:
 
     def __str__(self) -> str: ...
 
+
 def modules() -> Iterator[Optional[Module]]: ...
+
 
 def module_from_name(name: str) -> Optional[Module]: ...
 
+
 def module_from_path(path: str) -> Optional[Module]: ...
 
+
 def module_from_addr(addr: int) -> Optional[Module]: ...
+
 
 class Memory:
     class MMAP_FLAGS(enum.IntFlag):
@@ -124,17 +140,17 @@ class Memory:
 
         JIT = 16
 
-    NONE: PERM = ...
+    NONE: Memory.PERM = ...
 
-    PRIVATE: MMAP_FLAGS = ...
+    PRIVATE: Memory.MMAP_FLAGS = ...
 
-    ANONYMOUS: MMAP_FLAGS = ...
+    ANONYMOUS: Memory.MMAP_FLAGS = ...
 
-    SHARED: MMAP_FLAGS = ...
+    SHARED: Memory.MMAP_FLAGS = ...
 
-    FIXED: MMAP_FLAGS = ...
+    FIXED: Memory.MMAP_FLAGS = ...
 
-    JIT: MMAP_FLAGS = ...
+    JIT: Memory.MMAP_FLAGS = ...
 
     class PERM(enum.IntFlag):
         def __repr__(self, /): ...
@@ -147,11 +163,11 @@ class Memory:
 
         EXEC = 4
 
-    READ: PERM = ...
+    READ: Memory.PERM = ...
 
-    WRITE: PERM = ...
+    WRITE: Memory.PERM = ...
 
-    EXEC: PERM = ...
+    EXEC: Memory.PERM = ...
 
     class Chunk:
         @overload
@@ -204,13 +220,13 @@ class Memory:
         def __str__(self) -> str: ...
 
     @staticmethod
-    def mmap(size: int, flags: int, permissions: int = 0) -> Chunk | None: ...
+    def mmap(size: int, flags: int, permissions: int = 0) -> Memory.Chunk | None: ...
 
     @staticmethod
-    def munmap(chunk: Chunk) -> lief.ok_error_t: ...
+    def munmap(chunk: Memory.Chunk) -> lief.ok_error_t: ...
 
     @staticmethod
-    def mprotect(chunk: Chunk, flags: int) -> lief.ok_error_t: ...
+    def mprotect(chunk: Memory.Chunk, flags: int) -> lief.ok_error_t: ...
 
     @staticmethod
     def perm_str(flags: int) -> str: ...
@@ -283,6 +299,10 @@ class Memory:
     @staticmethod
     def read_i64(addr: int) -> int: ...
 
+
 def disassemble(addr: int) -> Iterator[Optional[lief.assembly.Instruction]]: ...
 
-def assemble(address: int, assembly: str, config: lief.assembly.AssemblerConfig = ...) -> bytes: ...
+
+def assemble(
+    address: int, assembly: str, config: lief.assembly.AssemblerConfig = ...
+) -> bytes: ...

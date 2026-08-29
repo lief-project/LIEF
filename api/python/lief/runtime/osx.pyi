@@ -1,5 +1,5 @@
 import os
-from typing import Any, Final, Iterator, Optional, Union, overload
+from typing import Any, Final, Optional, Union, overload
 
 import lief.MachO
 import lief.runtime
@@ -72,7 +72,7 @@ class Host:
 
     os_version_name: Final[str] = ...
 
-    os_version: Final[version_t] = ...
+    os_version: Final[Host.version_t] = ...
 
     is_sip_enabled: Final[bool] = ...
 

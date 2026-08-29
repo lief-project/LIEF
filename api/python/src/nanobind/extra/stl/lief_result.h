@@ -16,7 +16,7 @@ struct type_caster<LIEF::result<T>> {
                 const_name("Union[") + Caster::Name + const_name(",") + const_name("lief.lief_errors") + const_name("]"));
 
 
-  bool from_python(handle src, uint8_t flags, cleanup_list * cleanup) noexcept {
+  bool from_python(handle src, uint32_t flags, cleanup_list * cleanup) noexcept {
     Caster caster;
     if (!caster.from_python(src, flags_for_local_caster<T>(flags), cleanup) ||
         !caster.template can_cast<T>())

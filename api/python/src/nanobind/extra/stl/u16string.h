@@ -11,7 +11,7 @@ template <> struct type_caster<std::u16string> {
     using CharT = typename std::u16string::value_type;
     NB_TYPE_CASTER(std::u16string, const_name("str"));
 
-    bool from_python(handle src, uint8_t, cleanup_list *) noexcept {
+    bool from_python(handle src, uint32_t, cleanup_list *) noexcept {
         const object Nbytes = steal(PyUnicode_AsUTF16String(src.ptr()));
         if (!Nbytes) {
           PyErr_Clear();

@@ -1,6 +1,6 @@
 import enum
 import os
-from typing import Iterator, Optional, Union, overload
+from typing import Union, overload
 
 
 class Level(enum.Enum):

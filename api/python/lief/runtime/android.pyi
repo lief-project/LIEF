@@ -1,5 +1,5 @@
 import os
-from typing import Any, Final, Iterator, Optional, Union, overload
+from typing import Any, Final, Optional, Union, overload
 
 import lief.ELF
 import lief.runtime

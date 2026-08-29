@@ -1,7 +1,8 @@
 import enum
-from typing import Iterator, Optional, Union
+from typing import Union
 
-from . import (
+import lief
+from lief.assembly import (
     aarch64 as aarch64,
     arm as arm,
     ebpf as ebpf,
@@ -10,7 +11,6 @@ from . import (
     riscv as riscv,
     x86 as x86
 )
-import lief
 
 
 class Engine:
@@ -118,6 +118,6 @@ class AssemblerConfig:
     @staticmethod
     def default_config() -> AssemblerConfig: ...
 
-    dialect: DIALECT
+    dialect: AssemblerConfig.DIALECT
 
     def resolve_symbol(self, name: str) -> int | None: ...

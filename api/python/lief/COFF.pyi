@@ -1,7 +1,8 @@
+from collections.abc import Iterator
 import enum
 import io
 import os
-from typing import Final, Iterator, Optional, Union, overload
+from typing import Final, Optional, Union, overload
 
 import lief
 import lief.PE

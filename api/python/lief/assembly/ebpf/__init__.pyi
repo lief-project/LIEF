@@ -1,8 +1,9 @@
+from collections.abc import Iterator
 import enum
-from typing import Iterator, Optional, Union
+from typing import Optional
 
-from . import operands as operands
 import lief.assembly
+from lief.assembly.ebpf import operands as operands
 
 
 class OPCODE(enum.Enum):

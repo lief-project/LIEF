@@ -1,5 +1,6 @@
+from collections.abc import Iterator
 import enum
-from typing import Iterator, Optional, Union as _Union
+from typing import Optional
 
 import lief.dwarf
 
@@ -30,7 +31,7 @@ class ClassLike(lief.dwarf.Type):
     @property
     def members(self) -> list[ClassLike.Member]: ...
 
-    def find_member(self, offset: int) -> Optional[Member]: ...
+    def find_member(self, offset: int) -> Optional[ClassLike.Member]: ...
 
     @property
     def functions(self) -> Iterator[Optional[lief.dwarf.Function]]: ...
@@ -121,7 +122,7 @@ class Enum(lief.dwarf.Type):
     @property
     def underlying_type(self) -> lief.dwarf.Type | None: ...
 
-    def find_entry(self, value: int) -> Entry | None: ...
+    def find_entry(self, value: int) -> Enum.Entry | None: ...
 
 class File(lief.dwarf.Type):
     pass

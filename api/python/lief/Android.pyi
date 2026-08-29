@@ -1,5 +1,4 @@
 import enum
-from typing import Iterator, Optional, Union
 
 
 class ANDROID_VERSIONS(enum.Enum):

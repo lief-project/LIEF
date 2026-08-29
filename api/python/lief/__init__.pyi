@@ -1,15 +1,13 @@
-from collections.abc import Mapping, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 import enum
 import io
+import os
+from typing import Any, Optional, Union, overload
+
 import lief
 import lief.PE
-import os
-from typing import Any, Iterator, Optional, Union, overload
 
-import lief.ELF
-import lief.MachO
-
-from . import (
+from lief import (
     ART as ART,
     Android as Android,
     COFF as COFF,
@@ -645,14 +643,14 @@ class Binary(Object):
     def get_function_address(self, function_name: str) -> Union[int, lief_errors]: ...
 
     @overload
-    def patch_address(self, address: int, patch_value: Sequence[int], va_type: VA_TYPES = VA_TYPES.AUTO) -> None: ...
+    def patch_address(self, address: int, patch_value: Sequence[int], va_type: Binary.VA_TYPES = Binary.VA_TYPES.AUTO) -> None: ...
 
     @overload
-    def patch_address(self, address: int, patch_value: int, size: int = 8, va_type: VA_TYPES = VA_TYPES.AUTO) -> None: ...
+    def patch_address(self, address: int, patch_value: int, size: int = 8, va_type: Binary.VA_TYPES = Binary.VA_TYPES.AUTO) -> None: ...
 
-    def get_content_from_virtual_address(self, virtual_address: int, size: int, va_type: VA_TYPES = VA_TYPES.AUTO) -> memoryview: ...
+    def get_content_from_virtual_address(self, virtual_address: int, size: int, va_type: Binary.VA_TYPES = Binary.VA_TYPES.AUTO) -> memoryview: ...
 
-    def get_int_from_virtual_address(self, address: int, interger_size: int, type: VA_TYPES = VA_TYPES.AUTO) -> Optional[int]: ...
+    def get_int_from_virtual_address(self, address: int, interger_size: int, type: Binary.VA_TYPES = Binary.VA_TYPES.AUTO) -> Optional[int]: ...
 
     @property
     def abstract(self) -> lief.Binary: ...
@@ -797,9 +795,9 @@ class Function(Symbol):
 
         DEBUG_INFO = 4
 
-    def add(self, flag: FLAGS) -> Function: ...
+    def add(self, flag: Function.FLAGS) -> Function: ...
 
-    def has(self, flag: FLAGS) -> bool: ...
+    def has(self, flag: Function.FLAGS) -> bool: ...
 
     @property
     def flags(self) -> Function.FLAGS: ...

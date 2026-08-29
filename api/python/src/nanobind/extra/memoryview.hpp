@@ -36,7 +36,7 @@ public:
         PyObject *ptr = PyMemoryView_FromMemory(
             reinterpret_cast<char *>(mem), size, (readonly) ? PyBUF_READ : PyBUF_WRITE);
         if (!ptr) {
-          detail::fail("Could not allocate memoryview object!");
+          detail::raise_python_error();
         }
         return memoryview(object(ptr, detail::steal_t{}));
     }

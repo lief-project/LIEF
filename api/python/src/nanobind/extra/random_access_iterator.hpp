@@ -15,7 +15,7 @@ class TypedRandomIterator : public nanobind::iterator {
   {}
 };
 
-template <typename Access, rv_policy Policy, typename Iterator,
+template <typename Access, rv_policy::value Policy, typename Iterator,
           typename Sentinel, typename ValueType, typename... Extra>
 struct random_iterator_state {
     Iterator it;
@@ -24,7 +24,7 @@ struct random_iterator_state {
     bool first_or_done;
 };
 
-template <typename Access, rv_policy Policy, typename Iterator,
+template <typename Access, rv_policy::value Policy, typename Iterator,
           typename Sentinel, typename ValueType, typename... Extra>
 iterator make_rnd_iterator_impl(handle scope, const char *name,
                             Iterator &&first, Sentinel &&last,
@@ -49,10 +49,10 @@ iterator make_rnd_iterator_impl(handle scope, const char *name,
                   }
                   Iterator it = s.begin + i;
                   return Access()(it);
-                }, std::forward<Extra>(extra)..., Policy)
+                }, std::forward<Extra>(extra)..., rv_policy::policy_tag<Policy>())
 
             .def("__next__",
-                 [](State &s) -> ValueType {
+                 [](State &s) -> iter_result<ValueType> {
                      if (!s.first_or_done)
                          ++s.it;
                      else
@@ -60,13 +60,13 @@ iterator make_rnd_iterator_impl(handle scope, const char *name,
 
                      if (s.it == s.end) {
                          s.first_or_done = true;
-                         throw stop_iteration();
+                         return { };
                      }
 
                      return Access()(s.it);
                  },
                  std::forward<Extra>(extra)...,
-                 Policy);
+                 rv_policy::policy_tag<Policy>());
     }
     auto begin = first;
     return borrow<iterator>(cast(State{ std::forward<Iterator>(first),
@@ -76,7 +76,7 @@ iterator make_rnd_iterator_impl(handle scope, const char *name,
 }
 
 
-template <rv_policy Policy = rv_policy::reference_internal,
+template <rv_policy::value Policy = rv_policy::reference_internal_v,
           typename Iterator,
           typename Sentinel,
           typename ValueType = typename detail::iterator_access<Iterator>::result_type,
@@ -88,7 +88,7 @@ detail::TypedRandomIterator<ValueType> make_random_access_iterator(handle scope,
         std::forward<Sentinel>(last), std::forward<Extra>(extra)...);
 }
 
-template <rv_policy Policy = rv_policy::reference_internal,
+template <rv_policy::value Policy = rv_policy::reference_internal_v,
           typename Type,
           typename ValueType = typename detail::iterator_access<typename Type::IteratorTy>::result_type,
           typename... Extra>

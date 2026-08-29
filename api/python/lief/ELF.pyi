@@ -1,13 +1,14 @@
-from collections.abc import Iterable, Mapping, Sequence
 import enum
 import io
 import os
-from typing import Final, Iterator, Optional, Union, overload
+from collections.abc import Iterable, Iterator, Mapping, Sequence
+from typing import Final, Optional, Union, overload
 
 import lief
 
 
 def check_layout(binary: Binary) -> tuple[bool, str]: ...
+
 
 class ARCH(enum.Enum):
     @staticmethod
@@ -377,6 +378,7 @@ class ARCH(enum.Enum):
 
     ALPHA_ALT = 36902
 
+
 class ParserConfig:
     def __init__(self) -> None: ...
 
@@ -410,21 +412,35 @@ class ParserConfig:
 
     parse_overlay: bool
 
-    count_mtd: DYNSYM_COUNT
+    count_mtd: ParserConfig.DYNSYM_COUNT
 
     page_size: int
 
     all: Final[ParserConfig] = ...
 
+
 @overload
 def parse_from_memory(address: int, config: ParserConfig = ...) -> Optional[Binary]: ...
 
+
 @overload
-def parse_from_memory(address: int, size: int, config: ParserConfig = ...) -> Optional[Binary]: ...
+def parse_from_memory(
+    address: int, size: int, config: ParserConfig = ...
+) -> Optional[Binary]: ...
 
-def parse_from_dump(obj: Union[str | io.IOBase | os.PathLike | bytes | list[int]], addr: int, config: ParserConfig = ...) -> Optional[Binary]: ...
 
-def parse(obj: Union[str | io.IOBase | os.PathLike | bytes | list[int]], config: ParserConfig = ...) -> Optional[Binary]: ...
+def parse_from_dump(
+    obj: Union[str | io.IOBase | os.PathLike | bytes | list[int]],
+    addr: int,
+    config: ParserConfig = ...,
+) -> Optional[Binary]: ...
+
+
+def parse(
+    obj: Union[str | io.IOBase | os.PathLike | bytes | list[int]],
+    config: ParserConfig = ...,
+) -> Optional[Binary]: ...
+
 
 class SymbolVersion(lief.Object):
     @overload
@@ -455,6 +471,7 @@ class SymbolVersion(lief.Object):
     def as_local(self) -> None: ...
 
     def __str__(self) -> str: ...
+
 
 class Binary(lief.Binary):
     class it_notes:
@@ -587,10 +604,10 @@ class Binary(lief.Binary):
     def type(self) -> Header.CLASS: ...
 
     @property
-    def header(self) -> Header: ... # type: ignore
+    def header(self) -> Header: ...  # type: ignore
 
     @property
-    def sections(self) -> Binary.it_sections: ... # type: ignore
+    def sections(self) -> Binary.it_sections: ...  # type: ignore
 
     @property
     def segments(self) -> Binary.it_segments: ...
@@ -602,7 +619,12 @@ class Binary(lief.Binary):
     def add(self, arg: DynamicEntry, /) -> DynamicEntry: ...
 
     @overload
-    def add(self, section: Section, loaded: bool = True, pos: SEC_INSERT_POS = SEC_INSERT_POS.AUTO) -> Section | None: ...
+    def add(
+        self,
+        section: Section,
+        loaded: bool = True,
+        pos: Binary.SEC_INSERT_POS = Binary.SEC_INSERT_POS.AUTO,
+    ) -> Section | None: ...
 
     @overload
     def add(self, segment: Segment, base: int = 0) -> Segment | None: ...
@@ -617,7 +639,7 @@ class Binary(lief.Binary):
     def dynamic_symbols(self) -> Binary.it_symbols: ...
 
     @property
-    def symbols(self) -> Binary.it_dyn_symtab_symbols: ... # type: ignore
+    def symbols(self) -> Binary.it_dyn_symtab_symbols: ...  # type: ignore
 
     @property
     def exported_symbols(self) -> Binary.it_filter_symbols: ...
@@ -632,7 +654,9 @@ class Binary(lief.Binary):
 
     def add_pltgot_relocation(self, relocation: Relocation) -> Relocation: ...
 
-    def add_object_relocation(self, relocation: Relocation, section: Section) -> Relocation | None: ...
+    def add_object_relocation(
+        self, relocation: Relocation, section: Section
+    ) -> Relocation | None: ...
 
     @property
     def pltgot_relocations(self) -> Binary.it_filter_relocation: ...
@@ -641,7 +665,7 @@ class Binary(lief.Binary):
     def object_relocations(self) -> Binary.it_filter_relocation: ...
 
     @property
-    def relocations(self) -> Binary.it_relocations: ... # type: ignore
+    def relocations(self) -> Binary.it_relocations: ...  # type: ignore
 
     @property
     def symbols_version(self) -> Binary.it_symbols_version: ...
@@ -681,9 +705,13 @@ class Binary(lief.Binary):
 
     interpreter: str
 
-    def section_from_offset(self, offset: int, skip_nobits: bool = True) -> Section | None: ...
+    def section_from_offset(
+        self, offset: int, skip_nobits: bool = True
+    ) -> Section | None: ...
 
-    def section_from_virtual_address(self, address: int, skip_nobits: bool = True) -> Section | None: ...
+    def section_from_virtual_address(
+        self, address: int, skip_nobits: bool = True
+    ) -> Section | None: ...
 
     def segment_from_virtual_address(self, address: int) -> Segment | None: ...
 
@@ -741,11 +769,17 @@ class Binary(lief.Binary):
 
     def add_symtab_symbol(self, symbol: Symbol) -> Symbol: ...
 
-    def add_dynamic_symbol(self, symbol: Symbol, symbol_version: SymbolVersion | None = None) -> Symbol: ...
+    def add_dynamic_symbol(
+        self, symbol: Symbol, symbol_version: SymbolVersion | None = None
+    ) -> Symbol: ...
 
-    def virtual_address_to_offset(self, virtual_address: int) -> Union[int, lief.lief_errors]: ...
+    def virtual_address_to_offset(
+        self, virtual_address: int
+    ) -> Union[int, lief.lief_errors]: ...
 
-    def replace(self, new_segment: Segment, original_segment: Segment, base: int = 0) -> Segment | None: ...
+    def replace(
+        self, new_segment: Segment, original_segment: Segment, base: int = 0
+    ) -> Segment | None: ...
 
     @overload
     def extend(self, segment: Segment, size: int) -> Segment | None: ...
@@ -788,7 +822,9 @@ class Binary(lief.Binary):
     def write(self, output: Union[str | os.PathLike]) -> None: ...
 
     @overload
-    def write(self, output: Union[str | os.PathLike], config: Builder.config_t) -> None: ...
+    def write(
+        self, output: Union[str | os.PathLike], config: Builder.config_t
+    ) -> None: ...
 
     @overload
     def write_to_bytes(self, config: Builder.config_t) -> bytes: ...
@@ -834,7 +870,7 @@ class Binary(lief.Binary):
     @overload
     def remove_dynamic_symbol(self, arg: str, /) -> None: ...
 
-    def add_exported_function(self, address: int, name: str = '') -> Symbol: ...
+    def add_exported_function(self, address: int, name: str = "") -> Symbol: ...
 
     @overload
     def export_symbol(self, symbol: Symbol) -> Symbol: ...
@@ -875,11 +911,15 @@ class Binary(lief.Binary):
     @overlay.setter
     def overlay(self, arg: bytes, /) -> None: ...
 
-    def relocate_phdr_table(self, type: PHDR_RELOC = PHDR_RELOC.AUTO) -> int: ...
+    def relocate_phdr_table(
+        self, type: Binary.PHDR_RELOC = Binary.PHDR_RELOC.AUTO
+    ) -> int: ...
 
     def get_relocated_dynamic_array(self, array_tag: DynamicEntry.TAG) -> list[int]: ...
 
-    def find_version_requirement(self, libname: str) -> SymbolVersionRequirement | None: ...
+    def find_version_requirement(
+        self, libname: str
+    ) -> SymbolVersionRequirement | None: ...
 
     def remove_version_requirement(self, libname: str) -> bool: ...
 
@@ -932,6 +972,7 @@ class Binary(lief.Binary):
     def __contains__(self, arg: Section.TYPE, /) -> bool: ...
 
     def __str__(self) -> str: ...
+
 
 class PROCESSOR_FLAGS(enum.Enum):
     @staticmethod
@@ -1081,6 +1122,7 @@ class PROCESSOR_FLAGS(enum.Enum):
 
     RISCV_FLOAT_ABI_TSO = 43980465111056
 
+
 class Header(lief.Object):
     def __init__(self) -> None: ...
 
@@ -1202,13 +1244,13 @@ class Header(lief.Object):
 
         MSB = 2
 
-    identity_class: CLASS
+    identity_class: Header.CLASS
 
-    identity_data: ELF_DATA
+    identity_data: Header.ELF_DATA
 
-    identity_version: VERSION
+    identity_version: Header.VERSION
 
-    identity_os_abi: OS_ABI
+    identity_os_abi: Header.OS_ABI
 
     identity_abi_version: int
 
@@ -1218,11 +1260,11 @@ class Header(lief.Object):
     @identity.setter
     def identity(self, arg: object, /) -> None: ...
 
-    file_type: FILE_TYPE
+    file_type: Header.FILE_TYPE
 
     machine_type: ARCH
 
-    object_file_version: VERSION
+    object_file_version: Header.VERSION
 
     entrypoint: int
 
@@ -1251,12 +1293,15 @@ class Header(lief.Object):
 
     def __str__(self) -> str: ...
 
+
 class Section(lief.Section):
     @overload
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, name: str, type: TYPE = TYPE.PROGBITS) -> None: ...
+    def __init__(
+        self, name: str, type: Section.TYPE = Section.TYPE.PROGBITS
+    ) -> None: ...
 
     class it_segments:
         def __getitem__(self, arg: int, /) -> Segment: ...
@@ -1508,7 +1553,7 @@ class Section(lief.Section):
     @property
     def is_frame(self) -> bool: ...
 
-    type: TYPE
+    type: Section.TYPE
 
     flags: int
 
@@ -1533,27 +1578,28 @@ class Section(lief.Section):
 
     def clear(self, value: int = 0) -> Section: ...
 
-    def add(self, flag: FLAGS) -> None: ...
+    def add(self, flag: Section.FLAGS) -> None: ...
 
-    def remove(self, flag: FLAGS) -> None: ...
+    def remove(self, flag: Section.FLAGS) -> None: ...
 
     @overload
-    def has(self, flag: FLAGS) -> bool: ...
+    def has(self, flag: Section.FLAGS) -> bool: ...
 
     @overload
     def has(self, segment: Segment) -> bool: ...
 
-    def __iadd__(self, arg: FLAGS, /) -> Section: ...
+    def __iadd__(self, arg: Section.FLAGS, /) -> Section: ...
 
-    def __isub__(self, arg: FLAGS, /) -> Section: ...
+    def __isub__(self, arg: Section.FLAGS, /) -> Section: ...
 
     @overload
-    def __contains__(self, arg: FLAGS, /) -> bool: ...
+    def __contains__(self, arg: Section.FLAGS, /) -> bool: ...
 
     @overload
     def __contains__(self, arg: Segment, /) -> bool: ...
 
     def __str__(self) -> str: ...
+
 
 class Segment(lief.Object):
     def __init__(self) -> None: ...
@@ -1676,9 +1722,9 @@ class Segment(lief.Object):
     @staticmethod
     def from_raw(arg: bytes, /) -> Union[Segment, lief.lief_errors]: ...
 
-    type: TYPE
+    type: Segment.TYPE
 
-    flags: FLAGS
+    flags: Segment.FLAGS
 
     raw_flags: int
 
@@ -1700,12 +1746,12 @@ class Segment(lief.Object):
     @content.setter
     def content(self, arg: Sequence[int], /) -> None: ...
 
-    def add(self, flag: FLAGS) -> None: ...
+    def add(self, flag: Segment.FLAGS) -> None: ...
 
-    def remove(self, flag: FLAGS) -> None: ...
+    def remove(self, flag: Segment.FLAGS) -> None: ...
 
     @overload
-    def has(self, flag: FLAGS) -> bool: ...
+    def has(self, flag: Segment.FLAGS) -> bool: ...
 
     @overload
     def has(self, section: Section) -> bool: ...
@@ -1720,12 +1766,12 @@ class Segment(lief.Object):
     @property
     def sections(self) -> Segment.it_sections: ...
 
-    def __iadd__(self, arg: FLAGS, /) -> Segment: ...
+    def __iadd__(self, arg: Segment.FLAGS, /) -> Segment: ...
 
-    def __isub__(self, arg: FLAGS, /) -> Segment: ...
+    def __isub__(self, arg: Segment.FLAGS, /) -> Segment: ...
 
     @overload
-    def __contains__(self, arg: FLAGS, /) -> bool: ...
+    def __contains__(self, arg: Segment.FLAGS, /) -> bool: ...
 
     @overload
     def __contains__(self, arg: Section, /) -> bool: ...
@@ -1734,6 +1780,7 @@ class Segment(lief.Object):
     def __contains__(self, arg: str, /) -> bool: ...
 
     def __str__(self) -> str: ...
+
 
 class Symbol(lief.Symbol):
     def __init__(self) -> None: ...
@@ -1803,15 +1850,15 @@ class Symbol(lief.Symbol):
     @property
     def demangled_name(self) -> str: ...
 
-    type: TYPE
+    type: Symbol.TYPE
 
-    binding: BINDING
+    binding: Symbol.BINDING
 
     information: int
 
     other: int
 
-    visibility: VISIBILITY
+    visibility: Symbol.VISIBILITY
 
     value: int
 
@@ -1843,6 +1890,7 @@ class Symbol(lief.Symbol):
 
     def __str__(self) -> str: ...
 
+
 class Relocation(lief.Relocation):
     @overload
     def __init__(self) -> None: ...
@@ -1851,7 +1899,9 @@ class Relocation(lief.Relocation):
     def __init__(self, arch: ARCH) -> None: ...
 
     @overload
-    def __init__(self, address: int, type: TYPE, encoding: ENCODING) -> None: ...
+    def __init__(
+        self, address: int, type: Relocation.TYPE, encoding: Relocation.ENCODING
+    ) -> None: ...
 
     class TYPE(enum.Enum):
         @staticmethod
@@ -4165,9 +4215,9 @@ class Relocation(lief.Relocation):
 
     info: int
 
-    purpose: PURPOSE
+    purpose: Relocation.PURPOSE
 
-    type: TYPE
+    type: Relocation.TYPE
 
     @property
     def has_symbol(self) -> bool: ...
@@ -4208,6 +4258,7 @@ class Relocation(lief.Relocation):
 
     def __str__(self) -> str: ...
 
+
 class SymbolVersionAux(lief.Object):
     @property
     def name(self) -> Union[str, bytes]: ...
@@ -4216,6 +4267,7 @@ class SymbolVersionAux(lief.Object):
     def name(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
+
 
 class SymbolVersionAuxRequirement(SymbolVersionAux):
     def __init__(self) -> None: ...
@@ -4227,6 +4279,7 @@ class SymbolVersionAuxRequirement(SymbolVersionAux):
     other: int
 
     def __str__(self) -> str: ...
+
 
 class SymbolVersionDefinition(lief.Object):
     class it_version_aux:
@@ -4252,6 +4305,7 @@ class SymbolVersionDefinition(lief.Object):
 
     def __str__(self) -> str: ...
 
+
 class SymbolVersionRequirement(lief.Object):
     class it_aux_requirement:
         def __getitem__(self, arg: int, /) -> SymbolVersionAuxRequirement: ...
@@ -4266,9 +4320,11 @@ class SymbolVersionRequirement(lief.Object):
 
     name: str
 
-    def get_auxiliary_symbols(self) -> it_aux_requirement: ...
+    def get_auxiliary_symbols(self) -> SymbolVersionRequirement.it_aux_requirement: ...
 
-    def add_auxiliary_requirement(self, arg: SymbolVersionAuxRequirement, /) -> SymbolVersionAuxRequirement: ...
+    def add_auxiliary_requirement(
+        self, arg: SymbolVersionAuxRequirement, /
+    ) -> SymbolVersionAuxRequirement: ...
 
     def find_aux(self, name: str) -> SymbolVersionAuxRequirement | None: ...
 
@@ -4280,12 +4336,13 @@ class SymbolVersionRequirement(lief.Object):
 
     def __str__(self) -> str: ...
 
+
 class DynamicEntry(lief.Object):
     @overload
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, tag: TAG, value: int) -> None: ...
+    def __init__(self, tag: DynamicEntry.TAG, value: int) -> None: ...
 
     class TAG(enum.Enum):
         @staticmethod
@@ -4613,11 +4670,12 @@ class DynamicEntry(lief.Object):
 
         IA_64_VMS_FPMODE = 35970351170
 
-    tag: TAG
+    tag: DynamicEntry.TAG
 
     value: int
 
     def __str__(self) -> str: ...
+
 
 class DynamicEntryLibrary(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
@@ -4630,6 +4688,7 @@ class DynamicEntryLibrary(DynamicEntry):
 
     def __str__(self) -> str: ...
 
+
 class DynamicSharedObject(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
 
@@ -4640,6 +4699,7 @@ class DynamicSharedObject(DynamicEntry):
     def name(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
+
 
 class DynamicEntryAuxiliary(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
@@ -4652,6 +4712,7 @@ class DynamicEntryAuxiliary(DynamicEntry):
 
     def __str__(self) -> str: ...
 
+
 class DynamicEntryFilter(DynamicEntry):
     def __init__(self, library_name: str) -> None: ...
 
@@ -4662,6 +4723,7 @@ class DynamicEntryFilter(DynamicEntry):
     def name(self, arg: str, /) -> None: ...
 
     def __str__(self) -> str: ...
+
 
 class DynamicEntryArray(DynamicEntry):
     def __init__(self, tag: DynamicEntry.TAG, array: Sequence[int]) -> None: ...
@@ -4688,9 +4750,10 @@ class DynamicEntryArray(DynamicEntry):
 
     def __str__(self) -> str: ...
 
+
 class DynamicEntryRpath(DynamicEntry):
     @overload
-    def __init__(self, path: str = '') -> None: ...
+    def __init__(self, path: str = "") -> None: ...
 
     @overload
     def __init__(self, paths: Sequence[str]) -> None: ...
@@ -4719,9 +4782,10 @@ class DynamicEntryRpath(DynamicEntry):
 
     def __str__(self) -> str: ...
 
+
 class DynamicEntryRunPath(DynamicEntry):
     @overload
-    def __init__(self, path: str = '') -> None: ...
+    def __init__(self, path: str = "") -> None: ...
 
     @overload
     def __init__(self, paths: Sequence[str]) -> None: ...
@@ -4749,6 +4813,7 @@ class DynamicEntryRunPath(DynamicEntry):
     def __isub__(self, arg: str, /) -> DynamicEntryRunPath: ...
 
     def __str__(self) -> str: ...
+
 
 class DynamicEntryFlags(DynamicEntry):
     class FLAG(enum.Enum):
@@ -4834,19 +4899,20 @@ class DynamicEntryFlags(DynamicEntry):
     @property
     def flags(self) -> list[DynamicEntryFlags.FLAG]: ...
 
-    def has(self, flag: FLAG) -> bool: ...
+    def has(self, flag: DynamicEntryFlags.FLAG) -> bool: ...
 
-    def add(self, flag: FLAG) -> None: ...
+    def add(self, flag: DynamicEntryFlags.FLAG) -> None: ...
 
-    def remove(self, flag: FLAG) -> None: ...
+    def remove(self, flag: DynamicEntryFlags.FLAG) -> None: ...
 
-    def __iadd__(self, arg: FLAG, /) -> DynamicEntryFlags: ...
+    def __iadd__(self, arg: DynamicEntryFlags.FLAG, /) -> DynamicEntryFlags: ...
 
-    def __isub__(self, arg: FLAG, /) -> DynamicEntryFlags: ...
+    def __isub__(self, arg: DynamicEntryFlags.FLAG, /) -> DynamicEntryFlags: ...
 
-    def __contains__(self, arg: FLAG, /) -> bool: ...
+    def __contains__(self, arg: DynamicEntryFlags.FLAG, /) -> bool: ...
 
     def __str__(self) -> str: ...
+
 
 class GnuHash(lief.Object):
     def __init__(self) -> None: ...
@@ -4881,6 +4947,7 @@ class GnuHash(lief.Object):
 
     def __str__(self) -> str: ...
 
+
 class SysvHash(lief.Object):
     def __init__(self) -> None: ...
 
@@ -4897,12 +4964,13 @@ class SysvHash(lief.Object):
 
     def __str__(self) -> str: ...
 
+
 class Builder:
     @overload
     def __init__(self, elf: Binary) -> None: ...
 
     @overload
-    def __init__(self, elf: Binary, config: config_t) -> None: ...
+    def __init__(self, elf: Binary, config: Builder.config_t) -> None: ...
 
     class config_t:
         def __init__(self) -> None: ...
@@ -4957,6 +5025,7 @@ class Builder:
     def write(self, output: str) -> None: ...
 
     def get_build(self) -> list[int]: ...
+
 
 class Note(lief.Object):
     class TYPE(enum.Enum):
@@ -5059,15 +5128,36 @@ class Note(lief.Object):
 
     @overload
     @staticmethod
-    def create(name: str, original_type: int, description: Sequence[int], section_name: str, file_type: Header.FILE_TYPE = Header.FILE_TYPE.NONE, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
+    def create(
+        name: str,
+        original_type: int,
+        description: Sequence[int],
+        section_name: str,
+        file_type: Header.FILE_TYPE = Header.FILE_TYPE.NONE,
+        arch: ARCH = ARCH.NONE,
+        cls: Header.CLASS = Header.CLASS.NONE,
+    ) -> Optional[Note]: ...
 
     @overload
     @staticmethod
-    def create(raw: bytes, section_name: str = '', file_type: Header.FILE_TYPE = Header.FILE_TYPE.NONE, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
+    def create(
+        raw: bytes,
+        section_name: str = "",
+        file_type: Header.FILE_TYPE = Header.FILE_TYPE.NONE,
+        arch: ARCH = ARCH.NONE,
+        cls: Header.CLASS = Header.CLASS.NONE,
+    ) -> Optional[Note]: ...
 
     @overload
     @staticmethod
-    def create(name: str, type: TYPE, description: Sequence[int], section_name: str, arch: ARCH = ARCH.NONE, cls: Header.CLASS = Header.CLASS.NONE) -> Optional[Note]: ...
+    def create(
+        name: str,
+        type: Note.TYPE,
+        description: Sequence[int],
+        section_name: str,
+        arch: ARCH = ARCH.NONE,
+        cls: Header.CLASS = Header.CLASS.NONE,
+    ) -> Optional[Note]: ...
 
     name: str
 
@@ -5089,6 +5179,7 @@ class Note(lief.Object):
     def copy(self) -> Optional[Note]: ...
 
     def __str__(self) -> str: ...
+
 
 class NoteGnuProperty(Note):
     class Property:
@@ -5128,9 +5219,12 @@ class NoteGnuProperty(Note):
     @property
     def properties(self) -> list[Optional[NoteGnuProperty.Property]]: ...
 
-    def find(self, arg: Property.TYPE, /) -> Optional[Property]: ...
+    def find(
+        self, arg: NoteGnuProperty.Property.TYPE, /
+    ) -> Optional[NoteGnuProperty.Property]: ...
 
     def __str__(self) -> str: ...
+
 
 class AArch64Feature(NoteGnuProperty.Property):
     @property
@@ -5154,12 +5248,14 @@ class AArch64Feature(NoteGnuProperty.Property):
 
         GCS = 3
 
+
 class AArch64PAuth(NoteGnuProperty.Property):
     @property
     def platform(self) -> int: ...
 
     @property
     def version(self) -> int: ...
+
 
 class Needed(NoteGnuProperty.Property):
     class NEED(enum.Enum):
@@ -5178,6 +5274,7 @@ class Needed(NoteGnuProperty.Property):
 
     @property
     def needs(self) -> list[Needed.NEED]: ...
+
 
 class X86Features(NoteGnuProperty.Property):
     @property
@@ -5242,6 +5339,7 @@ class X86Features(NoteGnuProperty.Property):
         TMM = 15
 
         MASK = 16
+
 
 class X86ISA(NoteGnuProperty.Property):
     @property
@@ -5339,16 +5437,20 @@ class X86ISA(NoteGnuProperty.Property):
 
         AVX512_BF16 = 32
 
+
 class StackSize(NoteGnuProperty.Property):
     @property
     def stack_size(self) -> int: ...
 
+
 class NoteNoCopyOnProtected(NoteGnuProperty.Property):
     pass
+
 
 class Generic(NoteGnuProperty.Property):
     @property
     def raw_type(self) -> int: ...
+
 
 class AndroidIdent(Note):
     sdk_version: int
@@ -5358,6 +5460,7 @@ class AndroidIdent(Note):
     ndk_build_number: str
 
     def __str__(self) -> str: ...
+
 
 class NoteAbi(Note):
     class ABI(enum.Enum):
@@ -5391,6 +5494,7 @@ class NoteAbi(Note):
     def version(self) -> Optional[list[int]]: ...
 
     def __str__(self) -> str: ...
+
 
 class CoreAuxv(Note):
     class TYPE(enum.Enum):
@@ -5466,23 +5570,24 @@ class CoreAuxv(Note):
     @property
     def values(self) -> dict[CoreAuxv.TYPE, int]: ...
 
-    def get(self, type: TYPE) -> Optional[int]: ...
+    def get(self, type: CoreAuxv.TYPE) -> Optional[int]: ...
 
-    def __getitem__(self, arg: TYPE, /) -> Optional[int]: ...
-
-    @overload
-    def set(self, type: TYPE, value: int) -> bool: ...
+    def __getitem__(self, arg: CoreAuxv.TYPE, /) -> Optional[int]: ...
 
     @overload
-    def set(self, arg: Mapping[TYPE, int], /) -> bool: ...
+    def set(self, type: CoreAuxv.TYPE, value: int) -> bool: ...
 
     @overload
-    def __setitem__(self, arg0: TYPE, arg1: int, /) -> bool: ...
+    def set(self, arg: Mapping[CoreAuxv.TYPE, int], /) -> bool: ...
 
     @overload
-    def __setitem__(self, arg: Mapping[TYPE, int], /) -> bool: ...
+    def __setitem__(self, arg0: CoreAuxv.TYPE, arg1: int, /) -> bool: ...
+
+    @overload
+    def __setitem__(self, arg: Mapping[CoreAuxv.TYPE, int], /) -> bool: ...
 
     def __str__(self) -> str: ...
+
 
 class CoreFile(Note):
     class files_t:
@@ -5490,7 +5595,7 @@ class CoreFile(Note):
         def __init__(self) -> None: ...
 
         @overload
-        def __init__(self, arg: CoreFile.files_t) -> None: ...
+        def __init__(self, arg: CoreFile.files_t, /) -> None: ...
 
         @overload
         def __init__(self, arg: Iterable[CoreFile.entry_t], /) -> None: ...
@@ -5542,13 +5647,14 @@ class CoreFile(Note):
 
         def __str__(self) -> str: ...
 
-    files: files_t
+    files: CoreFile.files_t
 
     def __len__(self) -> int: ...
 
-    def __iter__(self) -> Iterator[entry_t]: ...
+    def __iter__(self) -> Iterator[CoreFile.entry_t]: ...
 
     def __str__(self) -> str: ...
+
 
 class CorePrPsInfo(Note):
     class info_t:
@@ -5592,6 +5698,7 @@ class CorePrPsInfo(Note):
 
     def __str__(self) -> str: ...
 
+
 class CoreSigInfo(Note):
     @property
     def signo(self) -> Optional[int]: ...
@@ -5612,6 +5719,7 @@ class CoreSigInfo(Note):
     def sigerrno(self, arg: int, /) -> None: ...
 
     def __str__(self) -> str: ...
+
 
 class CorePrStatus(Note):
     class timeval_t:
@@ -5880,7 +5988,7 @@ class CorePrStatus(Note):
 
             PSTATE = 33
 
-    status: pr_status_t
+    status: CorePrStatus.pr_status_t
 
     @property
     def architecture(self) -> ARCH: ...
@@ -5898,54 +6006,67 @@ class CorePrStatus(Note):
     def register_values(self) -> list[int]: ...
 
     @overload
-    def get(self, reg: Registers.X86) -> Optional[int]: ...
+    def get(self, reg: CorePrStatus.Registers.X86) -> Optional[int]: ...
 
     @overload
-    def get(self, reg: Registers.X86_64) -> Optional[int]: ...
+    def get(self, reg: CorePrStatus.Registers.X86_64) -> Optional[int]: ...
 
     @overload
-    def get(self, reg: Registers.ARM) -> Optional[int]: ...
+    def get(self, reg: CorePrStatus.Registers.ARM) -> Optional[int]: ...
 
     @overload
-    def get(self, reg: Registers.AARCH64) -> Optional[int]: ...
+    def get(self, reg: CorePrStatus.Registers.AARCH64) -> Optional[int]: ...
 
     @overload
-    def __getitem__(self, arg: Registers.X86, /) -> Optional[int]: ...
+    def __getitem__(self, arg: CorePrStatus.Registers.X86, /) -> Optional[int]: ...
 
     @overload
-    def __getitem__(self, arg: Registers.X86_64, /) -> Optional[int]: ...
+    def __getitem__(self, arg: CorePrStatus.Registers.X86_64, /) -> Optional[int]: ...
 
     @overload
-    def __getitem__(self, arg: Registers.ARM, /) -> Optional[int]: ...
+    def __getitem__(self, arg: CorePrStatus.Registers.ARM, /) -> Optional[int]: ...
 
     @overload
-    def __getitem__(self, arg: Registers.AARCH64, /) -> Optional[int]: ...
+    def __getitem__(self, arg: CorePrStatus.Registers.AARCH64, /) -> Optional[int]: ...
 
     @overload
-    def set(self, reg: Registers.X86, value: int) -> lief.ok_error_t: ...
+    def set(self, reg: CorePrStatus.Registers.X86, value: int) -> lief.ok_error_t: ...
 
     @overload
-    def set(self, reg: Registers.X86_64, value: int) -> lief.ok_error_t: ...
+    def set(
+        self, reg: CorePrStatus.Registers.X86_64, value: int
+    ) -> lief.ok_error_t: ...
 
     @overload
-    def set(self, reg: Registers.ARM, value: int) -> lief.ok_error_t: ...
+    def set(self, reg: CorePrStatus.Registers.ARM, value: int) -> lief.ok_error_t: ...
 
     @overload
-    def set(self, reg: Registers.AARCH64, value: int) -> lief.ok_error_t: ...
+    def set(
+        self, reg: CorePrStatus.Registers.AARCH64, value: int
+    ) -> lief.ok_error_t: ...
 
     @overload
-    def __setitem__(self, arg0: Registers.X86, arg1: int, /) -> lief.ok_error_t: ...
+    def __setitem__(
+        self, arg0: CorePrStatus.Registers.X86, arg1: int, /
+    ) -> lief.ok_error_t: ...
 
     @overload
-    def __setitem__(self, arg0: Registers.X86_64, arg1: int, /) -> lief.ok_error_t: ...
+    def __setitem__(
+        self, arg0: CorePrStatus.Registers.X86_64, arg1: int, /
+    ) -> lief.ok_error_t: ...
 
     @overload
-    def __setitem__(self, arg0: Registers.ARM, arg1: int, /) -> lief.ok_error_t: ...
+    def __setitem__(
+        self, arg0: CorePrStatus.Registers.ARM, arg1: int, /
+    ) -> lief.ok_error_t: ...
 
     @overload
-    def __setitem__(self, arg0: Registers.AARCH64, arg1: int, /) -> lief.ok_error_t: ...
+    def __setitem__(
+        self, arg0: CorePrStatus.Registers.AARCH64, arg1: int, /
+    ) -> lief.ok_error_t: ...
 
     def __str__(self) -> str: ...
+
 
 class QNXStack(Note):
     stack_size: int

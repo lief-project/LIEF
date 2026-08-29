@@ -1,5 +1,4 @@
 import enum
-from typing import Iterator, Optional, Union
 
 import lief.assembly
 

@@ -1,5 +1,6 @@
+from collections.abc import Iterator
 import enum
-from typing import Iterator, Optional, Union as _Union
+from typing import Optional
 
 import lief.pdb
 
@@ -218,7 +219,7 @@ class Enum(lief.pdb.Type):
     @property
     def underlying_type(self) -> lief.pdb.Type | None: ...
 
-    def find_entry(self, value: int) -> Entry | None: ...
+    def find_entry(self, value: int) -> Enum.Entry | None: ...
 
 class Function(lief.pdb.Type):
     @property

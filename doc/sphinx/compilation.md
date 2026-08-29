@@ -11,7 +11,7 @@ To compile **LIEF**, you need at least the following:
 
 - C++17 compiler (GCC, Clang, MSVC, etc.)
 - CMake
-- Python >= 3.9 (for the bindings)
+- Python >= 3.10 (for the bindings)
 
 :::{note}
 Compiling from scratch with all options enabled can take approximately

@@ -9,8 +9,7 @@ namespace LIEF::assembly::py {
 
 class PyAssemblerConfig : public assembly::AssemblerConfig {
   public:
-  static constexpr auto NB_NUM_SLOTS = 3;
-  NB_TRAMPOLINE(assembly::AssemblerConfig, NB_NUM_SLOTS);
+  NB_TRAMPOLINE(assembly::AssemblerConfig);
 
   std::optional<uint64_t> resolve_symbol(const std::string& name) override {
     NB_OVERRIDE(resolve_symbol, name);

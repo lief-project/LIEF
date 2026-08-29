@@ -1,4 +1,4 @@
-from typing import Iterator, Optional, Union
+from typing import Optional
 
 import lief.dwarf
 

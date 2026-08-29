@@ -9,7 +9,7 @@ struct type_caster<LIEF::assembly::powerpc::operands::Memory::offset_t> {
   NB_TYPE_CASTER(LIEF::assembly::powerpc::operands::Memory::offset_t,
                  const_name("Optional[Union[lief.assembly.powerpc.REG, int]]"));
 
-  bool from_python(handle, uint8_t, cleanup_list *) noexcept {
+  bool from_python(handle, uint32_t, cleanup_list *) noexcept {
     return false;
   }
 

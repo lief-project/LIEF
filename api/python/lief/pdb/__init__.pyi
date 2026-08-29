@@ -1,9 +1,10 @@
+from collections.abc import Iterator
 import enum
 import os
-from typing import Iterator, Optional, Union, overload
+from typing import Optional, Union, overload
 
-from . import types as types
 import lief
+from lief.pdb import types as types
 
 
 def load(path: str) -> Optional[DebugInfo]: ...

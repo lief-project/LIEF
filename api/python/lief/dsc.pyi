@@ -1,7 +1,7 @@
-from collections.abc import Sequence
+from collections.abc import Iterator, Sequence
 import enum
 import os
-from typing import Iterator, Optional, Union, overload
+from typing import Optional, Union, overload
 
 import lief
 import lief.MachO
@@ -191,7 +191,7 @@ class Dylib:
     @property
     def padding(self) -> int: ...
 
-    def get(self, opt: extract_opt_t = ...) -> Optional[lief.MachO.Binary]: ...
+    def get(self, opt: Dylib.extract_opt_t = ...) -> Optional[lief.MachO.Binary]: ...
 
 class SubCache:
     @property

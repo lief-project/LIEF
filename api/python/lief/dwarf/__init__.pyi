@@ -1,14 +1,15 @@
+from collections.abc import Iterator
 import enum
 import os
-from typing import Iterator, Optional, Union, overload
+from typing import Optional, Union, overload
 
-from . import (
+import lief
+import lief.assembly
+from lief.dwarf import (
     editor as editor,
     parameters as parameters,
     types as types
 )
-import lief
-import lief.assembly
 
 
 def load(path: Union[str | os.PathLike]) -> Optional[DebugInfo]: ...
@@ -214,7 +215,7 @@ class Parameter:
         @property
         def type(self) -> Parameter.Location.Type: ...
 
-    class RegisterLoc(Location):
+    class RegisterLoc(Parameter.Location):
         @property
         def id(self) -> int: ...
 
@@ -261,7 +262,7 @@ class CompilationUnit:
 
             COBOL = 10
 
-        lang: LANG
+        lang: CompilationUnit.Language.LANG
 
         version: int
 
@@ -356,7 +357,7 @@ class Editor:
     def from_binary(bin: lief.Binary) -> Optional[Editor]: ...
 
     @staticmethod
-    def create(fmt: FORMAT, arch: ARCH) -> Optional[Editor]: ...
+    def create(fmt: Editor.FORMAT, arch: Editor.ARCH) -> Optional[Editor]: ...
 
     def create_compilation_unit(self) -> Optional[editor.CompilationUnit]: ...
 

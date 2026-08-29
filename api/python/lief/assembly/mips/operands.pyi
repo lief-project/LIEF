@@ -1,5 +1,6 @@
+from typing import Optional, Union
+
 import lief.assembly.mips
-from typing import Iterator, Optional, Union
 
 import lief.assembly.mips
 

@@ -1,5 +1,3 @@
-from typing import Iterator, Optional, Union
-
 import lief.assembly.x86
 
 

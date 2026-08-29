@@ -1,7 +1,6 @@
 #pragma once
 
 #include <nanobind/nanobind.h>
-#include <string>
 
 #include "LIEF/span.hpp"
 
@@ -18,7 +17,7 @@ struct type_caster<LIEF::span<T>> {
 
   NB_TYPE_CASTER(LIEF::span<T>, const_name("memoryview"));
 
-  bool from_python(handle /*src*/, uint8_t, cleanup_list *) noexcept {
+  bool from_python(handle /*src*/, uint32_t, cleanup_list *) noexcept {
     return false;
   }
 
@@ -30,13 +29,8 @@ struct type_caster<LIEF::span<T>> {
       mem = (void*)&empty;
     }
 
-    PyObject *ptr = PyMemoryView_FromMemory(
+    return PyMemoryView_FromMemory(
         reinterpret_cast<char *>(mem), val.size(), IsRO ? PyBUF_READ : PyBUF_WRITE);
-
-    if (!ptr) {
-      detail::fail("Could not allocate memoryview object!");
-    }
-    return ptr;
   }
 };
 
