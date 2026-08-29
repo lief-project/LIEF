@@ -31,9 +31,9 @@ class LIEF_API Host {
     uint32_t patch = 0;
 
     version_t(uint32_t major, uint32_t minor, uint32_t patch) :
-      major(major),
-      minor(minor),
-      patch(patch) {}
+      major{major},
+      minor{minor},
+      patch{patch} {}
 
     bool operator<=(const version_t& rhs) const;
     bool operator>(const version_t& rhs) const {

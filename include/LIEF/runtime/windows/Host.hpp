@@ -34,9 +34,9 @@ class LIEF_API Host {
     version_t() = default;
 
     version_t(uint32_t major, uint32_t minor, uint32_t build_number) :
-      major(major),
-      minor(minor),
-      build_number(build_number) {}
+      major{major},
+      minor{minor},
+      build_number{build_number} {}
 
     bool operator<=(const version_t& rhs) const;
     bool operator>(const version_t& rhs) const {
