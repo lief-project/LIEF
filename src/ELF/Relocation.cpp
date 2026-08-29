@@ -150,8 +150,13 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
       return 0;
     }
 
+    if (binary_ == nullptr) {
+      LIEF_ERR("Can't resolve {} without an associated binary", to_string(type()));
+      return 0;
+    }
+
     switch (RSZ) {
-      case sizeof(uint8_t):
+      case sizeof(uint8_t) * 8:
       {
         auto V = binary_->get_int_from_virtual_address<uint8_t>(P);
         if (!V) {
@@ -161,10 +166,14 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
           );
           return 0;
         }
-        return (int64_t)((int8_t)*V);
+        uint8_t value = *V;
+        if (binary_->should_swap()) {
+          swap_endian(&value);
+        }
+        return int64_t(int8_t(value));
       }
 
-      case sizeof(uint16_t):
+      case sizeof(uint16_t) * 8:
       {
         auto V = binary_->get_int_from_virtual_address<uint16_t>(P);
         if (!V) {
@@ -174,9 +183,13 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
           );
           return 0;
         }
-        return (int64_t)((int16_t)*V);
+        uint16_t value = *V;
+        if (binary_->should_swap()) {
+          swap_endian(&value);
+        }
+        return int64_t(int16_t(value));
       }
-      case sizeof(uint32_t):
+      case sizeof(uint32_t) * 8:
       {
         auto V = binary_->get_int_from_virtual_address<uint32_t>(P);
         if (!V) {
@@ -186,9 +199,14 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
           );
           return 0;
         }
-        return (int64_t)((int32_t)*V);
+        uint32_t value = *V;
+        if (binary_->should_swap()) {
+          swap_endian(&value);
+        }
+
+        return int64_t(int32_t(value));
       }
-      case sizeof(uint64_t):
+      case sizeof(uint64_t) * 8:
       {
         auto V = binary_->get_int_from_virtual_address<uint64_t>(P);
         if (!V) {
@@ -198,7 +216,13 @@ result<uint64_t> Relocation::resolve(uint64_t base_address) const {
           );
           return 0;
         }
-        return (int64_t)*V;
+
+        uint64_t value = *V;
+        if (binary_->should_swap()) {
+          swap_endian(&value);
+        }
+
+        return int64_t(value);
       }
       default:
         LIEF_ERR("Invalid relocation size {} (sz: {})", to_string(type()), RSZ);
