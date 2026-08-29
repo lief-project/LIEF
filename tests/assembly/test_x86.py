@@ -32,7 +32,7 @@ def test_pe_x86_64():
     pe = parse_pe("PE/ntoskrnl.exe")
     instructions = list(pe.disassemble(0x140200000))
 
-    assert len(instructions) == 54785
+    assert len(instructions) == 54382
     assert instructions[0] is not None
     assert instructions[0].to_string() == "0x140200000: int3"
     assert instructions[8] is not None
@@ -46,7 +46,7 @@ def test_elf_x86():
 
     instructions = list(elf.disassemble(0x000010C0))
 
-    assert len(instructions) == 822
+    assert len(instructions) == 821
     assert instructions[0] is not None
     assert instructions[0].to_string() == "0x0010c0: push ebp"
 
@@ -54,13 +54,13 @@ def test_elf_x86():
 def test_elf_x86_64():
     elf = parse_elf("ELF/ELF64_x86-64_binary_static-binary.bin")
     instructions = list(elf.disassemble(0x00400CDD))
-    assert len(instructions) == 139591
+    assert len(instructions) == 139400
 
     assert instructions[0] is not None
     assert instructions[0].to_string() == "0x400cdd: push rax"
-    assert instructions[83418] is not None
+    assert instructions[83276] is not None
     assert (
-        instructions[83418].to_string() == "0x453df1: vmovdqu xmm1, xmmword ptr [rdi]"
+        instructions[83276].to_string() == "0x453df1: vmovdqu xmm1, xmmword ptr [rdi]"
     )
 
 
@@ -75,7 +75,7 @@ def test_macho_x86():
     for idx, inst in enumerate(instructions):
         lief.logging.info(f"{idx} {inst}")
 
-    assert len(instructions) == 6946
+    assert len(instructions) == 6943
     assert instructions[0] is not None
     assert instructions[0].to_string() == "0x001141: push ebp"
     assert instructions[9] is not None
@@ -93,7 +93,7 @@ def test_macho_x86_64():
     for idx, inst in enumerate(instructions):
         lief.logging.info(f"{idx} {inst}")
 
-    assert len(instructions) == 4903
+    assert len(instructions) == 4900
     assert instructions[0] is not None
     assert instructions[0].to_string() == "0x001108: push rbp"
     assert instructions[23] is not None
@@ -131,9 +131,9 @@ def test_x86_operands():
 
     # -------------------------------------------------------------------------
 
-    assert instructions[21] is not None
-    assert isinstance(instructions[21], lief.assembly.x86.Instruction)
-    operands = list(instructions[21].operands)
+    assert instructions[20] is not None
+    assert isinstance(instructions[20], lief.assembly.x86.Instruction)
+    operands = list(instructions[20].operands)
 
     assert len(operands) == 1
     assert isinstance(operands[0], lief.assembly.x86.operands.PCRelative)
@@ -141,9 +141,9 @@ def test_x86_operands():
 
     # -------------------------------------------------------------------------
 
-    assert instructions[53] is not None
-    assert isinstance(instructions[53], lief.assembly.x86.Instruction)
-    operands = list(instructions[53].operands)
+    assert instructions[51] is not None
+    assert isinstance(instructions[51], lief.assembly.x86.Instruction)
+    operands = list(instructions[51].operands)
 
     assert len(operands) == 2
     assert isinstance(operands[1], lief.assembly.x86.operands.Immediate)
