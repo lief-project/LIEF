@@ -19,7 +19,7 @@
 
 namespace LIEF::MachO::details {
 
-uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind24& bind) {
+uint64_t sign_extended_addend(dyld_chained_ptr_arm64e_bind24 bind) {
   const uint64_t addend19 = bind.addend;
   if ((addend19 & 0x40000) > 0) {
     return addend19 | 0xFFFFFFFFFFFC0000ULL;
@@ -27,7 +27,7 @@ uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind24& bind) {
   return addend19;
 }
 
-uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind& bind) {
+uint64_t sign_extended_addend(dyld_chained_ptr_arm64e_bind bind) {
   const uint64_t addend19 = bind.addend;
   if ((addend19 & 0x40000) > 0) {
     return addend19 | 0xFFFFFFFFFFFC0000ULL;
@@ -35,7 +35,7 @@ uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind& bind) {
   return addend19;
 }
 
-uint64_t sign_extended_addend(const dyld_chained_ptr_64_bind& bind) {
+uint64_t sign_extended_addend(dyld_chained_ptr_64_bind bind) {
   uint64_t addend27 = bind.addend;
   uint64_t top8 = addend27 & 0x00007F80000ULL;
   uint64_t bottom19 = addend27 & 0x0000007FFFFULL;

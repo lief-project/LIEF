@@ -222,9 +222,9 @@ inline void pack_target(T& rebase, uint64_t value) {
   rebase.target = value & 0x7FFFFFFFFFF;
 }
 
-uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind& bind);
-uint64_t sign_extended_addend(const dyld_chained_ptr_arm64e_bind24& bind);
-uint64_t sign_extended_addend(const dyld_chained_ptr_64_bind& bind);
+uint64_t sign_extended_addend(dyld_chained_ptr_arm64e_bind bind);
+uint64_t sign_extended_addend(dyld_chained_ptr_arm64e_bind24 bind);
+uint64_t sign_extended_addend(dyld_chained_ptr_64_bind bind);
 
 union dyld_chained_ptr_arm64e {
   dyld_chained_ptr_arm64e_auth_rebase auth_rebase;
