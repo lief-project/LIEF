@@ -5,6 +5,7 @@ Checks: [
   portability-*,
   cppcoreguidelines-*,
   misc-*,
+  clang-taidy-*,
 
   # Remove
   -bugprone-easily-swappable-parameters,

@@ -15,6 +15,7 @@ Diagnostics:
       cppcoreguidelines-*,
       modernize-*,
       misc-*,
+      clang-taidy-*,
     ]
     Remove: [
       bugprone-easily-swappable-parameters,

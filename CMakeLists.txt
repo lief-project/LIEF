@@ -319,9 +319,12 @@ set_target_properties(LIB_LIEF
 
 if (LIEF_CLANG_TIDY)
   find_program(CLANG_TIDY_EXE NAMES "clang-tidy" REQUIRED)
+  cmake_path(GET CLANG_TIDY_EXE PARENT_PATH CLANG_TIDY_DIR)
+
   set(CLANG_TIDY_COMMAND
     "${CLANG_TIDY_EXE}"
     "--use-color"
+    "--load=${CLANG_TIDY_DIR}/clang-taidy.so"
     "--config-file=${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy-core.yaml"
   )
   if (LIEF_CLANG_TIDY_WARN_ERR)
