@@ -173,6 +173,21 @@ impl Memory {
         ))
     }
 
+    /// Allocate a memory chunk through mmap-like function and
+    /// place the allocation at or near the address given in the first parameter.
+    ///
+    /// This address is a **hint**: it is rounded up to the next page boundary
+    /// (next allocation granularity on Windows) and the system remains free to
+    /// return a chunk located somewhere else.
+    pub fn mmap_hint(hint: u64, size: u64, flags: MmapFlags, permission: Perm) -> Option<Chunk> {
+        into_optional(ffi::runtime_Memory::mmap_hint(
+            hint,
+            size,
+            flags.into(),
+            permission.into(),
+        ))
+    }
+
     /// Deallocates a mmaped memory chunk
     pub fn munmap(chunk: &mut Chunk) -> Result<(), Error> {
         to_ok_result!(ffi::runtime_Memory::munmap, chunk.ptr.pin_mut());

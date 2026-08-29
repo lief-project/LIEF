@@ -1513,6 +1513,12 @@
     :py:class:`lief.runtime.Memory`
     :cpp:class:`LIEF::runtime::Memory`
 
+.. |lief-runtime-memory-mmap_hint| lief-api:: lief.runtime.Memory.mmap_hint()
+
+    :rust:method:`lief::runtime::Memory::mmap_hint [struct]`
+    :py:meth:`lief.runtime.Memory.mmap_hint`
+    :cpp:func:`LIEF::runtime::Memory::mmap_hint`
+
 .. |lief-runtime-module| lief-api:: lief.runtime.Module
 
     :rust:trait:`lief::runtime::module::Module`

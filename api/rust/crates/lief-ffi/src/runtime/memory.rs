@@ -24,6 +24,13 @@ pub mod ffi {
         #[Self = "runtime_Memory"]
         fn mmap(size: u64, flags: u32, permission: u32) -> UniquePtr<runtime_Memory_Chunk>;
         #[Self = "runtime_Memory"]
+        fn mmap_hint(
+            hint: u64,
+            size: u64,
+            flags: u32,
+            permission: u32,
+        ) -> UniquePtr<runtime_Memory_Chunk>;
+        #[Self = "runtime_Memory"]
         fn munmap(chunk: Pin<&mut runtime_Memory_Chunk>, err: Pin<&mut u32>);
         #[Self = "runtime_Memory"]
         fn mprotect(chunk: Pin<&mut runtime_Memory_Chunk>, flags: u32, err: Pin<&mut u32>);

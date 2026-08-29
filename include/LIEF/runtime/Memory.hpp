@@ -197,6 +197,15 @@ class LIEF_API Memory {
   static std::optional<Chunk> mmap(size_t size, uint32_t flags,
                                    uint32_t permissions = P_NONE);
 
+  /// Allocate a memory chunk through mmap-like function and
+  /// place the allocation at or near the address given in the first parameter.
+  ///
+  /// This address is a **hint**: it is rounded up to the next page boundary
+  /// (next allocation granularity on Windows) and the system remains free to
+  /// return a chunk located somewhere else.
+  static std::optional<Chunk> mmap_hint(uint64_t hint, size_t size, uint32_t flags,
+                                        uint32_t permissions = P_NONE);
+
   /// Deallocate a mmaped memory chunk
   static ok_error_t munmap(Chunk& C);
 

@@ -106,14 +106,34 @@ std::string Memory::Chunk::to_string() const {
 
 std::optional<Memory::Chunk> Memory::mmap(size_t size, uint32_t flags,
                                           uint32_t perms) {
+  return Memory::mmap_hint(/*hint=*/0, size, flags, perms);
+}
+
+std::optional<Memory::Chunk> Memory::mmap_hint(uint64_t hint, size_t size,
+                                               uint32_t flags, uint32_t perms) {
   if (size == 0) {
     return std::nullopt;
   }
 
-  void* ret = ::mmap(/*__addr=*/nullptr, /*__len=*/size, get_posix_flags(perms),
-                     get_posix_mmap_flags(flags),
+  // mmap requires a page-aligned address. The hint is rounded **up** so that
+  // the mapping does not overlap what is located before it.
+  const uintptr_t addr =
+      hint == 0 ? 0 : runtime::page_align(hint, Process::page_size());
+
+  if (hint != 0 && addr == 0) {
+    LIEF_ERR("mmap: invalid hint: {:#016x}", hint);
+    return std::nullopt;
+  }
+
+  void* ret = ::mmap(reinterpret_cast<void*>(addr), /*__len=*/size,
+                     get_posix_flags(perms), get_posix_mmap_flags(flags),
                      /*__fd=*/-1, /*__offset=*/0);
   if (ret == nullptr || reinterpret_cast<intptr_t>(ret) == -1) {
+    if (addr != 0 && (flags & MP_FIXED) == 0) {
+      LIEF_DEBUG("mmap failed for the hint {:#016x} ({}). Trying without it", addr,
+                 strerror(errno));
+      return Memory::mmap_hint(/*hint=*/0, size, flags, perms);
+    }
     LIEF_ERR("mmap failed: {}", strerror(errno));
     return std::nullopt;
   }

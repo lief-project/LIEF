@@ -185,6 +185,13 @@ std::optional<Memory::Chunk> Memory::mmap(size_t /*size*/, uint32_t /*flags*/,
   return std::nullopt;
 }
 
+std::optional<Memory::Chunk> Memory::mmap_hint(uint64_t /*hint*/, size_t /*size*/,
+                                               uint32_t /*flags*/,
+                                               uint32_t /*permissions*/) {
+  LIEF_ERR(LIEF_NEEDS_RUNTIME_MSG);
+  return std::nullopt;
+}
+
 ok_error_t Memory::munmap(Chunk& /*C*/) {
   LIEF_ERR(LIEF_NEEDS_RUNTIME_MSG);
   return make_error_code(lief_errors::not_implemented);

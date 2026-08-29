@@ -110,6 +110,17 @@ void create<Memory>(nb::module_& m) {
       "Allocates a memory chunk through mmap-like function"_doc,
       "size"_a, "flags"_a, "permissions"_a = Memory::P_NONE)
 
+    .def_static("mmap_hint", &Memory::mmap_hint,
+      R"doc(
+      Allocates a memory chunk through mmap-like function, asking the system
+      to place the allocation at the address given in the first parameter.
+
+      This address is a **hint**: it is rounded up to the next page boundary
+      (next allocation granularity on Windows) and the system remains free to
+      return a chunk located somewhere else.
+      )doc"_doc,
+      "hint"_a, "size"_a, "flags"_a, "permissions"_a = Memory::P_NONE)
+
     .def_static("munmap", &Memory::munmap,
       "Deallocates a mmaped memory chunk"_doc,
       "chunk"_a)

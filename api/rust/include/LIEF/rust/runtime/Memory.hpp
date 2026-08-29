@@ -83,6 +83,13 @@ class runtime_Memory : public Mirror<LIEF::runtime::Memory> {
                                                                   permission));
   }
 
+  static auto mmap_hint(uint64_t hint, uint64_t size, uint32_t flags,
+                        uint32_t permission) {
+    return details::try_unique<runtime_Memory_Chunk>(
+        lief_t::mmap_hint(hint, size, flags, permission)
+    );
+  }
+
   static void munmap(runtime_Memory_Chunk& chunk, uint32_t& err) {
     details::make_error(lief_t::munmap(chunk.get()), err);
   }

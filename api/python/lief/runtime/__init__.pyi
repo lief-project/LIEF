@@ -223,6 +223,11 @@ class Memory:
     def mmap(size: int, flags: int, permissions: int = 0) -> Memory.Chunk | None: ...
 
     @staticmethod
+    def mmap_hint(
+        hint: int, size: int, flags: int, permissions: int = 0
+    ) -> Memory.Chunk | None: ...
+
+    @staticmethod
     def munmap(chunk: Memory.Chunk) -> lief.ok_error_t: ...
 
     @staticmethod

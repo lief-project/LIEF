@@ -56,6 +56,11 @@
       section.name               # '/18'
       section.coff_string.string # '.debug_rnglists'
 
+:Runtime:
+
+  * Add |lief-runtime-memory-mmap_hint| to allocate memory close to a given
+    address.
+
 :C++:
 
   * The parsers now take the file path as a ``std::string_view`` and they also

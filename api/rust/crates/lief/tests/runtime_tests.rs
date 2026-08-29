@@ -240,6 +240,54 @@ fn test_memory() {
     Memory::munmap(&mut chunk);
 }
 
+fn test_memory_hint() {
+    let page_size = Process::page_size() as u64;
+
+    let mut reserved = Memory::mmap(
+        2 * page_size,
+        MmapFlags::ANONYMOUS | MmapFlags::PRIVATE,
+        Perm::READ | Perm::WRITE,
+    )
+    .unwrap();
+
+    // A misaligned hint is rounded up to the next page boundary
+    let mut chunk = Memory::mmap_hint(
+        reserved.addr() + page_size + 1,
+        page_size,
+        MmapFlags::ANONYMOUS | MmapFlags::PRIVATE,
+        Perm::READ,
+    )
+    .unwrap();
+
+    assert_eq!(chunk.addr() % page_size, 0);
+    assert_eq!(chunk.size(), page_size);
+    Memory::munmap(&mut chunk);
+
+    // A hint set to 0 is equivalent to the non-hinted version
+    let mut chunk = Memory::mmap_hint(
+        0,
+        page_size,
+        MmapFlags::ANONYMOUS | MmapFlags::PRIVATE,
+        Perm::READ,
+    )
+    .unwrap();
+    assert!(chunk.is_valid());
+    Memory::munmap(&mut chunk);
+
+    // A hint that can't be page-aligned is rejected
+    assert!(
+        Memory::mmap_hint(
+            u64::MAX,
+            page_size,
+            MmapFlags::ANONYMOUS | MmapFlags::PRIVATE,
+            Perm::READ,
+        )
+        .is_none()
+    );
+
+    Memory::munmap(&mut reserved);
+}
+
 #[test]
 fn test_runtime() {
     if !lief::runtime::enabled() {
@@ -248,6 +296,7 @@ fn test_runtime() {
     test_process();
     test_modules();
     test_memory();
+    test_memory_hint();
     test_android();
 
     if cfg!(target_os = "macos") {
