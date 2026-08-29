@@ -1,20 +1,14 @@
-import enum
 from collections.abc import Iterator, Mapping
+import enum
 from typing import Any, Final, Optional, overload
 
 import lief
 import lief.assembly
 from lief.runtime import (
     android as android,
-)
-from lief.runtime import (
     linux as linux,
-)
-from lief.runtime import (
     osx as osx,
-)
-from lief.runtime import (
-    windows as windows,
+    windows as windows
 )
 
 
@@ -26,7 +20,6 @@ class ARCH(enum.Enum):
     ARM64 = 2
 
     RISCV64 = 3
-
 
 class PLATFORMS(enum.Enum):
     NONE = 0
@@ -41,13 +34,11 @@ class PLATFORMS(enum.Enum):
 
     IOS = 5
 
-
 enabled: bool = ...
 
 platform: PLATFORMS = ...
 
 arch: ARCH = ...
-
 
 class Host:
     name: Final[str] = ...
@@ -59,7 +50,6 @@ class Host:
     config_dir: Final[str] = ...
 
     cache_dir: Final[str] = ...
-
 
 class Process:
     class EnvVars:
@@ -83,7 +73,6 @@ class Process:
     def get_env(key: str) -> str | None: ...
 
     envs: Final[Process.EnvVars] = ...
-
 
 class Module:
     @property
@@ -111,18 +100,13 @@ class Module:
 
     def __str__(self) -> str: ...
 
-
 def modules() -> Iterator[Optional[Module]]: ...
-
 
 def module_from_name(name: str) -> Optional[Module]: ...
 
-
 def module_from_path(path: str) -> Optional[Module]: ...
 
-
 def module_from_addr(addr: int) -> Optional[Module]: ...
-
 
 class Memory:
     class MMAP_FLAGS(enum.IntFlag):
@@ -223,9 +207,7 @@ class Memory:
     def mmap(size: int, flags: int, permissions: int = 0) -> Memory.Chunk | None: ...
 
     @staticmethod
-    def mmap_hint(
-        hint: int, size: int, flags: int, permissions: int = 0
-    ) -> Memory.Chunk | None: ...
+    def mmap_hint(hint: int, size: int, flags: int, permissions: int = 0) -> Memory.Chunk | None: ...
 
     @staticmethod
     def munmap(chunk: Memory.Chunk) -> lief.ok_error_t: ...
@@ -304,10 +286,6 @@ class Memory:
     @staticmethod
     def read_i64(addr: int) -> int: ...
 
-
 def disassemble(addr: int) -> Iterator[Optional[lief.assembly.Instruction]]: ...
 
-
-def assemble(
-    address: int, assembly: str, config: lief.assembly.AssemblerConfig = ...
-) -> bytes: ...
+def assemble(address: int, assembly: str, config: lief.assembly.AssemblerConfig = ...) -> bytes: ...
