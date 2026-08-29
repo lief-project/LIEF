@@ -47,7 +47,7 @@ std::unique_ptr<Binary> BinaryParser::parse(std::string_view file,
     return nullptr;
   }
 
-  if (!is_fat(file)) {
+  if (is_fat(file)) {
     LIEF_ERR("{} is a Fat Mach-O file. Please use MachO::Parser::parse(...)",
              file);
     return nullptr;
