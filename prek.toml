@@ -1,3 +1,5 @@
+default_env = { RUSTUP_TOOLCHAIN = "nightly" }
+
 [[repos]]
 repo = "local"
 hooks = [
