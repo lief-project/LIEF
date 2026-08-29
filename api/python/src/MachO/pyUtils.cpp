@@ -28,7 +28,7 @@ namespace LIEF::MachO::py {
 
 void init_utils(nb::module_& m) {
   lief_mod->def("is_macho",
-    [] (nb::PathLike path) { return is_macho(path); },
+    [] (nb::PathLike path) { return is_macho(path.to_string()); },
     "Check if the given file is a ``MachO`` (from filename)"_doc,
     "filename"_a
   );
@@ -40,13 +40,13 @@ void init_utils(nb::module_& m) {
   );
 
   m.def("is_fat",
-    [] (nb::PathLike path) { return is_fat(path); },
+    [] (nb::PathLike path) { return is_fat(path.to_string()); },
     "Check if the given Mach-O is fat"_doc,
     "file"_a
   );
 
   m.def("is_64",
-    [] (nb::PathLike path) { return is_64(path); },
+    [] (nb::PathLike path) { return is_64(path.to_string()); },
     "Check if the given Mach-O is 64-bits"_doc,
     "file"_a
   );

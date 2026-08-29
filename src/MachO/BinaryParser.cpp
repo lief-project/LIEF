@@ -36,11 +36,11 @@ BinaryParser::BinaryParser() = default;
 BinaryParser::~BinaryParser() = default;
 
 
-std::unique_ptr<Binary> BinaryParser::parse(const std::string& file) {
+std::unique_ptr<Binary> BinaryParser::parse(std::string_view file) {
   return parse(file, ParserConfig::deep());
 }
 
-std::unique_ptr<Binary> BinaryParser::parse(const std::string& file,
+std::unique_ptr<Binary> BinaryParser::parse(std::string_view file,
                                             const ParserConfig& conf) {
   if (!is_macho(file)) {
     LIEF_DEBUG("{} is not a Mach-O file", file);

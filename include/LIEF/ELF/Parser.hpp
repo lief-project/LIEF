@@ -15,9 +15,11 @@
  */
 #ifndef LIEF_ELF_PARSER_H
 #define LIEF_ELF_PARSER_H
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 
+#include "LIEF/path.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/visibility.h"
 
@@ -71,8 +73,15 @@ class LIEF_API Parser : public LIEF::Parser {
   ///
   /// @return LIEF::ELF::Binary as a `unique_ptr`
   static std::unique_ptr<Binary>
-      parse(const std::string& file,
-            const ParserConfig& conf = ParserConfig::all());
+      parse(std::string_view file, const ParserConfig& conf = ParserConfig::all());
+
+  /// Same as parse(std::string_view, const ParserConfig&) but the file is
+  /// given as a `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<Binary>
+      parse(const PathT& file, const ParserConfig& conf = ParserConfig::all()) {
+    return parse(file.string(), conf);
+  }
 
   /// Parse the given raw data as an ELF binary and return a LIEF::ELF::Binary
   /// object
@@ -133,16 +142,25 @@ class LIEF_API Parser : public LIEF::Parser {
   /// @param[in] addr     Virtual address at which the dump was mapped
   /// @param[in] conf     Optional configuration for the parser
   static std::unique_ptr<Binary>
-      parse_from_dump(const std::string& filepath, uint64_t addr,
+      parse_from_dump(std::string_view filepath, uint64_t addr,
                       const ParserConfig& conf = ParserConfig::all());
 
-  /// Same as parse_from_dump(const std::string&, uint64_t, const ParserConfig&)
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
+  /// but the dump file is given as a `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<Binary>
+      parse_from_dump(const PathT& filepath, uint64_t addr,
+                      const ParserConfig& conf = ParserConfig::all()) {
+    return parse_from_dump(filepath.string(), addr, conf);
+  }
+
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
   /// but the dump is wrapped in the given **non-owned** stream.
   static std::unique_ptr<Binary>
       parse_from_dump(BinaryStream& stream, uint64_t addr,
                       const ParserConfig& conf = ParserConfig::all());
 
-  /// Same as parse_from_dump(const std::string&, uint64_t, const ParserConfig&)
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
   /// but the dump is wrapped in the given **owned** stream.
   static std::unique_ptr<Binary>
       parse_from_dump(std::unique_ptr<BinaryStream> stream, uint64_t addr,
@@ -156,7 +174,7 @@ class LIEF_API Parser : public LIEF::Parser {
   protected:
   LIEF_LOCAL Parser();
   LIEF_LOCAL Parser(std::unique_ptr<BinaryStream> stream, ParserConfig config);
-  LIEF_LOCAL Parser(const std::string& file, ParserConfig config);
+  LIEF_LOCAL Parser(std::string_view file, ParserConfig config);
   LIEF_LOCAL Parser(const std::vector<uint8_t>& data, ParserConfig config);
 
   LIEF_LOCAL ok_error_t init();

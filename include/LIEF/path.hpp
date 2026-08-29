@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "COFF/pyCOFF.hpp"
+#ifndef LIEF_PATH_H
+#define LIEF_PATH_H
+#include <type_traits>
+#include <filesystem>
 
-#include "LIEF/COFF/utils.hpp"
+namespace LIEF {
 
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
-#include "nanobind/extra/stl/pathlike.h"
+/// Whether `T` is a `std::filesystem::path`
+template<class T>
+inline constexpr bool is_path_v =
+    std::is_same_v<std::decay_t<T>, std::filesystem::path>;
 
-namespace LIEF::COFF::py {
+/// Helper used by the functions that expose both a `std::string_view` and a
+/// `std::filesystem::path` overload to avoid ambiguous resolution
+/// (e.g. LIEF::ELF::Parser::parse).
+template<class... Ts>
+using enable_if_path_t = std::enable_if_t<(is_path_v<Ts> || ...), int>;
 
-void init_utils(nb::module_&) {
-  lief_mod->def("is_coff",
-    [] (nb::PathLike path) { return is_coff(path.to_string()); },
-    "Check if the given file is a COFF"_doc,
-    "file"_a
-  );
 }
-}
+
+#endif

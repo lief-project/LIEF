@@ -90,7 +90,7 @@ bool is_macho(BinaryStream& stream) {
           magic == MachO::MACHO_TYPES::NEURAL_MODEL);
 }
 
-bool is_macho(const std::string& file) {
+bool is_macho(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return is_macho(*stream);
   }
@@ -104,7 +104,7 @@ bool is_macho(const std::vector<uint8_t>& raw) {
   return false;
 }
 
-bool is_fat(const std::string& file) {
+bool is_fat(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     if (auto magic_res = magic_from_stream(*stream)) {
       const MACHO_TYPES magic = *magic_res;
@@ -123,7 +123,7 @@ bool is_64(BinaryStream& stream) {
   return false;
 }
 
-bool is_64(const std::string& file) {
+bool is_64(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return is_64(*stream);
   }

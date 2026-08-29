@@ -3,7 +3,7 @@
 ## Utilities
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::ART::is_art(const std::string&)
+.. doxygenfunction:: LIEF::ART::is_art(std::string_view)
   :project: lief
 ```
 
@@ -13,7 +13,7 @@
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::ART::version(const std::string&)
+.. doxygenfunction:: LIEF::ART::version(std::string_view)
   :project: lief
 ```
 

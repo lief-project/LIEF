@@ -15,11 +15,13 @@
  */
 #ifndef LIEF_PE_SIGNATURE_PARSER_H
 #define LIEF_PE_SIGNATURE_PARSER_H
+#include <string_view>
 #include <array>
 #include <memory>
 #include <string>
 
 #include "LIEF/errors.hpp"
+#include "LIEF/path.hpp"
 
 #include "LIEF/PE/signature/Signature.hpp"
 
@@ -63,7 +65,14 @@ class LIEF_API SignatureParser {
   static result<Signature> parse(BinaryStream& stream, bool skip_header = false);
 
   /// Parse a PKCS #7 signature from a file path
-  static result<Signature> parse(const std::string& path);
+  static result<Signature> parse(std::string_view path);
+
+  /// Same as parse(std::string_view) but the file is given as a
+  /// `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static result<Signature> parse(const PathT& path) {
+    return parse(path.string());
+  }
   SignatureParser(const SignatureParser&) = delete;
   SignatureParser& operator=(const SignatureParser&) = delete;
 

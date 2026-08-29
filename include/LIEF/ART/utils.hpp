@@ -16,7 +16,7 @@
 #ifndef LIEF_ART_UTILS_H
 #define LIEF_ART_UTILS_H
 
-#include <string>
+#include <string_view>
 #include <vector>
 
 #include "LIEF/ART/types.hpp"
@@ -29,13 +29,13 @@
 namespace LIEF::ART {
 
 /// Check if the given file is an ART one.
-LIEF_API bool is_art(const std::string& file);
+LIEF_API bool is_art(std::string_view file);
 
 /// Check if the given raw data is an ART one.
 LIEF_API bool is_art(const std::vector<uint8_t>& raw);
 
 /// Return the ART version of the given file
-LIEF_API art_version_t version(const std::string& file);
+LIEF_API art_version_t version(std::string_view file);
 
 /// Return the ART version of the raw data
 LIEF_API art_version_t version(const std::vector<uint8_t>& raw);

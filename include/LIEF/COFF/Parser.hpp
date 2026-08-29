@@ -18,7 +18,10 @@
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/path.hpp"
 #include "LIEF/visibility.h"
+
+#include <string_view>
 #include <map>
 
 #include "LIEF/COFF/Header.hpp"
@@ -43,8 +46,17 @@ class Parser {
 
   /// Parse the COFF binary pointed by the `file` argument with the given config
   static LIEF_API std::unique_ptr<Binary>
-      parse(const std::string& file,
+      parse(std::string_view file,
             const ParserConfig& config = ParserConfig::default_conf());
+
+  /// Same as parse(std::string_view, const ParserConfig&) but the file is
+  /// given as a `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<Binary>
+      parse(const PathT& file,
+            const ParserConfig& config = ParserConfig::default_conf()) {
+    return parse(file.string(), config);
+  }
 
   /// @private
   struct SymSec {

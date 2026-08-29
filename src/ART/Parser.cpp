@@ -34,7 +34,7 @@ namespace LIEF::ART {
 Parser::~Parser() = default;
 Parser::Parser() = default;
 
-std::unique_ptr<File> Parser::parse(const std::string& filename) {
+std::unique_ptr<File> Parser::parse(std::string_view filename) {
   if (!is_art(filename)) {
     LIEF_ERR("'{}' is not an ART file", filename);
     return nullptr;
@@ -47,7 +47,7 @@ std::unique_ptr<File> Parser::parse(const std::string& filename) {
 }
 
 std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data,
-                                    const std::string& name) {
+                                    std::string_view name) {
   if (!is_art(data)) {
     LIEF_ERR("'{}' is not an ART file", name);
     return nullptr;
@@ -64,7 +64,7 @@ Parser::Parser(std::vector<uint8_t> data) :
   file_{new File{}},
   stream_{std::make_unique<VectorStream>(std::move(data))} {}
 
-Parser::Parser(const std::string& file) :
+Parser::Parser(std::string_view file) :
   file_{new File{}} {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
@@ -75,7 +75,7 @@ Parser::Parser(const std::string& file) :
 }
 
 
-void Parser::init(const std::string& /*name*/, art_version_t version) {
+void Parser::init(std::string_view /*name*/, art_version_t version) {
 
   if (version <= details::ART_17::art_version) {
     return parse_file<details::ART17>();

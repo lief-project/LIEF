@@ -56,6 +56,19 @@
       section.name               # '/18'
       section.coff_string.string # '.debug_rnglists'
 
+:C++:
+
+  * The parsers now take the file path as a ``std::string_view`` and they also
+    accept a ``std::filesystem::path``:
+
+    .. code-block:: cpp
+
+      #include <filesystem>
+      #include <LIEF/ELF.hpp>
+
+      std::filesystem::path path = "/bin/ls";
+      std::unique_ptr<LIEF::ELF::Binary> elf = LIEF::ELF::Parser::parse(path);
+
 :Dependencies:
 
   * Update nanobind to version ``3.0.1``

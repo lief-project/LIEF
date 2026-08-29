@@ -800,7 +800,7 @@ ______________________________________________________________________
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::PE::get_type(const std::string &)
+.. doxygenfunction:: LIEF::PE::get_type(std::string_view)
 ```
 
 ```{eval-rst}
@@ -808,7 +808,7 @@ ______________________________________________________________________
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::PE::is_pe(const std::string &)
+.. doxygenfunction:: LIEF::PE::is_pe(std::string_view)
 ```
 
 ```{eval-rst}

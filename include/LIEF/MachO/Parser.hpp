@@ -15,11 +15,12 @@
  */
 #ifndef LIEF_MACHO_PARSER_H
 #define LIEF_MACHO_PARSER_H
+#include <string_view>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "LIEF/errors.hpp"
+#include "LIEF/path.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Parser.hpp"
@@ -55,8 +56,17 @@ class LIEF_API Parser : public LIEF::Parser {
   /// @param[in] filename   Path to the Mach-O file
   /// @param[in] conf       Parser configuration (Default: ParserConfig::deep)
   static std::unique_ptr<FatBinary>
-      parse(const std::string& filename,
+      parse(std::string_view filename,
             const ParserConfig& conf = ParserConfig::deep());
+
+  /// Same as parse(std::string_view, const ParserConfig&) but the file is
+  /// given as a `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<FatBinary>
+      parse(const PathT& filename,
+            const ParserConfig& conf = ParserConfig::deep()) {
+    return parse(filename.string(), conf);
+  }
 
   /// Parse a Mach-O file from the raw content provided by the ``data``
   /// parameter
@@ -97,23 +107,32 @@ class LIEF_API Parser : public LIEF::Parser {
   /// @param[in] addr     Virtual address at which the dump was mapped
   /// @param[in] conf     Optional configuration for the parser
   static std::unique_ptr<FatBinary>
-      parse_from_dump(const std::string& filepath, uint64_t addr,
+      parse_from_dump(std::string_view filepath, uint64_t addr,
                       const ParserConfig& conf = ParserConfig::deep());
 
-  /// Same as parse_from_dump(const std::string&, uint64_t, const ParserConfig&)
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
+  /// but the dump file is given as a `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<FatBinary>
+      parse_from_dump(const PathT& filepath, uint64_t addr,
+                      const ParserConfig& conf = ParserConfig::deep()) {
+    return parse_from_dump(filepath.string(), addr, conf);
+  }
+
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
   /// but the dump is wrapped in the given **non-owned** stream.
   static std::unique_ptr<FatBinary>
       parse_from_dump(BinaryStream& stream, uint64_t addr,
                       const ParserConfig& conf = ParserConfig::deep());
 
-  /// Same as parse_from_dump(const std::string&, uint64_t, const ParserConfig&)
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
   /// but the dump is wrapped in the given **owned** stream.
   static std::unique_ptr<FatBinary>
       parse_from_dump(std::unique_ptr<BinaryStream> stream, uint64_t addr,
                       const ParserConfig& conf = ParserConfig::deep());
 
   private:
-  LIEF_LOCAL Parser(const std::string& file, const ParserConfig& conf);
+  LIEF_LOCAL Parser(std::string_view file, const ParserConfig& conf);
   LIEF_LOCAL Parser(std::vector<uint8_t> data, const ParserConfig& conf);
   LIEF_LOCAL Parser();
 

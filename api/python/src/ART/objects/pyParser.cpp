@@ -27,6 +27,7 @@
 #include <memory>
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 
@@ -37,13 +38,14 @@ void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
   m.def("parse",
-    nb::overload_cast<const std::string&>(&Parser::parse),
+    static_cast<std::unique_ptr<File>(*)(std::string_view)>(&Parser::parse),
     "Parse the given filename and return an " RST_CLASS_REF(lief.ART.File) " object"_doc,
     "filename"_a,
     nb::rv_policy::take_ownership);
 
   m.def("parse",
-    nb::overload_cast<std::vector<uint8_t>, const std::string&>(&Parser::parse),
+    static_cast<std::unique_ptr<File>(*)(std::vector<uint8_t>, std::string_view)>(
+        &Parser::parse),
     "Parse the given raw data and return an " RST_CLASS_REF(lief.ART.File) " object"_doc,
     "raw"_a, "name"_a = "",
     nb::rv_policy::take_ownership);

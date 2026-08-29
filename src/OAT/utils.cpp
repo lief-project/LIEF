@@ -28,7 +28,7 @@
 
 namespace LIEF::OAT {
 
-bool is_oat(const std::string& file) {
+bool is_oat(std::string_view file) {
   if (!ELF::is_elf(file)) {
     return false;
   }
@@ -58,7 +58,7 @@ bool is_oat(const ELF::Binary& elf) {
   return false;
 }
 
-oat_version_t version(const std::string& file) {
+oat_version_t version(std::string_view file) {
   if (!is_oat(file)) {
     return 0;
   }

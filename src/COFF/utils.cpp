@@ -19,7 +19,7 @@
 
 namespace LIEF::COFF {
 
-bool is_coff(const std::string& file) {
+bool is_coff(std::string_view file) {
   result<FileStream> fs = LIEF::FileStream::from_file(file);
   return fs ? is_coff(*fs) : false;
 }

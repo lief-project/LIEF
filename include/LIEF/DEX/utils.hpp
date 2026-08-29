@@ -16,7 +16,7 @@
 #ifndef LIEF_DEX_UTILS_H
 #define LIEF_DEX_UTILS_H
 
-#include <string>
+#include <string_view>
 #include <vector>
 
 #include "LIEF/DEX/types.hpp"
@@ -28,13 +28,13 @@ class BinaryStream;
 namespace DEX {
 
 /// Check if the given file is a DEX.
-LIEF_API bool is_dex(const std::string& file);
+LIEF_API bool is_dex(std::string_view file);
 
 /// Check if the given raw data is a DEX.
 LIEF_API bool is_dex(const std::vector<uint8_t>& raw);
 
 /// Return the DEX version of the given file
-LIEF_API dex_version_t version(const std::string& file);
+LIEF_API dex_version_t version(std::string_view file);
 
 /// Return the DEX version of the raw data
 LIEF_API dex_version_t version(const std::vector<uint8_t>& raw);

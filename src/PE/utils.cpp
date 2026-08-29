@@ -67,7 +67,7 @@ bool is_pe(BinaryStream& stream) {
   return false;
 }
 
-bool is_pe(const std::string& file) {
+bool is_pe(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return is_pe(*stream);
   }
@@ -145,7 +145,7 @@ result<PE_TYPE> get_type_from_stream(BinaryStream& stream) {
   return make_error_code(lief_errors::file_format_error);
 }
 
-result<PE_TYPE> get_type(const std::string& file) {
+result<PE_TYPE> get_type(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return get_type_from_stream(*stream);
   }

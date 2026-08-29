@@ -20,6 +20,7 @@
 #include <cstdint>
 #include <functional>
 
+#include <string_view>
 #include <string>
 #include <vector>
 
@@ -33,16 +34,16 @@ class FatBinary;
 LIEF_API bool is_macho(BinaryStream& stream);
 
 /// Check if the given file is a Mach-O binary
-LIEF_API bool is_macho(const std::string& file);
+LIEF_API bool is_macho(std::string_view file);
 
 /// Check if the given raw data is a Mach-O binary
 LIEF_API bool is_macho(const std::vector<uint8_t>& raw);
 
 /// Check if the given file is a FAT Mach-O
-LIEF_API bool is_fat(const std::string& file);
+LIEF_API bool is_fat(std::string_view file);
 
 /// Check if the given Mach-O is 64-bits
-LIEF_API bool is_64(const std::string& file);
+LIEF_API bool is_64(std::string_view file);
 
 LIEF_API bool is_64(BinaryStream& stream);
 

@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_UTILS_H
 #define LIEF_ELF_UTILS_H
 
+#include <string_view>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -32,7 +33,7 @@ class Binary;
 LIEF_API bool is_elf(BinaryStream& stream);
 
 /// Check if the given file is an ELF one.
-LIEF_API bool is_elf(const std::string& file);
+LIEF_API bool is_elf(std::string_view file);
 
 /// Check if the raw data is an ELF file
 LIEF_API bool is_elf(const std::vector<uint8_t>& raw);

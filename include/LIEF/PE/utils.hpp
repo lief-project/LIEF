@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_UTILS_H
 #define LIEF_PE_UTILS_H
+#include <string_view>
 #include <string>
 #include <vector>
 
@@ -49,13 +50,13 @@ enum class IMPHASH_MODE {
 LIEF_API bool is_pe(BinaryStream& stream);
 
 /// check if the `file` is a PE file
-LIEF_API bool is_pe(const std::string& file);
+LIEF_API bool is_pe(std::string_view file);
 
 /// check if the raw data is a PE file
 LIEF_API bool is_pe(const std::vector<uint8_t>& raw);
 
 /// if the input `file` is a PE one, return `PE32` or `PE32+`
-LIEF_API result<PE_TYPE> get_type(const std::string& file);
+LIEF_API result<PE_TYPE> get_type(std::string_view file);
 
 /// Return `PE32` or `PE32+`
 LIEF_API result<PE_TYPE> get_type(const std::vector<uint8_t>& raw);

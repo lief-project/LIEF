@@ -347,7 +347,7 @@ ______________________________________________________________________
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::ELF::is_elf(const std::string&)
+.. doxygenfunction:: LIEF::ELF::is_elf(std::string_view)
 ```
 
 ```{eval-rst}

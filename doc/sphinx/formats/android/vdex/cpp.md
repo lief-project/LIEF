@@ -3,7 +3,7 @@
 ## Utilities
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::VDEX::is_vdex(const std::string&)
+.. doxygenfunction:: LIEF::VDEX::is_vdex(std::string_view)
   :project: lief
 ```
 
@@ -13,7 +13,7 @@
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::VDEX::version(const std::string&)
+.. doxygenfunction:: LIEF::VDEX::version(std::string_view)
   :project: lief
 ```
 

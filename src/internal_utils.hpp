@@ -39,7 +39,7 @@ inline bool is_printable(char c) {
   return ' ' <= c && c <= '~';
 }
 
-inline bool is_printable(const std::string& str) {
+inline bool is_printable(std::string_view str) {
   return std::all_of(str.begin(), str.end(),
                      [](char c) { return is_printable(c); });
 }

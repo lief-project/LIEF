@@ -109,7 +109,7 @@ void init_objects(nb::module_& m) {
 inline void init_utils(nb::module_& m) {
   lief_mod->def("is_elf",
     [] (nb::PathLike path) {
-      return is_elf(path);
+      return is_elf(path.to_string());
     }, "Check if the given file is an ``ELF``", "filename"_a
   );
 

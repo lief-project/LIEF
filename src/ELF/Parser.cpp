@@ -71,7 +71,7 @@ Parser::Parser(std::unique_ptr<BinaryStream> stream, ParserConfig conf) :
   }
 }
 
-Parser::Parser(const std::string& file, ParserConfig conf) :
+Parser::Parser(std::string_view file, ParserConfig conf) :
   binary_{new Binary{}},
   config_{conf} {
   if (auto s = VectorStream::from_file(file)) {
@@ -367,7 +367,7 @@ ok_error_t Parser::init() {
   return ok();
 }
 
-std::unique_ptr<Binary> Parser::parse(const std::string& filename,
+std::unique_ptr<Binary> Parser::parse(std::string_view filename,
                                       const ParserConfig& conf) {
   if (!is_elf(filename)) {
     return nullptr;
@@ -439,7 +439,7 @@ std::unique_ptr<Binary> Parser::parse_from_memory(uintptr_t address, size_t size
   return std::move(parser.binary_);
 }
 
-std::unique_ptr<Binary> Parser::parse_from_dump(const std::string& filepath,
+std::unique_ptr<Binary> Parser::parse_from_dump(std::string_view filepath,
                                                 uint64_t addr,
                                                 const ParserConfig& conf) {
   auto stream = VectorStream::from_file(filepath);

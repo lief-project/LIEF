@@ -18,13 +18,14 @@
 #include "LIEF/ART/utils.hpp"
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
 
 namespace LIEF::ART::py {
 
 void init_utils(nb::module_& m) {
   lief_mod->def("is_art",
-      nb::overload_cast<const std::string&>(&is_art),
+      nb::overload_cast<std::string_view>(&is_art),
       "Check if the **file** given in parameter is an ART"_doc,
       "path"_a);
 
@@ -34,7 +35,7 @@ void init_utils(nb::module_& m) {
       "raw"_a);
 
   m.def("version",
-      nb::overload_cast<const std::string&>(&version),
+      nb::overload_cast<std::string_view>(&version),
       "Return the ART version of the **file** given in parameter"_doc,
       "file"_a);
 

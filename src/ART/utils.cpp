@@ -51,7 +51,7 @@ inline art_version_t version(BinaryStream& stream) {
 }
 
 
-bool is_art(const std::string& file) {
+bool is_art(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return is_art(*stream);
   }
@@ -65,7 +65,7 @@ bool is_art(const std::vector<uint8_t>& raw) {
   return false;
 }
 
-art_version_t version(const std::string& file) {
+art_version_t version(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return version(*stream);
   }

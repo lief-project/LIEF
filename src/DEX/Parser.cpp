@@ -34,7 +34,7 @@ namespace LIEF::DEX {
 Parser::~Parser() = default;
 Parser::Parser() = default;
 
-std::unique_ptr<File> Parser::parse(const std::string& filename) {
+std::unique_ptr<File> Parser::parse(std::string_view filename) {
   if (!is_dex(filename)) {
     LIEF_ERR("'{}' is not a DEX file", filename);
     return nullptr;
@@ -46,7 +46,7 @@ std::unique_ptr<File> Parser::parse(const std::string& filename) {
 }
 
 std::unique_ptr<File> Parser::parse(std::vector<uint8_t> data,
-                                    const std::string& name) {
+                                    std::string_view name) {
   if (!is_dex(data)) {
     LIEF_ERR("'{}' is not a DEX file", name);
     return nullptr;
@@ -63,7 +63,7 @@ Parser::Parser(std::vector<uint8_t> data) :
   file_{new File{}},
   stream_{std::make_unique<VectorStream>(std::move(data))} {}
 
-Parser::Parser(const std::string& file) :
+Parser::Parser(std::string_view file) :
   file_{new File{}} {
   auto stream = VectorStream::from_file(file);
   if (!stream) {
@@ -74,7 +74,7 @@ Parser::Parser(const std::string& file) :
 }
 
 
-void Parser::init(const std::string& name, dex_version_t version) {
+void Parser::init(std::string_view name, dex_version_t version) {
   LIEF_DEBUG("Parsing file: {}", name);
 
   if (version == details::DEX_35::dex_version) {

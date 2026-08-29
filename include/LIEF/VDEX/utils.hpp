@@ -16,7 +16,7 @@
 #ifndef LIEF_VDEX_UTILS_H
 #define LIEF_VDEX_UTILS_H
 
-#include <string>
+#include <string_view>
 #include <vector>
 
 #include "LIEF/VDEX/type_traits.hpp"
@@ -29,13 +29,13 @@
 namespace LIEF::VDEX {
 
 /// Check if the given file is a VDEX one.
-LIEF_API bool is_vdex(const std::string& file);
+LIEF_API bool is_vdex(std::string_view file);
 
 /// Check if the given raw data is a VDEX one.
 LIEF_API bool is_vdex(const std::vector<uint8_t>& raw);
 
 /// Return the VDEX version of the given file
-LIEF_API vdex_version_t version(const std::string& file);
+LIEF_API vdex_version_t version(std::string_view file);
 
 /// Return the VDEX version of the raw data
 LIEF_API vdex_version_t version(const std::vector<uint8_t>& raw);

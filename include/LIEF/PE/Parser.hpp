@@ -16,11 +16,12 @@
 #ifndef LIEF_PE_PARSER_H
 #define LIEF_PE_PARSER_H
 
+#include <string_view>
 #include <map>
-#include <string>
 #include <vector>
 
 #include "LIEF/errors.hpp"
+#include "LIEF/path.hpp"
 #include "LIEF/utils.hpp"
 #include "LIEF/visibility.h"
 
@@ -77,20 +78,29 @@ class LIEF_API Parser : public LIEF::Parser {
   ///   1. The name is not too large or empty (cf.
   ///   https://stackoverflow.com/a/23340781)
   ///   2. All the characters are printable
-  static bool is_valid_import_name(const std::string& name);
+  static bool is_valid_import_name(std::string_view name);
 
   /// Check if the given name is a valid DLL name.
   ///
   /// This check verifies that:
   ///   1. The name of the DLL is at least 4 characters long
   ///   2. All the characters are printable
-  static bool is_valid_dll_name(const std::string& name);
+  static bool is_valid_dll_name(std::string_view name);
 
   public:
   /// Parse a PE binary from the given filename
   static std::unique_ptr<Binary>
-      parse(const std::string& filename,
+      parse(std::string_view filename,
             const ParserConfig& conf = ParserConfig::default_conf());
+
+  /// Same as parse(std::string_view, const ParserConfig&) but the file is
+  /// given as a `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<Binary>
+      parse(const PathT& filename,
+            const ParserConfig& conf = ParserConfig::default_conf()) {
+    return parse(filename.string(), conf);
+  }
 
   /// Parse a PE binary from a data buffer
   static std::unique_ptr<Binary>
@@ -126,16 +136,25 @@ class LIEF_API Parser : public LIEF::Parser {
   /// @param[in] addr     Virtual address at which the dump was mapped
   /// @param[in] config   Optional configuration for the parser
   static std::unique_ptr<Binary>
-      parse_from_dump(const std::string& filepath, uint64_t addr,
+      parse_from_dump(std::string_view filepath, uint64_t addr,
                       const ParserConfig& config = ParserConfig::default_conf());
 
-  /// Same as parse_from_dump(const std::string&, uint64_t, const ParserConfig&)
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
+  /// but the dump file is given as a `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<Binary>
+      parse_from_dump(const PathT& filepath, uint64_t addr,
+                      const ParserConfig& config = ParserConfig::default_conf()) {
+    return parse_from_dump(filepath.string(), addr, config);
+  }
+
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
   /// but the dump is wrapped in the given **non-owned** stream.
   static std::unique_ptr<Binary>
       parse_from_dump(BinaryStream& stream, uint64_t addr,
                       const ParserConfig& config = ParserConfig::default_conf());
 
-  /// Same as parse_from_dump(const std::string&, uint64_t, const ParserConfig&)
+  /// Same as parse_from_dump(std::string_view, uint64_t, const ParserConfig&)
   /// but the dump is wrapped in the given **owned** stream.
   static std::unique_ptr<Binary>
       parse_from_dump(std::unique_ptr<BinaryStream> stream, uint64_t addr,
@@ -184,7 +203,7 @@ class LIEF_API Parser : public LIEF::Parser {
     uint64_t size = 0;
     uint64_t value = 0;
   };
-  Parser(const std::string& file);
+  Parser(std::string_view file);
   Parser(std::vector<uint8_t> data);
   Parser(std::unique_ptr<BinaryStream> stream);
 

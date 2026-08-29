@@ -51,7 +51,7 @@ dex_version_t version(BinaryStream& stream) {
   return 0;
 }
 
-bool is_dex(const std::string& file) {
+bool is_dex(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return is_dex(*stream);
   }
@@ -65,7 +65,7 @@ bool is_dex(const std::vector<uint8_t>& raw) {
   return false;
 }
 
-dex_version_t version(const std::string& file) {
+dex_version_t version(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return version(*stream);
   }

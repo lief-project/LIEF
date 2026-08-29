@@ -16,8 +16,8 @@
 #ifndef LIEF_VECTOR_STREAM_H
 #define LIEF_VECTOR_STREAM_H
 
+#include <string_view>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
@@ -32,7 +32,7 @@ class LIEF_API VectorStream : public BinaryStream {
   using BinaryStream::p;
   using BinaryStream::start;
 
-  static result<VectorStream> from_file(const std::string& file);
+  static result<VectorStream> from_file(std::string_view file);
   VectorStream(std::vector<uint8_t> data) :
     BinaryStream(BinaryStream::STREAM_TYPE::VECTOR),
     binary_(std::move(data)),

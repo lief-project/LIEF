@@ -16,7 +16,7 @@
 #ifndef LIEF_OAT_UTILS_H
 #define LIEF_OAT_UTILS_H
 
-#include <string>
+#include <string_view>
 #include <vector>
 
 #include "LIEF/visibility.h"
@@ -37,13 +37,13 @@ LIEF_API bool is_oat(BinaryStream& stream);
 LIEF_API bool is_oat(const LIEF::ELF::Binary& elf_binary);
 
 /// Check if the given file is an OAT one.
-LIEF_API bool is_oat(const std::string& file);
+LIEF_API bool is_oat(std::string_view file);
 
 /// Check if the given raw data is an OAT one.
 LIEF_API bool is_oat(const std::vector<uint8_t>& raw);
 
 /// Return the OAT version of the given file
-LIEF_API oat_version_t version(const std::string& file);
+LIEF_API oat_version_t version(std::string_view file);
 
 /// Return the OAT version of the raw data
 LIEF_API oat_version_t version(const std::vector<uint8_t>& raw);

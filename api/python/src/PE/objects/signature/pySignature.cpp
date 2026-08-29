@@ -85,7 +85,7 @@ void create<Signature>(nb::module_& m) {
   signature
     .def_static("parse",
         [] (nb::PathLike path) -> std::unique_ptr<Signature> {
-          auto sig = SignatureParser::parse(path);
+          auto sig = SignatureParser::parse(path.to_string());
           if (!sig) {
             return nullptr;
           }

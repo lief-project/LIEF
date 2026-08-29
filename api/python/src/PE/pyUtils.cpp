@@ -44,7 +44,7 @@ void init_utils(nb::module_& m) {
 
 
   lief_mod->def("is_pe",
-    [] (nb::PathLike path) { return is_pe(path); },
+    [] (nb::PathLike path) { return is_pe(path.to_string()); },
     "Check if the given file is a ``PE``"_doc,
     "file"_a);
 
@@ -55,7 +55,8 @@ void init_utils(nb::module_& m) {
 
   m.def("get_type",
       [] (nb::PathLike file) {
-        return error_or(static_cast<result<PE_TYPE> (*)(const std::string&)>(&get_type), file);
+        return error_or(static_cast<result<PE_TYPE> (*)(std::string_view)>(&get_type),
+                        file.to_string());
       },
       R"delim(
       If the input file is a valid ``PE``, return the :class:`~.lief.PE.PE_TYPE`.

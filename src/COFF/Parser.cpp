@@ -60,7 +60,7 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
   return nullptr;
 }
 
-std::unique_ptr<Binary> Parser::parse(const std::string& file,
+std::unique_ptr<Binary> Parser::parse(std::string_view file,
                                       const ParserConfig& config) {
   if (auto strm = VectorStream::from_file(file)) {
     return parse(std::make_unique<VectorStream>(std::move(*strm)), config);

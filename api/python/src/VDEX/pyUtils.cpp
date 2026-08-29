@@ -17,12 +17,13 @@
 
 #include "LIEF/VDEX/utils.hpp"
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
 
 namespace LIEF::VDEX::py {
 
 void init_utils(nb::module_& m) {
-  lief_mod->def("is_vdex", nb::overload_cast<const std::string&>(&is_vdex),
+  lief_mod->def("is_vdex", nb::overload_cast<std::string_view>(&is_vdex),
       "Check if the **file** given in parameter is a VDEX"_doc,
       "path"_a);
 
@@ -30,7 +31,7 @@ void init_utils(nb::module_& m) {
       "Check if the **raw data** given in parameter is a VDEX"_doc,
       "raw"_a);
 
-  m.def("version", nb::overload_cast<const std::string&>(&version),
+  m.def("version", nb::overload_cast<std::string_view>(&version),
       "Return the VDEX version of the **file** given in parameter"_doc,
       "file"_a);
 

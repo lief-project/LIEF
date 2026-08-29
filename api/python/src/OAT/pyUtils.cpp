@@ -19,6 +19,7 @@
 #include "LIEF/OAT/Binary.hpp"
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
 
 namespace LIEF::OAT::py {
@@ -30,7 +31,7 @@ void init_utils(nb::module_& m) {
       "binary"_a);
 
   lief_mod->def("is_oat",
-      nb::overload_cast<const std::string&>(&is_oat),
+      nb::overload_cast<std::string_view>(&is_oat),
       "Check if the **file** given in parameter is an OAT"_doc,
       "path"_a);
 
@@ -45,7 +46,7 @@ void init_utils(nb::module_& m) {
       "binary"_a);
 
   m.def("version",
-      nb::overload_cast<const std::string&>(&version),
+      nb::overload_cast<std::string_view>(&version),
       "Return the OAT version of the **file** given in parameter"_doc,
       "file"_a);
 

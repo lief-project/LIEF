@@ -16,11 +16,12 @@
 #ifndef LIEF_ABSTRACT_PARSER_H
 #define LIEF_ABSTRACT_PARSER_H
 
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 #include <vector>
 
+#include "LIEF/path.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -34,7 +35,14 @@ class LIEF_API Parser {
   ///
   /// @warning If the target file is a FAT Mach-O, it will return the **last** one
   /// @see LIEF::MachO::Parser::parse
-  static std::unique_ptr<Binary> parse(const std::string& filename);
+  static std::unique_ptr<Binary> parse(std::string_view filename);
+
+  /// Same as parse(std::string_view) but the file is given as a
+  /// `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<Binary> parse(const PathT& filename) {
+    return parse(filename.string());
+  }
 
 
   /// Construct an LIEF::Binary from the given raw data
@@ -50,7 +58,7 @@ class LIEF_API Parser {
   static std::unique_ptr<Binary> parse(std::unique_ptr<BinaryStream> stream);
 
   protected:
-  Parser(const std::string& file);
+  Parser(std::string_view file);
   uint64_t binary_size_ = 0;
 
   virtual ~Parser();

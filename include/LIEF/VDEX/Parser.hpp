@@ -16,11 +16,12 @@
 #ifndef LIEF_VDEX_PARSER_H
 #define LIEF_VDEX_PARSER_H
 
+#include <string_view>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "LIEF/VDEX/type_traits.hpp"
+#include "LIEF/path.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -31,20 +32,28 @@ class File;
 /// Class which parses a VDEX file and transforms it into a VDEX::File object
 class LIEF_API Parser {
   public:
-  static std::unique_ptr<File> parse(const std::string& file);
+  static std::unique_ptr<File> parse(std::string_view file);
+
+  /// Same as parse(std::string_view) but the file is given as a
+  /// `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<File> parse(const PathT& file) {
+    return parse(file.string());
+  }
+
   static std::unique_ptr<File> parse(const std::vector<uint8_t>& data,
-                                     const std::string& name = "");
+                                     std::string_view name = "");
 
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy) = delete;
 
   private:
   Parser();
-  Parser(const std::string& file);
-  Parser(const std::vector<uint8_t>& data, const std::string& name);
+  Parser(std::string_view file);
+  Parser(const std::vector<uint8_t>& data, std::string_view name);
   virtual ~Parser();
 
-  void init(const std::string& name, vdex_version_t version);
+  void init(std::string_view name, vdex_version_t version);
 
   template<typename VDEX_T>
   void parse_file();

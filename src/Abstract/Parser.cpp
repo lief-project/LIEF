@@ -53,7 +53,7 @@ namespace LIEF {
 Parser::~Parser() = default;
 Parser::Parser() = default;
 
-std::unique_ptr<Binary> Parser::parse(const std::string& filename) {
+std::unique_ptr<Binary> Parser::parse(std::string_view filename) {
 
 #if defined(LIEF_OAT_SUPPORT)
   if (OAT::is_oat(filename)) {
@@ -156,8 +156,8 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream) {
   return nullptr;
 }
 
-Parser::Parser(const std::string& filename) {
-  std::ifstream file(filename, std::ios::in | std::ios::binary);
+Parser::Parser(std::string_view filename) {
+  std::ifstream file(std::string(filename), std::ios::in | std::ios::binary);
 
   if (!file) {
     LIEF_ERR("Failed to open '{}'", filename);

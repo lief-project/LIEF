@@ -43,7 +43,7 @@ Parser::~Parser() = default;
 
 
 // From File
-Parser::Parser(const std::string& file, const ParserConfig& conf) :
+Parser::Parser(std::string_view file, const ParserConfig& conf) :
   LIEF::Parser{file},
   config_{conf} {
   auto stream = VectorStream::from_file(file);
@@ -55,7 +55,7 @@ Parser::Parser(const std::string& file, const ParserConfig& conf) :
 }
 
 
-std::unique_ptr<FatBinary> Parser::parse(const std::string& filename,
+std::unique_ptr<FatBinary> Parser::parse(std::string_view filename,
                                          const ParserConfig& conf) {
   if (!is_macho(filename)) {
     LIEF_ERR("{} is not a MachO file", filename);
@@ -148,7 +148,7 @@ std::unique_ptr<FatBinary> Parser::parse_from_memory(uintptr_t address,
 }
 
 
-std::unique_ptr<FatBinary> Parser::parse_from_dump(const std::string& filepath,
+std::unique_ptr<FatBinary> Parser::parse_from_dump(std::string_view filepath,
                                                    uint64_t addr,
                                                    const ParserConfig& conf) {
   auto stream = VectorStream::from_file(filepath);

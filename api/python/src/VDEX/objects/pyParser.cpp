@@ -27,6 +27,7 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 namespace LIEF::VDEX::py {
 
@@ -34,7 +35,8 @@ template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
-  m.def("parse", nb::overload_cast<const std::string&>(&Parser::parse),
+  m.def("parse",
+    static_cast<std::unique_ptr<File>(*)(std::string_view)>(&Parser::parse),
     "Parse the given filename and return a " RST_CLASS_REF(lief.VDEX.File) " object"_doc,
     "filename"_a, nb::rv_policy::take_ownership);
 

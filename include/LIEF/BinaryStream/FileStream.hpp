@@ -16,8 +16,8 @@
 #ifndef LIEF_FILE_STREAM_H
 #define LIEF_FILE_STREAM_H
 
+#include <string_view>
 #include <fstream>
-#include <string>
 #include <vector>
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
@@ -29,7 +29,7 @@ namespace LIEF {
 /// Stream interface over a `std::ifstream`
 class LIEF_API FileStream : public BinaryStream {
   public:
-  static result<FileStream> from_file(const std::string& file);
+  static result<FileStream> from_file(std::string_view file);
   FileStream(std::ifstream fs, uint64_t size) :
     BinaryStream(STREAM_TYPE::FILE),
     ifs_(std::move(fs)),

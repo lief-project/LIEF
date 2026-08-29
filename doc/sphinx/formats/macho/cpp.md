@@ -500,7 +500,7 @@ ______________________________________________________________________
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::MachO::is_macho(const std::string&)
+.. doxygenfunction:: LIEF::MachO::is_macho(std::string_view)
   :project: lief
 ```
 
@@ -510,12 +510,12 @@ ______________________________________________________________________
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::MachO::is_fat(const std::string&)
+.. doxygenfunction:: LIEF::MachO::is_fat(std::string_view)
   :project: lief
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::MachO::is_64(const std::string&)
+.. doxygenfunction:: LIEF::MachO::is_64(std::string_view)
   :project: lief
 
 ```

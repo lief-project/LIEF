@@ -25,8 +25,8 @@
 
 namespace LIEF {
 
-result<VectorStream> VectorStream::from_file(const std::string& file) {
-  std::ifstream ifs(file, std::ios::in | std::ios::binary);
+result<VectorStream> VectorStream::from_file(std::string_view file) {
+  std::ifstream ifs(std::string(file), std::ios::in | std::ios::binary);
   if (!ifs) {
     LIEF_ERR("Failed to open '{}'", file);
     return make_error_code(lief_errors::read_error);

@@ -64,7 +64,7 @@ namespace LIEF::PE {
 Parser::~Parser() = default;
 Parser::Parser() = default;
 
-Parser::Parser(const std::string& file) :
+Parser::Parser(std::string_view file) :
   LIEF::Parser{file} {
   if (auto stream = VectorStream::from_file(file)) {
     stream_ = std::make_unique<VectorStream>(std::move(*stream));
@@ -1330,7 +1330,7 @@ ok_error_t Parser::parse_overlay() {
 }
 
 
-std::unique_ptr<Binary> Parser::parse(const std::string& filename,
+std::unique_ptr<Binary> Parser::parse(std::string_view filename,
                                       const ParserConfig& conf) {
   if (!is_pe(filename)) {
     return nullptr;
@@ -1371,7 +1371,7 @@ std::unique_ptr<Binary> Parser::parse(std::unique_ptr<BinaryStream> stream,
   return std::move(parser.binary_);
 }
 
-bool Parser::is_valid_import_name(const std::string& name) {
+bool Parser::is_valid_import_name(std::string_view name) {
 
   if (name.empty() || name.size() > MAX_IMPORT_NAME_SIZE) {
     return false;
@@ -1382,7 +1382,7 @@ bool Parser::is_valid_import_name(const std::string& name) {
 }
 
 
-bool Parser::is_valid_dll_name(const std::string& name) {
+bool Parser::is_valid_dll_name(std::string_view name) {
   /// @brief Minimum size for a DLL's name
   static constexpr unsigned MIN_DLL_NAME_SIZE = 4;
 
@@ -1561,7 +1561,7 @@ std::unique_ptr<Binary> Parser::parse_from_memory(uintptr_t address, size_t size
   return std::move(parser.binary_);
 }
 
-std::unique_ptr<Binary> Parser::parse_from_dump(const std::string& filepath,
+std::unique_ptr<Binary> Parser::parse_from_dump(std::string_view filepath,
                                                 uint64_t addr,
                                                 const ParserConfig& config) {
   auto stream = VectorStream::from_file(filepath);

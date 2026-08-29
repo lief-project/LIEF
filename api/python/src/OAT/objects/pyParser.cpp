@@ -27,6 +27,7 @@
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 namespace LIEF::OAT::py {
 
@@ -35,17 +36,18 @@ void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
   m.def("parse",
-    nb::overload_cast<const std::string&>(&Parser::parse),
+    static_cast<std::unique_ptr<Binary>(*)(std::string_view)>(&Parser::parse),
     "Parse the given OAT file and return a " RST_CLASS_REF(lief.OAT.Binary) " object"_doc,
     "oat_file"_a, nb::rv_policy::take_ownership);
 
   m.def("parse",
-    nb::overload_cast<const std::string&, const std::string&>(&Parser::parse),
+    static_cast<std::unique_ptr<Binary>(*)(std::string_view, std::string_view)>(
+        &Parser::parse),
     "Parse the given OAT with its VDEX file and return a " RST_CLASS_REF(lief.OAT.Binary) " object"_doc,
     "oat_file"_a, "vdex_file"_a, nb::rv_policy::take_ownership);
 
   m.def("parse",
-    nb::overload_cast<std::vector<uint8_t>>(&Parser::parse),
+    static_cast<std::unique_ptr<Binary>(*)(std::vector<uint8_t>)>(&Parser::parse),
     "Parse the given raw data and return a " RST_CLASS_REF(lief.OAT.Binary) " object"_doc,
     "raw"_a, nb::rv_policy::take_ownership);
 

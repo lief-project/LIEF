@@ -143,7 +143,7 @@ ______________________________________________________________________
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::COFF::is_coff(const std::string &)
+.. doxygenfunction:: LIEF::COFF::is_coff(std::string_view)
 ```
 
 ```{eval-rst}

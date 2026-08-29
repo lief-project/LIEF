@@ -8,7 +8,7 @@
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::OAT::is_oat(const std::string &file)
+.. doxygenfunction:: LIEF::OAT::is_oat(std::string_view file)
    :project: lief
 ```
 
@@ -23,7 +23,7 @@
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::OAT::version(const std::string &file)
+.. doxygenfunction:: LIEF::OAT::version(std::string_view file)
    :project: lief
 ```
 

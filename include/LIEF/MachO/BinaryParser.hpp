@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_MACHO_BINARY_PARSER_H
 #define LIEF_MACHO_BINARY_PARSER_H
+#include <string_view>
 #include <unordered_map>
 #include <limits>
 #include <map>
@@ -24,6 +25,7 @@
 #include <vector>
 
 #include "LIEF/errors.hpp"
+#include "LIEF/path.hpp"
 #include "LIEF/visibility.h"
 
 #include "LIEF/Abstract/Parser.hpp"
@@ -87,9 +89,18 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   constexpr static size_t MAX_COMMANDS = (std::numeric_limits<uint16_t>::max)();
 
   public:
-  static std::unique_ptr<Binary> parse(const std::string& file);
-  static std::unique_ptr<Binary> parse(const std::string& file,
+  static std::unique_ptr<Binary> parse(std::string_view file);
+  static std::unique_ptr<Binary> parse(std::string_view file,
                                        const ParserConfig& conf);
+
+  /// Same as parse(std::string_view, const ParserConfig&) but the file is
+  /// given as a `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<Binary>
+      parse(const PathT& file, const ParserConfig& conf = ParserConfig::deep()) {
+    return parse(file.string(), conf);
+  }
+
   static std::unique_ptr<Binary>
       parse(const std::vector<uint8_t>& data,
             const ParserConfig& conf = ParserConfig::deep());

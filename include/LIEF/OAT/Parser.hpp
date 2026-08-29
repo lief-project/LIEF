@@ -15,11 +15,13 @@
  */
 #ifndef LIEF_OAT_PARSER_H
 #define LIEF_OAT_PARSER_H
+#include <string_view>
 #include <cstdint>
 #include <memory>
 
 #include "LIEF/ELF/Parser.hpp"
 #include "LIEF/errors.hpp"
+#include "LIEF/path.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -40,9 +42,25 @@ class Class;
 class LIEF_API Parser : public ELF::Parser {
   public:
   /// Parse an OAT file
-  static std::unique_ptr<Binary> parse(const std::string& oat_file);
-  static std::unique_ptr<Binary> parse(const std::string& oat_file,
-                                       const std::string& vdex_file);
+  static std::unique_ptr<Binary> parse(std::string_view oat_file);
+  static std::unique_ptr<Binary> parse(std::string_view oat_file,
+                                       std::string_view vdex_file);
+
+  /// Same as parse(std::string_view) but the file is given as a
+  /// `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<Binary> parse(const PathT& oat_file) {
+    return parse(oat_file.string());
+  }
+
+  /// Same as parse(std::string_view, std::string_view) but at least one of the
+  /// files is given as a `std::filesystem::path`
+  template<class OatT, class VdexT, enable_if_path_t<OatT, VdexT> = 0>
+  static std::unique_ptr<Binary> parse(const OatT& oat_file,
+                                       const VdexT& vdex_file) {
+    return parse(std::filesystem::path(oat_file).string(),
+                 std::filesystem::path(vdex_file).string());
+  }
 
   static std::unique_ptr<Binary> parse(std::vector<uint8_t> data);
 
@@ -51,7 +69,7 @@ class LIEF_API Parser : public ELF::Parser {
 
   protected:
   Parser();
-  Parser(const std::string& oat_file);
+  Parser(std::string_view oat_file);
   Parser(std::vector<uint8_t> data);
   ~Parser() override;
 

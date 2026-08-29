@@ -36,7 +36,7 @@ Parser::~Parser() = default;
 Parser::Parser() = default;
 
 
-std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
+std::unique_ptr<Binary> Parser::parse(std::string_view oat_file) {
   if (!is_oat(oat_file)) {
     LIEF_ERR("'{}' is not an OAT file", oat_file);
     return nullptr;
@@ -52,8 +52,8 @@ std::unique_ptr<Binary> Parser::parse(const std::string& oat_file) {
 }
 
 
-std::unique_ptr<Binary> Parser::parse(const std::string& oat_file,
-                                      const std::string& vdex_file) {
+std::unique_ptr<Binary> Parser::parse(std::string_view oat_file,
+                                      std::string_view vdex_file) {
   if (!is_oat(oat_file)) {
     return nullptr;
   }
@@ -91,7 +91,7 @@ Parser::Parser(std::vector<uint8_t> data) {
   config_.count_mtd = ELF::ParserConfig::DYNSYM_COUNT::AUTO;
 }
 
-Parser::Parser(const std::string& file) {
+Parser::Parser(std::string_view file) {
   if (auto s = VectorStream::from_file(file)) {
     stream_ = std::make_unique<VectorStream>(std::move(*s));
   }

@@ -50,7 +50,7 @@ inline vdex_version_t version(BinaryStream& stream) {
   return 0;
 }
 
-bool is_vdex(const std::string& file) {
+bool is_vdex(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return is_vdex(*stream);
   }
@@ -64,7 +64,7 @@ bool is_vdex(const std::vector<uint8_t>& raw) {
   return false;
 }
 
-vdex_version_t version(const std::string& file) {
+vdex_version_t version(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return version(*stream);
   }

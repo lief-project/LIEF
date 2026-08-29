@@ -18,7 +18,8 @@
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/COFF/Header.hpp"
 #include "LIEF/visibility.h"
-#include <string>
+
+#include <string_view>
 
 
 namespace LIEF::COFF {
@@ -33,7 +34,7 @@ LIEF_API inline bool is_coff(BinaryStream& stream) {
 }
 
 /// Check if the `file` is a COFF
-LIEF_API bool is_coff(const std::string& file);
+LIEF_API bool is_coff(std::string_view file);
 
 /// Check if the given buffer points to a COFF file
 LIEF_API inline bool is_coff(const uint8_t* buffer, size_t size) {

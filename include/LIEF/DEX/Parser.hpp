@@ -16,12 +16,14 @@
 #ifndef LIEF_DEX_PARSER_H
 #define LIEF_DEX_PARSER_H
 
+#include <string_view>
 #include <unordered_map>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "LIEF/DEX/types.hpp"
+#include "LIEF/path.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF {
@@ -38,20 +40,28 @@ class Type;
 class LIEF_API Parser {
   public:
   /// Parse the DEX file from the file path given in parameter
-  static std::unique_ptr<File> parse(const std::string& file);
+  static std::unique_ptr<File> parse(std::string_view file);
+
+  /// Same as parse(std::string_view) but the file is given as a
+  /// `std::filesystem::path`
+  template<class PathT, enable_if_path_t<PathT> = 0>
+  static std::unique_ptr<File> parse(const PathT& file) {
+    return parse(file.string());
+  }
+
   static std::unique_ptr<File> parse(std::vector<uint8_t> data,
-                                     const std::string& name = "");
+                                     std::string_view name = "");
 
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy) = delete;
 
   private:
   Parser();
-  Parser(const std::string& file);
+  Parser(std::string_view file);
   Parser(std::vector<uint8_t> data);
   ~Parser();
 
-  void init(const std::string& name, dex_version_t version);
+  void init(std::string_view name, dex_version_t version);
 
   template<typename DEX_T>
   void parse_file();

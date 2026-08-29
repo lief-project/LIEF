@@ -37,7 +37,7 @@ bool is_elf(BinaryStream& stream) {
   return false;
 }
 
-bool is_elf(const std::string& file) {
+bool is_elf(std::string_view file) {
   if (auto stream = FileStream::from_file(file)) {
     return is_elf(*stream);
   }

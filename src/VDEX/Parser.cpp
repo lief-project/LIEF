@@ -35,19 +35,19 @@ namespace LIEF::VDEX {
 Parser::~Parser() = default;
 Parser::Parser() = default;
 
-std::unique_ptr<File> Parser::parse(const std::string& filename) {
+std::unique_ptr<File> Parser::parse(std::string_view filename) {
   Parser parser{filename};
   return std::unique_ptr<File>{parser.file_};
 }
 
 std::unique_ptr<File> Parser::parse(const std::vector<uint8_t>& data,
-                                    const std::string& name) {
+                                    std::string_view name) {
   Parser parser{data, name};
   return std::unique_ptr<File>{parser.file_};
 }
 
 
-Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
+Parser::Parser(const std::vector<uint8_t>& data, std::string_view name) :
   file_{new File{}},
   stream_{std::make_unique<VectorStream>(data)} {
   if (!is_vdex(data)) {
@@ -61,7 +61,7 @@ Parser::Parser(const std::vector<uint8_t>& data, const std::string& name) :
   init(name, version);
 }
 
-Parser::Parser(const std::string& file) :
+Parser::Parser(std::string_view file) :
   file_{new File{}} {
   if (!is_vdex(file)) {
     LIEF_ERR("'{}' is not a VDEX file", file);
@@ -79,7 +79,7 @@ Parser::Parser(const std::string& file) :
 }
 
 
-void Parser::init(const std::string& /*name*/, vdex_version_t version) {
+void Parser::init(std::string_view /*name*/, vdex_version_t version) {
   LIEF_DEBUG("VDEX version: {:d}", version);
 
   if (version <= details::VDEX_6::vdex_version) {

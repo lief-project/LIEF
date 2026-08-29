@@ -3,7 +3,7 @@
 ## Utilities
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::DEX::is_dex(const std::string&)
+.. doxygenfunction:: LIEF::DEX::is_dex(std::string_view)
   :project: lief
 ```
 
@@ -13,7 +13,7 @@
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::DEX::version(const std::string&)
+.. doxygenfunction:: LIEF::DEX::version(std::string_view)
   :project: lief
 ```
 

@@ -65,8 +65,8 @@ inline uint8_t stream_get_tag(BinaryStream& stream) {
   return 0;
 }
 
-result<Signature> SignatureParser::parse(const std::string& path) {
-  std::ifstream binary(path, std::ios::in | std::ios::binary);
+result<Signature> SignatureParser::parse(std::string_view path) {
+  std::ifstream binary(std::string(path), std::ios::in | std::ios::binary);
   if (!binary) {
     LIEF_ERR("Failed to open {}", path);
     return make_error_code(lief_errors::file_error);
