@@ -389,7 +389,7 @@ void* Module::dlsym(const std::string& name) const {
 }
 
 std::string Module::to_string() const {
-  return fmt::format("0x{:08x}: {}", imagebase(), name());
+  return fmt::format("{:#010x}: {}", imagebase(), name());
 }
 
 modules_t modules() {

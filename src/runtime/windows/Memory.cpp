@@ -75,10 +75,10 @@ std::string Memory::Chunk::to_string() const {
   }
 
   if (size() == 0) {
-    return fmt::format("[0x{:016x}, ...]", addr());
+    return fmt::format("[{:#018x}, ...]", addr());
   }
 
-  return fmt::format("[0x{:016x}, 0x{:016x}]", addr(), addr() + size());
+  return fmt::format("[{:#018x}, {:#018x}]", addr(), addr() + size());
 }
 
 
@@ -179,7 +179,7 @@ ok_error_t Memory::mprotect(Memory::Chunk& C, uint32_t flags) {
   DWORD old_perms = 0;
   int ret = VirtualProtect((void*)pstart, len, win_perms, &old_perms);
   if (ret == 0) {
-    LIEF_ERR("mprotect [0x{:016x}, 0x{:016x}] -> {} ({}) failed: {}", pstart, pend,
+    LIEF_ERR("mprotect [{:#018x}, {:#018x}] -> {} ({}) failed: {}", pstart, pend,
              perm_str(flags), win_perms, GetLastError());
     return make_error_code(lief_errors::runtime_error);
   }

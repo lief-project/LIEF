@@ -94,10 +94,10 @@ std::string Memory::Chunk::to_string() const {
   }
 
   if (size() == 0) {
-    return fmt::format("[0x{:016x}, ...]", addr());
+    return fmt::format("[{:#018x}, ...]", addr());
   }
 
-  return fmt::format("[0x{:016x}, 0x{:016x}]", addr(), addr() + size());
+  return fmt::format("[{:#018x}, {:#018x}]", addr(), addr() + size());
 }
 
 std::optional<Memory::Chunk> Memory::mmap(size_t size, uint32_t flags,
@@ -174,7 +174,7 @@ ok_error_t Memory::mprotect(Memory::Chunk& C, uint32_t flags) {
 
   int ret = ::mprotect((void*)pstart, len, posix_flags);
   if (ret != 0) {
-    LIEF_ERR("mprotect [0x{:016x}, 0x{:016x}] -> {} ({:04b}) failed: {} ({})",
+    LIEF_ERR("mprotect [{:#018x}, {:#018x}] -> {} ({:04b}) failed: {} ({})",
              pstart, pend, perm_str(flags), posix_flags, ret, strerror(errno));
     return make_error_code(lief_errors::runtime_error);
   }
