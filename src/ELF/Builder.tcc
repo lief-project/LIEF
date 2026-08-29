@@ -1469,6 +1469,9 @@ ok_error_t Builder::build_section_relocations() {
               });
     for (Relocation* reloc : relocs) {
       Section* reloc_section = sec_relo_map.at(section);
+      auto content_it =
+          section_content.try_emplace(reloc_section, should_swap()).first;
+      vector_iostream& content = content_it->second;
       uint32_t symidx = 0;
 
       if (const Symbol* symbol = reloc->symbol()) {
@@ -1498,12 +1501,12 @@ ok_error_t Builder::build_section_relocations() {
         relahdr.r_offset = static_cast<Elf_Addr>(reloc->address());
         relahdr.r_info = static_cast<Elf_Xword>(r_info);
         relahdr.r_addend = static_cast<Elf_Sxword>(reloc->addend());
-        section_content[reloc_section].write<Elf_Rela>(relahdr);
+        content.write<Elf_Rela>(relahdr);
       } else {
         Elf_Rel relhdr;
         relhdr.r_offset = static_cast<Elf_Addr>(reloc->address());
         relhdr.r_info = static_cast<Elf_Xword>(r_info);
-        section_content[reloc_section].write<Elf_Rel>(relhdr);
+        content.write<Elf_Rel>(relhdr);
       }
     }
   }
