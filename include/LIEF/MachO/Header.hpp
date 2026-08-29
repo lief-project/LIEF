@@ -246,7 +246,7 @@ class LIEF_API Header : public Object {
 
   MACHO_TYPES magic_ = MACHO_TYPES::UNKNOWN;
   CPU_TYPE cputype_ = CPU_TYPE::ANY;
-  uint32_t cpusubtype_;
+  uint32_t cpusubtype_{};
   FILE_TYPE filetype_ = FILE_TYPE::UNKNOWN;
   uint32_t ncmds_ = 0;
   uint32_t sizeofcmds_ = 0;

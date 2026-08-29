@@ -25,9 +25,9 @@ namespace LIEF::MachO {
 
 BuildToolVersion::BuildToolVersion(const details::build_tool_version& tool) :
   tool_{BuildToolVersion::TOOLS(tool.tool)},
-  version_{{static_cast<uint32_t>((tool.version >> 16) & 0xFFFF),
-            static_cast<uint32_t>((tool.version >> 8) & 0xFF),
-            static_cast<uint32_t>((tool.version >> 0) & 0xFF)}} {}
+  version_{{uint32_t{(tool.version >> 16) & 0xFFFF},
+            uint32_t{(tool.version >> 8) & 0xFF},
+            uint32_t{(tool.version >> 0) & 0xFF}}} {}
 
 void BuildToolVersion::accept(Visitor& visitor) const {
   visitor.visit(*this);

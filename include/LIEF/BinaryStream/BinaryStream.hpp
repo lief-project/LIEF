@@ -68,21 +68,30 @@ class LIEF_API BinaryStream {
     return is_memory_stream() || is_dump_stream();
   }
 
+  const BinaryStream& skip_uleb128() const LIEF_LIFETIMEBOUND {
+    static_cast<void>(read_uleb128());
+    return *this;
+  }
+
+  const BinaryStream& skip_sleb128() const LIEF_LIFETIMEBOUND {
+    static_cast<void>(read_sleb128());
+    return *this;
+  }
+
   result<uint64_t> read_uleb128(size_t* size = nullptr) const;
   result<uint64_t> read_sleb128(size_t* size = nullptr) const;
 
   result<int64_t> read_dwarf_encoded(uint8_t encoding) const;
 
-  result<std::string> read_string(size_t maxsize = ~static_cast<size_t>(0)) const;
-  result<std::string> peek_string(size_t maxsize = ~static_cast<size_t>(0)) const;
-  result<std::string>
-      peek_string_at(size_t offset,
-                     size_t maxsize = ~static_cast<size_t>(0)) const;
+  result<std::string> read_string(size_t maxsize = ~size_t{0}) const;
+  result<std::string> peek_string(size_t maxsize = ~size_t{0}) const;
+  result<std::string> peek_string_at(size_t offset,
+                                     size_t maxsize = ~size_t{0}) const;
 
   result<std::u16string> read_u16string() const;
   result<std::u16string> peek_u16string() const;
 
-  result<std::string> read_mutf8(size_t maxsize = ~static_cast<size_t>(0)) const;
+  result<std::string> read_mutf8(size_t maxsize = ~size_t{0}) const;
 
   result<std::u16string> read_u16string(size_t length) const;
   result<std::u16string> peek_u16string(size_t length) const;
@@ -99,9 +108,8 @@ class LIEF_API BinaryStream {
     const bool read_ok = offset <= this->size() &&
                          (offset + size) <= this->size()
                          /* Check for an overflow */
-                         && (static_cast<int64_t>(offset) >= 0 &&
-                             static_cast<int64_t>(size) >= 0) &&
-                         (static_cast<int64_t>(offset + size) >= 0);
+                         && (int64_t(offset) >= 0 && int64_t(size) >= 0) &&
+                         (int64_t(offset + size) >= 0);
     if (!read_ok) {
       return make_error_code(lief_errors::read_error);
     }
@@ -218,12 +226,11 @@ class LIEF_API BinaryStream {
     }
     // Even though offset + size < ... => offset < ...
     // the addition could overflow so it's worth checking both
-    const bool read_ok =
-        pos_ <= size() &&
-        (pos_ + N) <= size()
-        /* Check for an overflow */
-        && (static_cast<int64_t>(pos_) >= 0 && static_cast<int64_t>(N) >= 0) &&
-        (static_cast<int64_t>(pos_ + N) >= 0);
+    const bool read_ok = pos_ <= size() &&
+                         (pos_ + N) <= size()
+                         /* Check for an overflow */
+                         && (int64_t(pos_) >= 0 && int64_t(N) >= 0) &&
+                         (int64_t(pos_ + N) >= 0);
 
     if (!read_ok) {
       return make_error_code(lief_errors::read_error);
@@ -258,6 +265,12 @@ class LIEF_API BinaryStream {
 
   template<class T>
   result<T> read() const;
+
+  template<class T>
+  const BinaryStream& skip() const LIEF_LIFETIMEBOUND {
+    static_cast<void>(read<T>());
+    return *this;
+  }
 
   template<typename T>
   bool can_read() const;

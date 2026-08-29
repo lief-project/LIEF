@@ -39,7 +39,7 @@ ResourceAccelerator::ResourceAccelerator(
 ) :
   flags_{entry.fFlags},
   ansi_{entry.wAnsi},
-  id_{static_cast<uint16_t>(entry.wId)},
+  id_{uint16_t(entry.wId)},
   padding_{entry.padding} {}
 
 void ResourceAccelerator::accept(Visitor& visitor) const {

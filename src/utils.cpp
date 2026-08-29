@@ -81,10 +81,10 @@ result<std::u16string> u8tou16(const std::string& string) {
     }
     uint32_t cp_val = *cp;
     if (cp_val > 0xffff) {
-      *res++ = static_cast<uint16_t>((cp_val >> 10) + LEAD_OFFSET);
-      *res++ = static_cast<uint16_t>((cp_val & 0x3ff) + TRAIL_SURROGATE_MIN);
+      *res++ = uint16_t((cp_val >> 10) + LEAD_OFFSET);
+      *res++ = uint16_t((cp_val & 0x3ff) + TRAIL_SURROGATE_MIN);
     } else {
-      *res++ = static_cast<uint16_t>(cp_val);
+      *res++ = uint16_t(cp_val);
     }
   }
   return name;
@@ -108,7 +108,7 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
 
   if (!title.empty()) {
     banner = prefix + "+" +
-             std::string(static_cast<size_t>(22 * 3), '-')
+             std::string(size_t{22} * 3, '-')
                  .append("---+\n")
                  .append(prefix)
                  .append("| ");
@@ -119,7 +119,7 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
     banner += "|\n";
   }
 
-  out = std::string(static_cast<size_t>(22 * 3), '-') + "\n";
+  out = std::string(size_t{22} * 3, '-') + "\n";
   std::string rhs;
   if (limit > 0) {
     size = std::min<size_t>(size, limit);
@@ -128,7 +128,7 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
   for (size_t i = 0; i < size; ++i) {
     if (i == 0) {
       out = prefix + "+" +
-            std::string(static_cast<size_t>(22 * 3), '-')
+            std::string(size_t{22} * 3, '-')
                 .append("---+\n")
                 .append(prefix)
                 .append("| ");
@@ -152,8 +152,8 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
     }
   }
 
-  out += std::string("\n") + prefix + '+' +
-         std::string(static_cast<size_t>(22 * 3), '-') + "---+";
+  out +=
+      std::string("\n") + prefix + '+' + std::string(size_t{22} * 3, '-') + "---+";
   return banner + out;
 }
 

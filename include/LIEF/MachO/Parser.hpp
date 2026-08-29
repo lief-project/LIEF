@@ -45,7 +45,7 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser& operator=(const Parser& copy) = delete;
   Parser(const Parser& copy) = delete;
 
-  ~Parser() override;
+  ~Parser();
 
   /// Parse a Mach-O file from the path provided by the ``filename``
   /// parameter

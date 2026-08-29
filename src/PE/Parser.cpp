@@ -225,7 +225,7 @@ ok_error_t Parser::read_section_content(const details::pe_section& raw_sec,
   if (peek_target < stream_->size() &&
       (peek_target + size_to_read) > stream_->size())
   {
-    size_to_read = static_cast<uint32_t>(stream_->size() - peek_target);
+    size_to_read = uint32_t(stream_->size() - peek_target);
   }
 
   if (size_to_read > Parser::MAX_DATA_SIZE) {
@@ -334,8 +334,9 @@ ok_error_t Parser::parse_sections() {
   // At this point we can bind the binary to the stream (if needed)
   stream_->bind_binary(*binary_);
 
-  const uint32_t last_section_header_offset =
-      sections_offset + numberof_sections * sizeof(details::pe_section);
+  const uint64_t last_section_header_offset =
+      uint64_t{sections_offset} +
+      uint64_t{numberof_sections} * sizeof(details::pe_section);
 
   if (first_section_offset == SENTINEL ||
       first_section_offset < last_section_header_offset)
@@ -485,8 +486,8 @@ ok_error_t Parser::parse_string_table() {
   LIEF_DEBUG("Parsing string table");
 
   const uint64_t string_tbl_offset =
-      static_cast<uint64_t>(hdr.pointerto_symbol_table()) +
-      static_cast<uint64_t>(hdr.numberof_symbols()) * SYMBOL16_SZ;
+      uint64_t{hdr.pointerto_symbol_table()} +
+      uint64_t{hdr.numberof_symbols()} * SYMBOL16_SZ;
 
   if (string_tbl_offset + sizeof(uint32_t) > stream_->size()) {
     LIEF_DEBUG("COFF string table offset ({:#x}) is out of bounds",

@@ -1,3 +1,4 @@
+// clang-format off
 using Elf32_Addr = uint32_t;
 using Elf32_Off = uint32_t;
 using Elf32_Half = uint16_t;
@@ -194,7 +195,7 @@ struct Elf32_Verneed {
   Elf32_Word    vn_file;    /**< Offset of filename for this dependency */
   Elf32_Word    vn_aux;     /**< Offset in bytes to vernaux array */
   Elf32_Word    vn_next;    /**< Offset in bytes to next verneed */
-} ;
+};
 
 struct Elf64_Verneed {
   Elf64_Half    vn_version; /**< Version of structure */
@@ -340,4 +341,3 @@ struct Elf32_FileEntry
 };
 
 #pragma pack(pop)
-

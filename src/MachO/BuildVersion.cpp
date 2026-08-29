@@ -28,20 +28,17 @@ namespace LIEF::MachO {
 BuildVersion::BuildVersion(const details::build_version_command& ver) :
   LoadCommand::LoadCommand{LoadCommand::TYPE(ver.cmd), ver.cmdsize},
   platform_{PLATFORMS(ver.platform)},
-  minos_{{static_cast<uint32_t>((ver.minos >> 16) & 0xFFFF),
-          static_cast<uint32_t>((ver.minos >> 8) & 0xFF),
-          static_cast<uint32_t>((ver.minos >> 0) & 0xFF)}},
-  sdk_{{static_cast<uint32_t>((ver.sdk >> 16) & 0xFFFF),
-        static_cast<uint32_t>((ver.sdk >> 8) & 0xFF),
-        static_cast<uint32_t>((ver.sdk >> 0) & 0xFF)}} {}
+  minos_{{uint32_t{(ver.minos >> 16) & 0xFFFF}, uint32_t{(ver.minos >> 8) & 0xFF},
+          uint32_t{(ver.minos >> 0) & 0xFF}}},
+  sdk_{{uint32_t{(ver.sdk >> 16) & 0xFFFF}, uint32_t{(ver.sdk >> 8) & 0xFF},
+        uint32_t{(ver.sdk >> 0) & 0xFF}}} {}
 
 BuildVersion::BuildVersion(const PLATFORMS platform, const version_t& minos,
                            const version_t& sdk, const tools_list_t& tools) :
-  LoadCommand::LoadCommand{
-      LoadCommand::TYPE::BUILD_VERSION,
-      static_cast<uint32_t>(sizeof(details::build_version_command) +
-                            sizeof(details::build_tool_version) * tools.size())
-  },
+  LoadCommand::LoadCommand{LoadCommand::TYPE::BUILD_VERSION,
+                           uint32_t(sizeof(details::build_version_command) +
+                                    sizeof(details::build_tool_version) *
+                                        tools.size())},
   platform_{platform},
   minos_{minos},
   sdk_{sdk},

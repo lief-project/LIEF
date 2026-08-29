@@ -465,7 +465,7 @@ void Parser::parse_oat_classes() {
       if (!res_status) {
         break;
       }
-      auto status = static_cast<OAT_CLASS_STATUS>(*res_status);
+      auto status = OAT_CLASS_STATUS(*res_status);
 
       // OAT Type
       auto res_type = stream_->read<int16_t>();
@@ -473,7 +473,7 @@ void Parser::parse_oat_classes() {
         break;
       }
 
-      auto type = static_cast<OAT_CLASS_TYPES>(*res_type);
+      auto type = OAT_CLASS_TYPES(*res_type);
 
       // Bitmap (if type is "some compiled")
       uint32_t method_bitmap_size = 0;
@@ -568,7 +568,7 @@ void Parser::parse_oat_methods(uint64_t methods_offsets, Class& clazz,
         if (!res_new_pc) {
           break;
         }
-        auto new_pc = static_cast<uint32_t>(*res_new_pc);
+        auto new_pc = uint32_t(*res_new_pc);
 
         if (new_pc <= pc && round > 0) {
           break;
@@ -585,7 +585,7 @@ void Parser::parse_oat_methods(uint64_t methods_offsets, Class& clazz,
           break;
         }
 
-        auto index = static_cast<uint32_t>(*res_index);
+        auto index = uint32_t(*res_index);
         oat_method->dex_method()->insert_dex2dex_info(pc, index);
       }
     }

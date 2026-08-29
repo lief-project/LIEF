@@ -129,7 +129,7 @@ class LIEF_API ExportEntry : public LIEF::Symbol {
   }
 
   void value(uint64_t value) override {
-    address(static_cast<uint32_t>(value));
+    address(uint32_t(value));
   }
 
   void set_forward_info(std::string lib, std::string function) {

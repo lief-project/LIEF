@@ -157,7 +157,7 @@ class LIEF_LOCAL DyldChainedFixupsCreator {
                        DyldChainedFixups* cmd);
 
   uint32_t fixups_version_ = 0;
-  DYLD_CHAINED_FORMAT imports_format_;
+  DYLD_CHAINED_FORMAT imports_format_ = DYLD_CHAINED_FORMAT::IMPORT;
   std::vector<binding_info_t> bindings_;
   std::vector<reloc_info_t> relocations_;
   std::unordered_map<SegmentCommand*, std::vector<binding_rebase_t>>

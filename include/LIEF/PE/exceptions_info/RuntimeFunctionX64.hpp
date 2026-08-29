@@ -262,7 +262,7 @@ class LIEF_API RuntimeFunctionX64 : public ExceptionInfo {
     return info->arch() == ExceptionInfo::ARCH::X86_64;
   }
 
-  ~RuntimeFunctionX64() = default;
+  ~RuntimeFunctionX64() override = default;
 
   private:
   uint32_t rva_end_ = 0;

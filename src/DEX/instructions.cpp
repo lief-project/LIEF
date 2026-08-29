@@ -317,7 +317,7 @@ bool is_switch_array(const uint8_t* ptr, const uint8_t* end) {
     return false;
   }
 
-  const auto opcode = static_cast<OPCODES>(*ptr);
+  const auto opcode = OPCODES{*ptr};
   const bool valid_opcode = opcode == OPCODES::OP_NOP ||
                             opcode == OPCODES::OP_RETURN_VOID ||
                             opcode == OPCODES::OP_RETURN_VOID_NO_BARRIER;
@@ -326,8 +326,7 @@ bool is_switch_array(const uint8_t* ptr, const uint8_t* end) {
     return false;
   }
 
-  const auto ident =
-      static_cast<SWITCH_ARRAY_IDENT>(static_cast<uint16_t>(ptr[1] << 8) | opcode);
+  const auto ident = SWITCH_ARRAY_IDENT(uint16_t(ptr[1] << 8) | opcode);
 
   switch (ident) {
     case SWITCH_ARRAY_IDENT::IDENT_PACKED_SWITCH:
@@ -349,10 +348,9 @@ size_t switch_array_size(const uint8_t* ptr, const uint8_t* end) {
     return SIZE_MAX;
   }
 
-  const size_t remaining = static_cast<size_t>(end - ptr);
-  const auto opcode = static_cast<OPCODES>(*ptr);
-  const auto ident =
-      static_cast<SWITCH_ARRAY_IDENT>(static_cast<uint16_t>(ptr[1] << 8) | opcode);
+  const auto remaining = size_t(end - ptr);
+  const auto opcode = OPCODES{*ptr};
+  const auto ident = SWITCH_ARRAY_IDENT(uint16_t(ptr[1] << 8) | opcode);
 
   switch (ident) {
     case SWITCH_ARRAY_IDENT::IDENT_PACKED_SWITCH:

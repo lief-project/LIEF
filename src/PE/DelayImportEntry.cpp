@@ -41,7 +41,7 @@ bool DelayImportEntry::is_ordinal() const {
   // https://docs.microsoft.com/en-us/windows/desktop/debug/pe-format#the-idata-section
   const uint64_t ORDINAL_MASK =
       type_ == PE_TYPE::PE32 ? 0x80000000 : 0x8000000000000000;
-  bool ordinal_bit_is_set = static_cast<bool>(data_ & ORDINAL_MASK);
+  bool ordinal_bit_is_set = bool(data_ & ORDINAL_MASK);
 
   // Check that bit 31 / 63 is set
   if (!ordinal_bit_is_set) {

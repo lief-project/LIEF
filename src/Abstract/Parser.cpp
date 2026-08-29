@@ -50,7 +50,6 @@
 
 
 namespace LIEF {
-Parser::~Parser() = default;
 Parser::Parser() = default;
 
 std::unique_ptr<Binary> Parser::parse(std::string_view filename) {

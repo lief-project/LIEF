@@ -680,7 +680,7 @@ bool LayoutChecker::check_tls() {
 
     uint64_t addr = sym.value();
     if (addr > tls_seg->virtual_size() ||
-        (addr + sym.size()) > tls_seg->virtual_size())
+        sym.size() > tls_seg->virtual_size() - addr)
     {
       return error("TLS symbol {:#010}: {} out of PT_TLS segment range"
                    "([{:#010x}, {:#010x}])",

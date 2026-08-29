@@ -52,7 +52,7 @@ result<VectorStream> VectorStream::from_file(std::string_view file) {
 
 std::unique_ptr<SpanStream> VectorStream::slice(uint32_t offset,
                                                 size_t size) const {
-  if (offset > binary_.size() || (offset + size) > binary_.size()) {
+  if (offset > binary_.size() || size > binary_.size() - offset) {
     return nullptr;
   }
   const uint8_t* start = binary_.data() + offset;

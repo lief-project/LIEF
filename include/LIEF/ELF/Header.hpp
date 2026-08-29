@@ -308,7 +308,7 @@ class LIEF_API Header : public Object {
   template<class T>
   LIEF_LOCAL Header(const T& header);
 
-  identity_t identity_;
+  identity_t identity_{};
   FILE_TYPE file_type_ = FILE_TYPE::NONE;
   ARCH machine_type_ = ARCH::NONE;
   VERSION object_file_version_ = VERSION::NONE;

@@ -45,7 +45,7 @@ void Hash::visit(const Header& header) {
   process(header.patch_delta());
   process(header.image_roots());
   process(header.pointer_size());
-  process(static_cast<size_t>(header.compile_pic()));
+  process(size_t{header.compile_pic()});
   process(header.nb_sections());
   process(header.nb_methods());
   process(header.boot_image_begin());

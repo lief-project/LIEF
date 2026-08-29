@@ -61,7 +61,7 @@ class LIEF_API Parser {
   Parser(std::string_view file);
   uint64_t binary_size_ = 0;
 
-  virtual ~Parser();
+  ~Parser() = default;
   Parser();
 };
 }

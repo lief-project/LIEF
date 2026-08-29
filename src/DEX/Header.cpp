@@ -117,10 +117,10 @@ std::ostream& operator<<(std::ostream& os, const Header& hdr) {
   std::string magic_str;
   for (uint8_t c : hdr.magic()) {
     if (::isprint(c) != 0) {
-      magic_str.push_back(static_cast<char>(c));
+      magic_str.push_back(char(c));
     } else {
       std::stringstream ss;
-      ss << std::dec << "'\\" << static_cast<uint32_t>(c) << "'";
+      ss << std::dec << "'\\" << uint32_t{c} << "'";
       magic_str += ss.str();
     }
   }

@@ -205,7 +205,7 @@ void Section::content(const content_t& data) {
   span<uint8_t> content = segment_->content();
 
   if (relative_offset > content.size() ||
-      (relative_offset + data.size()) > content.size())
+      data.size() > content.size() - relative_offset)
   {
     LIEF_ERR("New data exceeds original size");
     return;

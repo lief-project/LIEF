@@ -246,7 +246,7 @@ void Hash::visit(const Relocation& relocation) {
 
   process(relocation.size());
   process(relocation.address());
-  process(static_cast<size_t>(relocation.is_pc_relative()));
+  process(size_t{relocation.is_pc_relative()});
   process(relocation.type());
   process(relocation.origin());
 
@@ -258,7 +258,7 @@ void Hash::visit(const Relocation& relocation) {
 void Hash::visit(const RelocationObject& robject) {
 
   visit(*robject.as<Relocation>());
-  process(static_cast<size_t>(robject.is_scattered()));
+  process(size_t{robject.is_scattered()});
   if (robject.is_scattered()) {
     process(robject.value());
   }
@@ -277,7 +277,7 @@ void Hash::visit(const BindingInfo& binding) {
 
   process(binding.library_ordinal());
   process(binding.addend());
-  process(static_cast<size_t>(binding.is_weak_import()));
+  process(size_t{binding.is_weak_import()});
   process(binding.address());
 
   if (binding.has_symbol()) {

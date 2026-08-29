@@ -131,6 +131,7 @@ inline bool is_err(const ok_error_t& val) {
 
 }
 
+// NOLINTBEGIN(misc-multiple-inheritance)
 extern template class tl::expected<LIEF::ok_t, lief_errors>;
 extern template class LIEF::result<LIEF::ok_t>;
 extern template class tl::expected<uint64_t, lief_errors>;
@@ -139,5 +140,6 @@ extern template class tl::expected<uint32_t, lief_errors>;
 extern template class LIEF::result<uint32_t>;
 extern template class tl::expected<std::string, lief_errors>;
 extern template class LIEF::result<std::string>;
+// NOLINTEND(misc-multiple-inheritance)
 
 #endif

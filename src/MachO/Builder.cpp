@@ -309,8 +309,7 @@ ok_error_t Builder::build_uuid() {
   details::uuid_command raw_cmd{};
 
   raw_cmd.cmd = static_cast<uint32_t>(uuid_cmd->command());
-  raw_cmd.cmdsize =
-      static_cast<uint32_t>(uuid_cmd->size()); // sizeof(uuid_command)
+  raw_cmd.cmdsize = uint32_t{uuid_cmd->size()}; // sizeof(uuid_command)
 
   const uuid_t& uuid = uuid_cmd->uuid();
   std::copy(uuid.begin(), uuid.end(), raw_cmd.uuid);

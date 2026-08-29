@@ -68,7 +68,7 @@ inline bool greater_than_add_or_overflow(T LHS, T RHS, U B) {
 inline uint64_t rnd64(uint64_t v, uint64_t r) {
   r--;
   v += r;
-  v &= ~static_cast<int64_t>(r);
+  v &= ~int64_t(r);
   return v;
 }
 
@@ -440,7 +440,7 @@ bool LayoutChecker::check_load_commands() {
   for (size_t i = 0; i < commands.size(); ++i) {
     const LoadCommand& cmd = commands[i];
     if (cmd.command_offset() > last_cmd_offset ||
-        (cmd.command_offset() + cmd.size()) > last_cmd_offset)
+        cmd.size() > last_cmd_offset - cmd.command_offset())
     {
       return error("Command #{} ({}) pasts the end of the commands", i,
                    to_string(cmd.command()));
@@ -984,7 +984,7 @@ bool LayoutChecker::check_section_contiguity() {
     uint64_t next_expected_offset = sections_vec[0]->offset();
     for (auto it = sections_vec.begin(); it != sections_vec.end(); ++it) {
       const Section* section = *it;
-      const uint32_t alignment = 1 << section->alignment();
+      const uint32_t alignment = uint32_t{1} << section->alignment();
       if ((section->offset() % alignment) != 0) {
         return error("section '{}' offset ({:#06x}) is misaligned (align={:#06x})",
                      section->name(), section->virtual_address(), alignment);

@@ -35,7 +35,8 @@ RsaInfo::RsaInfo(const RsaInfo::rsa_ctx_handle ctx) {
   auto* local_ctx = new mbedtls_rsa_context{};
   mbedtls_rsa_init(local_ctx);
   mbedtls_rsa_set_padding(local_ctx, pctx->private_padding,
-                          static_cast<mbedtls_md_type_t>(pctx->private_hash_id));
+                          // NOLINTNEXTLINE(clang-taidy-avoid-unfixed-enum-cast)
+                          mbedtls_md_type_t(pctx->private_hash_id));
   mbedtls_rsa_copy(local_ctx, pctx);
   mbedtls_rsa_complete(local_ctx);
   ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
@@ -47,7 +48,8 @@ RsaInfo::RsaInfo(const RsaInfo& other) {
     auto* local_ctx = new mbedtls_rsa_context{};
     mbedtls_rsa_init(local_ctx);
     mbedtls_rsa_set_padding(local_ctx, octx->private_padding,
-                            static_cast<mbedtls_md_type_t>(octx->private_hash_id));
+                            // NOLINTNEXTLINE(clang-taidy-avoid-unfixed-enum-cast)
+                            mbedtls_md_type_t(octx->private_hash_id));
     mbedtls_rsa_copy(local_ctx, octx);
     mbedtls_rsa_complete(local_ctx);
     ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);

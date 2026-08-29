@@ -91,9 +91,9 @@ oat_version_t version(const ELF::Binary& elf) {
       return 0;
     }
 
-    return static_cast<oat_version_t>(parse_android_version(
+    return oat_version_t{parse_android_version(
         reinterpret_cast<const char*>(header.data()), header.size()
-    ));
+    )};
   }
   return 0;
 }

@@ -138,6 +138,7 @@ class LIEF_API Module {
     std::ofstream ofs(filepath, std::ios::out | std::ios::binary);
     if (ofs) {
       ofs.write(reinterpret_cast<const char*>(out.data()),
+                // NOLINTNEXTLINE(clang-taidy-avoid-static-integer-cast)
                 static_cast<std::streamsize>(out.size()));
     }
     return out;
@@ -147,6 +148,7 @@ class LIEF_API Module {
   std::vector<uint8_t> dump(std::ostream& os) const {
     std::vector<uint8_t> out = dump();
     os.write(reinterpret_cast<const char*>(out.data()),
+             // NOLINTNEXTLINE(clang-taidy-avoid-static-integer-cast)
              static_cast<std::streamsize>(out.size()));
     return out;
   }

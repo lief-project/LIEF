@@ -169,7 +169,7 @@ class LIEF_API Parser : public LIEF::Parser {
   Parser& operator=(const Parser&) = delete;
   Parser(const Parser&) = delete;
 
-  ~Parser() override;
+  ~Parser();
 
   protected:
   LIEF_LOCAL Parser();

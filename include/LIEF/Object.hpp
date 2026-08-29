@@ -45,8 +45,8 @@ class LIEF_API Object {
   Object(const Object& other);
   Object& operator=(const Object& other);
 
-  Object(Object&& other) noexcept = default;
-  Object& operator=(Object&& other) noexcept = default;
+  Object(Object&&) noexcept = default;
+  Object& operator=(Object&&) noexcept = default;
 
   template<class T>
   LIEF_LOCAL output_t<T> as();

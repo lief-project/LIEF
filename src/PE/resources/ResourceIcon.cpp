@@ -44,8 +44,7 @@ ResourceIcon::ResourceIcon(const details::pe_icon_header& header) :
   color_count_{header.color_count},
   reserved_{header.reserved},
   planes_{header.planes},
-  bit_count_{header.bit_count},
-  id_{static_cast<uint32_t>(-1)} {}
+  bit_count_{header.bit_count} {}
 
 result<ResourceIcon> ResourceIcon::from_serialization(const uint8_t* buffer,
                                                       size_t size) {
@@ -56,7 +55,7 @@ result<ResourceIcon> ResourceIcon::from_serialization(const uint8_t* buffer,
   }
 
   SpanStream stream(buffer, size);
-  /* reserved */ stream.read<uint16_t>();
+  stream.skip<uint16_t>(); // reserved
   auto type = stream.read<uint16_t>().value_or(0);
   if (type != 1) {
     return make_error_code(lief_errors::corrupted);

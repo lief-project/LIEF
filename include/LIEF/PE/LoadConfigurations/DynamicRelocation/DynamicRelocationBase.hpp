@@ -33,7 +33,7 @@ class DynamicFixup;
 class LIEF_API DynamicRelocation {
   public:
   /// Special symbol values as defined in `link.exe - GetDVRTSpecialSymbolName`
-  enum IMAGE_DYNAMIC_RELOCATION {
+  enum IMAGE_DYNAMIC_RELOCATION : uint64_t {
     /// Mirror `IMAGE_DYNAMIC_RELOCATION_GUARD_RF_PROLOGUE`
     RELOCATION_GUARD_RF_PROLOGUE = 1,
 

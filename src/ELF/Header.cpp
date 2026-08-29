@@ -110,7 +110,6 @@ static constexpr auto PFLAGS_LIST = {
 
 template<class T>
 Header::Header(const T& header) :
-  identity_{},
   file_type_(FILE_TYPE(header.e_type)),
   machine_type_(ARCH(header.e_machine)),
   object_file_version_(VERSION(header.e_version)),

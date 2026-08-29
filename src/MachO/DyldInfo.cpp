@@ -123,7 +123,7 @@ inline std::string_view safe_segment_name(Binary::it_segments& segments,
 
 inline std::string_view safe_library_name(Binary::it_libraries& libraries,
                                           int64_t idx) {
-  if (idx >= 0 && static_cast<size_t>(idx) < libraries.size()) {
+  if (idx >= 0 && size_t(idx) < libraries.size()) {
     return libraries[idx].name();
   }
   return "<invalid>";
@@ -228,8 +228,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
       case REBASE_OPCODES::DO_REBASE_IMM_TIMES:
       {
         output << "[" << to_string(opcode) << "]" << '\n';
-        output << fmt::format("{}for i in range({}):\n", tab,
-                              static_cast<uint32_t>(imm));
+        output << fmt::format("{}for i in range({}):\n", tab, uint32_t{imm});
         for (size_t i = 0; i < imm; ++i) {
           output << tab << tab;
           output << fmt::format("rebase({}, {}, {:#x})\n",
@@ -263,8 +262,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
 
         output << "[" << to_string(opcode) << "]" << '\n';
 
-        output << fmt::format("{}for i in range({}):\n", tab,
-                              static_cast<uint32_t>(count));
+        output << fmt::format("{}for i in range({}):\n", tab, uint32_t{count});
         for (size_t i = 0; i < count; ++i) {
           output << tab << tab;
           output << fmt::format("rebase({}, {}, {:#x})\n",
@@ -340,8 +338,7 @@ std::string DyldInfo::show_rebases_opcodes() const {
                                                      nullptr,
                                                  segment_offset, pint_v, count);
 
-        output << fmt::format("{}for i in range({}):\n", tab,
-                              static_cast<uint32_t>(count));
+        output << fmt::format("{}for i in range({}):\n", tab, uint32_t{count});
         for (size_t i = 0; i < count; ++i) {
           output << tab << tab;
           output << fmt::format("rebase({}, {}, {:#x})\n",
@@ -449,9 +446,7 @@ void DyldInfo::show_bindings(std::ostream& output,
 
         library_ordinal = imm;
 
-        output << tab
-               << fmt::format("Library Ordinal := {}\n",
-                              static_cast<uint32_t>(imm));
+        output << tab << fmt::format("Library Ordinal := {}\n", uint32_t{imm});
         break;
       }
 
@@ -480,7 +475,7 @@ void DyldInfo::show_bindings(std::ostream& output,
         if (imm == 0) {
           library_ordinal = 0;
         } else {
-          int8_t sign_extended = static_cast<int8_t>(OPCODE_MASK) | imm;
+          int8_t sign_extended = int8_t(OPCODE_MASK) | imm;
           library_ordinal = sign_extended;
         }
 
@@ -502,7 +497,7 @@ void DyldInfo::show_bindings(std::ostream& output,
         }
         symbol_flags = imm;
 
-        is_weak_import = (imm & BIND_SYMBOL_FLAGS::WEAK_IMPORT) != 0;
+        is_weak_import = (imm & uint32_t(BIND_SYMBOL_FLAGS::WEAK_IMPORT)) != 0;
 
         output << tab << "Symbol name := " << symbol_name << '\n';
         output << tab << fmt::format("Is Weak ? {}\n", is_weak_import);
@@ -694,9 +689,7 @@ void DyldInfo::show_bindings(std::ostream& output,
                                                      nullptr,
                                                  segment_offset, pint_v, count);
 
-        output << tab
-               << fmt::format("for i in range({}):\n",
-                              static_cast<uint32_t>(count));
+        output << tab << fmt::format("for i in range({}):\n", uint32_t{count});
         for (size_t i = 0; i < count; ++i) {
           output << tab << tab
                  << fmt::format("bind({}, {}, {:#x}, {}, library_ordinal={}, "
@@ -737,14 +730,14 @@ void DyldInfo::show_bindings(std::ostream& output,
                   current_segment.virtual_address() + segment_offset;
               span<const uint8_t> content = current_segment.content();
               if (segment_offset >= content.size() ||
-                  (segment_offset + sizeof(uint64_t)) >= content.size())
+                  sizeof(uint64_t) >= content.size() - segment_offset)
               {
                 LIEF_WARN("Invalid segment offset: {:#x}", segment_offset);
                 break;
               }
               auto value = *reinterpret_cast<const uint64_t*>(content.data() +
                                                               segment_offset);
-              bool is_rebase = (value & (static_cast<uint64_t>(1) << 62)) == 0;
+              bool is_rebase = (value & (uint64_t{1} << 62)) == 0;
 
               if (is_rebase) {
                 output << tab << tab
@@ -942,7 +935,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
   uint64_t current_segment_end = 0;
   uint32_t current_segment_index = 0;
   uint8_t type = 0;
-  auto address = static_cast<uint64_t>(-1);
+  auto address = uint64_t(-1);
   std::vector<details::rebase_instruction> output;
 
   for (RelocationDyld* rebase : rebases) {
@@ -1168,7 +1161,7 @@ DyldInfo& DyldInfo::update_rebase_info(vector_iostream& stream) {
 
       default:
       {
-        LIEF_ERR("Unknown opcode: {:#x}", static_cast<uint32_t>(inst.opcode));
+        LIEF_ERR("Unknown opcode: {:#x}", uint32_t{inst.opcode});
       }
     }
   }
@@ -1258,7 +1251,7 @@ DyldInfo& DyldInfo::update_binding_info(vector_iostream& stream,
     {
       update_standard_bindings(standard_binds, stream);
     }
-    cmd.bind_size = stream.size() - cmd.bind_off;
+    cmd.bind_size = uint32_t(stream.size_since(cmd.bind_off));
 
     // LIEF_DEBUG("LC_DYLD_INFO.bind_off : {:#08x} -> {:#08x}",
     //            this->bind().first, cmd.bind_off);
@@ -1270,14 +1263,14 @@ DyldInfo& DyldInfo::update_binding_info(vector_iostream& stream,
     {
       update_weak_bindings(weak_binds, stream);
     }
-    cmd.weak_bind_size = stream.size() - cmd.weak_bind_off;
+    cmd.weak_bind_size = uint32_t(stream.size_since(cmd.weak_bind_off));
   }
   if (!lazy_binds.empty()) {
     cmd.lazy_bind_off = stream.size();
     {
       update_lazy_bindings(lazy_binds, stream);
     }
-    cmd.lazy_bind_size = stream.size() - cmd.lazy_bind_off;
+    cmd.lazy_bind_size = uint32_t(stream.size_since(cmd.lazy_bind_off));
   }
   return *this;
 }
@@ -1300,7 +1293,7 @@ DyldInfo&
   uint32_t current_segment_index = 0;
 
   uint8_t type = 0;
-  auto address = static_cast<uint64_t>(-1);
+  auto address = uint64_t(-1);
   std::string symbol_name;
   int64_t addend = 0;
   const size_t pint_size = binary_->pointer_size();
@@ -1311,7 +1304,7 @@ DyldInfo&
     if (sym != nullptr) {
       if (sym->name() != symbol_name) {
         uint64_t flag = info->is_non_weak_definition() ?
-                            BIND_SYMBOL_FLAGS::NON_WEAK_DEFINITION :
+                            uint64_t(BIND_SYMBOL_FLAGS::NON_WEAK_DEFINITION) :
                             0;
         instructions.emplace_back(
             uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0,
@@ -1594,9 +1587,10 @@ DyldInfo&
           .write_uleb128(info->library_ordinal());
     }
 
-    uint64_t flags = info->is_weak_import() ? BIND_SYMBOL_FLAGS::WEAK_IMPORT : 0;
+    uint64_t flags =
+        info->is_weak_import() ? uint64_t(BIND_SYMBOL_FLAGS::WEAK_IMPORT) : 0;
     flags |= info->is_non_weak_definition() ?
-                 BIND_SYMBOL_FLAGS::NON_WEAK_DEFINITION :
+                 uint64_t(BIND_SYMBOL_FLAGS::NON_WEAK_DEFINITION) :
                  0;
     if (!info->has_symbol()) {
       LIEF_ERR("Missing symbol for update");
@@ -1673,7 +1667,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(
   uint64_t current_segment_end = 0;
   uint32_t current_segment_index = 0;
   uint8_t type = 0;
-  auto address = static_cast<uint64_t>(-1);
+  auto address = uint64_t(-1);
   int32_t ordinal = 0x80000000;
   std::string symbol_name;
   int64_t addend = 0;
@@ -1696,7 +1690,8 @@ DyldInfo& DyldInfo::update_standard_bindings_v1(
       return *this;
     }
     if (info->symbol()->name() != symbol_name) {
-      uint64_t flag = info->is_weak_import() ? BIND_SYMBOL_FLAGS::WEAK_IMPORT : 0;
+      uint64_t flag =
+          info->is_weak_import() ? uint64_t(BIND_SYMBOL_FLAGS::WEAK_IMPORT) : 0;
       symbol_name = info->symbol()->name();
       instructions.emplace_back(
           uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0,
@@ -1950,11 +1945,11 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(
   uint64_t current_segment_end = 0;
   uint64_t current_segment_index = 0;
   uint8_t type = 0;
-  auto address = static_cast<uint64_t>(-1);
+  auto address = uint64_t(-1);
   int32_t ordinal = 0x80000000;
   std::string symbol_name;
   int64_t addend = 0;
-  auto num_bindings = static_cast<uint64_t>(-1);
+  auto num_bindings = uint64_t(-1);
   const size_t pint_size = binary_->pointer_size();
 
   for (DyldBindingInfo* info : bindings) {
@@ -1979,7 +1974,8 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(
       return *this;
     }
     if (symbol_name != info->symbol()->name()) {
-      uint64_t flag = info->is_weak_import() ? BIND_SYMBOL_FLAGS::WEAK_IMPORT : 0;
+      uint64_t flag =
+          info->is_weak_import() ? uint64_t(BIND_SYMBOL_FLAGS::WEAK_IMPORT) : 0;
       symbol_name = info->symbol()->name();
       instructions.emplace_back(
           uint8_t(BIND_OPCODES::SET_SYMBOL_TRAILING_FLAGS_IMM), flag, 0,
@@ -2025,7 +2021,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(
   }
 
   if (num_bindings > std::numeric_limits<uint16_t>::max() &&
-      num_bindings != static_cast<uint64_t>(-1))
+      num_bindings != uint64_t(-1))
   {
     LIEF_ERR("Too many binds ({:d}). The limit being 65536");
     return *this;

@@ -424,7 +424,7 @@ std::unique_ptr<Binary> Parser::parse_from_memory(uintptr_t address,
     vsize = MAX_MEM_IMAGE;
   }
 
-  return parse_from_memory(address, static_cast<size_t>(vsize), conf);
+  return parse_from_memory(address, size_t(vsize), conf);
 }
 
 std::unique_ptr<Binary> Parser::parse_from_memory(uintptr_t address, size_t size,
@@ -469,7 +469,7 @@ ok_error_t Parser::parse_symbol_version(uint64_t symbol_version_offset) {
   LIEF_DEBUG("Parsing symbol version");
   LIEF_DEBUG("Symbol version offset: {:#x}", symbol_version_offset);
 
-  const auto nb_entries = static_cast<uint32_t>(binary_->dynamic_symbols_.size());
+  const auto nb_entries = uint32_t(binary_->dynamic_symbols_.size());
 
   stream_->setpos(symbol_version_offset);
   for (size_t i = 0; i < nb_entries; ++i) {
@@ -685,7 +685,7 @@ ok_error_t Parser::parse_notes(uint64_t offset, uint64_t size) {
       return make_error_code(lief_errors::corrupted);
     }
 
-    if (static_cast<int64_t>(stream_->pos()) <= current_pos) {
+    if (int64_t(stream_->pos()) <= current_pos) {
       return make_error_code(lief_errors::corrupted);
     }
   }

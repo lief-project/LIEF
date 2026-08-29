@@ -1475,7 +1475,7 @@ ok_error_t Builder::build_section_relocations() {
       if (const Symbol* symbol = reloc->symbol()) {
         int64_t symtab_idx = binary_->symtab_idx(*symbol);
         if (0 <= symtab_idx) {
-          symidx = static_cast<uint32_t>(symtab_idx);
+          symidx = uint32_t(symtab_idx);
         } else {
           LIEF_ERR("Can't find the symbol idx associated with the relocation ({})",
                    symbol->name());
@@ -1663,7 +1663,7 @@ ok_error_t Builder::build_dynamic_relocations() {
     if (const Symbol* symbol = relocation.symbol()) {
       int64_t dynsym_idx = binary_->dynsym_idx(*symbol);
       if (0 <= dynsym_idx) {
-        idx = static_cast<uint32_t>(dynsym_idx);
+        idx = uint32_t(dynsym_idx);
       } else {
         LIEF_ERR("Can't find the symbol idx associated with the relocation ({})",
                  symbol->name());
@@ -1744,7 +1744,7 @@ ok_error_t Builder::build_pltgot_relocations() {
     if (const Symbol* symbol = relocation.symbol()) {
       int64_t dynsym_idx = binary_->dynsym_idx(*symbol);
       if (0 <= dynsym_idx) {
-        idx = static_cast<uint32_t>(dynsym_idx);
+        idx = uint32_t(dynsym_idx);
       } else {
         LIEF_ERR("Can't find the symbol idx associated with the relocation ({})",
                  symbol->name());
@@ -1806,7 +1806,7 @@ ok_error_t Builder::build_symbol_requirement() {
     return make_error_code(lief_errors::not_found);
   }
   const Elf_Addr svr_address = dt_verneed->value();
-  const auto svr_nb = static_cast<uint32_t>(dt_verneednum->value());
+  const auto svr_nb = uint32_t(dt_verneednum->value());
 
   if (svr_nb != binary_->symbol_version_requirements_.size()) {
     LIEF_WARN("The number of symbol version requirement "

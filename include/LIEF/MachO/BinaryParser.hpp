@@ -116,7 +116,7 @@ class LIEF_API BinaryParser : public LIEF::Parser {
   BinaryParser& operator=(const BinaryParser& copy) = delete;
   BinaryParser(const BinaryParser& copy) = delete;
 
-  ~BinaryParser() override;
+  ~BinaryParser();
 
   private:
   using exports_list_t = std::vector<std::unique_ptr<ExportInfo>>;

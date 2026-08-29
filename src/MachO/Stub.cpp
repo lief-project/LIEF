@@ -54,17 +54,14 @@ const Section* Stub::Iterator::find_section_offset(size_t pos,
     return second;
   }
 
-  uint64_t limit = nb_stubs(*stubs_[0]);
-  for (size_t idx = 0; idx < stubs_.size(); ++idx) {
-    if (pos < limit) {
-      offset = idx > 0 ? get_offset(pos - (limit - nb_stubs(*stubs_[idx - 1])),
-                                    *stubs_[idx]) :
-                         get_offset(pos, *stubs_[idx]);
-      return stubs_[idx];
+  uint64_t base = 0;
+  for (const Section* section : stubs_) {
+    const uint64_t nb = nb_stubs(*section);
+    if (pos >= base && (pos - base) < nb) {
+      offset = get_offset(pos - base, *section);
+      return section;
     }
-    if (idx < stubs_.size() - 1) {
-      limit += nb_stubs(*stubs_[idx + 1]);
-    }
+    base += nb;
   }
   return nullptr;
 }
@@ -77,7 +74,7 @@ Stub Stub::Iterator::operator*() const {
   }
   LIEF::span<const uint8_t> content = section->content();
   const uint32_t stride = section->reserved2();
-  if (offset >= content.size() || offset + stride > content.size()) {
+  if (offset >= content.size() || stride > content.size() - offset) {
     logging::fatal_error("Stub out of range at pos: {}", pos_);
   }
   LIEF::span<const uint8_t> stub_raw = section->content().subspan(offset, stride);

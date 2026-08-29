@@ -239,9 +239,8 @@ inline uint32_t parse_android_version(const char* field, size_t size) {
   {
     return 0;
   }
-  return static_cast<uint32_t>(field[0] - '0') * 100 +
-         static_cast<uint32_t>(field[1] - '0') * 10 +
-         static_cast<uint32_t>(field[2] - '0');
+  return uint32_t(field[0] - '0') * 100 + uint32_t(field[1] - '0') * 10 +
+         uint32_t(field[2] - '0');
 }
 
 std::string ts_to_str(uint64_t timestamp);

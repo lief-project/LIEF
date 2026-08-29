@@ -176,14 +176,14 @@ span<const uint8_t> Segment::content() const {
 
   if ((node.offset() + node.size()) >= size) {
     if ((node.offset() + handler_size()) <= size) {
-      return {ptr, static_cast<size_t>(handler_size())};
+      return {ptr, size_t(handler_size())};
     }
     LIEF_ERR("Failed to access segment content {}:{:#x}", to_string(type()),
              virtual_address());
     return {};
   }
 
-  return {ptr, static_cast<size_t>(node.size())};
+  return {ptr, size_t(node.size())};
 }
 
 size_t Segment::get_content_size() const {

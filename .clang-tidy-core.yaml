@@ -6,8 +6,26 @@ Checks: [
   cppcoreguidelines-*,
   misc-*,
   clang-taidy-*,
+  modernize-*,
 
-  # Remove
+  -clang-taidy-avoid-implicit-enum-to-integer-conversion,
+  -clang-taidy-avoid-high-cyclomatic-complexity,
+
+  -modernize-use-trailing-return-type,
+  -modernize-use-nodiscard,
+  -modernize-avoid-c-arrays,
+
+  # `modernize-avoid-c-style-cast` also rejects the functional-style suggested by
+  # `clang-taidy-avoid-static-integer-cast` (caught by -Wold-style-cast though)
+  -modernize-avoid-c-style-cast,
+
+  -modernize-use-ranges,
+  -modernize-use-constraints,
+  -modernize-use-designated-initializers,
+  -modernize-use-integer-sign-comparison,
+  -modernize-use-string-view,
+
+  -bugprone-derived-method-shadowing-base-method,
   -bugprone-easily-swappable-parameters,
   -bugprone-macro-parentheses,
   -bugprone-narrowing-conversions,
@@ -41,6 +59,7 @@ Checks: [
   -misc-misplaced-const,
   -misc-no-recursion,
   -misc-non-private-member-variables-in-classes,
+  -misc-override-with-different-visibility,
   -misc-static-assert,
   -misc-use-anonymous-namespace,
   -misc-use-internal-linkage,
@@ -49,5 +68,9 @@ Checks: [
   -portability-avoid-pragma-once,
 ]
 
+CheckOptions:
+  bugprone-unused-return-value.CheckedReturnTypes: '^::std::error_code$;^::std::error_condition$;^::std::errc$;^::std::expected$;^::LIEF::result$'
+  bugprone-unused-return-value.AllowCastToVoid: true
+
 HeaderFilterRegex: '.*'
-ExcludeHeaderFilterRegex: '(builds|build|include/LIEF|utils/ordinals_lookup_tables_std|utils/ordinals_lookup_tables)/*'
+ExcludeHeaderFilterRegex: '(builds|build|api/rust/include|utils/ordinals_lookup_tables_std|utils/ordinals_lookup_tables)/*'

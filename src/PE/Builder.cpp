@@ -311,8 +311,8 @@ ok_error_t Builder::build_relocations() {
     }
 
     const uint32_t block_size =
-        static_cast<uint32_t>((reloc.entries().size()) * sizeof(uint16_t) +
-                              sizeof(details::pe_base_relocation_block));
+        uint32_t((reloc.entries().size()) * sizeof(uint16_t) +
+                 sizeof(details::pe_base_relocation_block));
 
     ios.write<uint32_t>(reloc.virtual_address())
         .write<uint32_t>(align(block_size, sizeof(uint32_t)));
@@ -1190,7 +1190,6 @@ ok_error_t Builder::build_exports() {
           .seekp(names_table_off + name_idx * sizeof(uint32_t))
           .record_fixup(FX_BASE_RVA)
           .write<uint32_t>(str_table_off + it->second);
-      ;
       ++name_idx;
     }
   }

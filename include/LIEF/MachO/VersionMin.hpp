@@ -79,8 +79,8 @@ class LIEF_API VersionMin : public LoadCommand {
   }
 
   private:
-  version_t version_;
-  version_t sdk_;
+  version_t version_{};
+  version_t sdk_{};
 };
 
 }

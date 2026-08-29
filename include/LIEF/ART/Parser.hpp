@@ -51,7 +51,7 @@ class LIEF_API Parser {
   Parser();
   Parser(std::string_view file);
   Parser(std::vector<uint8_t> data);
-  virtual ~Parser();
+  ~Parser();
 
   void init(std::string_view name, art_version_t version);
 

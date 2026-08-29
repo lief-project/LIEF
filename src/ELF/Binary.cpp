@@ -457,7 +457,7 @@ Binary::string_list_t Binary::strings(size_t min_size) const {
       continue;
     }
 
-    current.push_back(static_cast<char>(c));
+    current.push_back(char(c));
   }
 
 
@@ -902,7 +902,7 @@ Section* Binary::symtab_symbols_section() {
 }
 
 uint64_t Binary::imagebase() const {
-  auto imagebase = static_cast<uint64_t>(-1);
+  auto imagebase = uint64_t(-1);
   for (const std::unique_ptr<Segment>& segment : segments_) {
     if (segment != nullptr && segment->is_load()) {
       imagebase =
@@ -941,7 +941,6 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name) cons
   }
 
   return LIEF::Binary::get_function_address(func_name);
-  ;
 }
 
 result<uint64_t> Binary::get_function_address(const std::string& func_name,
@@ -1379,7 +1378,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
 
     span<uint8_t> content = section->writable_content();
     const uint64_t offset = address - section->file_offset();
-    if (offset > content.size() || (offset + size) > content.size()) {
+    if (offset > content.size() || size > content.size() - offset) {
       LIEF_ERR(
           "Patch value ({} bytes @{:#x}) exceeds segment bounds (limit: {:#x})",
           size, offset, content.size()
@@ -1390,28 +1389,28 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
     switch (size) {
       case sizeof(uint8_t):
       {
-        auto X = static_cast<uint8_t>(patch_value);
+        auto X = uint8_t(patch_value);
         memcpy(content.data() + offset, &X, sizeof(uint8_t));
         break;
       }
 
       case sizeof(uint16_t):
       {
-        auto X = static_cast<uint16_t>(patch_value);
+        auto X = uint16_t(patch_value);
         memcpy(content.data() + offset, &X, sizeof(uint16_t));
         break;
       }
 
       case sizeof(uint32_t):
       {
-        auto X = static_cast<uint32_t>(patch_value);
+        auto X = uint32_t(patch_value);
         memcpy(content.data() + offset, &X, sizeof(uint32_t));
         break;
       }
 
       case sizeof(uint64_t):
       {
-        auto X = static_cast<uint64_t>(patch_value);
+        auto X = uint64_t{patch_value};
         memcpy(content.data() + offset, &X, sizeof(uint64_t));
         break;
       }
@@ -1435,7 +1434,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
 
   const uint64_t offset = address - segment_topatch->virtual_address();
   span<uint8_t> content = segment_topatch->writable_content();
-  if (offset > content.size() || (offset + size) > content.size()) {
+  if (offset > content.size() || size > content.size() - offset) {
     LIEF_ERR("Patch value ({} bytes @{:#x}) exceeds segment bounds (limit: {:#x})",
              size, offset, content.size());
     return;
@@ -1443,28 +1442,28 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
   switch (size) {
     case sizeof(uint8_t):
     {
-      const auto X = static_cast<uint8_t>(patch_value);
+      const auto X = uint8_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint8_t));
       break;
     }
 
     case sizeof(uint16_t):
     {
-      const auto X = static_cast<uint16_t>(patch_value);
+      const auto X = uint16_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint16_t));
       break;
     }
 
     case sizeof(uint32_t):
     {
-      const auto X = static_cast<uint32_t>(patch_value);
+      const auto X = uint32_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint32_t));
       break;
     }
 
     case sizeof(uint64_t):
     {
-      const auto X = static_cast<uint64_t>(patch_value);
+      const auto X = uint64_t{patch_value};
       memcpy(content.data() + offset, &X, sizeof(uint64_t));
       break;
     }
@@ -1743,7 +1742,7 @@ span<const uint8_t>
 
   const auto checked_size = std::min<uint64_t>(size, content.size() - offset);
 
-  return {content.data() + offset, static_cast<size_t>(checked_size)};
+  return {content.data() + offset, size_t(checked_size)};
 }
 
 
@@ -1923,10 +1922,8 @@ static void do_dynamic_entry_shift(uint64_t from, uint64_t shift,
       DynamicEntryArray::array_t& array = entry.as<DynamicEntryArray>()->array();
       for (uint64_t& address : array) {
         if (address >= from) {
-          if ((binary_type == Header::CLASS::ELF32 &&
-               static_cast<int32_t>(address) > 0) ||
-              (binary_type == Header::CLASS::ELF64 &&
-               static_cast<int64_t>(address) > 0))
+          if ((binary_type == Header::CLASS::ELF32 && int32_t(address) > 0) ||
+              (binary_type == Header::CLASS::ELF64 && int64_t(address) > 0))
           {
             address += shift;
           }
@@ -2235,9 +2232,7 @@ LIEF::Binary::functions_t Binary::tor_functions(DynamicEntry::TAG tag) const {
   functions.reserve(array.size());
 
   for (uint64_t x : array) {
-    if (x != 0 && static_cast<uint32_t>(x) != static_cast<uint32_t>(-1) &&
-        x != static_cast<uint64_t>(-1))
-    {
+    if (x != 0 && uint32_t(x) != uint32_t(-1) && x != uint64_t(-1)) {
       functions.emplace_back(x);
     }
   }
@@ -2335,7 +2330,7 @@ LIEF::Binary::functions_t Binary::armexid_functions() const {
   static const auto expand_prel31 = [](uint32_t word, uint32_t base) {
     uint32_t offset = word & 0x7fffffff;
     if ((offset & 0x40000000) != 0u) {
-      offset |= ~static_cast<uint32_t>(0x7fffffff);
+      offset |= ~uint32_t{0x7fffffff};
     }
     return base + offset;
   };
@@ -2437,15 +2432,15 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
   }
 
 
-  LIEF_DEBUG("  eh_frame_ptr_enc: {:#x}", static_cast<uint32_t>(eh_frame_ptr_enc));
-  LIEF_DEBUG("  fde_count_enc:    {:#x}", static_cast<uint32_t>(fde_count_enc));
-  LIEF_DEBUG("  table_enc:        {:#x}", static_cast<uint32_t>(table_enc));
-  LIEF_DEBUG("  eh_frame_ptr:     {:#x}", static_cast<uint32_t>(eh_frame_ptr));
-  LIEF_DEBUG("  fde_count:        {:#x}", static_cast<uint32_t>(fde_count));
+  LIEF_DEBUG("  eh_frame_ptr_enc: {:#x}", uint32_t{eh_frame_ptr_enc});
+  LIEF_DEBUG("  fde_count_enc:    {:#x}", uint32_t{fde_count_enc});
+  LIEF_DEBUG("  table_enc:        {:#x}", uint32_t{table_enc});
+  LIEF_DEBUG("  eh_frame_ptr:     {:#x}", uint32_t(eh_frame_ptr));
+  LIEF_DEBUG("  fde_count:        {:#x}", uint32_t(fde_count));
 
   auto table_bias = static_cast<dwarf::EH_ENCODING>(table_enc & 0xF0);
 
-  for (size_t i = 0; i < static_cast<size_t>(fde_count); ++i) {
+  for (size_t i = 0; i < size_t(fde_count); ++i) {
 
     // Read Function address / FDE address within the
     // Binary search table
@@ -2526,7 +2521,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
         continue;
       }
       uint64_t fde_length = *res_fde_length;
-      if (fde_length == static_cast<uint32_t>(-1)) {
+      if (fde_length == uint32_t(-1)) {
         if (vs.can_read<uint64_t>()) {
           fde_length = *vs.read<uint64_t>();
         }
@@ -2544,7 +2539,16 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
         continue;
       }
 
-      const uint32_t cie_offset = vs.pos() - *cie_pointer - sizeof(uint32_t);
+      const uint64_t cie_delta = uint64_t{*cie_pointer} + sizeof(uint32_t);
+      if (vs.pos() < cie_delta) {
+        LIEF_DEBUG("CIE pointer ({:#x}) points before the beginning of the "
+                   ".eh_frame section",
+                   *cie_pointer);
+        vs.setpos(saved_pos);
+        continue;
+      }
+
+      const uint64_t cie_offset = vs.pos() - cie_delta;
 
       LIEF_DEBUG("fde_length@{:#x}: {:#x}", address - bias, fde_length);
       LIEF_DEBUG("cie_pointer: {:#x}", *cie_pointer);
@@ -2566,7 +2570,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
         }
         uint64_t cie_length = *res_cie_length;
 
-        if (cie_length == static_cast<uint32_t>(-1)) {
+        if (cie_length == uint32_t(-1)) {
           if (vs.can_read<uint64_t>()) {
             cie_length = *vs.read<uint64_t>();
           }
@@ -2607,26 +2611,26 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
         LIEF_DEBUG("CIE augmentation: {}", cie_augmentation_string);
         if (cie_augmentation_string.find("eh") != std::string::npos) {
           if (is64) {
-            /* uint64_t eh_data = */ vs.read<uint64_t>();
+            vs.skip<uint64_t>(); // eh_data
           } else {
-            /* uint32_t eh_data = */ vs.read<uint32_t>();
+            vs.skip<uint32_t>(); // eh_data
           }
         }
 
         if (*version >= 4) {
-          /* uint8_t address_size          = */ vs.read<uint8_t>();
-          /* uint8_t segment_selector_size = */ vs.read<uint8_t>();
+          vs.skip<uint8_t>(); // address_size
+          vs.skip<uint8_t>(); // segment_selector_size
         }
 
-        /* uint64_t code_alignment         = */ vs.read_uleb128();
-        /* int64_t  data_alignment         = */ vs.read_sleb128();
+        vs.skip_uleb128(); // code_alignment
+        vs.skip_sleb128(); // data_alignment
         if (*version == 1) {
-          /* uint8_t return_address_register = */ vs.read<uint8_t>();
+          vs.skip<uint8_t>(); // return_address_register
         } else {
-          /* uint64_t return_address_register = */ vs.read_uleb128();
+          vs.skip_uleb128(); // return_address_register
         }
         if (cie_augmentation_string.find('z') != std::string::npos) {
-          /* int64_t  augmentation_length    = */ vs.read_uleb128();
+          vs.skip_uleb128(); // return_address_register
         }
         LIEF_DEBUG("cie_augmentation_string: {}", cie_augmentation_string);
 
@@ -2646,8 +2650,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
           }
         }
       }
-      LIEF_DEBUG("Augmentation data: {:#x}",
-                 static_cast<uint32_t>(augmentation_data));
+      LIEF_DEBUG("Augmentation data: {:#x}", uint32_t{augmentation_data});
 
       // Go back to FDE Structure
       vs.setpos(saved_pos);
@@ -2665,7 +2668,7 @@ LIEF::Binary::functions_t Binary::eh_frame_functions() const {
       int32_t size = *res;
 
       // Create the function
-      Function f{static_cast<uint64_t>(initial_location + imagebase())};
+      Function f{uint64_t{initial_location + imagebase()}};
       f.size(size);
       functions.push_back(std::move(f));
       LIEF_DEBUG("PC@{:#x}:{:#x}", function_begin, size);

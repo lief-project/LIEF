@@ -226,7 +226,7 @@ result<std::u16string> BinaryStream::read_u16string(size_t length) const {
 }
 
 result<std::u16string> BinaryStream::peek_u16string(size_t length) const {
-  if (length == static_cast<size_t>(SIZE_MAX)) {
+  if (length == size_t{SIZE_MAX}) {
     return peek_u16string();
   }
 
@@ -277,7 +277,7 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
     }
     uint8_t a = *res_a;
 
-    if (static_cast<uint8_t>(a) < 0x80) {
+    if (uint8_t{a} < 0x80) {
       if (a == 0) {
         break;
       }
@@ -293,7 +293,7 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
       if ((b & 0xC0) != 0x80) {
         break;
       }
-      u32str.push_back(static_cast<char32_t>((((a & 0x1F) << 6) | (b & 0x3F))));
+      u32str.push_back(char32_t((((a & 0x1F) << 6) | (b & 0x3F))));
     } else if ((a & 0xf0) == 0xe0) {
       result<uint8_t> res_b = read<uint8_t>();
       result<uint8_t> res_c = read<uint8_t>();
@@ -309,8 +309,8 @@ result<std::string> BinaryStream::read_mutf8(size_t maxsize) const {
       if (((b & 0xC0) != 0x80) || ((c & 0xC0) != 0x80)) {
         break;
       }
-      u32str.push_back(static_cast<char32_t>(((a & 0x1F) << 12) |
-                                             ((b & 0x3F) << 6) | (c & 0x3F)));
+      u32str.push_back(char32_t(((a & 0x1F) << 12) | ((b & 0x3F) << 6) |
+                                (c & 0x3F)));
     } else {
       break;
     }

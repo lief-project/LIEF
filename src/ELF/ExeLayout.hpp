@@ -232,11 +232,11 @@ class LIEF_LOCAL ExeLayout : public Layout {
     for (const Note& note : binary_->notes()) {
       size_t pos = raw_notes.tellp();
       // First we have to write the length of the Note's name
-      const auto namesz = static_cast<uint32_t>(note.name().size() + 1);
+      const auto namesz = uint32_t(note.name().size() + 1);
       raw_notes.write<uint32_t>(namesz);
 
       // Then the length of the Note's description
-      const auto descsz = static_cast<uint32_t>(note.description().size());
+      const auto descsz = uint32_t(note.description().size());
       raw_notes.write<uint32_t>(descsz);
 
       // Then the note's type
@@ -363,12 +363,15 @@ class LIEF_LOCAL ExeLayout : public Layout {
     std::vector<uint> bloom_filters(maskwords, 0);
     size_t C = sizeof(uint) * 8; // 32 for ELF, 64 for ELF64
 
-    for (size_t i = symndx; i < dynamic_symbols.size(); ++i) {
-      const uint32_t hash = dl_new_hash(dynamic_symbols[i].name().c_str());
-      const size_t pos = (hash / C) & (gnu_hash->maskwords() - 1);
-      uint V = (static_cast<uint>(1) << (hash % C)) |
-               (static_cast<uint>(1) << ((hash >> gnu_hash->shift2()) % C));
-      bloom_filters[pos] |= V;
+    if (maskwords > 0) {
+      const size_t bloom_mask = maskwords - 1;
+      for (size_t i = symndx; i < dynamic_symbols.size(); ++i) {
+        const uint32_t hash = dl_new_hash(dynamic_symbols[i].name().c_str());
+        const size_t pos = (hash / C) & bloom_mask;
+        uint V = (static_cast<uint>(1) << (hash % C)) |
+                 (static_cast<uint>(1) << ((hash >> gnu_hash->shift2()) % C));
+        bloom_filters[pos] |= V;
+      }
     }
     for (size_t idx = 0; idx < bloom_filters.size(); ++idx) {
       LIEF_DEBUG("Bloom filter [{:d}]: {:#x}", idx, bloom_filters[idx]);
@@ -880,9 +883,9 @@ class LIEF_LOCAL ExeLayout : public Layout {
     const uint64_t read_write_segment =
         init_size_ + preinit_size_ + fini_size_ + dynamic_size_;
 
-    const size_t required_segments = static_cast<size_t>(needs_interp) +
-                                     static_cast<size_t>(read_segment > 0) +
-                                     static_cast<size_t>(read_write_segment > 0);
+    const size_t required_segments = size_t{needs_interp} +
+                                     size_t{read_segment > 0} +
+                                     size_t{read_write_segment > 0};
     if (required_segments > 0 &&
         binary_->relocate_phdr_table_auto(required_segments) == 0)
     {

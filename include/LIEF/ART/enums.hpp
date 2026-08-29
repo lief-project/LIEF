@@ -15,11 +15,12 @@
  */
 #ifndef LIEF_ART_ENUMS_H
 #define LIEF_ART_ENUMS_H
+#include <cstdint>
 
 
 namespace LIEF::ART {
 
-enum STORAGE_MODES {
+enum STORAGE_MODES : uint32_t {
   STORAGE_UNCOMPRESSED = 0,
   STORAGE_LZ4 = 1,
   STORAGE_LZ4HC = 2,

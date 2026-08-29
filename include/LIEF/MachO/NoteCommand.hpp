@@ -92,7 +92,7 @@ class LIEF_API NoteCommand : public LoadCommand {
   }
 
   private:
-  std::array<char, 16> owner_;
+  std::array<char, 16> owner_{};
   uint64_t note_offset_ = 0;
   uint64_t note_size_ = 0;
 };

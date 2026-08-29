@@ -24,21 +24,21 @@
 namespace LIEF::MachO {
 
 RelocationObject::RelocationObject(const details::relocation_info& relocinfo) :
-  is_pcrel_{static_cast<bool>(relocinfo.r_pcrel)} {
-  address_ = static_cast<uint32_t>(relocinfo.r_address);
-  size_ = static_cast<uint8_t>(relocinfo.r_length);
-  type_ = static_cast<uint8_t>(relocinfo.r_type);
+  is_pcrel_{bool{relocinfo.r_pcrel}} {
+  address_ = uint32_t(relocinfo.r_address);
+  size_ = uint8_t{relocinfo.r_length};
+  type_ = uint8_t{relocinfo.r_type};
 }
 
 RelocationObject::RelocationObject(
     const details::scattered_relocation_info& scattered_relocinfo
 ) :
-  is_pcrel_{static_cast<bool>(scattered_relocinfo.r_pcrel)},
+  is_pcrel_{bool{scattered_relocinfo.r_pcrel}},
   is_scattered_{true},
   value_{scattered_relocinfo.r_value} {
   address_ = scattered_relocinfo.r_address;
-  size_ = static_cast<uint8_t>(scattered_relocinfo.r_length);
-  type_ = static_cast<uint8_t>(scattered_relocinfo.r_type);
+  size_ = uint8_t{scattered_relocinfo.r_length};
+  type_ = uint8_t{scattered_relocinfo.r_type};
 }
 
 void RelocationObject::swap(RelocationObject& other) noexcept {

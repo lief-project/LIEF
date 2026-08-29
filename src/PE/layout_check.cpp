@@ -319,7 +319,7 @@ bool LayoutChecker::check_sections() {
       return error("Invalid number of pages");
     }
 
-    next_va += static_cast<uint64_t>(nb_sec_pages * DEFAULT_PAGE_SIZE);
+    next_va += uint64_t{nb_sec_pages} * DEFAULT_PAGE_SIZE;
   } else {
     nb_sec_pages = align(sizeof_image, DEFAULT_PAGE_SIZE) / DEFAULT_PAGE_SIZE;
   }
@@ -381,7 +381,7 @@ bool LayoutChecker::check_sections() {
         }
       }
 
-      next_va += static_cast<uint64_t>(nb_sec_pages * DEFAULT_PAGE_SIZE);
+      next_va += uint64_t{nb_sec_pages} * DEFAULT_PAGE_SIZE;
     }
   }
 
@@ -475,9 +475,7 @@ bool LayoutChecker::check_load_config() {
   // NOTE(romain): dynamic_value_reloctable_section starts by indexing from 1
   if (auto value = config->dynamic_value_reloctable_section(); value && *value > 0)
   {
-    if ((*value - 1) < 0 ||
-        static_cast<size_t>((*value - 1)) >= pe.sections().size())
-    {
+    if ((*value - 1) < 0 || size_t((*value - 1)) >= pe.sections().size()) {
       return false;
     }
   }

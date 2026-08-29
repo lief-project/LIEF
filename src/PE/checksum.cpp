@@ -67,18 +67,17 @@ uint32_t ChecksumStream::finalize() {
     partial_sum_ = (partial_sum_ >> 16) + (partial_sum_ & 0xffff);
   }
 
-  auto partial_sum_res =
-      static_cast<uint16_t>(((partial_sum_ >> 16) + partial_sum_) & 0xffff);
+  auto partial_sum_res = uint16_t(((partial_sum_ >> 16) + partial_sum_) & 0xffff);
   const uint32_t binary_checksum = checksum_;
   const uint32_t adjust_sum_lsb = binary_checksum & 0xFFFF;
   const uint32_t adjust_sum_msb = binary_checksum >> 16;
 
-  partial_sum_res -= static_cast<int>(partial_sum_res < adjust_sum_lsb);
+  partial_sum_res -= int{partial_sum_res < adjust_sum_lsb};
   partial_sum_res -= adjust_sum_lsb;
 
-  partial_sum_res -= static_cast<int>(partial_sum_res < adjust_sum_msb);
+  partial_sum_res -= int{partial_sum_res < adjust_sum_msb};
   partial_sum_res -= adjust_sum_msb;
 
-  return static_cast<uint32_t>(partial_sum_res) + size_;
+  return uint32_t{partial_sum_res} + size_;
 }
 }

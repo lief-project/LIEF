@@ -420,7 +420,7 @@ void Binary::patch_relocations<ARCH::S390>(uint64_t from, uint64_t shift) {
 
 template<class T>
 void Binary::patch_addend(Relocation& relocation, uint64_t from, uint64_t shift) {
-  if (static_cast<uint64_t>(relocation.addend()) >= from) {
+  if (uint64_t(relocation.addend()) >= from) {
     LIEF_DEBUG("(addend) {:23}: {:#012x} -> {:#012x}",
                to_string(relocation.type()), relocation.addend(),
                relocation.addend() + shift);

@@ -104,7 +104,7 @@ void Binary::patch_address(uint64_t address,
   }
   const uint64_t offset = address - segment_topatch->virtual_address();
   span<uint8_t> content = segment_topatch->content();
-  if (offset > content.size() || (offset + patch_value.size()) > content.size()) {
+  if (offset > content.size() || patch_value.size() > content.size() - offset) {
     LIEF_ERR("Patch value ({} bytes @{:#x}) out of segment bounds (limit: {:#x})",
              patch_value.size(), offset, content.size());
     return;
@@ -128,7 +128,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
   const uint64_t offset = address - segment_topatch->virtual_address();
   span<uint8_t> content = segment_topatch->content();
 
-  if (offset > content.size() || (offset + size) > content.size()) {
+  if (offset > content.size() || size > content.size() - offset) {
     LIEF_ERR("Patch value ({} bytes @{:#x}) out of segment bounds (limit: {:#x})",
              size, offset, content.size());
     return;
@@ -137,28 +137,28 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
   switch (size) {
     case sizeof(uint8_t):
     {
-      auto X = static_cast<uint8_t>(patch_value);
+      auto X = uint8_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint8_t));
       break;
     }
 
     case sizeof(uint16_t):
     {
-      auto X = static_cast<uint16_t>(patch_value);
+      auto X = uint16_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint16_t));
       break;
     }
 
     case sizeof(uint32_t):
     {
-      auto X = static_cast<uint32_t>(patch_value);
+      auto X = uint32_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint32_t));
       break;
     }
 
     case sizeof(uint64_t):
     {
-      auto X = static_cast<uint64_t>(patch_value);
+      auto X = uint64_t{patch_value};
       memcpy(content.data() + offset, &X, sizeof(uint64_t));
       break;
     }
@@ -192,7 +192,7 @@ span<const uint8_t>
 
   const auto checked_size = std::min<uint64_t>(size, content.size() - offset);
 
-  return {content.data() + offset, static_cast<size_t>(checked_size)};
+  return {content.data() + offset, size_t(checked_size)};
 }
 
 
@@ -1166,11 +1166,14 @@ bool Binary::remove(const LoadCommand& command) {
     }
   }
 
-  const uint64_t cmd_rm_offset = cmd_rm->command_offset();
+  const uint64_t cmd_rm_size = cmd_rm->size();
+  const uint64_t cmd_rm_end = cmd_rm->command_offset() + cmd_rm_size;
   for (std::unique_ptr<LoadCommand>& cmd : commands_) {
-    if (cmd->command_offset() >= cmd_rm_offset) {
-      cmd->command_offset(cmd->command_offset() - cmd_rm->size());
+    const uint64_t offset = cmd->command_offset();
+    if (offset < cmd_rm_end || offset < cmd_rm_size) {
+      continue;
     }
+    cmd->command_offset(offset - cmd_rm_size);
   }
 
 
@@ -1378,7 +1381,7 @@ bool Binary::extend_section(Section& section, size_t size) {
                        [](const Section* a, const Section* b) {
                          return a->alignment() < b->alignment();
                        });
-  const size_t max_alignment = 1 << (*it_maxa)->alignment();
+  const size_t max_alignment = size_t{1} << (*it_maxa)->alignment();
 
   // Resize command space, if needed.
   const size_t shift_value = align(size, max_alignment);
@@ -1448,15 +1451,16 @@ void Binary::remove_section(const std::string& segname, const std::string& secna
   }
 
   const size_t lc_offset = segment->command_offset();
-  const size_t section_struct_size =
+  const uint32_t section_struct_size =
       is64_ ? sizeof(details::section_64) : sizeof(details::section_32);
   segment->size_ -= section_struct_size;
 
   header().sizeof_cmds(header().sizeof_cmds() - section_struct_size);
 
   for (std::unique_ptr<LoadCommand>& lc : commands_) {
-    if (lc->command_offset() > lc_offset) {
-      lc->command_offset(lc->command_offset() - section_struct_size);
+    const uint64_t offset = lc->command_offset();
+    if (offset > lc_offset && offset >= section_struct_size) {
+      lc->command_offset(offset - section_struct_size);
     }
   }
 
@@ -1511,7 +1515,7 @@ Section* Binary::add_section(const SegmentCommand& segment,
     // content.
     const size_t hdr_size =
         is64_ ? sizeof(details::section_64) : sizeof(details::section_32);
-    const size_t alignment = 1 << section.alignment();
+    const size_t alignment = size_t{1} << section.alignment();
     const size_t needed_size = hdr_size + content.size() + alignment;
 
     // Request size with a gap of alignment, so we would have enough room
@@ -2580,7 +2584,7 @@ Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {
   sym->category_ = Symbol::CATEGORY::LOCAL;
   sym->origin_ = Symbol::ORIGIN::SYMTAB;
   sym->numberof_sections_ = 0;
-  sym->description_ = static_cast<uint16_t>(/* N_NO_DEAD_STRIP */ 0x20);
+  sym->description_ = uint16_t{/* N_NO_DEAD_STRIP */ 0x20};
 
   sym->value(address);
   sym->name(name);

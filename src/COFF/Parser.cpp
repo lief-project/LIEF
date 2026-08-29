@@ -308,8 +308,7 @@ ok_error_t Parser::parse_string_table() {
                                 sizeof(details::symbol16);
 
   const uint64_t string_tbl_offset =
-      static_cast<uint64_t>(symbols_offset) +
-      static_cast<uint64_t>(nb_symbols) * sizeof_sym;
+      uint64_t{symbols_offset} + uint64_t{nb_symbols} * sizeof_sym;
 
   if (string_tbl_offset + sizeof(uint32_t) > stream_->size()) {
     LIEF_DEBUG("COFF string table offset ({:#x}) is out of bounds",

@@ -346,8 +346,7 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
   for (ImportEntry& entry : resolved_import.entries()) {
     if (entry.is_ordinal()) {
       LIEF_DEBUG("Dealing with: {}", to_string(entry));
-      const char* entry_name =
-          ordinal_resolver(static_cast<uint32_t>(entry.ordinal()));
+      const char* entry_name = ordinal_resolver(uint32_t{entry.ordinal()});
       if (entry_name == nullptr) {
         if (strict) {
           return make_error_code(lief_errors::not_supported);

@@ -197,7 +197,7 @@ result<bool> ASN1Reader::read_bool() {
 
   stream_.increment_pos(reinterpret_cast<uintptr_t>(p) -
                         reinterpret_cast<uintptr_t>(cur_p));
-  return static_cast<bool>(value);
+  return bool(value);
 }
 
 result<std::vector<uint8_t>> ASN1Reader::read_large_int() {

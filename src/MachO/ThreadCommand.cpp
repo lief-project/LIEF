@@ -47,8 +47,8 @@ ThreadCommand::ThreadCommand(const details::thread_command& cmd,
 ThreadCommand::ThreadCommand(uint32_t flavor, uint32_t count,
                              Header::CPU_TYPE arch) :
   LoadCommand::LoadCommand{LoadCommand::TYPE::UNIXTHREAD,
-                           static_cast<uint32_t>(sizeof(details::thread_command) +
-                                                 count * sizeof(uint32_t))},
+                           uint32_t(sizeof(details::thread_command) +
+                                    count * sizeof(uint32_t))},
   flavor_{flavor},
   count_{count},
   architecture_{arch},

@@ -116,6 +116,7 @@ class LIEF_API Hash : public Visitor {
   }
 
   template<class InputIt>
+  // NOLINTNEXTLINE(performance-unnecessary-value-param)
   Hash& process(InputIt begin, InputIt end) {
     for (auto&& it = begin; it != end; ++it) {
       process(*it);

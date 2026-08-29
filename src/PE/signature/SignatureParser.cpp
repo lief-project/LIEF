@@ -80,7 +80,7 @@ result<Signature> SignatureParser::parse(std::string_view path) {
 
   std::vector<uint8_t> raw_blob(*size, 0);
   binary.read(reinterpret_cast<char*>(raw_blob.data()), raw_blob.size());
-  raw_blob.resize(static_cast<size_t>(binary.gcount()));
+  raw_blob.resize(size_t(binary.gcount()));
   return SignatureParser::parse(std::move(raw_blob));
 }
 

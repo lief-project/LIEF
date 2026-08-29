@@ -46,8 +46,7 @@ std::vector<uint8_t> RichHeader::raw(uint32_t xor_key) const {
 
   for (auto it = entries_.crbegin(); it != entries_.crend(); ++it) {
     const RichEntry& entry = *it;
-    const uint32_t value =
-        (static_cast<uint32_t>(entry.id()) << 16) | entry.build_id();
+    const uint32_t value = (uint32_t{entry.id()} << 16) | entry.build_id();
     wstream.write(value ^ xor_key).write(entry.count() ^ xor_key);
   }
   wstream.write(RICH_MAGIC, std::size(RICH_MAGIC)).write(xor_key);

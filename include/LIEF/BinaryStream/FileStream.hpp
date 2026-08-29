@@ -56,7 +56,7 @@ class LIEF_API FileStream : public BinaryStream {
 
   ok_error_t peek_in(void* dst, uint64_t offset, uint64_t size,
                      uint64_t /* virtual_address */ = 0) const override {
-    if (offset > size_ || offset + size > size_) {
+    if (offset > size_ || size > size_ - offset) {
       return make_error_code(lief_errors::read_error);
     }
     const auto pos = ifs_.tellg();

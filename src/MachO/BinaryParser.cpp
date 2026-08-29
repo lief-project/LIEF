@@ -324,7 +324,7 @@ result<BinaryParser::exports_list_t>
       LIEF_ERR("Failed to read child_node_offset");
       break;
     }
-    auto child_node_offet = static_cast<uint32_t>(*res_child_node_offet);
+    auto child_node_offet = uint32_t(*res_child_node_offet);
 
     if (child_node_offet == 0) {
       break;
@@ -377,7 +377,7 @@ ok_error_t BinaryParser::parse_dyld_exports() {
 
   span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
-  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+  if (rel_offset > content.size() || size > content.size() - rel_offset) {
     LIEF_ERR("Export trie out of bounds for segment {}", linkedit->name());
     return make_error_code(lief_errors::read_out_of_bound);
   }
@@ -422,7 +422,7 @@ ok_error_t BinaryParser::parse_dyldinfo_export() {
 
   span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
-  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+  if (rel_offset > content.size() || size > content.size() - rel_offset) {
     LIEF_ERR("Export trie out of bounds for segment {}", linkedit->name());
     return make_error_code(lief_errors::read_out_of_bound);
   }

@@ -35,7 +35,7 @@ class ChecksumStream {
   }
 
   uint8_t leftover() const {
-    return static_cast<uint8_t>(leftover_ & 0xFF);
+    return uint8_t(leftover_ & 0xFF);
   }
 
   bool has_leftover() const {

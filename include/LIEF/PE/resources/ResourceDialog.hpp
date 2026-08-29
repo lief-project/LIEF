@@ -507,7 +507,7 @@ class LIEF_API ResourceDialog : public Object {
 
   virtual std::string to_string() const = 0;
 
-  virtual ~ResourceDialog() = default;
+  ~ResourceDialog() override = default;
 
 
   /// Helper to **downcast** a ResourceDialog into a ResourceDialogRegular or

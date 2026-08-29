@@ -66,7 +66,7 @@ inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr,
   const bool fit_in_data =
       delta < new_data.size() && (delta + original_size) <= new_data.size();
   if (!fit_in_data) {
-    sp = {new_data.data(), static_cast<size_t>(0)};
+    sp = {new_data.data(), size_t{0}};
     return make_error_code(lief_errors::corrupted);
   }
 
@@ -100,7 +100,7 @@ inline ok_error_t update_span(span<uint8_t>& sp, uintptr_t original_data_addr,
       (original_rel_offset + delta_offset) < new_data.size() &&
       (original_rel_offset + delta_offset + sp.size()) < new_data.size();
   if (!fit_in_data) {
-    sp = {new_data.data(), static_cast<size_t>(0)};
+    sp = {new_data.data(), size_t{0}};
     return make_error_code(lief_errors::corrupted);
   }
 
@@ -121,7 +121,7 @@ void LinkEdit::swap(LinkEdit& other) noexcept {
 
 void LinkEdit::update_data(const update_fnc_t& f) {
   const auto original_data_addr = reinterpret_cast<uintptr_t>(data_.data());
-  const auto original_data_size = static_cast<size_t>(data_.size());
+  const auto original_data_size = size_t{data_.size()};
   const uintptr_t original_data_end = original_data_addr + original_data_size;
   f(data_);
   if (dyld_ != nullptr) {
@@ -277,7 +277,7 @@ void LinkEdit::update_data(const update_fnc_t& f) {
 
 void LinkEdit::update_data(const update_fnc_ws_t& f, size_t where, size_t size) {
   const auto original_data_addr = reinterpret_cast<uintptr_t>(data_.data());
-  const auto original_data_size = static_cast<size_t>(data_.size());
+  const auto original_data_size = size_t{data_.size()};
   const uintptr_t original_data_end = original_data_addr + original_data_size;
   f(data_, where, size);
   if (dyld_ != nullptr) {

@@ -30,9 +30,9 @@ class canbe_unique {
     return *this;
   }
 
-  canbe_unique(canbe_unique&& other) noexcept {
+  canbe_unique(canbe_unique&& other) noexcept :
+    owned_(other.owned_) {
     std::swap(ptr_, other.ptr_);
-    owned_ = other.owned_;
   }
 
   canbe_unique& operator=(canbe_unique&& other) noexcept {
@@ -44,12 +44,10 @@ class canbe_unique {
   }
 
   canbe_unique(T& ptr) :
-    ptr_(&ptr),
-    owned_(false) {}
+    ptr_(&ptr) {}
 
   canbe_unique(const T& ptr) :
-    ptr_(const_cast<T*>(&ptr)),
-    owned_(false) {}
+    ptr_(const_cast<T*>(&ptr)) {}
 
   canbe_unique(std::unique_ptr<T> unique_ptr) :
     ptr_(unique_ptr.release()),

@@ -67,7 +67,7 @@ inline ok_error_t write_info_impl(Note::description_t& description,
 
   raw.pr_state = info.state;
   raw.pr_sname = info.sname;
-  raw.pr_zomb = static_cast<char>(info.zombie);
+  raw.pr_zomb = char{info.zombie};
   raw.pr_nice = info.nice;
   raw.pr_flag = info.flag;
   raw.pr_uid = info.uid;

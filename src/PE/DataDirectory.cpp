@@ -52,10 +52,14 @@ std::unique_ptr<SpanStream> DataDirectory::stream(bool sized) const {
     return std::make_unique<SpanStream>(section_content);
   }
 
-  int64_t rel_offset = RVA() - section_->virtual_address();
+  if (RVA() < section_->virtual_address()) {
+    return std::make_unique<SpanStream>(nullptr, 0);
+  }
 
-  if (rel_offset < 0 || (uint64_t)rel_offset >= section_content.size() ||
-      ((uint64_t)rel_offset + size()) > section_content.size())
+  const uint64_t rel_offset = RVA() - section_->virtual_address();
+
+  if (rel_offset >= section_content.size() ||
+      size() > section_content.size() - rel_offset)
   {
     return std::make_unique<SpanStream>(nullptr, 0);
   }
@@ -74,10 +78,14 @@ span<uint8_t> DataDirectory::content() {
     return {};
   }
 
-  int64_t rel_offset = RVA() - section_->virtual_address();
+  if (RVA() < section_->virtual_address()) {
+    return {};
+  }
 
-  if (rel_offset < 0 || (uint64_t)rel_offset >= section_content.size() ||
-      ((uint64_t)rel_offset + size()) > section_content.size())
+  const uint64_t rel_offset = RVA() - section_->virtual_address();
+
+  if (rel_offset >= section_content.size() ||
+      size() > section_content.size() - rel_offset)
   {
     return {};
   }

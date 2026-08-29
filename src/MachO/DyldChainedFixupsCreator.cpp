@@ -320,7 +320,7 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
           LIEF_DEBUG("        [next] delta: {:#018x}", next_delta);
           LIEF_DEBUG("        [next] offset: {:#018x}", next_offset);
 
-          if (next_page_idx == page_idx) {
+          if (next_page_idx == page_idx && next_delta >= delta) {
             assert((next_delta - delta) % stride == 0);
             next = (next_delta - delta) / stride;
           }

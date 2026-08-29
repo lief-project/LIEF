@@ -175,8 +175,7 @@ void Parser::parse_quickening_info<details::VDEX6>() {
           if (!index) {
             break;
           }
-          method.insert_dex2dex_info(static_cast<int32_t>(*pc),
-                                     static_cast<uint16_t>(*index));
+          method.insert_dex2dex_info(int32_t(*pc), uint16_t(*index));
         }
       }
     }
@@ -371,7 +370,7 @@ void Parser::parse_quickening_info<details::VDEX10>() {
 
       while (nb_indexes > 0 && inst_ptr < inst_end) {
         uint16_t dex_pc = (inst_ptr - inst_start) / sizeof(uint16_t);
-        auto opcode = static_cast<DEX::OPCODES>(*inst_ptr);
+        auto opcode = DEX::OPCODES{*inst_ptr};
         uint16_t index_value = quickinfo[quickinfo.size() - nb_indexes];
 
         // Skip packed-switch, sparse-switch, fill-array instructions
@@ -414,7 +413,7 @@ void Parser::parse_quickening_info<details::VDEX10>() {
           }
           case DEX::OPCODES::OP_NOP:
           {
-            if (index_value == static_cast<uint16_t>(-1)) {
+            if (index_value == uint16_t(-1)) {
               nb_indexes--;
             } else {
               if (nb_indexes > 1) {

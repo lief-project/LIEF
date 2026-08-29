@@ -71,7 +71,7 @@ class LIEF_API Parser : public ELF::Parser {
   Parser();
   Parser(std::string_view oat_file);
   Parser(std::vector<uint8_t> data);
-  ~Parser() override;
+  ~Parser();
 
   Binary& oat_binary() {
     // The type of the parent binary_ is guaranteed by the constructor

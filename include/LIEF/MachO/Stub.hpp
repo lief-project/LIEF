@@ -51,10 +51,9 @@ class Section;
 class LIEF_API Stub {
   public:
   struct target_info_t {
-    Header::CPU_TYPE arch;
+    Header::CPU_TYPE arch = Header::CPU_TYPE::ANY;
     uint32_t subtype = 0;
-    friend bool operator==(const Stub::target_info_t& lhs,
-                           const Stub::target_info_t& rhs) {
+    friend bool operator==(Stub::target_info_t lhs, Stub::target_info_t rhs) {
       return lhs.arch == rhs.arch && lhs.subtype == rhs.subtype;
     }
   };

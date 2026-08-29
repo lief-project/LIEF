@@ -123,8 +123,8 @@ class LIEF_API BuildVersion : public LoadCommand {
 
   private:
   PLATFORMS platform_ = PLATFORMS::UNKNOWN;
-  version_t minos_;
-  version_t sdk_;
+  version_t minos_{};
+  version_t sdk_{};
   tools_list_t tools_;
 };
 

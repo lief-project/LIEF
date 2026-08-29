@@ -97,6 +97,15 @@ struct ThreadedBindData {
 };
 }
 
+
+inline uint64_t next_opcode_offset(const BinaryStream& stream, uint64_t start) {
+  const uint64_t pos = stream.pos();
+  if (pos < start) {
+    return 0;
+  }
+  return pos - start + 1;
+}
+
 template<class MACHO_T>
 ok_error_t BinaryParser::parse() {
   parse_header<MACHO_T>();
@@ -1112,8 +1121,8 @@ ok_error_t BinaryParser::parse_load_commands() {
         LIEF_DEBUG("LC_DYLD_CHAINED_FIXUPS payload in '{}'", lnk->name());
         span<uint8_t> content = lnk->content();
 
-        if (static_cast<int32_t>(chained->data_size()) < 0 ||
-            static_cast<int32_t>(chained->data_offset()) < 0)
+        if (int32_t(chained->data_size()) < 0 ||
+            int32_t(chained->data_offset()) < 0)
         {
           LIEF_WARN("LC_DYLD_CHAINED_FIXUPS payload is corrupted");
           break;
@@ -1297,7 +1306,8 @@ ok_error_t BinaryParser::parse_load_commands() {
     }
     loadcommands_offset += command->cmdsize;
   }
-  binary_->available_command_space_ = low_fileoff - loadcommands_offset;
+  binary_->available_command_space_ =
+      low_fileoff > loadcommands_offset ? low_fileoff - loadcommands_offset : 0;
   return ok();
 }
 
@@ -1337,7 +1347,7 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
       LIEF_INFO("Can't read relocation address for #{}@{:#x}", i, address);
       break;
     }
-    bool is_scattered = static_cast<bool>(address & Relocation::R_SCATTERED);
+    bool is_scattered = bool(address & Relocation::R_SCATTERED);
 
     if (is_scattered) {
       if (auto res = stream_->peek<details::scattered_relocation_info>(
@@ -1448,7 +1458,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
     return ok();
   }
 
-  if (static_cast<int32_t>(offset) < 0 || static_cast<int32_t>(size) < 0) {
+  if (int32_t(offset) < 0 || int32_t(size) < 0) {
     LIEF_WARN("LC_DYLD_INFO.rebases payload is corrupted");
     return make_error_code(lief_errors::read_out_of_bound);
   }
@@ -1464,7 +1474,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
 
   span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
-  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+  if (rel_offset > content.size() || size > content.size() - rel_offset) {
     LIEF_ERR("Rebase opcodes are out of bounds of the segment {}",
              linkedit->name());
     return make_error_code(lief_errors::read_out_of_bound);
@@ -1693,7 +1703,7 @@ ok_error_t BinaryParser::parse_dyldinfo_rebases() {
 
       default:
       {
-        LIEF_ERR("Unsupported opcode: {:#x}", static_cast<uint32_t>(opcode));
+        LIEF_ERR("Unsupported opcode: {:#x}", uint32_t{opcode});
         break;
       }
     }
@@ -1732,7 +1742,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
     return ok();
   }
 
-  if (static_cast<int32_t>(offset) < 0 || static_cast<int32_t>(size) < 0) {
+  if (int32_t(offset) < 0 || int32_t(size) < 0) {
     LIEF_WARN("LC_DYLD_INFO.binding payload is corrupted");
     return make_error_code(lief_errors::read_out_of_bound);
   }
@@ -1748,7 +1758,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
 
   span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
-  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+  if (rel_offset > content.size() || size > content.size() - rel_offset) {
     LIEF_ERR("Regular bind opcodes are out of bounds of the segment {}",
              linkedit->name());
     return make_error_code(lief_errors::read_out_of_bound);
@@ -1891,7 +1901,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
           do_bind<MACHO_T>(DyldBindingInfo::CLASS::STANDARD, type, segment_idx,
                            segment_offset, symbol_name, library_ordinal, addend,
                            is_weak_import, false, &segments, start_offset);
-          start_offset = stream_->pos() - offset + 1;
+          start_offset = next_opcode_offset(*stream_, offset);
           segment_offset += sizeof(pint_t);
         } else {
           ordinal_table.push_back(ThreadedBindData{symbol_name, addend,
@@ -1906,7 +1916,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
         do_bind<MACHO_T>(DyldBindingInfo::CLASS::STANDARD, type, segment_idx,
                          segment_offset, symbol_name, library_ordinal, addend,
                          is_weak_import, false, &segments, start_offset);
-        start_offset = stream_->pos() - offset + 1;
+        start_offset = next_opcode_offset(*stream_, offset);
 
         auto val = stream_->read_uleb128();
         if (!val) {
@@ -1925,7 +1935,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
         do_bind<MACHO_T>(DyldBindingInfo::CLASS::STANDARD, type, segment_idx,
                          segment_offset, symbol_name, library_ordinal, addend,
                          is_weak_import, false, &segments, start_offset);
-        start_offset = stream_->pos() - offset + 1;
+        start_offset = next_opcode_offset(*stream_, offset);
         segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
         break;
       }
@@ -1962,7 +1972,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
           {
             break;
           }
-          start_offset = stream_->pos() - offset + 1;
+          start_offset = next_opcode_offset(*stream_, offset);
           segment_offset += skip + sizeof(pint_t);
         }
         break;
@@ -1984,7 +1994,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
                   current_segment.virtual_address() + segment_offset;
               span<const uint8_t> content = current_segment.content();
               if (segment_offset >= content.size() ||
-                  segment_offset + sizeof(uint64_t) >= content.size())
+                  sizeof(uint64_t) >= content.size() - segment_offset)
               {
                 LIEF_WARN("Bad segment offset ({:#x})", segment_offset);
                 delta = 0; // exit from the do ... while
@@ -1992,7 +2002,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
               }
               auto value = *reinterpret_cast<const uint64_t*>(content.data() +
                                                               segment_offset);
-              bool is_rebase = (value & (static_cast<uint64_t>(1) << 62)) == 0;
+              bool is_rebase = (value & (uint64_t{1} << 62)) == 0;
 
               if (is_rebase) {
                 // LIEF_WARN("do rebase for addr: {:#x} vs {:#x}", address,
@@ -2029,7 +2039,7 @@ ok_error_t BinaryParser::parse_dyldinfo_generic_bind() {
                         uint8_t(DyldInfo::BIND_SYMBOL_FLAGS::WEAK_IMPORT),
                     false, &segments, start_offset
                 );
-                start_offset = stream_->pos() - offset + 1;
+                start_offset = next_opcode_offset(*stream_, offset);
               }
               // The delta is bits [51..61]
               // And bit 62 is to tell us if we are a rebase (0) or bind (1)
@@ -2100,7 +2110,7 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
     return ok();
   }
 
-  if (static_cast<int32_t>(offset) < 0 || static_cast<int32_t>(size) < 0) {
+  if (int32_t(offset) < 0 || int32_t(size) < 0) {
     LIEF_WARN("LC_DYLD_INFO.weak_bind payload is corrupted");
     return make_error_code(lief_errors::read_out_of_bound);
   }
@@ -2116,7 +2126,7 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
 
   span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
-  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+  if (rel_offset > content.size() || size > content.size() - rel_offset) {
     LIEF_ERR("Weak bind opcodes are out of bounds of the segment {}",
              linkedit->name());
     return make_error_code(lief_errors::read_out_of_bound);
@@ -2231,7 +2241,7 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
         do_bind<MACHO_T>(DyldBindingInfo::CLASS::WEAK, type, segment_idx,
                          segment_offset, symbol_name, 0, addend, is_weak_import,
                          is_non_weak_definition, &segments, start_offset);
-        start_offset = stream_->pos() - offset + 1;
+        start_offset = next_opcode_offset(*stream_, offset);
         segment_offset += sizeof(pint_t);
         break;
       }
@@ -2242,7 +2252,7 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
         do_bind<MACHO_T>(DyldBindingInfo::CLASS::WEAK, type, segment_idx,
                          segment_offset, symbol_name, 0, addend, is_weak_import,
                          is_non_weak_definition, &segments, start_offset);
-        start_offset = stream_->pos() - offset + 1;
+        start_offset = next_opcode_offset(*stream_, offset);
 
         auto val = stream_->read_uleb128();
         if (!val) {
@@ -2261,7 +2271,7 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
         do_bind<MACHO_T>(DyldBindingInfo::CLASS::WEAK, type, segment_idx,
                          segment_offset, symbol_name, 0, addend, is_weak_import,
                          is_non_weak_definition, &segments, start_offset);
-        start_offset = stream_->pos() - offset + 1;
+        start_offset = next_opcode_offset(*stream_, offset);
         segment_offset += imm * sizeof(pint_t) + sizeof(pint_t);
         break;
       }
@@ -2302,7 +2312,7 @@ ok_error_t BinaryParser::parse_dyldinfo_weak_bind() {
           {
             break;
           }
-          start_offset = stream_->pos() - offset + 1;
+          start_offset = next_opcode_offset(*stream_, offset);
           segment_offset += skip + sizeof(pint_t);
         }
         break;
@@ -2338,7 +2348,7 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
     return ok();
   }
 
-  if (static_cast<int32_t>(offset) < 0 || static_cast<int32_t>(size) < 0) {
+  if (int32_t(offset) < 0 || int32_t(size) < 0) {
     LIEF_WARN("LC_DYLD_INFO.lazy payload is corrupted");
     return make_error_code(lief_errors::read_out_of_bound);
   }
@@ -2354,7 +2364,7 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
 
   span<uint8_t> content = linkedit->content();
   const uint64_t rel_offset = offset - linkedit->file_offset();
-  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+  if (rel_offset > content.size() || size > content.size() - rel_offset) {
     LIEF_ERR("Lazy bind opcodes are out of bounds of the segment {}",
              linkedit->name());
     return make_error_code(lief_errors::read_out_of_bound);
@@ -2469,7 +2479,7 @@ ok_error_t BinaryParser::parse_dyldinfo_lazy_bind() {
                          static_cast<uint8_t>(DyldBindingInfo::TYPE::POINTER),
                          segment_idx, segment_offset, symbol_name, library_ordinal,
                          addend, is_weak_import, false, &segments, start_offset);
-        start_offset = stream_->pos() - offset + 1;
+        start_offset = next_opcode_offset(*stream_, offset);
         segment_offset += sizeof(pint_t);
         break;
       }
@@ -2516,7 +2526,7 @@ ok_error_t BinaryParser::do_bind(DyldBindingInfo::CLASS cls, uint8_t type,
   binding_info->segment_ = &segment;
 
 
-  if (0 < ord && static_cast<size_t>(ord) <= binding_libs_.size()) {
+  if (0 < ord && size_t(ord) <= binding_libs_.size()) {
     binding_info->library_ = binding_libs_[ord - 1];
   }
 
@@ -2734,7 +2744,7 @@ ok_error_t BinaryParser::parse_chained_import(
         int32_t lib_ordinal = 0;
         uint8_t lib_val = import.lib_ordinal;
         if (lib_val > 0xF0) {
-          lib_ordinal = static_cast<int8_t>(lib_val);
+          lib_ordinal = int8_t(lib_val);
         } else {
           lib_ordinal = lib_val;
         }
@@ -2765,7 +2775,7 @@ ok_error_t BinaryParser::parse_chained_import(
         int32_t lib_ordinal = 0;
         uint8_t lib_val = import.lib_ordinal;
         if (lib_val > 0xF0) {
-          lib_ordinal = static_cast<int8_t>(lib_val);
+          lib_ordinal = int8_t(lib_val);
         } else {
           lib_ordinal = lib_val;
         }
@@ -2797,7 +2807,7 @@ ok_error_t BinaryParser::parse_chained_import(
         int32_t lib_ordinal = 0;
         uint16_t lib_val = import.lib_ordinal;
         if (lib_val > 0xFFF0) {
-          lib_ordinal = static_cast<int16_t>(lib_val);
+          lib_ordinal = int16_t(lib_val);
         } else {
           lib_ordinal = lib_val;
         }
@@ -2898,7 +2908,7 @@ ok_error_t BinaryParser::parse_fixup_seg(SpanStream& stream,
   }
   SpanStream seg_stream = std::move(*res_seg_stream);
   seg_stream.set_endian_swap(stream_->should_swap());
-  seg_stream.read<details::dyld_chained_starts_in_segment>();
+  seg_stream.skip<details::dyld_chained_starts_in_segment>();
 
   LIEF_DEBUG("{}size              = {}", DPREFIX, seg_info.size);
   LIEF_DEBUG("{}page_size         = {:#x}", DPREFIX, seg_info.page_size);
@@ -2951,8 +2961,7 @@ ok_error_t BinaryParser::parse_fixup_seg(SpanStream& stream,
         chain_end = overflow_val & DYLD_CHAINED_PTR_START_LAST;
         offset_in_page = overflow_val & ~DYLD_CHAINED_PTR_START_LAST;
         uint64_t page_content_start =
-            seg_info.segment_offset +
-            (static_cast<uint64_t>(page_idx) * seg_info.page_size);
+            seg_info.segment_offset + (uint64_t{page_idx} * seg_info.page_size);
         uint64_t chain_address = imagebase + page_content_start + offset_in_page;
         uint64_t chain_offset =
             (chain_address - segment->virtual_address()) + segment->file_offset();
@@ -2969,8 +2978,7 @@ ok_error_t BinaryParser::parse_fixup_seg(SpanStream& stream,
 
     } else {
       uint64_t page_content_start =
-          seg_info.segment_offset +
-          (static_cast<uint64_t>(page_idx) * seg_info.page_size);
+          seg_info.segment_offset + (uint64_t{page_idx} * seg_info.page_size);
       uint64_t chain_address = imagebase + page_content_start + offset_in_page;
       uint64_t chain_offset =
           (chain_address - segment->virtual_address()) + segment->file_offset();
@@ -2997,7 +3005,7 @@ ok_error_t BinaryParser::do_fixup(DYLD_CHAINED_FORMAT fmt, int32_t ord,
   auto binding_info = std::make_unique<ChainedBindingInfoList>(fmt, is_weak);
   binding_info->addend_ = addend;
   binding_info->library_ordinal_ = ord;
-  if (0 < ord && static_cast<size_t>(ord) <= binding_libs_.size()) {
+  if (0 < ord && size_t(ord) <= binding_libs_.size()) {
     binding_info->library_ = binding_libs_[ord - 1];
     LIEF_DEBUG("  lib_ordinal: {} ({})", ord, binding_libs_[ord - 1]->name());
   } else {
@@ -3660,6 +3668,10 @@ ok_error_t BinaryParser::do_chained_fixup(
   std::unique_ptr<RelocationFixup> reloc;
   if (fixup.rebase.target > seg_info.max_valid_pointer) {
     const uint32_t bias = (0x04000000 + seg_info.max_valid_pointer) / 2;
+
+    // Mirrors dyld: the target of a non-pointer at the end of the chain is
+    // biased, so the subtraction is deliberately modular.
+    // NOLINTNEXTLINE(clang-taidy-avoid-unsigned-wraparound)
     const uint64_t target = fixup.rebase.target - bias;
 
     /* This is used to avoid storing bias information */
@@ -3756,11 +3768,16 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
   /* n_list table */ {
     span<uint8_t> content = nlist_linkedit->content();
 
+    if (cmd.symbol_offset() < nlist_linkedit->file_offset()) {
+      LIEF_ERR("The LC_SYMTAB.n_list is out of bounds of the segment '{}'",
+               nlist_linkedit->name());
+      return make_error_code(lief_errors::read_out_of_bound);
+    }
+
     const uint64_t rel_offset =
         cmd.symbol_offset() - nlist_linkedit->file_offset();
     const size_t symtab_size = cmd.numberof_symbols() * sizeof(nlist_t);
-    if (rel_offset > content.size() || (rel_offset + symtab_size) > content.size())
-    {
+    if (rel_offset > content.size() || symtab_size > content.size() - rel_offset) {
       LIEF_ERR("The LC_SYMTAB.n_list is out of bounds of the segment '{}'",
                nlist_linkedit->name());
       return make_error_code(lief_errors::read_out_of_bound);
@@ -3778,11 +3795,16 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
   /* strtable */ {
     span<uint8_t> content = strings_linkedit->content();
 
+    if (cmd.strings_offset() < strings_linkedit->file_offset()) {
+      LIEF_ERR("The LC_SYMTAB.strtab is out of bounds of the segment '{}'",
+               strings_linkedit->name());
+      return make_error_code(lief_errors::read_out_of_bound);
+    }
+
     const uint64_t rel_offset =
         cmd.strings_offset() - strings_linkedit->file_offset();
     const size_t strtab_size = cmd.strings_size();
-    if (rel_offset > content.size() || (rel_offset + strtab_size) > content.size())
-    {
+    if (rel_offset > content.size() || strtab_size > content.size() - rel_offset) {
       LIEF_ERR("The LC_SYMTAB.strtab is out of bounds of the segment {}",
                strings_linkedit->name());
       return make_error_code(lief_errors::read_out_of_bound);
@@ -3824,8 +3846,7 @@ ok_error_t BinaryParser::post_process(FunctionStarts& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_FUNCTION_STARTS is out of bounds of the segment '{}'",
              linkedit->name());
@@ -3880,8 +3901,7 @@ ok_error_t BinaryParser::post_process(DataInCode& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_DATA_IN_CODE is out of bounds of the segment '{}'",
              linkedit->name());
@@ -3914,8 +3934,7 @@ ok_error_t BinaryParser::post_process(SegmentSplitInfo& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_SEGMENT_SPLIT_INFO is out of bounds of the segment '{}'",
              linkedit->name());
@@ -3987,7 +4006,7 @@ ok_error_t BinaryParser::post_process(DynamicSymbolCommand& cmd) {
 
   const uint64_t rel_offset =
       cmd.indirect_symbol_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() || (rel_offset + size) > content.size()) {
+  if (rel_offset > content.size() || size > content.size() - rel_offset) {
     LIEF_ERR("LC_DYSYMTAB.indirect_symbols is out of bounds of the segment '{}'",
              linkedit->name());
     return make_error_code(lief_errors::read_out_of_bound);
@@ -4019,8 +4038,7 @@ ok_error_t BinaryParser::post_process(LinkerOptHint& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR(
         "The LC_LINKER_OPTIMIZATION_HINT is out of bounds of the segment '{}'",
@@ -4058,8 +4076,7 @@ ok_error_t BinaryParser::post_process(AtomInfo& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_ATOM_INFO is out of bounds of the segment '{}'",
              linkedit->name());
@@ -4091,8 +4108,7 @@ ok_error_t BinaryParser::post_process(CodeSignature& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_CODE_SIGNATURE is out of bounds of the segment '{}'",
              linkedit->name());
@@ -4124,8 +4140,7 @@ ok_error_t BinaryParser::post_process(CodeSignatureDir& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_DYLIB_CODE_SIGN_DRS is out of bounds of the segment '{}'",
              linkedit->name());
@@ -4159,7 +4174,7 @@ ok_error_t BinaryParser::post_process(TwoLevelHints& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.offset() - linkedit->file_offset();
-  if (rel_offset > content.size() || (rel_offset + raw_size) > content.size()) {
+  if (rel_offset > content.size() || raw_size > content.size() - rel_offset) {
     LIEF_ERR("The LC_TWOLEVEL_HINTS is out of bounds of the segment '{}'",
              linkedit->name());
     return make_error_code(lief_errors::read_out_of_bound);
@@ -4298,8 +4313,7 @@ ok_error_t BinaryParser::post_process(FunctionVariants& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_FUNCTION_VARIANTS is out of bounds of the segment '{}'",
              linkedit->name());
@@ -4339,8 +4353,7 @@ ok_error_t BinaryParser::post_process(FunctionVariantFixups& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_FUNCTION_VARIANT_FIXUPS is out of bounds of the segment '{}'",
              linkedit->name());
@@ -4391,8 +4404,7 @@ ok_error_t BinaryParser::post_process(LazyLoadDylibInfo& cmd) {
   span<uint8_t> content = linkedit->content();
 
   const uint64_t rel_offset = cmd.data_offset() - linkedit->file_offset();
-  if (rel_offset > content.size() ||
-      (rel_offset + cmd.data_size()) > content.size())
+  if (rel_offset > content.size() || cmd.data_size() > content.size() - rel_offset)
   {
     LIEF_ERR("The LC_LAZY_LOAD_DYLIB_INFO is out of bounds of the segment '{}'",
              linkedit->name());

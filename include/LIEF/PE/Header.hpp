@@ -315,7 +315,7 @@ class LIEF_API Header : public Object {
   LIEF_LOCAL Header() = default;
 
   private:
-  signature_t signature_;
+  signature_t signature_{};
   MACHINE_TYPES machine_ = MACHINE_TYPES::UNKNOWN;
   uint16_t nb_sections_ = 0;
   uint32_t timedatestamp_ = 0;

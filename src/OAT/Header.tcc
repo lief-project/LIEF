@@ -50,7 +50,7 @@ Header::Header(const T* header) :
   if (std::all_of(std::begin(header->oat_version),
                   std::end(header->oat_version) - 1, ::isdigit))
   {
-    version_ = static_cast<uint32_t>(
+    version_ = uint32_t(
         std::stoi(std::string{reinterpret_cast<const char*>(header->oat_version),
                               sizeof(header->oat_version)})
     );
@@ -63,7 +63,7 @@ Header::Header(const details::OAT_131::oat_header* header) :
   magic_{},
 
   checksum_{header->adler32_checksum},
-  instruction_set_{static_cast<INSTRUCTION_SETS>(header->instruction_set)},
+  instruction_set_{INSTRUCTION_SETS(header->instruction_set)},
   instruction_set_features_bitmap_{header->instruction_set_features_bitmap},
   dex_file_count_{header->dex_file_count},
   oat_dex_files_offset_{
@@ -92,7 +92,7 @@ Header::Header(const details::OAT_131::oat_header* header) :
   if (std::all_of(std::begin(header->oat_version),
                   std::end(header->oat_version) - 1, ::isdigit))
   {
-    version_ = static_cast<uint32_t>(
+    version_ = uint32_t(
         std::stoi(std::string{reinterpret_cast<const char*>(header->oat_version),
                               sizeof(header->oat_version)})
     );

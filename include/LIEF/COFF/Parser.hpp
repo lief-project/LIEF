@@ -63,15 +63,15 @@ class Parser {
     size_t sec_idx = 0;
     Symbol* symbol = nullptr;
 
-    friend bool operator<(const SymSec& lhs, const SymSec& rhs) {
+    friend bool operator<(SymSec lhs, SymSec rhs) {
       return lhs.sec_idx < rhs.sec_idx;
     }
 
-    friend bool operator==(const SymSec& lhs, const SymSec& rhs) {
+    friend bool operator==(SymSec lhs, SymSec rhs) {
       return lhs.sec_idx == rhs.sec_idx && lhs.symbol == rhs.symbol;
     }
 
-    friend bool operator!=(const SymSec& lhs, const SymSec& rhs) {
+    friend bool operator!=(SymSec lhs, SymSec rhs) {
       return !(lhs == rhs);
     }
   };

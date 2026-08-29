@@ -302,7 +302,7 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
     icon_grp_node = &resources_->add_child(std::move(icon_grp_dir));
   }
 
-  auto new_id = static_cast<uint16_t>(icon.id());
+  auto new_id = uint16_t(icon.id());
 
   if ((int32_t)icon.id() < 0) {
     new_id = icon_node->childs().size() + 1;
@@ -342,8 +342,7 @@ void ResourcesManager::add_icon(const ResourceIcon& icon) {
       .write<uint16_t>(new_id);
 
   auto pixel_node = std::make_unique<ResourceData>(as_vector(icon.pixels()));
-  pixel_node->id(static_cast<int>(icon.sublang()) << 10 |
-                 static_cast<int>(icon.lang()));
+  pixel_node->id(int(icon.sublang()) << 10 | int(icon.lang()));
   icon_dir->add_child(std::move(pixel_node));
 }
 

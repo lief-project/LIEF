@@ -359,8 +359,7 @@ uint32_t Binary::sizeof_headers() const {
 
   size += sizeof(details::pe_data_directory) * data_directories_.size();
   size += sizeof(details::pe_section) * sections_.size();
-  size =
-      static_cast<uint32_t>(LIEF::align(size, optional_header().file_alignment()));
+  size = uint32_t(LIEF::align(size, optional_header().file_alignment()));
 
   return size;
 }
@@ -413,7 +412,7 @@ void Binary::remove(const Section& section, bool clear) {
   header().numberof_sections(header().numberof_sections() - 1);
 
   optional_header().sizeof_headers(sizeof_headers());
-  optional_header().sizeof_image(static_cast<uint32_t>(virtual_size()));
+  optional_header().sizeof_image(uint32_t(virtual_size()));
 }
 
 result<uint64_t> Binary::make_space_for_new_section() {
@@ -440,7 +439,7 @@ void Binary::shift(uint64_t /*from*/, uint64_t by) {
 
 uint64_t Binary::last_section_offset() const {
   uint64_t offset = std::accumulate(
-      sections_.begin(), sections_.end(), static_cast<uint64_t>(sizeof_headers()),
+      sections_.begin(), sections_.end(), uint64_t{sizeof_headers()},
       [](uint64_t offset, const std::unique_ptr<Section>& s) {
         return std::max<uint64_t>(s->pointerto_raw_data() + s->sizeof_raw_data(),
                                   offset);
@@ -451,19 +450,23 @@ uint64_t Binary::last_section_offset() const {
 
 Section* Binary::add_section(const Section& section) {
   if (available_sections_space_ < 0) {
-    make_space_for_new_section();
+    if (!make_space_for_new_section()) {
+      LIEF_ERR("Can't make space for the section '{}'", section.name());
+      return nullptr;
+    }
     return add_section(section);
   }
 
   auto new_section = std::make_unique<Section>(section);
   std::vector<uint8_t> content = as_vector(new_section->content());
-  const auto section_size = static_cast<uint32_t>(content.size());
+  const auto section_size = uint32_t(content.size());
   const auto section_size_aligned =
-      static_cast<uint32_t>(align(section_size,
-                                  optional_header().file_alignment()));
+      uint32_t(align(section_size, optional_header().file_alignment()));
   const uint32_t virtual_size = section_size;
 
-  content.insert(content.end(), section_size_aligned - section_size, 0);
+  if (section_size_aligned > section_size) {
+    content.insert(content.end(), section_size_aligned - section_size, 0);
+  }
   new_section->content(content);
 
   // Compute new section offset
@@ -473,8 +476,7 @@ Section* Binary::add_section(const Section& section) {
   LIEF_DEBUG("New section offset: {:#012x}", new_section_offset);
 
   // Compute new section Virtual address
-  const auto section_align =
-      static_cast<uint64_t>(optional_header().section_alignment());
+  const auto section_align = uint64_t{optional_header().section_alignment()};
   const uint64_t new_section_va =
       align(std::accumulate(sections_.begin(), sections_.end(), section_align,
                             [](uint64_t va, const std::unique_ptr<Section>& s) {
@@ -510,7 +512,7 @@ Section* Binary::add_section(const Section& section) {
   available_sections_space_--;
 
   // Update headers
-  header().numberof_sections(static_cast<uint16_t>(sections_.size()));
+  header().numberof_sections(uint16_t(sections_.size()));
 
   optional_header().sizeof_image(this->virtual_size());
   optional_header().sizeof_headers(sizeof_headers());
@@ -615,7 +617,7 @@ uint32_t Binary::compute_checksum() const {
       .write(header_.pointerto_symbol_table())
       .write(header_.numberof_symbols())
       .write(header_.sizeof_optional_header())
-      .write(static_cast<uint16_t>(header_.characteristics()));
+      .write(uint16_t(header_.characteristics()));
 
   cs // Hash OptionalHeader
       .write(static_cast<uint16_t>(optional_header_.magic()))
@@ -645,7 +647,7 @@ uint32_t Binary::compute_checksum() const {
       .write(optional_header_.sizeof_headers())
       .write(optional_header_.checksum())
       .write(static_cast<uint16_t>(optional_header_.subsystem()))
-      .write(static_cast<uint16_t>(optional_header_.dll_characteristics()))
+      .write(uint16_t(optional_header_.dll_characteristics()))
       .write_sized_int(optional_header_.sizeof_stack_reserve(), sizeof_ptr)
       .write_sized_int(optional_header_.sizeof_stack_commit(), sizeof_ptr)
       .write_sized_int(optional_header_.sizeof_heap_reserve(), sizeof_ptr)
@@ -669,7 +671,7 @@ uint32_t Binary::compute_checksum() const {
         .write(sec->pointerto_line_numbers())
         .write(sec->numberof_relocations())
         .write(sec->numberof_line_numbers())
-        .write(static_cast<uint32_t>(sec->characteristics()));
+        .write(uint32_t{sec->characteristics()});
   }
 
   cs.write(section_offset_padding_);
@@ -760,7 +762,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
       .write(header_.pointerto_symbol_table())
       .write(header_.numberof_symbols())
       .write(header_.sizeof_optional_header())
-      .write(static_cast<uint16_t>(header_.characteristics()));
+      .write(uint16_t(header_.characteristics()));
 
   ios // Hash OptionalHeader
       .write(static_cast<uint16_t>(optional_header_.magic()))
@@ -790,7 +792,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
       .write(optional_header_.sizeof_headers())
       // optional_header_.checksum() is not part of the hash
       .write(static_cast<uint16_t>(optional_header_.subsystem()))
-      .write(static_cast<uint16_t>(optional_header_.dll_characteristics()))
+      .write(uint16_t(optional_header_.dll_characteristics()))
       .write_sized_int(optional_header_.sizeof_stack_reserve(), sizeof_ptr)
       .write_sized_int(optional_header_.sizeof_stack_commit(), sizeof_ptr)
       .write_sized_int(optional_header_.sizeof_heap_reserve(), sizeof_ptr)
@@ -817,7 +819,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
         .write(sec->pointerto_line_numbers())
         .write(sec->numberof_relocations())
         .write(sec->numberof_line_numbers())
-        .write(static_cast<uint32_t>(sec->characteristics()));
+        .write(uint32_t{sec->characteristics()});
   }
   // LIEF_DEBUG("Section padding at {:#x}", ios.tellp());
   ios.write(section_offset_padding_);
@@ -1102,7 +1104,7 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
   }
   const uint64_t offset = rva - section_topatch->virtual_address();
   span<uint8_t> content = section_topatch->writable_content();
-  if (offset > content.size() || (offset + size) > content.size()) {
+  if (offset > content.size() || size > content.size() - offset) {
     LIEF_ERR("Patch value ({} bytes @{:#x}) out of section bounds (limit: {:#x})",
              size, offset, content.size());
     return;
@@ -1110,28 +1112,28 @@ void Binary::patch_address(uint64_t address, uint64_t patch_value, size_t size,
   switch (size) {
     case sizeof(uint8_t):
     {
-      auto X = static_cast<uint8_t>(patch_value);
+      auto X = uint8_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint8_t));
       break;
     }
 
     case sizeof(uint16_t):
     {
-      auto X = static_cast<uint16_t>(patch_value);
+      auto X = uint16_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint16_t));
       break;
     }
 
     case sizeof(uint32_t):
     {
-      auto X = static_cast<uint32_t>(patch_value);
+      auto X = uint32_t(patch_value);
       memcpy(content.data() + offset, &X, sizeof(uint32_t));
       break;
     }
 
     case sizeof(uint64_t):
     {
-      auto X = static_cast<uint64_t>(patch_value);
+      auto X = uint64_t{patch_value};
       memcpy(content.data() + offset, &X, sizeof(uint64_t));
       break;
     }
@@ -1174,7 +1176,7 @@ span<const uint8_t> Binary::get_content_from_virtual_address(
 
   const auto checked_size = std::min<uint64_t>(size, content.size() - offset);
 
-  return {content.data() + offset, static_cast<size_t>(checked_size)};
+  return {content.data() + offset, size_t(checked_size)};
 }
 
 void Binary::rich_header(const RichHeader& rich_header) {

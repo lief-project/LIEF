@@ -632,7 +632,7 @@ void Parser::parse_field(size_t index, Class& cls, bool is_static) {
     return;
   }
 
-  field->access_flags_ = static_cast<uint32_t>(*access_flags);
+  field->access_flags_ = uint32_t(*access_flags);
   field->parent_ = &cls;
   cls.fields_.push_back(field.get());
 
@@ -673,7 +673,7 @@ void Parser::parse_method(size_t index, Class& cls, bool is_virtual) {
     return;
   }
 
-  method->access_flags_ = static_cast<uint32_t>(*access_flags);
+  method->access_flags_ = uint32_t(*access_flags);
   method->parent_ = &cls;
   cls.methods_.push_back(method.get());
 

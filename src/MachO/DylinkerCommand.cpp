@@ -27,10 +27,9 @@ DylinkerCommand::DylinkerCommand(const details::dylinker_command& cmd) :
 
 DylinkerCommand::DylinkerCommand(std::string name) :
   LoadCommand::LoadCommand{LoadCommand::TYPE::LOAD_DYLINKER,
-                           static_cast<uint32_t>(align(
-                               sizeof(details::dylinker_command) + name.size() + 1,
-                               sizeof(uint64_t)
-                           ))},
+                           uint32_t(align(sizeof(details::dylinker_command) +
+                                              name.size() + 1,
+                                          sizeof(uint64_t)))},
   name_{std::move(name)} {
   this->data(LoadCommand::raw_t(size(), 0));
 }

@@ -36,7 +36,7 @@ Header::Header(const details::ART_17::header* header) :
   patch_delta_{header->patch_delta},
   image_roots_{header->image_roots},
   pointer_size_{header->pointer_size},
-  compile_pic_{static_cast<bool>(header->compile_pic)},
+  compile_pic_{bool(header->compile_pic)},
   nb_sections_{sizeof(header->sections) / sizeof(header->sections[0])},
   nb_methods_{sizeof(header->image_methods) / sizeof(header->image_methods[0])} {
   std::copy(std::begin(header->magic), std::end(header->magic),
@@ -44,7 +44,7 @@ Header::Header(const details::ART_17::header* header) :
   if (std::all_of(header->version, header->version + sizeof(header->version) - 1,
                   ::isdigit))
   {
-    version_ = static_cast<uint32_t>(std::stoi(std::string{
+    version_ = uint32_t(std::stoi(std::string{
         reinterpret_cast<const char*>(header->version), sizeof(header->version)
     }));
   }
@@ -78,7 +78,7 @@ Header::Header(const T* header) :
   if (std::all_of(header->version, header->version + sizeof(header->version) - 1,
                   ::isdigit))
   {
-    version_ = static_cast<uint32_t>(std::stoi(std::string{
+    version_ = uint32_t(std::stoi(std::string{
         reinterpret_cast<const char*>(header->version), sizeof(header->version)
     }));
   }

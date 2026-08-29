@@ -47,7 +47,7 @@ uint64_t dyld_chained_ptr_arm64e::sign_extended_addend() const {
 }
 
 uint64_t dyld_chained_ptr_arm64e::unpack_target() const {
-  return static_cast<uint64_t>(rebase.high8) << 56 | rebase.target;
+  return uint64_t{rebase.high8} << 56 | rebase.target;
 }
 
 void dyld_chained_ptr_arm64e::pack_target(uint64_t value) {
@@ -60,7 +60,7 @@ uint64_t dyld_chained_ptr_generic64::sign_extended_addend() const {
 }
 
 uint64_t dyld_chained_ptr_generic64::unpack_target() const {
-  return static_cast<uint64_t>(rebase.high8) << 56 | rebase.target;
+  return uint64_t{rebase.high8} << 56 | rebase.target;
 }
 
 void dyld_chained_ptr_generic64::pack_target(uint64_t value) {

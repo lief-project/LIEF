@@ -37,12 +37,8 @@ ok_error_t Builder::build_optional_header(const OptionalHeader& optional_header)
   using pe_optional_header = typename PE_T::pe_optional_header;
 
   // Build optional header
-  binary_->optional_header().sizeof_image(
-      static_cast<uint32_t>(binary_->virtual_size())
-  );
-  binary_->optional_header().sizeof_headers(
-      static_cast<uint32_t>(binary_->sizeof_headers())
-  );
+  binary_->optional_header().sizeof_image(uint32_t(binary_->virtual_size()));
+  binary_->optional_header().sizeof_headers(uint32_t{binary_->sizeof_headers()});
 
   vector_iostream pe_opt_hdr_strm;
   pe_opt_hdr_strm.reserve(sizeof(pe_optional_header));
@@ -514,10 +510,8 @@ ok_error_t Builder::build_imports() {
   // +--------------------------+ --------> Custom IAT for user-added imports
   // | IAT(s)                   |
   // +--------------------------+
-  enum FIXUP {
-    FX_IMPORT_TABLE = 0,
-    _FX_CNT,
-  };
+  static constexpr size_t FX_IMPORT_TABLE = 0;
+  static constexpr size_t FX_COUNT = 1;
   static constexpr auto RELOCATED_IAT = uint64_t(1) << 60;
   using uint__ = typename PE_T::uint;
 
@@ -568,8 +562,8 @@ ok_error_t Builder::build_imports() {
   uint32_t iat_offset =
       align(strings_offset + names_stream.size(), sizeof(uint16_t));
 
-  headers_ilt.init_fixups(_FX_CNT);
-  iat_stream.init_fixups(_FX_CNT);
+  headers_ilt.init_fixups(FX_COUNT);
+  iat_stream.init_fixups(FX_COUNT);
 
   for (Import& imp : binary_->imports()) {
     const bool has_existing_iat = imp.import_address_table_rva() != 0;

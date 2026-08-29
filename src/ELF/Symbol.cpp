@@ -72,8 +72,8 @@ template Symbol::Symbol(const details::Elf64_Sym& header, ARCH);
 
 
 uint8_t Symbol::information() const {
-  return static_cast<uint8_t>((static_cast<uint8_t>(binding_) << 4) |
-                              (static_cast<uint8_t>(type_) & 0x0f));
+  return uint8_t((static_cast<uint8_t>(binding_) << 4) |
+                 (static_cast<uint8_t>(type_) & 0x0f));
 }
 
 void Symbol::information(uint8_t info) {

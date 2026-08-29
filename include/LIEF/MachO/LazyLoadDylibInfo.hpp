@@ -205,7 +205,7 @@ class LIEF_API LazyLoadDylibInfo : public LoadCommand {
     if (value) {
       flags_ |= MAYBE_MISSING_FLAG;
     } else {
-      flags_ &= ~static_cast<uint16_t>(MAYBE_MISSING_FLAG);
+      flags_ &= ~uint16_t{MAYBE_MISSING_FLAG};
     }
     return *this;
   }

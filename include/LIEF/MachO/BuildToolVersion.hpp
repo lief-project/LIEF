@@ -76,7 +76,7 @@ class LIEF_API BuildToolVersion : public Object {
 
   private:
   TOOLS tool_ = TOOLS::UNKNOWN;
-  version_t version_;
+  version_t version_{};
 };
 
 LIEF_API const char* to_string(BuildToolVersion::TOOLS tool);

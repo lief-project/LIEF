@@ -249,7 +249,7 @@ void Hash::visit(const ExportEntry& export_entry) {
   process(export_entry.name());
   process(export_entry.ordinal());
   process(export_entry.address());
-  process(static_cast<size_t>(export_entry.is_extern()));
+  process(size_t{export_entry.is_extern()});
 }
 
 void Hash::visit(const TLS& tls) {
@@ -420,7 +420,7 @@ void Hash::visit(const ResourceVersion& version) {
 }
 
 void Hash::visit(const ResourceIcon& resource_icon) {
-  if (resource_icon.id() != static_cast<uint32_t>(-1)) {
+  if (resource_icon.id() != uint32_t(-1)) {
     process(resource_icon.id());
   }
   process(resource_icon.lang());

@@ -275,8 +275,8 @@ ok_error_t Parser::fix_tls() {
   }
   /* Callbacks */ {
     std::vector<uint64_t> callbacks = tls->callbacks();
-    for (size_t i = 0; i < callbacks.size(); ++i) {
-      callbacks[i] -= D;
+    for (uint64_t& callback : callbacks) {
+      callback -= D;
     }
     tls->callbacks(std::move(callbacks));
   }

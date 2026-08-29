@@ -110,6 +110,7 @@ class ref_iterator {
 
   ~ref_iterator() = default;
 
+  // NOLINTNEXTLINE(performance-unnecessary-value-param)
   ref_iterator(T container) :
     container_{std::forward<T>(container)},
     it_(std::begin(container_)) {}
@@ -365,13 +366,14 @@ class filter_iterator {
 
   ~filter_iterator() = default;
 
+  // NOLINTNEXTLINE(performance-unnecessary-value-param)
   filter_iterator(T container, filter_t filter) :
     container_{std::forward<T>(container)},
     it_(std::begin(container_)),
     filters_{} {
 
 
-    filters_.push_back(filter);
+    filters_.push_back(std::move(filter));
 
     if (it_ != std::end(container_)) {
       if (!std::all_of(std::begin(filters_), std::end(filters_),
@@ -382,6 +384,7 @@ class filter_iterator {
     }
   }
 
+  // NOLINTNEXTLINE(performance-unnecessary-value-param)
   filter_iterator(T container, const std::vector<filter_t>& filters) :
     container_{std::forward<T>(container)},
     it_(std::begin(container_)),
@@ -397,6 +400,7 @@ class filter_iterator {
     }
   }
 
+  // NOLINTNEXTLINE(performance-unnecessary-value-param)
   filter_iterator(T container) :
     container_{std::forward<T>(container)},
     it_(std::begin(container_)),
@@ -645,14 +649,12 @@ class iterator_range {
   }
 
   protected:
-  enum {
-    IsRandomAccess =
-        std::is_base_of_v<std::random_access_iterator_tag,
-                          typename IteratorDecayTy::iterator_category>,
-    IsBidirectional =
-        std::is_base_of_v<std::bidirectional_iterator_tag,
-                          typename IteratorDecayTy::iterator_category>,
-  };
+  static constexpr bool IsRandomAccess =
+      std::is_base_of_v<std::random_access_iterator_tag,
+                        typename IteratorDecayTy::iterator_category>;
+  static constexpr bool IsBidirectional =
+      std::is_base_of_v<std::bidirectional_iterator_tag,
+                        typename IteratorDecayTy::iterator_category>;
 
   private:
   IteratorT begin_;
@@ -736,6 +738,9 @@ template<typename DerivedT, typename IteratorCategoryT, typename T,
          typename DifferenceTypeT = std::ptrdiff_t, typename PointerT = T*,
          typename ReferenceT = T&>
 class iterator_facade_base {
+  friend DerivedT;
+  iterator_facade_base() = default;
+
   public:
   using iterator_category = IteratorCategoryT;
   using value_type = T;
@@ -744,12 +749,10 @@ class iterator_facade_base {
   using reference = ReferenceT;
 
   protected:
-  enum {
-    IsRandomAccess =
-        std::is_base_of_v<std::random_access_iterator_tag, IteratorCategoryT>,
-    IsBidirectional =
-        std::is_base_of_v<std::bidirectional_iterator_tag, IteratorCategoryT>,
-  };
+  static constexpr bool IsRandomAccess =
+      std::is_base_of_v<std::random_access_iterator_tag, IteratorCategoryT>;
+  static constexpr bool IsBidirectional =
+      std::is_base_of_v<std::bidirectional_iterator_tag, IteratorCategoryT>;
 
   /// A proxy object for computing a reference via indirecting a copy of an
   /// iterator. This is used in APIs which need to produce a reference via

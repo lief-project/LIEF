@@ -94,9 +94,8 @@ void Parser::parse_dex_files<details::OAT131_t>() {
       break;
     }
 
-    /* uint32_t dex_sections_layout_offset = */ stream_->read<uint32_t>();
-
-    /* uint32_t method_bss_mapping_offset =  */ stream_->read<uint32_t>();
+    stream_->skip<uint32_t>(); // dex_sections_layout_offset
+    stream_->skip<uint32_t>(); // method_bss_mapping_offset
 
     oat.oat_dex_files_.push_back(std::move(dex_file));
   }

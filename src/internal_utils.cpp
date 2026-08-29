@@ -126,8 +126,15 @@ std::string ts_to_str(uint64_t timestamp) {
   system_clock::time_point tp =
       system_clock::time_point(std::chrono::seconds(timestamp));
   std::time_t t = std::chrono::system_clock::to_time_t(tp);
-  std::string ts = std::ctime(&t);
-  ts.resize(ts.size() - 1);
+  const char* raw_ts = std::ctime(&t);
+  if (raw_ts == nullptr) {
+    return "";
+  }
+
+  std::string ts = raw_ts;
+  if (!ts.empty() && ts.back() == '\n') {
+    ts.pop_back();
+  }
   return ts;
 }
 

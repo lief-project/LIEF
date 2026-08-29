@@ -15,11 +15,12 @@
  */
 #ifndef LIEF_OAT_ENUMS_H
 #define LIEF_OAT_ENUMS_H
+#include <cstdint>
 
 
 namespace LIEF::OAT {
 
-enum OAT_CLASS_TYPES {
+enum OAT_CLASS_TYPES : int16_t {
   OAT_CLASS_ALL_COMPILED =
       0, /// OatClass is followed by an OatMethodOffsets for each method.
   OAT_CLASS_SOME_COMPILED =
@@ -29,7 +30,7 @@ enum OAT_CLASS_TYPES {
 };
 
 // From art/runtime/mirror/class.h
-enum OAT_CLASS_STATUS {
+enum OAT_CLASS_STATUS : int16_t {
   STATUS_RETIRED =
       -2, // Retired, should not be used. Use the newly cloned one instead.
   STATUS_ERROR = -1,
@@ -63,7 +64,7 @@ enum HEADER_KEYS {
   KE_COMPILATION_REASON = 11,
 };
 
-enum INSTRUCTION_SETS {
+enum INSTRUCTION_SETS : uint32_t {
   INST_SET_NONE = 0,
   INST_SET_ARM = 1,
   INST_SET_ARM_64 = 2,

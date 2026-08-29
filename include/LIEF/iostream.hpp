@@ -181,6 +181,14 @@ class LIEF_API vector_iostream {
     return raw_->size();
   }
 
+  size_t size_since(size_t start) const {
+    const size_t end = size();
+    if (end < start) {
+      return 0;
+    }
+    return end - start;
+  }
+
   // seeks:
   pos_type tellp() const {
     return current_pos_;

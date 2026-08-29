@@ -41,9 +41,9 @@ class LIEF_API DylibCommand : public LoadCommand {
   /// Helper to convert an integer into a version array
   static version_t int2version(uint32_t version) {
     return {{
-        static_cast<uint16_t>(version >> 16),
-        static_cast<uint16_t>((version >> 8) & 0xFF),
-        static_cast<uint16_t>(version & 0xFF),
+        uint16_t(version >> 16),
+        uint16_t((version >> 8) & 0xFF),
+        uint16_t(version & 0xFF),
     }};
   }
 

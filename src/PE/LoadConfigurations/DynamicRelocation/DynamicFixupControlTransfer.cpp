@@ -59,17 +59,21 @@ std::unique_ptr<DynamicFixupControlTransfer>
       return fixup;
     }
 
-    if (*BlockSize == 0) {
+    static constexpr uint32_t HEADER_SIZE = sizeof(uint32_t) + sizeof(uint32_t);
+
+    if (*BlockSize < HEADER_SIZE) {
       continue;
     }
 
-    auto block_strm = strm.slice(strm.pos(), (*BlockSize - 8));
+    const uint32_t payload_size = *BlockSize - HEADER_SIZE;
+
+    auto block_strm = strm.slice(strm.pos(), payload_size);
     if (!block_strm) {
       LIEF_DEBUG("Error: {}:{}", __FUNCTION__, __LINE__);
       return fixup;
     }
 
-    strm.increment_pos(*BlockSize - 8);
+    strm.increment_pos(payload_size);
 
     while (*block_strm) {
       auto value = block_strm->read<details::control_transfer_reloc_t>();

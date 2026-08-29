@@ -271,7 +271,7 @@ void JsonVisitor::visit(const Header& header) {
   node_["pointerto_symbol_table"] = header.pointerto_symbol_table();
   node_["numberof_symbols"] = header.numberof_symbols();
   node_["sizeof_optional_header"] = header.sizeof_optional_header();
-  node_["characteristics"] = static_cast<size_t>(header.characteristics());
+  node_["characteristics"] = size_t{header.characteristics()};
 }
 
 void JsonVisitor::visit(const OptionalHeader& optional_header) {

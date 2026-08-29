@@ -170,7 +170,7 @@ class LIEF_API Memory {
     }
 
     protected:
-    void* addr_ = 0;
+    void* addr_ = nullptr;
     size_t size_ = 0;
     uint32_t permissions_ = P_NONE;
   };

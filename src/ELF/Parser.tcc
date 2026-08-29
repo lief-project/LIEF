@@ -422,8 +422,7 @@ ok_error_t Parser::process_dynamic_table() {
     if (dt_verneed != nullptr && dt_verneed_num != nullptr) {
       const uint64_t virtual_address = dt_verneed->value();
       const uint32_t nb_entries =
-          std::min(Parser::NB_MAX_SYMBOLS,
-                   static_cast<uint32_t>(dt_verneed_num->value()));
+          std::min(Parser::NB_MAX_SYMBOLS, uint32_t(dt_verneed_num->value()));
 
       if (auto res = binary_->virtual_address_to_offset(virtual_address)) {
         parse_symbol_version_requirement<ELF_T>(*res, nb_entries);
@@ -719,9 +718,8 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset,
                 "REL_T must be Elf_Rel || Elf_Rela");
 
   const uint8_t shift = ELF_T::r_info_shift;
-  ;
 
-  const auto nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  const auto nb_entries = uint32_t(size / sizeof(REL_T));
 
   uint32_t idx = 0;
   stream_->setpos(relocations_offset);
@@ -733,7 +731,7 @@ uint32_t Parser::max_relocation_index(uint64_t relocations_offset,
     idx = std::max(idx, static_cast<uint32_t>(reloc_entry->r_info >> shift));
   }
   return idx + 1;
-} // max_relocation_index
+}
 
 template<typename ELF_T>
 result<uint32_t> Parser::nb_dynsym_section() const {
@@ -865,7 +863,7 @@ ok_error_t Parser::parse_sections() {
     // Only if it contains data (with bits)
     if (section->size() > 0 && access_content) {
       int64_t read_size = section->size();
-      if (static_cast<int32_t>(read_size) < 0) {
+      if (int32_t(read_size) < 0) {
         LIEF_WARN("Section #{} is {} bytes large. Only the first {} bytes will be "
                   "taken into account",
                   i, read_size, Section::MAX_SECTION_SIZE);
@@ -991,7 +989,7 @@ ok_error_t Parser::parse_segments() {
 
       const bool corrupted_offset =
           segment->file_offset() > stream_->size() ||
-          (segment->file_offset() + read_size) > stream_->size();
+          read_size > stream_->size() - segment->file_offset();
 
       if (!corrupted_offset) {
         const Elf_Off offset_to_content = segment->file_offset();
@@ -1252,7 +1250,7 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset,
     return ok();
   }
 
-  auto nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  auto nb_entries = uint32_t(size / sizeof(REL_T));
 
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
   binary_->relocations_.reserve(nb_entries);
@@ -1276,7 +1274,7 @@ ok_error_t Parser::parse_dynamic_relocations(uint64_t relocations_offset,
     insert_relocation(std::move(reloc));
   }
   return ok();
-} // build_dynamic_reclocations
+}
 
 template<typename ELF_T>
 ok_error_t Parser::parse_symtab_symbols(const Section& symtab_section,
@@ -1288,8 +1286,8 @@ ok_error_t Parser::parse_symtab_symbols(const Section& symtab_section,
   LIEF::SpanStream stream(symtab_section.content());
   stream.set_endian_swap(stream_->should_swap());
 
-  const auto nb_symbols = static_cast<uint32_t>((symtab_section.size() /
-                                                 sizeof(typename ELF_T::Elf_Sym)));
+  const auto nb_symbols =
+      uint32_t((symtab_section.size() / sizeof(typename ELF_T::Elf_Sym)));
   const size_t nb_reserved = std::min<size_t>(nb_symbols, MAX_RESERVED_SYMBOLS);
   binary_->symtab_symbols_.reserve(nb_reserved);
 
@@ -1560,7 +1558,7 @@ ok_error_t Parser::parse_dynamic_entries(BinaryStream& stream) {
       std::vector<uint64_t>& array =
           dt_init_array->as<DynamicEntryArray>()->array();
       const auto nb_functions =
-          static_cast<uint32_t>(dt_init_arraysz->value() / sizeof(uint__));
+          uint32_t(dt_init_arraysz->value() / sizeof(uint__));
       if (auto offset = binary_->virtual_address_to_offset(dt_init_array->value()))
       {
         stream_->setpos(*offset);
@@ -1590,7 +1588,7 @@ ok_error_t Parser::parse_dynamic_entries(BinaryStream& stream) {
           dt_fini_array->as<DynamicEntryArray>()->array();
 
       const auto nb_functions =
-          static_cast<uint32_t>(dt_fini_arraysz->value() / sizeof(uint__));
+          uint32_t(dt_fini_arraysz->value() / sizeof(uint__));
 
       if (auto offset = binary_->virtual_address_to_offset(dt_fini_array->value()))
       {
@@ -1622,7 +1620,7 @@ ok_error_t Parser::parse_dynamic_entries(BinaryStream& stream) {
           dt_preini_array->as<DynamicEntryArray>()->array();
 
       const auto nb_functions =
-          static_cast<uint32_t>(dt_preinit_arraysz->value() / sizeof(uint__));
+          uint32_t(dt_preinit_arraysz->value() / sizeof(uint__));
 
       if (auto offset =
               binary_->virtual_address_to_offset(dt_preini_array->value()))
@@ -1659,7 +1657,7 @@ ok_error_t Parser::parse_pltgot_relocations(uint64_t offset, uint64_t size) {
 
   const Elf_Off offset_relocations = offset;
 
-  auto nb_entries = static_cast<uint32_t>(size / sizeof(REL_T));
+  auto nb_entries = uint32_t(size / sizeof(REL_T));
 
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
@@ -1749,7 +1747,7 @@ ok_error_t Parser::parse_section_relocations(const Section& section) {
       std::is_same_v<REL_T, typename ELF_T::Elf_Rel> ? Relocation::ENCODING::REL :
                                                        Relocation::ENCODING::RELA;
 
-  auto nb_entries = static_cast<uint32_t>(section.size() / sizeof(REL_T));
+  auto nb_entries = uint32_t(section.size() / sizeof(REL_T));
   nb_entries = std::min<uint32_t>(nb_entries, Parser::NB_MAX_RELOCATIONS);
 
   std::unordered_set<Relocation*, RelocationSetHash, RelocationSetEq> reloc_hash;

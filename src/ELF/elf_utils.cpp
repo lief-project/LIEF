@@ -46,9 +46,7 @@ std::optional<elf_file_info_t> get_info(BinaryStream& strm) {
     }
   }
 
-  if (info.imagebase == static_cast<uintptr_t>(-1) ||
-      info.end_address < info.imagebase)
-  {
+  if (info.imagebase == uintptr_t(-1) || info.end_address < info.imagebase) {
     LIEF_WARN("No loadable segment found while probing the ELF image");
     return std::nullopt;
   }

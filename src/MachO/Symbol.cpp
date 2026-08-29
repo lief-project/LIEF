@@ -47,7 +47,7 @@ Symbol::Symbol(const Symbol& other) :
 Symbol::Symbol(const details::nlist_32& cmd) :
   type_{cmd.n_type},
   numberof_sections_{cmd.n_sect},
-  description_{static_cast<uint16_t>(cmd.n_desc)},
+  description_{uint16_t(cmd.n_desc)},
   origin_{ORIGIN::SYMTAB} {
   value_ = cmd.n_value;
 }
