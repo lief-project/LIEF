@@ -82,7 +82,7 @@ macro(LIEF_load_targets lib_type)
     include(CMakeFindDependencyMacro)
 
     if(@LIEF_EXTERNAL_MBEDTLS@)
-      find_dependency(MbedTLS)
+      find_dependency(MbedTLS 4.0.0 EXACT)
     endif()
 
     if(@LIEF_EXTERNAL_UTF8CPP@)
