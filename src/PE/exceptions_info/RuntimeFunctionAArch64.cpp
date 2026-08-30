@@ -19,7 +19,7 @@
 #include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/PE/Binary.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/Parser.hpp"
 
 #include "logging.hpp"
@@ -53,8 +53,7 @@ std::unique_ptr<RuntimeFunctionAArch64>
 
   if (flag == PACKED_FLAGS::UNPACKED) {
     uint32_t xdata_rva = details::xdata_unpacked_rva(*unwind_data);
-    uint32_t xdata_offset = ctx.bin().rva_to_offset(xdata_rva);
-    ScopedStream xdata_strm(ctx.stream(), xdata_offset);
+    std::unique_ptr<SpanStream> xdata_strm = ctx.stream_from_rva(xdata_rva);
     return unwind_aarch64::UnpackedFunction::parse(ctx, *xdata_strm, xdata_rva,
                                                    *rva_start);
   }

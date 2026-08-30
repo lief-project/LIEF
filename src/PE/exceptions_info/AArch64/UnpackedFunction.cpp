@@ -19,6 +19,7 @@
 #include "LIEF/span.hpp"
 #include <sstream>
 
+#include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 #include "PE/exceptions_info/UnwindAArch64Decoder.hpp"
 
@@ -29,7 +30,7 @@ namespace LIEF::PE::unwind_aarch64 {
 
 using epilog_scope_t = UnpackedFunction::epilog_scope_t;
 
-std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(Parser& /*ctx*/,
+std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(Parser& ctx,
                                                           BinaryStream& strm,
                                                           uint32_t xdata_rva,
                                                           uint32_t rva) {
@@ -90,6 +91,11 @@ std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(Parser& /*ctx*/,
   /// is required.
   std::vector<uint32_t> scopes;
   if (unpacked.E() == 0) {
+    if (!ctx.consume_exception_scopes(ecount)) {
+      LIEF_DEBUG("Epilog scope budget exhausted (record claims {} scopes)",
+                 ecount);
+      return func;
+    }
     func->epilog_scopes_offset_ = strm.pos() - strm_offset;
     if (!strm.read_objects(scopes, ecount)) {
       LIEF_DEBUG("Failed to read #{} epilog scopes", ecount);
