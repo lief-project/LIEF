@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <mutex>
+#include <cstdlib>
 
 #include "logging.hpp"
 #include "mbedtls_init.hpp"
@@ -31,13 +31,13 @@
 
 namespace LIEF {
 void mbedtls_init() {
-  static std::once_flag ONCE;
-  std::call_once(ONCE, [] {
+  [[maybe_unused]] static bool INITIALIZED = [] {
     mbedtls_init_threading_alt();
     if (psa_status_t status = psa_crypto_init(); status != PSA_SUCCESS) {
       LIEF_WARN("psa_crypto_init() didn't succeed: {}", (int)status);
     }
     std::atexit(mbedtls_psa_crypto_free);
-  });
+    return true;
+  }();
 }
 }
