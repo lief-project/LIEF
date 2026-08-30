@@ -6,6 +6,7 @@ pub mod disassembler;
 pub mod host;
 pub mod linux;
 pub mod memory;
+pub mod memory_layout;
 pub mod module;
 pub mod osx;
 pub mod process;
@@ -28,6 +29,9 @@ pub use module::{Module, Modules, module_from_addr, module_from_name, module_fro
 
 #[doc(inline)]
 pub use memory::Memory;
+
+#[doc(inline)]
+pub use memory_layout::{Region, RegionsIt, memory_layout};
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]

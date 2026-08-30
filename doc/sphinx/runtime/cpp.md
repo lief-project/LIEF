@@ -72,6 +72,18 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
+## {fa}`solid fa-map` MemoryLayout
+
+```{eval-rst}
+.. doxygenclass:: LIEF::runtime::MemoryLayout
+```
+
+```{eval-rst}
+.. doxygenfunction:: LIEF::runtime::memory_layout()
+```
+
+______________________________________________________________________
+
 ## {fa}`brands fa-linux` Linux
 
 ### {fa}`solid fa-cubes` Module

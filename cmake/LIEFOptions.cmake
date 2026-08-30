@@ -35,6 +35,7 @@ option(LIEF_DEBUG_INFO        "Build LIEF with DWARF/PDB support"              O
 option(LIEF_OBJC              "Build LIEF with ObjC metadata support"          OFF)
 option(LIEF_DYLD_SHARED_CACHE "Build LIEF with Dyld shared cache support"      OFF)
 option(LIEF_ASM               "Build LIEF with assembler/disassembler support" OFF)
+option(LIEF_RUNTIME_EXTENDED  "Build LIEF with assembler/disassembler support" OFF)
 
 if (LIEF_COFF AND NOT LIEF_PE)
   message(FATAL_ERROR "COFF module requires LIEF_PE enabled")
@@ -259,7 +260,15 @@ if (LIEF_ASM)
   set(LIEF_ASM_SUPPORT 1)
 endif()
 
-if (LIEF_DEBUG_INFO OR LIEF_OBJC OR LIEF_DYLD_SHARED_CACHE OR LIEF_ASM) # or any other extended feature
+if (LIEF_RUNTIME_EXTENDED)
+  set(LIEF_RUNTIME_EXTENDED_SUPPORT 1)
+endif()
+
+if (LIEF_DEBUG_INFO        OR
+    LIEF_OBJC              OR
+    LIEF_DYLD_SHARED_CACHE OR
+    LIEF_ASM               OR
+    LIEF_RUNTIME_EXTENDED) # or any other extended feature
   set(LIEF_EXTENDED 1)
 endif()
 

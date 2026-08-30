@@ -19,6 +19,7 @@
 #include "LIEF/rust/runtime/Disassembler.hpp"
 #include "LIEF/rust/runtime/Host.hpp"
 #include "LIEF/rust/runtime/Memory.hpp"
+#include "LIEF/rust/runtime/MemoryLayout.hpp"
 #include "LIEF/rust/runtime/Module.hpp"
 #include "LIEF/rust/runtime/Process.hpp"
 #include "LIEF/rust/runtime/android/Host.hpp"

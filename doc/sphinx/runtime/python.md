@@ -91,6 +91,18 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
+## {fa}`solid fa-map` MemoryLayout
+
+```{eval-rst}
+.. autoclass:: lief.runtime.MemoryLayout
+```
+
+```{eval-rst}
+.. autofunction:: lief.runtime.memory_layout
+```
+
+______________________________________________________________________
+
 ## {fa}`brands fa-linux` Linux
 
 ### {fa}`solid fa-cubes` Module

@@ -27,6 +27,7 @@ namespace LIEF::runtime {
 class Process;
 class Module;
 class Memory;
+class MemoryLayout;
 class Host;
 }
 
@@ -61,6 +62,7 @@ void init(nb::module_& m) {
   create<LIEF::runtime::Process>(runtime_mod);
   create<LIEF::runtime::Module>(runtime_mod);
   create<LIEF::runtime::Memory>(runtime_mod);
+  create<LIEF::runtime::MemoryLayout>(runtime_mod);
   init_disassembler(runtime_mod);
   init_assembler(runtime_mod);
 

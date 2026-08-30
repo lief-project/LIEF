@@ -60,6 +60,10 @@ if (LIEF_RUNTIME)
     target_sources(LIB_LIEF_RUNTIME PRIVATE osx/no_runtime.cpp)
   endif()
 
+  if (NOT LIEF_RUNTIME_EXTENDED)
+    target_sources(LIB_LIEF_RUNTIME PRIVATE MemoryLayout.cpp)
+  endif()
+
 else()
   target_sources(LIB_LIEF_RUNTIME PRIVATE
     no_runtime.cpp
@@ -68,5 +72,6 @@ else()
     windows/no_runtime.cpp
     android/no_runtime.cpp
     osx/no_runtime.cpp
+    MemoryLayout.cpp
   )
 endif()

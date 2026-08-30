@@ -65,6 +65,16 @@
 
   * Add |lief-runtime-memory-mmap_hint| to allocate memory close to a given
     address.
+  * Add |lief-runtime-memorylayout| to inspect the memory layout of the current
+    process. |lief-runtime-memory_layout| iterates over the mapped
+    |lief-runtime-memorylayout-region| (:ref:`documentation <runtime_memory_layout>`):
+
+    .. code-block:: python
+
+      import lief
+
+      for region in lief.runtime.memory_layout():
+          print(f"{region.addr:#014x}-{region.end_addr:#014x} {region.name}")
 
 :C++:
 

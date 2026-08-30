@@ -9,6 +9,7 @@ pub mod elf;
 pub mod intro;
 pub mod logging;
 pub mod macho;
+pub mod memory_layout;
 pub mod objc;
 pub mod pdb;
 pub mod pe;

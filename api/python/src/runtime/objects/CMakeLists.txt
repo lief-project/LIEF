@@ -3,6 +3,7 @@ target_sources(pyLIEF PRIVATE
   pyModule.cpp
   pyHost.cpp
   pyMemory.cpp
+  pyMemoryLayout.cpp
   pyDisassembler.cpp
   pyAssembler.cpp
 )

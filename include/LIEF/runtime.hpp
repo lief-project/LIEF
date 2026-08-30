@@ -19,6 +19,7 @@
 // IWYU pragma: begin_exports
 #include "LIEF/runtime/Host.hpp"
 #include "LIEF/runtime/Memory.hpp"
+#include "LIEF/runtime/MemoryLayout.hpp"
 #include "LIEF/runtime/Module.hpp"
 #include "LIEF/runtime/Process.hpp"
 #include "LIEF/runtime/assembler.hpp"

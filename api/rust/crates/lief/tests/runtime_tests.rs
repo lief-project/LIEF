@@ -199,6 +199,30 @@ fn test_android() {
     }
 }
 
+fn test_memory_layout() {
+    let regions: Vec<_> = lief::runtime::memory_layout().collect();
+
+    for region in &regions {
+        println!(
+            "{:#x}-{:#x} ({:#x}) {}",
+            region.addr(),
+            region.end_addr(),
+            region.size(),
+            region.name()
+        );
+        assert_eq!(region.end_addr(), region.addr() + region.size());
+    }
+
+    if lief::is_extended() {
+        assert!(!regions.is_empty());
+        assert!(regions.iter().all(|r| !format!("{r}").is_empty()));
+
+        // The regions backing this test binary must be part of the layout.
+        let self_addr = test_memory_layout as usize as u64;
+        assert!(regions.iter().any(|r| r.contains(self_addr)));
+    }
+}
+
 fn test_memory() {
     let mut chunk = Memory::mmap(
         0x4000,
@@ -297,6 +321,7 @@ fn test_runtime() {
     test_modules();
     test_memory();
     test_memory_hint();
+    test_memory_layout();
     test_android();
 
     if cfg!(target_os = "macos") {

@@ -1530,6 +1530,23 @@
     :py:meth:`lief.runtime.Memory.mmap_hint`
     :cpp:func:`LIEF::runtime::Memory::mmap_hint`
 
+.. |lief-runtime-memorylayout| lief-api:: lief.runtime.MemoryLayout
+
+    :py:class:`lief.runtime.MemoryLayout`
+    :cpp:class:`LIEF::runtime::MemoryLayout`
+
+.. |lief-runtime-memorylayout-region| lief-api:: lief.runtime.MemoryLayout.Region
+
+    :rust:struct:`lief::runtime::Region`
+    :py:class:`lief.runtime.MemoryLayout.Region`
+    :cpp:class:`LIEF::runtime::MemoryLayout::Region`
+
+.. |lief-runtime-memory_layout| lief-api:: lief.runtime.memory_layout()
+
+    :rust:func:`lief::runtime::memory_layout`
+    :py:func:`lief.runtime.memory_layout`
+    :cpp:func:`LIEF::runtime::memory_layout`
+
 .. |lief-runtime-module| lief-api:: lief.runtime.Module
 
     :rust:trait:`lief::runtime::module::Module`

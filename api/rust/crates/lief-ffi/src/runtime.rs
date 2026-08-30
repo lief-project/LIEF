@@ -4,6 +4,7 @@ pub mod disassembler;
 pub mod host;
 pub mod linux;
 pub mod memory;
+pub mod memory_layout;
 pub mod module;
 pub mod osx;
 pub mod process;

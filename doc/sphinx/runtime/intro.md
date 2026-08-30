@@ -10,6 +10,7 @@
   components/host
   components/process
   components/memory
+  components/memory_layout
   components/modules
 ```
 
@@ -92,5 +93,6 @@ The runtime features are split in the following components:
   components/host
   components/process
   components/memory
+  components/memory_layout
   components/modules
 ```
