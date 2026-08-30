@@ -144,7 +144,7 @@ if(NOT LIEF_OPT_MBEDTLS_EXTERNAL)
     -DTF_PSA_CRYPTO_USER_CONFIG_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config/mbedtls/psa_config.h"
   )
 else()
-  find_package(MbedTLS 4.0.0 REQUIRED)
+  find_package(MbedTLS 4.0.0 EXACT REQUIRED)
   target_link_libraries(LIB_LIEF PRIVATE
                         MbedTLS::tfpsacrypto MbedTLS::mbedx509)
   if (LIEF_PYTHON_FREE_THREADED)
