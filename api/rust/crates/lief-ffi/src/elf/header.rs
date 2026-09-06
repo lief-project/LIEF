@@ -3,6 +3,7 @@ pub mod ffi {
     unsafe extern "C++" {
         include!("LIEF/rust/ELF/Header.hpp");
 
+        type Span = crate::utils::ffi::Span;
         type ELF_Header;
 
         fn entrypoint(self: &ELF_Header) -> u64;
@@ -13,6 +14,7 @@ pub mod ffi {
         fn identity_os_abi(self: &ELF_Header) -> u32;
         fn identity_version(self: &ELF_Header) -> u32;
         fn identity_data(self: &ELF_Header) -> u32;
+        fn identity(self: &ELF_Header) -> Span;
         fn is_mips_n64(self: &ELF_Header) -> bool;
         fn identity_abi_version(self: &ELF_Header) -> u32;
         fn program_headers_offset(self: &ELF_Header) -> u64;

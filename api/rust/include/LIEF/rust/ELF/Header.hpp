@@ -15,6 +15,7 @@
 #pragma once
 #include <LIEF/ELF/Header.hpp>
 #include <LIEF/rust/Mirror.hpp>
+#include <LIEF/rust/Span.hpp>
 #include <LIEF/rust/helpers.hpp>
 
 class ELF_Header : public Mirror<LIEF::ELF::Header> {
@@ -44,6 +45,9 @@ class ELF_Header : public Mirror<LIEF::ELF::Header> {
   }
   auto identity_data() const {
     return as_u32(get().identity_data());
+  }
+  auto identity() const {
+    return make_span(get().identity());
   }
   bool is_mips_n64() const {
     return get().is_mips_n64();

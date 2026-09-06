@@ -935,6 +935,18 @@
     :py:attr:`lief.ELF.Header.is_mips_n64`
     :cpp:func:`LIEF::ELF::Header::is_mips_n64`
 
+.. |lief-elf-header-identity| lief-api:: lief.ELF.Header.identity
+
+    :rust:method:`lief::elf::Header::identity [struct]`
+    :py:attr:`lief.ELF.Header.identity`
+    :cpp:func:`LIEF::ELF::Header::identity`
+
+.. |lief-elf-header-identity_abi_version| lief-api:: lief.ELF.Header.identity_abi_version
+
+    :rust:method:`lief::elf::Header::identity_abi_version [struct]`
+    :py:attr:`lief.ELF.Header.identity_abi_version`
+    :cpp:func:`LIEF::ELF::Header::identity_abi_version`
+
 .. |lief-elf-segment| lief-api:: lief.ELF.Segment
 
     :rust:struct:`lief::elf::Segment`

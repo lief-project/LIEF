@@ -309,3 +309,38 @@ fn test_mips_n64() {
     };
     assert!(!bin.header().is_mips_n64());
 }
+
+#[test]
+fn test_header_identity() {
+    use lief::elf::header::{Class, ElfData, OsAbi, Version};
+
+    let path = utils::get_elf_sample("libtest_mips64el_n64.bin").unwrap();
+    let Binary::ELF(bin) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
+    let header = bin.header();
+    assert_eq!(
+        header.identity(),
+        &[0x7f, b'E', b'L', b'F', 2, 1, 1, 0, 5, 0, 0, 0, 0, 0, 0, 0]
+    );
+    assert_eq!(header.identity_abi_version(), 5);
+    assert_eq!(header.identity_class(), Class::ELF64);
+    assert_eq!(header.identity_data(), ElfData::LSB);
+    assert_eq!(header.identity_version(), Version::CURRENT);
+    assert_eq!(header.identity_os_abi(), OsAbi::SYSTEMV);
+
+    let path = utils::get_elf_sample("elf_reader.mips.elf").unwrap();
+    let Binary::ELF(bin) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
+    let header = bin.header();
+    assert_eq!(
+        header.identity(),
+        &[0x7f, b'E', b'L', b'F', 1, 2, 1, 3, 1, 0, 0, 0, 0, 0, 0, 0]
+    );
+    assert_eq!(header.identity_abi_version(), 1);
+    assert_eq!(header.identity_class(), Class::ELF32);
+    assert_eq!(header.identity_data(), ElfData::MSB);
+    assert_eq!(header.identity_os_abi(), OsAbi::LINUX);
+    assert!(format!("{header:?}").contains("identity_abi_version: 1"));
+}

@@ -3,6 +3,7 @@ use lief_ffi as ffi;
 use std::{fmt, marker::PhantomData};
 
 use crate::common::FromFFI;
+use crate::to_slice;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -262,6 +263,11 @@ impl Header<'_> {
         Class::from(self.ptr.identity_class())
     }
 
+    /// Return the ELF identity (`e_ident`) as a slice of 16 bytes
+    pub fn identity(&self) -> &[u8] {
+        to_slice!(self.ptr.identity());
+    }
+
     /// Specify the data encoding
     pub fn identity_data(&self) -> ElfData {
         ElfData::from(self.ptr.identity_data())
@@ -280,6 +286,11 @@ impl Header<'_> {
     /// Identifies the version of the ABI for which the object is prepared
     pub fn identity_os_abi(&self) -> OsAbi {
         OsAbi::from(self.ptr.identity_os_abi())
+    }
+
+    /// ABI Version
+    pub fn identity_abi_version(&self) -> u32 {
+        self.ptr.identity_abi_version()
     }
 
     /// Target architecture
@@ -349,9 +360,11 @@ impl fmt::Debug for Header<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("Header")
             .field("entrypoint", &self.entrypoint())
+            .field("identity", &self.identity())
             .field("object_file_version", &self.object_file_version())
             .field("identity_class", &self.identity_class())
             .field("identity_os_abi", &self.identity_os_abi())
+            .field("identity_abi_version", &self.identity_abi_version())
             .field("identity_data", &self.identity_data())
             .field("is_mips_n64", &self.is_mips_n64())
             .field("identity_version", &self.identity_version())
