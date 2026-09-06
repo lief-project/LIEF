@@ -117,7 +117,9 @@ hooks = [
     language = "python",
     entry = "uv run internal/scripts/harper_lint.py",
     additional_dependencies = ["myst-parser==5.1.0"],
-    files = "\\.md$",
+    files = "\\.(md|markdown)$",
+    exclude = "^internal/",
+
   },
   {
     id = "harper-cpp",
