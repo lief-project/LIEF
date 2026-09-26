@@ -1,5 +1,4 @@
 import ctypes
-import resource
 
 import lief
 import pytest
@@ -72,6 +71,8 @@ def test_handle_and_dlsym():
 )
 @pytest.mark.parametrize("relocate", [False, True], ids=["preferred", "relocated"])
 def test_nonzero_imagebase(library: str, has_phdr: bool, relocate: bool):
+    import resource
+
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
 
     target_lib = get_sample(f"private/ELF/static2dyn/{library}")
