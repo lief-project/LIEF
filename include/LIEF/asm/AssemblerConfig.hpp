@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <optional>
 
-#include <string>
+#include <string_view>
 
 
 namespace LIEF::assembly {
@@ -71,7 +71,7 @@ class LIEF_API AssemblerConfig {
   /// ```cpp
   /// class MyConfig : public AssemblerConfig {
   ///   public:
-  ///   std::optional<uint64_t> resolve_symbol(const std::string& name) {
+  ///   std::optional<uint64_t> resolve_symbol(std::string_view name) override {
   ///     if (name == "_my_function") {
   ///       return 0x4000;
   ///     }
@@ -79,7 +79,7 @@ class LIEF_API AssemblerConfig {
   ///   }
   /// };
   /// ```
-  virtual std::optional<uint64_t> resolve_symbol(const std::string& /*name*/) {
+  virtual std::optional<uint64_t> resolve_symbol(std::string_view /*name*/) {
     return std::nullopt;
   }
 

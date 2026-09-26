@@ -16,6 +16,7 @@
 #ifndef LIEF_ABSTRACT_BINARY_H
 #define LIEF_ABSTRACT_BINARY_H
 
+#include <string_view>
 #include <unordered_map>
 #include <memory>
 #include <vector>
@@ -384,7 +385,7 @@ class LIEF_API Binary : public Object {
   ///
   /// If you need to configure the assembly engine or to define addresses for
   /// symbols, you can provide your own assembly::AssemblerConfig.
-  std::vector<uint8_t> assemble(uint64_t address, const std::string& Asm,
+  std::vector<uint8_t> assemble(uint64_t address, std::string_view Asm,
                                 assembly::AssemblerConfig& config =
                                     assembly::AssemblerConfig::default_config());
 

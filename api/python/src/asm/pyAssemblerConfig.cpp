@@ -1,7 +1,7 @@
 #include "LIEF/asm/AssemblerConfig.hpp"
 #include "asm/pyAssembly.hpp"
 
-#include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/trampoline.h>
 #include <nanobind/stl/optional.h>
 
@@ -11,7 +11,7 @@ class PyAssemblerConfig : public assembly::AssemblerConfig {
   public:
   NB_TRAMPOLINE(assembly::AssemblerConfig);
 
-  std::optional<uint64_t> resolve_symbol(const std::string& name) override {
+  std::optional<uint64_t> resolve_symbol(std::string_view name) override {
     NB_OVERRIDE(resolve_symbol, name);
   }
 

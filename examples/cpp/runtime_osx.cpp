@@ -154,7 +154,7 @@ void memory_example() {
 
   class Config : public LIEF::assembly::AssemblerConfig {
     public:
-    std::optional<uint64_t> resolve_symbol(const std::string& name) override {
+    std::optional<uint64_t> resolve_symbol(std::string_view name) override {
       // The message to print
       static constexpr char HELLO[] = "Hello World\n";
       static constexpr uint32_t HELLO_LEN = sizeof(HELLO) - 1;

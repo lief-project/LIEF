@@ -16,6 +16,7 @@
 #ifndef LIEF_RUNTIME_ASSEMBLER_H
 #define LIEF_RUNTIME_ASSEMBLER_H
 #include "LIEF/visibility.h"
+#include <string_view>
 #include <vector>
 
 #include "LIEF/asm/AssemblerConfig.hpp"
@@ -44,7 +45,7 @@ namespace LIEF::runtime {
 /// If you need to configure the assembly engine or to define addresses for
 /// symbols, you can provide your own assembly::AssemblerConfig instance.
 LIEF_API std::vector<uint8_t> assemble(
-    uint64_t addr, const std::string& Asm,
+    uint64_t addr, std::string_view Asm,
     assembly::AssemblerConfig& config = assembly::AssemblerConfig::default_config()
 );
 

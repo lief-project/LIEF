@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 #include "LIEF/runtime/assembler.hpp"
 #include "LIEF/asm/AssemblerConfig.hpp"
@@ -23,7 +23,7 @@
 namespace LIEF::runtime::py {
 void init_assembler(nb::module_& m) {
   m.def("assemble",
-    [] (uint64_t address, const std::string& Asm,
+    [] (uint64_t address, std::string_view Asm,
         assembly::AssemblerConfig& config)
     {
       return nb::to_bytes(runtime::assemble(address, Asm, config));

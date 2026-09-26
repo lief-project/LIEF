@@ -19,7 +19,7 @@
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::runtime::assemble(uint64_t, const std::string&, assembly::AssemblerConfig&)
+.. doxygenfunction:: LIEF::runtime::assemble(uint64_t, std::string_view, assembly::AssemblerConfig&)
 ```
 
 ```{eval-rst}

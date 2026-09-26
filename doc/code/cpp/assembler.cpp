@@ -43,7 +43,7 @@ void config_resolver() {
   // lief-doc: config-resolver-start
   class MyConfig : public LIEF::assembly::AssemblerConfig {
     public:
-    std::optional<uint64_t> resolve_symbol(const std::string& name) override {
+    std::optional<uint64_t> resolve_symbol(std::string_view name) override {
       if (name == "a_custom_function") {
         return 0x1000;
       }
@@ -72,8 +72,8 @@ void config_target() {
       LIEF::assembly::AssemblerConfig(),
       target_(&target) {}
 
-    std::optional<uint64_t> resolve_symbol(const std::string& name) override {
-      if (auto addr = target_->get_function_address(name)) {
+    std::optional<uint64_t> resolve_symbol(std::string_view name) override {
+      if (auto addr = target_->get_function_address(std::string(name))) {
         return *addr;
       }
       return std::nullopt;

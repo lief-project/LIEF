@@ -19,6 +19,7 @@
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
+#include <string_view>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -102,7 +103,7 @@ class LIEF_API Instruction {
   const std::vector<uint8_t>& raw() const LIEF_LIFETIMEBOUND;
 
   /// Instruction mnemonic (e.g. `br`)
-  std::string mnemonic() const;
+  std::string_view mnemonic() const LIEF_LIFETIMEBOUND;
 
   /// Representation of the current instruction in a pretty assembly way
   std::string to_string(bool with_address = true) const;

@@ -2,6 +2,7 @@
 
 #include "LIEF/rust/asm/AssemblerConfig.hpp"
 
+#include <string_view>
 #include <memory>
 
 class RustAssemblerConfig : public LIEF::assembly::AssemblerConfig {
@@ -10,8 +11,8 @@ class RustAssemblerConfig : public LIEF::assembly::AssemblerConfig {
     LIEF::assembly::AssemblerConfig(),
     impl_(const_cast<AssemblerConfig_r*>(&impl)) {}
 
-  std::optional<uint64_t> resolve_symbol(const std::string& name) override {
-    int64_t addr = impl_->resolve_symbol(name);
+  std::optional<uint64_t> resolve_symbol(std::string_view name) override {
+    int64_t addr = impl_->resolve_symbol(rust::Str(name.data(), name.size()));
     if (addr < 0) {
       return std::nullopt;
     }

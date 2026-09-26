@@ -16,6 +16,7 @@
 #include <sstream>
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 
@@ -380,7 +381,7 @@ void create<Binary>(nb::module_& m) {
     )
 
     .def("assemble",
-      [] (Binary& self, uint64_t address, const std::string& Asm,
+      [] (Binary& self, uint64_t address, std::string_view Asm,
           assembly::AssemblerConfig& config)
       {
         return nb::to_bytes(self.assemble(address, Asm, config));

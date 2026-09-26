@@ -21,6 +21,7 @@
 #include "LIEF/asm/AssemblerConfig.hpp"
 #include "LIEF/asm/Instruction.hpp"
 
+#include <string_view>
 #include <memory>
 
 namespace LIEF {
@@ -59,11 +60,11 @@ class LIEF_API Engine {
   }
 
   std::vector<uint8_t>
-      assemble(uint64_t address, const std::string& Asm,
+      assemble(uint64_t address, std::string_view Asm,
                AssemblerConfig& config = AssemblerConfig::default_config());
 
   std::vector<uint8_t>
-      assemble(uint64_t address, const std::string& Asm, LIEF::Binary& bin,
+      assemble(uint64_t address, std::string_view Asm, LIEF::Binary& bin,
                AssemblerConfig& config = AssemblerConfig::default_config());
 
   std::vector<uint8_t> assemble(const llvm::MCInst& inst);

@@ -6,7 +6,7 @@
 #include "messages.hpp"
 
 namespace LIEF::runtime {
-std::vector<uint8_t> assemble(uint64_t /*addr*/, const std::string& /*Asm*/,
+std::vector<uint8_t> assemble(uint64_t /*addr*/, std::string_view /*Asm*/,
                               assembly::AssemblerConfig& /*config*/) {
   LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
   return {};

@@ -152,7 +152,7 @@ Binary::instructions_it Binary::disassemble(const uint8_t*, size_t,
 }
 
 std::vector<uint8_t> Binary::assemble(uint64_t /*address*/,
-                                      const std::string& /*Asm*/,
+                                      std::string_view /*Asm*/,
                                       assembly::AssemblerConfig& /*config*/) {
   LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
   return {};
@@ -271,7 +271,7 @@ const std::vector<uint8_t>& Instruction::raw() const {
   return empty;
 }
 
-std::string Instruction::mnemonic() const {
+std::string_view Instruction::mnemonic() const {
   return "";
 }
 
@@ -361,13 +361,13 @@ Engine::instructions_it Engine::disassemble(const uint8_t*, size_t, uint64_t) {
 }
 
 std::vector<uint8_t> Engine::assemble(uint64_t /*address*/,
-                                      const std::string& /*Asm*/,
+                                      std::string_view /*Asm*/,
                                       AssemblerConfig& /*config*/) {
   return {};
 }
 
 std::vector<uint8_t> Engine::assemble(uint64_t /*address*/,
-                                      const std::string& /*Asm*/,
+                                      std::string_view /*Asm*/,
                                       LIEF::Binary& /*bin*/,
                                       AssemblerConfig& /*config*/) {
   return {};

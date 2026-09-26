@@ -158,7 +158,7 @@ void memory_example() {
   }
 
   struct Config : LIEF::assembly::AssemblerConfig {
-    std::optional<uint64_t> resolve_symbol(const std::string& name) override {
+    std::optional<uint64_t> resolve_symbol(std::string_view name) override {
       std::unique_ptr<LIEF::runtime::android::Module> libc =
           LIEF::runtime::android::dlopen("libc.so");
       if (libc == nullptr) {
