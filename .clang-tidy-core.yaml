@@ -24,6 +24,7 @@ Checks: [
   -modernize-use-designated-initializers,
   -modernize-use-integer-sign-comparison,
   -modernize-use-string-view,
+  -modernize-use-to-underlying,
 
   -bugprone-derived-method-shadowing-base-method,
   -bugprone-easily-swappable-parameters,
