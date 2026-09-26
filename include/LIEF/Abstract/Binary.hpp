@@ -429,6 +429,29 @@ class LIEF_API Binary : public Object {
     return 0;
   }
 
+  /// This function can be used to **down cast** a Binary:
+  ///
+  /// ```cpp
+  /// std::unique_ptr<LIEF::Binary> bin = parse();
+  /// if (const auto* elf = bin->cast<LIEF::ELF::Binary>()) {
+  ///   const LIEF::ELF::Header& hdr = elf->header();
+  /// }
+  /// ```
+  template<class T>
+  const T* cast() const LIEF_LIFETIMEBOUND {
+    static_assert(std::is_base_of_v<LIEF::Binary, T>,
+                  "Require Abstract binary inheritance");
+    if (T::classof(this)) {
+      return static_cast<const T*>(this);
+    }
+    return nullptr;
+  }
+
+  template<class T>
+  T* cast() LIEF_LIFETIMEBOUND {
+    return const_cast<T*>(static_cast<const Binary*>(this)->cast<T>());
+  }
+
   protected:
   FORMATS format_ = FORMATS::UNKNOWN;
   mutable std::unique_ptr<DebugInfo> debug_info_;
