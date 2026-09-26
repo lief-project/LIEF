@@ -51,11 +51,14 @@ class LIEF_API Engine {
 
   /// Disassemble the provided buffer with the address specified in the second
   /// parameter.
-  instructions_it disassemble(const uint8_t* buffer, size_t size, uint64_t addr);
+  /// The engine and the buffer must outlive the returned iterator.
+  instructions_it disassemble(const uint8_t* buffer LIEF_LIFETIMEBOUND,
+                              size_t size, uint64_t addr) LIEF_LIFETIMEBOUND;
 
   /// Disassemble the given vector of bytes with the address specified in the
   /// second parameter.
-  instructions_it disassemble(const std::vector<uint8_t>& bytes, uint64_t addr) {
+  instructions_it disassemble(const std::vector<uint8_t>& bytes LIEF_LIFETIMEBOUND,
+                              uint64_t addr) LIEF_LIFETIMEBOUND {
     return disassemble(bytes.data(), bytes.size(), addr);
   }
 

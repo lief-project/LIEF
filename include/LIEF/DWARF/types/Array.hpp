@@ -73,7 +73,7 @@ class LIEF_API Array : public Type {
   ///
   /// This size info is usually embedded in a `DW_TAG_subrange_type` DIE which
   /// is represented by the size_info_t structure.
-  size_info_t size_info() const;
+  size_info_t size_info() const LIEF_LIFETIMEBOUND;
 
   ~Array() override;
 

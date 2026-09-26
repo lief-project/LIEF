@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_OBJC_IVAR_H
 #define LIEF_OBJC_IVAR_H
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
@@ -63,10 +64,10 @@ class LIEF_API IVar {
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
     LIEF_API Iterator& operator--();
 
-    LIEF_API const IVar& operator*() const;
+    LIEF_API const IVar& operator*() const LIEF_LIFETIMEBOUND;
 
     // NOLINTNEXTLINE(bugprone-derived-method-shadowing-base-method)
-    LIEF_API const IVar* operator->() const;
+    LIEF_API const IVar* operator->() const LIEF_LIFETIMEBOUND;
 
     /// Transfer ownership of the ivar at the current position to the
     /// caller. Returns `nullptr` if the iterator is past-the-end.

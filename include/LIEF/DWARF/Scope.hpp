@@ -49,7 +49,7 @@ class LIEF_API Scope {
   std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// Parent scope (if any)
-  std::unique_ptr<Scope> parent() const;
+  std::unique_ptr<Scope> parent() const LIEF_LIFETIMEBOUND;
 
   /// The current scope type
   TYPE type() const;

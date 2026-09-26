@@ -109,7 +109,7 @@ class LIEF_API Type {
   std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   template<class T>
-  const T* as() const {
+  const T* as() const LIEF_LIFETIMEBOUND {
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }

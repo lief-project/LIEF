@@ -177,13 +177,13 @@ class LIEF_API Type {
   debug_location_t location() const;
 
   /// Return the scope in which this type is defined
-  std::unique_ptr<Scope> scope() const;
+  std::unique_ptr<Scope> scope() const LIEF_LIFETIMEBOUND;
 
   /// Generates a C/C++ definition for this type
   std::string to_decl(const DeclOpt& opt = DeclOpt()) const;
 
   template<class T>
-  const T* as() const {
+  const T* as() const LIEF_LIFETIMEBOUND {
     if (T::classof(this)) {
       return static_cast<const T*>(this);
     }

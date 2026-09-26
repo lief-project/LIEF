@@ -189,7 +189,7 @@ class LIEF_API Binary {
   /// ```
   ///
   /// @see LIEF::assembly::Instruction
-  instructions_it disassemble(const Symbol& symbol) const;
+  instructions_it disassemble(const Symbol& symbol) const LIEF_LIFETIMEBOUND;
 
   /// Disassemble code for the given symbol name
   ///
@@ -201,32 +201,36 @@ class LIEF_API Binary {
   /// ```
   ///
   /// @see LIEF::assembly::Instruction
-  instructions_it disassemble(const std::string& symbol) const;
+  instructions_it disassemble(const std::string& symbol) const LIEF_LIFETIMEBOUND;
 
   /// Disassemble code provided by the given buffer at the specified
   /// `address` parameter.
   ///
+  /// The binary and the buffer must outlive the returned iterator.
+  ///
   /// @see LIEF::assembly::Instruction
-  instructions_it disassemble(const uint8_t* buffer, size_t size,
-                              uint64_t address = 0) const;
+  instructions_it disassemble(const uint8_t* buffer LIEF_LIFETIMEBOUND,
+                              size_t size,
+                              uint64_t address = 0) const LIEF_LIFETIMEBOUND;
 
 
   /// Disassemble code provided by the given vector of bytes at the specified
   /// `address` parameter.
   ///
   /// @see LIEF::assembly::Instruction
-  instructions_it disassemble(const std::vector<uint8_t>& buffer,
-                              uint64_t address = 0) const {
+  instructions_it
+      disassemble(const std::vector<uint8_t>& buffer LIEF_LIFETIMEBOUND,
+                  uint64_t address = 0) const LIEF_LIFETIMEBOUND {
     return disassemble(buffer.data(), buffer.size(), address);
   }
 
-  instructions_it disassemble(LIEF::span<const uint8_t> buffer,
-                              uint64_t address = 0) const {
+  instructions_it disassemble(LIEF::span<const uint8_t> buffer LIEF_LIFETIMEBOUND,
+                              uint64_t address = 0) const LIEF_LIFETIMEBOUND {
     return disassemble(buffer.data(), buffer.size(), address);
   }
 
-  instructions_it disassemble(LIEF::span<uint8_t> buffer,
-                              uint64_t address = 0) const {
+  instructions_it disassemble(LIEF::span<uint8_t> buffer LIEF_LIFETIMEBOUND,
+                              uint64_t address = 0) const LIEF_LIFETIMEBOUND {
     return disassemble(buffer.data(), buffer.size(), address);
   }
 
