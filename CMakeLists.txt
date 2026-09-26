@@ -344,7 +344,6 @@ if(UNIX AND NOT APPLE)
   target_link_options(LIB_LIEF PRIVATE -Wl,--gc-sections -Wl,--exclude-libs,ALL)
 endif()
 
-target_compile_definitions(LIB_LIEF PUBLIC -D_GLIBCXX_USE_CXX11_ABI=1)
 
 # LIEF Sanitizer options
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
