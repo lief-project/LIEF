@@ -17,6 +17,7 @@
 #define LIEF_PRIVATE_LOGGING_H
 #include <memory>
 #include <sstream>
+#include <utility>
 
 #include "LIEF/config.h"
 #include "LIEF/logging.hpp" // Public interface
@@ -26,12 +27,6 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/fmt/ranges.h>
 #include <spdlog/spdlog.h>
-
-#define LIEF_TRACE(...) LIEF::logging::Logger::instance().trace(__VA_ARGS__)
-#define LIEF_DEBUG(...) LIEF::logging::Logger::instance().debug(__VA_ARGS__)
-#define LIEF_INFO(...)  LIEF::logging::Logger::instance().info(__VA_ARGS__)
-#define LIEF_WARN(...)  LIEF::logging::Logger::instance().warn(__VA_ARGS__)
-#define LIEF_ERR(...)   LIEF::logging::Logger::instance().err(__VA_ARGS__)
 
 #define CHECK(X, ...)                                                             \
   do {                                                                            \
@@ -94,44 +89,44 @@ class Logger {
   void reset();
 
   template<typename... Args>
-  void trace(const char* fmt, const Args&... args) {
+  void trace(fmt::format_string<Args...> fmt, Args&&... args) {
     if constexpr (lief_logging_support && lief_logging_debug) {
-      sink_->trace(fmt::runtime(fmt), args...);
+      sink_->trace(fmt, std::forward<Args>(args)...);
     }
   }
 
   template<typename... Args>
-  void debug(const char* fmt, const Args&... args) {
+  void debug(fmt::format_string<Args...> fmt, Args&&... args) {
     if constexpr (lief_logging_support && lief_logging_debug) {
-      sink_->debug(fmt::runtime(fmt), args...);
+      sink_->debug(fmt, std::forward<Args>(args)...);
     }
   }
 
   template<typename... Args>
-  void info(const char* fmt, const Args&... args) {
+  void info(fmt::format_string<Args...> fmt, Args&&... args) {
     if constexpr (lief_logging_support) {
-      sink_->info(fmt::runtime(fmt), args...);
+      sink_->info(fmt, std::forward<Args>(args)...);
     }
   }
 
   template<typename... Args>
-  void err(const char* fmt, const Args&... args) {
+  void err(fmt::format_string<Args...> fmt, Args&&... args) {
     if constexpr (lief_logging_support) {
-      sink_->error(fmt::runtime(fmt), args...);
+      sink_->error(fmt, std::forward<Args>(args)...);
     }
   }
 
   template<typename... Args>
-  void warn(const char* fmt, const Args&... args) {
+  void warn(fmt::format_string<Args...> fmt, Args&&... args) {
     if constexpr (lief_logging_support) {
-      sink_->warn(fmt::runtime(fmt), args...);
+      sink_->warn(fmt, std::forward<Args>(args)...);
     }
   }
 
   template<typename... Args>
-  void critial(const char* fmt, const Args&... args) {
+  void critial(fmt::format_string<Args...> fmt, Args&&... args) {
     if constexpr (lief_logging_support) {
-      sink_->critical(fmt::runtime(fmt), args...);
+      sink_->critical(fmt, std::forward<Args>(args)...);
     }
   }
 
@@ -153,6 +148,35 @@ class Logger {
 
   std::shared_ptr<spdlog::logger> sink_;
 };
+
+}
+
+template<typename... Args>
+void LIEF_TRACE(fmt::format_string<Args...> fmt, Args&&... args) {
+  LIEF::logging::Logger::instance().trace(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void LIEF_DEBUG(fmt::format_string<Args...> fmt, Args&&... args) {
+  LIEF::logging::Logger::instance().debug(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void LIEF_INFO(fmt::format_string<Args...> fmt, Args&&... args) {
+  LIEF::logging::Logger::instance().info(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void LIEF_WARN(fmt::format_string<Args...> fmt, Args&&... args) {
+  LIEF::logging::Logger::instance().warn(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void LIEF_ERR(fmt::format_string<Args...> fmt, Args&&... args) {
+  LIEF::logging::Logger::instance().err(fmt, std::forward<Args>(args)...);
+}
+
+namespace LIEF::logging {
 
 
 inline void critial(const char* msg) {
