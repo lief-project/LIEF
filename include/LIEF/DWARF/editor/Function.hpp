@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_DWARF_EDITOR_FUNCTION_H
 #define LIEF_DWARF_EDITOR_FUNCTION_H
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
@@ -56,7 +56,7 @@ class LIEF_API Function {
     ~Parameter();
 
     /// Assign this parameter to a specific named register.
-    Parameter& assign_register(const std::string& name) LIEF_LIFETIMEBOUND;
+    Parameter& assign_register(std::string_view name) LIEF_LIFETIMEBOUND;
 
     /// Assign this parameter to the given DWARF register id (e.g. `DW_OP_reg0`).
     Parameter& assign_register(uint64_t reg) LIEF_LIFETIMEBOUND;
@@ -81,11 +81,10 @@ class LIEF_API Function {
 
     /// Create a `DW_AT_description` entry with the description
     /// provided in parameter.
-    LexicalBlock&
-        add_description(const std::string& description) LIEF_LIFETIMEBOUND;
+    LexicalBlock& add_description(std::string_view description) LIEF_LIFETIMEBOUND;
 
     /// Create a `DW_AT_name` entry to associate a name to this entry
-    LexicalBlock& add_name(const std::string& name) LIEF_LIFETIMEBOUND;
+    LexicalBlock& add_name(std::string_view name) LIEF_LIFETIMEBOUND;
 
     ~LexicalBlock();
 
@@ -132,12 +131,12 @@ class LIEF_API Function {
   Function& set_return_type(const Type& type) LIEF_LIFETIMEBOUND;
 
   /// Add a parameter to the current function
-  std::unique_ptr<Parameter> add_parameter(const std::string& name,
+  std::unique_ptr<Parameter> add_parameter(std::string_view name,
                                            const Type& type) LIEF_LIFETIMEBOUND;
 
   /// Create a stack-based variable owned by the current function
   std::unique_ptr<Variable>
-      create_stack_variable(const std::string& name) LIEF_LIFETIMEBOUND;
+      create_stack_variable(std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Add a lexical block with the given range
   std::unique_ptr<LexicalBlock> add_lexical_block(uint64_t start,
@@ -145,11 +144,11 @@ class LIEF_API Function {
 
   /// Add a label at the given address
   std::unique_ptr<Label> add_label(uint64_t addr,
-                                   const std::string& label) LIEF_LIFETIMEBOUND;
+                                   std::string_view label) LIEF_LIFETIMEBOUND;
 
   /// Create a `DW_AT_description` entry with the description
   /// provided in parameter.
-  Function& add_description(const std::string& description) LIEF_LIFETIMEBOUND;
+  Function& add_description(std::string_view description) LIEF_LIFETIMEBOUND;
 
   ~Function();
 

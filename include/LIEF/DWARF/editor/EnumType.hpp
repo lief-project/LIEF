@@ -14,8 +14,8 @@
  */
 #ifndef LIEF_DWARF_EDITOR_ENUM_TYPE_H
 #define LIEF_DWARF_EDITOR_ENUM_TYPE_H
+#include <string_view>
 #include <cstdint>
-#include <string>
 
 #include "LIEF/DWARF/editor/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
@@ -56,7 +56,7 @@ class LIEF_API EnumType : public Type {
   EnumType& set_underlying_type(const Type& type) LIEF_LIFETIMEBOUND;
 
   /// Add an enum value by specifying its name and its integer value
-  std::unique_ptr<Value> add_value(const std::string& name,
+  std::unique_ptr<Value> add_value(std::string_view name,
                                    int64_t value) LIEF_LIFETIMEBOUND;
 
   static bool classof(const Type* type);

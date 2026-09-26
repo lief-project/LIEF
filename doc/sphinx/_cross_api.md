@@ -302,7 +302,7 @@
 
     :rust:func:`lief::pdb::is_pdb`
     :py:meth:`lief.is_pdb`
-    :cpp:func:`bool LIEF::pdb::is_pdb(const std::std::string &)`
+    :cpp:func:`bool LIEF::pdb::is_pdb(std::string_view)`
 
 .. |lief-pdb-types-Enum| lief-api:: lief.pdb.types.Enum
 

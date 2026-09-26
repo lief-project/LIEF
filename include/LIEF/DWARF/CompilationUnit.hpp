@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_DWARF_COMPILATION_UNIT_H
 #define LIEF_DWARF_COMPILATION_UNIT_H
+#include <string_view>
 #include <memory>
 #include <string>
 #include <vector>
@@ -141,7 +142,7 @@ class LIEF_API CompilationUnit {
   /// Return an **empty** string if the name is not found or can't be resolved
   ///
   /// This value matches the `DW_AT_name` attribute
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// Information about the program (or library) that generated this compilation
   /// unit. For instance, it can output: `Debian clang version 17.0.6`.
@@ -150,7 +151,7 @@ class LIEF_API CompilationUnit {
   /// resolved
   ///
   /// This value matches the `DW_AT_producer` attribute
-  std::string producer() const;
+  std::string_view producer() const LIEF_LIFETIMEBOUND;
 
   /// Return the path to the directory in which the compilation took place for
   /// compiling this compilation unit (e.g. `/workdir/build`)
@@ -159,7 +160,7 @@ class LIEF_API CompilationUnit {
   /// resolved
   ///
   /// This value matches the `DW_AT_comp_dir` attribute
-  std::string compilation_dir() const;
+  std::string_view compilation_dir() const LIEF_LIFETIMEBOUND;
 
   /// Original language of this compilation unit.
   ///
@@ -192,7 +193,7 @@ class LIEF_API CompilationUnit {
   ///
   /// The provided name can be demangled
   std::unique_ptr<Function>
-      find_function(const std::string& name) const LIEF_LIFETIMEBOUND;
+      find_function(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the function at the given address
   std::unique_ptr<Function> find_function(uint64_t addr) const LIEF_LIFETIMEBOUND;
@@ -202,7 +203,7 @@ class LIEF_API CompilationUnit {
 
   /// Try to find the Variable with the given name
   std::unique_ptr<Variable>
-      find_variable(const std::string& name) const LIEF_LIFETIMEBOUND;
+      find_variable(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the functions implemented in this compilation
   /// unit.

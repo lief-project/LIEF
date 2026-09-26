@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_PDB_COMPILATION_UNIT_H
 #define LIEF_PDB_COMPILATION_UNIT_H
+#include <string_view>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -97,12 +98,12 @@ class LIEF_API CompilationUnit {
   /// Name (or path) to the COFF object (`.obj`) associated with this
   /// compilation unit (e.g.
   /// `e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvlp.obj`)
-  std::string module_name() const;
+  std::string_view module_name() const LIEF_LIFETIMEBOUND;
 
   /// Name or path to the original binary object (COFF, Archive) in which
   /// the compilation unit was located before being linked.
   /// e.g. `e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvl.lib`
-  std::string object_filename() const;
+  std::string_view object_filename() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over the sources files that compose this compilation unit.
   /// These files also include **headers** (`.h, .hpp`, ...).

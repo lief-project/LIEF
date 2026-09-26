@@ -7,6 +7,7 @@
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/extra/stl/pathlike.h>
 
 #include "pyOwningIterator.hpp"
@@ -30,14 +31,14 @@ void create<pdb::DebugInfo>(nb::module_& m) {
                  "Unique identifier of the PDB file."_doc)
 
     .def_static("from_file",
-      [] (nb::PathLike path) { return pdb::DebugInfo::from_file(path); },
+      [] (nb::PathLike path) { return pdb::DebugInfo::from_file(path.to_string()); },
       R"doc(
       Instantiate this class from the given PDB file. It returns ``None``
       if the PDB can't be processed.
       )doc"_doc, "filepath"_a
     )
 
-    .def("find_type", nb::overload_cast<const std::string&>(&pdb::DebugInfo::find_type, nb::const_),
+    .def("find_type", nb::overload_cast<std::string_view>(&pdb::DebugInfo::find_type, nb::const_),
       "Find the type with the given name"_doc, "name"_a
     )
 

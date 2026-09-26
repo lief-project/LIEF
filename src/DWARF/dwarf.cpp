@@ -115,16 +115,16 @@ class StructMember {};
 Variable::Variable(std::unique_ptr<details::Variable>) :
   impl_(nullptr) {}
 
-std::string Variable::name() const {
-  return "";
+std::string_view Variable::name() const {
+  return {};
 }
 
 std::unique_ptr<Scope> Variable::scope() const {
   return nullptr;
 }
 
-std::string Variable::linkage_name() const {
-  return "";
+std::string_view Variable::linkage_name() const {
+  return {};
 }
 
 result<int64_t> Variable::address() const {
@@ -151,8 +151,8 @@ debug_location_t Variable::debug_location() const {
   return {};
 }
 
-std::string Variable::description() const {
-  return "";
+std::string_view Variable::description() const {
+  return {};
 }
 
 std::string Variable::to_decl(const DeclOpt& /*opt*/) const {
@@ -221,8 +221,8 @@ Parameter::KIND Parameter::kind() const {
   return KIND::UNKNOWN;
 }
 
-std::string Parameter::name() const {
-  return "";
+std::string_view Parameter::name() const {
+  return {};
 }
 
 std::unique_ptr<Type> Parameter::type() const {
@@ -256,12 +256,12 @@ std::unique_ptr<Scope> Function::scope() const {
   return nullptr;
 }
 
-std::string Function::name() const {
-  return "";
+std::string_view Function::name() const {
+  return {};
 }
 
-std::string Function::linkage_name() const {
-  return "";
+std::string_view Function::linkage_name() const {
+  return {};
 }
 
 result<uint64_t> Function::address() const {
@@ -304,8 +304,8 @@ Function::lexical_blocks_it Function::lexical_blocks() const {
   return make_empty_iterator<LexicalBlock>();
 }
 
-std::string Function::description() const {
-  return "";
+std::string_view Function::description() const {
+  return {};
 }
 
 std::string Function::to_decl(const DeclOpt& /*opt*/) const {
@@ -363,12 +363,12 @@ std::unique_ptr<Function> Function::Iterator::yield() {
 // ----------------------------------------------------------------------------
 // DWARF/DebugInfo.hpp
 // ----------------------------------------------------------------------------
-std::unique_ptr<DebugInfo> DebugInfo::from_file(const std::string&) {
+std::unique_ptr<DebugInfo> DebugInfo::from_file(std::string_view) {
   LIEF_ERR(DEBUG_FMT_NOT_SUPPORTED);
   return nullptr;
 }
 
-std::unique_ptr<Function> DebugInfo::find_function(const std::string&) const {
+std::unique_ptr<Function> DebugInfo::find_function(std::string_view) const {
   return nullptr;
 }
 
@@ -381,16 +381,16 @@ std::unique_ptr<Variable> DebugInfo::find_variable(uint64_t /*addr*/) const {
 }
 
 std::unique_ptr<Variable>
-    DebugInfo::find_variable(const std::string& /*name*/) const {
+    DebugInfo::find_variable(std::string_view /*name*/) const {
   return nullptr;
 }
 
-std::unique_ptr<Type> DebugInfo::find_type(const std::string& /*name*/) const {
+std::unique_ptr<Type> DebugInfo::find_type(std::string_view /*name*/) const {
   return nullptr;
 }
 
 std::optional<uint64_t>
-    DebugInfo::find_function_address(const std::string& /*name*/) const {
+    DebugInfo::find_function_address(std::string_view /*name*/) const {
   return std::nullopt;
 }
 
@@ -407,16 +407,16 @@ CompilationUnit::CompilationUnit(std::unique_ptr<details::CompilationUnit>) :
 CompilationUnit::~CompilationUnit() = default;
 
 
-std::string CompilationUnit::name() const {
-  return "";
+std::string_view CompilationUnit::name() const {
+  return {};
 }
 
-std::string CompilationUnit::compilation_dir() const {
-  return "";
+std::string_view CompilationUnit::compilation_dir() const {
+  return {};
 }
 
-std::string CompilationUnit::producer() const {
-  return "";
+std::string_view CompilationUnit::producer() const {
+  return {};
 }
 
 uint64_t CompilationUnit::low_address() const {
@@ -437,7 +437,7 @@ std::vector<range_t> CompilationUnit::ranges() const {
 }
 
 std::unique_ptr<Function>
-    CompilationUnit::find_function(const std::string& /*name*/) const {
+    CompilationUnit::find_function(std::string_view /*name*/) const {
   return nullptr;
 }
 
@@ -450,7 +450,7 @@ std::unique_ptr<Variable> CompilationUnit::find_variable(uint64_t /*addr*/) cons
 }
 
 std::unique_ptr<Variable>
-    CompilationUnit::find_variable(const std::string& /*name*/) const {
+    CompilationUnit::find_variable(std::string_view /*name*/) const {
   return nullptr;
 }
 
@@ -540,7 +540,7 @@ Type::KIND Type::kind() const {
   return KIND::UNKNOWN;
 }
 
-result<std::string> Type::name() const {
+result<std::string_view> Type::name() const {
   return make_error_code(lief_errors::not_implemented);
 }
 
@@ -618,8 +618,8 @@ Scope::~Scope() = default;
 Scope::Scope(std::unique_ptr<details::Scope> impl) :
   impl_(std::move(impl)) {}
 
-std::string Scope::name() const {
-  return "";
+std::string_view Scope::name() const {
+  return {};
 }
 
 std::unique_ptr<Scope> Scope::parent() const {
@@ -630,7 +630,7 @@ Scope::TYPE Scope::type() const {
   return TYPE::UNKNOWN;
 }
 
-std::string Scope::chained(const std::string& /* sep */) const {
+std::string Scope::chained(std::string_view /* sep */) const {
   return "";
 }
 
@@ -643,12 +643,12 @@ LexicalBlock::LexicalBlock(std::unique_ptr<details::LexicalBlock>) :
 
 LexicalBlock::~LexicalBlock() = default;
 
-std::string LexicalBlock::name() const {
-  return "";
+std::string_view LexicalBlock::name() const {
+  return {};
 }
 
-std::string LexicalBlock::description() const {
-  return "";
+std::string_view LexicalBlock::description() const {
+  return {};
 }
 
 LexicalBlock::sub_blocks_it LexicalBlock::sub_blocks() const {
@@ -766,8 +766,8 @@ std::unique_ptr<Type> ClassLike::Member::type() const {
   return nullptr;
 }
 
-std::string ClassLike::Member::name() const {
-  return "";
+std::string_view ClassLike::Member::name() const {
+  return {};
 }
 
 std::vector<ClassLike::Member> ClassLike::members() const {
@@ -863,8 +863,8 @@ Enum::Entry::~Entry() = default;
 Enum::Entry::Entry(std::unique_ptr<details::EnumEntry> impl) :
   impl_(std::move(impl)) {}
 
-std::string Enum::Entry::name() const {
-  return "";
+std::string_view Enum::Entry::name() const {
+  return {};
 }
 
 std::optional<int64_t> Enum::Entry::value() const {
@@ -1036,7 +1036,7 @@ std::unique_ptr<editor::CompilationUnit> Editor::create_compilation_unit() {
   return nullptr;
 }
 
-void Editor::write(const std::string& /*output*/) {
+void Editor::write(std::string_view /*output*/) {
   return;
 }
 
@@ -1048,47 +1048,47 @@ CompilationUnit::CompilationUnit(std::unique_ptr<details::CompilationUnit> impl)
   impl_(std::move(impl)) {}
 
 
-CompilationUnit& CompilationUnit::set_producer(const std::string&) {
+CompilationUnit& CompilationUnit::set_producer(std::string_view) {
   return *this;
 }
 
 std::unique_ptr<Function>
-    CompilationUnit::create_function(const std::string& /*name*/) {
+    CompilationUnit::create_function(std::string_view /*name*/) {
   return nullptr;
 }
 
 std::unique_ptr<Variable>
-    CompilationUnit::create_variable(const std::string& /*name*/) {
+    CompilationUnit::create_variable(std::string_view /*name*/) {
   return nullptr;
 }
 
 std::unique_ptr<Type>
-    CompilationUnit::create_generic_type(const std::string& /*name*/) {
+    CompilationUnit::create_generic_type(std::string_view /*name*/) {
   return nullptr;
 }
 
-std::unique_ptr<EnumType> CompilationUnit::create_enum(const std::string&) {
+std::unique_ptr<EnumType> CompilationUnit::create_enum(std::string_view) {
   return nullptr;
 }
 
-std::unique_ptr<TypeDef> CompilationUnit::create_typedef(const std::string&,
+std::unique_ptr<TypeDef> CompilationUnit::create_typedef(std::string_view,
                                                          const Type&) {
   return nullptr;
 }
 
-std::unique_ptr<StructType> CompilationUnit::create_structure(const std::string&,
+std::unique_ptr<StructType> CompilationUnit::create_structure(std::string_view,
                                                               StructType::TYPE) {
   return nullptr;
 }
 
-std::unique_ptr<BaseType> CompilationUnit::create_base_type(const std::string&,
+std::unique_ptr<BaseType> CompilationUnit::create_base_type(std::string_view,
                                                             size_t,
                                                             BaseType::ENCODING) {
   return nullptr;
 }
 
 std::unique_ptr<FunctionType>
-    CompilationUnit::create_function_type(const std::string&) {
+    CompilationUnit::create_function_type(std::string_view) {
   return nullptr;
 }
 
@@ -1096,7 +1096,7 @@ std::unique_ptr<Type> CompilationUnit::create_void_type() {
   return nullptr;
 }
 
-std::unique_ptr<ArrayType> CompilationUnit::create_array(const std::string&,
+std::unique_ptr<ArrayType> CompilationUnit::create_array(std::string_view,
                                                          const Type&, size_t) {
   return nullptr;
 }
@@ -1125,7 +1125,7 @@ Variable& Variable::set_type(const Type&) {
   return *this;
 }
 
-Variable& Variable::add_description(const std::string& /*description*/) {
+Variable& Variable::add_description(std::string_view /*description*/) {
   return *this;
 }
 
@@ -1153,7 +1153,7 @@ Function& Function::set_external() {
   return *this;
 }
 
-Function& Function::add_description(const std::string& /*description*/) {
+Function& Function::add_description(std::string_view /*description*/) {
   return *this;
 }
 
@@ -1161,12 +1161,12 @@ Function& Function::set_return_type(const Type&) {
   return *this;
 }
 
-std::unique_ptr<Function::Parameter> Function::add_parameter(const std::string&,
+std::unique_ptr<Function::Parameter> Function::add_parameter(std::string_view,
                                                              const Type&) {
   return nullptr;
 }
 
-std::unique_ptr<Variable> Function::create_stack_variable(const std::string&) {
+std::unique_ptr<Variable> Function::create_stack_variable(std::string_view) {
   return nullptr;
 }
 
@@ -1175,8 +1175,7 @@ std::unique_ptr<Function::LexicalBlock> Function::add_lexical_block(uint64_t,
   return nullptr;
 }
 
-std::unique_ptr<Function::Label> Function::add_label(uint64_t,
-                                                     const std::string&) {
+std::unique_ptr<Function::Label> Function::add_label(uint64_t, std::string_view) {
   return nullptr;
 }
 
@@ -1184,7 +1183,7 @@ Function::Parameter::Parameter(std::unique_ptr<details::FunctionParameter> impl)
   impl_(std::move(impl)) {}
 
 Function::Parameter&
-    Function::Parameter::assign_register(const std::string& /*name*/) {
+    Function::Parameter::assign_register(std::string_view /*name*/) {
   return *this;
 }
 
@@ -1213,12 +1212,12 @@ std::unique_ptr<Function::LexicalBlock>
 }
 
 Function::LexicalBlock&
-    Function::LexicalBlock::add_description(const std::string& /*name*/) {
+    Function::LexicalBlock::add_description(std::string_view /*name*/) {
   return *this;
 }
 
 Function::LexicalBlock&
-    Function::LexicalBlock::add_name(const std::string& /*name*/) {
+    Function::LexicalBlock::add_name(std::string_view /*name*/) {
   return *this;
 }
 
@@ -1269,7 +1268,7 @@ EnumType& EnumType::set_size(uint64_t /*size*/) {
   return *this;
 }
 
-std::unique_ptr<EnumType::Value> EnumType::add_value(const std::string& /*name*/,
+std::unique_ptr<EnumType::Value> EnumType::add_value(std::string_view /*name*/,
                                                      int64_t /*value*/) {
   return nullptr;
 }
@@ -1335,13 +1334,13 @@ StructType& StructType::set_size(uint64_t /*size*/) {
 }
 
 std::unique_ptr<StructType::Member>
-    StructType::add_member(const std::string& /*name*/, const Type& /*type*/,
+    StructType::add_member(std::string_view /*name*/, const Type& /*type*/,
                            int64_t /*offset*/) {
   return nullptr;
 }
 
 std::unique_ptr<StructType::Member>
-    StructType::add_bitfield(const std::string& /*name*/, const Type& /*type*/,
+    StructType::add_bitfield(std::string_view /*name*/, const Type& /*type*/,
                              uint64_t /*bitsize*/, int64_t /*bitoffset*/) {
   return nullptr;
 }

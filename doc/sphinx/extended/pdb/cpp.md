@@ -171,5 +171,5 @@ ______________________________________________________________________
 ## Utilities
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::pdb::is_pdb(const std::string&)
+.. doxygenfunction:: LIEF::pdb::is_pdb(std::string_view)
 ```

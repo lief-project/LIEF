@@ -11,6 +11,7 @@
 #include "DWARF/pyDwarf.hpp"
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unique_ptr.h>
 
 namespace LIEF::dwarf::py {

@@ -15,6 +15,7 @@
 #ifndef LIEF_DWARF_VARIABLE_H
 #define LIEF_DWARF_VARIABLE_H
 
+#include <string_view>
 #include <memory>
 
 #include "LIEF/DWARF/Type.hpp"
@@ -88,13 +89,13 @@ class LIEF_API Variable {
   Variable(std::unique_ptr<details::Variable> impl);
 
   /// Name of the variable (usually demangled)
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// The name of the variable which is used for linking (`DW_AT_linkage_name`).
   ///
   /// This name differs from name() as it is usually mangled. The function
   /// returns an empty string if the linkage name is not available.
-  std::string linkage_name() const;
+  std::string_view linkage_name() const LIEF_LIFETIMEBOUND;
 
   /// Address of the variable.
   ///
@@ -128,7 +129,7 @@ class LIEF_API Variable {
   std::unique_ptr<Scope> scope() const LIEF_LIFETIMEBOUND;
 
   /// Description (`DW_AT_description`) of the variable or an empty string
-  std::string description() const;
+  std::string_view description() const LIEF_LIFETIMEBOUND;
 
   /// Generates a C/C++ definition for this variable
   std::string to_decl(const DeclOpt& opt = DeclOpt()) const;

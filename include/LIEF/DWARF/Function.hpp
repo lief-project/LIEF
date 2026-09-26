@@ -15,6 +15,7 @@
 #ifndef LIEF_DWARF_FUNCTION_H
 #define LIEF_DWARF_FUNCTION_H
 
+#include <string_view>
 #include <memory>
 #include <string>
 
@@ -105,13 +106,13 @@ class LIEF_API Function {
   Function(std::unique_ptr<details::Function> impl);
 
   /// The name of the function (`DW_AT_name`)
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// The name of the function which is used for linking (`DW_AT_linkage_name`).
   ///
   /// This name differs from name() as it is usually mangled. The function
   /// returns an empty string if the linkage name is not available.
-  std::string linkage_name() const;
+  std::string_view linkage_name() const LIEF_LIFETIMEBOUND;
 
   /// Return the address of the function (`DW_AT_entry_pc` or `DW_AT_low_pc`).
   result<uint64_t> address() const;
@@ -170,7 +171,7 @@ class LIEF_API Function {
   lexical_blocks_it lexical_blocks() const LIEF_LIFETIMEBOUND;
 
   /// Description (`DW_AT_description`) of this function or an empty string
-  std::string description() const;
+  std::string_view description() const LIEF_LIFETIMEBOUND;
 
   /// Generates a C/C++ definition for this function
   std::string to_decl(const DeclOpt& opt = DeclOpt()) const;

@@ -6,6 +6,7 @@
 
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 namespace LIEF::dwarf::py {
 template<>

@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_PDB_INFO_H
 #define LIEF_PDB_INFO_H
+#include <string_view>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -50,7 +51,7 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
 
   /// Instantiate this class from the given PDB file. It returns a nullptr
   /// if the PDB can't be processed.
-  static std::unique_ptr<DebugInfo> from_file(const std::string& pdb_path);
+  static std::unique_ptr<DebugInfo> from_file(std::string_view pdb_path);
 
   FORMAT format() const override {
     return LIEF::DebugInfo::FORMAT::PDB;
@@ -71,8 +72,7 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   types_it types() const LIEF_LIFETIMEBOUND;
 
   /// Find the type with the given name
-  std::unique_ptr<Type>
-      find_type(const std::string& name) const LIEF_LIFETIMEBOUND;
+  std::unique_ptr<Type> find_type(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Find the type at the given index
   std::unique_ptr<Type> find_type(uint32_t index) const LIEF_LIFETIMEBOUND;
@@ -89,11 +89,11 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// }
   /// ```
   std::unique_ptr<PublicSymbol>
-      find_public_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
+      find_public_symbol(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Attempt to resolve the address of the function specified by `name`.
   std::optional<uint64_t>
-      find_function_address(const std::string& name) const override;
+      find_function_address(std::string_view name) const override;
 
   /// The number of times the PDB file has been written.
   uint32_t age() const;
@@ -115,7 +115,7 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
 
 
 /// Load the PDB file from the given path
-inline std::unique_ptr<DebugInfo> load(const std::string& pdb_path) {
+inline std::unique_ptr<DebugInfo> load(std::string_view pdb_path) {
   return DebugInfo::from_file(pdb_path);
 }
 

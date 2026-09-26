@@ -18,9 +18,9 @@
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 
 
 namespace LIEF::dwarf {
@@ -90,7 +90,7 @@ class LIEF_API Parameter {
   KIND kind() const;
 
   /// Name of the parameter
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// Type of this parameter
   std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;

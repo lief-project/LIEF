@@ -15,6 +15,7 @@
 #ifndef LIEF_DWARF_TYPE_H
 #define LIEF_DWARF_TYPE_H
 
+#include <string_view>
 #include <memory>
 
 #include "LIEF/DebugDeclOpt.hpp"
@@ -165,7 +166,7 @@ class LIEF_API Type {
 
   /// Return the type's name using either `DW_AT_name` or `DW_AT_picture_string`
   /// (if any).
-  result<std::string> name() const;
+  result<std::string_view> name() const LIEF_LIFETIMEBOUND;
 
   /// Return the size of the type or an error if it can't be computed.
   ///

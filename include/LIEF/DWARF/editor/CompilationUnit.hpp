@@ -14,8 +14,8 @@
  */
 #ifndef LIEF_DWARF_EDITOR_COMPILATION_UNIT_H
 #define LIEF_DWARF_EDITOR_COMPILATION_UNIT_H
+#include <string_view>
 #include <memory>
-#include <string>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
@@ -48,43 +48,42 @@ class LIEF_API CompilationUnit {
   ///
   /// This attribute aims to inform about the program that generated this
   /// compilation unit (e.g. `LIEF Extended`)
-  CompilationUnit& set_producer(const std::string& producer) LIEF_LIFETIMEBOUND;
+  CompilationUnit& set_producer(std::string_view producer) LIEF_LIFETIMEBOUND;
 
   /// Create a new function owned by this compilation unit
   std::unique_ptr<Function>
-      create_function(const std::string& name) LIEF_LIFETIMEBOUND;
+      create_function(std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Create a new **global** variable owned by this compilation unit
   std::unique_ptr<Variable>
-      create_variable(const std::string& name) LIEF_LIFETIMEBOUND;
+      create_variable(std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Create a `DW_TAG_unspecified_type` type with the given name
   std::unique_ptr<Type>
-      create_generic_type(const std::string& name) LIEF_LIFETIMEBOUND;
+      create_generic_type(std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Create an enum type (`DW_TAG_enumeration_type`)
-  std::unique_ptr<EnumType>
-      create_enum(const std::string& name) LIEF_LIFETIMEBOUND;
+  std::unique_ptr<EnumType> create_enum(std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Create a typedef with the name provided in the first parameter which aliases
   /// the type provided in the second parameter
-  std::unique_ptr<TypeDef> create_typedef(const std::string& name,
+  std::unique_ptr<TypeDef> create_typedef(std::string_view name,
                                           const Type& type) LIEF_LIFETIMEBOUND;
 
   /// Create a struct-like type (struct, class, union) with the given name.
   std::unique_ptr<StructType> create_structure(
-      const std::string& name, StructType::TYPE kind = StructType::TYPE::STRUCT
+      std::string_view name, StructType::TYPE kind = StructType::TYPE::STRUCT
   ) LIEF_LIFETIMEBOUND;
 
   /// Create a primitive type with the given name and size.
   std::unique_ptr<BaseType> create_base_type(
-      const std::string& name, size_t size,
+      std::string_view name, size_t size,
       BaseType::ENCODING encoding = BaseType::ENCODING::NONE
   ) LIEF_LIFETIMEBOUND;
 
   /// Create a function type with the given name.
   std::unique_ptr<FunctionType>
-      create_function_type(const std::string& name) LIEF_LIFETIMEBOUND;
+      create_function_type(std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Create a pointer on the provided type
   std::unique_ptr<PointerType>
@@ -96,8 +95,7 @@ class LIEF_API CompilationUnit {
   std::unique_ptr<Type> create_void_type() LIEF_LIFETIMEBOUND;
 
   /// Create an array type with the given name, type and size.
-  std::unique_ptr<ArrayType> create_array(const std::string& name,
-                                          const Type& type,
+  std::unique_ptr<ArrayType> create_array(std::string_view name, const Type& type,
                                           size_t count) LIEF_LIFETIMEBOUND;
 
   ~CompilationUnit();

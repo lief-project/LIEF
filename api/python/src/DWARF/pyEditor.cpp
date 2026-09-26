@@ -51,7 +51,7 @@ void create<dw::Editor>(nb::module_& m) {
       "Create a new compilation unit"_doc, nb::lock_self()
     )
     .def("write", [] (dw::Editor& self, nb::PathLike path) {
-        self.write(path);
+        self.write(path.to_string());
       },
       "Write the DWARF file to the specified output"_doc,
       "output"_a, nb::lock_self()

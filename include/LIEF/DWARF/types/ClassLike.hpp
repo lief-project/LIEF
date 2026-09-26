@@ -20,6 +20,7 @@
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
+#include <string_view>
 
 namespace LIEF::dwarf::types {
 
@@ -47,7 +48,7 @@ class LIEF_API ClassLike : public Type {
     Member& operator=(const Member&) = delete;
 
     /// Name of the member
-    std::string name() const;
+    std::string_view name() const LIEF_LIFETIMEBOUND;
 
     /// Offset of the current member in the struct/union/class
     ///

@@ -4,6 +4,7 @@
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 namespace LIEF::dwarf::py {
 template<>

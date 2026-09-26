@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_DEBUGINFO_H
 #define LIEF_DEBUGINFO_H
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 
 #include "LIEF/visibility.h"
 #include <optional>
@@ -71,7 +71,7 @@ class LIEF_API DebugInfo {
 
   /// Attempt to resolve the address of the function specified by `name`.
   virtual std::optional<uint64_t>
-      find_function_address(const std::string& name) const = 0;
+      find_function_address(std::string_view name) const = 0;
 
   protected:
   std::unique_ptr<details::DebugInfo> impl_;

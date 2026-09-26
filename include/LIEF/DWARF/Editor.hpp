@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_DWARF_EDITOR_H
 #define LIEF_DWARF_EDITOR_H
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
@@ -64,7 +64,7 @@ class LIEF_API Editor {
       create_compilation_unit() LIEF_LIFETIMEBOUND;
 
   /// Write the DWARF file to the specified output
-  void write(const std::string& output);
+  void write(std::string_view output);
 
   ~Editor();
 

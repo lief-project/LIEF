@@ -21,9 +21,9 @@
 #include "LIEF/visibility.h"
 #include <optional>
 
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 
 
 namespace LIEF::dwarf {
@@ -93,11 +93,11 @@ class LIEF_API LexicalBlock {
 
   /// Return the *name* associated with this lexical block or an
   /// empty string
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// Return the description associated with this lexical block or an
   /// empty string
-  std::string description() const;
+  std::string_view description() const LIEF_LIFETIMEBOUND;
 
   /// Return an iterator over the sub-LexicalBlock owned by this block.
   sub_blocks_it sub_blocks() const LIEF_LIFETIMEBOUND;

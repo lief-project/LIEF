@@ -13,7 +13,7 @@ namespace LIEF::dwarf::py {
 void init(nb::module_& m) {
   nb::module_ dwarf = m.def_submodule("dwarf");
 
-  dwarf.def("load", [] (nb::PathLike path) { return load(path); },
+  dwarf.def("load", [] (nb::PathLike path) { return load(path.to_string()); },
     R"doc(
     Load the DWARF from the given path
     )doc"_doc, "path"_a

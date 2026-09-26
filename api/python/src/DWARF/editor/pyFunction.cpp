@@ -6,6 +6,7 @@
 
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unique_ptr.h>
 
 namespace LIEF::dwarf::py {
@@ -32,7 +33,7 @@ void create<dw::editor::Function>(nb::module_& m) {
   );
 
   FP
-    .def("assign_register", nb::overload_cast<const std::string&>(&Parameter::assign_register),
+    .def("assign_register", nb::overload_cast<std::string_view>(&Parameter::assign_register),
       "Assign this parameter to a specific named register."_doc,
       nb::rv_policy::reference_internal
     )

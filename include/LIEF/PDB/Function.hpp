@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_PDB_FUNCTION_H
 #define LIEF_PDB_FUNCTION_H
+#include <string_view>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -81,7 +82,7 @@ class LIEF_API Function {
   ~Function();
 
   /// The name of the function (this name is usually demangled)
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// The **Relative** Virtual Address of the function
   uint32_t RVA() const;

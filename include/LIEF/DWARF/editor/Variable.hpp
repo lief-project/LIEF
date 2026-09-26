@@ -14,9 +14,9 @@
  */
 #ifndef LIEF_DWARF_EDITOR_VARIABLE_H
 #define LIEF_DWARF_EDITOR_VARIABLE_H
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
@@ -56,7 +56,7 @@ class LIEF_API Variable {
 
   /// Create a `DW_AT_description` entry with the description
   /// provided in parameter.
-  Variable& add_description(const std::string& description) LIEF_LIFETIMEBOUND;
+  Variable& add_description(std::string_view description) LIEF_LIFETIMEBOUND;
 
   ~Variable();
 

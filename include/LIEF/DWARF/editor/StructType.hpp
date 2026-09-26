@@ -15,8 +15,8 @@
 #ifndef LIEF_DWARF_EDITOR_STRUCT_TYPE_H
 #define LIEF_DWARF_EDITOR_STRUCT_TYPE_H
 
+#include <string_view>
 #include <cstdint>
-#include <string>
 
 #include "LIEF/DWARF/editor/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
@@ -66,11 +66,11 @@ class LIEF_API StructType : public Type {
   StructType& set_size(uint64_t size) LIEF_LIFETIMEBOUND;
 
   /// Adds a member to the current struct-like
-  std::unique_ptr<Member> add_member(const std::string& name, const Type& type,
+  std::unique_ptr<Member> add_member(std::string_view name, const Type& type,
                                      int64_t offset = -1) LIEF_LIFETIMEBOUND;
 
   /// Adds a bitfield member to the current structure.
-  std::unique_ptr<Member> add_bitfield(const std::string& name, const Type& type,
+  std::unique_ptr<Member> add_bitfield(std::string_view name, const Type& type,
                                        uint64_t bitsize,
                                        int64_t bitoffset = -1) LIEF_LIFETIMEBOUND;
 

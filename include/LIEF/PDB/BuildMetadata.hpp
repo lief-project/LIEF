@@ -14,12 +14,14 @@
  */
 #ifndef LIEF_PDB_BUILD_METADATA_H
 #define LIEF_PDB_BUILD_METADATA_H
+#include <string_view>
 #include <cstdint>
 #include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 #include <optional>
 
@@ -175,7 +177,7 @@ class LIEF_API BuildMetadata {
 
   /// Version of the *tool* as a string. For instance, `Microsoft (R) CVTRES`,
   /// `Microsoft (R) LINK`.
-  std::string version() const;
+  std::string_view version() const LIEF_LIFETIMEBOUND;
 
   /// Source language
   LANG language() const;

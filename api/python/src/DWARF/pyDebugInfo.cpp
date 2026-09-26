@@ -6,6 +6,7 @@
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 #include "pyOwningIterator.hpp"
 
@@ -23,7 +24,7 @@ void create<dw::DebugInfo>(nb::module_& m) {
   );
 
   dbg_info
-    .def("find_function", nb::overload_cast<const std::string&>(&DebugInfo::find_function, nb::const_),
+    .def("find_function", nb::overload_cast<std::string_view>(&DebugInfo::find_function, nb::const_),
       R"doc(
       Try to find the function with the given name (mangled or not)
 
@@ -49,13 +50,13 @@ void create<dw::DebugInfo>(nb::module_& m) {
       )doc"_doc, "addr"_a
     )
 
-    .def("find_variable", nb::overload_cast<const std::string&>(&DebugInfo::find_variable, nb::const_),
+    .def("find_variable", nb::overload_cast<std::string_view>(&DebugInfo::find_variable, nb::const_),
       R"doc(
       Try to find the variable with the given name. This name can be mangled or not.
       )doc"_doc, "name"_a
     )
 
-    .def("find_type", nb::overload_cast<const std::string&>(&DebugInfo::find_type, nb::const_),
+    .def("find_type", nb::overload_cast<std::string_view>(&DebugInfo::find_type, nb::const_),
       R"doc(
       Try to find the type with the given name.
       )doc"_doc, "name"_a

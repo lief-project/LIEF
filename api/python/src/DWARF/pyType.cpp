@@ -6,6 +6,7 @@
 #include "DWARF/pyTypes.hpp"
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unique_ptr.h>
 
 namespace LIEF::dwarf::types {

@@ -5,6 +5,7 @@
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 
 namespace nanobind::detail {
 template<> struct type_hook<LIEF::dwarf::Parameter::Location> {

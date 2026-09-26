@@ -83,7 +83,7 @@ DebugInfo::types_it DebugInfo::types() const {
   return make_empty_iterator<Type>();
 }
 
-std::unique_ptr<Type> DebugInfo::find_type(const std::string& /*name*/) const {
+std::unique_ptr<Type> DebugInfo::find_type(std::string_view /*name*/) const {
   return nullptr;
 }
 
@@ -104,24 +104,24 @@ std::string DebugInfo::to_string() const {
 }
 
 std::unique_ptr<PublicSymbol>
-    DebugInfo::find_public_symbol(const std::string&) const {
+    DebugInfo::find_public_symbol(std::string_view) const {
   return nullptr;
 }
 
-std::unique_ptr<DebugInfo> DebugInfo::from_file(const std::string&) {
+std::unique_ptr<DebugInfo> DebugInfo::from_file(std::string_view) {
   LIEF_ERR(DEBUG_FMT_NOT_SUPPORTED);
   return nullptr;
 }
 
 std::optional<uint64_t>
-    DebugInfo::find_function_address(const std::string& /*name*/) const {
+    DebugInfo::find_function_address(std::string_view /*name*/) const {
   return std::nullopt;
 }
 
 // ----------------------------------------------------------------------------
 // PDB/Utils.hpp
 // ----------------------------------------------------------------------------
-bool is_pdb(const std::string& /*path*/) {
+bool is_pdb(std::string_view /*path*/) {
   LIEF_ERR(DEBUG_FMT_NOT_SUPPORTED);
   return false;
 }
@@ -135,12 +135,12 @@ CompilationUnit::CompilationUnit(std::unique_ptr<details::CompilationUnit> impl)
 CompilationUnit::~CompilationUnit() = default;
 
 
-std::string CompilationUnit::module_name() const {
-  return "";
+std::string_view CompilationUnit::module_name() const {
+  return {};
 }
 
-std::string CompilationUnit::object_filename() const {
-  return "";
+std::string_view CompilationUnit::object_filename() const {
+  return {};
 }
 
 CompilationUnit::sources_iterator CompilationUnit::sources() const {
@@ -260,8 +260,8 @@ std::unique_ptr<PublicSymbol> PublicSymbol::Iterator::yield() {
   return nullptr;
 }
 
-std::string PublicSymbol::name() const {
-  return "";
+std::string_view PublicSymbol::name() const {
+  return {};
 }
 
 std::string PublicSymbol::section_name() const {
@@ -329,8 +329,8 @@ std::unique_ptr<Function> Function::Iterator::yield() {
   return nullptr;
 }
 
-std::string Function::name() const {
-  return "";
+std::string_view Function::name() const {
+  return {};
 }
 
 uint32_t Function::RVA() const {
@@ -474,8 +474,8 @@ ClassLike::methods_iterator ClassLike::methods() const {
   return make_empty_iterator<Method>();
 }
 
-std::string ClassLike::unique_name() const {
-  return "";
+std::string_view ClassLike::unique_name() const {
+  return {};
 }
 
 ClassLike::~ClassLike() = default;
@@ -495,16 +495,16 @@ Enum::Entry::~Entry() = default;
 Enum::Entry::Entry(std::unique_ptr<details::EnumEntry> impl) :
   impl_(std::move(impl)) {}
 
-std::string Enum::Entry::name() const {
-  return "";
+std::string_view Enum::Entry::name() const {
+  return {};
 }
 
 int64_t Enum::Entry::value() const {
   return 0;
 }
 
-std::string Enum::unique_name() const {
-  return "";
+std::string_view Enum::unique_name() const {
+  return {};
 }
 
 std::vector<Enum::Entry> Enum::entries() const {
@@ -603,8 +603,8 @@ std::unique_ptr<Attribute> Attribute::Iterator::yield() {
   return nullptr;
 }
 
-std::string Attribute::name() const {
-  return "";
+std::string_view Attribute::name() const {
+  return {};
 }
 
 std::unique_ptr<Type> Attribute::type() const {
@@ -663,8 +663,8 @@ std::unique_ptr<Method> Method::Iterator::yield() {
   return nullptr;
 }
 
-std::string Method::name() const {
-  return "";
+std::string_view Method::name() const {
+  return {};
 }
 
 Method::TYPE Method::type() const {
@@ -695,8 +695,8 @@ BuildMetadata::version_t BuildMetadata::backend_version() const {
   return {};
 }
 
-std::string BuildMetadata::version() const {
-  return "";
+std::string_view BuildMetadata::version() const {
+  return {};
 }
 
 std::string BuildMetadata::to_string() const {

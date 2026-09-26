@@ -18,13 +18,13 @@
 #define LIEF_PDB_UTILS_H
 
 #include "LIEF/visibility.h"
-#include <string>
+#include <string_view>
 
 
 namespace LIEF::pdb {
 
 /// Check if the file given in parameter points to a PDB file
-LIEF_API bool is_pdb(const std::string& pdb_path);
+LIEF_API bool is_pdb(std::string_view pdb_path);
 
 }
 

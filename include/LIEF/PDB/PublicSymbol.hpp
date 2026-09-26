@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_PDB_PUBLIC_SYMBOL_H
 #define LIEF_PDB_PUBLIC_SYMBOL_H
+#include <string_view>
 #include <cstdint>
 #include <memory>
 #include <ostream>
@@ -91,7 +92,7 @@ class LIEF_API PublicSymbol {
   };
 
   /// Name of the symbol
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// Demangled representation of the symbol
   std::string demangled_name() const;

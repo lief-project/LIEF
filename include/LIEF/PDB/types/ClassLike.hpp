@@ -22,6 +22,7 @@
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
+#include <string_view>
 #include <type_traits>
 
 
@@ -43,7 +44,7 @@ class LIEF_API ClassLike : public Type {
   using methods_iterator = iterator_range<Method::Iterator>;
 
   /// Mangled type name
-  std::string unique_name() const;
+  std::string_view unique_name() const LIEF_LIFETIMEBOUND;
 
   /// Iterator over the different attributes defined in this class-like type
   attributes_iterator attributes() const LIEF_LIFETIMEBOUND;

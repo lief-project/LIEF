@@ -19,9 +19,9 @@
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 
 
 namespace LIEF::pdb {
@@ -117,7 +117,7 @@ class LIEF_API Method {
   Method(std::unique_ptr<details::Method> impl);
 
   /// Name of the method
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// Type/Properties of the method (virtual, static, etc.)
   TYPE type() const;

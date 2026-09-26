@@ -15,10 +15,12 @@
 #ifndef LIEF_DWARF_SCOPE_H
 #define LIEF_DWARF_SCOPE_H
 
+#include <string_view>
 #include <cstdint>
 #include <memory>
 #include <string>
 
+#include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 
@@ -44,7 +46,7 @@ class LIEF_API Scope {
   Scope(std::unique_ptr<details::Scope> impl);
 
   /// Name of the scope. For instance namespace's name or function's name.
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// Parent scope (if any)
   std::unique_ptr<Scope> parent() const;
@@ -54,7 +56,7 @@ class LIEF_API Scope {
 
   /// Represent the whole chain of all (parent) scopes using the provided
   /// separator. E.g. `ns1::ns2::Class1::Struct2::Type`
-  std::string chained(const std::string& sep = "::") const;
+  std::string chained(std::string_view sep = "::") const;
 
   ~Scope();
 

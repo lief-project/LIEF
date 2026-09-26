@@ -19,9 +19,9 @@
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
 
+#include <string_view>
 #include <cstdint>
 #include <memory>
-#include <string>
 
 
 namespace LIEF::pdb {
@@ -85,7 +85,7 @@ class LIEF_API Attribute {
   Attribute(std::unique_ptr<details::Attribute> impl);
 
   /// Name of the attribute
-  std::string name() const;
+  std::string_view name() const LIEF_LIFETIMEBOUND;
 
   /// Type of this attribute
   std::unique_ptr<Type> type() const LIEF_LIFETIMEBOUND;

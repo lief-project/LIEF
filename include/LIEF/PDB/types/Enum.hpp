@@ -19,6 +19,7 @@
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
+#include <string_view>
 
 namespace LIEF::pdb::types {
 
@@ -43,7 +44,7 @@ class LIEF_API Enum : public Type {
     Entry& operator=(Entry&& other) noexcept;
 
     /// Enum entry's name
-    std::string name() const;
+    std::string_view name() const LIEF_LIFETIMEBOUND;
 
     /// Enum entry's value (if any)
     int64_t value() const;
@@ -55,7 +56,7 @@ class LIEF_API Enum : public Type {
   };
 
   /// Enum's mangled name
-  std::string unique_name() const;
+  std::string_view unique_name() const LIEF_LIFETIMEBOUND;
 
   /// Return the different entries associated with this enum
   std::vector<Entry> entries() const LIEF_LIFETIMEBOUND;

@@ -14,8 +14,8 @@
  */
 #ifndef LIEF_DWARF_INFO_H
 #define LIEF_DWARF_INFO_H
+#include <string_view>
 #include <memory>
-#include <string>
 
 #include "LIEF/Abstract/DebugInfo.hpp"
 #include "LIEF/DWARF/CompilationUnit.hpp"
@@ -38,7 +38,7 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   public:
   using LIEF::DebugInfo::DebugInfo;
 
-  static std::unique_ptr<DebugInfo> from_file(const std::string& path);
+  static std::unique_ptr<DebugInfo> from_file(std::string_view path);
 
   /// Iterator over the CompilationUnit
   using compilation_units_it = iterator_range<CompilationUnit::Iterator>;
@@ -55,7 +55,7 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// }
   /// ```
   std::unique_ptr<Function>
-      find_function(const std::string& name) const LIEF_LIFETIMEBOUND;
+      find_function(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the function at the given **virtual** address
   std::unique_ptr<Function> find_function(uint64_t addr) const LIEF_LIFETIMEBOUND;
@@ -63,21 +63,20 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
   /// Try to find the variable with the given name. This name can be mangled or
   /// not.
   std::unique_ptr<Variable>
-      find_variable(const std::string& name) const LIEF_LIFETIMEBOUND;
+      find_variable(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the variable at the given **virtual** address
   std::unique_ptr<Variable> find_variable(uint64_t addr) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the type with the given name
-  std::unique_ptr<Type>
-      find_type(const std::string& name) const LIEF_LIFETIMEBOUND;
+  std::unique_ptr<Type> find_type(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Iterator on the CompilationUnit embedded in this dwarf
   compilation_units_it compilation_units() const LIEF_LIFETIMEBOUND;
 
   /// Attempt to resolve the address of the function specified by `name`.
   std::optional<uint64_t>
-      find_function_address(const std::string& name) const override;
+      find_function_address(std::string_view name) const override;
 
   FORMAT format() const override {
     return LIEF::DebugInfo::FORMAT::DWARF;
@@ -92,7 +91,7 @@ class LIEF_API DebugInfo : public LIEF::DebugInfo {
 
 
 /// Load DWARF file from the given path
-inline std::unique_ptr<DebugInfo> load(const std::string& dwarf_path) {
+inline std::unique_ptr<DebugInfo> load(std::string_view dwarf_path) {
   return DebugInfo::from_file(dwarf_path);
 }
 

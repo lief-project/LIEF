@@ -23,7 +23,7 @@ namespace LIEF::pdb::py {
 
 void init_utils(nb::module_&) {
   lief_mod->def("is_pdb", [] (nb::PathLike path) {
-      return is_pdb(path);
+      return is_pdb(path.to_string());
     },
     "Check if the given file is a ``PDB``"_doc, "file"_a
   );

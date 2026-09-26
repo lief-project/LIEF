@@ -10,6 +10,7 @@
 
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
 
@@ -131,7 +132,7 @@ void create<dw::CompilationUnit>(nb::module_& m) {
     )
 
     .def("find_function",
-         nb::overload_cast<const std::string&>(&dw::CompilationUnit::find_function, nb::const_),
+         nb::overload_cast<std::string_view>(&dw::CompilationUnit::find_function, nb::const_),
          R"doc(
          Try to find the function whose name is given in parameter.
 
@@ -154,7 +155,7 @@ void create<dw::CompilationUnit>(nb::module_& m) {
     )
 
     .def("find_variable",
-         nb::overload_cast<const std::string&>(&dw::CompilationUnit::find_variable, nb::const_),
+         nb::overload_cast<std::string_view>(&dw::CompilationUnit::find_variable, nb::const_),
          R"doc(
          Try to find the variable with the given name (mangled or not)
          )doc"_doc, "name"_a

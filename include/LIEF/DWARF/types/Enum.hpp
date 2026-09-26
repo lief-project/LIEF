@@ -18,9 +18,9 @@
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
+#include <string_view>
 #include <cstdint>
 #include <optional>
-#include <string>
 
 
 namespace LIEF::dwarf::types {
@@ -55,7 +55,7 @@ class LIEF_API Enum : public Type {
     Entry& operator=(const Entry&) = delete;
 
     /// Enum entry's name
-    std::string name() const;
+    std::string_view name() const LIEF_LIFETIMEBOUND;
 
     /// Enum entry's value (if any)
     std::optional<int64_t> value() const;
