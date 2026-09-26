@@ -9,6 +9,7 @@ hooks = [
     language = "system",
     entry = "clang-format -i",
     files = "\\.(cpp|hpp|tcc|c)$",
+    stages = ["pre-commit"],
   },
   {
     id = "format-tests-ruff",
@@ -16,6 +17,7 @@ hooks = [
     language = "system",
     entry = "ruff format",
     files = { glob = ["tests/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "format-backend-ruff",
@@ -23,6 +25,7 @@ hooks = [
     language = "system",
     entry = "ruff format",
     files = { glob = ["api/python/backend/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "format-doc-ruff",
@@ -30,6 +33,7 @@ hooks = [
     language = "system",
     entry = "ruff format",
     files = { glob = ["doc/code/python/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "format-rust",
@@ -37,6 +41,7 @@ hooks = [
     language = "system",
     entry = "rustfmt --edition 2024",
     files = "\\.rs$",
+    stages = ["pre-commit"],
   },
   {
     id = "lint-bindings-python-ty",
@@ -52,7 +57,8 @@ hooks = [
       "api/python/lief/**/*.pyi",
       "api/python/lief/**/*.py",
       "api/python/backend/**/*.py",
-    ] }
+    ] },
+    stages = ["pre-commit"],
   },
   {
     id = "lint-tests-ty",
@@ -64,6 +70,7 @@ hooks = [
       "--config-file", "./tests/ty.toml"
     ],
     files = { glob = ["tests/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "lint-examples-ty",
@@ -75,6 +82,7 @@ hooks = [
       "--config-file", "api/python/examples/ty.toml"
     ],
     files = { glob = ["api/python/examples/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "lint-doc-examples-ty",
@@ -86,6 +94,7 @@ hooks = [
       "--config-file", "./doc/code/python/ty.toml"
     ],
     files = { glob = ["doc/code/python/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "lint-tests-ruff",
@@ -94,6 +103,7 @@ hooks = [
     entry = "ruff check",
     #args = ["--fix"],
     files = { glob = ["tests/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "lint-examples-ruff",
@@ -102,6 +112,7 @@ hooks = [
     entry = "ruff check",
     #args = ["--fix"],
     files = { glob = ["api/python/examples/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "lint-doc-ruff",
@@ -110,6 +121,7 @@ hooks = [
     entry = "ruff check",
     #args = ["--fix"],
     files = { glob = ["doc/code/python/**/*.py"] },
+    stages = ["pre-commit"],
   },
   {
     id = "harper-markdown",
@@ -119,7 +131,7 @@ hooks = [
     additional_dependencies = ["myst-parser==5.1.0"],
     files = "\\.(md|markdown)$",
     exclude = "^internal/",
-
+    stages = ["pre-commit"],
   },
   {
     id = "harper-cpp",
@@ -129,6 +141,7 @@ hooks = [
     additional_dependencies = ["myst-parser==5.1.0"],
     files = "\\.(cpp|hpp|tcc|c)$",
     exclude = "(third-party/|nanobind/extra/|^src/frozen\\.hpp$)",
+    stages = ["pre-commit"],
   },
   {
     id = "harper-python",
@@ -137,6 +150,7 @@ hooks = [
     entry = "uv run internal/scripts/harper_lint.py",
     additional_dependencies = ["myst-parser==5.1.0"],
     files = "\\.py$",
+    stages = ["pre-commit"],
   },
   {
     id = "lint-doc-code-rust-clippy",
@@ -150,6 +164,7 @@ hooks = [
     ],
     pass_filenames = false,
     files = { glob = ["doc/code/rust/**/*.rs"] },
+    stages = ["pre-commit"],
   },
   {
     id = "lint-tool-rust-clippy",
@@ -163,6 +178,7 @@ hooks = [
     ],
     pass_filenames = false,
     files = { glob = ["tools/**/*.rs"] },
+    stages = ["pre-commit"],
   },
   {
     id = "lint-core-rust-clippy",
@@ -176,6 +192,7 @@ hooks = [
     ],
     pass_filenames = false,
     files = { glob = ["api/rust/crates/**/*.rs"] },
+    stages = ["pre-commit"],
   },
   {
     id = "iwyu-lint",
@@ -204,6 +221,7 @@ hooks = [
         "src/**/*.hpp"
       ]
     },
+    stages = ["pre-commit"],
   },
   # ----------------------------------------------------------------------------
   # Pre-push
