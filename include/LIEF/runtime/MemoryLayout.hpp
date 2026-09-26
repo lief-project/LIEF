@@ -19,6 +19,7 @@
 #include <string_view>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <string>
 #include <utility>
@@ -144,6 +145,15 @@ using memory_layout_it = iterator_range<MemoryLayout::Iterator>;
 
 /// Return an iterator over the memory layout of the current process
 LIEF_API memory_layout_it memory_layout();
+
+inline std::optional<MemoryLayout::Region> find_region(uint64_t addr) {
+  for (const MemoryLayout::Region& region : memory_layout()) {
+    if (region.contains(addr)) {
+      return region;
+    }
+  }
+  return std::nullopt;
+}
 
 }
 #endif
