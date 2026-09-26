@@ -60,6 +60,14 @@ pub mod ffi {
             self: Pin<&mut DWARF_editor_CompilationUnit>,
             ty: &DWARF_editor_Type,
         ) -> UniquePtr<DWARF_editor_PointerType>;
+        fn create_const_type(
+            self: Pin<&mut DWARF_editor_CompilationUnit>,
+            ty: &DWARF_editor_Type,
+        ) -> UniquePtr<DWARF_editor_Type>;
+        fn create_volatile_type(
+            self: Pin<&mut DWARF_editor_CompilationUnit>,
+            ty: &DWARF_editor_Type,
+        ) -> UniquePtr<DWARF_editor_Type>;
         fn create_void_type(
             self: Pin<&mut DWARF_editor_CompilationUnit>,
         ) -> UniquePtr<DWARF_editor_Type>;

@@ -84,6 +84,18 @@ class DWARF_editor_CompilationUnit
     );
   }
 
+  auto create_const_type(const DWARF_editor_Type& ty) {
+    return details::try_unique<DWARF_editor_Type>(
+        get().create_const_type(ty.get())
+    );
+  }
+
+  auto create_volatile_type(const DWARF_editor_Type& ty) {
+    return details::try_unique<DWARF_editor_Type>(
+        get().create_volatile_type(ty.get())
+    );
+  }
+
   auto create_void_type() {
     return details::try_unique<DWARF_editor_Type>(get().create_void_type());
   }

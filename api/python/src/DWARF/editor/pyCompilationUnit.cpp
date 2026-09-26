@@ -68,6 +68,22 @@ void create<dw::editor::CompilationUnit>(nb::module_& m) {
     .def("create_pointer_type", &dw::editor::CompilationUnit::create_pointer_type,
       "Create a pointer on the provided type."_doc, "ty"_a, nb::keep_alive<0, 1>())
 
+    .def("create_const_type", &dw::editor::CompilationUnit::create_const_type,
+      R"doc(
+      Create a ``const``-qualified version of the provided type
+      (``DW_TAG_const_type``).
+
+      Qualifying the same type twice returns the same underlying DWARF entry.
+      )doc"_doc, "ty"_a, nb::keep_alive<0, 1>())
+
+    .def("create_volatile_type", &dw::editor::CompilationUnit::create_volatile_type,
+      R"doc(
+      Create a ``volatile``-qualified version of the provided type
+      (``DW_TAG_volatile_type``).
+
+      Qualifying the same type twice returns the same underlying DWARF entry.
+      )doc"_doc, "ty"_a, nb::keep_alive<0, 1>())
+
     .def("create_void_type", &dw::editor::CompilationUnit::create_void_type,
       "Create a ``void`` type"_doc, nb::keep_alive<0, 1>())
 

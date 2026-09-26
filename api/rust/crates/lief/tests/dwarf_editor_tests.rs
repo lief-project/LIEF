@@ -83,3 +83,76 @@ fn test_api() {
     println!("{}", lief::extended_version_info());
     test_with("user32.dll", "PE/user32.dll");
 }
+
+#[test]
+fn test_qualifiers() {
+    if !lief::is_extended() {
+        return;
+    }
+
+    use lief::dwarf::editor::{Arch, Editor, Format};
+    use lief::dwarf::types::DwarfType;
+
+    let mut editor = Editor::create(Format::ELF, Arch::X64).unwrap();
+    {
+        let mut unit = editor.create_compile_unit().unwrap();
+        let int_ty =
+            unit.create_base_type("int", 4, lief::dwarf::editor::types::base::Encoding::SIGNED);
+        let const_int = unit.create_const_type(&int_ty);
+        let volatile_int = unit.create_volatile_type(&int_ty);
+        let cv_int = unit.create_volatile_type(&const_int);
+        let ptr_const_int = lief::dwarf::editor::Type::Pointer(const_int.pointer_to());
+
+        for (name, addr, ty) in [
+            ("c_var", 0x1000, &const_int),
+            ("v_var", 0x1004, &volatile_int),
+            ("cv_var", 0x1008, &cv_int),
+            ("ptr_c_var", 0x1010, &ptr_const_int),
+        ] {
+            let mut var = unit.create_variable(name).unwrap();
+            var.set_addr(addr);
+            var.set_type(ty);
+        }
+    }
+
+    let mut output = env::temp_dir();
+    output.push("lief_rust_dwarf_editor_qualifiers.debug");
+    editor.write(&output);
+
+    let dbg = lief::dwarf::load(&output).unwrap();
+    let var = |name: &str| dbg.variable_by_name(name).expect(name);
+
+    match var("c_var").get_type().unwrap() {
+        lief::dwarf::Type::Const(ty) => {
+            assert_eq!(ty.underlying_type().unwrap().name().unwrap(), "int");
+        }
+        _ => panic!("c_var: expected a const type"),
+    }
+
+    match var("v_var").get_type().unwrap() {
+        lief::dwarf::Type::Volatile(ty) => {
+            assert_eq!(ty.underlying_type().unwrap().name().unwrap(), "int");
+        }
+        _ => panic!("v_var: expected a volatile type"),
+    }
+
+    match var("cv_var").get_type().unwrap() {
+        lief::dwarf::Type::Volatile(ty) => match ty.underlying_type().unwrap() {
+            lief::dwarf::Type::Const(inner) => {
+                assert_eq!(inner.underlying_type().unwrap().name().unwrap(), "int");
+            }
+            _ => panic!("cv_var: expected const under volatile"),
+        },
+        _ => panic!("cv_var: expected a volatile type"),
+    }
+
+    match var("ptr_c_var").get_type().unwrap() {
+        lief::dwarf::Type::Pointer(ty) => {
+            assert!(matches!(
+                ty.underlying_type().unwrap(),
+                lief::dwarf::Type::Const(_)
+            ));
+        }
+        _ => panic!("ptr_c_var: expected a pointer type"),
+    }
+}

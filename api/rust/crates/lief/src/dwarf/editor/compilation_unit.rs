@@ -119,6 +119,21 @@ impl CompilationUnit<'_> {
         Pointer::from_ffi(self.ptr.pin_mut().create_pointer_type(ty.get_base()))
     }
 
+    /// Create a `const`-qualified version of the provided type (`DW_TAG_const_type`).
+    ///
+    /// Qualifying the same type twice returns the same underlying DWARF entry.
+    pub fn create_const_type(&mut self, ty: &dyn EditorType) -> Type {
+        Type::from_ffi(self.ptr.pin_mut().create_const_type(ty.get_base()))
+    }
+
+    /// Create a `volatile`-qualified version of the provided type
+    /// (`DW_TAG_volatile_type`).
+    ///
+    /// Qualifying the same type twice returns the same underlying DWARF entry.
+    pub fn create_volatile_type(&mut self, ty: &dyn EditorType) -> Type {
+        Type::from_ffi(self.ptr.pin_mut().create_volatile_type(ty.get_base()))
+    }
+
     /// Create a `void` type
     pub fn create_void_type(&mut self) -> Type {
         Type::from_ffi(self.ptr.pin_mut().create_void_type())

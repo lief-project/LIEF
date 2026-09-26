@@ -145,3 +145,81 @@ def test_register_param(tmp_path: Path):
     assert loc is not None
     assert isinstance(loc, lief.dwarf.Parameter.RegisterLoc)
     assert loc.id == 15
+
+
+def test_qualifiers(tmp_path: Path):
+    elf = parse_elf("ELF/ELF64_x86-64_binary_hello-cpp.bin")
+    editor = lief.dwarf.Editor.from_binary(elf)
+    assert editor is not None
+    cu = editor.create_compilation_unit()
+    assert cu is not None
+
+    int_t = cu.create_base_type("int", 4, lief.dwarf.editor.BaseType.ENCODING.SIGNED)
+    assert int_t is not None
+
+    const_int = cu.create_const_type(int_t)
+    volatile_int = cu.create_volatile_type(int_t)
+    assert const_int is not None
+    assert volatile_int is not None
+    cv_int = cu.create_volatile_type(const_int)
+    assert cv_int is not None
+
+    # Qualifying the same type again must not create a new DIE
+    const_int_2 = cu.create_const_type(int_t)
+    assert const_int_2 is not None
+
+    for name, addr, ty in (
+        ("c_var", 0x1000, const_int),
+        ("c_var_2", 0x1018, const_int_2),
+        ("v_var", 0x1004, volatile_int),
+        ("cv_var", 0x1008, cv_int),
+        ("ptr_c_var", 0x1010, cast(lief.dwarf.editor.Type, const_int.pointer_to())),
+    ):
+        var = cu.create_variable(name)
+        assert var is not None
+        var.set_addr(addr)
+        var.set_type(ty)
+
+    output = tmp_path / "qualifiers.dwarf"
+    editor.write(output.as_posix())
+
+    dbg = lief.dwarf.load(output.as_posix())
+    assert dbg is not None
+
+    def var_type(name: str) -> lief.dwarf.Type:
+        var = dbg.find_variable(name)
+        assert var is not None
+        assert var.type is not None
+        return var.type
+
+    c_ty = var_type("c_var")
+    assert isinstance(c_ty, lief.dwarf.types.Const)
+    assert c_ty.underlying_type is not None
+    assert c_ty.underlying_type.name == "int"
+
+    v_ty = var_type("v_var")
+    assert isinstance(v_ty, lief.dwarf.types.Volatile)
+    assert v_ty.underlying_type is not None
+    assert v_ty.underlying_type.name == "int"
+
+    cv_ty = var_type("cv_var")
+    assert isinstance(cv_ty, lief.dwarf.types.Volatile)
+    inner = cv_ty.underlying_type
+    assert isinstance(inner, lief.dwarf.types.Const)
+    assert inner.underlying_type is not None
+    assert inner.underlying_type.name == "int"
+
+    ptr_ty = var_type("ptr_c_var")
+    assert isinstance(ptr_ty, lief.dwarf.types.Pointer)
+    assert isinstance(ptr_ty.underlying_type, lief.dwarf.types.Const)
+
+    c_ty_2 = var_type("c_var_2")
+    assert isinstance(c_ty_2, lief.dwarf.types.Const)
+
+    # Qualifying the same type twice reuses the same DW_TAG_const_type entry:
+    # the output must hold a single DIE per qualified type.
+    cu_out = next(iter(dbg.compilation_units))
+    assert cu_out is not None
+    tags = [ty.kind for ty in cu_out.types if ty is not None]
+    assert tags.count(lief.dwarf.Type.KIND.CONST_KIND) == 1
+    assert tags.count(lief.dwarf.Type.KIND.VOLATILE) == 2

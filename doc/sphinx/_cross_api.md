@@ -220,6 +220,18 @@
     :cpp:func:`LIEF::dwarf::LexicalBlock::description`
     :py:attr:`lief.dwarf.LexicalBlock.description`
 
+.. |lief-dwarf-editor-CompilationUnit-create_const_type| lief-api:: lief.dwarf.editor.CompilationUnit.create_const_type()
+
+    :rust:method:`lief::dwarf::editor::CompilationUnit::create_const_type [struct]`
+    :cpp:func:`LIEF::dwarf::editor::CompilationUnit::create_const_type`
+    :py:meth:`lief.dwarf.editor.CompilationUnit.create_const_type`
+
+.. |lief-dwarf-editor-CompilationUnit-create_volatile_type| lief-api:: lief.dwarf.editor.CompilationUnit.create_volatile_type()
+
+    :rust:method:`lief::dwarf::editor::CompilationUnit::create_volatile_type [struct]`
+    :cpp:func:`LIEF::dwarf::editor::CompilationUnit::create_volatile_type`
+    :py:meth:`lief.dwarf.editor.CompilationUnit.create_volatile_type`
+
 .. |lief-dwarf-editor-Function-lexical-block| lief-api:: lief.dwarf.editor.Function.LexicalBlock
 
     :rust:struct:`lief::dwarf::editor::function::LexicalBlock`

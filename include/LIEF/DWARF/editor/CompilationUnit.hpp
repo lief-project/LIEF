@@ -91,6 +91,18 @@ class LIEF_API CompilationUnit {
     return ty.pointer_to();
   }
 
+  /// Create a `const`-qualified version of the provided type
+  /// (`DW_TAG_const_type`).
+  ///
+  /// Qualifying the same type twice returns the same underlying DWARF entry.
+  std::unique_ptr<Type> create_const_type(const Type& ty) LIEF_LIFETIMEBOUND;
+
+  /// Create a `volatile`-qualified version of the provided type
+  /// (`DW_TAG_volatile_type`).
+  ///
+  /// Qualifying the same type twice returns the same underlying DWARF entry.
+  std::unique_ptr<Type> create_volatile_type(const Type& ty) LIEF_LIFETIMEBOUND;
+
   /// Create a `void` type
   std::unique_ptr<Type> create_void_type() LIEF_LIFETIMEBOUND;
 

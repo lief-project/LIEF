@@ -1092,6 +1092,14 @@ std::unique_ptr<FunctionType>
   return nullptr;
 }
 
+std::unique_ptr<Type> CompilationUnit::create_const_type(const Type&) {
+  return nullptr;
+}
+
+std::unique_ptr<Type> CompilationUnit::create_volatile_type(const Type&) {
+  return nullptr;
+}
+
 std::unique_ptr<Type> CompilationUnit::create_void_type() {
   return nullptr;
 }
