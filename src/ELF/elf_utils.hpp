@@ -28,6 +28,7 @@ struct elf_file_info_t {
   uintptr_t imagebase = -1llu;
   uint64_t end_address = 0;
   uintptr_t phdr_off = 0;
+  std::optional<uintptr_t> phdr_vaddr;
   uintptr_t phnum = 0;
   uintptr_t vsize() const {
     return end_address >= imagebase ? end_address - imagebase : 0;

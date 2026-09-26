@@ -26,6 +26,7 @@
 #include <cstring>
 #include <dlfcn.h>
 #include <elf.h>
+#include <limits>
 #include <link.h>
 #include <unistd.h>
 
@@ -67,10 +68,23 @@ class Module {
 
 class LinkerModule : public Module {
   public:
+  static uint64_t bias(const dl_phdr_info& info) {
+    auto bias = std::numeric_limits<uint64_t>::max();
+    for (size_t i = 0; i < info.dlpi_phnum; ++i) {
+      const auto& phdr = info.dlpi_phdr[i];
+      if (phdr.p_type != PT_LOAD) {
+        continue;
+      }
+      bias = std::min<uint64_t>(phdr.p_vaddr - phdr.p_offset, bias);
+    }
+    return bias;
+  }
+
   LinkerModule() = default;
   LinkerModule(const dl_phdr_info& info, size_t size) :
     phdr_info_{},
-    dlpi_name_(info.dlpi_name == nullptr ? "" : info.dlpi_name) {
+    dlpi_name_(info.dlpi_name == nullptr ? "" : info.dlpi_name),
+    bias_(bias(info)) {
     std::memset(&phdr_info_, 0, sizeof(dl_phdr_info));
     if (size <= sizeof(dl_phdr_info)) {
       std::memcpy(&phdr_info_, &info, size);
@@ -119,8 +133,12 @@ class LinkerModule : public Module {
     return dlpi_name_.substr(pos + 1);
   }
 
+  uint64_t bias() const {
+    return bias_;
+  }
+
   uint64_t imagebase() const override {
-    return phdr_info_.dlpi_addr;
+    return bias() + phdr_info_.dlpi_addr;
   }
 
   size_t size() const override {
@@ -165,6 +183,7 @@ class LinkerModule : public Module {
   private:
   dl_phdr_info phdr_info_{};
   std::string dlpi_name_;
+  uint64_t bias_ = 0;
   mutable size_t size_ = 0;
   mutable void* handle_ = nullptr;
 };
@@ -324,7 +343,7 @@ std::unique_ptr<Module> Module::from_handle(void* H) {
   std::memset(&phdr_info, 0, sizeof(dl_phdr_info));
   phdr_info.dlpi_name = lmap->l_name;
 
-  // l_addr is NOT the based address of the underlying object but the
+  // l_addr is NOT the base address of the underlying object but the
   // *Difference between the address in the ELF file and the addresses in memory.*
   phdr_info.dlpi_addr = lmap->l_addr;
   LIEF_DEBUG("link_map.l_addr: {:#08x}", lmap->l_addr);
@@ -365,13 +384,11 @@ std::unique_ptr<Module> Module::from_handle(void* H) {
     return nullptr;
   }
 
-  phdr_info.dlpi_addr = abs_addr;
   phdr_info.dlpi_phnum = info->phnum;
   phdr_info.dlpi_name = lmap->l_name;
-  uintptr_t dlpi_phdr = info->phdr_off;
-  if (info->phdr_off <= abs_addr) {
-    dlpi_phdr += abs_addr;
-  }
+
+  uintptr_t dlpi_phdr = info->phdr_vaddr ? lmap->l_addr + *info->phdr_vaddr :
+                                           abs_addr + info->phdr_off;
   phdr_info.dlpi_phdr = reinterpret_cast<const ElfW(Phdr)*>(dlpi_phdr);
 
   return std::make_unique<Module>(

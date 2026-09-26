@@ -38,7 +38,7 @@ std::optional<elf_file_info_t> get_info(BinaryStream& strm) {
     static_assert((int)Segment::TYPE::LOAD == 1);
     static_assert((int)Segment::TYPE::PHDR == 6);
     if (phdr->p_type == (int)Segment::TYPE::PHDR) {
-      info.phdr_off = phdr->p_vaddr;
+      info.phdr_vaddr = phdr->p_vaddr;
     } else if (phdr->p_type == (int)Segment::TYPE::LOAD) {
       info.imagebase = std::min<uintptr_t>(info.imagebase, phdr->p_vaddr);
       info.end_address =
