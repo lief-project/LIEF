@@ -2,6 +2,7 @@
 #include "LIEF/DWARF/types/Subroutine.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
 #include "DWARF/pyDwarf.hpp"
+#include "pyutils.hpp"
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
@@ -20,12 +21,12 @@ void create<dw::types::Subroutine>(nb::module_& m) {
       R"doc(
       Return the :class:`~.dwarf.Type` associated with the **return type** of this
       function
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
     .def_prop_ro("parameters", &dw::types::Subroutine::parameters,
       R"doc(
       Parameters of this subroutine
-      )doc"_doc
+      )doc"_doc, nb::call_policy<LIEF::py::returns_references_to<1>>()
     )
   ;
 }

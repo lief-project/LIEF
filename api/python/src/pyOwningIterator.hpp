@@ -75,6 +75,10 @@ class OwningIterator {
   It it_;
 };
 
+/// Wrap an iterator that yields `std::unique_ptr` so that it can be exposed
+/// with `nb::make_iterator()`. It is needed because
+/// nanobind ignores `nb::rv_policy::reference_internal` for `std::unique_ptr`
+/// values
 template<class It>
 iterator_range<OwningIterator<It>>
     owning_range(const iterator_range<It>& range) {

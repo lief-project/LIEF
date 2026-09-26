@@ -160,7 +160,9 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
     .def_prop_ro("libraries",
         [] (const DyldSharedCache& self) {
           auto libraries = LIEF::py::owning_random_access_range(self.libraries());
-          return nb::make_random_access_iterator(nb::type<DyldSharedCache>(), "dylib_iterator", libraries);
+          return nb::make_random_access_iterator(
+            nb::type<DyldSharedCache>(), "dylib_iterator", libraries.begin(), libraries.end(),
+            nb::keep_alive<0, 1>());
         }, nb::keep_alive<0, 1>(),
         R"doc(
         Return a list-like of the :class:`~.Dylib` embedded in this dyld shared cache
@@ -170,7 +172,9 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
     .def_prop_ro("mapping_info",
         [] (const DyldSharedCache& self) {
           auto mapping = LIEF::py::owning_random_access_range(self.mapping_info());
-          return nb::make_random_access_iterator(nb::type<DyldSharedCache>(), "mapping_info_iterator", mapping);
+          return nb::make_random_access_iterator(
+            nb::type<DyldSharedCache>(), "mapping_info_iterator", mapping.begin(), mapping.end(),
+            nb::keep_alive<0, 1>());
         }, nb::keep_alive<0, 1>(),
         R"doc(
         Return a list-like of the :class:`~.MappingInfo` embedded in this dyld shared cache
@@ -180,7 +184,9 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
     .def_prop_ro("subcaches",
         [] (const DyldSharedCache& self) {
           auto subcaches = LIEF::py::owning_random_access_range(self.subcaches());
-          return nb::make_random_access_iterator(nb::type<DyldSharedCache>(), "subcache_iterator", subcaches);
+          return nb::make_random_access_iterator(
+            nb::type<DyldSharedCache>(), "subcache_iterator", subcaches.begin(), subcaches.end(),
+            nb::keep_alive<0, 1>());
         }, nb::keep_alive<0, 1>(),
         R"doc(
         Return a list-like of :class:`~.SubCache` embedded in this (main)
@@ -235,7 +241,8 @@ void create<dsc::DyldSharedCache>(nb::module_& m) {
         [] (const DyldSharedCache& self, uint64_t addr) {
           auto insts = LIEF::py::owning_range(self.disassemble(addr));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<DyldSharedCache>(), "instructions_iterator", insts
+            nb::type<DyldSharedCache>(), "instructions_iterator", insts.begin(), insts.end(),
+            nb::keep_alive<0, 1>()
           );
         }, nb::keep_alive<0, 1>(),
         R"doc(

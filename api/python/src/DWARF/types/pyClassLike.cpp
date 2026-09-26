@@ -10,6 +10,7 @@
 #include "pyOwningIterator.hpp"
 
 #include "pyErr.hpp"
+#include "pyutils.hpp"
 
 namespace LIEF::dwarf::py {
 template<>
@@ -35,7 +36,7 @@ void create<dw::types::ClassLike>(nb::module_& m) {
     .def_prop_ro("type", &dw::types::ClassLike::Member::type,
       R"doc(
       Type of the current member
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
 
     .def_prop_ro("is_external", &dw::types::ClassLike::Member::is_external,
@@ -95,18 +96,19 @@ void create<dw::types::ClassLike>(nb::module_& m) {
     .def_prop_ro("members", &dw::types::ClassLike::members,
       R"doc(
       Return a list of all the members defined in this class-like type.
-      )doc"_doc
+      )doc"_doc, nb::call_policy<LIEF::py::returns_references_to<1>>()
     )
     .def("find_member", &dw::types::ClassLike::find_member,
       R"doc(
       Try to find the attribute at the given offset
-      )doc"_doc, "offset"_a
+      )doc"_doc, "offset"_a, nb::keep_alive<0, 1>()
     )
     .def_prop_ro("functions",
         [] (dw::types::ClassLike& self) {
           auto funcs = LIEF::py::owning_range(self.functions());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<dw::types::ClassLike>(), "functions_it", funcs
+            nb::type<dw::types::ClassLike>(), "functions_it", funcs.begin(), funcs.end(),
+            nb::keep_alive<0, 1>()
           );
         }, nb::keep_alive<0, 1>(),
         R"doc(Iterator over the functions defined by the class-like.)doc"_doc

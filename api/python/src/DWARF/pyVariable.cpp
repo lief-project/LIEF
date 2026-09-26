@@ -79,12 +79,12 @@ void create<dw::Variable>(nb::module_& m) {
     .def_prop_ro("type", &dw::Variable::type,
       R"doc(
       Return the type of this variable.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
     .def_prop_ro("scope", &dw::Variable::scope,
       R"doc(
       Scope in which this variable is defined
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
 
     .def_prop_ro("description", &dw::Variable::description,

@@ -54,7 +54,7 @@ void create<dw::editor::Function>(nb::module_& m) {
 
       If the function managed to create the new block, it returns
       the newly created block, otherwise it returns the current block
-      )doc"_doc, "start"_a, "end"_a, nb::rv_policy::reference_internal
+      )doc"_doc, "start"_a, "end"_a, nb::rv_policy::reference_internal, nb::keep_alive<0, 1>()
     )
 
     .def("add_block", nb::overload_cast<const std::vector<range_t>&>(&LexicalBlock::add_block),
@@ -63,7 +63,7 @@ void create<dw::editor::Function>(nb::module_& m) {
 
       If the function managed to create the new block, it returns
       the newly created block, otherwise it returns the current block
-      )doc"_doc, "range"_a, nb::rv_policy::reference_internal
+      )doc"_doc, "range"_a, nb::rv_policy::reference_internal, nb::keep_alive<0, 1>()
     )
 
     .def("add_description", &LexicalBlock::add_description,
@@ -117,19 +117,19 @@ void create<dw::editor::Function>(nb::module_& m) {
 
     .def("add_parameter", &dw::editor::Function::add_parameter,
          "Add a parameter to the current function"_doc,
-         "name"_a, "type"_a)
+         "name"_a, "type"_a, nb::keep_alive<0, 1>())
 
     .def("create_stack_variable", &dw::editor::Function::create_stack_variable,
          "Create a stack-based variable owned by the current function"_doc,
-         "name"_a)
+         "name"_a, nb::keep_alive<0, 1>())
 
     .def("add_lexical_block", &dw::editor::Function::add_lexical_block,
          "Add a lexical block with the given range"_doc,
-         "start"_a, "end"_a)
+         "start"_a, "end"_a, nb::keep_alive<0, 1>())
 
     .def("add_label", &dw::editor::Function::add_label,
          "Add a label at the given address"_doc,
-         "addr"_a, "label"_a)
+         "addr"_a, "label"_a, nb::keep_alive<0, 1>())
 
     .def("add_description", &dw::editor::Function::add_description,
       R"doc(

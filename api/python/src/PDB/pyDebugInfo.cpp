@@ -39,11 +39,11 @@ void create<pdb::DebugInfo>(nb::module_& m) {
     )
 
     .def("find_type", nb::overload_cast<std::string_view>(&pdb::DebugInfo::find_type, nb::const_),
-      "Find the type with the given name"_doc, "name"_a
+      "Find the type with the given name"_doc, "name"_a, nb::keep_alive<0, 1>()
     )
 
     .def("find_type", nb::overload_cast<uint32_t>(&pdb::DebugInfo::find_type, nb::const_),
-      "Find type at the given index"_doc, "index"_a
+      "Find type at the given index"_doc, "index"_a, nb::keep_alive<0, 1>()
     )
 
     .def("find_public_symbol", &pdb::DebugInfo::find_public_symbol,
@@ -56,13 +56,14 @@ void create<pdb::DebugInfo>(nb::module_& m) {
         debug_info: lief.pdb.DebugInfo = ...
         if sym := debug_info.find_public_symbol("MiSyncSystemPdes"):
             print("found")
-      )doc"_doc, "name"_a
+      )doc"_doc, "name"_a, nb::keep_alive<0, 1>()
     )
     .def_prop_ro("public_symbols",
       [] (pdb::DebugInfo& self) {
         auto symbols = LIEF::py::owning_range(self.public_symbols());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<pdb::DebugInfo>(), "public_symbols_it", symbols);
+            nb::type<pdb::DebugInfo>(), "public_symbols_it", symbols.begin(), symbols.end(),
+            nb::keep_alive<0, 1>());
       },
       R"doc(
       Return an iterator over the public symbol stream.
@@ -72,7 +73,8 @@ void create<pdb::DebugInfo>(nb::module_& m) {
       [] (pdb::DebugInfo& self) {
         auto units = LIEF::py::owning_range(self.compilation_units());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<pdb::DebugInfo>(), "compilation_units_it", units);
+            nb::type<pdb::DebugInfo>(), "compilation_units_it", units.begin(), units.end(),
+            nb::keep_alive<0, 1>());
       },
       R"doc(
       Iterator over the :class:`.CompilationUnit` from the PDB's DBI stream.
@@ -83,7 +85,8 @@ void create<pdb::DebugInfo>(nb::module_& m) {
       [] (pdb::DebugInfo& self) {
         auto types = LIEF::py::owning_range(self.types());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<pdb::DebugInfo>(), "types_it", types);
+            nb::type<pdb::DebugInfo>(), "types_it", types.begin(), types.end(),
+            nb::keep_alive<0, 1>());
       },
       R"doc(
       Return an iterator over the different types registered in this PDB file

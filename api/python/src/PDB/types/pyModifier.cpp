@@ -17,7 +17,7 @@ void create<pdb::types::Modifier>(nb::module_& m) {
     .def_prop_ro("underlying_type", &pdb::types::Modifier::underlying_type,
       R"doc(
       Underlying type targeted by this modifier
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

@@ -65,14 +65,14 @@ void create<dw::Parameter>(nb::module_& m) {
     .def_prop_ro("type", &dw::Parameter::type,
       R"doc(
       Type of this parameter
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
 
     .def_prop_ro("location", &dw::Parameter::location,
       R"doc(
       Location of this parameter. For instance it can be a specific register
       that is not following the calling convention.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 
@@ -102,7 +102,7 @@ void create<dw::Parameter>(nb::module_& m) {
        *
        * CAN BE REMOVED if one of these classes are API enhanced
        */
-      .def_prop_ro("type", &dw::parameters::Formal::type)
+      .def_prop_ro("type", &dw::parameters::Formal::type, nb::keep_alive<0, 1>())
     ;
   }
 

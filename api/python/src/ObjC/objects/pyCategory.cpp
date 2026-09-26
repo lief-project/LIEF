@@ -31,7 +31,8 @@ void create<objc::Category>(nb::module_& m) {
       [] (objc::Category& self) {
           auto methods = LIEF::py::owning_range(self.methods());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Category>(), "methods_it", methods
+            nb::type<objc::Category>(), "methods_it", methods.begin(), methods.end(),
+            nb::keep_alive<0, 1>()
           );
       }, nb::keep_alive<0, 1>(),
       R"doc(
@@ -42,7 +43,8 @@ void create<objc::Category>(nb::module_& m) {
       [] (objc::Category& self) {
           auto protocols = LIEF::py::owning_range(self.protocols());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Category>(), "protocols_it", protocols
+            nb::type<objc::Category>(), "protocols_it", protocols.begin(), protocols.end(),
+            nb::keep_alive<0, 1>()
           );
       }, nb::keep_alive<0, 1>(),
       R"doc(
@@ -53,7 +55,8 @@ void create<objc::Category>(nb::module_& m) {
       [] (objc::Category& self) {
           auto properties = LIEF::py::owning_range(self.properties());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Category>(), "properties_it", properties
+            nb::type<objc::Category>(), "properties_it", properties.begin(), properties.end(),
+            nb::keep_alive<0, 1>()
           );
       }, nb::keep_alive<0, 1>(),
       R"doc(

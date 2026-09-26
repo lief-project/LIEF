@@ -33,7 +33,8 @@ void create<objc::Metadata>(nb::module_& m) {
         [] (objc::Metadata& self) {
           auto classes = LIEF::py::owning_range(self.classes());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Metadata>(), "classes_it", classes
+            nb::type<objc::Metadata>(), "classes_it", classes.begin(), classes.end(),
+            nb::keep_alive<0, 1>()
           );
         }, nb::keep_alive<0, 1>(),
         R"doc(
@@ -44,7 +45,8 @@ void create<objc::Metadata>(nb::module_& m) {
         [] (objc::Metadata& self) {
           auto protocols = LIEF::py::owning_range(self.protocols());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Metadata>(), "protocols_it", protocols
+            nb::type<objc::Metadata>(), "protocols_it", protocols.begin(), protocols.end(),
+            nb::keep_alive<0, 1>()
           );
         }, nb::keep_alive<0, 1>(),
         R"doc(
@@ -56,7 +58,8 @@ void create<objc::Metadata>(nb::module_& m) {
         [] (objc::Metadata& self) {
           auto categories = LIEF::py::owning_range(self.categories());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Metadata>(), "categories_it", categories
+            nb::type<objc::Metadata>(), "categories_it", categories.begin(), categories.end(),
+            nb::keep_alive<0, 1>()
           );
         }, nb::keep_alive<0, 1>(),
         R"doc(

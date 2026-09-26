@@ -1,5 +1,6 @@
 #include "LIEF/PDB/types/Enum.hpp"
 #include "PDB/pyPDB.hpp"
+#include "pyutils.hpp"
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
@@ -40,16 +41,17 @@ void create<pdb::types::Enum>(nb::module_& m) {
     )
 
     .def_prop_ro("entries", &Enum::entries,
-      "Return the different entries associated with this enum"_doc
+      "Return the different entries associated with this enum"_doc,
+      nb::call_policy<LIEF::py::returns_references_to<1>>()
     )
 
     .def_prop_ro("underlying_type", &Enum::underlying_type,
-      "The underlying type that is used to encode this enum"_doc
+      "The underlying type that is used to encode this enum"_doc, nb::keep_alive<0, 1>()
     )
 
     .def("find_entry", &Enum::find_entry,
       "Try to find the enum matching the given value"_doc,
-      "value"_a
+      "value"_a, nb::keep_alive<0, 1>()
     )
   ;
 

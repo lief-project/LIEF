@@ -36,7 +36,7 @@ void create<dsc::SubCache>(nb::module_& m) {
       },
       R"doc(
       The associated :class:`~.DyldSharedCache` object for this subcache
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

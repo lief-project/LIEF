@@ -18,7 +18,7 @@ void create<dw::types::Typedef>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::Typedef::underlying_type,
       R"doc(
       The type aliased by this typedef
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

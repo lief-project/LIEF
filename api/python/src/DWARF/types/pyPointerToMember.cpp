@@ -17,12 +17,12 @@ void create<dw::types::PointerToMember>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::PointerToMember::underlying_type,
       R"doc(
       The type of the member referenced by this pointer.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
     .def_prop_ro("containing_type", &dw::types::PointerToMember::containing_type,
       R"doc(
       The type that embeds this member.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

@@ -43,7 +43,7 @@ void create<dw::types::Array>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::Array::underlying_type,
       R"doc(
       The underlying type of this array.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
 
     .def_prop_ro("size_info", &dw::types::Array::size_info,
@@ -52,7 +52,7 @@ void create<dw::types::Array>(nb::module_& m) {
 
       This size info is usually embedded in a ``DW_TAG_subrange_type`` DIE which
       is represented by the :class:`.Array.size_info_t` class.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

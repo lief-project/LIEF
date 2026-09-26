@@ -49,7 +49,8 @@ void create<pdb::CompilationUnit>(nb::module_& m) {
         [] (const pdb::CompilationUnit& self) {
           auto functions = LIEF::py::owning_range(self.functions());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<pdb::CompilationUnit>(), "functions_it", functions);
+              nb::type<pdb::CompilationUnit>(), "functions_it", functions.begin(), functions.end(),
+            nb::keep_alive<0, 1>());
         },
       R"doc(
       Return an iterator over the functions defined in this compilation unit.

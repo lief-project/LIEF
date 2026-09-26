@@ -15,7 +15,7 @@ void create<dw::types::Restrict>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::Restrict::underlying_type,
       R"doc(
       The underlying type referenced by this restrict-type.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

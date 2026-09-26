@@ -2,6 +2,7 @@
 #include "LIEF/DWARF/types/TemplateAlias.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
 #include "DWARF/pyDwarf.hpp"
+#include "pyutils.hpp"
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
@@ -19,13 +20,13 @@ void create<dw::types::TemplateAlias>(nb::module_& m) {
     .def_prop_ro("parameters", &dw::types::TemplateAlias::parameters,
       R"doc(
       Parameters associated with the underlying template
-      )doc"_doc
+      )doc"_doc, nb::call_policy<LIEF::py::returns_references_to<1>>()
     )
 
     .def_prop_ro("underlying_type", &dw::types::TemplateAlias::underlying_type,
       R"doc(
       The underlying type aliased by this type.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

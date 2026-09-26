@@ -151,7 +151,7 @@ void create<dw::Type>(nb::module_& m) {
     .def_prop_ro("scope", &dw::Type::scope,
       R"doc(
       Scope in which this type is defined
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
 
     .def("to_decl",

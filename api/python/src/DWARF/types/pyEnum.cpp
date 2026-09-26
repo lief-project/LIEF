@@ -1,6 +1,7 @@
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/types/Enum.hpp"
 #include "DWARF/pyDwarf.hpp"
+#include "pyutils.hpp"
 
 #include <nanobind/stl/optional.h>
 
@@ -35,17 +36,17 @@ void create<dw::types::Enum>(nb::module_& m) {
 
   type
     .def_prop_ro("entries", &Enum::entries,
-      "Entries associated with this enum"_doc
+      "Entries associated with this enum"_doc, nb::call_policy<LIEF::py::returns_references_to<1>>()
     )
 
     .def_prop_ro("underlying_type", &Enum::underlying_type,
       "The underlying type that is used to encode this enum"_doc,
-      nb::rv_policy::reference_internal
+      nb::rv_policy::reference_internal, nb::keep_alive<0, 1>()
     )
 
     .def("find_entry", &Enum::find_entry,
       "Try to find the entry matching the given value"_doc,
-      "value"_a
+      "value"_a, nb::keep_alive<0, 1>()
     )
   ;
 }

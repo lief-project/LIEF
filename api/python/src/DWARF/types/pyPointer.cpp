@@ -15,7 +15,7 @@ void create<dw::types::Pointer>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::Pointer::underlying_type,
       R"doc(
       The type pointed by this pointer
-      )doc"_doc, nb::rv_policy::reference_internal
+      )doc"_doc, nb::rv_policy::reference_internal, nb::keep_alive<0, 1>()
     )
   ;
 }

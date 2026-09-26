@@ -138,7 +138,8 @@ void create<Binary>(nb::module_& m) {
     .def("disassemble", [] (const Binary& self, const Symbol& function) {
           auto insts = LIEF::py::owning_range(self.disassemble(function));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<Binary>(), "instructions_it", insts);
+              nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
+              nb::keep_alive<0, 1>());
       }, "function"_a, nb::keep_alive<0, 1>(),
       R"doc(
       Disassemble code for the given symbol
@@ -156,7 +157,8 @@ void create<Binary>(nb::module_& m) {
     .def("disassemble", [] (const Binary& self, const std::string& function) {
           auto insts = LIEF::py::owning_range(self.disassemble(function));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<Binary>(), "instructions_it", insts);
+              nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
+              nb::keep_alive<0, 1>());
       }, "function_name"_a, nb::keep_alive<0, 1>(),
       R"doc(
       Disassemble code for the given symbol name
@@ -178,7 +180,8 @@ void create<Binary>(nb::module_& m) {
             buffer.size(), address
           ));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<Binary>(), "instructions_it", insts);
+              nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
+              nb::keep_alive<0, 1>());
       }, "buffer"_a, "address"_a = 0, nb::keep_alive<0, 1>(), nb::keep_alive<0, 2>(),
       R"doc(
       Disassemble code from the provided bytes

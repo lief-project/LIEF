@@ -35,38 +35,39 @@ void create<dw::DebugInfo>(nb::module_& m) {
               print("Found")
           if func := info.find_function("std::locale::~locale()"):
               print("Found")
-      )doc"_doc, "name"_a
+      )doc"_doc, "name"_a, nb::keep_alive<0, 1>()
     )
 
     .def("find_function", nb::overload_cast<uint64_t>(&DebugInfo::find_function, nb::const_),
       R"doc(
       Try to find the function at the given **virtual** address.
-      )doc"_doc, "addr"_a
+      )doc"_doc, "addr"_a, nb::keep_alive<0, 1>()
     )
 
     .def("find_variable", nb::overload_cast<uint64_t>(&DebugInfo::find_variable, nb::const_),
       R"doc(
       Try to find the (static) variable at the given virtual address.
-      )doc"_doc, "addr"_a
+      )doc"_doc, "addr"_a, nb::keep_alive<0, 1>()
     )
 
     .def("find_variable", nb::overload_cast<std::string_view>(&DebugInfo::find_variable, nb::const_),
       R"doc(
       Try to find the variable with the given name. This name can be mangled or not.
-      )doc"_doc, "name"_a
+      )doc"_doc, "name"_a, nb::keep_alive<0, 1>()
     )
 
     .def("find_type", nb::overload_cast<std::string_view>(&DebugInfo::find_type, nb::const_),
       R"doc(
       Try to find the type with the given name.
-      )doc"_doc, "name"_a
+      )doc"_doc, "name"_a, nb::keep_alive<0, 1>()
     )
 
     .def_prop_ro("compilation_units",
         [] (DebugInfo& self) {
           auto units = LIEF::py::owning_range(self.compilation_units());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<dw::DebugInfo>(), "compilation_units_it", units);
+              nb::type<dw::DebugInfo>(), "compilation_units_it", units.begin(), units.end(),
+            nb::keep_alive<0, 1>());
         }, nb::keep_alive<0, 1>(),
         "Iterator on the CompilationUnit embedded in this dwarf"_doc)
   ;

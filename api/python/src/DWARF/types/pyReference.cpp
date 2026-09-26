@@ -15,7 +15,7 @@ void create<dw::types::Reference>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::Reference::underlying_type,
       R"doc(
       The underlying type referenced by this ref-type.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

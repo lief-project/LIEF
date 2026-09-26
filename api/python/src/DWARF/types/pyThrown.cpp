@@ -15,7 +15,7 @@ void create<dw::types::Thrown>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::Thrown::underlying_type,
       R"doc(
       The underlying type being thrown
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

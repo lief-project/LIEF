@@ -15,7 +15,7 @@ void create<dw::types::Const>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::Const::underlying_type,
       R"doc(
       The underlying type being const-ed by this type.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

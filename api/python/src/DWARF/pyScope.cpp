@@ -36,7 +36,7 @@ void create<dw::Scope>(nb::module_& m) {
     .def_prop_ro("parent", &dw::Scope::parent,
       R"doc(
       Parent scope (if any).
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
 
     .def_prop_ro("type", &dw::Scope::type,

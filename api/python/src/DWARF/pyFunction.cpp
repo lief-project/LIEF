@@ -6,6 +6,7 @@
 #include "LIEF/DWARF/Parameter.hpp"
 #include "DWARF/pyDwarf.hpp"
 #include "pyErr.hpp"
+#include "pyutils.hpp"
 
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/unique_ptr.h>
@@ -55,7 +56,8 @@ void create<dw::Function>(nb::module_& m) {
         [] (dw::Function& self) {
           auto vars = LIEF::py::owning_range(self.variables());
           return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<dw::Function>(), "variables_it", vars);
+              nb::type<dw::Function>(), "variables_it", vars.begin(), vars.end(),
+            nb::keep_alive<0, 1>());
         }, nb::keep_alive<0, 1>(),
         R"delim(
         Return an iterator over the variables (``DW_TAG_variable``) defined within the
@@ -100,14 +102,14 @@ void create<dw::Function>(nb::module_& m) {
       R"doc(
       Return the :class:`~.Type` associated with the **return type** of this
       function
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
 
     .def_prop_ro("parameters", &dw::Function::parameters,
       R"doc(
       Return the list of parameters used by this function
       (including template parameters)
-      )doc"_doc
+      )doc"_doc, nb::call_policy<LIEF::py::returns_references_to<1>>()
     )
 
     .def_prop_ro("thrown_types", &dw::Function::thrown_types,
@@ -123,19 +125,20 @@ void create<dw::Function>(nb::module_& m) {
 
       :attr:`~.thrown_types` returns one element associated with the
       :class:`~.Type`: ``StatisticsError``.
-      )doc"_doc
+      )doc"_doc, nb::call_policy<LIEF::py::returns_references_to<1>>()
     )
 
     .def_prop_ro("scope", &dw::Function::scope,
       R"doc(
       Scope in which this function is defined
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
     .def_prop_ro("instructions",
       [] (dw::Function& self) {
         auto insts = LIEF::py::owning_range(self.instructions());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<dw::Function>(), "instructions_it", insts);
+            nb::type<dw::Function>(), "instructions_it", insts.begin(), insts.end(),
+            nb::keep_alive<0, 1>());
       }, nb::keep_alive<0, 1>(),
       R"doc(
       Disassemble the current function by returning an iterator over the
@@ -147,7 +150,8 @@ void create<dw::Function>(nb::module_& m) {
       [] (dw::Function& self) {
         auto lexical_blocks = LIEF::py::owning_range(self.lexical_blocks());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<dw::Function>(), "lexical_blocks_it", lexical_blocks);
+            nb::type<dw::Function>(), "lexical_blocks_it", lexical_blocks.begin(), lexical_blocks.end(),
+            nb::keep_alive<0, 1>());
       }, nb::keep_alive<0, 1>(),
       R"delim(
       Iterator over the :class:`~.LexicalBlock` owned by this function

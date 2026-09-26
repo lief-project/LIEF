@@ -19,11 +19,11 @@ void create<pdb::types::Array>(nb::module_& m) {
     )
 
     .def_prop_ro("element_type", &Array::element_type,
-      "Type of the elements"_doc
+      "Type of the elements"_doc, nb::keep_alive<0, 1>()
     )
 
     .def_prop_ro("index_type", &Array::index_type,
-      "Type of the index"_doc
+      "Type of the index"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

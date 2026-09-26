@@ -26,7 +26,7 @@ void create<pdb::types::Attribute>(nb::module_& m) {
     .def_prop_ro("type", &pdb::types::Attribute::type,
       R"doc(
       Type of this attribute
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
     .def_prop_ro("field_offset", &pdb::types::Attribute::field_offset,
       R"doc(

@@ -23,7 +23,7 @@ void create<dw::editor::FunctionType>(nb::module_& m) {
          "type"_a, nb::rv_policy::reference_internal)
 
     .def("add_parameter", &dw::editor::FunctionType::add_parameter,
-         "Add a parameter"_doc, "type"_a)
+         "Add a parameter"_doc, "type"_a, nb::keep_alive<0, 1>())
   ;
 }
 

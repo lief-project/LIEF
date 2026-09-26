@@ -33,7 +33,8 @@ void create<dw::LexicalBlock>(nb::module_& m) {
       [] (dw::LexicalBlock& self) {
         auto sub_blocks = LIEF::py::owning_range(self.sub_blocks());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<dw::LexicalBlock>(), "sub_blocks_it", sub_blocks);
+            nb::type<dw::LexicalBlock>(), "sub_blocks_it", sub_blocks.begin(), sub_blocks.end(),
+            nb::keep_alive<0, 1>());
       }, nb::keep_alive<0, 1>(),
       "Return an iterator over the sub-LexicalBlock owned by this block."_doc
   )

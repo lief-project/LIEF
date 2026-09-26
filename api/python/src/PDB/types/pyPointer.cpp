@@ -17,7 +17,7 @@ void create<pdb::types::Pointer>(nb::module_& m) {
     .def_prop_ro("underlying_type", &pdb::types::Pointer::underlying_type,
       R"doc(
       The underlying type pointed to by this pointer
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

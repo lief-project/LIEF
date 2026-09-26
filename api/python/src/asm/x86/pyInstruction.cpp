@@ -21,7 +21,8 @@ void create<x86::Instruction>(nb::module_& m) {
     .def_prop_ro("operands", [] (const x86::Instruction& self) {
         auto ops = LIEF::py::owning_range(self.operands());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<x86::Instruction>(), "operands_it", ops
+          nb::type<x86::Instruction>(), "operands_it", ops.begin(), ops.end(),
+          nb::keep_alive<0, 1>()
         );
       }, nb::keep_alive<0, 1>(),
       R"doc(Iterator over the operands of the current instruction)doc"_doc

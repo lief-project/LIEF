@@ -27,7 +27,8 @@ void create<objc::Protocol>(nb::module_& m) {
       [] (objc::Protocol& self) {
         auto protocols = LIEF::py::owning_range(self.protocols());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<objc::Protocol>(), "protocols_it", protocols
+          nb::type<objc::Protocol>(), "protocols_it", protocols.begin(), protocols.end(),
+          nb::keep_alive<0, 1>()
         );
       }, nb::keep_alive<0, 1>(),
       R"doc(
@@ -40,7 +41,8 @@ void create<objc::Protocol>(nb::module_& m) {
       [] (objc::Protocol& self) {
         auto methods = LIEF::py::owning_range(self.optional_methods());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<objc::Protocol>(), "optional_methods_it", methods
+          nb::type<objc::Protocol>(), "optional_methods_it", methods.begin(), methods.end(),
+          nb::keep_alive<0, 1>()
         );
       }, nb::keep_alive<0, 1>(),
       R"doc(
@@ -51,7 +53,8 @@ void create<objc::Protocol>(nb::module_& m) {
       [] (objc::Protocol& self) {
         auto methods = LIEF::py::owning_range(self.required_methods());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<objc::Protocol>(), "required_methods_it", methods
+          nb::type<objc::Protocol>(), "required_methods_it", methods.begin(), methods.end(),
+          nb::keep_alive<0, 1>()
         );
       }, nb::keep_alive<0, 1>(),
       R"doc(
@@ -62,7 +65,8 @@ void create<objc::Protocol>(nb::module_& m) {
       [] (objc::Protocol& self) {
         auto props = LIEF::py::owning_range(self.properties());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<objc::Protocol>(), "properties_it", props
+          nb::type<objc::Protocol>(), "properties_it", props.begin(), props.end(),
+          nb::keep_alive<0, 1>()
         );
       }, nb::keep_alive<0, 1>(),
       R"doc(

@@ -34,7 +34,7 @@ void create<dw::editor::EnumType>(nb::module_& m) {
     .def("add_value", &dw::editor::EnumType::add_value,
       R"doc(
       Add an enum value by specifying its name and its integer value.
-      )doc"_doc, "name"_a, "value"_a, nb::rv_policy::reference_internal)
+      )doc"_doc, "name"_a, "value"_a, nb::rv_policy::reference_internal, nb::keep_alive<0, 1>())
   ;
 }
 

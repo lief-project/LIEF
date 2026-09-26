@@ -48,7 +48,7 @@ void create<dw::Editor>(nb::module_& m) {
       "fmt"_a, "arch"_a
     )
     .def("create_compilation_unit", &dw::Editor::create_compilation_unit,
-      "Create a new compilation unit"_doc, nb::lock_self()
+      "Create a new compilation unit"_doc, nb::lock_self(), nb::keep_alive<0, 1>()
     )
     .def("write", [] (dw::Editor& self, nb::PathLike path) {
         self.write(path.to_string());

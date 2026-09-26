@@ -16,7 +16,7 @@ void create<dw::types::Immutable>(nb::module_& m) {
     .def_prop_ro("underlying_type", &dw::types::Immutable::underlying_type,
       R"doc(
       The underlying type.
-      )doc"_doc
+      )doc"_doc, nb::keep_alive<0, 1>()
     )
   ;
 }

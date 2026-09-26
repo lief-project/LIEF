@@ -40,11 +40,11 @@ void create<dw::editor::StructType>(nb::module_& m) {
 
     .def("add_member", &editor::StructType::add_member,
       "Adds a member to the current struct-like"_doc,
-      "name"_a, "type"_a, "offset"_a = -1)
+      "name"_a, "type"_a, "offset"_a = -1, nb::keep_alive<0, 1>())
 
     .def("add_bitfield", &editor::StructType::add_bitfield,
       "Adds a member to the current struct-like"_doc,
-      "name"_a, "type"_a, "bitsize"_a, "bitoffset"_a = -1)
+      "name"_a, "type"_a, "bitsize"_a, "bitoffset"_a = -1, nb::keep_alive<0, 1>())
   ;
 }
 

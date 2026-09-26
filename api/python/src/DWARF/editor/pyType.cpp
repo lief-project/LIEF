@@ -24,7 +24,7 @@ void create<dw::editor::Type>(nb::module_& m) {
     )doc"_doc
   )
     .def("pointer_to", &dw::editor::Type::pointer_to,
-         "Create a pointer type pointing to this type"_doc)
+         "Create a pointer type pointing to this type"_doc, nb::keep_alive<0, 1>())
   ;
 
   create<LIEF::dwarf::editor::PointerType>(m);

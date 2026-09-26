@@ -25,7 +25,8 @@ void create<pdb::types::ClassLike>(nb::module_& m) {
       [] (pdb::types::ClassLike& self) {
         auto attrs = LIEF::py::owning_range(self.attributes());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<pdb::types::ClassLike>(), "attributes_it", attrs);
+            nb::type<pdb::types::ClassLike>(), "attributes_it", attrs.begin(), attrs.end(),
+            nb::keep_alive<0, 1>());
       },
       R"doc(
       Return an iterator over the different attributes defined in this class-like type
@@ -35,7 +36,8 @@ void create<pdb::types::ClassLike>(nb::module_& m) {
       [] (pdb::types::ClassLike& self) {
         auto methods = LIEF::py::owning_range(self.methods());
         return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<pdb::types::ClassLike>(), "methods_it", methods);
+            nb::type<pdb::types::ClassLike>(), "methods_it", methods.begin(), methods.end(),
+            nb::keep_alive<0, 1>());
       },
       R"doc(
       Return an iterator over the different methods implemented in this class-like type
