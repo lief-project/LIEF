@@ -94,7 +94,7 @@ void RelocationEntry::address(uint64_t address) {
   }
 
   if (delta > MAX_ADDR) {
-    LIEF_ERR("{:#06x} does not fit in a 12-bit encoding");
+    LIEF_ERR("{:#06x} does not fit in a 12-bit encoding", delta);
     return;
   }
 

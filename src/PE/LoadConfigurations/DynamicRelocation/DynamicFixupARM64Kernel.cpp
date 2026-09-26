@@ -104,8 +104,8 @@ std::unique_ptr<DynamicFixupARM64Kernel>
                  "ImportType: {}, "
                  "IATIndex: {}",
                  *PageRVA, *PageRVA + (value->page_relative_offset << 2),
-                 value->indirect_call, value->register_index, value->import_type,
-                 value->iat_index);
+                 uint32_t(value->indirect_call), uint32_t(value->register_index),
+                 uint32_t(value->import_type), uint32_t(value->iat_index));
     }
   }
   return fixup;

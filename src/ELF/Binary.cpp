@@ -1231,7 +1231,7 @@ Segment* Binary::extend(const Segment& segment, uint64_t size) {
 
     default:
     {
-      LIEF_WARN("Extending segment '{}' is not supported");
+      LIEF_WARN("Extending segment '{}' is not supported", to_string(type));
       return nullptr;
     }
   }

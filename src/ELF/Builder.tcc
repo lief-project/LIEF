@@ -611,7 +611,7 @@ ok_error_t Builder::process_object_relocations() {
     }
     const size_t sh_info = sec.information();
     if (sh_info == 0 || sh_info >= sections.size()) {
-      LIEF_WARN("Relocation index for section '{}' is corrupted");
+      LIEF_WARN("Relocation index for section '{}' is corrupted", sec.name());
       continue;
     }
     Section& associated = sections[sh_info];

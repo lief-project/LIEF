@@ -1117,7 +1117,7 @@ ok_error_t Builder::build_exports() {
   if (auto it = strmap_offset.find(exp->name()); it != strmap_offset.end()) {
     name_off = str_table_off + it->second;
   } else {
-    LIEF_ERR("Entry '{}' not found in optimized string table");
+    LIEF_ERR("Entry '{}' not found in optimized string table", exp->name());
     return make_error_code(lief_errors::build_error);
   }
 

@@ -383,7 +383,7 @@ void ResourcesManager::change_icon(const ResourceIcon& original,
         const size_t pos = stream.pos();
         auto res = stream.read<details::pe_resource_icon_group>();
         if (!res) {
-          LIEF_DEBUG("Icon #{} is corrupted");
+          LIEF_DEBUG("Icon #{} is corrupted", i);
           return;
         }
         if (res->ID != original.id()) {

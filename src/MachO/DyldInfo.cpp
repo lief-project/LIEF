@@ -2023,7 +2023,7 @@ DyldInfo& DyldInfo::update_standard_bindings_v2(
   if (num_bindings > std::numeric_limits<uint16_t>::max() &&
       num_bindings != uint64_t(-1))
   {
-    LIEF_ERR("Too many binds ({:d}). The limit being 65536");
+    LIEF_ERR("Too many binds ({:d}). The limit being 65536", num_bindings);
     return *this;
   }
 

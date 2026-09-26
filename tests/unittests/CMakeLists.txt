@@ -43,7 +43,7 @@ set_target_properties(unittests
   PROPERTIES CXX_STANDARD           17
              CXX_STANDARD_REQUIRED  ON)
 
-target_link_libraries(unittests LIB_LIEF Catch2::Catch2WithMain)
+target_link_libraries(unittests PRIVATE LIB_LIEF Catch2::Catch2WithMain)
 
 add_test(unittests
          ${CMAKE_CURRENT_BINARY_DIR}/unittests)

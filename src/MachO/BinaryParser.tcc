@@ -1422,7 +1422,8 @@ ok_error_t BinaryParser::parse_relocations(Section& section) {
            */
           LIEF_INFO("Relocation #{:d} of {} seems corrupted: "
                     "r_symbolnum is {} sections.size(): {}",
-                    i, section.name(), reloc_info.r_symbolnum, sections.size());
+                    i, section.name(), uint32_t(reloc_info.r_symbolnum),
+                    sections.size());
         }
       }
     }
