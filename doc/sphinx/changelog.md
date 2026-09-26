@@ -27,6 +27,11 @@
 
 :ELF:
 
+  * Enhance the symbol-version API with the masked version index
+    (|lief-elf-symbol-version-version|), local/global classification
+    (|lief-elf-symbol-version-is_local| / |lief-elf-symbol-version-is_global|),
+    and support for inspecting the GNU ``VERSYM_HIDDEN`` bit
+    (|lief-elf-symbol-version-is_hidden| / |lief-elf-symbol-version-set_hidden|).
   * Fix the layout of the segments added by LIEF for the architectures that
     can use pages larger than 4K (:issue:`1366`)
   * Fix the modification of binaries that have already been modified by LIEF.

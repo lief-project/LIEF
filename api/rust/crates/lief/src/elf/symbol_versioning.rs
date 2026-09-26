@@ -22,6 +22,33 @@ impl SymbolVersion<'_> {
         self.ptr.value()
     }
 
+    /// Version index without the GNU `VERSYM_HIDDEN` bit.
+    pub fn version(&self) -> u16 {
+        self.ptr.version()
+    }
+
+    /// Whether this symbol version is local (`VER_NDX_LOCAL`).
+    pub fn is_local(&self) -> bool {
+        self.ptr.is_local()
+    }
+
+    /// Whether this symbol version is global (`VER_NDX_GLOBAL`) or the base
+    /// version (`VERSYM_BASE`).
+    pub fn is_global(&self) -> bool {
+        self.ptr.is_global()
+    }
+
+    /// Whether the GNU `VERSYM_HIDDEN` bit is set.
+    pub fn is_hidden(&self) -> bool {
+        self.ptr.is_hidden()
+    }
+
+    /// Set or clear the GNU `VERSYM_HIDDEN` bit while preserving the version
+    /// index.
+    pub fn set_hidden(&mut self, value: bool) {
+        self.ptr.pin_mut().set_hidden(value)
+    }
+
     /// SymbolVersionAux associated with the current Version if any.
     pub fn symbol_version_auxiliary(&self) -> Option<SymbolVersionAux<'_>> {
         into_optional(self.ptr.symbol_version_auxiliary())
@@ -51,6 +78,8 @@ impl fmt::Debug for SymbolVersion<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("SymbolVersion")
             .field("value", &self.value())
+            .field("version", &self.version())
+            .field("is_hidden", &self.is_hidden())
             .field("symbol_version_auxiliary", &self.symbol_version_auxiliary())
             .finish()
     }

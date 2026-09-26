@@ -26,6 +26,26 @@ class ELF_SymbolVersion : private Mirror<LIEF::ELF::SymbolVersion> {
     return get().value();
   }
 
+  auto version() const {
+    return get().version();
+  }
+
+  auto is_local() const {
+    return get().is_local();
+  }
+
+  auto is_global() const {
+    return get().is_global();
+  }
+
+  auto is_hidden() const {
+    return get().is_hidden();
+  }
+
+  auto set_hidden(bool value) {
+    get().set_hidden(value);
+  }
+
   auto symbol_version_auxiliary() const {
     return details::try_unique<ELF_SymbolVersionAux>(
         get().symbol_version_auxiliary()

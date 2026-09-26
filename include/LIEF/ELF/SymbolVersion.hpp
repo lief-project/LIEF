@@ -34,8 +34,14 @@ class LIEF_API SymbolVersion : public Object {
   friend class Parser;
 
   public:
-  static constexpr auto LOCAL_VERSION = 0;
-  static constexpr auto GLOBAL_VERSION = 1;
+  static constexpr uint16_t LOCAL_VERSION = 0;
+  static constexpr uint16_t GLOBAL_VERSION = 1;
+
+  /// Mask for the GNU `VERSYM_HIDDEN` bit.
+  static constexpr uint16_t HIDDEN_MASK = 0x8000;
+
+  /// Mask for the version index (`VERSYM_VERSION` in the GNU implementation).
+  static constexpr uint16_t VERSION_MASK = 0x7fff;
 
   SymbolVersion(uint16_t value) :
     value_(value) {}
@@ -66,6 +72,42 @@ class LIEF_API SymbolVersion : public Object {
     return value_;
   }
 
+  /// Version index without the GNU `VERSYM_HIDDEN` bit.
+  uint16_t version() const {
+    return value() & VERSION_MASK;
+  }
+
+  /// Whether this symbol version is local (`VER_NDX_LOCAL`).
+  bool is_local() const {
+    return version() == LOCAL_VERSION;
+  }
+
+  /// Whether this symbol version is global (`VER_NDX_GLOBAL`).
+  ///
+  /// `VERSYM_BASE` has the same value as `VER_NDX_GLOBAL`, so this also
+  /// identifies the base version.
+  bool is_global() const {
+    return version() == GLOBAL_VERSION;
+  }
+
+  /// Whether the GNU `VERSYM_HIDDEN` bit is set.
+  ///
+  /// A hidden version is only available when explicitly referenced by its
+  /// version name.
+  bool is_hidden() const {
+    return (value() & HIDDEN_MASK) != 0;
+  }
+
+  /// Set or clear the GNU `VERSYM_HIDDEN` bit while preserving the version
+  /// index.
+  void set_hidden(bool value = true) {
+    if (value) {
+      value_ |= HIDDEN_MASK;
+    } else {
+      value_ &= VERSION_MASK;
+    }
+  }
+
   /// Whether the current SymbolVersion has an auxiliary one
   bool has_auxiliary_version() const {
     return symbol_version_auxiliary() != nullptr;
@@ -91,9 +133,6 @@ class LIEF_API SymbolVersion : public Object {
 
   /// Drop the versioning requirement and replace the value (local/global)
   void drop_version(uint16_t value) {
-    if (symbol_aux_ == nullptr) {
-      return;
-    }
     assert(value == LOCAL_VERSION || value == GLOBAL_VERSION);
     value_ = value;
     symbol_aux_ = nullptr;

@@ -1896,8 +1896,7 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset,
   // Symbol version requirement is used to map
   // SymbolVersion::SymbolVersionAux <------> SymbolVersionAuxRequirement
   //
-  // We mask the 15th (7FFF) bit because it indicates if this symbol is a hidden
-  // one or not, but we don't care
+  // The hidden bit is independent from the version index.
   for (const std::unique_ptr<SymbolVersionRequirement>& svr :
        binary_->symbol_version_requirements_)
   {
@@ -1909,7 +1908,7 @@ ok_error_t Parser::parse_symbol_version_requirement(uint64_t offset,
       for (const std::unique_ptr<SymbolVersion>& sv :
            binary_->symbol_version_table_)
       {
-        if ((sv->value() & 0x7FFF) == svar->other()) {
+        if (sv->version() == (svar->other() & SymbolVersion::VERSION_MASK)) {
           sv->symbol_aux_ = svar.get();
         }
       }
@@ -1995,14 +1994,14 @@ ok_error_t Parser::parse_symbol_version_definition(uint64_t offset,
   binary_->sizing_info_->verdef = def_size;
 
   // Associate Symbol Version with auxiliary symbol
-  // We mask the 15th bit because it indicates if this symbol is a hidden one or
-  // not, but we don't care
+  // The hidden bit is independent from the version index.
   for (std::unique_ptr<SymbolVersionDefinition>& svd :
        binary_->symbol_version_definition_)
   {
+    const uint16_t version = svd->ndx() & SymbolVersion::VERSION_MASK;
     for (std::unique_ptr<SymbolVersionAux>& sva : svd->symbol_version_aux_) {
       for (std::unique_ptr<SymbolVersion>& sv : binary_->symbol_version_table_) {
-        if (svd->ndx() > 1 && (sv->value() & 0x7FFF) == svd->ndx() &&
+        if (version > SymbolVersion::GLOBAL_VERSION && sv->version() == version &&
             !sv->symbol_aux_)
         {
           sv->symbol_aux_ = sva.get();

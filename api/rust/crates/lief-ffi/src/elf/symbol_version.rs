@@ -8,6 +8,11 @@ pub mod ffi {
         type ELF_SymbolVersion;
 
         fn value(self: &ELF_SymbolVersion) -> u16;
+        fn version(self: &ELF_SymbolVersion) -> u16;
+        fn is_local(self: &ELF_SymbolVersion) -> bool;
+        fn is_global(self: &ELF_SymbolVersion) -> bool;
+        fn is_hidden(self: &ELF_SymbolVersion) -> bool;
+        fn set_hidden(self: Pin<&mut ELF_SymbolVersion>, value: bool);
         fn symbol_version_auxiliary(self: &ELF_SymbolVersion) -> UniquePtr<ELF_SymbolVersionAux>;
         fn drop_version(self: Pin<&mut ELF_SymbolVersion>, value: u16);
         fn as_local(self: Pin<&mut ELF_SymbolVersion>);

@@ -440,6 +440,17 @@ class SymbolVersion(lief.Object):
     value: int
 
     @property
+    def version(self) -> int: ...
+
+    @property
+    def is_local(self) -> bool: ...
+
+    @property
+    def is_global(self) -> bool: ...
+
+    is_hidden: bool
+
+    @property
     def has_auxiliary_version(self) -> bool: ...
 
     @property

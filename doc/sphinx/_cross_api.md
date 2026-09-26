@@ -856,6 +856,36 @@
     :py:attr:`lief.ELF.Symbol.demangled_name`
     :cpp:func:`LIEF::ELF::Symbol::demangled_name`
 
+.. |lief-elf-symbol-version-version| lief-api:: lief.ELF.SymbolVersion.version
+
+    :rust:method:`lief::elf::SymbolVersion::version [struct]`
+    :py:attr:`lief.ELF.SymbolVersion.version`
+    :cpp:func:`LIEF::ELF::SymbolVersion::version`
+
+.. |lief-elf-symbol-version-is_local| lief-api:: lief.ELF.SymbolVersion.is_local
+
+    :rust:method:`lief::elf::SymbolVersion::is_local [struct]`
+    :py:attr:`lief.ELF.SymbolVersion.is_local`
+    :cpp:func:`LIEF::ELF::SymbolVersion::is_local`
+
+.. |lief-elf-symbol-version-is_global| lief-api:: lief.ELF.SymbolVersion.is_global
+
+    :rust:method:`lief::elf::SymbolVersion::is_global [struct]`
+    :py:attr:`lief.ELF.SymbolVersion.is_global`
+    :cpp:func:`LIEF::ELF::SymbolVersion::is_global`
+
+.. |lief-elf-symbol-version-is_hidden| lief-api:: lief.ELF.SymbolVersion.is_hidden
+
+    :rust:method:`lief::elf::SymbolVersion::is_hidden [struct]`
+    :py:attr:`lief.ELF.SymbolVersion.is_hidden`
+    :cpp:func:`LIEF::ELF::SymbolVersion::is_hidden`
+
+.. |lief-elf-symbol-version-set_hidden| lief-api:: lief.ELF.SymbolVersion.set_hidden()
+
+    :rust:method:`lief::elf::SymbolVersion::set_hidden [struct]`
+    :py:attr:`lief.ELF.SymbolVersion.is_hidden`
+    :cpp:func:`LIEF::ELF::SymbolVersion::set_hidden`
+
 .. |lief-elf-parse| lief-api:: lief.ELF.parse()
 
     :rust:method:`lief::elf::Binary::parse [struct]`

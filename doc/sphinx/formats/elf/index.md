@@ -322,6 +322,12 @@ command-line interface.
 The ELF format supports symbol versioning, allowing multiple versions of
 the same function or variable to coexist within a single shared object.
 
+GNU symbol-version entries can also carry the `VERSYM_HIDDEN` bit. It marks
+a non-default version that is only available through an explicit versioned
+reference. Use |lief-elf-symbol-version-is_hidden| to inspect this bit and
+|lief-elf-symbol-version-set_hidden| to update it without changing the version
+index.
+
 During compilation, the linker selects the appropriate symbols and versions
 based on the libraries provided as input. For example, if a program uses the
 `printf` function and is linked with a version of `libc.so` that exposes

@@ -64,6 +64,57 @@ def test_issue_1014(tmp_path: Path):
     check_lib(new_lib)
 
 
+def test_versym_hidden(tmp_path: Path):
+    elf = parse_elf("ELF/ELF32_x86_binary_all.bin")
+    symbol = elf.get_dynamic_symbol("first")
+    assert symbol is not None
+
+    version = symbol.symbol_version
+    assert version is not None
+    assert version.value == 0x8002
+    assert version.version == 2
+    assert version.is_hidden
+    assert not version.is_local
+    assert not version.is_global
+
+    version.is_hidden = False
+    assert version.value == 2
+    assert not version.is_hidden
+    assert version.symbol_version_auxiliary is not None
+
+    output = tmp_path / "versym-hidden.elf"
+    elf.write(output)
+
+    reparsed = parse_elf(output)
+    symbol = reparsed.get_dynamic_symbol("first")
+    assert symbol is not None
+    version = symbol.symbol_version
+    assert version is not None
+    assert version.value == 2
+    assert version.version == 2
+    assert not version.is_hidden
+    assert version.symbol_version_auxiliary is not None
+
+    version.is_hidden = True
+    assert version.value == 0x8002
+    assert version.is_hidden
+
+    version.as_global()
+    assert version.value == 1
+    assert version.is_global
+    assert not version.is_hidden
+
+    version.is_hidden = True
+    assert version.value == 0x8001
+    assert version.is_global
+    assert version.is_hidden
+
+    version.as_local()
+    assert version.value == 0
+    assert version.is_local
+    assert not version.is_hidden
+
+
 def test_remove_symbol(tmp_path: Path):
     elf = parse_elf("ELF/lib_symbol_versions.so")
 

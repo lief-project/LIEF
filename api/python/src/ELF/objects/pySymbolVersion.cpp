@@ -58,6 +58,28 @@ void create<SymbolVersion>(nb::module_& m) {
         the dependencies. This is the version the symbol is tied to.
         )delim"_doc)
 
+    .def_prop_ro("version",
+        &SymbolVersion::version,
+        "Version index without the GNU ``VERSYM_HIDDEN`` bit"_doc)
+
+    .def_prop_ro("is_local",
+        &SymbolVersion::is_local,
+        "Whether this symbol version is local"_doc)
+
+    .def_prop_ro("is_global",
+        &SymbolVersion::is_global,
+        "Whether this symbol version is global or the base version"_doc)
+
+    .def_prop_rw("is_hidden",
+        &SymbolVersion::is_hidden,
+        &SymbolVersion::set_hidden,
+        R"delim(
+        Whether the GNU ``VERSYM_HIDDEN`` bit is set.
+
+        A hidden version is only available when explicitly referenced by its
+        version name.
+        )delim"_doc)
+
     .def_prop_ro("has_auxiliary_version",
         &SymbolVersion::has_auxiliary_version,
         "Check if this symbols has a " RST_CLASS_REF(lief.ELF.SymbolVersionAux) ""_doc)

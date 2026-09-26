@@ -287,6 +287,45 @@ fn test_mut_api() {
 }
 
 #[test]
+fn test_symbol_version() {
+    let path = utils::get_elf_sample("ELF32_x86_binary_all.bin").unwrap();
+    let Binary::ELF(bin) = Binary::parse(path.to_str().unwrap()).unwrap() else {
+        panic!("Expecting an ELF");
+    };
+
+    let mut version = bin
+        .symbols_version()
+        .find(|version| version.value() == 0x8002)
+        .unwrap();
+    assert_eq!(version.version(), 2);
+    assert!(version.is_hidden());
+    assert!(!version.is_local());
+    assert!(!version.is_global());
+
+    version.set_hidden(false);
+    assert_eq!(version.value(), 2);
+    assert!(!version.is_hidden());
+
+    version.set_hidden(true);
+    assert_eq!(version.value(), 0x8002);
+    assert!(version.is_hidden());
+
+    version.as_global();
+    assert_eq!(version.value(), 1);
+    assert!(version.is_global());
+    assert!(!version.is_hidden());
+
+    version.set_hidden(true);
+    assert!(version.is_global());
+    assert!(version.is_hidden());
+
+    version.as_local();
+    assert_eq!(version.value(), 0);
+    assert!(version.is_local());
+    assert!(!version.is_hidden());
+}
+
+#[test]
 fn test_mips_n64() {
     let path = utils::get_elf_sample("libtest_mips64el_n64.bin").unwrap();
     let Binary::ELF(bin) = Binary::parse(path.to_str().unwrap()).unwrap() else {
