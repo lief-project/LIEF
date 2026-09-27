@@ -5,6 +5,24 @@ Checks: [
   portability-*,
   cppcoreguidelines-*,
   misc-*,
+  clang-taidy-*,
+  modernize-*,
+
+  -clang-taidy-avoid-implicit-enum-to-integer-conversion,
+  -clang-taidy-avoid-high-cyclomatic-complexity,
+
+  -modernize-use-trailing-return-type,
+  -modernize-use-nodiscard,
+  -modernize-avoid-c-arrays,
+
+  -modernize-avoid-c-style-cast,
+
+  -modernize-use-ranges,
+  -modernize-use-constraints,
+  -modernize-use-designated-initializers,
+  -modernize-use-integer-sign-comparison,
+  -modernize-use-string-view,
+  -modernize-use-to-underlying,
 
   # Remove
   -bugprone-easily-swappable-parameters,

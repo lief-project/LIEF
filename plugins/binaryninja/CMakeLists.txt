@@ -61,6 +61,7 @@ if (LIEF_BINARYNINJA_CLANG_TIDY)
   set(CLANG_TIDY_COMMAND
     "${CLANG_TIDY_EXE}"
     "--use-color"
+    "--load=${CLANG_TIDY_DIR}/clang-taidy.so"
     "--config-file=${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy-core.yaml"
   )
   if (LIEF_BINARYNINJA_CLANG_TIDY_WARN_ERR)
