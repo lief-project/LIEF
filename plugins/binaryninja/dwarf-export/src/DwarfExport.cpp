@@ -50,10 +50,6 @@ using ARCH = LIEF::dwarf::Editor::ARCH;
 
 namespace dwarf_plugin {
 
-inline bool startwith(const std::string& s, const char* prefix) {
-  return s.rfind(prefix, 0) == 0;
-}
-
 DwarfExport::~DwarfExport() = default;
 
 DwarfExport::DwarfExport(BinaryNinja::BinaryView& bv) :
@@ -65,11 +61,11 @@ std::pair<FORMAT, ARCH> get_fmt_arch(const BN::BinaryView& bv) {
 
   if (BN::Ref<BN::Platform> platform = bv.GetDefaultPlatform()) {
     const std::string& name = platform->GetName();
-    if (startwith(name, "linux-") || startwith(name, "freebsd-")) {
+    if (name.starts_with("linux-") || name.starts_with("freebsd-")) {
       fmt = FORMAT::ELF;
-    } else if (startwith(name, "mac-")) {
+    } else if (name.starts_with("mac-")) {
       fmt = FORMAT::MACHO;
-    } else if (startwith(name, "windows-") || startwith(name, "efi-")) {
+    } else if (name.starts_with("windows-") || name.starts_with("efi-")) {
       fmt = FORMAT::PE;
     } else {
       BN_WARN("Platform '{}' is not supported", name);

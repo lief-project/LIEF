@@ -71,7 +71,7 @@ class BNStream : public LIEF::BinaryStream {
   }
 
   std::unique_ptr<BNStream> clone() const {
-    return std::unique_ptr<BNStream>(new BNStream(*this));
+    return std::make_unique<BNStream>(*this);
   }
 
   ~BNStream() override = default;
