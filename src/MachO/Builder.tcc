@@ -893,8 +893,7 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
     dynsym->nb_indirect_symbols(count);
   }
 
-  // The indirect symbol table holds a 4 byte index per symbol, so an odd number
-  // of them leaves the string table misaligned.
+  // Alignment enforced since macOS / iOS >= 27
   linkedit_.align(sizeof(typename T::uint));
 
   symtab.stroff = linkedit_offset_ + linkedit_.size();
