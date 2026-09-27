@@ -893,6 +893,9 @@ ok_error_t Builder::build(SymbolCommand& symbol_command) {
     dynsym->nb_indirect_symbols(count);
   }
 
+  // Alignment enforced since macOS / iOS >= 27
+  linkedit_.align(sizeof(typename T::uint));
+
   symtab.stroff = linkedit_offset_ + linkedit_.size();
   symtab.strsize = strtab.size();
   LIEF_DEBUG("LC_SYMTAB.strtab.offset: {:#08x} -> {:#x}",
