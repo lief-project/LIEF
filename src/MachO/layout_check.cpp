@@ -688,8 +688,10 @@ bool LayoutChecker::check_linkedit() {
                           symtab->symbol_table().size());
 
       if (symtab->strings_size() > 0) {
-        chunks.emplace_back(chunk_t::KIND::SYMTAB_STR, 1, symtab->strings_offset(),
-                            symtab->strings_size());
+        // Since iOS/macOS >= 27, it requires pointer alignment ("mis-aligned
+        // LINKEDIT string pool")
+        chunks.emplace_back(chunk_t::KIND::SYMTAB_STR, ptr_size,
+                            symtab->strings_offset(), symtab->strings_size());
       }
     }
 
