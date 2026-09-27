@@ -21,6 +21,20 @@ use the menu: `Plugins > LIEF > Export as DWARF`
 <br />
 ```
 
+### Command-line export
+
+The standalone `lief-tool-dwarf-export-<system>-<architecture>` tool exports
+the saved analysis from a Binary Ninja database into a DWARF file.
+
+For example, on Linux x86-64:
+
+```console
+$ lief-tool-dwarf-export-linux-x86_64 input.bndb --output out.dwarf
+$ lief-tool-dwarf-export-linux-x86_64 /path/to/input.bndb
+```
+
+The second command writes `/path/to/input.dwarf` next to the database.
+
 ### Support & Limitations
 
 This extension tries to convert most of the information registered in a

@@ -12,6 +12,7 @@ target_link_libraries(dwarf-core PUBLIC
 )
 
 add_subdirectory(src)
+add_subdirectory(tools)
 
 if (NOT LIEF_BINARYNINJA_STATIC)
   add_library(dwarf-plugin SHARED src/plugin.cpp)
