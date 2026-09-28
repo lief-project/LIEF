@@ -97,6 +97,7 @@
 :Dependencies:
 
   * Update nanobind to version ``3.0.1``
+  * Update frozen to commit ``1a6065f``
 
 :Python:
 
