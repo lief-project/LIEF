@@ -13,29 +13,49 @@
  * limitations under the License.
  */
 #pragma once
+#include <string_view>
+#include <utility>
+
 #include <binaryninja/log.hpp>
-
-#define BN_PLUGIN_ANALYSIS_LOG_NAME "lief-analysis-plugin"
-
-#define BN_TRACE(...)                                                             \
-  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)                \
-      .trace(__VA_ARGS__)
-#define BN_DEBUG(...)                                                             \
-  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)                \
-      .debug(__VA_ARGS__)
-#define BN_INFO(...)                                                              \
-  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)                \
-      .info(__VA_ARGS__)
-#define BN_WARN(...)                                                              \
-  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)                \
-      .warn(__VA_ARGS__)
-#define BN_ERR(...)                                                               \
-  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME).err(__VA_ARGS__)
-
+#include <fmt/base.h>
 
 namespace analysis_plugin {
+using Logger = binaryninja::core::Logger;
+
+inline constexpr std::string_view BN_PLUGIN_ANALYSIS_LOG_NAME =
+    "lief-analysis-plugin";
+
+template<typename... Args>
+void BN_TRACE(fmt::format_string<Args...> format, Args&&... args) {
+  Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)
+      .trace(format, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void BN_DEBUG(fmt::format_string<Args...> format, Args&&... args) {
+  Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)
+      .debug(format, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void BN_INFO(fmt::format_string<Args...> format, Args&&... args) {
+  Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)
+      .info(format, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void BN_WARN(fmt::format_string<Args...> format, Args&&... args) {
+  Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)
+      .warn(format, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void BN_ERR(fmt::format_string<Args...> format, Args&&... args) {
+  Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)
+      .error(format, std::forward<Args>(args)...);
+}
+
 inline void enable_debug_log() {
-  binaryninja::core::Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME)
-      .set_level(binaryninja::core::Logger::Level::Debug);
+  Logger::instance(BN_PLUGIN_ANALYSIS_LOG_NAME).set_level(Logger::Level::Debug);
 }
 }

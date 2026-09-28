@@ -8,6 +8,8 @@
 
 namespace BN = BinaryNinja;
 
+using namespace analysis_plugin;
+
 int main(int argc, const char** argv) {
   if (argc < 3) {
     BN_ERR("Usage: {} <target> <output>", argv[0]);

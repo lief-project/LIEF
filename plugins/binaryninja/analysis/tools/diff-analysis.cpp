@@ -8,6 +8,8 @@
 
 namespace BN = BinaryNinja;
 
+using namespace analysis_plugin;
+
 int main(int argc, const char** argv) {
   if (argc < 4) {
     BN_ERR("Usage: {} <path>.bndb <original> <updated>", argv[0]);

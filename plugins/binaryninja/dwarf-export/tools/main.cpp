@@ -65,7 +65,7 @@ int export_dwarf(const fs::path& input, const fs::path& output,
   BN::LogToStderr(WarningLog);
   BN::SetBundledPluginDirectory(BN::GetBundledPluginDirectory());
 
-  Logger::instance(BN_PLUGIN_LOG_NAME)
+  Logger::instance(dwarf_plugin::BN_PLUGIN_LOG_NAME)
       .set_level(debug ? Logger::Level::Debug : Logger::Level::Warn);
 
   if (!BN::InitPlugins()) {

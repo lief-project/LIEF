@@ -11,6 +11,8 @@ namespace BN = BinaryNinja;
 
 namespace fs = std::filesystem;
 
+using namespace analysis_plugin;
+
 int main(int argc, const char** argv) {
   if (argc < 2) {
     BN_ERR("Usage: {} <path>.bndb", argv[0]);

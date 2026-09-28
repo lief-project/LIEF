@@ -103,8 +103,8 @@ std::unique_ptr<LIEF::Binary> get_bin(BinaryNinja::BinaryView& bv) {
       return fat->take(LIEF::MachO::Header::CPU_TYPE::POWERPC64);
     }
 
-    BN_ERR("Unsupported architecture: {} ({})", arch_name,
-           bv.GetDefaultPlatform()->GetName());
+    core::BN_ERR("Unsupported architecture: {} ({})", arch_name,
+                 bv.GetDefaultPlatform()->GetName());
     return nullptr;
   }
 
@@ -172,8 +172,8 @@ std::optional<std::string> find_typelib(const std::string& name) {
       }
     }
   }
-  BN_WARN("Could not find {} in the following locations:\n{}", name,
-          fmt::join(candidates, "\n-"));
+  core::BN_WARN("Could not find {} in the following locations:\n{}", name,
+                fmt::join(candidates, "\n-"));
   return std::nullopt;
 }
 
