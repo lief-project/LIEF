@@ -4,6 +4,7 @@ use crate::common::FromFFI;
 
 use crate::dwarf::editor::Type;
 use crate::dwarf::editor::types::EditorType;
+use crate::dwarf::location::Location;
 
 pub struct Variable {
     ptr: cxx::UniquePtr<ffi::DWARF_editor_Variable>,
@@ -16,6 +17,12 @@ impl FromFFI<ffi::DWARF_editor_Variable> for Variable {
 }
 
 impl Variable {
+    /// Set the `DW_AT_location` of this variable.
+    pub fn set_location(&mut self, location: &Location<'_>) -> &mut Self {
+        self.ptr.pin_mut().set_location(location.base());
+        self
+    }
+
     /// Set the global address of this variable. Setting this address is only
     /// revelant in the case of a static global variable. For stack variable, you
     /// should use [`Variable::set_stack_offset`].

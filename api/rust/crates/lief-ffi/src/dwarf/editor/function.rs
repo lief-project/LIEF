@@ -15,6 +15,7 @@ pub mod ffi {
 
         type DWARF_editor_Function_Range = crate::dwarf::editor::function::Range;
         type DWARF_editor_Type = crate::dwarf::editor::type_::ffi::DWARF_editor_Type;
+        type DWARF_Location = crate::dwarf::location::ffi::DWARF_Location;
         type DWARF_editor_Variable = crate::dwarf::editor::variable::ffi::DWARF_editor_Variable;
 
         type DWARF_editor_Function;
@@ -65,6 +66,8 @@ pub mod ffi {
         fn add_description(self: Pin<&mut DWARF_editor_Function_LexicalBlock>, name: &CxxString);
 
         type DWARF_editor_Function_Parameter;
+
+        fn set_location(self: Pin<&mut DWARF_editor_Function_Parameter>, location: &DWARF_Location);
 
         fn assign_register_by_name(
             self: Pin<&mut DWARF_editor_Function_Parameter>,

@@ -4,8 +4,11 @@ pub mod ffi {
         include!("LIEF/rust/DWARF/editor/Variable.hpp");
 
         type DWARF_editor_Type = crate::dwarf::editor::type_::ffi::DWARF_editor_Type;
+        type DWARF_Location = crate::dwarf::location::ffi::DWARF_Location;
 
         type DWARF_editor_Variable;
+
+        fn set_location(self: Pin<&mut DWARF_editor_Variable>, location: &DWARF_Location);
 
         fn set_external(self: Pin<&mut DWARF_editor_Variable>);
         fn set_addr(self: Pin<&mut DWARF_editor_Variable>, addr: u64);

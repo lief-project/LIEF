@@ -1,4 +1,5 @@
 #include "LIEF/DWARF/editor/Variable.hpp"
+#include "LIEF/DWARF/Location.hpp"
 #include "LIEF/DWARF/editor/Type.hpp"
 
 #include "DWARF/pyDwarf.hpp"
@@ -17,6 +18,10 @@ void create<dw::editor::Variable>(nb::module_& m) {
   );
 
   V
+    .def("set_location", &dw::editor::Variable::set_location,
+      "Set the ``DW_AT_location`` of this variable."_doc,
+      "location"_a, nb::rv_policy::reference_internal)
+
     .def("set_addr", &dw::editor::Variable::set_addr,
       R"doc(
       Set the global address of this variable. Setting this address is only

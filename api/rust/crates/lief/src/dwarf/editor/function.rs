@@ -4,6 +4,7 @@ use crate::common::{FromFFI, into_optional};
 
 use crate::dwarf::editor::Variable;
 use crate::dwarf::editor::types::EditorType;
+use crate::dwarf::location::Location;
 
 /// This structure represents an **editable** DWARF function (`DW_TAG_subprogram`)
 pub struct Function {
@@ -28,6 +29,12 @@ pub struct Parameter {
 }
 
 impl Parameter {
+    /// Set the `DW_AT_location` of this parameter.
+    pub fn set_location(&mut self, location: &Location<'_>) -> &mut Self {
+        self.ptr.pin_mut().set_location(location.base());
+        self
+    }
+
     /// Assign this parameter to a specific named register.
     pub fn assign_register_by_name(&mut self, name: &str) -> &mut Self {
         cxx::let_cxx_string!(__cxx_s = name);

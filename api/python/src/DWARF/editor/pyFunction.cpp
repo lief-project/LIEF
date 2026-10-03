@@ -1,4 +1,5 @@
 #include "LIEF/DWARF/editor/Function.hpp"
+#include "LIEF/DWARF/Location.hpp"
 #include "LIEF/DWARF/editor/Variable.hpp"
 #include "LIEF/DWARF/editor/Type.hpp"
 
@@ -33,6 +34,10 @@ void create<dw::editor::Function>(nb::module_& m) {
   );
 
   FP
+    .def("set_location", &Parameter::set_location,
+      "Set the ``DW_AT_location`` of this parameter."_doc,
+      "location"_a, nb::rv_policy::reference_internal)
+
     .def("assign_register", nb::overload_cast<std::string_view>(&Parameter::assign_register),
       "Assign this parameter to a specific named register."_doc,
       nb::rv_policy::reference_internal

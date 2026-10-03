@@ -2,6 +2,8 @@ from collections.abc import Sequence
 import enum
 from typing import Optional, overload
 
+import lief.dwarf
+
 
 class Type:
     def pointer_to(self) -> Optional[PointerType]: ...
@@ -81,6 +83,8 @@ class Function:
         end: int
 
     class Parameter:
+        def set_location(self, location: lief.dwarf.Location) -> Function.Parameter: ...
+
         @overload
         def assign_register(self, arg: str, /) -> Function.Parameter: ...
 
@@ -122,6 +126,8 @@ class Function:
     def add_description(self, description: str) -> Function: ...
 
 class Variable:
+    def set_location(self, location: lief.dwarf.Location) -> Variable: ...
+
     def set_addr(self, addr: int) -> Variable: ...
 
     def set_stack_offset(self, offset: int) -> Variable: ...

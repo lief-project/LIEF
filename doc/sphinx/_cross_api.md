@@ -183,6 +183,18 @@
     :py:class:`lief.dwarf.editor.Variable`
     :cpp:class:`LIEF::dwarf::editor::Variable`
 
+.. |lief-dwarf-editor-Parameter-set_location| lief-api:: lief.dwarf.editor.Function.Parameter.set_location()
+
+    :rust:method:`lief::dwarf::editor::function::Parameter::set_location [struct]`
+    :py:meth:`lief.dwarf.editor.Function.Parameter.set_location`
+    :cpp:func:`LIEF::dwarf::editor::Function::Parameter::set_location`
+
+.. |lief-dwarf-editor-Variable-set_location| lief-api:: lief.dwarf.editor.Variable.set_location()
+
+    :rust:method:`lief::dwarf::editor::Variable::set_location [struct]`
+    :py:meth:`lief.dwarf.editor.Variable.set_location`
+    :cpp:func:`LIEF::dwarf::editor::Variable::set_location`
+
 .. |lief-dwarf-editor-Type| lief-api:: lief.dwarf.editor.Type
 
     :rust:enum:`lief::dwarf::editor::Type`

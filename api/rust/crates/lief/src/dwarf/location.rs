@@ -40,7 +40,7 @@ pub enum Location<'a> {
 }
 
 impl Location<'_> {
-    fn base(&self) -> &ffi::DWARF_Location {
+    pub(crate) fn base(&self) -> &ffi::DWARF_Location {
         match self {
             Location::Register(l) => l.ptr.as_ref().unwrap().as_ref(),
             Location::Address(l) => l.ptr.as_ref().unwrap().as_ref(),

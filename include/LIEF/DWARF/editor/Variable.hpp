@@ -22,6 +22,10 @@
 #include "LIEF/visibility.h"
 
 
+namespace LIEF::dwarf {
+class Location;
+}
+
 namespace LIEF::dwarf::editor {
 class Type;
 
@@ -35,6 +39,9 @@ class LIEF_API Variable {
   public:
   Variable() = delete;
   Variable(std::unique_ptr<details::Variable> impl);
+
+  /// Set the `DW_AT_location` of this variable.
+  Variable& set_location(const dwarf::Location& location) LIEF_LIFETIMEBOUND;
 
   /// Set the global address of this variable. Setting this address is only
   /// relevant in the case of a static global variable. For stack variable, you

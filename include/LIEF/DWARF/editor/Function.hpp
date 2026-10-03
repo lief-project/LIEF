@@ -23,6 +23,10 @@
 #include "LIEF/visibility.h"
 
 
+namespace LIEF::dwarf {
+class Location;
+}
+
 namespace LIEF::dwarf::editor {
 class Type;
 class Variable;
@@ -54,6 +58,9 @@ class LIEF_API Function {
     Parameter(std::unique_ptr<details::FunctionParameter> impl);
 
     ~Parameter();
+
+    /// Set the `DW_AT_location` of this parameter.
+    Parameter& set_location(const dwarf::Location& location) LIEF_LIFETIMEBOUND;
 
     /// Assign this parameter to a specific named register.
     Parameter& assign_register(std::string_view name) LIEF_LIFETIMEBOUND;

@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+#include "LIEF/rust/DWARF/Location.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include <LIEF/DWARF/editor/Function.hpp>
 #include <LIEF/range.hpp>
@@ -32,6 +33,10 @@ class DWARF_editor_Function_Parameter
   public:
   using Mirror::Mirror;
   using lief_t = LIEF::dwarf::editor::Function::Parameter;
+
+  auto set_location(const DWARF_Location& location) {
+    get().set_location(location.get());
+  }
 
   auto assign_register_by_name(const std::string& name) {
     get().assign_register(name);

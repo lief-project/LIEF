@@ -1155,6 +1155,10 @@ Variable& Variable::set_external() {
   return *this;
 }
 
+Variable& Variable::set_location(const dwarf::Location&) {
+  return *this;
+}
+
 Variable& Variable::set_addr(uint64_t /*address*/) {
   return *this;
 }
@@ -1223,6 +1227,10 @@ std::unique_ptr<Function::Label> Function::add_label(uint64_t, std::string_view)
 
 Function::Parameter::Parameter(std::unique_ptr<details::FunctionParameter> impl) :
   impl_(std::move(impl)) {}
+
+Function::Parameter& Function::Parameter::set_location(const dwarf::Location&) {
+  return *this;
+}
 
 Function::Parameter&
     Function::Parameter::assign_register(std::string_view /*name*/) {

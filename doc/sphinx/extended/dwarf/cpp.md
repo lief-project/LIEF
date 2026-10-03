@@ -388,6 +388,12 @@ ______________________________________________________________________
 .. doxygenclass:: LIEF::dwarf::editor::Function
 ```
 
+### Parameter
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::editor::Function::Parameter
+```
+
 ______________________________________________________________________
 
 ## Editor - Variable
