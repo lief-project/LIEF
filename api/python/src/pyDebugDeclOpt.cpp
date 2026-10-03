@@ -18,6 +18,7 @@
 #include <string>
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unordered_map.h>
 
 namespace LIEF::py {
@@ -118,6 +119,20 @@ void create<DeclOpt>(nb::module_& m) {
       Mapping of type names to user-friendly aliases used while
       rendering types (e.g.
       ``std::basic_string<char, ...>`` -> ``std::string``).
+      )doc"_doc,
+      nb::rv_policy::reference_internal
+    )
+
+    .def_prop_rw("target_triple",
+      nb::overload_cast<>(&DeclOpt::target_triple, nb::const_),
+      nb::overload_cast<std::string>(&DeclOpt::target_triple),
+      R"doc(
+      The LLVM target (e.g. ``aarch64-unknown-linux-gnu``) used to build the
+      AST from which the definitions are generated.
+
+      The target defines the size of the builtin types (e.g. ``long``) and the
+      register names used in the annotations. If empty (default), the target
+      is inferred from the binary associated with the debug info.
       )doc"_doc,
       nb::rv_policy::reference_internal
     )

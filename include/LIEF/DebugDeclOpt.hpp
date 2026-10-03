@@ -14,6 +14,7 @@
  */
 #ifndef LIEF_DEBUG_DECL_OPT_H
 #define LIEF_DEBUG_DECL_OPT_H
+#include <string_view>
 #include <unordered_map>
 #include <cstdint>
 #include <memory>
@@ -105,6 +106,16 @@ class LIEF_API DeclOpt {
 
   /// Register a single type alias.
   DeclOpt& add_type_alias(std::string name, std::string alias) LIEF_LIFETIMEBOUND;
+
+  /// The LLVM target (e.g. `aarch64-unknown-linux-gnu`) used to build the
+  /// AST from which the definitions are generated.
+  ///
+  /// The target defines the size of the builtin types (e.g. `long`) and the
+  /// register names used in the annotations. If empty (default), the target
+  /// is inferred from the binary associated with the debug info.
+  std::string_view target_triple() const LIEF_LIFETIMEBOUND;
+
+  DeclOpt& target_triple(std::string triple) LIEF_LIFETIMEBOUND;
 
   private:
   std::unique_ptr<details::DeclOpt> impl_;

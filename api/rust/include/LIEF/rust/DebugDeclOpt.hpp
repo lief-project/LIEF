@@ -15,6 +15,7 @@
 #pragma once
 #include <LIEF/DebugDeclOpt.hpp>
 #include <memory>
+#include <string>
 
 class LIEF_DeclOpt {
   public:
@@ -52,6 +53,10 @@ class LIEF_DeclOpt {
 
   void set_show_field_offsets(bool value) {
     config_.show_field_offsets(value);
+  }
+
+  void set_target_triple(const std::string& value) {
+    config_.target_triple(value);
   }
 
   private:

@@ -39,6 +39,14 @@ pub struct DeclOpt {
     ///
     /// If true, every member of a structure is prefixed with its byte offset (e.g. `/* 0x04 */`).
     pub show_field_offsets: bool,
+
+    /// The LLVM target (e.g. `aarch64-unknown-linux-gnu`) used to build the
+    /// AST from which the definitions are generated.
+
+    /// The target defines the size of the builtin types (e.g. `long`) and the
+    /// register names used in the annotations. If empty (default), the target
+    /// is inferred from the binary associated with the debug info.
+    pub target_triple: String,
 }
 
 impl Default for DeclOpt {
@@ -51,6 +59,7 @@ impl Default for DeclOpt {
             include_locals: false,
             desugar: true,
             show_field_offsets: false,
+            target_triple: String::new(),
         }
     }
 }
@@ -68,6 +77,8 @@ impl DeclOpt {
         ptr.pin_mut().set_desugar(self.desugar);
         ptr.pin_mut()
             .set_show_field_offsets(self.show_field_offsets);
+        cxx::let_cxx_string!(target_triple = &self.target_triple);
+        ptr.pin_mut().set_target_triple(&target_triple);
         ptr
     }
 }

@@ -548,3 +548,33 @@ fn test_api() {
         "private/DWARF/types/DW_TAG_volatile_type.o",
     );
 }
+
+#[test]
+fn test_decl_target_triple() {
+    if !lief::is_extended() {
+        return;
+    }
+
+    let path = utils::get_sample(Path::new("DWARF/main_DW_OP_piece.elf")).unwrap();
+    let dbg = lief::dwarf::load(path).unwrap();
+    let func = dbg.function_by_name("process_pair").unwrap();
+
+    let mut opt = lief::DeclOpt {
+        is_cpp: true,
+        ..Default::default()
+    };
+    assert!(opt.target_triple.is_empty());
+    assert!(
+        func.to_decl_with_opt(&opt)
+            .ends_with("process_pair(Pair64 p /* rdi, rsi */);")
+    );
+
+    opt.target_triple = "aarch64-unknown-linux-gnu".to_string();
+    assert!(
+        func.to_decl_with_opt(&opt)
+            .ends_with("process_pair(Pair64 p /* x5, x4 */);")
+    );
+
+    opt.target_triple = "invalid-target".to_string();
+    assert!(func.to_decl_with_opt(&opt).is_empty());
+}

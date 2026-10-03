@@ -130,3 +130,31 @@ def test_show_field_offsets():
     assert "/* 0x20 */ Elf64_Addr r_ldbase;" in decorated
     # The offset is emitted for every member which includes padding
     assert decorated.count("/* 0x") >= 5
+
+
+def test_target_triple():
+    opt = lief.DeclOpt()
+    assert opt.target_triple == ""
+
+    dbg = lief.dwarf.load(get_sample("DWARF/main_DW_OP_piece.elf"))
+    assert dbg is not None
+    func = dbg.find_function("process_pair")
+    assert func is not None
+
+    # The target is inferred from the binary (x86-64)
+    opt.is_cpp = True
+    assert func.to_decl(opt).endswith("uint64_t process_pair(Pair64 p /* rdi, rsi */);")
+
+    opt.target_triple = "aarch64-unknown-linux-gnu"
+    assert opt.target_triple == "aarch64-unknown-linux-gnu"
+    assert func.to_decl(opt).endswith("uint64_t process_pair(Pair64 p /* x5, x4 */);")
+
+    copy = lief.DeclOpt()
+    copy.target_triple = opt.target_triple
+    assert copy.target_triple == "aarch64-unknown-linux-gnu"
+
+    opt.target_triple = "invalid-target"
+    assert func.to_decl(opt) == ""
+
+    opt.target_triple = ""
+    assert func.to_decl(opt).endswith("(Pair64 p /* rdi, rsi */);")

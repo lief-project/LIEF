@@ -94,4 +94,13 @@ DeclOpt& DeclOpt::add_type_alias(std::string, std::string) {
   return *this;
 }
 
+std::string_view DeclOpt::target_triple() const {
+  return {};
+}
+
+// NOLINTNEXTLINE
+DeclOpt& DeclOpt::target_triple(std::string) {
+  return *this;
+}
+
 }
