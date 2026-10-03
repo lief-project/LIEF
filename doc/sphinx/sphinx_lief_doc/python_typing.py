@@ -159,6 +159,14 @@ def autodoc_skip_member(app, what, name: str, obj: Any, skip: bool, options):
         and hasattr(obj, "__next__")
     ):
         return True
+
+    if (
+        not skip
+        and what == "class"
+        and isinstance(obj, type)
+        and not obj.__qualname__.endswith(f".{name}")
+    ):
+        return True
     return None
 
 

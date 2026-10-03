@@ -149,8 +149,8 @@ class LIEF_API DynamicEntry : public Object {
     MIPS_LOCAL_GOTIDX          = MIPS_DISC + 0x70000026, /**< The GOT index of the first PTE for a local symbol */
     MIPS_HIDDEN_GOTIDX         = MIPS_DISC + 0x70000027, /**< The GOT index of the first PTE for a hidden symbol */
     MIPS_PROTECTED_GOTIDX      = MIPS_DISC + 0x70000028, /**< The GOT index of the first PTE for a protected symbol */
-    MIPS_OPTIONS               = MIPS_DISC + 0x70000029, /**< Address of `.MIPS.options'. */
-    MIPS_INTERFACE             = MIPS_DISC + 0x7000002A, /**< Address of `.interface'. */
+    MIPS_OPTIONS               = MIPS_DISC + 0x70000029, /**< Address of `.MIPS.options`. */
+    MIPS_INTERFACE             = MIPS_DISC + 0x7000002A, /**< Address of `.interface`. */
     MIPS_DYNSTR_ALIGN          = MIPS_DISC + 0x7000002B, /**< Unknown. */
     MIPS_INTERFACE_SIZE        = MIPS_DISC + 0x7000002C, /**< Size of the .interface section. */
     MIPS_RLD_TEXT_RESOLVE_ADDR = MIPS_DISC + 0x7000002D, /**< Size of rld_text_resolve function stored in the GOT. */

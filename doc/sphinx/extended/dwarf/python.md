@@ -576,12 +576,6 @@ ______________________________________________________________________
 .. autoclass:: lief.dwarf.editor.Function
 ```
 
-### Parameter
-
-```{eval-rst}
-.. autoclass:: lief.dwarf.editor.Function.Parameter
-```
-
 ______________________________________________________________________
 
 ## Editor - Variable

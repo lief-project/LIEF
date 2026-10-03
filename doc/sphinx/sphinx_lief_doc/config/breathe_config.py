@@ -1,7 +1,9 @@
 import lief
 import os
+import re
 import sphinx_lief
 
+from breathe.renderer.sphinxrenderer import SphinxRenderer
 from pathlib import Path
 from sphinx.application import Sphinx
 
@@ -12,7 +14,17 @@ DOXYGEN_XML_PATH = Path(os.environ['LIEF_DOXYGEN_XML']).resolve().absolute()
 
 assert DOXYGEN_XML_PATH.exists()
 
+DOXYGEN_ANONYMOUS_RE = re.compile(r"^\[(?:class|struct|union)\]\.__unnamed(\d+)__$")
+
+_join_nested_name = SphinxRenderer.join_nested_name
+
+def join_nested_name(self: SphinxRenderer, names: list[str]) -> str:
+    names = [DOXYGEN_ANONYMOUS_RE.sub(r"@unnamed\1", name) for name in names]
+    return _join_nested_name(self, names)
+
 def setup(app: Sphinx):
+    SphinxRenderer.join_nested_name = join_nested_name
+
     app.config.breathe_default_members = ('members', 'protected-members', 'undoc-members')
     app.config.breathe_show_enumvalue_initializer = True
 

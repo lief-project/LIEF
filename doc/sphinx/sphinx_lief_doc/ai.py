@@ -480,8 +480,14 @@ def export_documentation(app: Sphinx, exception: Exception | None):
     (output / "llms.txt").write_text(
         llms_index(documents, base_url, version, channel), encoding="utf-8"
     )
-    if len({chunk["chunkID"] for chunk in chunks}) != len(chunks):
-        raise ExtensionError("AI export: duplicate chunk IDs")
+    counts = Counter(chunk["chunkID"] for chunk in chunks)
+    duplicates = sorted(
+        {chunk["url"] for chunk in chunks if counts[chunk["chunkID"]] > 1}
+    )
+    if duplicates:
+        raise ExtensionError(
+            "AI export: duplicate chunk IDs for " + ", ".join(duplicates)
+        )
     logger.info(
         "Exported %d Markdown documents and %d retrieval chunks",
         len(documents),
