@@ -40,12 +40,14 @@ def check(library: Path, relocate: bool):
             if m is not None and m.path == str(library)
         )
         assert isinstance(listed, lief.runtime.linux.Module)
+        named = lief.runtime.module_from_name(library.name)
+        assert isinstance(named, lief.runtime.linux.Module)
         from_handle = lief.runtime.linux.Module.from_handle(listed.handle)
         assert from_handle is not None
         opened = lief.runtime.linux.dlopen(library)
         assert opened is not None
 
-        for module in (listed, from_handle, opened):
+        for module in (listed, named, from_handle, opened):
             assert module.imagebase == expected_base, (
                 f"Expected base {expected_base:#x}, got {module.imagebase:#x}"
             )
