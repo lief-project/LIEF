@@ -72,6 +72,7 @@ ELF, PE, Mach-O, COFF, Android formats, and more in C++, Python, and Rust.
   :caption: <i class="fa-solid fa-toolbox">&nbsp;</i>Tools
   :maxdepth: 1
 
+  tools/lief-dwarfdump/index
   tools/lief-patchelf/index
 ```
 

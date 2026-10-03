@@ -1,0 +1,19 @@
+[package]
+name                   = "lief-dwarfdump"
+description            = "Reconstruct C/C++ declarations from DWARF"
+edition.workspace      = true
+version.workspace      = true
+authors.workspace      = true
+license.workspace      = true
+rust-version.workspace = true
+homepage.workspace     = true
+repository.workspace   = true
+
+[dependencies]
+common        = { workspace = true }
+lief          = { workspace = true }
+anyhow        = { workspace = true }
+clap          = { workspace = true }
+clap_complete = { workspace = true }
+clap_mangen   = { workspace = true }
+indoc         = { workspace = true }

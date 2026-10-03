@@ -905,6 +905,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "lief-dwarfdump"
+version = "2.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "clap_complete",
+ "clap_mangen",
+ "common",
+ "indoc",
+ "lief",
+]
+
+[[package]]
 name = "lief-ffi"
 version = "2.0.0"
 dependencies = [

@@ -19,7 +19,7 @@ the two versions.
 ## Compilation
 
 You can build `lief-patchelf` using `cargo` from the
-`src/tools/lief-patchelf` directory with the following commands:
+`tools/lief-patchelf` directory with the following commands:
 
 ```bash
 $ cargo build [--release]
