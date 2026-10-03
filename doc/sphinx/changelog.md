@@ -71,8 +71,9 @@
   * Add |lief-runtime-memory-mmap_hint| to allocate memory close to a given
     address.
   * Add |lief-runtime-memorylayout| to inspect the memory layout of the current
-    process. |lief-runtime-memory_layout| iterates over the mapped
-    |lief-runtime-memorylayout-region| (:ref:`documentation <runtime_memory_layout>`):
+    process on Linux, Android, and macOS. |lief-runtime-memory_layout| iterates
+    over the mapped |lief-runtime-memorylayout-region|
+    (:ref:`documentation <runtime_memory_layout>`):
 
     .. code-block:: python
 

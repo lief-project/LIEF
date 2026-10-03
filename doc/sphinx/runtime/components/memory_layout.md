@@ -8,6 +8,7 @@ description: Inspect mapped memory regions with LIEF Extended, calculate virtual
 
 The {sub-ref}`lief-runtime-memorylayout` interface exposes the memory layout of
 the **current** process: the regions that are mapped in its address space.
+It is available in LIEF Extended on Linux, Android, and macOS.
 
 ## Enumerate mapped regions
 
@@ -106,6 +107,28 @@ allocation:
 ```text
 [heap]: 0x56367cb52000-0x56367cb73000
 [stack]: 0x7ffd162f1000-0x7ffd16312000
+```
+
+## {fa}`brands fa-apple` macOS
+
+On macOS, the layout includes the individual regions within nested memory maps,
+including the dyld shared cache. LIEF tries to provide meaningful names for _anonymous_ regions
+associated with the dyld shared cache, the stack, ...:
+
+```text
+[0000000111e9c000, 0000000111f28000]: /private/tmp/LIEF/main/lief/_lief_extended.so:__DATA
+[0000000111f28000, 0000000112020000]: /private/tmp/LIEF/main/lief/_lief_extended.so
+[000000014f600000, 000000014f604000]: [heap]
+[000000016ed08000, 000000016ed0c000]: [stack]
+[000000016ed0c000, 000000016fd0c000]: [stack]
+[0000000180000000, 000000018ed58000]: <anonymous>
+[000000018ed58000, 000000018ede0000]: [dyld shared cache: __TEXT]
+[000000018ede0000, 00000001f4000000]: [dyld shared cache: __TEXT]
+[00000001f4000000, 00000001f45d8000]: [dyld shared cache: __TEXT]
+[00000001f45d8000, 00000001f45dc000]: [dyld shared cache: __TEXT]
+[00000001f45dc000, 00000001f6900000]: [dyld shared cache: __DATA_CONST]
+[00000001f6900000, 00000001f8000000]: <anonymous>
+[00000001f8000000, 00000001f8900000]: <anonymous>
 ```
 
 {{ cross_api }}
