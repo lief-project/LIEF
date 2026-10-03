@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/DWARF/Location.hpp>
 #include <LIEF/DWARF/editor/Variable.hpp>
 
 #include "binaryninja/dwarf-export/TypeEngine.hpp"
@@ -51,8 +52,10 @@ dw::Variable* VarEngine::add_variable(const BN::DataVariable& var) {
 
   std::unique_ptr<dw::Variable> dw_var = unit_.create_variable(name);
 
-  dw_var->set_addr(var.address);
+  auto location = std::make_unique<LIEF::dwarf::AddressLoc>(var.address);
+
   dw_var->set_type(types_.add_type(api_compat::get_type(var.type)));
+  dw_var->set_location(*location);
 
 
   std::string comment = bv_.GetCommentForAddress(var.address);

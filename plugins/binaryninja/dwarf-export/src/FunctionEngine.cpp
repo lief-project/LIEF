@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <LIEF/DWARF/Location.hpp>
 #include <LIEF/DWARF/editor/Function.hpp>
 #include <LIEF/DWARF/editor/Variable.hpp>
 
@@ -99,11 +100,14 @@ dw::Function* FunctionEngine::add_function(BN::Function& func) {
 
       std::unique_ptr<dw::Variable> dw_var =
           dw_func->create_stack_variable(info.name);
-      dw_var->set_stack_offset(std::abs(addr));
+
+      auto location = std::make_unique<LIEF::dwarf::FrameBaseLoc>(addr);
+
       if (auto var_type = info.type; api_compat::as_bool(var_type)) {
         dw::Type& dw_type = types_.add_type(api_compat::get_type(var_type));
         dw_var->set_type(dw_type);
       }
+      dw_var->set_location(*location);
     }
   }
   std::vector<uint64_t> commented_addresses = func.GetCommentedAddresses();
