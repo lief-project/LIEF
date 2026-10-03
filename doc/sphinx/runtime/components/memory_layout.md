@@ -8,7 +8,7 @@ description: Inspect mapped memory regions with LIEF Extended, calculate virtual
 
 The {sub-ref}`lief-runtime-memorylayout` interface exposes the memory layout of
 the **current** process: the regions that are mapped in its address space.
-It is available in LIEF Extended on Linux, Android, and macOS.
+It is available in LIEF Extended on Linux, Android, macOS, and Windows.
 
 ## Enumerate mapped regions
 
@@ -129,6 +129,29 @@ associated with the dyld shared cache, the stack, ...:
 [00000001f45dc000, 00000001f6900000]: [dyld shared cache: __DATA_CONST]
 [00000001f6900000, 00000001f8000000]: <anonymous>
 [00000001f8000000, 00000001f8900000]: <anonymous>
+```
+
+## {fa}`brands fa-windows` Windows
+
+On Windows, the layout includes committed pages and reserved address ranges,
+including stack, TEB/PEB regions:
+
+```text
+[0000000000127000, 0000000000182000]: <anonymous>
+[0000000000190000, 0000000000193000]: C:\Windows\System32\l_intl.nls
+[00000000001a0000, 00000000001b1000]: C:\Windows\System32\C_1252.NLS
+[00000000001c0000, 00000000001d1000]: C:\Windows\System32\C_850.NLS
+[00000000001e0000, 00000000001e3000]: [pagefile]
+[00000000001f0000, 00000000001f4000]: <anonymous>
+[0000000000200000, 000000000037f000]: <anonymous>
+[000000000037f000, 0000000000388000]: [peb/teb]
+[0000000000388000, 0000000000400000]: <anonymous>
+[0000000000400000, 0000000000639000]: [stack]
+[000000007ffe0000, 000000007ffe1000]: [shared-user-data]
+[00007ff6ae6d0000, 00007ff6ae6d1000]: C:\Python314\python.exe
+[00007ff6ae6d1000, 00007ff6ae6d2000]: C:\Python314\python.exe
+[00007ff6ae6d2000, 00007ff6ae6d3000]: C:\Python314\python.exe
+[00007ff6ae6d3000, 00007ff6ae6d4000]: C:\Python314\python.exe
 ```
 
 {{ cross_api }}

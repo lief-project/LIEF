@@ -9,6 +9,7 @@ if lief.runtime.platform not in {
     lief.runtime.PLATFORMS.LINUX,
     lief.runtime.PLATFORMS.ANDROID,
     lief.runtime.PLATFORMS.OSX,
+    lief.runtime.PLATFORMS.WINDOWS,
 }:
     pytest.skip("skipping: unsupported memory layout", allow_module_level=True)
 
