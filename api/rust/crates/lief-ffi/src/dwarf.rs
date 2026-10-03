@@ -3,6 +3,7 @@ pub mod debug_info;
 pub mod editor;
 pub mod function;
 pub mod lexical_block;
+pub mod location;
 pub mod parameter;
 pub mod scope;
 pub mod type_;

@@ -12,6 +12,8 @@ from lief.dwarf import (
 )
 
 
+from typing import TypeAlias
+
 def load(path: Union[str | os.PathLike]) -> Optional[DebugInfo]: ...
 
 class Scope:
@@ -121,6 +123,95 @@ class Type:
 
     def to_decl(self, opt: lief.DeclOpt | None = None) -> str: ...
 
+class Location:
+    class Type(enum.Enum):
+        UNKNOWN = 0
+
+        REGISTER = 1
+
+        ADDRESS = 2
+
+        FRAME_BASE = 3
+
+        REGISTER_OFFSET = 4
+
+        EXPRESSION = 5
+
+        UNAVAILABLE = 6
+
+        COMPOSITE = 7
+
+    @property
+    def type(self) -> Location.Type: ...
+
+    def __str__(self) -> str: ...
+
+class RegisterLoc(Location):
+    @property
+    def id(self) -> int: ...
+
+class AddressLoc(Location):
+    @property
+    def address(self) -> int: ...
+
+class FrameBaseLoc(Location):
+    @property
+    def offset(self) -> int: ...
+
+class RegisterOffsetLoc(Location):
+    @property
+    def id(self) -> int: ...
+
+    @property
+    def offset(self) -> int: ...
+
+class ExpressionLoc(Location):
+    @property
+    def expression(self) -> bytes: ...
+
+    @property
+    def description(self) -> str: ...
+
+class UnavailableLoc(Location):
+    pass
+
+class CompositeLocation(Location):
+    class Piece:
+        class KIND(enum.Enum):
+            BYTE = 0
+
+            BIT = 1
+
+        @property
+        def kind(self) -> CompositeLocation.Piece.KIND: ...
+
+        @property
+        def bit_size(self) -> int: ...
+
+        @property
+        def bit_offset(self) -> int: ...
+
+        @property
+        def source_bit_offset(self) -> int | None: ...
+
+        @property
+        def location(self) -> Location | None: ...
+
+    @property
+    def pieces(self) -> list[CompositeLocation.Piece]: ...
+
+class LocationEntry:
+    @property
+    def range(self) -> lief.range_t | None: ...
+
+    @property
+    def section_index(self) -> int | None: ...
+
+    @property
+    def location(self) -> Location | None: ...
+
+    def __str__(self) -> str: ...
+
 class Variable:
     @property
     def name(self) -> str: ...
@@ -139,6 +230,14 @@ class Variable:
 
     @property
     def is_stack_based(self) -> bool: ...
+
+    @property
+    def location(self) -> Optional[Location]: ...
+
+    def location_at(self, pc: int) -> Optional[Location]: ...
+
+    @property
+    def locations(self) -> list[LocationEntry]: ...
 
     @property
     def debug_location(self) -> lief.debug_location_t: ...
@@ -206,18 +305,9 @@ class Function:
     def to_decl(self, opt: lief.DeclOpt | None = None) -> str: ...
 
 class Parameter:
-    class Location:
-        class Type(enum.Enum):
-            UNKNOWN = 0
+    Location: TypeAlias = lief.dwarf.Location
 
-            REGISTER = 1
-
-        @property
-        def type(self) -> Parameter.Location.Type: ...
-
-    class RegisterLoc(Parameter.Location):
-        @property
-        def id(self) -> int: ...
+    RegisterLoc: TypeAlias = lief.dwarf.RegisterLoc
 
     @property
     def name(self) -> str: ...
@@ -226,7 +316,12 @@ class Parameter:
     def type(self) -> Optional[Type]: ...
 
     @property
-    def location(self) -> Optional[Parameter.Location]: ...
+    def location(self) -> Optional[Location]: ...
+
+    def location_at(self, pc: int) -> Optional[Location]: ...
+
+    @property
+    def locations(self) -> list[LocationEntry]: ...
 
 class CompilationUnit:
     class Language:

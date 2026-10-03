@@ -81,6 +81,50 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
+## Location
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::Location
+```
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::RegisterLoc
+```
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::AddressLoc
+```
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::FrameBaseLoc
+```
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::RegisterOffsetLoc
+```
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::ExpressionLoc
+```
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::UnavailableLoc
+```
+
+```{eval-rst}
+.. doxygenclass:: LIEF::dwarf::CompositeLocation
+```
+
+______________________________________________________________________
+
+## Location Entry
+
+```{eval-rst}
+.. doxygenstruct:: LIEF::dwarf::LocationEntry
+```
+
+______________________________________________________________________
+
 ## LexicalBlock
 
 ```{eval-rst}

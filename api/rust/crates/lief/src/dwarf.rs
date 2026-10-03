@@ -31,6 +31,7 @@ pub mod debug_info;
 pub mod editor;
 pub mod function;
 pub mod lexical_block;
+pub mod location;
 pub mod parameters;
 pub mod scope;
 pub mod types;
@@ -64,6 +65,9 @@ pub use parameters::{Parameter, Parameters};
 
 #[doc(inline)]
 pub use lexical_block::LexicalBlock;
+
+#[doc(inline)]
+pub use location::{Location, LocationEntry};
 
 /// Load a DWARF from its file path
 pub fn load<P: AsRef<Path>>(path: P) -> Option<DebugInfo<'static>> {

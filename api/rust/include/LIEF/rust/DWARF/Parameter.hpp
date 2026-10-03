@@ -14,39 +14,10 @@
  */
 #pragma once
 #include "LIEF/DWARF/Parameter.hpp"
+#include "LIEF/rust/DWARF/Location.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include "LIEF/rust/helpers.hpp"
-
-class DWARF_Parameter_Location : public Mirror<LIEF::dwarf::Parameter::Location> {
-  public:
-  using Mirror::Mirror;
-  using lief_t = LIEF::dwarf::Parameter::Location;
-
-  auto get_type() const {
-    return to_int(get().type);
-  }
-};
-
-class DWARF_Parameter_RegisterLocation
-  : public Mirror<LIEF::dwarf::Parameter::RegisterLoc> {
-  public:
-  using Mirror::Mirror;
-  using lief_t = LIEF::dwarf::Parameter::RegisterLoc;
-
-  auto id() const {
-    return impl().id;
-  }
-
-  static auto classof(const DWARF_Parameter_Location& loc) {
-    return lief_t::classof(&loc.get());
-  }
-
-  private:
-  const lief_t& impl() const {
-    return as<lief_t>(this);
-  }
-};
 
 class DWARF_Parameter : public Mirror<LIEF::dwarf::Parameter> {
   public:
@@ -62,7 +33,15 @@ class DWARF_Parameter : public Mirror<LIEF::dwarf::Parameter> {
   }
 
   auto location() const {
-    return details::try_unique<DWARF_Parameter_Location>(get().location());
+    return details::try_unique<DWARF_Location>(get().location());
+  }
+
+  auto location_at(uint64_t pc) const {
+    return details::try_unique<DWARF_Location>(get().location(pc));
+  }
+
+  auto locations() const {
+    return std::make_unique<DWARF_it_locations>(get().locations());
   }
 };
 

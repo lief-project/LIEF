@@ -4,6 +4,7 @@ use super::Type;
 use crate::common::FromFFI;
 use crate::common::into_optional;
 use crate::dwarf::Scope;
+use crate::dwarf::location::{Location, LocationEntries};
 use crate::{DebugLocation, DeclOpt};
 use crate::{Error, declare_fwd_iterator, to_result};
 use std::marker::PhantomData;
@@ -69,6 +70,21 @@ impl Variable<'_> {
     /// Whether this variable is allocated on the stack
     pub fn is_stack_based(&self) -> bool {
         self.ptr.is_stack_based()
+    }
+
+    /// Location of this variable.
+    pub fn location(&self) -> Option<Location<'_>> {
+        into_optional(self.ptr.location())
+    }
+
+    /// Location of this variable when PC is at the given address.
+    pub fn location_at(&self, pc: u64) -> Option<Location<'_>> {
+        into_optional(self.ptr.location_at(pc))
+    }
+
+    /// All the location entries (location list) of this variable
+    pub fn locations(&self) -> LocationEntries<'_> {
+        LocationEntries::new(self.ptr.locations())
     }
 
     /// The original source location where the variable is defined.

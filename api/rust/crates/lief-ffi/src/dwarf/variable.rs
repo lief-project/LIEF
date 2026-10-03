@@ -3,7 +3,9 @@ pub mod ffi {
     unsafe extern "C++" {
         include!("LIEF/rust/DWARF/Variable.hpp");
 
+        type DWARF_Location = crate::dwarf::location::ffi::DWARF_Location;
         type DWARF_Scope = crate::dwarf::scope::ffi::DWARF_Scope;
+        type DWARF_it_locations = crate::dwarf::location::ffi::DWARF_it_locations;
         type DWARF_Type = crate::dwarf::type_::ffi::DWARF_Type;
         type DebugLocation = crate::debug_location::ffi::DebugLocation;
         type LIEF_DeclOpt = crate::debug_decl_opt::ffi::LIEF_DeclOpt;
@@ -17,6 +19,9 @@ pub mod ffi {
         fn debug_location(self: &DWARF_Variable) -> UniquePtr<DebugLocation>;
         fn is_constexpr(self: &DWARF_Variable) -> bool;
         fn is_stack_based(self: &DWARF_Variable) -> bool;
+        fn location(self: &DWARF_Variable) -> UniquePtr<DWARF_Location>;
+        fn location_at(self: &DWARF_Variable, pc: u64) -> UniquePtr<DWARF_Location>;
+        fn locations(self: &DWARF_Variable) -> UniquePtr<DWARF_it_locations>;
         fn get_type(self: &DWARF_Variable) -> UniquePtr<DWARF_Type>;
         fn scope(self: &DWARF_Variable) -> UniquePtr<DWARF_Scope>;
         fn description(self: &DWARF_Variable) -> UniquePtr<CxxString>;

@@ -4,6 +4,7 @@ target_sources(pyLIEF PRIVATE
   pyDebugInfo.cpp
   pyEditor.cpp
   pyFunction.cpp
+  pyLocation.cpp
   pyParameter.cpp
   pyScope.cpp
   pyType.cpp

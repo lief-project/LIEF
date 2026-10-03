@@ -141,9 +141,19 @@ pub use crate::dwarf::function::ffi::DWARF_Function_it_thrown_types;
 pub use crate::dwarf::function::ffi::DWARF_Function_it_variables;
 pub use crate::dwarf::lexical_block::ffi::DWARF_LexicalBlock;
 pub use crate::dwarf::lexical_block::ffi::DWARF_LexicalBlock_it_sub_blocks;
+pub use crate::dwarf::location::ffi::DWARF_AddressLocation;
+pub use crate::dwarf::location::ffi::DWARF_CompositeLocation;
+pub use crate::dwarf::location::ffi::DWARF_CompositeLocation_Piece;
+pub use crate::dwarf::location::ffi::DWARF_CompositeLocation_it_pieces;
+pub use crate::dwarf::location::ffi::DWARF_ExpressionLocation;
+pub use crate::dwarf::location::ffi::DWARF_FrameBaseLocation;
+pub use crate::dwarf::location::ffi::DWARF_Location;
+pub use crate::dwarf::location::ffi::DWARF_LocationEntry;
+pub use crate::dwarf::location::ffi::DWARF_RegisterLocation;
+pub use crate::dwarf::location::ffi::DWARF_RegisterOffsetLocation;
+pub use crate::dwarf::location::ffi::DWARF_UnavailableLocation;
+pub use crate::dwarf::location::ffi::DWARF_it_locations;
 pub use crate::dwarf::parameter::ffi::DWARF_Parameter;
-pub use crate::dwarf::parameter::ffi::DWARF_Parameter_Location;
-pub use crate::dwarf::parameter::ffi::DWARF_Parameter_RegisterLocation;
 pub use crate::dwarf::parameter::ffi::DWARF_parameters_Formal;
 pub use crate::dwarf::parameter::ffi::DWARF_parameters_TemplateType;
 pub use crate::dwarf::parameter::ffi::DWARF_parameters_TemplateValue;
@@ -691,6 +701,41 @@ impl AsRef<AbstractSymbol> for COFF_Symbol {
 impl AsRef<AbstracDebugInfo> for DWARF_DebugInfo {
     fn as_ref(&self) -> &AbstracDebugInfo {
         unsafe { &*(self as *const DWARF_DebugInfo as *const AbstracDebugInfo) }
+    }
+}
+impl AsRef<DWARF_Location> for DWARF_AddressLocation {
+    fn as_ref(&self) -> &DWARF_Location {
+        unsafe { &*(self as *const DWARF_AddressLocation as *const DWARF_Location) }
+    }
+}
+impl AsRef<DWARF_Location> for DWARF_CompositeLocation {
+    fn as_ref(&self) -> &DWARF_Location {
+        unsafe { &*(self as *const DWARF_CompositeLocation as *const DWARF_Location) }
+    }
+}
+impl AsRef<DWARF_Location> for DWARF_ExpressionLocation {
+    fn as_ref(&self) -> &DWARF_Location {
+        unsafe { &*(self as *const DWARF_ExpressionLocation as *const DWARF_Location) }
+    }
+}
+impl AsRef<DWARF_Location> for DWARF_FrameBaseLocation {
+    fn as_ref(&self) -> &DWARF_Location {
+        unsafe { &*(self as *const DWARF_FrameBaseLocation as *const DWARF_Location) }
+    }
+}
+impl AsRef<DWARF_Location> for DWARF_RegisterLocation {
+    fn as_ref(&self) -> &DWARF_Location {
+        unsafe { &*(self as *const DWARF_RegisterLocation as *const DWARF_Location) }
+    }
+}
+impl AsRef<DWARF_Location> for DWARF_RegisterOffsetLocation {
+    fn as_ref(&self) -> &DWARF_Location {
+        unsafe { &*(self as *const DWARF_RegisterOffsetLocation as *const DWARF_Location) }
+    }
+}
+impl AsRef<DWARF_Location> for DWARF_UnavailableLocation {
+    fn as_ref(&self) -> &DWARF_Location {
+        unsafe { &*(self as *const DWARF_UnavailableLocation as *const DWARF_Location) }
     }
 }
 impl AsRef<DWARF_editor_Type> for DWARF_editor_ArrayType {

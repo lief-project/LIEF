@@ -17,7 +17,9 @@
 
 #include <string_view>
 #include <memory>
+#include <vector>
 
+#include "LIEF/DWARF/Location.hpp"
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/debug_loc.hpp"
@@ -118,6 +120,15 @@ class LIEF_API Variable {
 
   /// Whether this variable is allocated on the stack
   bool is_stack_based() const;
+
+  /// Location of this variable.
+  std::unique_ptr<Location> location() const;
+
+  /// Location of this variable when PC is at the given address.
+  std::unique_ptr<Location> location(uint64_t pc) const;
+
+  /// All the location entries of this variable
+  std::vector<LocationEntry> locations() const;
 
   /// The original source location where the variable is defined.
   debug_location_t debug_location() const;

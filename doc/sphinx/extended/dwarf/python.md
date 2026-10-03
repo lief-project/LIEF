@@ -94,6 +94,50 @@ ______________________________________________________________________
 
 ______________________________________________________________________
 
+## Location
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.Location
+```
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.RegisterLoc
+```
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.AddressLoc
+```
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.FrameBaseLoc
+```
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.RegisterOffsetLoc
+```
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.ExpressionLoc
+```
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.UnavailableLoc
+```
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.CompositeLocation
+```
+
+______________________________________________________________________
+
+## Location Entry
+
+```{eval-rst}
+.. autoclass:: lief.dwarf.LocationEntry
+```
+
+______________________________________________________________________
+
 ## LexicalBlock
 
 ```{eval-rst}

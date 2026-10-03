@@ -14,6 +14,7 @@
  */
 #pragma once
 #include "LIEF/DWARF/Variable.hpp"
+#include "LIEF/rust/DWARF/Location.hpp"
 #include "LIEF/rust/DWARF/Scope.hpp"
 #include "LIEF/rust/DWARF/Type.hpp"
 #include "LIEF/rust/DebugDeclOpt.hpp"
@@ -52,6 +53,18 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
 
   auto is_stack_based() const {
     return get().is_stack_based();
+  }
+
+  auto location() const {
+    return details::try_unique<DWARF_Location>(get().location());
+  }
+
+  auto location_at(uint64_t pc) const {
+    return details::try_unique<DWARF_Location>(get().location(pc));
+  }
+
+  auto locations() const {
+    return std::make_unique<DWARF_it_locations>(get().locations());
   }
 
   auto get_type() const {

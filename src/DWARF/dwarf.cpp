@@ -19,6 +19,7 @@
 #include "LIEF/DWARF/Editor.hpp"
 #include "LIEF/DWARF/Function.hpp"
 #include "LIEF/DWARF/LexicalBlock.hpp"
+#include "LIEF/DWARF/Location.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
 #include "LIEF/DWARF/Scope.hpp"
 #include "LIEF/DWARF/Type.hpp"
@@ -159,6 +160,18 @@ std::string Variable::to_decl(const DeclOpt& /*opt*/) const {
   return "";
 }
 
+std::unique_ptr<Location> Variable::location() const {
+  return nullptr;
+}
+
+std::unique_ptr<Location> Variable::location(uint64_t) const {
+  return nullptr;
+}
+
+std::vector<LocationEntry> Variable::locations() const {
+  return {};
+}
+
 Variable::~Variable() = default;
 
 Variable::Iterator::Iterator() :
@@ -206,6 +219,19 @@ std::unique_ptr<Variable> Variable::Iterator::yield() {
 }
 
 // ----------------------------------------------------------------------------
+// DWARF/Location.hpp
+// ----------------------------------------------------------------------------
+Location::~Location() = default;
+
+std::string Location::to_string() const {
+  return "";
+}
+
+std::string LocationEntry::to_string() const {
+  return "";
+}
+
+// ----------------------------------------------------------------------------
 // DWARF/Parameter.hpp
 // ----------------------------------------------------------------------------
 Parameter::~Parameter() = default;
@@ -231,6 +257,14 @@ std::unique_ptr<Type> Parameter::type() const {
 
 std::unique_ptr<Parameter::Location> Parameter::location() const {
   return nullptr;
+}
+
+std::unique_ptr<Parameter::Location> Parameter::location(uint64_t) const {
+  return nullptr;
+}
+
+std::vector<LocationEntry> Parameter::locations() const {
+  return {};
 }
 
 std::unique_ptr<Parameter>

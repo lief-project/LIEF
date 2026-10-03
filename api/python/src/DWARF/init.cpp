@@ -2,6 +2,7 @@
 #include "DWARF/pyDwarf.hpp"
 
 #include "LIEF/DWARF/DebugInfo.hpp"
+#include "LIEF/DWARF/Location.hpp"
 #include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DWARF/Editor.hpp"
 
@@ -21,6 +22,7 @@ void init(nb::module_& m) {
 
   create<LIEF::dwarf::Scope>(dwarf);
   create<LIEF::dwarf::Type>(dwarf);
+  create<LIEF::dwarf::Location>(dwarf);
   create<LIEF::dwarf::Variable>(dwarf);
   create<LIEF::dwarf::Function>(dwarf);
   create<LIEF::dwarf::Parameter>(dwarf);

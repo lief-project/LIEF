@@ -2,6 +2,7 @@
 #include "LIEF/DWARF/Scope.hpp"
 #include "LIEF/DWARF/Type.hpp"
 #include "DWARF/pyDwarf.hpp"
+#include "DWARF/pyLocation.hpp"
 #include "pyErr.hpp"
 #include "DWARF/pyTypes.hpp"
 
@@ -9,6 +10,7 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/stl/vector.h>
 
 namespace LIEF::dwarf::py {
 template<>
@@ -69,6 +71,24 @@ void create<dw::Variable>(nb::module_& m) {
     .def_prop_ro("is_stack_based",
       &dw::Variable::is_stack_based,
       "Whether this variable is allocated on the stack"_doc
+    )
+    .def_prop_ro("location",
+      nb::overload_cast<>(&dw::Variable::location, nb::const_),
+      R"doc(
+      Location of this variable.
+      )doc"_doc
+    )
+    .def("location_at",
+      nb::overload_cast<uint64_t>(&dw::Variable::location, nb::const_),
+      R"doc(
+      Location of this variable when PC is at the given
+      address.
+      )doc"_doc, "pc"_a
+    )
+    .def_prop_ro("locations", &dw::Variable::locations,
+      R"doc(
+      All the location entries of this variable.
+      )doc"_doc
     )
     .def_prop_ro("debug_location",
       &dw::Variable::debug_location,

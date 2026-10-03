@@ -1,10 +1,14 @@
 use lief_ffi as ffi;
 
 use super::Type;
+use super::location::LocationEntries;
 use crate::common::FromFFI;
 
 use crate::common::into_optional;
 use std::marker::PhantomData;
+
+#[doc(no_inline)]
+pub use super::location::{Location, RegisterLocation};
 
 pub trait Parameter {
     #[doc(hidden)]
@@ -24,6 +28,16 @@ pub trait Parameter {
     /// that is not following the calling convention.
     fn location(&self) -> Option<Location<'_>> {
         into_optional(self.get_base().location())
+    }
+
+    /// Location of this parameter when PC is at the given address.
+    fn location_at(&self, pc: u64) -> Option<Location<'_>> {
+        into_optional(self.get_base().location_at(pc))
+    }
+
+    /// All the location entries of this parameter
+    fn locations(&self) -> LocationEntries<'_> {
+        LocationEntries::new(self.get_base().locations())
     }
 }
 
@@ -133,52 +147,5 @@ impl FromFFI<ffi::DWARF_parameters_TemplateType> for TemplateType<'_> {
 impl Parameter for TemplateType<'_> {
     fn get_base(&self) -> &ffi::DWARF_Parameter {
         self.ptr.as_ref().unwrap().as_ref()
-    }
-}
-
-/// Enum that represents the different type of locations for a parameters
-pub enum Location<'a> {
-    /// Register location (e.g. `r8, x13`)
-    Register(RegisterLocation<'a>),
-}
-
-impl FromFFI<ffi::DWARF_Parameter_Location> for Location<'_> {
-    fn from_ffi(ffi_entry: cxx::UniquePtr<ffi::DWARF_Parameter_Location>) -> Self {
-        unsafe {
-            let loc_ref = ffi_entry.as_ref().unwrap();
-
-            if ffi::DWARF_Parameter_RegisterLocation::classof(loc_ref) {
-                let raw = {
-                    type From = cxx::UniquePtr<ffi::DWARF_Parameter_Location>;
-                    type To = cxx::UniquePtr<ffi::DWARF_Parameter_RegisterLocation>;
-                    std::mem::transmute::<From, To>(ffi_entry)
-                };
-                Location::Register(RegisterLocation::from_ffi(raw))
-            } else {
-                panic!("Unknown Parameter");
-            }
-        }
-    }
-}
-
-/// Location as a register
-pub struct RegisterLocation<'a> {
-    ptr: cxx::UniquePtr<ffi::DWARF_Parameter_RegisterLocation>,
-    _owner: PhantomData<&'a ()>,
-}
-
-impl FromFFI<ffi::DWARF_Parameter_RegisterLocation> for RegisterLocation<'_> {
-    fn from_ffi(ptr: cxx::UniquePtr<ffi::DWARF_Parameter_RegisterLocation>) -> Self {
-        Self {
-            ptr,
-            _owner: PhantomData,
-        }
-    }
-}
-
-impl RegisterLocation<'_> {
-    /// DWARF id of the register (e.g. `DW_OP_reg0`)
-    pub fn id(&self) -> u64 {
-        self.ptr.id()
     }
 }

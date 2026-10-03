@@ -15,12 +15,14 @@
 #ifndef LIEF_DWARF_PARAMETER_H
 #define LIEF_DWARF_PARAMETER_H
 
+#include "LIEF/DWARF/Location.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
 
 #include <string_view>
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 
 namespace LIEF::dwarf {
@@ -44,41 +46,15 @@ class LIEF_API Parameter {
     FORMAL,         ///< DW_TAG_formal_parameter
   };
 
-  /// This class exposes information about the location of a parameter
-  class LIEF_API Location {
-    public:
-    enum class Type : uint8_t {
-      UNKNOWN = 0,
-      REG,
-    };
-    Location(Type ty) :
-      type(ty) {}
+  /// Location of a parameter (see: dwarf::Location)
+  using Location = dwarf::Location;
 
-    template<class T>
-    const T* as() const {
-      if (T::classof(this)) {
-        return static_cast<const T*>(this);
-      }
-      return nullptr;
-    }
+  /// Register location of a parameter (see: dwarf::RegisterLoc)
+  using RegisterLoc = dwarf::RegisterLoc;
 
-    Type type = Type::UNKNOWN;
-  };
-
-  /// This class represents a register location
-  class LIEF_API RegisterLoc : public Location {
-    public:
-    RegisterLoc(uint64_t reg_id) :
-      Location(Type::REG),
-      id(reg_id) {}
-
-    static bool classof(const Location* loc) {
-      return loc->type == Type::REG;
-    }
-
-    /// DWARF id of the register
-    uint64_t id = 0;
-  };
+  /// Location of a parameter split across several pieces
+  /// (see: dwarf::CompositeLocation)
+  using CompositeLocation = dwarf::CompositeLocation;
 
   Parameter() = delete;
   Parameter(Parameter&& other) noexcept;
@@ -97,7 +73,14 @@ class LIEF_API Parameter {
 
   /// Location of this parameter. For instance it can be a specific register
   /// that is not following the calling convention.
-  std::unique_ptr<Location> location() const LIEF_LIFETIMEBOUND;
+  std::unique_ptr<Location> location() const;
+
+  /// Location of this parameter when the program counter is at the given
+  /// address.
+  std::unique_ptr<Location> location(uint64_t pc) const;
+
+  /// All the location entries of this parameter
+  std::vector<LocationEntry> locations() const;
 
   template<class T>
   const T* as() const {

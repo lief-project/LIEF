@@ -2,24 +2,12 @@
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/types.hpp"
 #include "DWARF/pyDwarf.hpp"
+#include "DWARF/pyLocation.hpp"
 
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-
-namespace nanobind::detail {
-template<> struct type_hook<LIEF::dwarf::Parameter::Location> {
-  static const std::type_info* get(const LIEF::dwarf::Parameter::Location *src) {
-    using Parameter = LIEF::dwarf::Parameter;
-    if (src) {
-      if (Parameter::RegisterLoc::classof(src)) {
-        return &typeid(Parameter::RegisterLoc);
-      }
-    }
-    return &typeid(Parameter::Location);
-  }
-};
-}
+#include <nanobind/stl/vector.h>
 
 namespace LIEF::dwarf::py {
 template<>
@@ -33,27 +21,8 @@ void create<dw::Parameter>(nb::module_& m) {
     )doc"_doc
   );
 
-  using Location = dw::Parameter::Location;
-  using RegisterLoc = dw::Parameter::RegisterLoc;
-
-  nb::class_<Location> loc(param, "Location",
-    R"doc(
-    This class exposes information about the location of a parameter
-    )doc"_doc);
-
-  nb::enum_<dw::Parameter::Location::Type>(loc, "Type")
-    .value("UNKNOWN", Location::Type::UNKNOWN)
-    .value("REGISTER", Location::Type::REG);
-
-  loc
-    .def_ro("type", &Location::type);
-
-  nb::class_<RegisterLoc, Location>(param, "RegisterLoc",
-    R"doc(
-    This class represents a register location
-    )doc"_doc)
-
-    .def_ro("id", &RegisterLoc::id, "DWARF id of the register"_doc);
+  param.attr("Location") = m.attr("Location");
+  param.attr("RegisterLoc") = m.attr("RegisterLoc");
 
   param
     .def_prop_ro("name", &dw::Parameter::name,
@@ -68,11 +37,26 @@ void create<dw::Parameter>(nb::module_& m) {
       )doc"_doc, nb::keep_alive<0, 1>()
     )
 
-    .def_prop_ro("location", &dw::Parameter::location,
+    .def_prop_ro("location",
+      nb::overload_cast<>(&dw::Parameter::location, nb::const_),
       R"doc(
       Location of this parameter. For instance it can be a specific register
       that is not following the calling convention.
-      )doc"_doc, nb::keep_alive<0, 1>()
+      )doc"_doc
+    )
+
+    .def("location_at",
+      nb::overload_cast<uint64_t>(&dw::Parameter::location, nb::const_),
+      R"doc(
+      Location of this parameter when the program counter is at the given
+      address.
+      )doc"_doc, "pc"_a
+    )
+
+    .def_prop_ro("locations", &dw::Parameter::locations,
+      R"doc(
+      All the location entries of this parameter.
+      )doc"_doc
     )
   ;
 
