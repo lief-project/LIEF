@@ -38,7 +38,6 @@ RsaInfo::RsaInfo(const RsaInfo::rsa_ctx_handle ctx) {
                           // NOLINTNEXTLINE(clang-taidy-avoid-unfixed-enum-cast)
                           mbedtls_md_type_t(pctx->private_hash_id));
   mbedtls_rsa_copy(local_ctx, pctx);
-  mbedtls_rsa_complete(local_ctx);
   ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
 }
 
@@ -51,7 +50,6 @@ RsaInfo::RsaInfo(const RsaInfo& other) {
                             // NOLINTNEXTLINE(clang-taidy-avoid-unfixed-enum-cast)
                             mbedtls_md_type_t(octx->private_hash_id));
     mbedtls_rsa_copy(local_ctx, octx);
-    mbedtls_rsa_complete(local_ctx);
     ctx_ = reinterpret_cast<RsaInfo::rsa_ctx_handle>(local_ctx);
   }
 }

@@ -51,22 +51,17 @@ extern "C" {
 #include <mbedtls/pk.h>
 #include <mbedtls/oid.h>
 
-#if defined(MBEDTLS_THREADING_C)
-#include "mbedtls/threading.h"
-#endif
-
-static_assert(MBEDTLS_VERSION_NUMBER == 0x04000000, "Expecting mbedtls 4.0.0");
+static_assert(MBEDTLS_VERSION_NUMBER == 0x04020000, "Expecting mbedtls 4.2.0");
 
 // From: tf-psa-crypto/include/mbedtls/private/pk_private.h
 // <pk_private.h>
 typedef enum {
-    MBEDTLS_PK_NONE=0,
-    MBEDTLS_PK_RSA,
+    MBEDTLS_PK_NONE = MBEDTLS_PK_SIGALG_NONE,
+    MBEDTLS_PK_RSA = MBEDTLS_PK_SIGALG_RSA_PKCS1V15,
+    MBEDTLS_PK_RSASSA_PSS = MBEDTLS_PK_SIGALG_RSA_PSS,
+    MBEDTLS_PK_ECDSA = MBEDTLS_PK_SIGALG_ECDSA,
     MBEDTLS_PK_ECKEY,
     MBEDTLS_PK_ECKEY_DH,
-    MBEDTLS_PK_ECDSA,
-    MBEDTLS_PK_RSA_ALT,
-    MBEDTLS_PK_RSASSA_PSS,
     MBEDTLS_PK_OPAQUE,
 } mbedtls_pk_type_t;
 
@@ -76,10 +71,6 @@ mbedtls_pk_type_t mbedtls_pk_get_type(const mbedtls_pk_context *ctx);
 // From: tf-psa-crypto/drivers/builtin/include/mbedtls/private/rsa.h
 // <rsa.h>
 typedef struct mbedtls_rsa_context {
-    int MBEDTLS_PRIVATE(ver);                    /*!<  Reserved for internal purposes.
-                                                  *    Do not set this field in application
-                                                  *    code. Its meaning might change without
-                                                  *    notice. */
     size_t MBEDTLS_PRIVATE(len);                 /*!<  The size of \p N in Bytes. */
 
     mbedtls_mpi MBEDTLS_PRIVATE(N);              /*!<  The public modulus. */
@@ -108,21 +99,7 @@ typedef struct mbedtls_rsa_context {
                                                     as specified in md.h for use in the MGF
                                                     mask generating function used in the
                                                     EME-OAEP and EMSA-PSS encodings. */
-#if defined(MBEDTLS_THREADING_C)
-    /* Invariant: the mutex is initialized iff ver != 0. */
-    mbedtls_threading_mutex_t MBEDTLS_PRIVATE(mutex);    /*!<  Thread-safety mutex. */
-#endif
 } mbedtls_rsa_context;
-
-static inline mbedtls_rsa_context *mbedtls_pk_rsa(const mbedtls_pk_context pk)
-{
-    switch (mbedtls_pk_get_type(&pk)) {
-        case MBEDTLS_PK_RSA:
-            return (mbedtls_rsa_context *) (pk).MBEDTLS_PRIVATE(pk_ctx);
-        default:
-            return NULL;
-    }
-}
 
 int mbedtls_rsa_parse_pubkey(mbedtls_rsa_context *rsa, const unsigned char *key, size_t keylen);
 void mbedtls_rsa_init(mbedtls_rsa_context *ctx);

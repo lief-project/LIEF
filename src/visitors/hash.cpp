@@ -16,8 +16,11 @@
 #include <functional>
 #include <numeric>
 
-#include "mbedtls_wraps.h"
-#include "psa/crypto_builtin_primitives.h"
+#ifndef MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+  #define MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
+#endif
+
+#include "mbedtls/private/sha256.h"
 
 #include "LIEF/hash.hpp"
 

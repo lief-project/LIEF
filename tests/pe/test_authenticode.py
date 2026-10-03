@@ -427,6 +427,16 @@ def test_rsa_info():
     assert Q == 0
 
 
+@pytest.mark.parametrize("name", ["Amazon Root CA 3", "Amazon Root CA 4"])
+def test_ec_certificate(name):
+    certs = lief.PE.x509.parse(get_sample("pkcs7/windows-ca-bundle.pem"))
+    cert = next(c for c in certs if c.subject == f"C=US, O=Amazon, CN={name}")
+
+    assert cert.key_type == lief.PE.x509.KEY_TYPES.ECKEY
+    assert cert.rsa_info is None
+    assert cert.verify(cert) == lief.PE.x509.VERIFICATION_FLAGS.OK
+
+
 def test_issue_703():
     sig = lief.PE.Signature.parse(get_sample("pkcs7/cert_issue_703.der"))
     assert sig is not None

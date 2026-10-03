@@ -28,7 +28,10 @@
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 #include "LIEF/PE/signature/attributes.hpp"
 
-#include <psa/crypto_builtin_primitives.h>
+#include <mbedtls/private/md5.h>
+#include <mbedtls/private/sha1.h>
+#include <mbedtls/private/sha256.h>
+#include <mbedtls/private/sha512.h>
 
 #include "frozen.hpp"
 #include "internal_utils.hpp"

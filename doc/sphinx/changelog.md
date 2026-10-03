@@ -98,6 +98,7 @@
 
   * Update nanobind to version ``3.0.1``
   * Update frozen to commit ``1a6065f``
+  * Update mbedtls to version ``4.2.0``
 
 :Python:
 

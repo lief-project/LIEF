@@ -21,7 +21,7 @@
 #endif
 
 #include "logging.hpp"
-#include "psa/crypto_builtin_primitives.h"
+#include "mbedtls/private/md5.h"
 
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
