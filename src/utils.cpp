@@ -38,8 +38,8 @@ template<typename octet_iterator>
 result<uint32_t> next(octet_iterator& it, octet_iterator end) {
   using namespace utf8;
   using namespace utf8::internal;
-  utfchar32_t cp = 0;
-  internal::utf_error err_code = validate_next(it, end, cp);
+  octet_iterator start = it;
+  internal::utf_error err_code = validate_next(it, end);
   switch (err_code) {
     case UTF8_OK: break;
     case NOT_ENOUGH_ROOM: return make_error_code(lief_errors::data_too_large);
@@ -48,7 +48,7 @@ result<uint32_t> next(octet_iterator& it, octet_iterator end) {
     case OVERLONG_SEQUENCE:
     case INVALID_CODE_POINT: return make_error_code(lief_errors::read_error);
   }
-  return cp;
+  return utf8::unchecked::next(start);
 }
 
 std::string u16tou8(const char16_t* buffer, size_t size, bool remove_null_char) {
