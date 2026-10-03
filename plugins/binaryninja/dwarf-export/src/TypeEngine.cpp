@@ -32,30 +32,6 @@ namespace dwarf_plugin {
 
 using namespace binaryninja;
 
-std::string infer_interger_name(size_t width, bool is_signed) {
-  if (width == sizeof(uint8_t)) {
-    return is_signed ? "int8_t" : "uint8_t";
-  }
-
-  if (width == sizeof(uint16_t)) {
-    return is_signed ? "int16_t" : "uint16_t";
-  }
-
-  if (width == sizeof(uint32_t)) {
-    return is_signed ? "int32_t" : "uint32_t";
-  }
-
-  if (width == sizeof(uint64_t)) {
-    return is_signed ? "int64_t" : "uint64_t";
-  }
-
-  if (width == /* uint128_t */ 16) {
-    return is_signed ? "int128_t" : "uint128_t";
-  }
-
-  return "";
-}
-
 void TypeEngine::init() {
   for (const auto& [name, type] : bv_.GetTypes()) {
     add_type(*type);
