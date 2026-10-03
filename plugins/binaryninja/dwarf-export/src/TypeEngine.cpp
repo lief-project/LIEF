@@ -276,7 +276,6 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
             unit_.create_typedef(binaryninja::to_string(ntr->GetName()),
                                  add_type(*alias));
         return *mapping_.insert({name_str, std::move(typdef_type)}).first->second;
-        ;
       }
 
       if (auto it = mapping_.find(alias->GetString(bv_.GetDefaultPlatform()));
@@ -301,7 +300,6 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
             unit_.create_array(name_str, dw_element_type, type.GetElementCount());
 
         return *mapping_.insert({name_str, std::move(array)}).first->second;
-        ;
       }
 
       std::unique_ptr<dw::editor::Type> dw_element_type =
