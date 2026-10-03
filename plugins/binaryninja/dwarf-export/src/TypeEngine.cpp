@@ -32,6 +32,14 @@ namespace dwarf_plugin {
 
 using namespace binaryninja;
 
+inline bool is_anonymous(const BN::Type& type) {
+  switch (type.GetClass()) {
+    case StructureTypeClass:
+    case EnumerationTypeClass: return type.GetStructureName().GetString().empty();
+    default: return false;
+  }
+}
+
 void TypeEngine::init() {
   for (const auto& [name, type] : bv_.GetTypes()) {
     add_type(*type);
@@ -43,6 +51,10 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
 
   if (auto it = mapping_.find(name_str); it != mapping_.end()) {
     return *it->second;
+  }
+
+  if (type.IsConst().GetValue() || type.IsVolatile().GetValue()) {
+    return add_qualified_type(type, name_str);
   }
 
   BNTypeClass class_type = type.GetClass();
@@ -342,6 +354,73 @@ LIEF::dwarf::editor::Type& TypeEngine::add_type(const BinaryNinja::Type& type) {
     }
 #endif
   }
+}
+
+LIEF::dwarf::editor::Type&
+    TypeEngine::add_qualified_type(const BinaryNinja::Type& type,
+                                   const std::string& name_str) {
+  const bool is_const = type.IsConst().GetValue();
+  const bool is_volatile = type.IsVolatile().GetValue();
+
+  BN::TypeBuilder builder(const_cast<BN::Type*>(&type));
+
+  switch (type.GetClass()) {
+    case FunctionTypeClass:
+    {
+      // C does not allow qualified function types
+      BN_DEBUG("Dropping the qualifiers of the function type {}", name_str);
+      return add_type(*builder.SetConst(false).SetVolatile(false).Finalize());
+    }
+
+    case ArrayTypeClass:
+    {
+      // Qualifying an array qualifies its elements
+      auto element = type.GetChildType();
+      if (!api_compat::as_bool(element)) {
+        break;
+      }
+
+      BN::TypeBuilder element_builder(
+          const_cast<BN::Type*>(&api_compat::get_type(element))
+      );
+
+      if (is_const) {
+        element_builder.SetConst(true);
+      }
+
+      if (is_volatile) {
+        element_builder.SetVolatile(true);
+      }
+
+      BN::Ref<BN::Type> array =
+          BN::Type::ArrayType(element_builder.Finalize(), type.GetElementCount());
+
+      return add_type(*array);
+    }
+
+    default: break;
+  }
+
+  // Remove one qualifier at a time so that `T const volatile` is built on top
+  // of `T volatile`.
+  if (is_const) {
+    builder.SetConst(false);
+  } else {
+    builder.SetVolatile(false);
+  }
+
+  BN::Ref<BN::Type> inner = builder.Finalize();
+  dw::editor::Type& dw_inner = add_type(*inner);
+
+  std::unique_ptr<dw::editor::Type> qualified =
+      is_const ? unit_.create_const_type(dw_inner) :
+                 unit_.create_volatile_type(dw_inner);
+
+  if (is_anonymous(*inner)) {
+    return *anon_types_.insert(anon_types_.end(), std::move(qualified))->get();
+  }
+
+  return *mapping_.insert({name_str, std::move(qualified)}).first->second;
 }
 
 void TypeEngine::add_member(const BinaryNinja::StructureMember& member,

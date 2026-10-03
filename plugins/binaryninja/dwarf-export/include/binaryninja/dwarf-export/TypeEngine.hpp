@@ -47,6 +47,9 @@ class TypeEngine {
   private:
   void init();
 
+  LIEF::dwarf::editor::Type& add_qualified_type(const BinaryNinja::Type& type,
+                                                const std::string& name_str);
+
   void add_member(const BinaryNinja::StructureMember& member,
                   LIEF::dwarf::editor::StructType& S);
 
