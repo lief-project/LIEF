@@ -268,7 +268,8 @@ class LIEF_API Memory {
   static std::string perm_str(uint32_t flags);
 
   static constexpr bool support_rwx() {
-    return platform() != PLATFORMS::IOS;
+    return platform() != PLATFORMS::IOS &&
+           !(platform() == PLATFORMS::OSX && arch() == ARCH::ARM64);
   }
 };
 
