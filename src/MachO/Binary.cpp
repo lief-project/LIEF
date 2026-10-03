@@ -1005,6 +1005,24 @@ ok_error_t Binary::shift(size_t value) {
       }
     }
   }
+  // The shift moved the code in __TEXT but not the image-base offsets in
+  // __TEXT,__init_offsets, so bump the ones past the shift point.
+  for (Section* section : sections_) {
+    if (section->type() != Section::TYPE::INIT_FUNC_OFFSETS) {
+      continue;
+    }
+    span<uint8_t> content = section->content();
+    for (size_t i = 0; i + sizeof(uint32_t) <= content.size();
+         i += sizeof(uint32_t)) {
+      uint32_t init_off = 0;
+      std::memcpy(&init_off, content.data() + i, sizeof(init_off));
+      if (init_off >= loadcommands_end) {
+        init_off += static_cast<uint32_t>(value);
+        std::memcpy(content.data() + i, &init_off, sizeof(init_off));
+      }
+    }
+  }
+
   refresh_seg_offset();
   available_command_space_ += value;
   return ok();
