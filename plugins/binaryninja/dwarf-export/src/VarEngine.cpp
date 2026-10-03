@@ -52,11 +52,8 @@ dw::Variable* VarEngine::add_variable(const BN::DataVariable& var) {
 
   std::unique_ptr<dw::Variable> dw_var = unit_.create_variable(name);
 
-  auto location = std::make_unique<LIEF::dwarf::AddressLoc>(var.address);
-
   dw_var->set_type(types_.add_type(api_compat::get_type(var.type)));
-  dw_var->set_location(*location);
-
+  dw_var->set_location(LIEF::dwarf::AddressLoc(var.address));
 
   std::string comment = bv_.GetCommentForAddress(var.address);
   if (!comment.empty()) {

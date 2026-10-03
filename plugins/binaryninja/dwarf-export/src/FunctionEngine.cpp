@@ -101,13 +101,11 @@ dw::Function* FunctionEngine::add_function(BN::Function& func) {
       std::unique_ptr<dw::Variable> dw_var =
           dw_func->create_stack_variable(info.name);
 
-      auto location = std::make_unique<LIEF::dwarf::FrameBaseLoc>(addr);
-
       if (auto var_type = info.type; api_compat::as_bool(var_type)) {
         dw::Type& dw_type = types_.add_type(api_compat::get_type(var_type));
         dw_var->set_type(dw_type);
       }
-      dw_var->set_location(*location);
+      dw_var->set_location(LIEF::dwarf::FrameBaseLoc(addr));
     }
   }
   std::vector<uint64_t> commented_addresses = func.GetCommentedAddresses();
