@@ -18,6 +18,9 @@
 #include "LIEF/runtime/utils.hpp"
 #include "logging.hpp"
 
+#include <mach/mach_error.h>
+#include <mach/mach_init.h>
+#include <mach/mach_vm.h>
 #include <sys/mman.h>
 
 namespace LIEF::runtime {
@@ -173,15 +176,21 @@ ok_error_t Memory::mprotect(Memory::Chunk& C, uint32_t flags) {
     return make_error_code(lief_errors::runtime_error);
   }
 
-  int posix_flags = get_posix_flags(flags);
+  vm_prot_t protections = get_posix_flags(flags);
   const uintptr_t pstart = C.page_start();
   const uintptr_t pend = C.page_end();
   const uintptr_t len = pend - pstart;
 
-  int ret = ::mprotect((void*)pstart, len, posix_flags);
-  if (ret != 0) {
-    LIEF_ERR("mprotect [{:#018x}, {:#018x}] -> {} ({:04b}) failed: {} ({})",
-             pstart, pend, perm_str(flags), posix_flags, ret, strerror(errno));
+  kern_return_t ret =
+      mach_vm_protect(mach_task_self(), pstart, len, false, protections);
+
+  if (ret == KERN_PROTECTION_FAILURE && (flags & Memory::P_WRITE)) {
+    ret = mach_vm_protect(mach_task_self(), pstart, len, false,
+                          protections | VM_PROT_COPY);
+  }
+  if (ret != KERN_SUCCESS) {
+    LIEF_ERR("mach_vm_protect [{:#018x}, {:#018x}] -> {} failed: {} ({})", pstart,
+             pend, perm_str(flags), ret, mach_error_string(ret));
     return make_error_code(lief_errors::runtime_error);
   }
   return ok();
