@@ -223,6 +223,20 @@ std::unique_ptr<Variable> Variable::Iterator::yield() {
 // ----------------------------------------------------------------------------
 Location::~Location() = default;
 
+RegisterLoc::~RegisterLoc() = default;
+
+AddressLoc::~AddressLoc() = default;
+
+FrameBaseLoc::~FrameBaseLoc() = default;
+
+RegisterOffsetLoc::~RegisterOffsetLoc() = default;
+
+ExpressionLoc::~ExpressionLoc() = default;
+
+UnavailableLoc::~UnavailableLoc() = default;
+
+CompositeLocation::~CompositeLocation() = default;
+
 std::string Location::to_string() const {
   return "";
 }

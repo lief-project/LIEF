@@ -97,7 +97,7 @@ class LIEF_API RegisterLoc : public Location {
     return loc->type == Type::REG;
   }
 
-  ~RegisterLoc() override = default;
+  ~RegisterLoc() override;
 
   /// DWARF id of the register that must be interpreted according to the target
   /// architecture
@@ -115,7 +115,7 @@ class LIEF_API AddressLoc : public Location {
     return loc->type == Type::ADDRESS;
   }
 
-  ~AddressLoc() override = default;
+  ~AddressLoc() override;
 
   /// Memory address where the value is located
   uint64_t address = 0;
@@ -132,7 +132,7 @@ class LIEF_API FrameBaseLoc : public Location {
     return loc->type == Type::FRAME_BASE;
   }
 
-  ~FrameBaseLoc() override = default;
+  ~FrameBaseLoc() override;
 
   /// Signed byte offset from the frame base
   int64_t offset = 0;
@@ -151,7 +151,7 @@ class LIEF_API RegisterOffsetLoc : public Location {
     return loc->type == Type::REGISTER_OFFSET;
   }
 
-  ~RegisterOffsetLoc() override = default;
+  ~RegisterOffsetLoc() override;
 
   /// DWARF id of the register that contains the base address
   uint64_t id = 0;
@@ -173,7 +173,7 @@ class LIEF_API ExpressionLoc : public Location {
     return loc->type == Type::EXPRESSION;
   }
 
-  ~ExpressionLoc() override = default;
+  ~ExpressionLoc() override;
 
   /// Raw bytes of the DWARF expression
   std::vector<uint8_t> expression;
@@ -193,7 +193,7 @@ class LIEF_API UnavailableLoc : public Location {
     return loc->type == Type::UNAVAILABLE;
   }
 
-  ~UnavailableLoc() override = default;
+  ~UnavailableLoc() override;
 };
 
 /// The value is split into several pieces (`DW_OP_piece/DW_OP_bit_piece`),
@@ -240,7 +240,7 @@ class LIEF_API CompositeLocation : public Location {
     return loc->type == Type::COMPOSITE;
   }
 
-  ~CompositeLocation() override = default;
+  ~CompositeLocation() override;
 
   /// The pieces of this location, ordered by their bit offset
   std::vector<Piece> pieces;
