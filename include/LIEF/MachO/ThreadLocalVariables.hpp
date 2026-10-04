@@ -127,7 +127,7 @@ class LIEF_API ThreadLocalVariables : public LIEF::MachO::Section {
     Thunk operator*() const {
       auto value = parent_->get(pos_);
       assert(value);
-      return *value;
+      return *value; // NOLINT
     }
 
     private:
