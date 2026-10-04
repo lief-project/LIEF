@@ -108,6 +108,10 @@
     an unpaired surrogate makes the conversion fail: the function now returns a
     ``result<std::string>``.
 
+:Extended:
+
+  * Use LLVM ``23.x``
+
 :Dependencies:
 
   * Update nanobind to version ``3.0.1``
