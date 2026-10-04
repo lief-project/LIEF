@@ -232,7 +232,8 @@ inline std::string to_u8(const details::unicode_string& str) {
     return "";
   }
   return u16tou8(reinterpret_cast<const char16_t*>(str.Buffer),
-                 str.Length / sizeof(char16_t), /*remove_null_char=*/true);
+                 str.Length / sizeof(char16_t), /*remove_null_char=*/true)
+      .value_or("");
 }
 
 

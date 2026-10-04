@@ -1,4 +1,5 @@
 import ctypes
+import json
 import random
 import struct
 import zipfile
@@ -852,6 +853,15 @@ def test_nodes():
     assert len(data_node.content) == 1064
     assert data_node.copy() == data_node
     assert hash(data_node.copy()) == hash(data_node)
+
+
+def test_node_name_surrogate_pair():
+    # U+1F600 is stored as a UTF-16 surrogate pair
+    node = lief.PE.ResourceDirectory(0x80000000)
+    node.name = "icon-\U0001f600"
+    assert node.has_name
+    assert node.name == "icon-\U0001f600"
+    assert json.loads(lief.to_json(node))["name"] == "icon-\U0001f600"
 
 
 def test_add_node(tmp_path: Path):

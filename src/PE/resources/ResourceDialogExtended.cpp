@@ -254,7 +254,7 @@ std::unique_ptr<ResourceDialogExtended>
 }
 
 std::string ResourceDialogExtended::font_t::to_string() const {
-  return fmt::format("{}, {}", point_size, u16tou8(typeface));
+  return fmt::format("{}, {}", point_size, u16tou8(typeface).value_or(""));
 }
 
 std::string ResourceDialogExtended::Item::to_string() const {
@@ -271,7 +271,7 @@ std::string ResourceDialogExtended::Item::to_string() const {
         default: win_class_str = fmt::format("unknown ({:#06x})", *ord); break;
       }
     } else {
-      win_class_str = u16tou8(clazz().string);
+      win_class_str = u16tou8(clazz().string).value_or("");
     }
   }
 

@@ -38,9 +38,12 @@ inline std::optional<std::string> get_folder_id(KNOWNFOLDERID id) {
   if (len == 0) {
     return std::nullopt;
   }
-  std::string u8 = u16tou8(reinterpret_cast<const char16_t*>(path), len,
-                           /*remove_null_char=*/true);
-  return u8;
+  auto u8 = u16tou8(reinterpret_cast<const char16_t*>(path), len,
+                    /*remove_null_char=*/true);
+  if (!u8) {
+    return std::nullopt;
+  }
+  return std::move(*u8);
 }
 
 std::string Host::name() {

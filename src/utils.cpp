@@ -51,18 +51,40 @@ result<uint32_t> next(octet_iterator& it, octet_iterator end) {
   return utf8::unchecked::next(start);
 }
 
-std::string u16tou8(const char16_t* buffer, size_t size, bool remove_null_char) {
-  std::string name;
-
-  std::u16string clean_string;
-  std::copy_if(buffer, buffer + size, std::back_inserter(clean_string),
-               utf8::internal::is_code_point_valid);
-
-  utf8::unchecked::utf16to8(clean_string.begin(), clean_string.end(),
-                            std::back_inserter(name));
-
+result<std::string> u16tou8(const char16_t* buffer, size_t size,
+                            bool remove_null_char) {
+  using namespace utf8::internal;
   if (remove_null_char) {
-    return std::string{name.c_str()};
+    size = std::find(buffer, buffer + size, u'\0') - buffer;
+  }
+
+  if (size == 0) {
+    return std::string();
+  }
+
+  const bool swapped = (buffer[0] == 0xFFFE);
+
+  const auto get = [&](size_t idx) -> uint32_t {
+    const uint16_t value = buffer[idx];
+    return swapped ? uint16_t((value >> 8) | (value << 8)) : value;
+  };
+
+  std::string name;
+  auto out = std::back_inserter(name);
+  size_t i = 0;
+
+  if (get(0) == 0xFEFF) {
+    i = 1;
+  }
+
+  while (i < size) {
+    uint32_t cp = get(i++);
+    if (is_lead_surrogate(cp) && i < size && is_trail_surrogate(get(i))) {
+      cp = (cp << 10) + get(i++) + SURROGATE_OFFSET;
+    } else if (is_surrogate(cp)) {
+      return make_error_code(lief_errors::conversion_error);
+    }
+    out = utf8::unchecked::append(cp, out);
   }
   return name;
 }

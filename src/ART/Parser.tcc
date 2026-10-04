@@ -232,7 +232,7 @@ void Parser::parse_jstring(size_t offset) {
     reinterpret_cast<const char16_t*>(stream_->read(value_offset, static_cast<uint16_t>(jstring->count) * sizeof(char16_t))),
     static_cast<uint16_t>(jstring->count)
   };
-  std::cout << u16tou8(str)  << '\n';
+  std::cout << u16tou8(str).value_or("")  << '\n';
 }
 
 template<typename ART_T, typename PTR_T>
@@ -274,7 +274,7 @@ void Parser::parse_dex_cache(size_t object_offset) {
       reinterpret_cast<const char16_t*>(stream_->read(name_offset, static_cast<uint16_t>(location->count) * sizeof(char16_t))),
       static_cast<uint16_t>(location->count)
     };
-    std::cout << u16tou8(location_string)  << '\n';
+    std::cout << u16tou8(location_string).value_or("")  << '\n';
   }
 }
 

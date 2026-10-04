@@ -107,12 +107,16 @@ struct lief_version_t {
   }
 };
 
-LIEF_API std::string u16tou8(const char16_t* buffer, size_t size,
-                             bool remove_null_char = false);
+/// Convert a UTF-16 buffer to a UTF-8 string.
+///
+/// If `remove_null_char` is set, the conversion stops at the first null
+/// character.
+LIEF_API result<std::string> u16tou8(const char16_t* buffer, size_t size,
+                                     bool remove_null_char = false);
 
-/// Convert a UTF-16 string to a UTF-8 one
-inline std::string u16tou8(const std::u16string& string,
-                           bool remove_null_char = false) {
+/// Convert a UTF-16 string to a UTF-8 one (see the `char16_t*` overload)
+inline result<std::string> u16tou8(const std::u16string& string,
+                                   bool remove_null_char = false) {
   return u16tou8(string.data(), string.size(), remove_null_char);
 }
 

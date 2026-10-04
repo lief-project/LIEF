@@ -137,15 +137,15 @@ result<ResourceStringTable> ResourceStringTable::parse(BinaryStream& stream) {
 }
 
 std::string ResourceStringTable::entry_t::key_u8() const {
-  return u16tou8(key);
+  return u16tou8(key).value_or("");
 }
 
 std::string ResourceStringTable::entry_t::value_u8() const {
-  return u16tou8(value);
+  return u16tou8(value).value_or("");
 }
 
 std::string ResourceStringTable::key_u8() const {
-  return u16tou8(key());
+  return u16tou8(key()).value_or("");
 }
 
 std::optional<std::string> ResourceStringTable::get(const std::string& key) const {
@@ -155,7 +155,9 @@ std::optional<std::string> ResourceStringTable::get(const std::string& key) cons
   }
 
   if (auto value = get(*u16)) {
-    return u16tou8(*value);
+    if (auto u8 = u16tou8(*value)) {
+      return std::move(*u8);
+    }
   }
 
   return std::nullopt;

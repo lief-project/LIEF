@@ -66,6 +66,13 @@
       section.name               # '/18'
       section.coff_string.string # '.debug_rnglists'
 
+:PE:
+
+  * Fix the UTF-8 conversion of the resource strings (e.g. the names of
+    |lief-pe-resource-node|) and of the Authenticode program names: the
+    characters outside the Basic Multilingual Plane, such as emoji, were
+    silently dropped.
+
 :Runtime:
 
   * Add |lief-runtime-memory-mmap_hint| to allocate memory close to a given
@@ -94,6 +101,12 @@
 
       std::filesystem::path path = "/bin/ls";
       std::unique_ptr<LIEF::ELF::Binary> elf = LIEF::ELF::Parser::parse(path);
+
+  * |lief-u16tou8| now behaves like ``llvm::convertUTF16ToUTF8String``. It used
+    to drop every UTF-16 surrogate, including the valid surrogate pairs. Surrogate
+    pairs are now decoded, a leading byte order mark is handled as in LLVM, and
+    an unpaired surrogate makes the conversion fail: the function now returns a
+    ``result<std::string>``.
 
 :Dependencies:
 

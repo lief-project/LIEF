@@ -73,7 +73,7 @@ class DefaultModule : public Module {
 
     if (GetModuleFileNameW(module, tmp_buffer.data(), tmp_buffer.size()) != 0) {
       std::u16string u16 = reinterpret_cast<const char16_t*>(tmp_buffer.data());
-      path = u16tou8(u16);
+      path = u16tou8(u16).value_or("");
     } else {
       LIEF_DEBUG("Error: {}:{} ({})", __FUNCTION__, __LINE__, (int)GetLastError());
     }
@@ -84,7 +84,7 @@ class DefaultModule : public Module {
                            tmp_buffer.size()) != 0)
     {
       std::u16string u16 = reinterpret_cast<const char16_t*>(tmp_buffer.data());
-      name = u16tou8(u16);
+      name = u16tou8(u16).value_or("");
     } else {
       LIEF_DEBUG("Error: {}:{} ({})", __FUNCTION__, __LINE__, (int)GetLastError());
     }

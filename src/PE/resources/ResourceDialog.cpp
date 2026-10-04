@@ -264,14 +264,14 @@ std::vector<ResourceDialog::WINDOW_EXTENDED_STYLES>
 
 
 std::string ResourceDialog::title_utf8() const {
-  return u16tou8(title_);
+  return u16tou8(title_).value_or("");
 }
 
 std::string ResourceDialog::ordinal_or_str_t::to_string() const {
   if (ordinal) {
     return fmt::format("ord={}", *ordinal);
   }
-  return u16tou8(string);
+  return u16tou8(string).value_or("");
 }
 
 std::vector<ResourceDialog::WINDOW_STYLES>

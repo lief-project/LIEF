@@ -139,7 +139,7 @@ result<ResourceVersion> ResourceVersion::parse(BinaryStream& stream) {
     return make_error_code(wType.error());
   }
 
-  std::string szKey_u8 = u16tou8(*szKey);
+  std::string szKey_u8 = u16tou8(*szKey).value_or("");
   if (szKey_u8 != "VS_VERSION_INFO") {
     LIEF_WARN("VS_VERSIONINFO.szKey should be 'VS_VERSION_INFO', got {}",
               szKey_u8);
@@ -426,7 +426,7 @@ void ResourceVersion::accept(Visitor& visitor) const {
 }
 
 std::string ResourceVersion::key_u8() const {
-  return u16tou8(key());
+  return u16tou8(key()).value_or("");
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceVersion& version) {

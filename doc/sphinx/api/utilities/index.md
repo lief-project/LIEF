@@ -156,4 +156,14 @@ For example:
 - {fa}`brands fa-rust` {rust:func}`lief::dump`
 - {fa}`brands fa-rust` {rust:func}`lief::dump_with_limit`
 
+In C++, UTF-16 strings (e.g. PE resource names) can be converted to UTF-8 with:
+
+```{eval-rst}
+.. doxygenfunction:: LIEF::u16tou8(const char16_t *buffer, size_t size, bool remove_null_char = false)
+```
+
+```{eval-rst}
+.. doxygenfunction:: LIEF::u16tou8(const std::u16string &string, bool remove_null_char = false)
+```
+
 {{ cross_api }}

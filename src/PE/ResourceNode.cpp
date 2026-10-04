@@ -259,7 +259,7 @@ void ResourceNode::swap(ResourceNode& other) {
 }
 
 std::string ResourceNode::utf8_name() const {
-  return u16tou8(name());
+  return u16tou8(name()).value_or("");
 }
 
 ResourceNode& ResourceNode::add_child(std::unique_ptr<ResourceNode> child) {

@@ -477,7 +477,7 @@ ok_error_t Builder::build_resources() {
 ok_error_t Builder::compute_resources_size(const ResourceNode& node,
                                            rsrc_sizing_info_t& info) {
   if (!node.name().empty() || node.has_name()) {
-    LIEF_DEBUG("{}", u16tou8(node.name()));
+    LIEF_DEBUG("{}", u16tou8(node.name()).value_or(""));
     info.name_size += sizeof(uint16_t) + node.name().size() * sizeof(char16_t);
   }
 
@@ -526,7 +526,8 @@ ok_error_t Builder::construct_resource(vector_iostream& ios,
       const std::u16string& name = child.name();
       child.id(0x80000000 | ctx.offset_name);
       LIEF_DEBUG("[rsrc] writing name '{}' at {:#06x} (depth={}, id={})",
-                 u16tou8(child.name()), ctx.offset_name, dir.depth(), dir.id());
+                 u16tou8(child.name()).value_or(""), ctx.offset_name, dir.depth(),
+                 dir.id());
       ios.seekp(ctx.offset_name)
           .write<uint16_t>(name.size())
           .write(name, /*with_null_char=*/false);

@@ -91,7 +91,7 @@ result<ResourceStringFileInfo>
 
 
 std::string ResourceStringFileInfo::key_u8() const {
-  return u16tou8(key());
+  return u16tou8(key()).value_or("");
 }
 
 void ResourceStringFileInfo::accept(Visitor& visitor) const {

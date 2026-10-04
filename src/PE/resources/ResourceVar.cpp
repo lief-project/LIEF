@@ -90,7 +90,7 @@ result<ResourceVar> ResourceVar::parse(BinaryStream& stream) {
 
 
 std::string ResourceVar::key_u8() const {
-  return u16tou8(key());
+  return u16tou8(key()).value_or("");
 }
 
 std::ostream& operator<<(std::ostream& os, const ResourceVar& var) {

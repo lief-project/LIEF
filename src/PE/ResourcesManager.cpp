@@ -52,7 +52,7 @@ static constexpr auto RESOURCE_TYPES = {
 };
 
 std::string ResourcesManager::string_entry_t::string_u8() const {
-  return u16tou8(string);
+  return u16tou8(string).value_or("");
 }
 
 const ResourceNode*
@@ -603,7 +603,7 @@ void ResourcesManager::print_tree(const ResourceNode& node,
   std::string info =
       fmt::format("{} ID: {:04d} ({:#06x})", type, node.id(), node.id());
   if (node.has_name()) {
-    info += fmt::format(" name: {}", u16tou8(node.name()));
+    info += fmt::format(" name: {}", u16tou8(node.name()).value_or(""));
   } else if (std::string ty = to_string(TYPE(node.id()));
              ty != "UNKNOWN" && node.depth() == 1)
   {

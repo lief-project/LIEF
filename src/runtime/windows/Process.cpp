@@ -61,7 +61,11 @@ std::optional<std::string> Process::get_env(const std::string& key) {
   }
 
   if (size <= value.size()) {
-    return u16tou8(reinterpret_cast<const char16_t*>(value.data()), size);
+    auto u8 = u16tou8(reinterpret_cast<const char16_t*>(value.data()), size);
+    if (!u8) {
+      return std::nullopt;
+    }
+    return std::move(*u8);
   }
 
   std::vector<wchar_t> out(size, 0);
@@ -69,7 +73,11 @@ std::optional<std::string> Process::get_env(const std::string& key) {
                                  out.data(), out.size());
 
   if (size <= out.size()) {
-    return u16tou8(reinterpret_cast<const char16_t*>(out.data()), size);
+    auto u8 = u16tou8(reinterpret_cast<const char16_t*>(out.data()), size);
+    if (!u8) {
+      return std::nullopt;
+    }
+    return std::move(*u8);
   }
 
   return std::nullopt;
@@ -96,7 +104,8 @@ Process::EnvVars Process::get_envs() {
 
   for (const std::wstring& var : vars) {
     std::string u8var = u16tou8(reinterpret_cast<const char16_t*>(var.c_str()),
-                                var.size(), /*remove_null_char=*/true);
+                                var.size(), /*remove_null_char=*/true)
+                            .value_or("");
     if (u8var.empty()) {
       continue;
     }

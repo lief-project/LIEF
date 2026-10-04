@@ -511,7 +511,7 @@ void JsonVisitor::visit(const ResourceNode& resource_node) {
   node_["id"] = resource_node.id();
 
   if (resource_node.has_name()) {
-    node_["name"] = u16tou8(resource_node.name());
+    node_["name"] = u16tou8(resource_node.name()).value_or("");
   }
 
   if (!resource_node.childs().empty()) {
@@ -531,7 +531,7 @@ void JsonVisitor::visit(const ResourceDirectory& resource_directory) {
   node_["id"] = resource_directory.id();
 
   if (resource_directory.has_name()) {
-    node_["name"] = u16tou8(resource_directory.name());
+    node_["name"] = u16tou8(resource_directory.name()).value_or("");
   }
 
   node_["characteristics"] = resource_directory.characteristics();
@@ -949,7 +949,7 @@ void JsonVisitor::visit(const ResourceDialogRegular& dialog) {
 
   if (const ResourceDialogRegular::font_t& font = dialog.font()) {
     node_["font"]["point_size"] = font.point_size;
-    node_["font"]["name"] = u16tou8(font.name);
+    node_["font"]["name"] = u16tou8(font.name).value_or("");
   }
 
   if (const ResourceDialog::ordinal_or_str_t& menu = dialog.menu()) {
@@ -979,7 +979,7 @@ void JsonVisitor::visit(const ResourceDialogExtended& dialog) {
 
   if (const ResourceDialogExtended::font_t& font = dialog.font()) {
     node_["font"]["point_size"] = font.point_size;
-    node_["font"]["name"] = u16tou8(font.typeface);
+    node_["font"]["name"] = u16tou8(font.typeface).value_or("");
   }
 
   if (const ResourceDialog::ordinal_or_str_t& menu = dialog.menu()) {

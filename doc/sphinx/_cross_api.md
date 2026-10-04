@@ -12,6 +12,10 @@
     :py:func:`lief.dump`
     :cpp:func:`LIEF::dump`
 
+.. |lief-u16tou8| lief-api:: LIEF::u16tou8()
+
+    :cpp:func:`LIEF::u16tou8`
+
 .. |get_int_from_virtual_address| lief-api:: LIEF.get_int_from_virtual_address()
 
     :rust:method:`lief::elf::Binary::get_int_from_virtual_address [struct]`
