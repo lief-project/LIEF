@@ -118,7 +118,7 @@ def test_stub_resolution():
     assert (
         stub.target == 0x4B6A738
         if lief.__extended__
-        else lief.lief_errors.require_extended_version
+        else lief.lief_errors.require_extended_version  # ty: ignore
     )
 
     raw_stub = [
@@ -132,7 +132,7 @@ def test_stub_resolution():
     assert (
         stub.target == 0x1C6A4C4C8
         if lief.__extended__
-        else lief.lief_errors.require_extended_version
+        else lief.lief_errors.require_extended_version  # ty: ignore
     )
 
     raw_stub = [
@@ -147,7 +147,7 @@ def test_stub_resolution():
     assert (
         stub.target == 0x2128000
         if lief.__extended__
-        else lief.lief_errors.require_extended_version
+        else lief.lief_errors.require_extended_version  # ty: ignore
     )
 
     raw_stub = [
@@ -161,7 +161,7 @@ def test_stub_resolution():
     assert (
         stub.target == 0x1001EC1A8
         if lief.__extended__
-        else lief.lief_errors.require_extended_version
+        else lief.lief_errors.require_extended_version  # ty: ignore
     )
 
     raw_stub = [
@@ -173,5 +173,5 @@ def test_stub_resolution():
     assert (
         stub.target == 0x100008000
         if lief.__extended__
-        else lief.lief_errors.require_extended_version
+        else lief.lief_errors.require_extended_version  # ty: ignore
     )
