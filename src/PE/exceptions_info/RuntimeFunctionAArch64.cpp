@@ -19,7 +19,7 @@
 #include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/PE/Binary.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/PE/Parser.hpp"
 
 #include "logging.hpp"
@@ -29,7 +29,8 @@
 namespace LIEF::PE {
 
 std::unique_ptr<RuntimeFunctionAArch64>
-    RuntimeFunctionAArch64::parse(Parser& ctx, BinaryStream& strm) {
+    RuntimeFunctionAArch64::parse(Parser& ctx, BinaryStream& strm, uint64_t size,
+                                  uint64_t nb_scopes) {
   auto rva_start = strm.read<uint32_t>();
   if (!rva_start) {
     LIEF_WARN("Failed to read exception info RVA start (line: {})", __LINE__);
@@ -53,9 +54,9 @@ std::unique_ptr<RuntimeFunctionAArch64>
 
   if (flag == PACKED_FLAGS::UNPACKED) {
     uint32_t xdata_rva = details::xdata_unpacked_rva(*unwind_data);
-    uint32_t xdata_offset = ctx.bin().rva_to_offset(xdata_rva);
-    ScopedStream xdata_strm(ctx.stream(), xdata_offset);
-    return unwind_aarch64::UnpackedFunction::parse(ctx, *xdata_strm, xdata_rva,
+    std::unique_ptr<SpanStream> xdata_strm = ctx.stream_from_rva(xdata_rva);
+    return unwind_aarch64::UnpackedFunction::parse(ctx, *xdata_strm, size,
+                                                   nb_scopes, xdata_rva,
                                                    *rva_start);
   }
 

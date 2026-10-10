@@ -23,9 +23,9 @@
 
 namespace LIEF::PE {
 
-std::unique_ptr<ExceptionInfo> ExceptionInfo::parse(Parser& ctx,
-                                                    BinaryStream& strm,
-                                                    Header::MACHINE_TYPES arch) {
+std::unique_ptr<ExceptionInfo>
+    ExceptionInfo::parse(Parser& ctx, BinaryStream& strm, uint64_t size,
+                         uint64_t nb_scopes, Header::MACHINE_TYPES arch) {
   uint64_t pos = strm.pos();
   switch (arch) {
     case Header::MACHINE_TYPES::AMD64:
@@ -38,7 +38,7 @@ std::unique_ptr<ExceptionInfo> ExceptionInfo::parse(Parser& ctx,
     }
     case Header::MACHINE_TYPES::ARM64:
     {
-      if (auto F = RuntimeFunctionAArch64::parse(ctx, strm)) {
+      if (auto F = RuntimeFunctionAArch64::parse(ctx, strm, size, nb_scopes)) {
         F->offset(pos);
         return F;
       }
@@ -51,9 +51,11 @@ std::unique_ptr<ExceptionInfo> ExceptionInfo::parse(Parser& ctx,
 }
 
 std::unique_ptr<ExceptionInfo> ExceptionInfo::parse(Parser& ctx,
-                                                    BinaryStream& strm) {
+                                                    BinaryStream& strm,
+                                                    uint64_t size,
+                                                    uint64_t nb_scopes) {
   const Header::MACHINE_TYPES arch = ctx.bin().header().machine();
-  return parse(ctx, strm, arch);
+  return parse(ctx, strm, size, nb_scopes, arch);
 }
 
 }

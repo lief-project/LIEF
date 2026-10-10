@@ -45,8 +45,8 @@ class LIEF_API RuntimeFunctionAArch64 : public ExceptionInfo {
     RESERVED = 3,
   };
 
-  static std::unique_ptr<RuntimeFunctionAArch64> parse(Parser& ctx,
-                                                       BinaryStream& strm);
+  static std::unique_ptr<RuntimeFunctionAArch64>
+      parse(Parser& ctx, BinaryStream& strm, uint64_t size, uint64_t nb_scopes);
 
   RuntimeFunctionAArch64(uint64_t RVA, uint32_t length, PACKED_FLAGS flag) :
     ExceptionInfo(ARCH::ARM64, RVA),

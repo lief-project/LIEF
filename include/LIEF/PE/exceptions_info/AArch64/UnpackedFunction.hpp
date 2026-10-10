@@ -50,6 +50,7 @@ class LIEF_API UnpackedFunction : public RuntimeFunctionAArch64 {
   using it_const_epilog_scopes = const_ref_iterator<const epilog_scopes_t&>;
 
   static std::unique_ptr<UnpackedFunction> parse(Parser& ctx, BinaryStream& strm,
+                                                 uint64_t size, uint64_t nb_scopes,
                                                  uint32_t xdata_rva, uint32_t rva);
 
   UnpackedFunction(uint32_t rva, uint32_t length) :

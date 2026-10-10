@@ -32,8 +32,10 @@ class Parser;
 /// This class is the base class for any exception or runtime function entry
 class LIEF_API ExceptionInfo {
   public:
-  static std::unique_ptr<ExceptionInfo> parse(Parser& ctx, BinaryStream& strm);
   static std::unique_ptr<ExceptionInfo> parse(Parser& ctx, BinaryStream& strm,
+                                              uint64_t size, uint64_t nb_scopes);
+  static std::unique_ptr<ExceptionInfo> parse(Parser& ctx, BinaryStream& strm,
+                                              uint64_t size, uint64_t nb_scopes,
                                               Header::MACHINE_TYPES arch);
 
   ExceptionInfo() = delete;
