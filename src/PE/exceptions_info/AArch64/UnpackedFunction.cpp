@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp"
-#include "LIEF/BinaryStream/BinaryStream.hpp"
-#include "LIEF/BinaryStream/SpanStream.hpp"
-#include "LIEF/span.hpp"
+#include <algorithm>
 #include <sstream>
 
-#include "LIEF/PE/Parser.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/BinaryStream/SpanStream.hpp"
+#include "LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp"
+#include "LIEF/span.hpp"
+
 #include "LIEF/PE/exceptions_info/internal_arm64.hpp"
 #include "PE/exceptions_info/UnwindAArch64Decoder.hpp"
 
@@ -30,11 +31,16 @@ namespace LIEF::PE::unwind_aarch64 {
 
 using epilog_scope_t = UnpackedFunction::epilog_scope_t;
 
-std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(Parser& ctx,
-                                                          BinaryStream& strm,
-                                                          uint32_t xdata_rva,
-                                                          uint32_t rva) {
+std::unique_ptr<UnpackedFunction>
+    UnpackedFunction::parse(Parser& /*ctx*/, BinaryStream& strm, uint64_t size,
+                            uint64_t nb_scopes, uint32_t xdata_rva, uint32_t rva) {
   static constexpr auto WIDTH = 20;
+
+  static constexpr size_t PDATA_ENTRY_SIZE = 2 * sizeof(uint32_t);
+  static constexpr size_t MAX_SCOPES_PER_FUNCTION = 32;
+
+  const uint64_t max_scopes = (size / PDATA_ENTRY_SIZE) * MAX_SCOPES_PER_FUNCTION;
+
   details::arm64_unpacked_t unpacked;
 
   LIEF_DEBUG("Parsing unpacked function {:#010x}", rva);
@@ -91,9 +97,8 @@ std::unique_ptr<UnpackedFunction> UnpackedFunction::parse(Parser& ctx,
   /// is required.
   std::vector<uint32_t> scopes;
   if (unpacked.E() == 0) {
-    if (!ctx.consume_exception_scopes(ecount)) {
-      LIEF_DEBUG("Epilog scope budget exhausted (record claims {} scopes)",
-                 ecount);
+    if (nb_scopes + ecount > max_scopes) {
+      LIEF_DEBUG("Epilog scope out of ranges (requested {} scopes)", ecount);
       return func;
     }
     func->epilog_scopes_offset_ = strm.pos() - strm_offset;

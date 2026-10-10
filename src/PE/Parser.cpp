@@ -46,6 +46,7 @@
 #include "LIEF/PE/debug/PogoEntry.hpp"
 #include "LIEF/PE/debug/Repro.hpp"
 #include "LIEF/PE/debug/VCFeature.hpp"
+#include "LIEF/PE/exceptions_info/AArch64/UnpackedFunction.hpp"
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
 #include "LIEF/PE/signature/Signature.hpp"
 #include "LIEF/PE/signature/SignatureParser.hpp"
@@ -761,14 +762,16 @@ ok_error_t Parser::parse_exceptions() {
     return make_error_code(lief_errors::corrupted);
   }
 
-  seed_exception_scopes_budget(pdata.size());
-
+  uint64_t nb_scopes = 0;
   [[maybe_unused]] size_t idx = 0;
   while (*stream) {
-    auto ptr = ExceptionInfo::parse(*this, *stream);
+    auto ptr = ExceptionInfo::parse(*this, *stream, pdata.size(), nb_scopes);
     if (ptr == nullptr) {
       LIEF_INFO("Failed to parse exception info index: {}", idx);
       break;
+    }
+    if (const auto* unpacked = ptr->as<unwind_aarch64::UnpackedFunction>()) {
+      nb_scopes += unpacked->epilog_scopes().size();
     }
     ptr->offset(base_offset + ptr->offset());
     binary_->exceptions_.push_back(std::move(ptr));
@@ -830,8 +833,6 @@ ok_error_t Parser::parse_chpe_exceptions() {
 
   uint64_t base_offset = binary_->rva_to_offset(arm64->extra_rfe_table());
 
-  seed_exception_scopes_budget(arm64->extra_rfe_table_size());
-
   Header::MACHINE_TYPES target_arch = bin().header().machine();
   switch (target_arch) {
     // ARM64EC
@@ -848,12 +849,17 @@ ok_error_t Parser::parse_chpe_exceptions() {
     default: break;
   }
 
+  uint64_t nb_scopes = 0;
   [[maybe_unused]] size_t idx = 0;
   while (*stream) {
-    auto ptr = ExceptionInfo::parse(*this, *stream, target_arch);
+    auto ptr = ExceptionInfo::parse(*this, *stream, arm64->extra_rfe_table_size(),
+                                    nb_scopes, target_arch);
     if (ptr == nullptr) {
       LIEF_INFO("Failed to parse exception info index: {}", idx);
       break;
+    }
+    if (const auto* unpacked = ptr->as<unwind_aarch64::UnpackedFunction>()) {
+      nb_scopes += unpacked->epilog_scopes().size();
     }
     ptr->offset(base_offset + ptr->offset());
 
