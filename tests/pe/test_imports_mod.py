@@ -379,7 +379,8 @@ def test_issue_multiple(tmp_path: Path):
 
     new = lief.PE.parse(out)
     assert new is not None
-    assert lief.PE.check_layout(new)
+    check, msg = lief.PE.check_layout(new)
+    assert check, msg
 
     imp = new.get_import("api-ms-win-crt-stdio-l1-1-0.dll")
     assert imp is not None
