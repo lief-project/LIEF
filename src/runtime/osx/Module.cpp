@@ -33,6 +33,10 @@
 
 #include <libkern/OSCacheControl.h>
 
+#include <string_view>
+#include <algorithm>
+#include <string>
+
 #include "logging.hpp"
 
 extern "C" kern_return_t mach_vm_read_overwrite(vm_map_read_t target_task,
@@ -202,6 +206,25 @@ uint8_t* darwin_read(mach_port_t task, uintptr_t address, size_t len,
   return result;
 }
 
+// Segment addresses exclude the ASLR slide: __TEXT, which maps the header,
+// starts at `load_address` once loaded. Executables place it after __PAGEZERO
+// (e.g. at 0x100000000), and dyld shared cache images at their cache address.
+static uintptr_t image_end(uintptr_t load_address) {
+  uint64_t text_addr = 0;
+  uint64_t max_addr = 0;
+  LIEF::MemoryStream stream(load_address);
+  LIEF::MachO::foreach_segment(stream, [&](const std::string& name,
+                                           uint64_t /*offset*/, uint64_t /*size*/,
+                                           uint64_t addr, uint64_t vsize) {
+    if (std::string_view(name.c_str()) == "__TEXT") {
+      text_addr = addr;
+    }
+    max_addr = std::max<uint64_t>(addr + vsize, max_addr);
+  });
+  return max_addr > text_addr ? load_address + (max_addr - text_addr) :
+                                load_address;
+}
+
 // This function is taken from frida-gum (gum_process_darwin.c:
 // gum_darwin_enumerate_modules)
 template<class F>
@@ -331,17 +354,7 @@ void enumerate_modules(mach_port_t task, F&& func) {
 
     header_data_end = (void*)(load_address + header_data_initial_size);
 
-    uint64_t max_address = load_address;
-    LIEF::MemoryStream stream(load_address);
-    LIEF::MachO::foreach_segment(
-        stream, [&](const std::string& /*name*/, uint64_t /*offset*/,
-                    uint64_t /*size*/, uint64_t addr, uint64_t vsize) {
-          uintptr_t seg_max = load_address + addr + vsize;
-          max_address = std::max<uint64_t>(seg_max, max_address);
-        }
-    );
-
-    carry_on = func(load_address, max_address, module_path);
+    carry_on = func(load_address, image_end(load_address), module_path);
   }
   return;
 }
@@ -676,17 +689,8 @@ std::unique_ptr<Module> Module::from_handle(void* handle) {
     return std::make_unique<Module>(std::move(impl));
   }
 
-  range_t va_ranges{reinterpret_cast<uintptr_t>(header), 0};
-  {
-    LIEF::MemoryStream stream(va_ranges.low);
-    LIEF::MachO::foreach_segment(
-        stream, [&](const std::string& /*name*/, uint64_t /*offset*/,
-                    uint64_t /*size*/, uint64_t addr, uint64_t vsize) {
-          uintptr_t seg_max = va_ranges.low + addr + vsize;
-          va_ranges.high = std::max<uint64_t>(seg_max, va_ranges.high);
-        }
-    );
-  }
+  const auto load_address = reinterpret_cast<uintptr_t>(header);
+  const range_t va_ranges{load_address, details::image_end(load_address)};
 
   const char* path = details::dyld_image_path_containing_address(
       reinterpret_cast<const void*>(va_ranges.low)
