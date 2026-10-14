@@ -114,6 +114,27 @@ def test_zero_div():
     assert macho is not None
 
 
+@pytest.mark.thread_unsafe
+@pytest.mark.parametrize(
+    "fixture", ["MachO/test_1325_64bit.macho", "MachO/test_1325_32bit.macho"]
+)
+def test_1325(fixture: str, capsys):
+    with lief.logging.level_scope(lief.logging.Level.Warn):
+        fat = parse_macho(fixture)
+
+    target = fat.at(0)
+    assert target is not None
+
+    symtab = target.symbol_command
+    assert symtab is not None
+
+    assert symtab.numberof_symbols == 0
+    assert symtab.strings_size == 0
+    assert len(target.symbols) == 0
+
+    assert capsys.readouterr().err == ""
+
+
 def test_1344(tmp_path: Path):
     sample = (
         "MachO/"
