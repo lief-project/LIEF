@@ -1,3 +1,4 @@
+import struct
 import subprocess
 import sys
 from pathlib import Path
@@ -432,3 +433,76 @@ def test_va_out_of_segment():
     # a valid address still returns data, truncated to what is available
     valid = segment.virtual_address + len(segment.content) - 4
     assert len(macho.get_content_from_virtual_address(valid, 16)) == 4
+
+
+def test_1325(tmp_path: Path):
+    """An empty LC_SYMTAB must be accepted silently.
+
+    Kernel collection files (e.g. x86_64 BootKernelExtensions.kc) embed an
+    LC_SYMTAB whose symoff/nsyms/stroff/strsize are all zero. It is meant to be
+    consumed by boot.efi and must not trigger "Weird" warnings.
+
+    See https://github.com/lief-project/LIEF/issues/1325
+    """
+    MH_MAGIC_64 = 0xFEEDFACF
+    CPU_TYPE_X86_64 = 0x01000007
+    CPU_SUBTYPE_X86_64_ALL = 0x00000003
+    MH_EXECUTE = 0x2
+    LC_SEGMENT_64 = 0x19
+    LC_SYMTAB = 0x2
+    SEG_CMDSIZE = 72
+    SYMTAB_CMDSIZE = 24
+    FILESIZE = 0x1000
+
+    header = struct.pack(
+        "<IiiIIIII",
+        MH_MAGIC_64,
+        CPU_TYPE_X86_64,
+        CPU_SUBTYPE_X86_64_ALL,
+        MH_EXECUTE,
+        2,
+        SEG_CMDSIZE + SYMTAB_CMDSIZE,
+        0,
+        0,
+    )
+    # __TEXT with fileoff=0 and filesize>0 so that offset 0 resolves to it
+    text = struct.pack(
+        "<II16sQQQQiiII",
+        LC_SEGMENT_64,
+        SEG_CMDSIZE,
+        b"__TEXT",
+        0x100000000,
+        0x1000,
+        0,
+        FILESIZE,
+        7,
+        5,
+        0,
+        0,
+    )
+    # Empty LC_SYMTAB: symoff, nsyms, stroff and strsize are all zero
+    symtab = struct.pack("<IIIIII", LC_SYMTAB, SYMTAB_CMDSIZE, 0, 0, 0, 0)
+
+    data = header + text + symtab
+    data += b"\x00" * (FILESIZE - len(data))
+
+    target = tmp_path / "empty_symtab.macho"
+    target.write_bytes(data)
+
+    log = tmp_path / "lief.log"
+    lief.logging.set_path(log)
+    try:
+        fat = lief.MachO.parse(target)
+        assert fat is not None
+        macho = fat.at(0)
+        assert macho is not None
+
+        symtab_cmd = macho.symbol_command
+        assert symtab_cmd is not None
+        assert symtab_cmd.numberof_symbols == 0
+        assert symtab_cmd.strings_size == 0
+    finally:
+        lief.logging.reset()
+
+    text = log.read_text() if log.exists() else ""
+    assert "Weird" not in text
