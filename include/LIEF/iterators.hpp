@@ -22,6 +22,7 @@
 #include <cstddef>
 #include <functional>
 #include <iterator>
+#include <memory>
 #include <vector>
 
 #include "LIEF/compiler_attributes.hpp"
@@ -40,8 +41,81 @@ using remove_const_t = std::remove_const_t<T>;
 template<class T>
 using add_lvalue_reference_t = std::add_lvalue_reference_t<T>;
 
+namespace details {
+/// Storage of the container iterated by a ref_iterator or a filter_iterator.
+///
+/// If the iterator is instantiated with a reference (e.g.
+/// `std::vector<Section*>&`), the container is borrowed the iterator and the
+/// storage is a pointer on it. Otherwise, the storage holds the container
+/// itself and copying the iterator copies the container.
+template<class T, bool = std::is_reference_v<T>>
+class container_storage {
+  public:
+  using container_t = std::remove_reference_t<T>;
+  using arg_t = T;
+
+  container_storage() = default;
+  explicit container_storage(arg_t container) :
+    container_{std::addressof(container)} {}
+
+  /// The container or a nullptr if the storage is default-constructed
+  container_t* get() const {
+    return container_;
+  }
+
+  private:
+  container_t* container_ = nullptr;
+};
+
+template<class T>
+class container_storage<T, false> {
+  public:
+  using container_t = std::remove_const_t<T>;
+  using arg_t = container_t;
+
+  container_storage() = default;
+  explicit container_storage(arg_t container) :
+    container_(std::move(container)) {}
+
+  container_t* get() const {
+    return &container_;
+  }
+
+  private:
+  mutable container_t container_;
+};
+
+template<class T>
+using container_arg_t = typename container_storage<T>::arg_t;
+
+template<class Ref, class U, class IT>
+Ref deref(const IT& it) {
+  if constexpr (std::is_pointer_v<U>) {
+    assert(*it && "integrity error: nullptr");
+    return static_cast<Ref>(**it);
+  } else {
+    return const_cast<Ref>(*it);
+  }
+}
+
+template<class T, class U, class Category>
+using iterator_concept_t =
+    std::conditional_t<std::is_reference_v<T> || std::is_pointer_v<U>, Category,
+                       std::input_iterator_tag>;
+}
 
 /// Iterator which returns reference on container's values
+///
+/// This class is both an iterator and the range over the whole container:
+/// begin() and end() return iterators on the first and past-the-end elements,
+/// whatever the current position of the iterator.
+///
+/// If `T` is not a reference, the iterator owns the container: copying the
+/// iterator copies the container.
+///
+/// IMPORTANT: An iterator that owns its container is not a view since it is not
+/// cheap to copy. It models `std::bidirectional_iterator` if the container holds
+/// pointers (`U` is a pointer) and `std::input_iterator` otherwise.
 template<class T, typename U = typename decay_t<T>::value_type,
          class ITERATOR_T = typename decay_t<T>::iterator>
 class ref_iterator {
@@ -50,7 +124,9 @@ class ref_iterator {
 
   public:
   using iterator_category = std::bidirectional_iterator_tag;
-  using value_type = decay_t<U>;
+  using iterator_concept =
+      details::iterator_concept_t<T, U, std::bidirectional_iterator_tag>;
+  using value_type = std::remove_cv_t<std::remove_pointer_t<decay_t<U>>>;
   using difference_type = ptrdiff_t;
   using pointer = std::remove_pointer_t<U>*;
   using reference = std::remove_pointer_t<U>&;
@@ -61,21 +137,33 @@ class ref_iterator {
   using ref_t = typename ref_iterator::reference;
   using pointer_t = typename ref_iterator::pointer;
 
-  ref_iterator(ref_iterator&& other) noexcept :
-    container_{std::forward<T>(other.container_)},
-    it_{std::begin(container_)},
+  ref_iterator() = default;
+
+  ref_iterator(const ref_iterator& other) :
+    container_{other.container_},
+    it_{other.it_},
     distance_{other.distance_} {
-    std::advance(it_, distance_);
+    rebase();
   }
 
-  ref_iterator& operator=(ref_iterator&& other) noexcept {
-    if (other == &this) {
-      return *this;
-    }
-    container_ = std::forward<T>(other.container_);
-    it_ = std::begin(other.container_);
-    distance_ = other.distance_;
-    std::advance(it_, distance_);
+  ref_iterator(ref_iterator&& other) noexcept :
+    container_{std::move(other.container_)},
+    it_{other.it_},
+    distance_{other.distance_} {
+    rebase();
+    other.container_ = {};
+    other.it_ = {};
+    other.distance_ = 0;
+  }
+
+  ref_iterator& operator=(const ref_iterator& other) LIEF_LIFETIMEBOUND {
+    ref_iterator copy{other};
+    swap(copy);
+    return *this;
+  }
+
+  ref_iterator& operator=(ref_iterator&& other) noexcept LIEF_LIFETIMEBOUND {
+    swap(other);
     return *this;
   }
 
@@ -85,55 +173,30 @@ class ref_iterator {
                std::is_same_v<decay_t<T>, decay_t<T2>>
            >>
   ref_iterator(const ref_iterator<T2, U2, IT2>& other) :
-    container_{
-        const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(other.container_)
-    },
-    it_{std::begin(container_)},
     distance_{other.distance_} {
-    std::advance(it_, distance_);
-  }
-
-  template<class T2, typename U2, class IT2,
-           typename = std::enable_if_t<
-               !std::is_same_v<ref_iterator, ref_iterator<T2, U2, IT2>> &&
-               std::is_same_v<decay_t<T>, decay_t<T2>>
-           >>
-  // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved)
-  ref_iterator(ref_iterator<T2, U2, IT2>&& other) noexcept :
-    container_{const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(
-        std::forward<T2>(other.container_)
-    )},
-    it_{std::begin(container_)},
-    distance_{other.distance_} {
-    std::advance(it_, distance_);
+    if (auto* container = other.container_.get(); container != nullptr) {
+      if constexpr (std::is_reference_v<T>) {
+        container_ = details::container_storage<T>{const_cast<T>(*container)};
+      } else {
+        container_ = details::container_storage<T>{*container};
+      }
+      it_ = std::next(std::begin(*container_.get()), distance_);
+    }
   }
 
   ~ref_iterator() = default;
 
   // NOLINTNEXTLINE(performance-unnecessary-value-param)
-  ref_iterator(T container) :
-    container_{std::forward<T>(container)},
-    it_(std::begin(container_)) {}
-
-  ref_iterator(const ref_iterator& copy) :
-    container_{copy.container_},
-    it_{std::begin(container_)},
-    distance_{copy.distance_} {
-    std::advance(it_, distance_);
-  }
-
-  ref_iterator& operator=(ref_iterator other) LIEF_LIFETIMEBOUND {
-    swap(other);
-    return *this;
-  }
+  ref_iterator(details::container_arg_t<T> container) :
+    container_{std::forward<details::container_arg_t<T>>(container)},
+    it_(std::begin(*container_.get())) {}
 
   void swap(ref_iterator& other) noexcept {
-    std::swap(
-        const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(container_),
-        const_cast<add_lvalue_reference_t<remove_const_t<DT>>>(other.container_)
-    );
+    std::swap(container_, other.container_);
     std::swap(it_, other.it_);
     std::swap(distance_, other.distance_);
+    rebase();
+    other.rebase();
   }
 
 
@@ -150,7 +213,7 @@ class ref_iterator {
   }
 
   ref_iterator& operator--() LIEF_LIFETIMEBOUND {
-    if (it_ != std::begin(container_)) {
+    if (it_ != std::begin(*container_.get())) {
       it_ = std::prev(it_);
       distance_--;
     }
@@ -190,20 +253,8 @@ class ref_iterator {
 
   add_const_t<ref_t> operator[](size_t n) const {
     assert(n < size() && "integrity error: out of bound");
-
-    auto* no_const_this = const_cast<ref_iterator*>(this);
-
-    typename ref_iterator::difference_type saved_dist =
-        std::distance(std::begin(no_const_this->container_), no_const_this->it_);
-    no_const_this->it_ = std::begin(no_const_this->container_);
-    std::advance(no_const_this->it_, n);
-
-    auto&& v = const_cast<add_const_t<ref_t>>(no_const_this->operator*());
-
-    no_const_this->it_ = std::begin(no_const_this->container_);
-    std::advance(no_const_this->it_, saved_dist);
-
-    return v;
+    return details::deref<ref_t, DT_VAL>(std::next(std::begin(*container_.get()),
+                                                   difference_type(n)));
   }
 
   ref_iterator operator+(typename ref_iterator::difference_type n) const {
@@ -242,7 +293,10 @@ class ref_iterator {
   }
 
   ref_iterator begin() const {
-    return container_;
+    if (container_.get() == nullptr) {
+      return {};
+    }
+    return ref_iterator{*container_.get()};
   }
 
   ref_iterator cbegin() const {
@@ -250,9 +304,11 @@ class ref_iterator {
   }
 
   ref_iterator end() const {
-    ref_iterator it = ref_iterator{container_};
-    it.it_ = std::end(it.container_);
-    it.distance_ = it.size();
+    ref_iterator it = begin();
+    if (auto* container = it.container_.get(); container != nullptr) {
+      it.it_ = std::end(*container);
+      it.distance_ = difference_type(container->size());
+    }
     return it;
   }
 
@@ -261,7 +317,14 @@ class ref_iterator {
   }
 
   bool operator==(const ref_iterator& other) const {
-    return (size() == other.size() && distance_ == other.distance_);
+    // If the current iterator borrows the container we assert the equality
+    // on the **address** of the container.
+    if constexpr (std::is_reference_v<T>) {
+      return container_.get() == other.container_.get() &&
+             distance_ == other.distance_;
+    } else {
+      return size() == other.size() && distance_ == other.distance_;
+    }
   }
 
   bool operator!=(const ref_iterator& other) const {
@@ -269,11 +332,13 @@ class ref_iterator {
   }
 
   size_t size() const {
-    return container_.size();
+    const auto* container = container_.get();
+    return container != nullptr ? container->size() : 0;
   }
 
   bool empty() const {
-    return container_.empty();
+    const auto* container = container_.get();
+    return container == nullptr || container->empty();
   }
 
   std::enable_if_t<!std::is_const_v<ref_t>, remove_const_t<ref_t>> operator*() {
@@ -282,17 +347,9 @@ class ref_iterator {
     );
   }
 
-  template<typename V = DT_VAL>
-  std::enable_if_t<std::is_pointer_v<V>, add_const_t<ref_t>> operator*() const {
-    assert(*it_ && "integrity error: nullptr");
-    return const_cast<add_const_t<ref_t>>(static_cast<ref_t>(**it_));
+  add_const_t<ref_t> operator*() const {
+    return details::deref<ref_t, DT_VAL>(it_);
   }
-
-  template<typename V = DT_VAL>
-  std::enable_if_t<!std::is_pointer_v<V>, add_const_t<ref_t>> operator*() const {
-    return const_cast<add_const_t<ref_t>>(*(it_));
-  }
-
 
   std::enable_if_t<!std::is_const_v<pointer_t>, pointer_t> operator->() {
     return const_cast<remove_const_t<pointer_t>>(
@@ -305,8 +362,16 @@ class ref_iterator {
   }
 
   protected:
-  T container_;
-  ITERATOR_T it_;
+  // If the container is owned by this iterator, make `it_` point in this
+  // container and not in the one it has been copied from
+  void rebase() {
+    if constexpr (!std::is_reference_v<T>) {
+      it_ = std::next(std::begin(*container_.get()), distance_);
+    }
+  }
+
+  details::container_storage<T> container_;
+  ITERATOR_T it_{};
   typename ref_iterator::difference_type distance_{};
 };
 
@@ -325,7 +390,9 @@ class filter_iterator {
 
   public:
   using iterator_category = std::forward_iterator_tag;
-  using value_type = decay_t<U>;
+  using iterator_concept =
+      details::iterator_concept_t<T, U, std::forward_iterator_tag>;
+  using value_type = std::remove_cv_t<std::remove_pointer_t<decay_t<U>>>;
   using difference_type = ptrdiff_t;
   using pointer = std::remove_pointer_t<U>*;
   using reference = std::remove_pointer_t<U>&;
@@ -337,96 +404,86 @@ class filter_iterator {
   using pointer_t = typename filter_iterator::pointer;
   using filter_t = std::function<bool(const typename DT::value_type&)>;
 
-  filter_iterator(filter_iterator&& other) noexcept :
-    size_c_(other.size_c_),
-    size_cached_(other.size_cached_),
-    container_(std::forward<T>(other.container_)),
-    it_(std::begin(container_)),
-    filters_{std::move(other.filters_)},
-    distance_(other.distance_) {
-    std::advance(it_, distance_);
+  /// Create an iterator that is not associated with a container. It behaves
+  /// as an empty range.
+  filter_iterator() = default;
+
+  filter_iterator(const filter_iterator& other) :
+    size_c_{other.size_c_},
+    size_cached_{other.size_cached_},
+    container_{other.container_},
+    it_{other.it_},
+    filters_{other.filters_},
+    distance_{other.distance_} {
+    rebase();
   }
 
-  filter_iterator& operator=(filter_iterator&& other) noexcept {
-    if (this == &other) {
-      return *this;
-    }
+  filter_iterator(filter_iterator&& other) noexcept :
+    size_c_{other.size_c_},
+    size_cached_{other.size_cached_},
+    container_{std::move(other.container_)},
+    it_{other.it_},
+    filters_{std::move(other.filters_)},
+    distance_{other.distance_} {
+    rebase();
+    other.size_c_ = 0;
+    other.size_cached_ = false;
+    other.container_ = {};
+    other.it_ = {};
+    other.distance_ = 0;
+  }
 
-    size_c_ = other.size_c_;
-    size_cached_ = other.size_cached_;
-    container_ = std::forward<T>(other.container_);
-    it_ = std::begin(container_);
-    filters_ = std::move(other.filters_);
-    distance_ = other.distance_;
+  filter_iterator& operator=(const filter_iterator& other) LIEF_LIFETIMEBOUND {
+    filter_iterator copy{other};
+    swap(copy);
+    return *this;
+  }
 
-    std::advance(it_, distance_);
-
+  filter_iterator& operator=(filter_iterator&& other) noexcept LIEF_LIFETIMEBOUND {
+    swap(other);
     return *this;
   }
 
   ~filter_iterator() = default;
 
   // NOLINTNEXTLINE(performance-unnecessary-value-param)
-  filter_iterator(T container, filter_t filter) :
-    container_{std::forward<T>(container)},
-    it_(std::begin(container_)),
+  filter_iterator(details::container_arg_t<T> container, filter_t filter) :
+    container_{std::forward<details::container_arg_t<T>>(container)},
+    it_(std::begin(*container_.get())),
     filters_{} {
-
-
     filters_.push_back(std::move(filter));
 
-    if (it_ != std::end(container_)) {
-      if (!std::all_of(std::begin(filters_), std::end(filters_),
-                       [this](const filter_t& f) { return f(*it_); }))
-      {
-        next();
-      }
+    if (it_ != std::end(*container_.get()) && !match()) {
+      next();
     }
   }
 
   // NOLINTNEXTLINE(performance-unnecessary-value-param)
-  filter_iterator(T container, const std::vector<filter_t>& filters) :
-    container_{std::forward<T>(container)},
-    it_(std::begin(container_)),
+  filter_iterator(details::container_arg_t<T> container,
+                  const std::vector<filter_t>& filters) :
+    container_{std::forward<details::container_arg_t<T>>(container)},
+    it_(std::begin(*container_.get())),
     filters_{filters} {
-
-
-    if (it_ != std::end(container_)) {
-      if (!std::all_of(std::begin(filters_), std::end(filters_),
-                       [this](const filter_t& f) { return f(*it_); }))
-      {
-        next();
-      }
+    if (it_ != std::end(*container_.get()) && !match()) {
+      next();
     }
   }
 
   // NOLINTNEXTLINE(performance-unnecessary-value-param)
-  filter_iterator(T container) :
-    container_{std::forward<T>(container)},
-    it_(std::begin(container_)),
+  filter_iterator(details::container_arg_t<T> container) :
+    container_{std::forward<details::container_arg_t<T>>(container)},
+    it_(std::begin(*container_.get())),
     filters_{} {}
 
-  filter_iterator(const filter_iterator& copy) :
-    container_{copy.container_},
-    it_{std::begin(container_)},
-    filters_{copy.filters_},
-    distance_{copy.distance_} {
-    std::advance(it_, distance_);
-  }
-
-  filter_iterator& operator=(filter_iterator other) LIEF_LIFETIMEBOUND {
-    swap(other);
-    return *this;
-  }
-
   void swap(filter_iterator& other) noexcept {
-    std::swap(const_cast<remove_const_t<DT>&>(container_),
-              const_cast<remove_const_t<DT>&>(other.container_));
+    std::swap(container_, other.container_);
     std::swap(it_, other.it_);
     std::swap(filters_, other.filters_);
     std::swap(size_c_, other.size_c_);
     std::swap(size_cached_, other.size_cached_);
     std::swap(distance_, other.distance_);
+    rebase();
+    other.rebase();
   }
 
 
@@ -449,7 +506,10 @@ class filter_iterator {
   }
 
   filter_iterator begin() const {
-    return {container_, filters_};
+    if (container_.get() == nullptr) {
+      return {};
+    }
+    return {*container_.get(), filters_};
   }
 
   filter_iterator cbegin() const {
@@ -457,11 +517,15 @@ class filter_iterator {
   }
 
   filter_iterator end() const {
-    // we don't need filter for the end iterator
-    filter_iterator it_end{container_};
+    if (container_.get() == nullptr) {
+      return {};
+    }
 
-    it_end.it_ = it_end.container_.end();
-    it_end.distance_ = it_end.container_.size();
+    // we don't need filter for the end iterator
+    filter_iterator it_end{*container_.get()};
+
+    it_end.it_ = std::end(*it_end.container_.get());
+    it_end.distance_ = difference_type(it_end.container_size());
 
     return it_end;
   }
@@ -476,15 +540,8 @@ class filter_iterator {
     );
   }
 
-  template<typename V = DT_VAL>
-  std::enable_if_t<std::is_pointer_v<V>, add_const_t<ref_t>> operator*() const {
-    assert(*it_ && "integrity error: nullptr");
-    return const_cast<add_const_t<ref_t>>(static_cast<ref_t>(**it_));
-  }
-
-  template<typename V = DT_VAL>
-  std::enable_if_t<!std::is_pointer_v<V>, add_const_t<ref_t>> operator*() const {
-    return const_cast<add_const_t<ref_t>>(*(it_));
+  add_const_t<ref_t> operator*() const {
+    return details::deref<ref_t, DT_VAL>(it_);
   }
 
 
@@ -500,7 +557,9 @@ class filter_iterator {
 
     auto it = begin();
     std::advance(it, n);
-    return const_cast<add_const_t<ref_t>>(*it);
+
+    return details::deref<ref_t, DT_VAL>(std::next(std::begin(*container_.get()),
+                                                   it.distance_));
   }
 
 
@@ -516,7 +575,7 @@ class filter_iterator {
 
   size_t size() const {
     if (filters_.empty()) {
-      return container_.size();
+      return container_size();
     }
 
     if (size_cached_) {
@@ -537,7 +596,7 @@ class filter_iterator {
 
   bool empty() const {
     if (filters_.empty()) {
-      return container_.empty();
+      return container_size() == 0;
     }
 
     if (size_cached_) {
@@ -549,8 +608,13 @@ class filter_iterator {
 
 
   bool operator==(const filter_iterator& other) const {
-    return (container_.size() == other.container_.size() &&
-            distance_ == other.distance_);
+    if constexpr (std::is_reference_v<T>) {
+      return container_.get() == other.container_.get() &&
+             distance_ == other.distance_;
+    } else {
+      return container_size() == other.container_size() &&
+             distance_ == other.distance_;
+    }
   }
 
   bool operator!=(const filter_iterator& other) const {
@@ -558,25 +622,39 @@ class filter_iterator {
   }
 
   protected:
+  size_t container_size() const {
+    const auto* container = container_.get();
+    return container != nullptr ? container->size() : 0;
+  }
+
+  bool match() const {
+    return std::all_of(std::begin(filters_), std::end(filters_),
+                       [this](const filter_t& f) { return f(*it_); });
+  }
+
   void next() {
-    if (it_ == std::end(container_)) {
-      distance_ = container_.size();
+    if (it_ == std::end(*container_.get())) {
+      distance_ = difference_type(container_size());
       return;
     }
 
     do {
       it_ = std::next(it_);
       distance_++;
-    } while (it_ != std::end(container_) &&
-             !std::all_of(std::begin(filters_), std::end(filters_),
-                          [this](const filter_t& f) { return f(*it_); }));
+    } while (it_ != std::end(*container_.get()) && !match());
+  }
+
+  void rebase() {
+    if constexpr (!std::is_reference_v<T>) {
+      it_ = std::next(std::begin(*container_.get()), distance_);
+    }
   }
 
 
   mutable size_t size_c_ = 0;
   mutable bool size_cached_ = false;
-  T container_;
-  ITERATOR_T it_;
+  details::container_storage<T> container_;
+  ITERATOR_T it_{};
   std::vector<filter_t> filters_;
   typename filter_iterator::difference_type distance_ = 0;
 };
@@ -672,6 +750,30 @@ iterator_range<T> make_range(T&& x, T&& y) {
 template<typename IteratorT>
 inline constexpr bool
     std::ranges::enable_borrowed_range<LIEF::iterator_range<IteratorT>> = true;
+
+// A {ref,filter}_iterator that borrows its container is cheap to
+// copy and can be used as a view.
+
+template<class T, typename U, class IT>
+inline constexpr bool std::ranges::enable_view<LIEF::ref_iterator<T, U, IT>> =
+    std::is_reference_v<T>;
+
+template<class T, typename U, class IT>
+inline constexpr bool std::ranges::enable_view<LIEF::filter_iterator<T, U, IT>> =
+    std::is_reference_v<T>;
+
+// The references returned by the iterators of a borrowed range must outlive
+// the range.
+
+template<class T, typename U, class IT>
+inline constexpr bool
+    std::ranges::enable_borrowed_range<LIEF::ref_iterator<T, U, IT>> =
+        std::is_reference_v<T> || std::is_pointer_v<U>;
+
+template<class T, typename U, class IT>
+inline constexpr bool
+    std::ranges::enable_borrowed_range<LIEF::filter_iterator<T, U, IT>> =
+        std::is_reference_v<T> || std::is_pointer_v<U>;
 #endif
 
 namespace LIEF {

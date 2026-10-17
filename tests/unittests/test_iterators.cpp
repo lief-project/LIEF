@@ -262,8 +262,8 @@ TEST_CASE("lief.test.const_ref_iterator", "[lief][iterators][const_ref]") {
 
     it_const_ref_t bar_operator_equal{bars};
     bar_operator_equal += 2;
-    // bar_operator_equal.operator=(bars);
-    // REQUIRE(bar_operator_equal == bars);
+    bar_operator_equal.operator=(bars);
+    REQUIRE(bar_operator_equal == bars);
   }
 }
 
@@ -531,5 +531,175 @@ TEST_CASE("lief.test.const_filter_ref_iterator",
   SECTION("local") {
     it_filter_const_ref_local bar_ptr_filtred = foo.get_bar_const_filter_local();
     CHECK(bar_ptr_filtred.size() == 3);
+  }
+}
+
+static_assert(std::is_same_v<it_ref_ptr_t::value_type, std::string>);
+static_assert(std::is_same_v<it_const_ref_ptr_t::value_type, std::string>);
+static_assert(std::is_same_v<it_filter_ref_ptr::value_type, std::string>);
+static_assert(std::is_same_v<it_filter_const_ref_ptr::value_type, std::string>);
+
+static_assert(std::is_nothrow_move_constructible_v<it_ref_t>);
+static_assert(std::is_nothrow_move_assignable_v<it_ref_t>);
+static_assert(std::is_nothrow_move_assignable_v<it_ref_local_t>);
+static_assert(std::is_copy_assignable_v<it_const_ref_t>);
+static_assert(std::is_nothrow_move_assignable_v<it_filter_ref>);
+static_assert(std::is_copy_assignable_v<it_filter_const_ref_local>);
+
+TEST_CASE("lief.test.iterators.value_semantics", "[lief][iterators]") {
+  Foo foo;
+
+  SECTION("Default constructor") {
+    it_ref_t bars;
+    CHECK(bars.empty());
+    CHECK(bars.size() == 0);
+    CHECK(bars.begin() == bars.end());
+
+    it_ref_local_t local;
+    CHECK(local.empty());
+    CHECK(local.begin() == local.end());
+
+    it_filter_ref filtered;
+    CHECK(filtered.empty());
+    CHECK(filtered.size() == 0);
+    CHECK(filtered.begin() == filtered.end());
+
+    bars = foo.get_bar();
+    CHECK(bars.size() == foo.bar.size());
+  }
+
+  SECTION("Assignment does not modify the containers") {
+    std::vector<std::string> lhs_values = {"a"};
+    std::vector<std::string> rhs_values = {"b", "c"};
+
+    it_ref_t lhs{lhs_values};
+    it_ref_t rhs{rhs_values};
+    ++rhs;
+    lhs = rhs;
+
+    CHECK(lhs_values == std::vector<std::string>{"a"});
+    CHECK(rhs_values == std::vector<std::string>{"b", "c"});
+    CHECK(lhs == rhs);
+    CHECK(&*lhs == &rhs_values[1]);
+    CHECK(lhs.size() == 2);
+
+    it_filter_ref flhs{lhs_values};
+    it_filter_ref frhs{rhs_values, [](const std::string& v) { return v == "c"; }};
+    flhs = frhs;
+
+    CHECK(lhs_values == std::vector<std::string>{"a"});
+    CHECK(&*flhs == &rhs_values[1]);
+  }
+
+  SECTION("Swap") {
+    std::vector<std::string> lhs_values = {"a"};
+    std::vector<std::string> rhs_values = {"b", "c"};
+
+    it_ref_t lhs{lhs_values};
+    it_ref_t rhs{rhs_values};
+    lhs.swap(rhs);
+
+    CHECK(lhs_values == std::vector<std::string>{"a"});
+    CHECK(&*lhs == &rhs_values[0]);
+    CHECK(&*rhs == &lhs_values[0]);
+  }
+
+  SECTION("Equality") {
+    std::vector<std::string> lhs_values = {"a", "b"};
+    std::vector<std::string> rhs_values = {"c", "d"};
+
+    // Borrowing iterators are only equal if they iterate over the same
+    // container (whatever the size of the containers)
+    it_ref_t lhs{lhs_values};
+    CHECK(lhs == it_ref_t{lhs_values});
+    CHECK(lhs != it_ref_t{rhs_values});
+    CHECK(it_ref_t{} == it_ref_t{});
+
+    it_filter_ref flhs{lhs_values};
+    CHECK(flhs == it_filter_ref{lhs_values});
+    CHECK(flhs != it_filter_ref{rhs_values});
+    CHECK(it_filter_ref{} == it_filter_ref{});
+
+    // Owning iterators have their own copy of the container
+    it_ref_local_t local{lhs_values};
+    CHECK(local == it_ref_local_t{lhs_values});
+    CHECK(local.end() == it_ref_local_t{lhs_values}.end());
+  }
+
+  SECTION("Moved-from iterators are empty") {
+    std::vector<std::string> values = {"a", "b", "a"};
+    const auto is_a = [](const std::string& v) { return v == "a"; };
+
+    it_ref_t bars{values};
+    ++bars;
+    it_ref_t moved_bars = std::move(bars);
+    CHECK(*moved_bars == "b");
+    CHECK(moved_bars.size() == 3);
+    // NOLINTBEGIN(bugprone-use-after-move)
+    CHECK(bars.empty());
+    CHECK(bars.begin() == bars.end());
+
+    it_ref_local_t local{values};
+    ++local;
+    it_ref_local_t moved_local = std::move(local);
+    CHECK(*moved_local == "b");
+    CHECK(local.empty());
+    CHECK(local.begin() == local.end());
+
+    it_filter_ref filtered{values, is_a};
+    CHECK(filtered.size() == 2);
+    it_filter_ref moved_filtered = std::move(filtered);
+    CHECK(moved_filtered.size() == 2);
+    CHECK(filtered.empty());
+    CHECK(filtered.size() == 0);
+    CHECK(filtered.begin() == filtered.end());
+
+    it_filter_ref_local_t filtered_local{values, is_a};
+    it_filter_ref_local_t moved_filtered_local = std::move(filtered_local);
+    CHECK(moved_filtered_local.size() == 2);
+    CHECK(filtered_local.empty());
+    CHECK(filtered_local.begin() == filtered_local.end());
+    // NOLINTEND(bugprone-use-after-move)
+  }
+
+  SECTION("Owned container") {
+    it_ref_local_t local = foo.get_bar_local();
+    it_ref_local_t copy = local;
+    ++copy;
+    CHECK(*copy == "b");
+
+    // The copies own their own container
+    *copy = "z";
+    CHECK(local[1] == "b");
+    CHECK(copy[1] == "z");
+
+    // operator[] returns the elements of the container owned by the iterator
+    local[0] = "x";
+    CHECK(*local == "x");
+
+    it_filter_ref_local_t filtered{std::vector<std::string>{"a", "b", "a"},
+                                   [](const std::string& v) { return v == "a"; }};
+    filtered[0] = "x";
+    CHECK(*filtered == "x");
+
+    it_ref_local_t moved = std::move(copy);
+    CHECK(*moved == "z");
+    CHECK(moved.size() == 3);
+    copy = moved;
+    CHECK(*copy == "z");
+    CHECK(&*copy != &*moved);
+  }
+
+  SECTION("Conversion") {
+    it_ref_t bars = foo.get_bar();
+    bars += 2;
+
+    const_ref_iterator<const std::vector<std::string>&> const_bars = bars;
+    CHECK(&*const_bars == &foo.bar[2]);
+    CHECK(const_bars.size() == foo.bar.size());
+
+    ref_iterator<std::vector<std::string>> owned = bars;
+    CHECK(*owned == "3");
+    CHECK(&*owned != &foo.bar[2]);
   }
 }

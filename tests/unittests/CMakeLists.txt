@@ -47,3 +47,20 @@ target_link_libraries(unittests PRIVATE LIB_LIEF Catch2::Catch2WithMain)
 
 add_test(unittests
          ${CMAKE_CURRENT_BINARY_DIR}/unittests)
+
+if (cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
+  add_executable(unittests_cxx20
+    main.cpp
+    utils.cpp
+    test_iterators_ranges.cpp
+  )
+
+  set_target_properties(unittests_cxx20
+    PROPERTIES CXX_STANDARD           20
+               CXX_STANDARD_REQUIRED  ON)
+
+  target_link_libraries(unittests_cxx20 PRIVATE LIB_LIEF Catch2::Catch2WithMain)
+
+  add_test(unittests_cxx20
+           ${CMAKE_CURRENT_BINARY_DIR}/unittests_cxx20)
+endif()
