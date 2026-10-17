@@ -253,6 +253,19 @@ class LIEF_API Symbol : public LIEF::Symbol {
     return this->type() == TYPE::OBJECT;
   }
 
+  /// Check if the given symbol is an `IFUNC` defined by the binary
+  bool is_local_ifunc() const {
+    return type() == Symbol::TYPE::GNU_IFUNC &&
+           shndx() != Symbol::SECTION_INDEX::UNDEF;
+  }
+
+  /// Check if the references to the given symbol can't be preempted by another
+  /// module: local binding, or hidden/internal/protected visibility
+  bool binds_locally() const {
+    return binding() == Symbol::BINDING::LOCAL ||
+           visibility() != Symbol::VISIBILITY::DEFAULT;
+  }
+
   void accept(Visitor& visitor) const override;
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os, const Symbol& entry);

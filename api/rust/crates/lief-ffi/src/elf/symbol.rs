@@ -17,6 +17,8 @@ pub mod ffi {
         fn section(self: &ELF_Symbol) -> UniquePtr<ELF_Section>;
         fn symbol_version(self: &ELF_Symbol) -> UniquePtr<ELF_SymbolVersion>;
         fn demangled_name(self: &ELF_Symbol) -> UniquePtr<CxxString>;
+        fn is_local_ifunc(self: &ELF_Symbol) -> bool;
+        fn binds_locally(self: &ELF_Symbol) -> bool;
         fn to_string(self: &ELF_Symbol) -> UniquePtr<CxxString>;
     }
 

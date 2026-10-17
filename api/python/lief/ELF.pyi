@@ -1851,6 +1851,12 @@ class Symbol(lief.Symbol):
     @property
     def is_variable(self) -> bool: ...
 
+    @property
+    def is_local_ifunc(self) -> bool: ...
+
+    @property
+    def binds_locally(self) -> bool: ...
+
     exported: bool
 
     imported: bool

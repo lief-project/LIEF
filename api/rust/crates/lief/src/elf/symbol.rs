@@ -154,6 +154,17 @@ impl Symbol<'_> {
     pub fn demangled_name(&self) -> String {
         self.ptr.demangled_name().to_string()
     }
+
+    /// True if the symbol is a GNU indirect function defined by the binary
+    pub fn is_local_ifunc(&self) -> bool {
+        self.ptr.is_local_ifunc()
+    }
+
+    /// True if references to the symbol cannot be preempted by another module:
+    /// it has local binding or hidden, internal, or protected visibility.
+    pub fn binds_locally(&self) -> bool {
+        self.ptr.binds_locally()
+    }
 }
 
 impl fmt::Debug for Symbol<'_> {

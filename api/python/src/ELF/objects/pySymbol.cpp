@@ -158,6 +158,17 @@ void create<Symbol>(nb::module_& m) {
         &Symbol::is_variable,
         "True if the symbol is a variable"_doc)
 
+    .def_prop_ro("is_local_ifunc",
+        &Symbol::is_local_ifunc,
+        "True if the symbol is a GNU indirect function defined by the binary"_doc)
+
+    .def_prop_ro("binds_locally",
+        &Symbol::binds_locally,
+        R"doc(
+        True if references to the symbol cannot be preempted by another module:
+        it has local binding or hidden, internal, or protected visibility.
+        )doc"_doc)
+
     .def_prop_rw("exported",
         &Symbol::is_exported, &Symbol::set_exported,
         "Whether the symbol is **exported**"_doc)

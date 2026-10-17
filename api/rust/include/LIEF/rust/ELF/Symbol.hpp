@@ -55,6 +55,14 @@ class ELF_Symbol : public AbstractSymbol {
     return to_unique_string(impl().demangled_name());
   }
 
+  bool is_local_ifunc() const {
+    return impl().is_local_ifunc();
+  }
+
+  bool binds_locally() const {
+    return impl().binds_locally();
+  }
+
   auto to_string() const {
     return to_unique_string(details::to_string(impl()));
   }
