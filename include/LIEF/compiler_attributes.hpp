@@ -72,6 +72,15 @@
   #define LIEF_LIFETIMEBOUND
 #endif
 
+// The library feature-test macros (e.g. `__cpp_lib_ranges`) are only defined
+// once a standard header is included: `<version>` makes the detection below
+// independent of the headers included before this one.
+#if defined(__has_include)
+  #if __has_include(<version>)
+    #include <version> // IWYU pragma: keep
+  #endif
+#endif
+
 #if defined(__cpp_lib_ranges) && __cpp_lib_ranges >= 201911L
   #include <ranges>
   #define LIEF_HAS_STD_RANGES 1
