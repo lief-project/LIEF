@@ -4,12 +4,15 @@ from pathlib import Path
 
 import lief
 import pytest
+from lief.runtime import Memory
 
 if not lief.runtime.enabled:
     pytest.skip("skipping: needs runtime support", allow_module_level=True)
 
 if lief.runtime.platform != lief.runtime.PLATFORMS.OSX:
     pytest.skip("skipping: osx only", allow_module_level=True)
+
+RW = Memory.PERM.READ | Memory.PERM.WRITE
 
 
 @pytest.mark.parametrize("size", [16, 4096, 16 * 1024 * 1024])
@@ -30,6 +33,7 @@ def test_heap_region(size: int):
         ]
         assert len(regions) == 1
         region = regions[0]
+        assert region.permissions & RW == RW
 
         if not region.contains(addr + size - 1):
             pytest.xfail(f"allocation of {size} bytes extends past its region")
@@ -54,6 +58,7 @@ def test_anonymous_mapping():
         region = regions[0]
         assert region.contains(addr + len(mapping) - 1)
         assert region.name == ""
+        assert region.permissions == RW
 
 
 @pytest.mark.parametrize("access", [mmap.ACCESS_WRITE, mmap.ACCESS_COPY])
@@ -76,6 +81,7 @@ def test_file_mapping_snapshot(tmp_path: Path, access: int):
     region = regions[0]
     assert region.contains(addr + size - 1)
     assert Path(region.name) == path.resolve()
+    assert region.permissions == RW
     assert all(
         r is not None and r.name != region.name for r in lief.runtime.memory_layout()
     )
@@ -91,3 +97,4 @@ def test_system_library_mapping():
     ]
     assert len(regions) == 1
     assert regions[0].name
+    assert regions[0].permissions & Memory.PERM.EXEC

@@ -26,6 +26,7 @@
 
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
+#include "LIEF/runtime/Memory.hpp"
 #include "LIEF/visibility.h"
 
 namespace LIEF::runtime {
@@ -41,10 +42,12 @@ class LIEF_API MemoryLayout {
   class Region {
     public:
     Region() = default;
-    Region(std::string name, uint64_t addr, uint64_t size) :
+    Region(std::string name, uint64_t addr, uint64_t size,
+           uint32_t permissions = Memory::P_NONE) :
       name_(std::move(name)),
       addr_(addr),
-      size_(size) {}
+      size_(size),
+      permissions_(permissions) {}
 
     Region(const Region&) = default;
     Region& operator=(const Region&) = default;
@@ -78,6 +81,11 @@ class LIEF_API MemoryLayout {
       return addr() + size();
     }
 
+    /// Permissions of the region as a combination of Memory::PERM.
+    uint32_t permissions() const {
+      return permissions_;
+    }
+
     /// Whether the given address is within this region
     bool contains(uint64_t addr) const {
       return addr_ <= addr && addr < end_addr();
@@ -95,6 +103,7 @@ class LIEF_API MemoryLayout {
     std::string name_;
     uint64_t addr_ = 0;
     uint64_t size_ = 0;
+    uint32_t permissions_ = Memory::P_NONE;
   };
 
   /// Forward iterator over the regions of the memory layout

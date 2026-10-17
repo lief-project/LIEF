@@ -1,4 +1,5 @@
 #include <sstream>
+#include "LIEF/runtime/Memory.hpp"
 #include "LIEF/runtime/MemoryLayout.hpp"
 #include "runtime/pyRuntime.hpp"
 
@@ -42,6 +43,12 @@ void create<MemoryLayout>(nb::module_& m) {
     )
     .def_prop_ro("end_addr", &Region::end_addr,
       "Address at which the region ends"_doc
+    )
+    .def_prop_ro("permissions",
+      [] (const Region& self) {
+        return Memory::PERM(self.permissions());
+      },
+      "Permissions of the region."_doc
     )
     .def("contains", &Region::contains, "addr"_a,
       "Whether the given address is within this region"_doc

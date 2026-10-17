@@ -4,13 +4,26 @@ pub fn iterate() {
     // lief-doc: iterate-start
     for region in lief::runtime::memory_layout() {
         println!(
-            "{:#014x}-{:#014x} {}",
+            "{:#014x}-{:#014x} {:?} {}",
             region.addr(),
             region.end_addr(),
+            region.permissions(),
             region.name()
         );
     }
     // lief-doc: iterate-end
+}
+
+pub fn writable_and_executable() {
+    // lief-doc: wx-start
+    use lief::runtime::memory::Perm;
+
+    for region in lief::runtime::memory_layout() {
+        if region.permissions().contains(Perm::WRITE | Perm::EXEC) {
+            println!("W+X: {region}");
+        }
+    }
+    // lief-doc: wx-end
 }
 
 pub fn inspect(address: u64) {

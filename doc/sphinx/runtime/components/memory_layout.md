@@ -30,21 +30,23 @@ regions, ordered by address:
 For illustration, a Linux process running `/usr/bin/cat` could have this layout:
 
 ```{code-block} text
-0x563668f9d000-0x563668f9f000 /usr/bin/cat
-0x563668f9f000-0x563668fa6000 /usr/bin/cat
-0x563668fa6000-0x563668fa9000 /usr/bin/cat
-0x563668fa9000-0x563668faa000 /usr/bin/cat
-0x563668faa000-0x563668fab000 /usr/bin/cat
-0x56367cb52000-0x56367cb73000 [heap]
-0x7f2d28e00000-0x7f2d29196000 /usr/lib/locale/locale-archive
-0x7f2d291be000-0x7f2d29200000
-0x7f2d29200000-0x7f2d29224000 /usr/lib/libc.so.6
+0x56460734e000-0x564607350000 r-- /usr/bin/cat
+0x564607350000-0x564607357000 r-x /usr/bin/cat
+0x564607357000-0x56460735a000 r-- /usr/bin/cat
+0x56460735a000-0x56460735b000 r-- /usr/bin/cat
+0x56460735b000-0x56460735c000 rw- /usr/bin/cat
+0x5646457bc000-0x5646457dd000 rw- [heap]
+0x7fc6fcc00000-0x7fc6fcf96000 r-- /usr/lib/locale/locale-archive
+0x7fc6fd000000-0x7fc6fd024000 r-- /usr/lib/libc.so.6
+0x7fc6fd024000-0x7fc6fd19f000 r-x /usr/lib/libc.so.6
 [...]
-0x7f2d29478000-0x7f2d2947a000 [vdso]
-0x7f2d2947a000-0x7f2d2947b000 /lib64/ld-linux-x86-64.so.2
+0x7fc6fd21b000-0x7fc6fd223000 rw-
 [...]
-0x7ffd162f1000-0x7ffd16312000 [stack]
-0xffffffffff600000-0xffffffffff601000 [vsyscall]
+0x7fc6fd30d000-0x7fc6fd30f000 r-x [vdso]
+0x7fc6fd30f000-0x7fc6fd310000 r-- /lib64/ld-linux-x86-64.so.2
+[...]
+0x7fffed226000-0x7fffed247000 rw- [stack]
+0xffffffffff600000-0xffffffffff601000 --x [vsyscall]
 ```
 
 A {sub-ref}`lief-runtime-memorylayout-region` describes a half-open address range:
@@ -83,6 +85,23 @@ measurements, and grouping anonymous regions combines unrelated allocations.
 :::
 :::{tab} {fa}`brands fa-rust` Rust
 {{ literalinclude("../../../code/rust/src/memory_layout.rs", "inspect") }}
+:::
+::::
+
+## {fa}`solid fa-lock` Permissions
+
+The permissions of the regions can be used to look for memory that is both
+writable and executable:
+
+::::{tabs}
+:::{tab} {fa}`brands fa-python` Python
+{{ literalinclude("../../../code/python/memory_layout.py", "wx") }}
+:::
+:::{tab} {fa}`regular fa-file-code` C++
+{{ literalinclude("../../../code/cpp/memory_layout.cpp", "wx") }}
+:::
+:::{tab} {fa}`brands fa-rust` Rust
+{{ literalinclude("../../../code/rust/src/memory_layout.rs", "wx") }}
 :::
 ::::
 
@@ -134,7 +153,9 @@ associated with the dyld shared cache, the stack, ...:
 ## {fa}`brands fa-windows` Windows
 
 On Windows, the layout includes committed pages and reserved address ranges,
-including stack, TEB/PEB regions:
+including stack, TEB/PEB regions. The reserved ranges and the guard pages
+(`PAGE_GUARD`) have no permission while the copy-on-write pages
+(`PAGE_WRITECOPY`) are reported as writable:
 
 ```text
 [0000000000127000, 0000000000182000]: <anonymous>

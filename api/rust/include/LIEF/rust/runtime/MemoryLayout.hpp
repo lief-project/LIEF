@@ -41,6 +41,10 @@ class runtime_MemoryLayout_Region
     return get().end_addr();
   }
 
+  uint32_t permissions() const {
+    return get().permissions();
+  }
+
   auto contains(uint64_t addr) const {
     return get().contains(addr);
   }

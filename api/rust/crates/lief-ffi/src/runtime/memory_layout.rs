@@ -10,6 +10,7 @@ pub mod ffi {
         fn addr(self: &runtime_MemoryLayout_Region) -> u64;
         fn size(self: &runtime_MemoryLayout_Region) -> u64;
         fn end_addr(self: &runtime_MemoryLayout_Region) -> u64;
+        fn permissions(self: &runtime_MemoryLayout_Region) -> u32;
         fn contains(self: &runtime_MemoryLayout_Region, addr: u64) -> bool;
         fn to_string(self: &runtime_MemoryLayout_Region) -> UniquePtr<CxxString>;
 

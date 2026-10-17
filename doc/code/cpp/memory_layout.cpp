@@ -11,10 +11,26 @@ void iterate() {
   for (const LIEF::runtime::MemoryLayout::Region& region :
        LIEF::runtime::memory_layout())
   {
-    std::cout << region.addr() << '-' << region.end_addr() << ' ' << region.name()
-              << '\n';
+    std::cout << region.addr() << '-' << region.end_addr() << ' '
+              << LIEF::runtime::Memory::perm_str(region.permissions()) << ' '
+              << region.name() << '\n';
   }
   // lief-doc: iterate-end
+}
+
+void writable_and_executable() {
+  // lief-doc: wx-start
+  using LIEF::runtime::Memory;
+  constexpr uint32_t WX = Memory::P_WRITE | Memory::P_EXEC;
+
+  for (const LIEF::runtime::MemoryLayout::Region& region :
+       LIEF::runtime::memory_layout())
+  {
+    if ((region.permissions() & WX) == WX) {
+      std::cout << "W+X: " << region << '\n';
+    }
+  }
+  // lief-doc: wx-end
 }
 
 void inspect(uint64_t address) {

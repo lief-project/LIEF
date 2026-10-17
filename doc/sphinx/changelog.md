@@ -90,7 +90,8 @@
       import lief
 
       for region in lief.runtime.memory_layout():
-          print(f"{region.addr:#014x}-{region.end_addr:#014x} {region.name}")
+          perms = lief.runtime.Memory.perm_str(region.permissions)
+          print(f"{region.addr:#014x}-{region.end_addr:#014x} {perms} {region.name}")
 
   * Add |lief-runtime-current_module| to get the module (executable or library)
     that contains the code calling this function.

@@ -2,6 +2,7 @@ use lief_ffi as ffi;
 
 use crate::common::FromFFI;
 use crate::declare_standalone_fwd_iterator;
+use crate::runtime::memory::Perm;
 
 /// A contiguous range of memory mapped in the current process.
 pub struct Region {
@@ -39,6 +40,11 @@ impl Region {
         self.ptr.end_addr()
     }
 
+    /// Permissions of the region.
+    pub fn permissions(&self) -> Perm {
+        Perm::from(self.ptr.permissions())
+    }
+
     /// Whether the given address is within this region
     pub fn contains(&self, addr: u64) -> bool {
         self.ptr.contains(addr)
@@ -58,6 +64,7 @@ impl std::fmt::Debug for Region {
             .field("addr", &self.addr())
             .field("size", &self.size())
             .field("end_addr", &self.end_addr())
+            .field("permissions", &self.permissions())
             .finish()
     }
 }

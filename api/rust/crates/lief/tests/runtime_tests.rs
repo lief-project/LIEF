@@ -213,10 +213,11 @@ fn test_memory_layout() {
 
     for region in &regions {
         println!(
-            "{:#x}-{:#x} ({:#x}) {}",
+            "{:#x}-{:#x} ({:#x}) {:?} {}",
             region.addr(),
             region.end_addr(),
             region.size(),
+            region.permissions(),
             region.name()
         );
         assert_eq!(region.end_addr(), region.addr() + region.size());
@@ -228,8 +229,30 @@ fn test_memory_layout() {
 
         // The regions backing this test binary must be part of the layout.
         let self_addr = test_memory_layout as usize as u64;
-        assert!(regions.iter().any(|r| r.contains(self_addr)));
+        let code = regions.iter().find(|r| r.contains(self_addr));
+        assert!(code.is_some_and(|r| r.permissions().contains(Perm::EXEC)));
+
+        test_memory_layout_permissions();
     }
+}
+
+fn test_memory_layout_permissions() {
+    let mut chunk = Memory::mmap(
+        Process::page_size() as u64,
+        MmapFlags::ANONYMOUS | MmapFlags::PRIVATE,
+        Perm::READ,
+    )
+    .unwrap();
+
+    for perm in [Perm::READ, Perm::READ | Perm::WRITE, Perm::NONE] {
+        chunk.change_permissions(perm);
+        let region = lief::runtime::memory_layout()
+            .find(|r| r.contains(chunk.addr()))
+            .unwrap();
+        assert_eq!(region.permissions(), perm);
+    }
+
+    Memory::munmap(&mut chunk);
 }
 
 fn test_memory() {

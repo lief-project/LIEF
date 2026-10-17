@@ -1652,6 +1652,12 @@
     :py:meth:`lief.runtime.Memory.Chunk.cache_flush`
     :cpp:func:`LIEF::runtime::Memory::Chunk::cache_flush`
 
+.. |lief-runtime-memory-perm| lief-api:: lief.runtime.Memory.PERM
+
+    :rust:struct:`lief::runtime::memory::Perm`
+    :py:class:`lief.runtime.Memory.PERM`
+    :cpp:enum:`LIEF::runtime::Memory::PERM`
+
 .. |lief-runtime-memorylayout| lief-api:: lief.runtime.MemoryLayout
 
     :py:class:`lief.runtime.MemoryLayout`
@@ -1662,6 +1668,12 @@
     :rust:struct:`lief::runtime::Region`
     :py:class:`lief.runtime.MemoryLayout.Region`
     :cpp:class:`LIEF::runtime::MemoryLayout::Region`
+
+.. |lief-runtime-memorylayout-region-permissions| lief-api:: lief.runtime.MemoryLayout.Region.permissions()
+
+    :rust:method:`lief::runtime::Region::permissions [struct]`
+    :py:attr:`lief.runtime.MemoryLayout.Region.permissions`
+    :cpp:func:`LIEF::runtime::MemoryLayout::Region::permissions`
 
 .. |lief-runtime-memory_layout| lief-api:: lief.runtime.memory_layout()
 

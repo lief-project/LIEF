@@ -6,7 +6,8 @@ import lief
 def iterate() -> None:
     # lief-doc: iterate-start
     for region in lief.runtime.memory_layout():
-        print(f"{region.addr:#014x}-{region.end_addr:#014x} {region.name}")
+        perms = lief.runtime.Memory.perm_str(region.permissions)
+        print(f"{region.addr:#014x}-{region.end_addr:#014x} {perms} {region.name}")
     # lief-doc: iterate-end
 
 
@@ -37,6 +38,16 @@ def inspect(address: int) -> None:
     if enclosing is not None:
         print(f"{address:#x}: {enclosing.name}+{address - enclosing.addr:#x}")
     # lief-doc: inspect-end
+
+
+def writable_and_executable() -> None:
+    # lief-doc: wx-start
+    wx = lief.runtime.Memory.PERM.WRITE | lief.runtime.Memory.PERM.EXEC
+
+    for region in lief.runtime.memory_layout():
+        if (region.permissions & wx) == wx:
+            print(f"W+X: {region}")
+    # lief-doc: wx-end
 
 
 def stack_and_heap() -> None:
