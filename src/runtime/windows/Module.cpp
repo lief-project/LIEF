@@ -23,6 +23,7 @@
 
 #include <Windows.h>
 #include <errhandlingapi.h>
+#include <intrin.h>
 #include <libloaderapi.h>
 #include <psapi.h>
 
@@ -406,5 +407,9 @@ modules_t modules() {
   return make_range(std::move(begin), std::move(end));
 }
 
+__declspec(noinline) std::unique_ptr<Module> current_module() {
+  void* caller_addr = _ReturnAddress();
+  return module_from_addr(reinterpret_cast<uintptr_t>(caller_addr));
+}
 
 }

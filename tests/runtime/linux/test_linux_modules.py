@@ -1,3 +1,4 @@
+import ctypes
 import subprocess
 import sys
 from pathlib import Path
@@ -58,6 +59,26 @@ def test_handle_and_dlsym():
     assert mod_from_hdl is not None
     assert mod_from_hdl.imagebase == module.imagebase
     assert mod_from_hdl.size == module.size
+
+
+@pytest.mark.runtime
+def test_current_module():
+    module = lief.runtime.current_module()
+    assert module is not None
+    assert module.name in {"_lief.so", "_lief_extended.so"}
+
+    library = resolve_runtime_library("runtime-current-module")
+    lib = ctypes.CDLL(str(library))
+    func = lib.lief_current_module_imagebase
+    func.restype = ctypes.c_uint64
+
+    func_addr = ctypes.cast(func, ctypes.c_void_p).value
+    assert func_addr is not None
+
+    lib_module = lief.runtime.module_from_path(str(library))
+    assert lib_module is not None
+    assert lib_module.contains(func_addr)
+    assert func() == lib_module.imagebase != module.imagebase
 
 
 @pytest.mark.runtime

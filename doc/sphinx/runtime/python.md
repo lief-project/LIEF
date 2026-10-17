@@ -81,6 +81,10 @@ ______________________________________________________________________
 .. autofunction:: lief.runtime.module_from_addr
 ```
 
+```{eval-rst}
+.. autofunction:: lief.runtime.current_module
+```
+
 ______________________________________________________________________
 
 ## {fa}`solid fa-memory` Memory

@@ -188,6 +188,11 @@ using modules_t = iterator_range<Module::Iterator>;
 /// process
 LIEF_API modules_t modules();
 
+/// Return the current module: the module that contains the code calling this
+/// function (e.g. the library from which it is called), or a nullptr if it
+/// can't be resolved.
+LIEF_API std::unique_ptr<Module> current_module();
+
 /// Find the module with the given name
 inline std::unique_ptr<Module> module_from_name(std::string_view name) {
   auto range = modules();

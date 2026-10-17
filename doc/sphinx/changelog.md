@@ -92,6 +92,9 @@
       for region in lief.runtime.memory_layout():
           print(f"{region.addr:#014x}-{region.end_addr:#014x} {region.name}")
 
+  * Add |lief-runtime-current_module| to get the module (executable or library)
+    that contains the code calling this function.
+
 :C++:
 
   * The parsers now take the file path as a ``std::string_view`` and they also

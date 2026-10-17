@@ -40,6 +40,15 @@ fn test_modules() {
     }
 }
 
+fn test_current_module() {
+    let module = lief::runtime::current_module().expect("missing current module");
+    let addr = test_current_module as *const () as u64;
+    assert!(module.contains(addr));
+
+    let from_addr = lief::runtime::module_from_addr(addr).expect("missing module");
+    assert_eq!(module.imagebase(), from_addr.imagebase());
+}
+
 fn test_osx_host() {
     use lief::runtime::osx::Host;
     let version = Host::os_version_name();
@@ -328,6 +337,7 @@ fn test_runtime() {
     }
     test_process();
     test_modules();
+    test_current_module();
     test_memory();
     test_memory_hint();
     test_memory_layout();

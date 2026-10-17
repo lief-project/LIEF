@@ -602,6 +602,7 @@ pub use crate::runtime::memory_layout::ffi::runtime_MemoryLayout_Region;
 pub use crate::runtime::memory_layout::ffi::runtime_it_memory_layout;
 pub use crate::runtime::memory_layout::ffi::runtime_memory_layout;
 pub use crate::runtime::module::ffi::runtime_Module;
+pub use crate::runtime::module::ffi::runtime_current_module;
 pub use crate::runtime::module::ffi::runtime_it_modules;
 pub use crate::runtime::module::ffi::runtime_module_from_addr;
 pub use crate::runtime::module::ffi::runtime_module_from_name;

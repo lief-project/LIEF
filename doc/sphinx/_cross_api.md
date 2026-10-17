@@ -1699,6 +1699,12 @@
     :py:func:`lief.runtime.module_from_addr`
     :cpp:func:`LIEF::runtime::module_from_addr`
 
+.. |lief-runtime-current_module| lief-api:: lief.runtime.current_module()
+
+    :rust:func:`lief::runtime::current_module`
+    :py:func:`lief.runtime.current_module`
+    :cpp:func:`LIEF::runtime::current_module`
+
 .. |lief-runtime-linux-module| lief-api:: lief.runtime.linux.Module
 
     :rust:struct:`lief::runtime::linux::Module`

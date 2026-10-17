@@ -19,6 +19,7 @@ pub mod ffi {
         fn runtime_module_from_name(name: &CxxString) -> UniquePtr<runtime_Module>;
         fn runtime_module_from_path(path: &CxxString) -> UniquePtr<runtime_Module>;
         fn runtime_module_from_addr(addr: u64) -> UniquePtr<runtime_Module>;
+        fn runtime_current_module() -> UniquePtr<runtime_Module>;
     }
     impl UniquePtr<runtime_Module> {}
     impl UniquePtr<runtime_it_modules> {}

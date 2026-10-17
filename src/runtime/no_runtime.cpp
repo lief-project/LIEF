@@ -159,6 +159,11 @@ modules_t modules() {
   return make_empty_iterator<Module>();
 }
 
+std::unique_ptr<Module> current_module() {
+  LIEF_ERR(LIEF_NEEDS_RUNTIME_MSG);
+  return nullptr;
+}
+
 // ----------------------------------------------------------------------------
 // Memory
 // ----------------------------------------------------------------------------

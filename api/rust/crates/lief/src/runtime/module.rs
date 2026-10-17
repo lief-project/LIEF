@@ -154,6 +154,14 @@ pub fn module_from_addr(addr: u64) -> Option<Modules> {
     into_optional(ffi::runtime_module_from_addr(addr))
 }
 
+/// Return the module that contains the code calling this function.
+///
+/// The bindings are statically linked, so it returns the executable or the
+/// shared library (e.g. a `cdylib`) that embeds this crate.
+pub fn current_module() -> Option<Modules> {
+    into_optional(ffi::runtime_current_module())
+}
+
 declare_standalone_fwd_iterator!(
     ModulesIt,
     Modules,

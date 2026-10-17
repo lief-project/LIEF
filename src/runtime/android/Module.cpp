@@ -326,6 +326,11 @@ modules_t modules() {
   return make_range(std::move(begin), std::move(end));
 }
 
+__attribute__((noinline)) std::unique_ptr<Module> current_module() {
+  void* caller_addr = __builtin_return_address(0);
+  return module_from_addr(reinterpret_cast<uintptr_t>(caller_addr));
+}
+
 namespace android {
 
 std::unique_ptr<Module> dlopen(const std::string& name) {

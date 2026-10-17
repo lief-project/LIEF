@@ -35,6 +35,11 @@ For a direct lookup, use {sub-ref}`lief-runtime-module_from_name`,
 Name and path lookups use exact matches. Address lookup expects an absolute
 address in the current process.
 
+{sub-ref}`lief-runtime-current_module` returns the module that contains the
+code calling it: from C++, the executable or the library that makes the call.
+From Rust it is the executable or the library that embeds the `lief` crate and from
+Python, the module of LIEF's native extension.
+
 The platform-specific module interfaces let you parse an image from its path on
 disk or from its current mapping:
 

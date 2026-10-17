@@ -62,6 +62,10 @@ ______________________________________________________________________
 .. doxygenfunction:: LIEF::runtime::module_from_addr(uintptr_t)
 ```
 
+```{eval-rst}
+.. doxygenfunction:: LIEF::runtime::current_module()
+```
+
 ______________________________________________________________________
 
 ## {fa}`solid fa-memory` Memory

@@ -75,6 +75,15 @@ void create<Module>(nb::module_& m) {
   m.def("module_from_addr", &runtime::module_from_addr, "addr"_a,
     "Find the module that encompasses the given virtual address (absolute)"_doc
   );
+
+  m.def("current_module", &runtime::current_module,
+    R"doc(
+    Return the module that contains the code calling this function.
+
+    From Python, this code is LIEF's native extension, so it returns the
+    module of the extension (e.g. ``_lief.{so,pyd}``).
+    )doc"_doc
+  );
 }
 
 }

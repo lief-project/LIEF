@@ -79,3 +79,7 @@ inline auto runtime_module_from_addr(uint64_t addr) {
       LIEF::runtime::module_from_addr(addr)
   );
 }
+
+inline auto runtime_current_module() {
+  return details::try_unique<runtime_Module>(LIEF::runtime::current_module());
+}

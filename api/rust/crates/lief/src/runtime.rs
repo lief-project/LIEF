@@ -25,7 +25,9 @@ pub use host::Host;
 pub use process::Process;
 
 #[doc(inline)]
-pub use module::{Module, Modules, module_from_addr, module_from_name, module_from_path, modules};
+pub use module::{
+    Module, Modules, current_module, module_from_addr, module_from_name, module_from_path, modules,
+};
 
 #[doc(inline)]
 pub use memory::Memory;
