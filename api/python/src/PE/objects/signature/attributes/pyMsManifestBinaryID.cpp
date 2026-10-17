@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
@@ -42,7 +43,7 @@ void create<MsManifestBinaryID>(nb::module_& m) {
 
     .def_prop_rw("manifest_id",
         nb::overload_cast<>(&MsManifestBinaryID::manifest_id, nb::const_),
-        nb::overload_cast<const std::string&>(&MsManifestBinaryID::manifest_id),
+        nb::overload_cast<std::string_view>(&MsManifestBinaryID::manifest_id),
         "The manifest id")
     LIEF_DEFAULT_STR(MsManifestBinaryID);
 }

@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_OAT_HEADER_H
 #define LIEF_OAT_HEADER_H
+#include <string_view>
 #include <array>
 #include <map>
 #include <string>
@@ -107,7 +108,7 @@ class LIEF_API Header : public Object {
   const std::string* get(HEADER_KEYS key) const LIEF_LIFETIMEBOUND;
   std::string* get(HEADER_KEYS key) LIEF_LIFETIMEBOUND;
 
-  Header& set(HEADER_KEYS key, const std::string& value) LIEF_LIFETIMEBOUND;
+  Header& set(HEADER_KEYS key, std::string_view value) LIEF_LIFETIMEBOUND;
 
   const std::string* operator[](HEADER_KEYS key) const;
   std::string* operator[](HEADER_KEYS key);

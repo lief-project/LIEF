@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 #include <cctype>
 #include <iterator>
@@ -76,11 +77,11 @@ Binary::Binary() :
   LIEF::Binary(LIEF::Binary::FORMATS::ELF),
   sizing_info_{std::make_unique<sizing_info_t>()} {}
 
-size_t Binary::hash(const std::string& name) {
+size_t Binary::hash(std::string_view name) {
   if (type_ == Header::CLASS::ELF32) {
-    return hash32(name.c_str());
+    return hash32(name);
   }
-  return hash64(name.c_str());
+  return hash64(name);
 }
 
 LIEF::Binary::sections_t Binary::get_abstract_sections() {
@@ -95,7 +96,7 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   functions_t result;
   for (const Symbol& symbol : exported_symbols()) {
     if (symbol.type() == Symbol::TYPE::FUNC) {
-      result.emplace_back(std::string(symbol.name()), symbol.value(),
+      result.emplace_back(symbol.name(), symbol.value(),
                           Function::FLAGS::EXPORTED);
     }
   }
@@ -107,7 +108,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   functions_t result;
   for (const Symbol& symbol : imported_symbols()) {
     if (symbol.type() == Symbol::TYPE::FUNC) {
-      result.emplace_back(std::string(symbol.name()), symbol.value(),
+      result.emplace_back(symbol.name(), symbol.value(),
                           Function::FLAGS::IMPORTED);
     }
   }
@@ -249,7 +250,7 @@ void Binary::remove(Note::TYPE type) {
 }
 
 
-int64_t Binary::symtab_idx(const std::string& name) const {
+int64_t Binary::symtab_idx(std::string_view name) const {
   if (symtab_symbols_.empty()) {
     return -1;
   }
@@ -267,14 +268,14 @@ int64_t Binary::symtab_idx(const std::string& name) const {
 }
 
 int64_t Binary::symtab_idx(const Symbol& sym) const {
-  return symtab_idx(std::string(sym.name()));
+  return symtab_idx(sym.name());
 }
 
 int64_t Binary::dynsym_idx(const Symbol& sym) const {
-  return dynsym_idx(std::string(sym.name()));
+  return dynsym_idx(sym.name());
 }
 
-int64_t Binary::dynsym_idx(const std::string& name) const {
+int64_t Binary::dynsym_idx(std::string_view name) const {
   if (dynamic_symbols_.empty()) {
     return -1;
   }
@@ -333,7 +334,7 @@ Symbol& Binary::export_symbol(const Symbol& symbol) {
   return *s;
 }
 
-Symbol& Binary::export_symbol(const std::string& symbol_name, uint64_t value) {
+Symbol& Binary::export_symbol(std::string_view symbol_name, uint64_t value) {
   Symbol* s = get_dynamic_symbol(symbol_name);
   if (s != nullptr) {
     if (value > 0) {
@@ -352,7 +353,7 @@ Symbol& Binary::export_symbol(const std::string& symbol_name, uint64_t value) {
 
   // Create a new one
   Symbol newsym;
-  newsym.name(symbol_name);
+  newsym.name(std::string(symbol_name));
   newsym.type(Symbol::TYPE::COMMON);
   newsym.binding(Symbol::BINDING::GLOBAL);
   newsym.visibility(Symbol::VISIBILITY::DEFAULT);
@@ -362,8 +363,8 @@ Symbol& Binary::export_symbol(const std::string& symbol_name, uint64_t value) {
 }
 
 
-Symbol& Binary::add_exported_function(uint64_t address, const std::string& name) {
-  std::string funcname = name;
+Symbol& Binary::add_exported_function(uint64_t address, std::string_view name) {
+  std::string funcname(name);
   if (funcname.empty()) {
     std::stringstream ss;
     ss << "func_" << std::hex << address;
@@ -402,7 +403,7 @@ Symbol& Binary::add_exported_function(uint64_t address, const std::string& name)
   return export_symbol(funcsym);
 }
 
-const Symbol* Binary::get_dynamic_symbol(const std::string& name) const {
+const Symbol* Binary::get_dynamic_symbol(std::string_view name) const {
   const auto it_symbol =
       std::find_if(dynamic_symbols_.begin(), dynamic_symbols_.end(),
                    [&name](const std::unique_ptr<Symbol>& s) {
@@ -415,7 +416,7 @@ const Symbol* Binary::get_dynamic_symbol(const std::string& name) const {
   return it_symbol->get();
 }
 
-const Symbol* Binary::get_symtab_symbol(const std::string& name) const {
+const Symbol* Binary::get_symtab_symbol(std::string_view name) const {
   const auto it_symbol =
       std::find_if(symtab_symbols_.begin(), symtab_symbols_.end(),
                    [&name](const std::unique_ptr<Symbol>& s) {
@@ -504,12 +505,14 @@ Binary::it_const_imported_symbols Binary::imported_symbols() const {
           [](const Symbol* symbol) { return symbol->is_imported(); }};
 }
 
-void Binary::remove_symbol(const std::string& name) {
-  remove_symtab_symbol(name);
-  remove_dynamic_symbol(name);
+void Binary::remove_symbol(std::string_view name) {
+  Symbol* symtab_symbol = get_symtab_symbol(name);
+  Symbol* dynamic_symbol = get_dynamic_symbol(name);
+  remove_symtab_symbol(symtab_symbol);
+  remove_dynamic_symbol(dynamic_symbol);
 }
 
-void Binary::remove_symtab_symbol(const std::string& name) {
+void Binary::remove_symtab_symbol(std::string_view name) {
   Symbol* sym = get_symtab_symbol(name);
   if (sym == nullptr) {
     LIEF_WARN("Symtab symbol '{}' not found, cannot remove", name);
@@ -537,7 +540,7 @@ void Binary::remove_symtab_symbol(Symbol* symbol) {
   symtab_symbols_.erase(it_symbol);
 }
 
-void Binary::remove_dynamic_symbol(const std::string& name) {
+void Binary::remove_dynamic_symbol(std::string_view name) {
   Symbol* sym = get_dynamic_symbol(name);
   if (sym == nullptr) {
     LIEF_WARN("Dynamic symbol '{}' not found, cannot remove", name);
@@ -679,7 +682,7 @@ Relocation& Binary::add_dynamic_relocation(const Relocation& relocation) {
   // Add symbol
   const Symbol* associated_sym = relocation.symbol();
   if (associated_sym != nullptr) {
-    Symbol* inner_sym = get_dynamic_symbol(std::string(associated_sym->name()));
+    Symbol* inner_sym = get_dynamic_symbol(associated_sym->name());
     if (inner_sym == nullptr) {
       inner_sym = &(add_dynamic_symbol(*associated_sym));
     }
@@ -743,7 +746,7 @@ Relocation& Binary::add_pltgot_relocation(const Relocation& relocation) {
   // Add symbol
   const Symbol* associated_sym = relocation.symbol();
   if (associated_sym != nullptr) {
-    Symbol* inner_sym = get_dynamic_symbol(std::string(associated_sym->name()));
+    Symbol* inner_sym = get_dynamic_symbol(associated_sym->name());
     if (inner_sym == nullptr) {
       inner_sym = &(add_dynamic_symbol(*associated_sym));
     }
@@ -931,7 +934,7 @@ std::vector<uint8_t> Binary::raw() {
   return builder.get_build();
 }
 
-result<uint64_t> Binary::get_function_address(const std::string& func_name) const {
+result<uint64_t> Binary::get_function_address(std::string_view func_name) const {
   if (auto res = get_function_address(func_name, /* demangle */ true)) {
     return *res;
   }
@@ -943,7 +946,7 @@ result<uint64_t> Binary::get_function_address(const std::string& func_name) cons
   return LIEF::Binary::get_function_address(func_name);
 }
 
-result<uint64_t> Binary::get_function_address(const std::string& func_name,
+result<uint64_t> Binary::get_function_address(std::string_view func_name,
                                               bool demangled) const {
 
   const auto it_dynsym =
@@ -1495,7 +1498,7 @@ void Binary::patch_pltgot(const Symbol& symbol, uint64_t address) {
   patch_address(got_address, address, sizeof(uint64_t));
 }
 
-void Binary::patch_pltgot(const std::string& symbol_name, uint64_t address) {
+void Binary::patch_pltgot(std::string_view symbol_name, uint64_t address) {
   std::for_each(dynamic_symbols_.begin(), dynamic_symbols_.end(),
                 [&symbol_name, address, this](const std::unique_ptr<Symbol>& s) {
                   if (s->name() == symbol_name) {
@@ -1553,7 +1556,7 @@ const Segment* Binary::segment_from_offset(uint64_t offset) const {
   return it_segment->get();
 }
 
-void Binary::remove_section(const std::string& name, bool clear) {
+void Binary::remove_section(std::string_view name, bool clear) {
   Section* sec = get_section(name);
   if (sec == nullptr) {
     return;
@@ -2191,12 +2194,13 @@ uint64_t Binary::next_virtual_address() const {
 }
 
 
-DynamicEntryLibrary& Binary::add_library(const std::string& library_name) {
-  return *add(DynamicEntryLibrary{library_name}).as<DynamicEntryLibrary>();
+DynamicEntryLibrary& Binary::add_library(std::string_view library_name) {
+  return *add(DynamicEntryLibrary{std::string(library_name)})
+              .as<DynamicEntryLibrary>();
 }
 
 
-void Binary::remove_library(const std::string& library_name) {
+void Binary::remove_library(std::string_view library_name) {
   DynamicEntryLibrary* lib = get_library(library_name);
   if (lib == nullptr) {
     LIEF_ERR("Library '{}' not found", library_name);
@@ -2206,7 +2210,7 @@ void Binary::remove_library(const std::string& library_name) {
 }
 
 const DynamicEntryLibrary*
-    Binary::get_library(const std::string& library_name) const {
+    Binary::get_library(std::string_view library_name) const {
   const auto it_needed =
       std::find_if(dynamic_entries_.begin(), dynamic_entries_.end(),
                    [&library_name](const std::unique_ptr<DynamicEntry>& entry) {
@@ -2316,7 +2320,7 @@ const Relocation* Binary::get_relocation(const Symbol& symbol) const {
   return nullptr;
 }
 
-const Relocation* Binary::get_relocation(const std::string& symbol_name) const {
+const Relocation* Binary::get_relocation(std::string_view symbol_name) const {
   const LIEF::Symbol* sym = get_symbol(symbol_name);
   if (sym == nullptr) {
     return nullptr;
@@ -2694,7 +2698,7 @@ LIEF::Binary::functions_t Binary::functions() const {
 
   for (const Symbol& s : symbols()) {
     if (s.type() == Symbol::TYPE::FUNC && s.value() > 0) {
-      Function f{std::string(s.name()), s.value()};
+      Function f{s.name(), s.value()};
       f.size(s.size());
       functions_set.insert(f);
     }
@@ -3550,7 +3554,7 @@ uint64_t Binary::layout_pagesize() const {
 }
 
 const SymbolVersionRequirement*
-    Binary::find_version_requirement(const std::string& libname) const {
+    Binary::find_version_requirement(std::string_view libname) const {
   auto it = std::find_if(
       symbol_version_requirements_.begin(), symbol_version_requirements_.end(),
       [&libname](const std::unique_ptr<SymbolVersionRequirement>& symver) {
@@ -3565,7 +3569,7 @@ const SymbolVersionRequirement*
   return (*it).get();
 }
 
-bool Binary::remove_version_requirement(const std::string& libname) {
+bool Binary::remove_version_requirement(std::string_view libname) {
   auto it = std::find_if(
       symbol_version_requirements_.begin(), symbol_version_requirements_.end(),
       [&libname](const std::unique_ptr<SymbolVersionRequirement>& symver) {

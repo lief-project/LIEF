@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 #include <iterator>
 
@@ -232,10 +233,10 @@ std::vector<Section::FLAGS> Section::flags_list() const {
   return flags;
 }
 
-void Section::segment_name(const std::string& name) {
+void Section::segment_name(std::string_view name) {
   segment_name_ = name;
   if (segment_ != nullptr && !segment_->name().empty()) {
-    segment_->name(name);
+    segment_->name(segment_name_);
   }
 }
 

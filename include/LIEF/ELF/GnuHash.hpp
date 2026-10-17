@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_GNU_HASH_H
 #define LIEF_ELF_GNU_HASH_H
 
+#include <string_view>
 #include <cstdint>
 #include <memory>
 #include <ostream>
@@ -115,7 +116,7 @@ class LIEF_API GnuHash : public Object {
   /// the returned value is ``false`` you can assume at ``100%`` that
   /// the symbol with the given name doesn't exist. If ``true``, you can't
   /// do any assumption
-  bool check(const std::string& symbol_name) const;
+  bool check(std::string_view symbol_name) const;
 
   /// Check if the symbol associated with the given hash *probably* exists. If
   /// the returned value is ``false`` you can assume at ``100%`` that

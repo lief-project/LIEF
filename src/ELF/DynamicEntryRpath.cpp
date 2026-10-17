@@ -16,6 +16,7 @@
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/Visitor.hpp"
 #include "logging.hpp"
+#include <string_view>
 
 #include <algorithm>
 #include <numeric>
@@ -53,7 +54,7 @@ DynamicEntryRpath& DynamicEntryRpath::append(std::string path) {
   return *this;
 }
 
-DynamicEntryRpath& DynamicEntryRpath::remove(const std::string& path) {
+DynamicEntryRpath& DynamicEntryRpath::remove(std::string_view path) {
   std::vector<std::string> paths = this->paths();
   paths.erase(std::remove_if(paths.begin(), paths.end(),
                              [&path](const std::string& p) { return p == path; }),
@@ -62,18 +63,18 @@ DynamicEntryRpath& DynamicEntryRpath::remove(const std::string& path) {
   return *this;
 }
 
-DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, const std::string& path) {
+DynamicEntryRpath& DynamicEntryRpath::insert(size_t pos, std::string_view path) {
   std::vector<std::string> paths = this->paths();
 
   if (pos == paths.size()) {
-    return append(path);
+    return append(std::string(path));
   }
 
   if (pos > paths.size()) {
     LIEF_ERR("Position {:d} is out of range", pos);
     return *this;
   }
-  paths.insert(paths.begin() + pos, path);
+  paths.emplace(paths.begin() + pos, path);
   this->paths(paths);
   return *this;
 }

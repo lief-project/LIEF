@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/ELF/hash.hpp"
+#include <string_view>
 
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
@@ -91,7 +92,7 @@ bool SymbolVersionRequirement::remove_aux_requirement(
 }
 
 const SymbolVersionAuxRequirement*
-    SymbolVersionRequirement::find_aux(const std::string& name) const {
+    SymbolVersionRequirement::find_aux(std::string_view name) const {
   auto it = std::find_if(
       aux_requirements_.begin(), aux_requirements_.end(),
       [&name](const std::unique_ptr<SymbolVersionAuxRequirement>& aux) {

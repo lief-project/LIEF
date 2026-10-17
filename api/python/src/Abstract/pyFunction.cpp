@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include <string>
 #include <sstream>
 
@@ -47,9 +49,9 @@ void create<Function>(nb::module_& m) {
 
     pyfunction
     .def(nb::init())
-    .def(nb::init<const std::string&>())
+    .def(nb::init<std::string_view>())
     .def(nb::init<uint64_t>())
-    .def(nb::init<const std::string&, uint64_t>())
+    .def(nb::init<std::string_view, uint64_t>())
 
     .def("add", &Function::add,
         "Add the given " RST_CLASS_REF(lief.Function.FLAGS) ""_doc,

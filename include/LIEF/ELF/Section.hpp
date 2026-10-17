@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_SECTION_H
 #define LIEF_ELF_SECTION_H
 
+#include <string_view>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -220,8 +221,8 @@ class LIEF_API Section : public LIEF::Section {
     return static_cast<uint64_t>(type) & TYPE_MASK;
   }
 
-  Section(const std::string& name, TYPE type = TYPE::PROGBITS) :
-    LIEF::Section(name),
+  Section(std::string_view name, TYPE type = TYPE::PROGBITS) :
+    LIEF::Section(std::string(name)),
     type_{type} {}
 
   Section() = default;

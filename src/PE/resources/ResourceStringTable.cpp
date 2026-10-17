@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <spdlog/fmt/fmt.h>
 #include <utility>
 
@@ -148,7 +149,7 @@ std::string ResourceStringTable::key_u8() const {
   return u16tou8(key()).value_or("");
 }
 
-std::optional<std::string> ResourceStringTable::get(const std::string& key) const {
+std::optional<std::string> ResourceStringTable::get(std::string_view key) const {
   auto u16 = u8tou16(key);
   if (!u16) {
     return std::nullopt;

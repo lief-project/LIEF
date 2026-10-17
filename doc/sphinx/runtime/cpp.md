@@ -51,11 +51,11 @@ ______________________________________________________________________
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::runtime::module_from_name(const std::string &)
+.. doxygenfunction:: LIEF::runtime::module_from_name(std::string_view)
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::runtime::module_from_path(const std::string &)
+.. doxygenfunction:: LIEF::runtime::module_from_path(std::string_view)
 ```
 
 ```{eval-rst}

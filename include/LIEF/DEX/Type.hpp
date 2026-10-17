@@ -16,6 +16,7 @@
 #ifndef LIEF_DEX_TYPE_H
 #define LIEF_DEX_TYPE_H
 
+#include <string_view>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -61,7 +62,7 @@ class LIEF_API Type : public Object {
 
   public:
   Type();
-  Type(const std::string& mangled);
+  Type(std::string_view mangled);
   Type(const Type& other);
 
   /// Whether it is a primitive type, a class, ...
@@ -99,7 +100,7 @@ class LIEF_API Type : public Object {
   ~Type() override;
 
   private:
-  void parse(const std::string& type);
+  void parse(std::string_view type);
 
   TYPES type_{TYPES::UNKNOWN};
   union {

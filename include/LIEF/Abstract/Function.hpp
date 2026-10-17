@@ -16,6 +16,7 @@
 #ifndef LIEF_ABSTRACT_FUNCTION_H
 #define LIEF_ABSTRACT_FUNCTION_H
 
+#include <string_view>
 #include <string>
 #include <vector>
 
@@ -57,13 +58,13 @@ class LIEF_API Function : public Symbol {
 
   public:
   Function() = default;
-  Function(const std::string& name) :
-    Symbol(name) {}
+  Function(std::string_view name) :
+    Symbol(std::string(name)) {}
   Function(uint64_t address) :
     Function("", address) {}
-  Function(const std::string& name, uint64_t address) :
-    Symbol(name, address) {}
-  Function(const std::string& name, uint64_t address, FLAGS flags) :
+  Function(std::string_view name, uint64_t address) :
+    Symbol(std::string(name), address) {}
+  Function(std::string_view name, uint64_t address, FLAGS flags) :
     Function(name, address) {
     flags_ = flags;
   }

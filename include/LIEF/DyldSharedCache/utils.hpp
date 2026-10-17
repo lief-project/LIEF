@@ -21,7 +21,7 @@
 #include "LIEF/BinaryStream/FileStream.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 
-#include <string>
+#include <string_view>
 
 
 namespace LIEF::dsc {
@@ -30,7 +30,7 @@ namespace LIEF::dsc {
 LIEF_API bool is_shared_cache(BinaryStream& stream);
 
 /// Check if the `file` is a dyld shared cache
-inline bool is_shared_cache(const std::string& file) {
+inline bool is_shared_cache(std::string_view file) {
   auto fs = LIEF::FileStream::from_file(file);
   if (!fs) {
     return false;

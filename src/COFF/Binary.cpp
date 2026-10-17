@@ -18,6 +18,7 @@
 #include "LIEF/COFF/Relocation.hpp"
 #include "LIEF/COFF/Section.hpp"
 #include "LIEF/COFF/Symbol.hpp"
+#include <string_view>
 
 #include "LIEF/asm/Engine.hpp" // IWYU pragma: keep
 
@@ -55,7 +56,7 @@ const Section* Binary::get_section(std::string_view name) const {
   return nullptr;
 }
 
-const Symbol* Binary::find_function(const std::string& name) const {
+const Symbol* Binary::find_function(std::string_view name) const {
   for (const Symbol& func : functions()) {
     if (func.name() == name) {
       return &func;
@@ -64,7 +65,7 @@ const Symbol* Binary::find_function(const std::string& name) const {
   return nullptr;
 }
 
-const Symbol* Binary::find_demangled_function(const std::string& name) const {
+const Symbol* Binary::find_demangled_function(std::string_view name) const {
   for (const Symbol& func : functions()) {
     if (func.demangled_name() == name) {
       return &func;

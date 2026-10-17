@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
 #include "pySafeString.hpp"
@@ -98,7 +100,7 @@ void create<Export>(nb::module_& m) {
     .def_prop_ro("ord_addr_table_rva", &Export::ord_addr_table_rva,
                  "RVA to the list of exported ordinals"_doc)
 
-    .def("find_entry", nb::overload_cast<const std::string&>(&Export::find_entry),
+    .def("find_entry", nb::overload_cast<std::string_view>(&Export::find_entry),
          "Find the export with the given name"_doc,
          "name"_a, nb::rv_policy::reference_internal)
 
@@ -121,7 +123,7 @@ void create<Export>(nb::module_& m) {
     .def("remove_entry", nb::overload_cast<const ExportEntry&>(&Export::remove_entry),
          "Remove the given export entry", "entry"_a)
 
-    .def("remove_entry", nb::overload_cast<const std::string&>(&Export::remove_entry),
+    .def("remove_entry", nb::overload_cast<std::string_view>(&Export::remove_entry),
          "Remove the export entry with the given name", "name"_a)
 
     .def("remove_entry", nb::overload_cast<uint32_t>(&Export::remove_entry),

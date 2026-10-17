@@ -15,6 +15,7 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"
+#include <string_view>
 
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/ResourceDirectory.hpp"
@@ -101,7 +102,7 @@ std::string ResourcesManager::manifest() const {
   return std::string{content.begin(), content.end()};
 }
 
-void ResourcesManager::manifest(const std::string& manifest) {
+void ResourcesManager::manifest(std::string_view manifest) {
   ResourceNode* manifest_node = get_node_type(TYPE::MANIFEST);
   if (manifest_node == nullptr) {
     auto L1 = std::make_unique<ResourceDirectory>((int)TYPE::MANIFEST);

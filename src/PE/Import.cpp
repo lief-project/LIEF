@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 
 #include "LIEF/Visitor.hpp"
@@ -81,7 +82,7 @@ Import& Import::operator=(const Import& other) {
   return *this;
 }
 
-bool Import::remove_entry(const std::string& name) {
+bool Import::remove_entry(std::string_view name) {
   auto it = std::find_if(entries_.begin(), entries_.end(),
                          [&name](const std::unique_ptr<ImportEntry>& entry) {
                            return entry->name() == name;
@@ -108,7 +109,7 @@ bool Import::remove_entry(uint32_t ordinal) {
   return true;
 }
 
-const ImportEntry* Import::get_entry(const std::string& name) const {
+const ImportEntry* Import::get_entry(std::string_view name) const {
   const auto it_entry =
       std::find_if(entries_.begin(), entries_.end(),
                    [&name](const std::unique_ptr<ImportEntry>& entry) {
@@ -121,7 +122,7 @@ const ImportEntry* Import::get_entry(const std::string& name) const {
 }
 
 result<uint32_t>
-    Import::get_function_rva_from_iat(const std::string& function) const {
+    Import::get_function_rva_from_iat(std::string_view function) const {
   const auto it_function =
       std::find_if(entries_.begin(), entries_.end(),
                    [&function](const std::unique_ptr<ImportEntry>& entry) {

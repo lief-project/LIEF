@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <spdlog/fmt/fmt.h>
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
@@ -45,8 +46,8 @@ bool GnuHash::check_bloom_filter(uint32_t hash) const {
   return ((filter >> b1) & (filter >> b2) & 1) != 0u;
 }
 
-bool GnuHash::check(const std::string& symbol_name) const {
-  uint32_t hash = dl_new_hash(symbol_name.c_str());
+bool GnuHash::check(std::string_view symbol_name) const {
+  uint32_t hash = dl_new_hash(symbol_name);
   return check(hash);
 }
 

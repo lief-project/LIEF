@@ -16,9 +16,9 @@
 #ifndef LIEF_ELF_SEGMENT_H
 #define LIEF_ELF_SEGMENT_H
 
+#include <string_view>
 #include <memory>
 #include <ostream>
-#include <string>
 #include <vector>
 
 #include "LIEF/Object.hpp"
@@ -222,7 +222,7 @@ class LIEF_API Segment : public Object {
   bool has(const Section& section) const;
 
   /// Check if the current segment wraps the given section's name
-  bool has(const std::string& section_name) const;
+  bool has(std::string_view section_name) const;
 
   /// Append the given ELF_SEGMENT_FLAGS
   void add(FLAGS flag);

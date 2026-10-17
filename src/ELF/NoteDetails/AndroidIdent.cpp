@@ -15,6 +15,7 @@
  */
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
 #include "LIEF/Visitor.hpp"
+#include <string_view>
 
 #include <spdlog/fmt/fmt.h>
 
@@ -54,14 +55,14 @@ void AndroidIdent::sdk_version(uint32_t version) {
   write_at(sdk_version_offset, version);
 }
 
-void AndroidIdent::ndk_version(const std::string& ndk_version) {
-  std::string sized_nersion = ndk_version;
+void AndroidIdent::ndk_version(std::string_view ndk_version) {
+  std::string sized_nersion(ndk_version);
   sized_nersion.resize(ndk_version_size, 0);
   write_string_at(ndk_version_offset, sized_nersion);
 }
 
-void AndroidIdent::ndk_build_number(const std::string& ndk_build_number) {
-  std::string sized_nersion = ndk_build_number;
+void AndroidIdent::ndk_build_number(std::string_view ndk_build_number) {
+  std::string sized_nersion(ndk_build_number);
   sized_nersion.resize(ndk_build_number_size);
   write_string_at(ndk_build_number_offset, sized_nersion);
 }

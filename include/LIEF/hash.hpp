@@ -53,14 +53,10 @@ class LIEF_API Hash : public Visitor {
 
   virtual Hash& process(const Object& obj);
   virtual Hash& process(size_t integer);
-  virtual Hash& process(const std::string& str);
+  virtual Hash& process(std::string_view str);
   virtual Hash& process(const std::u16string& str);
   virtual Hash& process(const std::vector<uint8_t>& raw);
   virtual Hash& process(span<const uint8_t> raw);
-
-  Hash& process(std::string_view str) {
-    return process(std::string(str));
-  }
 
   template<size_t N>
   Hash& process(const char (&str)[N]) {

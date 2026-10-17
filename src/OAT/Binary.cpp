@@ -17,6 +17,7 @@
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/File.hpp"
 #include "LIEF/VDEX/File.hpp"
+#include <string_view>
 
 #include "LIEF/OAT/Binary.hpp"
 #include "LIEF/OAT/Class.hpp"
@@ -77,12 +78,12 @@ Binary::it_classes Binary::classes() {
   return classes_list_;
 }
 
-bool Binary::has_class(const std::string& class_name) const {
+bool Binary::has_class(std::string_view class_name) const {
   return classes_.find(DEX::Class::fullname_normalized(class_name)) !=
          classes_.end();
 }
 
-const Class* Binary::get_class(const std::string& class_name) const {
+const Class* Binary::get_class(std::string_view class_name) const {
   auto it = classes_.find(DEX::Class::fullname_normalized(class_name));
   if (it == classes_.end()) {
     return nullptr;
@@ -90,7 +91,7 @@ const Class* Binary::get_class(const std::string& class_name) const {
   return it->second;
 }
 
-Class* Binary::get_class(const std::string& class_name) {
+Class* Binary::get_class(std::string_view class_name) {
   return const_cast<Class*>(
       static_cast<const Binary*>(this)->get_class(class_name)
   );

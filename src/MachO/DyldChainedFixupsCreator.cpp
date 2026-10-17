@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <string>
 
 #include "LIEF/MachO/Binary.hpp"
@@ -119,7 +120,7 @@ result<size_t> DyldChainedFixupsCreator::lib2ord(const Binary& bin,
 
 
 const Symbol* DyldChainedFixupsCreator::find_symbol(const Binary& bin,
-                                                    const std::string& name) {
+                                                    std::string_view name) {
   for (const Symbol& sym : bin.symbols()) {
     if (sym.name() == name) {
       return &sym;

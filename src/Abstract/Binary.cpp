@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/Abstract/Binary.hpp"
+#include <string_view>
 
 #include "LIEF/Visitor.hpp"
 #include "LIEF/config.h"
@@ -35,7 +36,7 @@ Binary::Binary(FORMATS fmt) :
 Binary::Binary() = default;
 Binary::~Binary() = default;
 
-const Symbol* Binary::get_symbol(const std::string& name) const {
+const Symbol* Binary::get_symbol(std::string_view name) const {
   symbols_t symbols = const_cast<Binary*>(this)->get_abstract_symbols();
   const auto it_symbol =
       std::find_if(symbols.begin(), symbols.end(),
@@ -48,7 +49,7 @@ const Symbol* Binary::get_symbol(const std::string& name) const {
   return *it_symbol;
 }
 
-result<uint64_t> Binary::get_function_address(const std::string& name) const {
+result<uint64_t> Binary::get_function_address(std::string_view name) const {
   if constexpr (lief_extended) {
     if (const DebugInfo* dbg = debug_info()) {
       if (auto addr = dbg->find_function_address(name)) {

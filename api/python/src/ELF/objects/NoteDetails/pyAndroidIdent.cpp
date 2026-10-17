@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
@@ -33,12 +35,12 @@ void create<AndroidIdent>(nb::module_& m) {
 
     .def_prop_rw("ndk_version",
         nb::overload_cast<>(&AndroidIdent::ndk_version, nb::const_),
-        nb::overload_cast<const std::string&>(&AndroidIdent::ndk_version),
+        nb::overload_cast<std::string_view>(&AndroidIdent::ndk_version),
         "Android NDK version used to build the current binary"_doc)
 
     .def_prop_rw("ndk_build_number",
         nb::overload_cast<>(&AndroidIdent::ndk_build_number, nb::const_),
-        nb::overload_cast<const std::string&>(&AndroidIdent::ndk_build_number),
+        nb::overload_cast<std::string_view>(&AndroidIdent::ndk_build_number),
         "Android NDK build number"_doc)
 
     LIEF_DEFAULT_STR(AndroidIdent);

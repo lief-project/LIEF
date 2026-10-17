@@ -71,19 +71,19 @@ class LIEF_API DynamicEntryRunPath : public DynamicEntry {
 
   /// Insert a ``path`` at the given ``position``
   DynamicEntryRunPath& insert(size_t pos,
-                              const std::string& path) LIEF_LIFETIMEBOUND;
+                              std::string_view path) LIEF_LIFETIMEBOUND;
 
   /// Append the given ``path``
-  DynamicEntryRunPath& append(const std::string& path) LIEF_LIFETIMEBOUND;
+  DynamicEntryRunPath& append(std::string_view path) LIEF_LIFETIMEBOUND;
 
   /// Remove the given ``path``
-  DynamicEntryRunPath& remove(const std::string& path) LIEF_LIFETIMEBOUND;
+  DynamicEntryRunPath& remove(std::string_view path) LIEF_LIFETIMEBOUND;
 
-  DynamicEntryRunPath& operator+=(const std::string& path) {
+  DynamicEntryRunPath& operator+=(std::string_view path) {
     return append(path);
   }
 
-  DynamicEntryRunPath& operator-=(const std::string& path) {
+  DynamicEntryRunPath& operator-=(std::string_view path) {
     return remove(path);
   }
 

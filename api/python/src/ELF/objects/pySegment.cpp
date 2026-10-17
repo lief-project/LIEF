@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -197,7 +199,7 @@ void create<Segment>(nb::module_& m) {
         "section"_a)
 
     .def("has",
-        nb::overload_cast<const std::string&>(&Segment::has, nb::const_),
+        nb::overload_cast<std::string_view>(&Segment::has, nb::const_),
         "Check if the given " RST_CLASS_REF(lief.ELF.Section) " 's name is present "
         "in :attr:`~lief.ELF.Segment.sections`"_doc,
         "section_name"_a)
@@ -227,7 +229,7 @@ void create<Segment>(nb::module_& m) {
         "in :attr:`~lief.ELF.Segment.sections`"_doc)
 
     .def("__contains__",
-        nb::overload_cast<const std::string&>(&Segment::has, nb::const_),
+        nb::overload_cast<std::string_view>(&Segment::has, nb::const_),
         "Check if the given " RST_CLASS_REF(lief.ELF.Section) " 's name is present "
         "in :attr:`~lief.ELF.Segment.sections`"_doc)
 

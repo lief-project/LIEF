@@ -19,6 +19,7 @@
 #include "LIEF/ObjC/Protocol.hpp"
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/visibility.h"
+#include <string_view>
 
 #include "LIEF/ObjC/DeclOpt.hpp"
 #include "LIEF/iterators.hpp"
@@ -56,12 +57,11 @@ class LIEF_API Metadata {
   categories_it categories() const LIEF_LIFETIMEBOUND;
 
   /// Try to find the Objective-C class with the given **mangled** name
-  std::unique_ptr<Class>
-      get_class(const std::string& name) const LIEF_LIFETIMEBOUND;
+  std::unique_ptr<Class> get_class(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Try to find the Objective-C protocol with the given **mangled** name
   std::unique_ptr<Protocol>
-      get_protocol(const std::string& name) const LIEF_LIFETIMEBOUND;
+      get_protocol(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Generate a header-like of all the Objective-C metadata identified in the
   /// binary.

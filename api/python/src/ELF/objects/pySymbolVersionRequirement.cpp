@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
@@ -45,7 +46,7 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
 
     .def_prop_rw("name",
         nb::overload_cast<>(&SymbolVersionRequirement::name, nb::const_),
-        nb::overload_cast<const std::string&>(&SymbolVersionRequirement::name),
+        nb::overload_cast<std::string_view>(&SymbolVersionRequirement::name),
         "Library's name associated with this requirement (e.g. ``libc.so.6``)"_doc)
 
     .def("get_auxiliary_symbols",
@@ -58,14 +59,14 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
         "Add an auxiliary version requirement to the existing entries"_doc,
         nb::lock_self())
 
-    .def("find_aux", nb::overload_cast<const std::string&>(&SymbolVersionRequirement::find_aux),
+    .def("find_aux", nb::overload_cast<std::string_view>(&SymbolVersionRequirement::find_aux),
         R"doc(
         Try to find the :class:`~.SymbolVersionAuxRequirement` with the given name
         (e.g. ``GLIBC_2.27``)
         )doc"_doc,
         nb::rv_policy::reference_internal, "name"_a)
 
-    .def("remove_aux_requirement", nb::overload_cast<const std::string&>(&SymbolVersionRequirement::remove_aux_requirement),
+    .def("remove_aux_requirement", nb::overload_cast<std::string_view>(&SymbolVersionRequirement::remove_aux_requirement),
         R"doc(
         Try to remove the auxiliary requirement symbol with the given name.
         The function returns true if the operation succeeds, false otherwise.

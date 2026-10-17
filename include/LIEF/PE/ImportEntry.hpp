@@ -44,7 +44,7 @@ class LIEF_API ImportEntry : public LIEF::Symbol {
     data_(data),
     type_(type) {}
 
-  ImportEntry(std::string name) {
+  explicit ImportEntry(std::string name) {
     this->name(std::move(name));
   }
 

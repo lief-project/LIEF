@@ -20,6 +20,7 @@
 #include "LIEF/errors.hpp"
 #include "LIEF/visibility.h"
 
+#include <string_view>
 #include <unordered_map>
 #include <cstdint>
 #include <string>
@@ -145,7 +146,7 @@ class LIEF_LOCAL DyldChainedFixupsCreator {
   };
   LIEF_LOCAL result<size_t> lib2ord(const Binary& bin, const Symbol& sym,
                                     const std::string& lib);
-  LIEF_LOCAL const Symbol* find_symbol(const Binary& bin, const std::string& name);
+  LIEF_LOCAL const Symbol* find_symbol(const Binary& bin, std::string_view name);
 
   LIEF_LOCAL static DYLD_CHAINED_PTR_FORMAT pointer_format(const Binary& bin,
                                                            size_t imp_count);

@@ -19,11 +19,7 @@ inline nanobind::bytes to_bytes(LIEF::span<const uint8_t> sp) {
   return nanobind::bytes(reinterpret_cast<const char*>(sp.data()), sp.size());
 }
 
-inline nanobind::bytes to_bytes(const std::string& str) {
-  return nanobind::bytes(str.data(), str.size());
-}
-
-inline nanobind::bytes to_bytes(const std::string_view& str) {
+inline nanobind::bytes to_bytes(std::string_view str) {
   return nanobind::bytes(str.data(), str.size());
 }
 

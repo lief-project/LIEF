@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "ELF/pyELF.hpp"
 #include "pyIterator.hpp"
 #include "enums_wrapper.hpp"
@@ -178,7 +180,7 @@ void create<Section>(nb::module_& m) {
     .def_prop_ro("is_frame",
         &Section::is_frame)
 
-    .def(nb::init<const std::string&, Section::TYPE>(),
+    .def(nb::init<std::string_view, Section::TYPE>(),
         "Constructor from a name and a section type"_doc,
         "name"_a, "type"_a = Section::TYPE::PROGBITS)
 

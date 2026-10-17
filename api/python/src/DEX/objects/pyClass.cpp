@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <string_view>
 #include "DEX/pyDEX.hpp"
 
 #include "LIEF/DEX/Class.hpp"
@@ -67,14 +68,14 @@ void create<Class>(nb::module_& m) {
     .def_prop_ro("methods", nb::overload_cast<>(&Class::methods),
         "Iterator over " RST_CLASS_REF(lief.DEX.Method) " implemented in this class"_doc)
 
-    .def("get_method", nb::overload_cast<const std::string&>(&Class::methods),
+    .def("get_method", nb::overload_cast<std::string_view>(&Class::methods),
         "Iterator over " RST_CLASS_REF(lief.DEX.Method) " (s) having the given name"_doc,
         "name"_a)
 
     .def_prop_ro("fields", nb::overload_cast<>(&Class::fields),
         "Iterator over " RST_CLASS_REF(lief.DEX.Field) " in this class"_doc)
 
-    .def("get_field", nb::overload_cast<const std::string&>(&Class::fields),
+    .def("get_field", nb::overload_cast<std::string_view>(&Class::fields),
         "Iterator over " RST_CLASS_REF(lief.DEX.Field) " (s) having the given name"_doc,
         "name"_a)
 

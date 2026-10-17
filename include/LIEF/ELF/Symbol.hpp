@@ -73,7 +73,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   };
 
   public:
-  Symbol(std::string name) :
+  explicit Symbol(std::string name) :
     LIEF::Symbol(std::move(name), 0, 0) {}
 
   static BINDING binding_from(uint32_t value, ARCH) {

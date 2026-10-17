@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <functional>
 #include <numeric>
 
@@ -113,8 +114,8 @@ Hash& Hash::process(size_t integer) {
   return *this;
 }
 
-Hash& Hash::process(const std::string& str) {
-  value_ = combine(value_, std::hash<std::string>{}(str));
+Hash& Hash::process(std::string_view str) {
+  value_ = combine(value_, std::hash<std::string_view>{}(str));
   return *this;
 }
 

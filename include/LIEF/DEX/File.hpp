@@ -78,11 +78,11 @@ class LIEF_API File : public Object {
   /// Name of this file
   std::string_view name() const;
 
-  void name(const std::string& name);
+  void name(std::string_view name);
 
   /// Location of this file
   std::string_view location() const;
-  void location(const std::string& location);
+  void location(std::string_view location);
 
   /// DEX header
   const Header& header() const LIEF_LIFETIMEBOUND;
@@ -93,12 +93,12 @@ class LIEF_API File : public Object {
   it_classes classes() LIEF_LIFETIMEBOUND;
 
   /// Check if the given class name exists
-  bool has_class(const std::string& class_name) const;
+  bool has_class(std::string_view class_name) const;
 
   /// Return the DEX::Class object associated with the given name
-  const Class* get_class(const std::string& class_name) const LIEF_LIFETIMEBOUND;
+  const Class* get_class(std::string_view class_name) const LIEF_LIFETIMEBOUND;
 
-  Class* get_class(const std::string& class_name) LIEF_LIFETIMEBOUND;
+  Class* get_class(std::string_view class_name) LIEF_LIFETIMEBOUND;
 
   /// Return the DEX::Class object associated with the given index
   const Class* get_class(size_t index) const LIEF_LIFETIMEBOUND;

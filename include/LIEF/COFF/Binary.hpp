@@ -160,9 +160,9 @@ class LIEF_API Binary {
   it_functions functions() LIEF_LIFETIMEBOUND;
 
   /// Try to find the function (symbol) with the given name
-  const Symbol* find_function(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const Symbol* find_function(std::string_view name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* find_function(const std::string& name) LIEF_LIFETIMEBOUND {
+  Symbol* find_function(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(
         static_cast<const Binary*>(this)->find_function(name)
     );
@@ -170,9 +170,9 @@ class LIEF_API Binary {
 
   /// Try to find the function (symbol) with the given **demangled** name
   const Symbol*
-      find_demangled_function(const std::string& name) const LIEF_LIFETIMEBOUND;
+      find_demangled_function(std::string_view name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* find_demangled_function(const std::string& name) LIEF_LIFETIMEBOUND {
+  Symbol* find_demangled_function(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(
         static_cast<const Binary*>(this)->find_demangled_function(name)
     );
@@ -201,7 +201,7 @@ class LIEF_API Binary {
   /// ```
   ///
   /// @see LIEF::assembly::Instruction
-  instructions_it disassemble(const std::string& symbol) const LIEF_LIFETIMEBOUND;
+  instructions_it disassemble(std::string_view symbol) const LIEF_LIFETIMEBOUND;
 
   /// Disassemble code provided by the given buffer at the specified
   /// `address` parameter.

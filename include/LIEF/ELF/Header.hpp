@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_HEADER_H
 #define LIEF_ELF_HEADER_H
 
+#include <string_view>
 #include <array>
 #include <ostream>
 #include <vector>
@@ -283,7 +284,7 @@ class LIEF_API Header : public Object {
     section_string_table_idx_ = idx;
   }
 
-  void identity(const std::string& identity);
+  void identity(std::string_view identity);
   void identity(const identity_t& identity);
 
   void identity_class(CLASS cls) {

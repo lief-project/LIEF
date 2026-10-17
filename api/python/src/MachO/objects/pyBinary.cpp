@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <string>
 #include <sstream>
 
@@ -146,7 +147,7 @@ void create<Binary>(nb::module_& m) {
         "name"_a)
 
     .def("get_symbol",
-        nb::overload_cast<const std::string&>(&Binary::get_symbol),
+        nb::overload_cast<std::string_view>(&Binary::get_symbol),
         "Return the " RST_CLASS_REF(lief.MachO.Symbol) " from the given name"_doc,
         "name"_a,
         nb::rv_policy::reference_internal)
@@ -511,7 +512,7 @@ void create<Binary>(nb::module_& m) {
         "name"_a)
 
     .def("get_section",
-        nb::overload_cast<const std::string&>(&Binary::get_section),
+        nb::overload_cast<std::string_view>(&Binary::get_section),
         "Return the section from the given name or None if the section does not exist"_doc,
         "name"_a,
         nb::rv_policy::reference_internal)
@@ -522,7 +523,7 @@ void create<Binary>(nb::module_& m) {
         "name"_a)
 
     .def("get_segment",
-        nb::overload_cast<const std::string&>(&Binary::get_segment),
+        nb::overload_cast<std::string_view>(&Binary::get_segment),
         "Return the " RST_CLASS_REF(lief.MachO.SegmentCommand) " from the given name"_doc,
         "name"_a,
         nb::rv_policy::reference_internal)
@@ -629,12 +630,12 @@ void create<Binary>(nb::module_& m) {
         "index"_a, nb::lock_self())
 
     .def("remove_section",
-        nb::overload_cast<const std::string&, bool>(&Binary::remove_section),
+        nb::overload_cast<std::string_view, bool>(&Binary::remove_section),
         "Remove the section with the given name"_doc,
         "name"_a, "clear"_a = false, nb::lock_self())
 
     .def("remove_section",
-        nb::overload_cast<const std::string&, const std::string&, bool>(&Binary::remove_section),
+        nb::overload_cast<std::string_view, std::string_view, bool>(&Binary::remove_section),
         R"delim(
         Remove the section from the segment with the name
         given in the first parameter and with the section's name provided in the
@@ -647,7 +648,7 @@ void create<Binary>(nb::module_& m) {
         nb::lock_self())
 
     .def("remove_symbol",
-        nb::overload_cast<const std::string&>(&Binary::remove_symbol),
+        nb::overload_cast<std::string_view>(&Binary::remove_symbol),
         "Remove all symbol(s) with the given name"_doc,
         "name"_a, nb::lock_self())
 
@@ -657,12 +658,12 @@ void create<Binary>(nb::module_& m) {
         "symbol"_a)
 
     .def("can_remove_symbol",
-        nb::overload_cast<const std::string&>(&Binary::can_remove_symbol, nb::const_),
+        nb::overload_cast<std::string_view>(&Binary::can_remove_symbol, nb::const_),
         "Check if the given symbol name can be safely removed."_doc,
         "symbol_name"_a)
 
     .def("unexport",
-        nb::overload_cast<const std::string&>(&Binary::unexport),
+        nb::overload_cast<std::string_view>(&Binary::unexport),
         "Remove the symbol from the export table"_doc,
         "name"_a, nb::lock_self())
 
@@ -695,7 +696,7 @@ void create<Binary>(nb::module_& m) {
         nb::lock_self(),
         nb::rv_policy::reference_internal)
 
-    .def("find_library", nb::overload_cast<const std::string&>(&Binary::find_library),
+    .def("find_library", nb::overload_cast<std::string_view>(&Binary::find_library),
       R"doc(
       Try to find the library with the given library name.
 
@@ -709,7 +710,7 @@ void create<Binary>(nb::module_& m) {
         "section"_a, "size"_a, nb::lock_self())
 
     .def("add_library",
-        nb::overload_cast<const std::string&>(&Binary::add_library),
+        nb::overload_cast<std::string_view>(&Binary::add_library),
         "Add a new library dependency"_doc,
         "library_name"_a,
         nb::lock_self(),
@@ -736,7 +737,7 @@ void create<Binary>(nb::module_& m) {
         "Return list of **all** " RST_CLASS_REF(lief.Function) " found"_doc)
 
     .def("get_section",
-        nb::overload_cast<const std::string&, const std::string&>(&Binary::get_section),
+        nb::overload_cast<std::string_view, std::string_view>(&Binary::get_section),
         R"delim(
         Return the section from the segment with the name
         given in the first parameter and with the section's name provided in the

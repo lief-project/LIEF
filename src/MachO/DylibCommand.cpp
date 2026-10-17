@@ -15,6 +15,7 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/utils.hpp"
+#include <string_view>
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ranges.h"
 
@@ -45,7 +46,7 @@ std::ostream& DylibCommand::print(std::ostream& os) const {
   return os;
 }
 
-DylibCommand DylibCommand::create(LoadCommand::TYPE type, const std::string& name,
+DylibCommand DylibCommand::create(LoadCommand::TYPE type, std::string_view name,
                                   uint32_t timestamp, uint32_t current_version,
                                   uint32_t compat_version) {
 
@@ -59,13 +60,13 @@ DylibCommand DylibCommand::create(LoadCommand::TYPE type, const std::string& nam
   raw_cmd.compatibility_version = compat_version;
 
   DylibCommand dylib{raw_cmd};
-  dylib.name(name);
+  dylib.name(std::string(name));
   dylib.data(LoadCommand::raw_t(raw_cmd.cmdsize, 0));
 
   return dylib;
 }
 
-DylibCommand DylibCommand::load_dylib(const std::string& name, uint32_t timestamp,
+DylibCommand DylibCommand::load_dylib(std::string_view name, uint32_t timestamp,
                                       uint32_t current_version,
                                       uint32_t compat_version) {
 
@@ -73,7 +74,7 @@ DylibCommand DylibCommand::load_dylib(const std::string& name, uint32_t timestam
                               current_version, compat_version);
 }
 
-DylibCommand DylibCommand::weak_dylib(const std::string& name, uint32_t timestamp,
+DylibCommand DylibCommand::weak_dylib(std::string_view name, uint32_t timestamp,
                                       uint32_t current_version,
                                       uint32_t compat_version) {
 
@@ -81,7 +82,7 @@ DylibCommand DylibCommand::weak_dylib(const std::string& name, uint32_t timestam
                               current_version, compat_version);
 }
 
-DylibCommand DylibCommand::id_dylib(const std::string& name, uint32_t timestamp,
+DylibCommand DylibCommand::id_dylib(std::string_view name, uint32_t timestamp,
                                     uint32_t current_version,
                                     uint32_t compat_version) {
 
@@ -89,7 +90,7 @@ DylibCommand DylibCommand::id_dylib(const std::string& name, uint32_t timestamp,
                               current_version, compat_version);
 }
 
-DylibCommand DylibCommand::reexport_dylib(const std::string& name,
+DylibCommand DylibCommand::reexport_dylib(std::string_view name,
                                           uint32_t timestamp,
                                           uint32_t current_version,
                                           uint32_t compat_version) {
@@ -98,7 +99,7 @@ DylibCommand DylibCommand::reexport_dylib(const std::string& name,
                               current_version, compat_version);
 }
 
-DylibCommand DylibCommand::load_upward_dylib(const std::string& name,
+DylibCommand DylibCommand::load_upward_dylib(std::string_view name,
                                              uint32_t timestamp,
                                              uint32_t current_version,
                                              uint32_t compat_version) {
@@ -108,7 +109,7 @@ DylibCommand DylibCommand::load_upward_dylib(const std::string& name,
 }
 
 
-DylibCommand DylibCommand::lazy_load_dylib(const std::string& name,
+DylibCommand DylibCommand::lazy_load_dylib(std::string_view name,
                                            uint32_t timestamp,
                                            uint32_t current_version,
                                            uint32_t compat_version) {

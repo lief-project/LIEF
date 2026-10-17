@@ -100,7 +100,7 @@ class LIEF_API Section : public Object {
   // ================
   size_t search(uint64_t integer, size_t pos, size_t size) const;
   size_t search(const std::vector<uint8_t>& pattern, size_t pos = 0) const;
-  size_t search(const std::string& pattern, size_t pos = 0) const;
+  size_t search(std::string_view pattern, size_t pos = 0) const;
   size_t search(uint64_t integer, size_t pos = 0) const;
 
   // Search all functions
@@ -109,7 +109,7 @@ class LIEF_API Section : public Object {
 
   std::vector<size_t> search_all(uint64_t v) const;
 
-  std::vector<size_t> search_all(const std::string& v) const;
+  std::vector<size_t> search_all(std::string_view v) const;
 
   /// Method so that the ``visitor`` can visit us
   void accept(Visitor& visitor) const override;

@@ -16,6 +16,7 @@
 
 #include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/hash.hpp"
+#include <string_view>
 #include <ostream>
 
 
@@ -46,7 +47,7 @@ const DEX::File* DexFile::dex_file() const {
   return dex_file_;
 }
 
-void DexFile::location(const std::string& location) {
+void DexFile::location(std::string_view location) {
   location_ = location;
 }
 

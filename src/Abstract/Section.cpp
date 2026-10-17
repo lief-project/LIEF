@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -73,7 +74,7 @@ size_t Section::search(const std::vector<uint8_t>& pattern, size_t pos) const {
   return std::distance(content.begin(), it_found);
 }
 
-size_t Section::search(const std::string& pattern, size_t pos) const {
+size_t Section::search(std::string_view pattern, size_t pos) const {
   std::vector<uint8_t> pattern_formated = {pattern.begin(), pattern.end()};
   return search(pattern_formated, pos);
 }
@@ -104,8 +105,8 @@ std::vector<size_t> Section::search_all(uint64_t v) const {
   return search_all(v, 0);
 }
 
-std::vector<size_t> Section::search_all(const std::string& v) const {
-  return search_all_<std::string>(v);
+std::vector<size_t> Section::search_all(std::string_view v) const {
+  return search_all_<std::string_view>(v);
 }
 
 

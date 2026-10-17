@@ -4,6 +4,7 @@
 #include "runtime/objects/pyModule.hpp"
 
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/make_iterator.h>
 #include "nanobind/utils.hpp"

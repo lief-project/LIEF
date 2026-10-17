@@ -145,15 +145,15 @@ class LIEF_API Binary : public Object {
   }
 
   /// Check if a Symbol with the given name exists
-  bool has_symbol(const std::string& name) const {
+  bool has_symbol(std::string_view name) const {
     return get_symbol(name) != nullptr;
   }
 
   /// Return the Symbol with the given name
   /// If the symbol does not exist, return a nullptr
-  const Symbol* get_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const Symbol* get_symbol(std::string_view name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* get_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
+  Symbol* get_symbol(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
   }
 
@@ -167,7 +167,7 @@ class LIEF_API Binary : public Object {
   }
 
   /// Remove **all** the sections in the underlying binary
-  virtual void remove_section(const std::string& name, bool clear = false) = 0;
+  virtual void remove_section(std::string_view name, bool clear = false) = 0;
 
   /// Return an iterator over the binary relocations (LIEF::Relocation)
   it_relocations relocations() LIEF_LIFETIMEBOUND {
@@ -202,8 +202,7 @@ class LIEF_API Binary : public Object {
   }
 
   /// Return the address of the given function name
-  virtual result<uint64_t>
-      get_function_address(const std::string& func_name) const;
+  virtual result<uint64_t> get_function_address(std::string_view func_name) const;
 
   /// Method so that a ``visitor`` can visit us
   void accept(Visitor& visitor) const override;
@@ -344,8 +343,7 @@ class LIEF_API Binary : public Object {
   /// ```
   ///
   /// @see LIEF::assembly::Instruction
-  instructions_it
-      disassemble(const std::string& function) const LIEF_LIFETIMEBOUND;
+  instructions_it disassemble(std::string_view function) const LIEF_LIFETIMEBOUND;
 
   /// Disassemble code provided by the given buffer at the specified
   /// `address` parameter.
@@ -429,7 +427,7 @@ class LIEF_API Binary : public Object {
   ///
   /// @note This function does not verify that the debug file matches the binary's
   ///       unique identifier (e.g., build ID, GUID).
-  DebugInfo* load_debug_info(const std::string& path);
+  DebugInfo* load_debug_info(std::string_view path);
 
   /// Size of the binary when mapped in memory
   virtual uint64_t virtual_size() const {

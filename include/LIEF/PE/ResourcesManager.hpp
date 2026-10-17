@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_RESOURCES_MANAGER_H
 #define LIEF_PE_RESOURCES_MANAGER_H
+#include <string_view>
 #include <ostream>
 #include <sstream>
 
@@ -149,7 +150,7 @@ class LIEF_API ResourcesManager : public Object {
 
   /// Change or set the manifest. If the manifest node path does not exist,
   /// all required nodes are created.
-  void manifest(const std::string& manifest);
+  void manifest(std::string_view manifest);
 
   /// `true` if resources contain a LIEF::PE::ResourceVersion
   bool has_version() const {

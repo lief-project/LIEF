@@ -15,6 +15,7 @@
  */
 #include "LIEF/Visitor.hpp"
 #include "LIEF/config.h"
+#include <string_view>
 
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/ExportEntry.hpp"
@@ -97,7 +98,7 @@ void Export::accept(Visitor& visitor) const {
 }
 
 
-const ExportEntry* Export::find_entry(const std::string& name) const {
+const ExportEntry* Export::find_entry(std::string_view name) const {
   auto it =
       std::find_if(entries_.begin(), entries_.end(),
                    [&name](const std::unique_ptr<ExportEntry>& E) {

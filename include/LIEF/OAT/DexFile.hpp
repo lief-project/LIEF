@@ -52,7 +52,7 @@ class LIEF_API DexFile : public Object {
   const DEX::File* dex_file() const;
   DEX::File* dex_file();
 
-  void location(const std::string& location);
+  void location(std::string_view location);
   void checksum(uint32_t checksum);
   void dex_offset(uint32_t dex_offset);
 

@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
@@ -99,7 +101,7 @@ void create<Section>(nb::module_& m) {
 
     .def("search",
         [] (const Section& self,
-            const std::string& str, size_t pos) -> search_result
+            std::string_view str, size_t pos) -> search_result
         {
           size_t res = self.search(str, pos);
           if (res == Section::npos) {
@@ -133,7 +135,7 @@ void create<Section>(nb::module_& m) {
         "number"_a, "size"_a = 0)
 
     .def("search_all",
-        nb::overload_cast<const std::string&>(&Section::search_all, nb::const_),
+        nb::overload_cast<std::string_view>(&Section::search_all, nb::const_),
         "Look for all **strings** within the current section"_doc,
         "str"_a)
 

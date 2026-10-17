@@ -17,6 +17,7 @@
 #include "LIEF/ObjC/Category.hpp"
 #include "LIEF/ObjC/Class.hpp"
 #include "LIEF/ObjC/Metadata.hpp"
+#include <string_view>
 
 #include "internal_utils.hpp"
 #include "logging.hpp"
@@ -77,12 +78,11 @@ Metadata::categories_it Metadata::categories() const {
   return make_empty_iterator<Category>();
 }
 
-std::unique_ptr<Class> Metadata::get_class(const std::string& /*name*/) const {
+std::unique_ptr<Class> Metadata::get_class(std::string_view /*name*/) const {
   return nullptr;
 }
 
-std::unique_ptr<Protocol>
-    Metadata::get_protocol(const std::string& /*name*/) const {
+std::unique_ptr<Protocol> Metadata::get_protocol(std::string_view /*name*/) const {
   return nullptr;
 }
 

@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "MachO/pyMachO.hpp"
 #include "pyIterator.hpp"
 #include "pySafeString.hpp"
@@ -145,7 +147,7 @@ void create<SegmentCommand>(nb::module_& m) {
         "section"_a)
 
     .def("has_section",
-        nb::overload_cast<const std::string&>(&SegmentCommand::has_section, nb::const_),
+        nb::overload_cast<std::string_view>(&SegmentCommand::has_section, nb::const_),
         "Check if the given section name belongs to the current segment"_doc,
         "section_name"_a)
 
@@ -156,7 +158,7 @@ void create<SegmentCommand>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("get_section",
-        nb::overload_cast<const std::string&>(&SegmentCommand::get_section),
+        nb::overload_cast<std::string_view>(&SegmentCommand::get_section),
         R"delim(
         Get the :class:`~lief.MachO.Section` with the given name
         )delim"_doc, "name"_a, nb::rv_policy::reference_internal)

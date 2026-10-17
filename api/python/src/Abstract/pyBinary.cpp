@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <sstream>
 
 #include <nanobind/stl/string.h>
@@ -127,7 +128,7 @@ void create<Binary>(nb::module_& m) {
         "Binary's entrypoint"_doc)
 
     .def("remove_section",
-        nb::overload_cast<const std::string&, bool>(&Binary::remove_section),
+        nb::overload_cast<std::string_view, bool>(&Binary::remove_section),
         "Remove the section with the given name"_doc,
         "name"_a, "clear"_a = false, nb::lock_self())
 
@@ -175,7 +176,7 @@ void create<Binary>(nb::module_& m) {
         "symbol_name"_a)
 
     .def("get_symbol",
-        nb::overload_cast<const std::string&>(&Binary::get_symbol),
+        nb::overload_cast<std::string_view>(&Binary::get_symbol),
         R"delim(
         Return the :class:`~lief.Symbol` from the given ``name``.
 
@@ -185,7 +186,7 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("get_function_address",
-        [] (const Binary& self, const std::string& name) {
+        [] (const Binary& self, std::string_view name) {
           return error_or(&Binary::get_function_address, self, name);
         },
         "Return the address of the given function name"_doc,
@@ -341,7 +342,7 @@ void create<Binary>(nb::module_& m) {
       )doc"_doc
     )
 
-    .def("disassemble", [] (const Binary& self, const std::string& function) {
+    .def("disassemble", [] (const Binary& self, std::string_view function) {
           auto insts = LIEF::py::owning_range(self.disassemble(function));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
@@ -417,7 +418,7 @@ void create<Binary>(nb::module_& m) {
     )
 
     .def("load_debug_info", [] (Binary& self, const nb::PathLike& pathlike) {
-        return self.load_debug_info(pathlike);
+        return self.load_debug_info(pathlike.to_string());
       }, "path"_a, nb::lock_self(), nb::rv_policy::reference_internal,
       R"doc(
       Load and associate an external debug file (e.g., DWARF or PDB) with this

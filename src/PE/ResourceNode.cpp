@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 
 #include "LIEF/Visitor.hpp"
@@ -316,7 +317,7 @@ void ResourceNode::delete_child(const ResourceNode& node) {
   childs_.erase(it_node);
 }
 
-void ResourceNode::name(const std::string& name) {
+void ResourceNode::name(std::string_view name) {
   if (auto res = u8tou16(name)) {
     return this->name(std::move(*res));
   }

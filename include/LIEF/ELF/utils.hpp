@@ -41,9 +41,9 @@ LIEF_API bool is_elf(const std::vector<uint8_t>& raw);
 /// Check that the layout of the given Binary is correct
 LIEF_API bool check_layout(const Binary& bin, std::string* error_info = nullptr);
 
-LIEF_API unsigned long hash32(const char* name);
-LIEF_API unsigned long hash64(const char* name);
-LIEF_API uint32_t dl_new_hash(const char* name);
+LIEF_API unsigned long hash32(std::string_view name);
+LIEF_API unsigned long hash64(std::string_view name);
+LIEF_API uint32_t dl_new_hash(std::string_view name);
 }
 }
 

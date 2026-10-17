@@ -17,6 +17,7 @@
 #define LIEF_LOGGING_H
 
 #include "LIEF/visibility.h"
+#include <string_view>
 
 #include <cstdint>
 #include <memory>
@@ -65,13 +66,13 @@ LIEF_API void set_level(Level level);
 LIEF_API void set_path(const std::string& path);
 
 /// Log a message with the LIEF's logger
-LIEF_API void log(Level level, const std::string& msg);
+LIEF_API void log(Level level, std::string_view msg);
 
-LIEF_API void log(Level level, const std::string& fmt,
+LIEF_API void log(Level level, std::string_view fmt,
                   const std::vector<std::string>& args);
 
 template<typename... Args>
-void log(Level level, const std::string& fmt, const Args&... args) {
+void log(Level level, std::string_view fmt, const Args&... args) {
   std::vector<std::string> vec_args;
   vec_args.insert(vec_args.end(),
                   {static_cast<decltype(vec_args)::value_type>(args)...});
@@ -86,16 +87,16 @@ inline void enable_debug() {
   set_level(Level::Debug);
 }
 
-inline void debug(const std::string& msg) {
+inline void debug(std::string_view msg) {
   log(Level::Debug, msg);
 }
 
-inline void debug(const std::string& fmt, const std::vector<std::string>& args) {
+inline void debug(std::string_view fmt, const std::vector<std::string>& args) {
   log(Level::Debug, fmt, args);
 }
 
 template<typename... Args>
-void debug(const std::string& fmt, const Args&... args) {
+void debug(std::string_view fmt, const Args&... args) {
   std::vector<std::string> vec_args;
   vec_args.insert(vec_args.end(),
                   {static_cast<decltype(vec_args)::value_type>(args)...});
@@ -104,16 +105,16 @@ void debug(const std::string& fmt, const Args&... args) {
 
 // -----------------------------------------------------------------------------
 
-inline void info(const std::string& msg) {
+inline void info(std::string_view msg) {
   log(Level::Info, msg);
 }
 
-inline void info(const std::string& fmt, const std::vector<std::string>& args) {
+inline void info(std::string_view fmt, const std::vector<std::string>& args) {
   log(Level::Info, fmt, args);
 }
 
 template<typename... Args>
-void info(const std::string& fmt, const Args&... args) {
+void info(std::string_view fmt, const Args&... args) {
   std::vector<std::string> vec_args;
   vec_args.insert(vec_args.end(),
                   {static_cast<decltype(vec_args)::value_type>(args)...});
@@ -122,16 +123,16 @@ void info(const std::string& fmt, const Args&... args) {
 
 // -----------------------------------------------------------------------------
 
-inline void warn(const std::string& msg) {
+inline void warn(std::string_view msg) {
   log(Level::Warn, msg);
 }
 
-inline void warn(const std::string& fmt, const std::vector<std::string>& args) {
+inline void warn(std::string_view fmt, const std::vector<std::string>& args) {
   log(Level::Warn, fmt, args);
 }
 
 template<typename... Args>
-void warn(const std::string& fmt, const Args&... args) {
+void warn(std::string_view fmt, const Args&... args) {
   std::vector<std::string> vec_args;
   vec_args.insert(vec_args.end(),
                   {static_cast<decltype(vec_args)::value_type>(args)...});
@@ -140,16 +141,16 @@ void warn(const std::string& fmt, const Args&... args) {
 
 // -----------------------------------------------------------------------------
 
-inline void err(const std::string& msg) {
+inline void err(std::string_view msg) {
   log(Level::Err, msg);
 }
 
-inline void err(const std::string& fmt, const std::vector<std::string>& args) {
+inline void err(std::string_view fmt, const std::vector<std::string>& args) {
   log(Level::Err, fmt, args);
 }
 
 template<typename... Args>
-void err(const std::string& fmt, const Args&... args) {
+void err(std::string_view fmt, const Args&... args) {
   std::vector<std::string> vec_args;
   vec_args.insert(vec_args.end(),
                   {static_cast<decltype(vec_args)::value_type>(args)...});
@@ -158,17 +159,16 @@ void err(const std::string& fmt, const Args&... args) {
 
 // -----------------------------------------------------------------------------
 
-inline void critical(const std::string& msg) {
+inline void critical(std::string_view msg) {
   log(Level::Critical, msg);
 }
 
-inline void critical(const std::string& fmt,
-                     const std::vector<std::string>& args) {
+inline void critical(std::string_view fmt, const std::vector<std::string>& args) {
   log(Level::Critical, fmt, args);
 }
 
 template<typename... Args>
-void critical(const std::string& fmt, const Args&... args) {
+void critical(std::string_view fmt, const Args&... args) {
   std::vector<std::string> vec_args;
   vec_args.insert(vec_args.end(),
                   {static_cast<decltype(vec_args)::value_type>(args)...});
@@ -193,7 +193,7 @@ LIEF_API void set_level(const char* name, Level level);
 LIEF_API void set_path(const char* name, const std::string& path);
 
 /// Log a message with the logger whose name is provided in the first parameter
-LIEF_API void log(const char* name, Level level, const std::string& msg);
+LIEF_API void log(const char* name, Level level, std::string_view msg);
 
 /// Set a spdlog sink for the logger with the given name
 LIEF_API void set_logger(const char* name, std::shared_ptr<spdlog::logger> logger);
@@ -208,23 +208,23 @@ inline void enable_debug(const char* name) {
   set_level(name, Level::Debug);
 }
 
-inline void debug(const char* name, const std::string& msg) {
+inline void debug(const char* name, std::string_view msg) {
   log(name, Level::Debug, msg);
 }
 
-inline void info(const char* name, const std::string& msg) {
+inline void info(const char* name, std::string_view msg) {
   log(name, Level::Info, msg);
 }
 
-inline void warn(const char* name, const std::string& msg) {
+inline void warn(const char* name, std::string_view msg) {
   log(name, Level::Warn, msg);
 }
 
-inline void err(const char* name, const std::string& msg) {
+inline void err(const char* name, std::string_view msg) {
   log(name, Level::Err, msg);
 }
 
-inline void critical(const char* name, const std::string& msg) {
+inline void critical(const char* name, std::string_view msg) {
   log(name, Level::Critical, msg);
 }
 }

@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_RUNTIME_MODULE_H
 #define LIEF_RUNTIME_MODULE_H
+#include <string_view>
 #include <cstdint>
 #include <cstring>
 #include <fstream>
@@ -188,7 +189,7 @@ using modules_t = iterator_range<Module::Iterator>;
 LIEF_API modules_t modules();
 
 /// Find the module with the given name
-inline std::unique_ptr<Module> module_from_name(const std::string& name) {
+inline std::unique_ptr<Module> module_from_name(std::string_view name) {
   auto range = modules();
   for (auto it = range.begin(); it != range.end(); ++it) {
     if (it->name() == name) {
@@ -199,7 +200,7 @@ inline std::unique_ptr<Module> module_from_name(const std::string& name) {
 }
 
 /// Find the module with the given path
-inline std::unique_ptr<Module> module_from_path(const std::string& path) {
+inline std::unique_ptr<Module> module_from_path(std::string_view path) {
   auto range = modules();
   for (auto it = range.begin(); it != range.end(); ++it) {
     if (it->path() == path) {

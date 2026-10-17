@@ -1273,8 +1273,8 @@ ok_error_t Builder::build_symbol_hash() {
   uint32_t idx = 0;
   for (const std::unique_ptr<Symbol>& symbol : binary_->dynamic_symbols_) {
     uint32_t hash = binary_->type_ == Header::CLASS::ELF32 ?
-                        hash32(symbol->name().c_str()) :
-                        hash64(symbol->name().c_str());
+                        hash32(symbol->name()) :
+                        hash64(symbol->name());
 
     const size_t bucket_idx = hash % nbucket;
     if (bucket_idx >= buckets_limits) {
@@ -1861,9 +1861,9 @@ ok_error_t Builder::build_symbol_requirement() {
       }
       uint32_t new_hash = 0;
       if constexpr (std::is_same_v<ELF_T, details::ELF32>) {
-        new_hash = hash32(svar_name.c_str());
+        new_hash = hash32(svar_name);
       } else {
-        new_hash = hash64(svar_name.c_str());
+        new_hash = hash64(svar_name);
       }
       if (new_hash != svar.hash()) {
         LIEF_WARN("Hash value for {} does not match. Updating ...", svar_name);

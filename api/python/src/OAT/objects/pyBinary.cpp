@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "LIEF/OAT/Binary.hpp"
 #include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/Method.hpp"
@@ -68,7 +70,7 @@ void create<Binary>(nb::module_& m) {
         "Check if the class with the given name is present in the current OAT binary"_doc)
 
     .def("get_class",
-        nb::overload_cast<const std::string&>(&Binary::get_class),
+        nb::overload_cast<std::string_view>(&Binary::get_class),
         "Return the " RST_CLASS_REF(lief.OAT.Class) " from its name"_doc,
         "class_name"_a, nb::rv_policy::reference_internal)
 

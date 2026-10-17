@@ -90,7 +90,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
     version_ = version;
   }
 
-  void name(const std::string& name) {
+  void name(std::string_view name) {
     name_ = name;
   }
 
@@ -102,10 +102,9 @@ class LIEF_API SymbolVersionRequirement : public Object {
   /// Try to find the SymbolVersionAuxRequirement with the given name (e.g.
   /// `GLIBC_2.27`)
   const SymbolVersionAuxRequirement*
-      find_aux(const std::string& name) const LIEF_LIFETIMEBOUND;
+      find_aux(std::string_view name) const LIEF_LIFETIMEBOUND;
 
-  SymbolVersionAuxRequirement*
-      find_aux(const std::string& name) LIEF_LIFETIMEBOUND {
+  SymbolVersionAuxRequirement* find_aux(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<SymbolVersionAuxRequirement*>(
         static_cast<const SymbolVersionRequirement*>(this)->find_aux(name)
     );
@@ -118,7 +117,7 @@ class LIEF_API SymbolVersionRequirement : public Object {
   ///          SymbolVersionAuxRequirement. Therefore, the user is responsible
   ///          to ensure that the auxiliary requirement is no longer used in the
   ///          ELF binary (e.g. in SymbolVersion)
-  bool remove_aux_requirement(const std::string& name) {
+  bool remove_aux_requirement(std::string_view name) {
     if (SymbolVersionAuxRequirement* aux = find_aux(name)) {
       return remove_aux_requirement(*aux);
     }

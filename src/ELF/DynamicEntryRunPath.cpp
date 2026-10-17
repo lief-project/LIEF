@@ -16,6 +16,7 @@
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/Visitor.hpp"
 #include "logging.hpp"
+#include <string_view>
 
 #include <algorithm>
 #include <numeric>
@@ -48,14 +49,14 @@ void DynamicEntryRunPath::paths(const std::vector<std::string>& paths) {
                       });
 }
 
-DynamicEntryRunPath& DynamicEntryRunPath::append(const std::string& path) {
+DynamicEntryRunPath& DynamicEntryRunPath::append(std::string_view path) {
   std::vector<std::string> paths = this->paths();
-  paths.push_back(path);
+  paths.emplace_back(path);
   this->paths(paths);
   return *this;
 }
 
-DynamicEntryRunPath& DynamicEntryRunPath::remove(const std::string& path) {
+DynamicEntryRunPath& DynamicEntryRunPath::remove(std::string_view path) {
   std::vector<std::string> paths = this->paths();
   paths.erase(std::remove_if(paths.begin(), paths.end(),
                              [&path](const std::string& p) { return p == path; }),
@@ -65,7 +66,7 @@ DynamicEntryRunPath& DynamicEntryRunPath::remove(const std::string& path) {
 }
 
 DynamicEntryRunPath& DynamicEntryRunPath::insert(size_t pos,
-                                                 const std::string& path) {
+                                                 std::string_view path) {
   std::vector<std::string> paths = this->paths();
 
   if (pos == paths.size()) {
@@ -76,7 +77,7 @@ DynamicEntryRunPath& DynamicEntryRunPath::insert(size_t pos,
     LIEF_ERR("Position {:d} is out of range", pos);
     return *this;
   }
-  paths.insert(paths.begin() + pos, path);
+  paths.emplace(paths.begin() + pos, path);
   this->paths(paths);
   return *this;
 }

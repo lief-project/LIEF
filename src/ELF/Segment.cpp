@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 
 #include "frozen.hpp"
@@ -275,7 +276,7 @@ bool Segment::has(const Section& section) const {
   return it_section != sections_.end();
 }
 
-bool Segment::has(const std::string& name) const {
+bool Segment::has(std::string_view name) const {
   auto it_section =
       std::find_if(sections_.begin(), sections_.end(),
                    [&name](const Section* s) { return s->name() == name; });

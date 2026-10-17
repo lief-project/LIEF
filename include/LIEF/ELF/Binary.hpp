@@ -480,8 +480,8 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return relocation associated with the given Symbol name
   /// It returns a ``nullptr`` if it is not found
   const Relocation*
-      get_relocation(const std::string& symbol_name) const LIEF_LIFETIMEBOUND;
-  Relocation* get_relocation(const std::string& symbol_name) LIEF_LIFETIMEBOUND {
+      get_relocation(std::string_view symbol_name) const LIEF_LIFETIMEBOUND;
+  Relocation* get_relocation(std::string_view symbol_name) LIEF_LIFETIMEBOUND {
     return const_cast<Relocation*>(
         static_cast<const Binary*>(this)->get_relocation(symbol_name)
     );
@@ -514,7 +514,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Check if a section with the given name exists in the binary
-  bool has_section(const std::string& name) const {
+  bool has_section(std::string_view name) const {
     return get_section(name) != nullptr;
   }
 
@@ -573,7 +573,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Change the interpreter
-  void interpreter(const std::string& interpreter) {
+  void interpreter(std::string_view interpreter) {
     interpreter_ = interpreter;
   }
 
@@ -590,37 +590,35 @@ class LIEF_API Binary : public LIEF::Binary {
   Symbol& export_symbol(const Symbol& symbol) LIEF_LIFETIMEBOUND;
 
   /// Export the symbol with the given name and create it if it doesn't exist
-  Symbol& export_symbol(const std::string& symbol_name,
+  Symbol& export_symbol(std::string_view symbol_name,
                         uint64_t value = 0) LIEF_LIFETIMEBOUND;
 
   /// Check if the symbol with the given ``name`` exists in the dynamic symbols
   /// table
-  bool has_dynamic_symbol(const std::string& name) const {
+  bool has_dynamic_symbol(std::string_view name) const {
     return get_dynamic_symbol(name) != nullptr;
   }
 
   /// Get the dynamic symbol from the given name.
   /// Return a nullptr if it can't be found
-  const Symbol*
-      get_dynamic_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const Symbol* get_dynamic_symbol(std::string_view name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* get_dynamic_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
+  Symbol* get_dynamic_symbol(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(
         static_cast<const Binary*>(this)->get_dynamic_symbol(name)
     );
   }
 
   /// Check if the symbol with the given ``name`` exists in the symtab symbol table
-  bool has_symtab_symbol(const std::string& name) const {
+  bool has_symtab_symbol(std::string_view name) const {
     return get_symtab_symbol(name) != nullptr;
   }
 
   /// Get the symtab symbol from the given name
   /// Return a nullptr if it can't be found
-  const Symbol*
-      get_symtab_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const Symbol* get_symtab_symbol(std::string_view name) const LIEF_LIFETIMEBOUND;
 
-  Symbol* get_symtab_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
+  Symbol* get_symtab_symbol(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(
         static_cast<const Binary*>(this)->get_symtab_symbol(name)
     );
@@ -636,14 +634,14 @@ class LIEF_API Binary : public LIEF::Binary {
   ///   * symtab symbols
   ///
   /// @see remove_symtab_symbol, remove_dynamic_symbol
-  void remove_symbol(const std::string& name);
+  void remove_symbol(std::string_view name);
 
   /// Remove symtab symbols with the given name
-  void remove_symtab_symbol(const std::string& name);
+  void remove_symtab_symbol(std::string_view name);
   void remove_symtab_symbol(Symbol* symbol);
 
   /// Remove dynamic symbols with the given name
-  void remove_dynamic_symbol(const std::string& name);
+  void remove_dynamic_symbol(std::string_view name);
 
   /// Remove the given symbol from the dynamic symbols table.
   ///
@@ -653,14 +651,13 @@ class LIEF_API Binary : public LIEF::Binary {
   void remove_dynamic_symbol(Symbol* symbol);
 
   /// Return the address of the given function name
-  result<uint64_t>
-      get_function_address(const std::string& func_name) const override;
+  result<uint64_t> get_function_address(std::string_view func_name) const override;
 
   /// Return the address of the given function name
   //
   /// @param[in] func_name    The function's name target
   /// @param[in] demangled    Use the demangled name
-  result<uint64_t> get_function_address(const std::string& func_name,
+  result<uint64_t> get_function_address(std::string_view func_name,
                                         bool demangled) const;
 
   /// Add a new section in the binary
@@ -688,19 +685,19 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Create a symbol for the function at the given address and export it
   Symbol& add_exported_function(uint64_t address,
-                                const std::string& name = "") LIEF_LIFETIMEBOUND;
+                                std::string_view name = "") LIEF_LIFETIMEBOUND;
 
   /// Add a library as dependency
   DynamicEntryLibrary&
-      add_library(const std::string& library_name) LIEF_LIFETIMEBOUND;
+      add_library(std::string_view library_name) LIEF_LIFETIMEBOUND;
 
   /// Remove the given library from the dependencies
-  void remove_library(const std::string& library_name);
+  void remove_library(std::string_view library_name);
 
   /// Get the library object (DynamicEntryLibrary) from the given name
   /// If the library can't be found, it returns a nullptr.
   DynamicEntryLibrary*
-      get_library(const std::string& library_name) LIEF_LIFETIMEBOUND {
+      get_library(std::string_view library_name) LIEF_LIFETIMEBOUND {
     return const_cast<DynamicEntryLibrary*>(
         static_cast<const Binary*>(this)->get_library(library_name)
     );
@@ -709,10 +706,10 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Get the library object (DynamicEntryLibrary) from the given name
   /// If the library can't be found, it returns a nullptr.
   const DynamicEntryLibrary*
-      get_library(const std::string& library_name) const LIEF_LIFETIMEBOUND;
+      get_library(std::string_view library_name) const LIEF_LIFETIMEBOUND;
 
   /// Check if the given library name exists in the current binary
-  bool has_library(const std::string& name) const {
+  bool has_library(std::string_view name) const {
     return get_library(name) != nullptr;
   }
 
@@ -769,7 +766,7 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// @param[in] symbol_name Imported symbol's name to patch
   /// @param[in] address New address
-  void patch_pltgot(const std::string& symbol_name, uint64_t address);
+  void patch_pltgot(std::string_view symbol_name, uint64_t address);
 
   /// Strip the binary by removing symtab symbols
   void strip();
@@ -778,7 +775,7 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// @param[in] name   The name of the section to remove
   /// @param[in] clear  Whether zeroize the original content
-  void remove_section(const std::string& name, bool clear = false) override;
+  void remove_section(std::string_view name, bool clear = false) override;
 
   /// Reconstruct the binary object and write it in `filename`
   ///
@@ -842,12 +839,12 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Symbol index in the dynamic symbol table or -1 if the symbol
   /// does not exist.
-  int64_t dynsym_idx(const std::string& name) const;
+  int64_t dynsym_idx(std::string_view name) const;
 
   int64_t dynsym_idx(const Symbol& sym) const;
 
   /// Symbol index from the `.symtab` section or -1 if the symbol is not present
-  int64_t symtab_idx(const std::string& name) const;
+  int64_t symtab_idx(std::string_view name) const;
 
   int64_t symtab_idx(const Symbol& sym) const;
 
@@ -1051,7 +1048,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Find the index of the section with the name given in the first parameter
-  result<size_t> get_section_idx(const std::string& name) const {
+  result<size_t> get_section_idx(std::string_view name) const {
     auto it = std::find_if(sections_.begin(), sections_.end(),
                            [name](const std::unique_ptr<Section>& S) {
                              return S->name() == name;
@@ -1064,12 +1061,11 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Try to find the SymbolVersionRequirement associated with the given library
   /// name (e.g. `libc.so.6`)
-  const SymbolVersionRequirement* find_version_requirement(
-      const std::string& libname
-  ) const LIEF_LIFETIMEBOUND;
+  const SymbolVersionRequirement*
+      find_version_requirement(std::string_view libname) const LIEF_LIFETIMEBOUND;
 
   SymbolVersionRequirement*
-      find_version_requirement(const std::string& name) LIEF_LIFETIMEBOUND {
+      find_version_requirement(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<SymbolVersionRequirement*>(
         static_cast<const Binary*>(this)->find_version_requirement(name)
     );
@@ -1081,7 +1077,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @warning To maintain consistency, this function also removes versions
   ///          associated with dynamic symbols that are linked to the specified
   ///          library name.
-  bool remove_version_requirement(const std::string& libname);
+  bool remove_version_requirement(std::string_view libname);
 
   uint8_t ptr_size() const {
     switch (type()) {
@@ -1101,7 +1097,7 @@ class LIEF_API Binary : public LIEF::Binary {
            bin->format() == Binary::FORMATS::OAT;
   }
 
-  size_t hash(const std::string& name);
+  size_t hash(std::string_view name);
 
   ~Binary() override;
 

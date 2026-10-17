@@ -16,6 +16,7 @@
 
 #include "LIEF/asm/Engine.hpp"
 #include "LIEF/asm/Instruction.hpp"
+#include <string_view>
 
 #include "LIEF/asm/aarch64/Instruction.hpp"
 #include "LIEF/asm/aarch64/Operand.hpp"
@@ -139,8 +140,7 @@ Binary::instructions_it Binary::disassemble(uint64_t /*address*/) const {
   return make_empty_iterator<assembly::Instruction>();
 }
 
-Binary::instructions_it
-    Binary::disassemble(const std::string& /*function*/) const {
+Binary::instructions_it Binary::disassemble(std::string_view /*function*/) const {
   LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
   return make_empty_iterator<assembly::Instruction>();
 }
@@ -182,7 +182,7 @@ assembly::Engine* Binary::get_engine(uint64_t) const {
   return nullptr;
 }
 
-Binary::instructions_it Binary::disassemble(const std::string& /*symbol*/) const {
+Binary::instructions_it Binary::disassemble(std::string_view /*symbol*/) const {
   LIEF_ERR(ASSEMBLY_NOT_SUPPORTED);
   return make_empty_iterator<assembly::Instruction>();
 }

@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
 #include "pySafeString.hpp"
@@ -79,7 +81,7 @@ void create<ResourceNode>(nb::module_& m) {
 
     .def_prop_rw("name",
       &ResourceNode::utf8_name,
-      nb::overload_cast<const std::string&>(&ResourceNode::name),
+      nb::overload_cast<std::string_view>(&ResourceNode::name),
       "Resource's name"_doc
     )
 

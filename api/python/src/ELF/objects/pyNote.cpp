@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
@@ -87,8 +88,8 @@ void create<Note>(nb::module_& m) {
   ;
   #undef ENTRY
 
-  const auto create_overload_0 = nb::overload_cast<const std::string&, uint32_t, Note::description_t, std::string, Header::FILE_TYPE, ARCH, Header::CLASS>(&Note::create);
-  const auto create_overload_1 = nb::overload_cast<const std::string&, Note::TYPE, Note::description_t, std::string, ARCH, Header::CLASS>(&Note::create);
+  const auto create_overload_0 = nb::overload_cast<std::string_view, uint32_t, Note::description_t, std::string, Header::FILE_TYPE, ARCH, Header::CLASS>(&Note::create);
+  const auto create_overload_1 = nb::overload_cast<std::string_view, Note::TYPE, Note::description_t, std::string, ARCH, Header::CLASS>(&Note::create);
   note
     .def_static("create", create_overload_0,
       R"doc(

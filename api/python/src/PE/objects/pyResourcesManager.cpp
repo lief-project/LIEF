@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
 #include "pyErr.hpp"
@@ -86,7 +88,7 @@ void create<ResourcesManager>(nb::module_& m) {
         [] (const ResourcesManager& obj) {
           return safe_string(obj.manifest());
         },
-        nb::overload_cast<const std::string&>(&ResourcesManager::manifest),
+        nb::overload_cast<std::string_view>(&ResourcesManager::manifest),
         "Manifest as a ``string``"_doc)
 
 

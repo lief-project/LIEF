@@ -72,12 +72,10 @@ class LIEF_API vector_iostream {
     return write(s.data(), s.size());
   }
 
-  vector_iostream& write(const std::string& s) {
-    return write(reinterpret_cast<const uint8_t*>(s.c_str()), s.size() + 1);
-  }
-
-  vector_iostream& write(const std::string_view& s) {
-    write(reinterpret_cast<const uint8_t*>(s.data()), s.size());
+  vector_iostream& write(std::string_view s) {
+    if (!s.empty()) {
+      write(reinterpret_cast<const uint8_t*>(s.data()), s.size());
+    }
     return write<uint8_t>(0);
   }
 

@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_RESOURCE_STRING_TABLE_H
 #define LIEF_PE_RESOURCE_STRING_TABLE_H
+#include <string_view>
 #include <cstdint>
 #include <ostream>
 #include <string>
@@ -121,7 +122,7 @@ class LIEF_API ResourceStringTable : public Object {
     return it->value;
   }
 
-  std::optional<std::string> get(const std::string& key) const;
+  std::optional<std::string> get(std::string_view key) const;
 
   ResourceStringTable& key(std::u16string value) {
     key_ = std::move(value);
@@ -143,7 +144,7 @@ class LIEF_API ResourceStringTable : public Object {
 
   void accept(Visitor& visitor) const override;
 
-  std::optional<std::string> operator[](const std::string& str) const {
+  std::optional<std::string> operator[](std::string_view str) const {
     return get(str);
   }
 

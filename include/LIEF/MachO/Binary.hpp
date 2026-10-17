@@ -276,14 +276,14 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Check if a symbol with the given name exists
-  bool has_symbol(const std::string& name) const {
+  bool has_symbol(std::string_view name) const {
     return get_symbol(name) != nullptr;
   }
 
   /// Return Symbol from the given name. If the symbol does not
   /// exist, it returns a null pointer
-  const Symbol* get_symbol(const std::string& name) const LIEF_LIFETIMEBOUND;
-  Symbol* get_symbol(const std::string& name) LIEF_LIFETIMEBOUND {
+  const Symbol* get_symbol(std::string_view name) const LIEF_LIFETIMEBOUND;
+  Symbol* get_symbol(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Symbol*>(static_cast<const Binary*>(this)->get_symbol(name));
   }
 
@@ -416,7 +416,7 @@ class LIEF_API Binary : public LIEF::Binary {
   LoadCommand* add(const SegmentCommand& segment) LIEF_LIFETIMEBOUND;
 
   /// Insert a new shared library through a `LC_LOAD_DYLIB` command
-  LoadCommand* add_library(const std::string& name) LIEF_LIFETIMEBOUND;
+  LoadCommand* add_library(std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Add a new MachO::Section in the __TEXT segment
   Section* add_section(const Section& section) LIEF_LIFETIMEBOUND;
@@ -425,10 +425,9 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// This function tries to match the fullpath of the DylibCommand or the
   /// library name suffix.
-  const DylibCommand*
-      find_library(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const DylibCommand* find_library(std::string_view name) const LIEF_LIFETIMEBOUND;
 
-  DylibCommand* find_library(const std::string& name) LIEF_LIFETIMEBOUND {
+  DylibCommand* find_library(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<DylibCommand*>(
         static_cast<const Binary*>(this)->find_library(name)
     );
@@ -445,7 +444,7 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// @param name     Name of the MachO::Section to remove
   /// @param clear    If `true` clear the content of the section before removing
-  void remove_section(const std::string& name, bool clear = false) override;
+  void remove_section(std::string_view name, bool clear = false) override;
 
   /// Remove the section from the segment with the name
   /// given in the first parameter and with the section's name provided in the
@@ -454,7 +453,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @param segname     Name of the MachO::Segment
   /// @param secname     Name of the MachO::Section to remove
   /// @param clear       If `true` clear the content of the section before removing
-  void remove_section(const std::string& segname, const std::string& secname,
+  void remove_section(std::string_view segname, std::string_view secname,
                       bool clear = false);
 
   /// Remove the given LoadCommand
@@ -499,13 +498,13 @@ class LIEF_API Binary : public LIEF::Binary {
   std::string_view loader() const LIEF_LIFETIMEBOUND;
 
   /// Check if a section with the given name exists
-  bool has_section(const std::string& name) const {
+  bool has_section(std::string_view name) const {
     return get_section(name) != nullptr;
   }
 
   /// Return the section from the given name or a nullptr
   /// if the section can't be found.
-  Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND {
+  Section* get_section(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->get_section(name)
     );
@@ -513,39 +512,39 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Return the section from the given name or a nullptr
   /// if the section can't be found
-  const Section* get_section(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const Section* get_section(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Return the section from the segment with the name
   /// given in the first parameter and with the section's name provided in the
   /// second parameter. If the section cannot be found, it returns a nullptr
-  Section* get_section(const std::string& segname,
-                       const std::string& secname) LIEF_LIFETIMEBOUND {
+  Section* get_section(std::string_view segname,
+                       std::string_view secname) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->get_section(segname, secname)
     );
   }
 
-  const Section* get_section(const std::string& segname,
-                             const std::string& secname) const LIEF_LIFETIMEBOUND;
+  const Section* get_section(std::string_view segname,
+                             std::string_view secname) const LIEF_LIFETIMEBOUND;
 
   /// Check if a segment with the given name exists
-  bool has_segment(const std::string& name) const {
+  bool has_segment(std::string_view name) const {
     return get_segment(name) != nullptr;
   }
 
   /// Return the segment from the given name
   const SegmentCommand*
-      get_segment(const std::string& name) const LIEF_LIFETIMEBOUND;
+      get_segment(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Return the segment from the given name
-  SegmentCommand* get_segment(const std::string& name) LIEF_LIFETIMEBOUND {
+  SegmentCommand* get_segment(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<SegmentCommand*>(
         static_cast<const Binary*>(this)->get_segment(name)
     );
   }
 
   /// Remove the symbol with the given name
-  bool remove_symbol(const std::string& name);
+  bool remove_symbol(std::string_view name);
 
   /// Remove the given symbol
   bool remove(const Symbol& sym);
@@ -554,10 +553,10 @@ class LIEF_API Binary : public LIEF::Binary {
   bool can_remove(const Symbol& sym) const;
 
   /// Check if the MachO::Symbol with the given name can be safely removed.
-  bool can_remove_symbol(const std::string& name) const;
+  bool can_remove_symbol(std::string_view name) const;
 
   /// Remove the given MachO::Symbol with the given name from the export table
-  bool unexport(const std::string& name);
+  bool unexport(std::string_view name);
 
   /// Remove the given symbol from the export table
   bool unexport(const Symbol& sym);
@@ -973,11 +972,11 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Add a symbol in the export trie of the current binary
   ExportInfo* add_exported_function(uint64_t address,
-                                    const std::string& name) LIEF_LIFETIMEBOUND;
+                                    std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Add a symbol in LC_SYMTAB command of the current binary
   Symbol* add_local_symbol(uint64_t address,
-                           const std::string& name) LIEF_LIFETIMEBOUND;
+                           std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// Return Objective-C metadata if present
   std::unique_ptr<objc::Metadata> objc_metadata() const;
@@ -1119,7 +1118,7 @@ class LIEF_API Binary : public LIEF::Binary {
   it_bindings bindings() const;
 
   /// Try to get the address for the function's name given in parameter
-  result<uint64_t> get_function_address(const std::string& name) const override;
+  result<uint64_t> get_function_address(std::string_view name) const override;
 
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::MACHO;

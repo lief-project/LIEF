@@ -17,6 +17,7 @@
 #include "LIEF/PE/ResourceData.hpp"
 #include "LIEF/PE/resources/ResourceDialogExtended.hpp"
 #include "LIEF/PE/resources/ResourceDialogRegular.hpp"
+#include <string_view>
 
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/utils.hpp"
@@ -292,7 +293,7 @@ std::vector<ResourceDialog::CONTROL_STYLES>
   return flags;
 }
 
-ResourceDialog& ResourceDialog::title(const std::string& title) {
+ResourceDialog& ResourceDialog::title(std::string_view title) {
   if (auto u16 = u8tou16(title)) {
     return this->title(std::move(*u16));
   }

@@ -99,7 +99,7 @@ LIEF_API std::string get_imphash(const Binary& binary,
 LIEF_API result<Import> resolve_ordinals(const Import& import, bool strict = false,
                                          bool use_std = false);
 
-LIEF_API ALGORITHMS algo_from_oid(const std::string& oid);
+LIEF_API ALGORITHMS algo_from_oid(std::string_view oid);
 
 /// Check that the layout of the given Binary is correct from the Windows loader
 /// perspective

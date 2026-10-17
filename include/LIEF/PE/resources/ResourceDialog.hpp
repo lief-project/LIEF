@@ -22,6 +22,7 @@
 #include "LIEF/errors.hpp"
 #include "LIEF/span.hpp"
 #include "LIEF/visibility.h"
+#include <string_view>
 
 #include <memory>
 #include <ostream>
@@ -460,7 +461,7 @@ class LIEF_API ResourceDialog : public Object {
     return *this;
   }
 
-  ResourceDialog& title(const std::string& title) LIEF_LIFETIMEBOUND;
+  ResourceDialog& title(std::string_view title) LIEF_LIFETIMEBOUND;
 
   /// Check if the dialog uses the given dialog style
   bool has(DIALOG_STYLES style) const {

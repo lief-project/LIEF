@@ -18,13 +18,14 @@
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/hash.hpp"
 #include "logging.hpp"
+#include <string_view>
 
 
 namespace LIEF::DEX {
 
 Type::Type() = default;
 
-Type::Type(const std::string& mangled) {
+Type::Type(std::string_view mangled) {
   parse(mangled);
 }
 
@@ -106,7 +107,7 @@ Type& Type::underlying_array_type() {
 }
 
 
-void Type::parse(const std::string& type) {
+void Type::parse(std::string_view type) {
   if (type.empty()) {
     type_ = Type::TYPES::UNKNOWN;
     return;

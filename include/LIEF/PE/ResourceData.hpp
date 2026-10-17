@@ -16,6 +16,7 @@
 #ifndef LIEF_PE_RESOURCE_DATA_H
 #define LIEF_PE_RESOURCE_DATA_H
 
+#include <string_view>
 #include <memory>
 #include <vector>
 
@@ -44,7 +45,7 @@ class LIEF_API ResourceData : public ResourceNode {
     content_(std::move(content)),
     code_page_(code_page) {}
 
-  ResourceData(const std::string& str, uint32_t code_page = 0) :
+  ResourceData(std::string_view str, uint32_t code_page = 0) :
     ResourceNode(ResourceNode::TYPE::DATA),
     content_{str.begin(), str.end()},
     code_page_(code_page) {}
@@ -94,7 +95,7 @@ class LIEF_API ResourceData : public ResourceNode {
     content_ = std::move(content);
   }
 
-  void content(const std::string& string) {
+  void content(std::string_view string) {
     content_ = {string.begin(), string.end()};
   }
 

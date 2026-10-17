@@ -53,34 +53,33 @@ class LIEF_API DylibCommand : public LoadCommand {
   }
 
   /// Factory function to generate a LC_LOAD_WEAK_DYLIB library
-  static DylibCommand weak_dylib(const std::string& name, uint32_t timestamp = 0,
+  static DylibCommand weak_dylib(std::string_view name, uint32_t timestamp = 0,
                                  uint32_t current_version = 0,
                                  uint32_t compat_version = 0);
 
   /// Factory function to generate a LC_ID_DYLIB library
-  static DylibCommand id_dylib(const std::string& name, uint32_t timestamp = 0,
+  static DylibCommand id_dylib(std::string_view name, uint32_t timestamp = 0,
                                uint32_t current_version = 0,
                                uint32_t compat_version = 0);
 
   /// Factory function to generate a LC_LOAD_DYLIB library
-  static DylibCommand load_dylib(const std::string& name, uint32_t timestamp = 2,
+  static DylibCommand load_dylib(std::string_view name, uint32_t timestamp = 2,
                                  uint32_t current_version = 0,
                                  uint32_t compat_version = 0);
 
   /// Factory function to generate a LC_REEXPORT_DYLIB library
-  static DylibCommand reexport_dylib(const std::string& name,
-                                     uint32_t timestamp = 0,
+  static DylibCommand reexport_dylib(std::string_view name, uint32_t timestamp = 0,
                                      uint32_t current_version = 0,
                                      uint32_t compat_version = 0);
 
   /// Factory function to generate a LC_LOAD_UPWARD_DYLIB library
-  static DylibCommand load_upward_dylib(const std::string& name,
+  static DylibCommand load_upward_dylib(std::string_view name,
                                         uint32_t timestamp = 0,
                                         uint32_t current_version = 0,
                                         uint32_t compat_version = 0);
 
   /// Factory function to generate a LC_LAZY_LOAD_DYLIB library
-  static DylibCommand lazy_load_dylib(const std::string& name,
+  static DylibCommand lazy_load_dylib(std::string_view name,
                                       uint32_t timestamp = 0,
                                       uint32_t current_version = 0,
                                       uint32_t compat_version = 0);
@@ -151,9 +150,10 @@ class LIEF_API DylibCommand : public LoadCommand {
   }
 
   private:
-  LIEF_LOCAL static DylibCommand
-      create(LoadCommand::TYPE type, const std::string& name, uint32_t timestamp,
-             uint32_t current_version, uint32_t compat_version);
+  LIEF_LOCAL static DylibCommand create(LoadCommand::TYPE type,
+                                        std::string_view name, uint32_t timestamp,
+                                        uint32_t current_version,
+                                        uint32_t compat_version);
 
   std::string name_;
   uint32_t name_offset_ = 0;

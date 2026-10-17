@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 
 #include "logging.hpp"
@@ -228,8 +229,7 @@ LIEF::Binary::functions_t Binary::get_abstract_exported_functions() const {
   it_const_exported_symbols syms = exported_symbols();
   std::transform(syms.begin(), syms.end(), std::back_inserter(result),
                  [](const Symbol& s) {
-                   return Function(std::string(s.name()), s.value(),
-                                   Function::FLAGS::EXPORTED);
+                   return Function(s.name(), s.value(), Function::FLAGS::EXPORTED);
                  });
   return result;
 }
@@ -239,8 +239,7 @@ LIEF::Binary::functions_t Binary::get_abstract_imported_functions() const {
   it_const_imported_symbols syms = imported_symbols();
   std::transform(syms.begin(), syms.end(), std::back_inserter(result),
                  [](const Symbol& s) {
-                   return Function(std::string(s.name()), s.value(),
-                                   Function::FLAGS::IMPORTED);
+                   return Function(s.name(), s.value(), Function::FLAGS::IMPORTED);
                  });
   return result;
 }
@@ -301,7 +300,7 @@ bool Binary::is_imported(const Symbol& symbol) {
   return symbol.is_external() && !symbol.has_export_info();
 }
 
-const Symbol* Binary::get_symbol(const std::string& name) const {
+const Symbol* Binary::get_symbol(std::string_view name) const {
   const auto it_symbol = std::find_if(symbols_.begin(), symbols_.end(),
                                       [&name](const std::unique_ptr<Symbol>& sym) {
                                         return sym->name() == name;
@@ -1404,7 +1403,7 @@ bool Binary::extend_section(Section& section, size_t size) {
   return true;
 }
 
-void Binary::remove_section(const std::string& name, bool clear) {
+void Binary::remove_section(std::string_view name, bool clear) {
   Section* sec_to_delete = get_section(name);
   if (sec_to_delete == nullptr) {
     LIEF_ERR("Section '{}' not found", name);
@@ -1417,10 +1416,10 @@ void Binary::remove_section(const std::string& name, bool clear) {
     return;
   }
 
-  remove_section(std::string(segment->name()), name, clear);
+  remove_section(segment->name(), name, clear);
 }
 
-void Binary::remove_section(const std::string& segname, const std::string& secname,
+void Binary::remove_section(std::string_view segname, std::string_view secname,
                             bool clear) {
   Section* sec_to_delete = get_section(segname, secname);
   if (sec_to_delete == nullptr) {
@@ -1777,7 +1776,7 @@ size_t Binary::add_cached_segment(SegmentCommand& segment) {
   return segment.index();
 }
 
-bool Binary::unexport(const std::string& name) {
+bool Binary::unexport(std::string_view name) {
   for (const std::unique_ptr<Symbol>& s : symbols_) {
     if (s->name() == name && s->has_export_info()) {
       return unexport(*s);
@@ -1848,9 +1847,10 @@ bool Binary::remove(const Symbol& sym) {
   return true;
 }
 
-bool Binary::remove_symbol(const std::string& name) {
+bool Binary::remove_symbol(std::string_view name) {
+  const std::string owned_name(name);
   bool removed = false;
-  while (const Symbol* s = get_symbol(name)) {
+  while (const Symbol* s = get_symbol(owned_name)) {
     if (!remove(*s)) {
       break;
     }
@@ -1884,7 +1884,7 @@ bool Binary::can_remove(const Symbol& sym) const {
   return true;
 }
 
-bool Binary::can_remove_symbol(const std::string& name) const {
+bool Binary::can_remove_symbol(std::string_view name) const {
   std::vector<const Symbol*> syms;
   for (const std::unique_ptr<Symbol>& s : symbols_) {
     if (s->name() == name) {
@@ -1908,7 +1908,7 @@ LoadCommand* Binary::add(const DylibCommand& library) {
   return add(*library.as<LoadCommand>());
 }
 
-LoadCommand* Binary::add_library(const std::string& name) {
+LoadCommand* Binary::add_library(std::string_view name) {
   return add(DylibCommand::load_dylib(name));
 }
 
@@ -1959,7 +1959,7 @@ bool Binary::disable_pie() {
   return false;
 }
 
-const Section* Binary::get_section(const std::string& name) const {
+const Section* Binary::get_section(std::string_view name) const {
   const auto it_section =
       std::find_if(sections_.begin(), sections_.end(),
                    [&name](const Section* sec) { return sec->name() == name; });
@@ -1972,8 +1972,8 @@ const Section* Binary::get_section(const std::string& name) const {
 }
 
 
-const Section* Binary::get_section(const std::string& segname,
-                                   const std::string& secname) const {
+const Section* Binary::get_section(std::string_view segname,
+                                   std::string_view secname) const {
   if (const SegmentCommand* seg = get_segment(segname)) {
     if (const Section* sec = seg->get_section(secname)) {
       return sec;
@@ -1982,7 +1982,7 @@ const Section* Binary::get_section(const std::string& segname,
   return nullptr;
 }
 
-const SegmentCommand* Binary::get_segment(const std::string& name) const {
+const SegmentCommand* Binary::get_segment(std::string_view name) const {
   const auto it_segment = std::find_if(segments_.begin(), segments_.end(),
                                        [&name](const SegmentCommand* seg) {
                                          return seg->name() == name;
@@ -2557,8 +2557,8 @@ Binary::it_bindings Binary::bindings() const {
   return make_range(std::move(begin), std::move(end));
 }
 
-result<uint64_t> Binary::get_function_address(const std::string& name) const {
-  const std::string alt_name = '_' + name;
+result<uint64_t> Binary::get_function_address(std::string_view name) const {
+  const std::string alt_name = std::string("_").append(name);
   for (const Symbol& sym : symbols()) {
     if (sym.value() == 0) {
       continue;
@@ -2579,7 +2579,7 @@ Symbol& Binary::add(const Symbol& symbol) {
   return *symbols_.back();
 }
 
-Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {
+Symbol* Binary::add_local_symbol(uint64_t address, std::string_view name) {
   auto sym = std::make_unique<Symbol>();
   sym->category_ = Symbol::CATEGORY::LOCAL;
   sym->origin_ = Symbol::ORIGIN::SYMTAB;
@@ -2587,12 +2587,12 @@ Symbol* Binary::add_local_symbol(uint64_t address, const std::string& name) {
   sym->description_ = uint16_t{/* N_NO_DEAD_STRIP */ 0x20};
 
   sym->value(address);
-  sym->name(name);
+  sym->name(std::string(name));
   return symbols_.emplace_back(std::move(sym)).get();
 }
 
 ExportInfo* Binary::add_exported_function(uint64_t address,
-                                          const std::string& name) {
+                                          std::string_view name) {
   if (Symbol* symbol = add_local_symbol(address, name)) {
     uint64_t trie_offset = address;
     if (trie_offset >= imagebase()) {
@@ -2621,7 +2621,7 @@ ExportInfo* Binary::add_exported_function(uint64_t address,
 }
 
 
-const DylibCommand* Binary::find_library(const std::string& name) const {
+const DylibCommand* Binary::find_library(std::string_view name) const {
   auto it = std::find_if(libraries_.begin(), libraries_.end(),
                          [&name](const DylibCommand* cmd) {
                            std::string_view libpath = cmd->name();

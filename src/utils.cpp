@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>
@@ -90,7 +91,7 @@ result<std::string> u16tou8(const char16_t* buffer, size_t size,
 }
 
 
-result<std::u16string> u8tou16(const std::string& string) {
+result<std::u16string> u8tou16(std::string_view string) {
   using namespace utf8::internal;
   std::u16string name;
   auto start = string.begin();
@@ -119,8 +120,8 @@ inline std::string pretty_hex(char c) {
   return ".";
 }
 
-std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
-                 const std::string& prefix, size_t limit) {
+std::string dump(const uint8_t* buffer, size_t size, std::string_view title,
+                 std::string_view prefix, size_t limit) {
   if (size < 2) {
     return "";
   }
@@ -129,7 +130,7 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
   std::string banner;
 
   if (!title.empty()) {
-    banner = prefix + "+" +
+    banner = std::string(prefix) + "+" +
              std::string(size_t{22} * 3, '-')
                  .append("---+\n")
                  .append(prefix)
@@ -149,7 +150,7 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
 
   for (size_t i = 0; i < size; ++i) {
     if (i == 0) {
-      out = prefix + "+" +
+      out = std::string(prefix) + "+" +
             std::string(size_t{22} * 3, '-')
                 .append("---+\n")
                 .append(prefix)
@@ -157,7 +158,7 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
     }
 
     if (i > 0 && i % 16 == 0) {
-      out += "\n" + prefix + "| ";
+      out.append("\n").append(prefix).append("| ");
     }
 
     rhs += pretty_hex((char)(buffer[i]));
@@ -174,8 +175,11 @@ std::string dump(const uint8_t* buffer, size_t size, const std::string& title,
     }
   }
 
-  out +=
-      std::string("\n") + prefix + '+' + std::string(size_t{22} * 3, '-') + "---+";
+  out.append("\n")
+      .append(prefix)
+      .append("+")
+      .append(size_t{22} * 3, '-')
+      .append("---+");
   return banner + out;
 }
 

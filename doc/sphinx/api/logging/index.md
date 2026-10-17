@@ -26,15 +26,15 @@ mechanism, and this API provides an abstraction over that implementation.
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::logging::log(Level level, const std::string &fmt, const Args&... args)
+.. doxygenfunction:: LIEF::logging::log(Level level, std::string_view fmt, const Args&... args)
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::logging::log(Level level, const std::string &fmt, const std::vector<std::string> &args)
+.. doxygenfunction:: LIEF::logging::log(Level level, std::string_view fmt, const std::vector<std::string> &args)
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::logging::log(Level level, const std::string &msg)
+.. doxygenfunction:: LIEF::logging::log(Level level, std::string_view msg)
 ```
 
 ```{eval-rst}

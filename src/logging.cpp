@@ -18,6 +18,7 @@
 #include "LIEF/config.h"
 #include "LIEF/platforms.hpp"
 #include "logging.hpp"
+#include <string_view>
 
 #include "spdlog/spdlog.h"
 
@@ -225,7 +226,7 @@ Level get_level() {
   return Logger::instance().get_level();
 }
 
-void log(Level level, const std::string& msg) {
+void log(Level level, std::string_view msg) {
   switch (level) {
     case Level::Off: break;
     case Level::Trace:
@@ -253,8 +254,7 @@ void log(Level level, const std::string& msg) {
   }
 }
 
-void log(Level level, const std::string& fmt,
-         const std::vector<std::string>& args) {
+void log(Level level, std::string_view fmt, const std::vector<std::string>& args) {
   fmt::dynamic_format_arg_store<fmt::format_context> store;
   for (const std::string& arg : args) {
     store.push_back(arg);
@@ -284,7 +284,7 @@ void set_path(const char* name, const std::string& path) {
   Logger::instance(name).set_log_path(path);
 }
 
-void log(const char* name, Level level, const std::string& msg) {
+void log(const char* name, Level level, std::string_view msg) {
   switch (level) {
     case Level::Off: return;
     case Level::Trace:

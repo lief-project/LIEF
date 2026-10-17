@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <string_view>
 #include <utility>
 
 #include "LIEF/DEX/Class.hpp"
@@ -33,11 +34,11 @@ Class::Class(std::string fullname, uint32_t access_flags, Class* parent,
   parent_{parent},
   source_filename_{std::move(source_filename)} {}
 
-std::string Class::package_normalized(const std::string& pkg) {
-  std::string package_normalized = pkg;
+std::string Class::package_normalized(std::string_view pkg) {
+  std::string package_normalized(pkg);
 
   // 1. Remove the '/' at the end
-  if (package_normalized.back() == '/') {
+  if (!package_normalized.empty() && package_normalized.back() == '/') {
     package_normalized =
         package_normalized.substr(0, package_normalized.size() - 1);
   }
@@ -47,19 +48,19 @@ std::string Class::package_normalized(const std::string& pkg) {
   return package_normalized;
 }
 
-std::string Class::fullname_normalized(const std::string& pkg,
-                                       const std::string& cls_name) {
-  return "L" + Class::package_normalized(pkg) + "/" + cls_name + ";";
+std::string Class::fullname_normalized(std::string_view pkg,
+                                       std::string_view cls_name) {
+  return ("L" + Class::package_normalized(pkg) + "/").append(cls_name) + ";";
 }
 
-std::string Class::fullname_normalized(const std::string& pkg_cls) {
-  std::string package_normalized = pkg_cls;
+std::string Class::fullname_normalized(std::string_view pkg_cls) {
+  std::string package_normalized(pkg_cls);
 
   // 1. Replace '.' with '/'
   std::replace(package_normalized.begin(), package_normalized.end(), '.', '/');
 
   // 2. Add 'L' at the beginning
-  if (package_normalized.front() != 'L') {
+  if (package_normalized.empty() || package_normalized.front() != 'L') {
     package_normalized = 'L' + package_normalized;
   }
 
@@ -148,21 +149,29 @@ Class::it_fields Class::fields() {
   return fields_;
 }
 
-Class::it_named_methods Class::methods(const std::string& name) {
-  return {methods_, [name](const Method* meth) { return meth->name() == name; }};
+Class::it_named_methods Class::methods(std::string_view name) {
+  return {methods_, [name = std::string(name)](const Method* meth) {
+            return meth->name() == name;
+          }};
 }
 
-Class::it_const_named_methods Class::methods(const std::string& name) const {
-  return {methods_, [name](const Method* meth) { return meth->name() == name; }};
+Class::it_const_named_methods Class::methods(std::string_view name) const {
+  return {methods_, [name = std::string(name)](const Method* meth) {
+            return meth->name() == name;
+          }};
 }
 
 
-Class::it_named_fields Class::fields(const std::string& name) {
-  return {fields_, [name](const Field* f) { return f->name() == name; }};
+Class::it_named_fields Class::fields(std::string_view name) {
+  return {fields_, [name = std::string(name)](const Field* f) {
+            return f->name() == name;
+          }};
 }
 
-Class::it_const_named_fields Class::fields(const std::string& name) const {
-  return {fields_, [name](const Field* f) { return f->name() == name; }};
+Class::it_const_named_fields Class::fields(std::string_view name) const {
+  return {fields_, [name = std::string(name)](const Field* f) {
+            return f->name() == name;
+          }};
 }
 
 size_t Class::index() const {

@@ -14,6 +14,7 @@
  */
 #include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/Abstract/DebugInfo.hpp"
+#include <string_view>
 
 #include "logging.hpp"
 #include "messages.hpp"
@@ -31,7 +32,7 @@ DebugInfo* Binary::debug_info() const {
   return nullptr;
 }
 
-DebugInfo* Binary::load_debug_info(const std::string& /*path*/) {
+DebugInfo* Binary::load_debug_info(std::string_view /*path*/) {
   LIEF_ERR(DEBUG_FMT_NOT_SUPPORTED);
   return nullptr;
 }

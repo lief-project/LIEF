@@ -142,15 +142,15 @@ For example:
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::dump(const std::vector<uint8_t> &data, const std::string &title = "", const std::string &prefix = "", size_t limit = 0)
+.. doxygenfunction:: LIEF::dump(const std::vector<uint8_t> &data, std::string_view title = "", std::string_view prefix = "", size_t limit = 0)
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::dump(const uint8_t *buffer, size_t size, const std::string &title = "", const std::string &prefix = "", size_t limit = 0)
+.. doxygenfunction:: LIEF::dump(const uint8_t *buffer, size_t size, std::string_view title = "", std::string_view prefix = "", size_t limit = 0)
 ```
 
 ```{eval-rst}
-.. doxygenfunction:: LIEF::dump(span<const uint8_t> data, const std::string &title = "", const std::string &prefix = "", size_t limit = 0)
+.. doxygenfunction:: LIEF::dump(span<const uint8_t> data, std::string_view title = "", std::string_view prefix = "", size_t limit = 0)
 ```
 
 - {fa}`brands fa-rust` {rust:func}`lief::dump`

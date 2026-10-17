@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include <string>
 #include "pyWriteStream.hpp"
 
@@ -90,7 +92,7 @@ void init_writerstream(nb::module_& m) {
       nb::rv_policy::reference_internal
     )
 
-    .def("write", [] (vector_iostream& self, const std::string& str) {
+    .def("write", [] (vector_iostream& self, std::string_view str) {
         return self.write(str);
       }, "s"_a, nb::rv_policy::reference_internal
     )

@@ -60,7 +60,7 @@ class LIEF_API MsManifestBinaryID : public Attribute {
     return id_;
   }
 
-  void manifest_id(const std::string& id) {
+  void manifest_id(std::string_view id) {
     id_ = id;
   }
 

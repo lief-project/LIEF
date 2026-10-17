@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 #include <iterator>
 #include <limits>
@@ -312,7 +313,7 @@ LIEF::Binary::sections_t Binary::get_abstract_sections() {
 }
 
 
-const Section* Binary::get_section(const std::string& name) const {
+const Section* Binary::get_section(std::string_view name) const {
   const auto section_it =
       std::find_if(sections_.begin(), sections_.end(),
                    [&name](const std::unique_ptr<Section>& section) {
@@ -364,7 +365,7 @@ uint32_t Binary::sizeof_headers() const {
   return size;
 }
 
-void Binary::remove_section(const std::string& name, bool clear) {
+void Binary::remove_section(std::string_view name, bool clear) {
   Section* sec = get_section(name);
 
   if (sec == nullptr) {
@@ -545,7 +546,7 @@ LIEF::Binary::relocations_t Binary::get_abstract_relocations() {
   return abstract_relocs;
 }
 
-bool Binary::remove_import(const std::string& name) {
+bool Binary::remove_import(std::string_view name) {
   auto it = std::find_if(imports_.begin(), imports_.end(),
                          [&name](const std::unique_ptr<Import>& imp) {
                            return imp->name() == name;
@@ -559,7 +560,7 @@ bool Binary::remove_import(const std::string& name) {
   return true;
 }
 
-const Import* Binary::get_import(const std::string& import_name) const {
+const Import* Binary::get_import(std::string_view import_name) const {
   const auto it_import =
       std::find_if(imports_.begin(), imports_.end(),
                    [&import_name](const std::unique_ptr<Import>& import) {
@@ -1246,7 +1247,7 @@ LIEF::Binary::functions_t Binary::exception_functions() const {
   return functions;
 }
 
-const DelayImport* Binary::get_delay_import(const std::string& import_name) const {
+const DelayImport* Binary::get_delay_import(std::string_view import_name) const {
   const auto it_import =
       std::find_if(delay_imports_.begin(), delay_imports_.end(),
                    [&import_name](const std::unique_ptr<DelayImport>& import) {
@@ -1337,7 +1338,7 @@ ExceptionInfo* Binary::find_exception_at(uint32_t rva) {
   return it->get();
 }
 
-result<uint64_t> Binary::get_function_address(const std::string& name) const {
+result<uint64_t> Binary::get_function_address(std::string_view name) const {
   if (const Export* exp = get_export()) {
     if (const ExportEntry* entry = exp->find_entry(name)) {
       uint32_t rva = entry->address();
@@ -1347,7 +1348,7 @@ result<uint64_t> Binary::get_function_address(const std::string& name) const {
     }
   }
 
-  const std::string alt_name = '_' + name;
+  const std::string alt_name = std::string("_").append(name);
 
   for (const COFF::Symbol& sym : symbols()) {
     if (sym.complex_type() != COFF::Symbol::COMPLEX_TYPE::TY_FUNCTION) {

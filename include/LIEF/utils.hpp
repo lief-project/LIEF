@@ -121,7 +121,7 @@ inline result<std::string> u16tou8(const std::u16string& string,
 }
 
 /// Convert a UTF-8 string to a UTF-16 one
-LIEF_API result<std::u16string> u8tou16(const std::string& string);
+LIEF_API result<std::u16string> u8tou16(std::string_view string);
 
 /// Whether this version of LIEF includes extended features
 LIEF_API bool is_extended();
@@ -153,17 +153,17 @@ LIEF_API result<std::string> demangle(std::string_view mangled);
 /// +---------------------------------------------------------------------+
 /// ```
 LIEF_API std::string dump(const uint8_t* buffer, size_t size,
-                          const std::string& title = "",
-                          const std::string& prefix = "", size_t limit = 0);
+                          std::string_view title = "",
+                          std::string_view prefix = "", size_t limit = 0);
 
-inline std::string dump(span<const uint8_t> data, const std::string& title = "",
-                        const std::string& prefix = "", size_t limit = 0) {
+inline std::string dump(span<const uint8_t> data, std::string_view title = "",
+                        std::string_view prefix = "", size_t limit = 0) {
   return dump(data.data(), data.size(), title, prefix, limit);
 }
 
 inline std::string dump(const std::vector<uint8_t>& data,
-                        const std::string& title = "",
-                        const std::string& prefix = "", size_t limit = 0) {
+                        std::string_view title = "", std::string_view prefix = "",
+                        size_t limit = 0) {
   return dump(data.data(), data.size(), title, prefix, limit);
 }
 }

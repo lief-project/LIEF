@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
 
@@ -72,10 +74,10 @@ void create<ResourceStringTable>(nb::module_& m) {
       R"doc(Iterator over the different :class:`~.entry_t` in this table)doc"_doc
     )
 
-    .def("get", nb::overload_cast<const std::string&>(&ResourceStringTable::get, nb::const_),
+    .def("get", nb::overload_cast<std::string_view>(&ResourceStringTable::get, nb::const_),
          "key"_a)
 
-    .def("__getitem__", nb::overload_cast<const std::string&>(&ResourceStringTable::get, nb::const_),
+    .def("__getitem__", nb::overload_cast<std::string_view>(&ResourceStringTable::get, nb::const_),
          "key")
   ;
 }

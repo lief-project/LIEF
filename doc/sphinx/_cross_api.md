@@ -878,6 +878,12 @@
 
 .. ELF =========================================================================
 
+.. |lief-elf-symbol| lief-api:: lief.ELF.Symbol
+
+    :rust:struct:`lief::elf::Symbol`
+    :py:class:`lief.ELF.Symbol`
+    :cpp:class:`LIEF::ELF::Symbol`
+
 .. |lief-elf-symbol-demangled_name| lief-api:: lief.ELF.Symbol.demangled_name()
 
     :rust:method:`lief::elf::Symbol::demangled_name [struct]`

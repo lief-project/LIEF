@@ -194,8 +194,8 @@ class LIEF_API SegmentCommand : public LoadCommand {
   }
 
   /// Get the section with the given name
-  const Section* get_section(const std::string& name) const LIEF_LIFETIMEBOUND;
-  Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND;
+  const Section* get_section(std::string_view name) const LIEF_LIFETIMEBOUND;
+  Section* get_section(std::string_view name) LIEF_LIFETIMEBOUND;
 
   /// The raw content of this segment
   span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
@@ -255,7 +255,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   bool has(const Section& section) const;
 
   /// Check if the current segment embeds the given section name
-  bool has_section(const std::string& section_name) const;
+  bool has_section(std::string_view section_name) const;
 
   bool is(VM_PROTECTIONS prot) const {
     return (init_protection() & (uint32_t)prot) > 0 ||

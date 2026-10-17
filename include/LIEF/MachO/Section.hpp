@@ -282,7 +282,7 @@ class LIEF_API Section : public LIEF::Section {
     return relocations_;
   }
 
-  void segment_name(const std::string& name);
+  void segment_name(std::string_view name);
   void address(uint64_t address) {
     virtual_address(address);
   }

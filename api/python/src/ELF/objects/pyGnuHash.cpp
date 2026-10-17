@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
@@ -71,7 +73,7 @@ void create<GnuHash>(nb::module_& m) {
         "hash"_a)
 
     .def("check",
-        nb::overload_cast<const std::string&>(&GnuHash::check, nb::const_),
+        nb::overload_cast<std::string_view>(&GnuHash::check, nb::const_),
         "Check if the symbol *probably* exists. If "
         "the returned value is ``false`` you can assume at ``100%`` that "
         "the symbol with the given name doesn't exist. If ``true`` you can't "

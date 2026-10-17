@@ -55,10 +55,10 @@ class LIEF_API Class : public Object {
   using it_const_named_fields = const_filter_iterator<const fields_t&>;
 
   public:
-  static std::string package_normalized(const std::string& pkg_name);
-  static std::string fullname_normalized(const std::string& pkg_cls);
-  static std::string fullname_normalized(const std::string& pkg,
-                                         const std::string& cls_name);
+  static std::string package_normalized(std::string_view pkg_name);
+  static std::string fullname_normalized(std::string_view pkg_cls);
+  static std::string fullname_normalized(std::string_view pkg,
+                                         std::string_view cls_name);
 
   Class();
   Class(const Class&) = delete;
@@ -100,16 +100,16 @@ class LIEF_API Class : public Object {
   it_methods methods();
 
   /// Return Methods having the given name
-  it_named_methods methods(const std::string& name);
-  it_const_named_methods methods(const std::string& name) const;
+  it_named_methods methods(std::string_view name);
+  it_const_named_methods methods(std::string_view name) const;
 
   /// Fields implemented in this class
   it_const_fields fields() const;
   it_fields fields();
 
   /// Return Fields having the given name
-  it_named_fields fields(const std::string& name);
-  it_const_named_fields fields(const std::string& name) const;
+  it_named_fields fields(std::string_view name);
+  it_const_named_fields fields(std::string_view name) const;
 
   /// De-optimize information
   dex2dex_class_info_t dex2dex_info() const;

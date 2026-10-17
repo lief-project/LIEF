@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 #include <memory>
 
@@ -172,7 +173,7 @@ bool SegmentCommand::has(const Section& section) const {
   return it != sections_.end();
 }
 
-bool SegmentCommand::has_section(const std::string& section_name) const {
+bool SegmentCommand::has_section(std::string_view section_name) const {
   auto it = std::find_if(sections_.begin(), sections_.end(),
                          [&section_name](const std::unique_ptr<Section>& sec) {
                            return sec->name() == section_name;
@@ -207,7 +208,7 @@ void SegmentCommand::content_insert(size_t where, size_t size) {
   );
 }
 
-const Section* SegmentCommand::get_section(const std::string& name) const {
+const Section* SegmentCommand::get_section(std::string_view name) const {
   const auto it = std::find_if(sections_.begin(), sections_.end(),
                                [&name](const std::unique_ptr<Section>& sec) {
                                  return sec->name() == name;
@@ -220,7 +221,7 @@ const Section* SegmentCommand::get_section(const std::string& name) const {
   return it->get();
 }
 
-Section* SegmentCommand::get_section(const std::string& name) {
+Section* SegmentCommand::get_section(std::string_view name) {
   return const_cast<Section*>(
       static_cast<const SegmentCommand*>(this)->get_section(name)
   );

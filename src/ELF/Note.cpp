@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 #include <memory>
 #include <utility>
@@ -134,8 +135,8 @@ CONST_MAP_ALT QNX_TYPES{
     std::pair(3, Note::TYPE::QNX_STACK),
 };
 
-static inline std::string strip_zero(const std::string& name) {
-  return name.c_str();
+static inline std::string_view strip_zero(std::string_view name) {
+  return name.substr(0, name.find('\0'));
 }
 
 result<const char*> Note::type_to_section(TYPE type) {
@@ -161,8 +162,8 @@ result<const char*> Note::type_to_section(TYPE type) {
   return make_error_code(lief_errors::not_found);
 }
 
-inline result<uint32_t> raw_type(const std::string& name, Note::TYPE type) {
-  std::string norm_name = strip_zero(name);
+inline result<uint32_t> raw_type(std::string_view name, Note::TYPE type) {
+  std::string_view norm_name = strip_zero(name);
 
   if (norm_name == NT_CORE_NAME) {
     for (const auto& [nt, ntype] : CORE_TYPES) {
@@ -309,8 +310,8 @@ result<const char*> Note::type_owner(Note::TYPE type) {
 
 
 result<Note::TYPE> Note::convert_type(Header::FILE_TYPE ftype, uint32_t type,
-                                      const std::string& name) {
-  std::string norm_name = strip_zero(name);
+                                      std::string_view name) {
+  std::string_view norm_name = strip_zero(name);
 
   if (ftype == Header::FILE_TYPE::CORE) {
     if (norm_name == NT_CORE_NAME) {
@@ -455,7 +456,7 @@ std::unique_ptr<Note> Note::create(BinaryStream& stream, std::string section_nam
                 arch, cls);
 }
 
-std::unique_ptr<Note> Note::create(const std::string& name, Note::TYPE ntype,
+std::unique_ptr<Note> Note::create(std::string_view name, Note::TYPE ntype,
                                    description_t description,
                                    std::string section_name, ARCH arch,
                                    Header::CLASS cls) {
@@ -594,7 +595,7 @@ std::unique_ptr<Note> Note::create(const std::string& name, Note::TYPE ntype,
 }
 
 
-std::unique_ptr<Note> Note::create(const std::string& name, uint32_t type,
+std::unique_ptr<Note> Note::create(std::string_view name, uint32_t type,
                                    description_t description,
                                    std::string section_name,
                                    Header::FILE_TYPE ftype, ARCH arch,
@@ -602,8 +603,8 @@ std::unique_ptr<Note> Note::create(const std::string& name, uint32_t type,
   auto conv = Note::convert_type(ftype, type, name);
   if (!conv) {
     LIEF_DEBUG("Unsupported note type {:#x} for owner '{}'", type, name);
-    return std::unique_ptr<Note>(new Note(name, Note::TYPE::UNKNOWN, type,
-                                          std::move(description),
+    return std::unique_ptr<Note>(new Note(std::string(name), Note::TYPE::UNKNOWN,
+                                          type, std::move(description),
                                           std::move(section_name)));
   }
   return create(name, *conv, std::move(description), std::move(section_name), arch,
@@ -727,7 +728,7 @@ ok_error_t Note::write_at(size_t offset, const T& value) {
   return ok();
 }
 
-ok_error_t Note::write_string_at(size_t offset, const std::string& value) {
+ok_error_t Note::write_string_at(size_t offset, std::string_view value) {
   Note::description_t original = description_;
   const auto* data = reinterpret_cast<const uint8_t*>(value.data());
 

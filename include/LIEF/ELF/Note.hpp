@@ -138,7 +138,7 @@ class LIEF_API Note : public Object {
   public:
   /// Convert the raw integer note type into a TYPE according to the owner
   static result<TYPE> convert_type(Header::FILE_TYPE ftype, uint32_t type,
-                                   const std::string& name);
+                                   std::string_view name);
 
   /// Try to determine the ELF section name associated with the TYPE
   /// provided in parameter
@@ -159,7 +159,7 @@ class LIEF_API Note : public Object {
   /// such as the architecture or the ELF class could be required for
   /// creating notes like Coredump notes.
   static std::unique_ptr<Note>
-      create(const std::string& name, uint32_t type, description_t description,
+      create(std::string_view name, uint32_t type, description_t description,
              std::string section_name,
              Header::FILE_TYPE ftype = Header::FILE_TYPE::NONE,
              ARCH arch = ARCH::NONE, Header::CLASS cls = Header::CLASS::NONE);
@@ -167,7 +167,7 @@ class LIEF_API Note : public Object {
   /// Create a new note from the given parameters. Additional information
   /// such as the architecture or the ELF class could be required for
   /// creating notes like Coredump notes.
-  static std::unique_ptr<Note> create(const std::string& name, TYPE type,
+  static std::unique_ptr<Note> create(std::string_view name, TYPE type,
                                       description_t description,
                                       std::string section_name,
                                       ARCH arch = ARCH::NONE,
@@ -273,7 +273,7 @@ class LIEF_API Note : public Object {
   template<class T>
   LIEF_LOCAL ok_error_t write_at(size_t offset, const T& value);
 
-  LIEF_LOCAL ok_error_t write_string_at(size_t offset, const std::string& value);
+  LIEF_LOCAL ok_error_t write_string_at(size_t offset, std::string_view value);
 
   LIEF_LOCAL result<std::string> read_string_at(size_t offset,
                                                 size_t maxsize = 0) const;

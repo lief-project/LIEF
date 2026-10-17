@@ -16,6 +16,7 @@
 #ifndef LIEF_PE_BINARY_H
 #define LIEF_PE_BINARY_H
 
+#include <string_view>
 #include <memory>
 
 #include "LIEF/PE/Builder.hpp"
@@ -453,12 +454,12 @@ class LIEF_API Binary : public LIEF::Binary {
   /// If the section can't be found, return a nullptr
   ///
   /// @param[in] name Name of the Section
-  Section* get_section(const std::string& name) LIEF_LIFETIMEBOUND {
+  Section* get_section(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<Section*>(
         static_cast<const Binary*>(this)->get_section(name)
     );
   }
-  const Section* get_section(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const Section* get_section(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Return the section associated with import table or a
   /// nullptr if the binary does not have an import table
@@ -474,7 +475,7 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @param[in] name    Name of section to delete
   /// @param[in] clear   if ``true`` clear the section's content with 0
   ///                    before removing (default: ``false``)
-  void remove_section(const std::string& name, bool clear = false) override;
+  void remove_section(std::string_view name, bool clear = false) override;
 
   /// Remove the given section
   ///
@@ -616,17 +617,16 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return the Import matching the provided name (case-sensitive)
   ///
   /// If the import can't be found, it returns a nullptr
-  Import* get_import(const std::string& import_name) LIEF_LIFETIMEBOUND {
+  Import* get_import(std::string_view import_name) LIEF_LIFETIMEBOUND {
     return const_cast<Import*>(
         static_cast<const Binary*>(this)->get_import(import_name)
     );
   }
 
-  const Import*
-      get_import(const std::string& import_name) const LIEF_LIFETIMEBOUND;
+  const Import* get_import(std::string_view import_name) const LIEF_LIFETIMEBOUND;
 
   /// `True` if the binary imports the given library name
-  bool has_import(const std::string& import_name) const {
+  bool has_import(std::string_view import_name) const {
     return get_import(import_name) != nullptr;
   }
 
@@ -646,18 +646,17 @@ class LIEF_API Binary : public LIEF::Binary {
 
   /// Returns the DelayImport matching the given name. If it can't be
   /// found, it returns a nullptr
-  DelayImport*
-      get_delay_import(const std::string& import_name) LIEF_LIFETIMEBOUND {
+  DelayImport* get_delay_import(std::string_view import_name) LIEF_LIFETIMEBOUND {
     return const_cast<DelayImport*>(
         static_cast<const Binary*>(this)->get_delay_import(import_name)
     );
   }
   const DelayImport*
-      get_delay_import(const std::string& import_name) const LIEF_LIFETIMEBOUND;
+      get_delay_import(std::string_view import_name) const LIEF_LIFETIMEBOUND;
 
 
   /// `True` if the binary delay-imports the given library name
-  bool has_delay_import(const std::string& import_name) const {
+  bool has_delay_import(std::string_view import_name) const {
     return get_delay_import(import_name) != nullptr;
   }
 
@@ -665,20 +664,19 @@ class LIEF_API Binary : public LIEF::Binary {
   ///
   /// The second parameter `pos` defines where to insert the import.
   /// If negative (default), the import is appended to the end of the list.
-  Import& add_import(const std::string& name,
-                     int32_t pos = -1) LIEF_LIFETIMEBOUND {
+  Import& add_import(std::string_view name, int32_t pos = -1) LIEF_LIFETIMEBOUND {
     if (pos < 0 || (size_t)pos >= imports_.size()) {
-      imports_.push_back(std::make_unique<Import>(name));
+      imports_.push_back(std::make_unique<Import>(std::string(name)));
       return *imports_.back();
     }
     return **imports_.insert(imports_.begin() + pos,
-                             std::make_unique<Import>(name));
+                             std::make_unique<Import>(std::string(name)));
   }
 
   /// Remove the imported library with the given `name`
   ///
   /// Return true if the deletion succeeded, false otherwise.
-  bool remove_import(const std::string& name);
+  bool remove_import(std::string_view name);
 
   /// Remove all libraries in the binary
   void remove_all_imports() {
@@ -923,7 +921,7 @@ class LIEF_API Binary : public LIEF::Binary {
   }
 
   /// Attempt to resolve the address of the function specified by `name`.
-  result<uint64_t> get_function_address(const std::string& name) const override;
+  result<uint64_t> get_function_address(std::string_view name) const override;
 
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::PE;

@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "LIEF/OAT/Header.hpp"
 
 #include "OAT/pyOAT.hpp"
@@ -37,7 +39,7 @@ void create<Header>(nb::module_& m) {
         [] (const Header::element_t& self) {
           return self.value;
         },
-        [] (const Header::element_t& self, const std::string& value) {
+        [] (const Header::element_t& self, std::string_view value) {
           *self.value = value;
         }, nb::rv_policy::reference_internal);
 
@@ -155,7 +157,7 @@ void create<Header>(nb::module_& m) {
         "key"_a, nb::rv_policy::reference_internal)
 
     .def("set",
-        nb::overload_cast<HEADER_KEYS, const std::string&>(&Header::set),
+        nb::overload_cast<HEADER_KEYS, std::string_view>(&Header::set),
         "key"_a, "value"_a, nb::rv_policy::reference_internal)
 
     .def("__getitem__",
@@ -163,7 +165,7 @@ void create<Header>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("__setitem__",
-        nb::overload_cast<HEADER_KEYS, const std::string&>(&Header::set),
+        nb::overload_cast<HEADER_KEYS, std::string_view>(&Header::set),
         nb::rv_policy::reference_internal)
 
     LIEF_DEFAULT_STR(Header);

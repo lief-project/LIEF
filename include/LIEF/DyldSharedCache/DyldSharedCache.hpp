@@ -21,6 +21,7 @@
 #include "LIEF/compiler_attributes.hpp"
 #include "LIEF/iterators.hpp"
 #include "LIEF/visibility.h"
+#include <string_view>
 
 #include "LIEF/asm/Instruction.hpp"
 
@@ -152,14 +153,14 @@ class LIEF_API DyldSharedCache {
 
   /// Find the Dylib whose Dylib::path matches the provided path.
   std::unique_ptr<Dylib>
-      find_lib_from_path(const std::string& path) const LIEF_LIFETIMEBOUND;
+      find_lib_from_path(std::string_view path) const LIEF_LIFETIMEBOUND;
 
   /// Find the Dylib whose filename of Dylib::path matches the provided name.
   ///
   /// If multiple libraries have the same name (but with a different path),
   /// the **first one** matching the provided name is returned.
   std::unique_ptr<Dylib>
-      find_lib_from_name(const std::string& name) const LIEF_LIFETIMEBOUND;
+      find_lib_from_name(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// True if the subcaches are associated with this cache
   bool has_subcaches() const;
@@ -224,7 +225,7 @@ class LIEF_API DyldSharedCache {
   /// Try to find the DyldSharedCache associated with the filename given
   /// in the first parameter.
   std::unique_ptr<DyldSharedCache>
-      find_subcache(const std::string& filename) const LIEF_LIFETIMEBOUND;
+      find_subcache(std::string_view filename) const LIEF_LIFETIMEBOUND;
 
   /// Convert the given virtual address into an offset.
   ///

@@ -100,15 +100,15 @@ class LIEF_API Import : public Object {
   /// Return the Function's RVA from the import address table (`IAT`)
   ///
   /// @warning This address could change when re-building the binary
-  result<uint32_t> get_function_rva_from_iat(const std::string& function) const;
+  result<uint32_t> get_function_rva_from_iat(std::string_view function) const;
 
   /// Return the imported function with the given name
-  ImportEntry* get_entry(const std::string& name) LIEF_LIFETIMEBOUND {
+  ImportEntry* get_entry(std::string_view name) LIEF_LIFETIMEBOUND {
     return const_cast<ImportEntry*>(
         static_cast<const Import*>(this)->get_entry(name)
     );
   }
-  const ImportEntry* get_entry(const std::string& name) const LIEF_LIFETIMEBOUND;
+  const ImportEntry* get_entry(std::string_view name) const LIEF_LIFETIMEBOUND;
 
   /// Return the library's name (e.g. `kernel32.dll`)
   std::string_view name() const LIEF_LIFETIMEBOUND {
@@ -156,15 +156,15 @@ class LIEF_API Import : public Object {
   }
 
   /// Add a new import entry with the given name (i.e. an imported function)
-  ImportEntry& add_entry(const std::string& name) LIEF_LIFETIMEBOUND {
-    entries_.emplace_back(new ImportEntry(name));
+  ImportEntry& add_entry(std::string_view name) LIEF_LIFETIMEBOUND {
+    entries_.emplace_back(new ImportEntry(std::string(name)));
     return *entries_.back();
   }
 
   /// Remove the import entry with the given name.
   ///
   /// Return true if the deletion succeeded, false otherwise
-  bool remove_entry(const std::string& name);
+  bool remove_entry(std::string_view name);
 
   /// Remove the import entry with the given ordinal number
   ///

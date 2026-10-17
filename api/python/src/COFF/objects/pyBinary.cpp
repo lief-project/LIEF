@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <string_view>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
@@ -123,13 +124,13 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("find_function",
-         nb::overload_cast<const std::string&>(&Binary::find_function),
+         nb::overload_cast<std::string_view>(&Binary::find_function),
          "Try to find the function (symbol) with the given name"_doc,
          "name"_a, nb::rv_policy::reference_internal
       )
 
     .def("find_demangled_function",
-         nb::overload_cast<const std::string&>(&Binary::find_demangled_function),
+         nb::overload_cast<std::string_view>(&Binary::find_demangled_function),
          "Try to find the function (symbol) with the given **demangled** name"_doc,
          "name"_a, nb::rv_policy::reference_internal
       )
@@ -154,7 +155,7 @@ void create<Binary>(nb::module_& m) {
       .. seealso:: :class:`lief.assembly.Instruction`
       )doc"_doc)
 
-    .def("disassemble", [] (const Binary& self, const std::string& function) {
+    .def("disassemble", [] (const Binary& self, std::string_view function) {
           auto insts = LIEF::py::owning_range(self.disassemble(function));
           return nb::make_iterator<nb::rv_policy::reference_internal>(
               nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 #include <iterator>
 
@@ -361,8 +362,8 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
 
   return resolved_import;
 }
-ALGORITHMS algo_from_oid(const std::string& oid) {
-  static const std::unordered_map<std::string, ALGORITHMS> OID_MAP = {
+ALGORITHMS algo_from_oid(std::string_view oid) {
+  static const std::unordered_map<std::string_view, ALGORITHMS> OID_MAP = {
       {"2.16.840.1.101.3.4.2.3", ALGORITHMS::SHA_512},
       {"2.16.840.1.101.3.4.2.2", ALGORITHMS::SHA_384},
       {"2.16.840.1.101.3.4.2.1", ALGORITHMS::SHA_256},
@@ -388,7 +389,7 @@ ALGORITHMS algo_from_oid(const std::string& oid) {
   };
 
 
-  const auto it = OID_MAP.find(oid.c_str());
+  const auto it = OID_MAP.find(oid.substr(0, oid.find('\0')));
   if (it == OID_MAP.end()) {
     return ALGORITHMS::UNKNOWN;
   }

@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_PE_RESOURCE_NODE_H
 #define LIEF_PE_RESOURCE_NODE_H
+#include <string_view>
 #include <cstdint>
 #include <memory>
 #include <sstream>
@@ -159,7 +160,7 @@ class LIEF_API ResourceNode : public Object {
     id_ = id;
   }
 
-  void name(const std::string& name);
+  void name(std::string_view name);
 
   void name(std::u16string name) {
     name_ = std::move(name);

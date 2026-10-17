@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_OAT_BINARY_H
 #define LIEF_OAT_BINARY_H
+#include <string_view>
 #include <ostream>
 
 #include "LIEF/visibility.h"
@@ -84,14 +85,14 @@ class LIEF_API Binary : public ELF::Binary {
   it_classes classes() LIEF_LIFETIMEBOUND;
 
   /// Check if the current OAT has the given class
-  bool has_class(const std::string& class_name) const;
+  bool has_class(std::string_view class_name) const;
 
 
   /// Return the LIEF::OAT::Class with the given name or
   /// a nullptr if the class can't be found
-  const Class* get_class(const std::string& class_name) const LIEF_LIFETIMEBOUND;
+  const Class* get_class(std::string_view class_name) const LIEF_LIFETIMEBOUND;
 
-  Class* get_class(const std::string& class_name) LIEF_LIFETIMEBOUND;
+  Class* get_class(std::string_view class_name) LIEF_LIFETIMEBOUND;
 
   /// Return the LIEF::OAT::Class at the given index or a nullptr
   /// if it does not exist

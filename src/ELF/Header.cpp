@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <algorithm>
 
 #include "frozen.hpp"
@@ -130,7 +131,7 @@ Header::Header(const T& header) :
 template Header::Header(const details::Elf32_Ehdr& header);
 template Header::Header(const details::Elf64_Ehdr& header);
 
-void Header::identity(const std::string& identity) {
+void Header::identity(std::string_view identity) {
   std::copy(identity.begin(), identity.end(), identity_.begin());
 }
 

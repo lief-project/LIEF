@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/DEX/File.hpp"
 
@@ -31,7 +32,7 @@ void create<DexFile>(nb::module_& m) {
 
     .def_prop_rw("location",
         nb::overload_cast<>(&DexFile::location, nb::const_),
-        nb::overload_cast<const std::string&>(&DexFile::location),
+        nb::overload_cast<std::string_view>(&DexFile::location),
         "Original location of the DEX file"_doc)
 
     .def_prop_rw("checksum",

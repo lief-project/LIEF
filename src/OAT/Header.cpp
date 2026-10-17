@@ -17,6 +17,7 @@
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/hash.hpp"
 #include "logging.hpp"
+#include <string_view>
 
 #include <iomanip>
 #include <map>
@@ -184,7 +185,7 @@ std::string* Header::get(HEADER_KEYS key) {
 }
 
 
-Header& Header::set(HEADER_KEYS key, const std::string& value) {
+Header& Header::set(HEADER_KEYS key, std::string_view value) {
   const auto it = dex2oat_context_.find(key);
   if (it == dex2oat_context_.end()) {
     LIEF_WARN("Key {} not found", to_string(key));

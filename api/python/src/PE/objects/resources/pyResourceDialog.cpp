@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "PE/pyPE.hpp"
 #include "enums_wrapper.hpp"
 
@@ -315,7 +317,7 @@ void create<ResourceDialog>(nb::module_& m) {
                  "List of :class:`~.WINDOW_EXTENDED_STYLES` used by this dialog"_doc)
 
     .def_prop_rw("title", nb::overload_cast<>(&ResourceDialog::title_utf8, nb::const_),
-                          nb::overload_cast<const std::string&>(&ResourceDialog::title),
+                          nb::overload_cast<std::string_view>(&ResourceDialog::title),
                           nb::rv_policy::reference_internal,
                           "title of the dialog box"_doc)
     .def_prop_ro("menu", nb::overload_cast<>(&ResourceDialog::menu, nb::const_),

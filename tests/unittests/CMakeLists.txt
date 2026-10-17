@@ -27,6 +27,7 @@ add_executable(unittests
   test_oat.cpp
   test_linux_header.cpp
   test_parser_api.cpp
+  test_string_view.cpp
 )
 
 if (NOT BUILD_SHARED_LIBS)

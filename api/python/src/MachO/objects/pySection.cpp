@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <string>
 #include <sstream>
 #include <nanobind/stl/string.h>
@@ -166,7 +167,7 @@ void create<Section>(nb::module_& m) {
 
     .def_prop_rw("segment_name",
         nb::overload_cast<>(&Section::segment_name, nb::const_),
-        nb::overload_cast<const std::string&>(&Section::segment_name),
+        nb::overload_cast<std::string_view>(&Section::segment_name),
         R"delim(The segment name associated with the section)delim"_doc)
 
     .def_prop_ro("has_segment", &Section::has_segment,

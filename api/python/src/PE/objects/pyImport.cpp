@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
 #include "pyErr.hpp"
@@ -114,7 +116,7 @@ void create<Import>(nb::module_& m) {
         )delim"_doc)
 
     .def("get_function_rva_from_iat",
-        [] (const Import& self, const std::string& name) {
+        [] (const Import& self, std::string_view name) {
           return error_or(&Import::get_function_rva_from_iat, self, name);
         },
         "Return the relative virtual address of the given function within the *Import Address Table*"_doc,
@@ -127,13 +129,13 @@ void create<Import>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("add_entry",
-        nb::overload_cast<const std::string&>(&Import::add_entry),
+        nb::overload_cast<std::string_view>(&Import::add_entry),
         "Add an " RST_CLASS_REF(lief.PE.ImportEntry) " (function) to the current import"_doc,
         "function_name"_a,
         nb::rv_policy::reference_internal)
 
     .def("get_entry",
-      nb::overload_cast<const std::string&>(&Import::get_entry),
+      nb::overload_cast<std::string_view>(&Import::get_entry),
       "Return the " RST_CLASS_REF(lief.PE.ImportEntry) " with the given name or None if not found"_doc,
       "function_name"_a,
       nb::rv_policy::reference_internal)
@@ -143,7 +145,7 @@ void create<Import>(nb::module_& m) {
     )
 
     .def("remove_entry",
-      nb::overload_cast<const std::string&>(&Import::remove_entry),
+      nb::overload_cast<std::string_view>(&Import::remove_entry),
       R"doc(
       Remove the import entry with the given name.
 

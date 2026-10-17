@@ -16,6 +16,7 @@
 #ifndef LIEF_ELF_ANDROID_IDENT_H
 #define LIEF_ELF_ANDROID_IDENT_H
 
+#include <string_view>
 #include <memory>
 #include <ostream>
 
@@ -50,8 +51,8 @@ class LIEF_API AndroidIdent : public Note {
   std::string ndk_build_number() const;
 
   void sdk_version(uint32_t version);
-  void ndk_version(const std::string& ndk_version);
-  void ndk_build_number(const std::string& ndk_build_number);
+  void ndk_version(std::string_view ndk_version);
+  void ndk_build_number(std::string_view ndk_build_number);
 
   void dump(std::ostream& os) const override;
 

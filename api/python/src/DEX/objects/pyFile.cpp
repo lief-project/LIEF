@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Method.hpp"
@@ -62,7 +63,7 @@ void create<File>(nb::module_& m) {
         "classname"_a)
 
     .def("get_class",
-        nb::overload_cast<const std::string&>(&File::get_class),
+        nb::overload_cast<std::string_view>(&File::get_class),
         "classname"_a, nb::rv_policy::reference_internal)
 
     .def("get_class",
@@ -99,12 +100,12 @@ void create<File>(nb::module_& m) {
 
     .def_prop_rw("name",
         nb::overload_cast<>(&File::name, nb::const_),
-        nb::overload_cast<const std::string&>(&File::name),
+        nb::overload_cast<std::string_view>(&File::name),
         "Name of the dex file"_doc)
 
     .def_prop_rw("location",
         nb::overload_cast<>(&File::location, nb::const_),
-        nb::overload_cast<const std::string&>(&File::location),
+        nb::overload_cast<std::string_view>(&File::location),
         "Original location of the dex file"_doc)
 
     //.def_prop_ro("dex2dex_info",

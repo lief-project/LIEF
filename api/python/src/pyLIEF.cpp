@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include <sstream>
 #include "pyLIEF.hpp"
 #include "pyErr.hpp"
@@ -182,7 +184,7 @@ void init_logger(nb::module_& m) {
               "path"_a);
 
   logging.def("log",
-              static_cast<void(*)(LIEF::logging::Level, const std::string&)>(&logging::log),
+              static_cast<void(*)(LIEF::logging::Level, std::string_view)>(&logging::log),
               "Log a message with the LIEF's logger"_doc,
               "level"_a, "msg"_a);
 
@@ -326,8 +328,8 @@ void init(nb::module_& m) {
     "mangled"_a
   );
 
-  m.def("dump", [] (nb::extra::memoryview view, const std::string& title,
-                    const std::string& prefix, size_t limit)
+  m.def("dump", [] (nb::extra::memoryview view, std::string_view title,
+                    std::string_view prefix, size_t limit)
     {
       return LIEF::dump(view.data(), view.size(), title, prefix, limit);
     }, "buffer"_a, "title"_a = "", "prefix"_a = "", "limit"_a = 0,
@@ -345,8 +347,8 @@ void init(nb::module_& m) {
     )doc"_doc
   );
 
-  m.def("dump", [] (const nb::bytes& bytes, const std::string& title,
-                    const std::string& prefix, size_t limit)
+  m.def("dump", [] (const nb::bytes& bytes, std::string_view title,
+                    std::string_view prefix, size_t limit)
     {
       return LIEF::dump(reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size(), title, prefix, limit);
     }, "buffer"_a, "title"_a = "", "prefix"_a = "", "limit"_a = 0,

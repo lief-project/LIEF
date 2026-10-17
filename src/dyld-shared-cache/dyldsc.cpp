@@ -18,6 +18,7 @@
 #include "LIEF/DyldSharedCache/SubCache.hpp"
 #include "LIEF/DyldSharedCache/caching.hpp"
 #include "LIEF/DyldSharedCache/utils.hpp"
+#include <string_view>
 
 #include "LIEF/MachO/Binary.hpp"
 
@@ -113,12 +114,12 @@ std::unique_ptr<Dylib> DyldSharedCache::find_lib_from_va(uint64_t) const {
 }
 
 std::unique_ptr<Dylib>
-    DyldSharedCache::find_lib_from_path(const std::string&) const {
+    DyldSharedCache::find_lib_from_path(std::string_view) const {
   return nullptr;
 }
 
 std::unique_ptr<Dylib>
-    DyldSharedCache::find_lib_from_name(const std::string&) const {
+    DyldSharedCache::find_lib_from_name(std::string_view) const {
   return nullptr;
 }
 
@@ -149,7 +150,7 @@ std::unique_ptr<DyldSharedCache> DyldSharedCache::main_cache() const {
 }
 
 std::unique_ptr<DyldSharedCache>
-    DyldSharedCache::find_subcache(const std::string& /*filename*/) const {
+    DyldSharedCache::find_subcache(std::string_view /*filename*/) const {
   return nullptr;
 }
 

@@ -24,6 +24,7 @@
 #include "LIEF/DEX/instructions.hpp"
 #include "LIEF/DEX/utils.hpp"
 #include "logging.hpp"
+#include <string_view>
 #include <climits>
 #include <fstream>
 
@@ -431,11 +432,11 @@ File::it_classes File::classes() {
   return class_list_;
 }
 
-bool File::has_class(const std::string& class_name) const {
+bool File::has_class(std::string_view class_name) const {
   return classes_.find(Class::fullname_normalized(class_name)) != classes_.end();
 }
 
-const Class* File::get_class(const std::string& class_name) const {
+const Class* File::get_class(std::string_view class_name) const {
   auto it_cls = classes_.find(Class::fullname_normalized(class_name));
   if (it_cls == classes_.end()) {
     return nullptr;
@@ -443,7 +444,7 @@ const Class* File::get_class(const std::string& class_name) const {
   return it_cls->second;
 }
 
-Class* File::get_class(const std::string& class_name) {
+Class* File::get_class(std::string_view class_name) {
   return const_cast<Class*>(static_cast<const File*>(this)->get_class(class_name));
 }
 
@@ -551,11 +552,11 @@ MapList& File::map() {
   return map_;
 }
 
-void File::name(const std::string& name) {
+void File::name(std::string_view name) {
   name_ = name;
 }
 
-void File::location(const std::string& location) {
+void File::location(std::string_view location) {
   location_ = location;
 }
 

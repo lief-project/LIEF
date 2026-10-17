@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/string_view.h>
+#include <string_view>
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/Binary.hpp"
@@ -318,7 +320,7 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal, nb::keep_alive<0, 1>())
 
     .def("get_section",
-        nb::overload_cast<const std::string&>(&Binary::get_section),
+        nb::overload_cast<std::string_view>(&Binary::get_section),
         "Return the " RST_CLASS_REF(lief.PE.Section) " object from the given name or None if not found"_doc,
         "section_name"_a,
         nb::rv_policy::reference_internal)
@@ -371,7 +373,7 @@ void create<Binary>(nb::module_& m) {
         "import_name"_a)
 
     .def("get_import",
-        nb::overload_cast<const std::string&>(&Binary::get_import),
+        nb::overload_cast<std::string_view>(&Binary::get_import),
         "Return the :class:`~.Import` from the given name or None if it can't be found"_doc,
         "import_name"_a,
         nb::rv_policy::reference_internal)
@@ -389,7 +391,7 @@ void create<Binary>(nb::module_& m) {
         "import_name"_a)
 
     .def("get_delay_import",
-        nb::overload_cast<const std::string&>(&Binary::get_delay_import),
+        nb::overload_cast<std::string_view>(&Binary::get_delay_import),
         "Return the " RST_CLASS_REF(lief.PE.DelayImport) " from the given name or None if not found"_doc,
         "import_name"_a,
         nb::rv_policy::reference_internal)

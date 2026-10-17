@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <sstream>
 
 #include "nanobind/utils.hpp"
@@ -307,7 +308,7 @@ void create<Binary>(nb::module_& m) {
 
     .def_prop_rw("interpreter",
         nb::overload_cast<>(&Binary::interpreter, nb::const_),
-        nb::overload_cast<const std::string&>(&Binary::interpreter),
+        nb::overload_cast<std::string_view>(&Binary::interpreter),
        "ELF interpreter (loader) if any. (e.g. ``/lib64/ld-linux-x86-64.so.2``)"_doc)
 
     .def("section_from_offset",
@@ -420,7 +421,7 @@ void create<Binary>(nb::module_& m) {
         "type"_a)
 
     .def("patch_pltgot",
-        nb::overload_cast<const std::string&, uint64_t>(&Binary::patch_pltgot),
+        nb::overload_cast<std::string_view, uint64_t>(&Binary::patch_pltgot),
         "Patch the imported symbol's name with the ``address``"_doc,
         "symbol_name"_a, "address"_a, nb::lock_self())
 
@@ -430,7 +431,7 @@ void create<Binary>(nb::module_& m) {
         "symbol"_a, "address"_a, nb::lock_self())
 
     .def("dynsym_idx",
-        nb::overload_cast<const std::string&>(&Binary::dynsym_idx, nb::const_),
+        nb::overload_cast<std::string_view>(&Binary::dynsym_idx, nb::const_),
         R"doc(
         Get the symbol index in the **dynamic** symbol from the given name or
         return -1 if the symbol does not exist.
@@ -444,7 +445,7 @@ void create<Binary>(nb::module_& m) {
         )doc"_doc, "symbol"_a)
 
     .def("symtab_idx",
-        nb::overload_cast<const std::string&>(&Binary::symtab_idx, nb::const_),
+        nb::overload_cast<std::string_view>(&Binary::symtab_idx, nb::const_),
         R"doc(
         Get the symbol index in the ``.symtab`` section from the given name or
         return -1 if the symbol does not exist.
@@ -676,7 +677,7 @@ void create<Binary>(nb::module_& m) {
         "library_name"_a, nb::lock_self())
 
     .def("get_library",
-        nb::overload_cast<const std::string&>(&Binary::get_library),
+        nb::overload_cast<std::string_view>(&Binary::get_library),
         R"delim(
         Return the :class:`~lief.ELF.DynamicEntryLibrary` with the given ``name``
 
@@ -691,7 +692,7 @@ void create<Binary>(nb::module_& m) {
         "symbol_name"_a)
 
     .def("get_dynamic_symbol",
-        nb::overload_cast<const std::string&>(&Binary::get_dynamic_symbol),
+        nb::overload_cast<std::string_view>(&Binary::get_dynamic_symbol),
         R"delim(
         Get the dynamic symbol from the given name.
 
@@ -706,7 +707,7 @@ void create<Binary>(nb::module_& m) {
         "symbol_name"_a)
 
     .def("get_symtab_symbol",
-        nb::overload_cast<const std::string&>(&Binary::get_symtab_symbol),
+        nb::overload_cast<std::string_view>(&Binary::get_symtab_symbol),
         R"delim(
         Get the **static** symbol from the given ``name``.
 
@@ -749,7 +750,7 @@ void create<Binary>(nb::module_& m) {
         nb::lock_self())
 
     .def("remove_dynamic_symbol",
-        nb::overload_cast<const std::string&>(&Binary::remove_dynamic_symbol),
+        nb::overload_cast<std::string_view>(&Binary::remove_dynamic_symbol),
         "Remove the " RST_CLASS_REF(lief.ELF.Symbol) " with the name given in parameter from the ``.dynsym`` section"_doc,
         nb::lock_self())
 
@@ -768,14 +769,14 @@ void create<Binary>(nb::module_& m) {
         nb::rv_policy::reference_internal)
 
     .def("export_symbol",
-        nb::overload_cast<const std::string&, uint64_t>(&Binary::export_symbol),
+        nb::overload_cast<std::string_view, uint64_t>(&Binary::export_symbol),
         "Export the symbol with the given name and create an entry if it doesn't exist"_doc,
         "symbol_name"_a, "value"_a = 0,
         nb::lock_self(),
         nb::rv_policy::reference_internal)
 
     .def("get_relocation",
-        nb::overload_cast<const std::string&>(&Binary::get_relocation),
+        nb::overload_cast<std::string_view>(&Binary::get_relocation),
         "Return the " RST_CLASS_REF(lief.ELF.Relocation) " associated with the given symbol name"_doc,
         "symbol_name"_a,
         nb::rv_policy::reference_internal)
@@ -817,9 +818,9 @@ void create<Binary>(nb::module_& m) {
       R"doc(Find the index of the section given in the first parameter)doc"_doc
     )
 
-    .def("get_section_idx", [] (const Binary& self, const std::string& name) {
+    .def("get_section_idx", [] (const Binary& self, std::string_view name) {
         return error_or(
-         nb::overload_cast<const std::string&>(&Binary::get_section_idx, nb::const_),
+         nb::overload_cast<std::string_view>(&Binary::get_section_idx, nb::const_),
          self, name);
       },
       R"doc(Find the index of the section with the name given in the first parameter)doc"_doc
@@ -855,7 +856,7 @@ void create<Binary>(nb::module_& m) {
     )
 
     .def("find_version_requirement",
-      nb::overload_cast<const std::string&>(&Binary::find_version_requirement),
+      nb::overload_cast<std::string_view>(&Binary::find_version_requirement),
       R"doc(
       Try to find the :class:`~.SymbolVersionRequirement` associated with the given library
       name (e.g. ``libc.so.6``)

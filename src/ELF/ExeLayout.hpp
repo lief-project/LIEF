@@ -339,8 +339,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
                      binary_->dynamic_symbols_.end(),
                      [&nb_buckets](const std::unique_ptr<Symbol>& lhs,
                                    const std::unique_ptr<Symbol>& rhs) {
-                       return (dl_new_hash(lhs->name().c_str()) % nb_buckets) <
-                              (dl_new_hash(rhs->name().c_str()) % nb_buckets);
+                       return (dl_new_hash(lhs->name()) % nb_buckets) <
+                              (dl_new_hash(rhs->name()) % nb_buckets);
                      });
     Binary::it_dynamic_symbols dynamic_symbols = binary_->dynamic_symbols();
 
@@ -366,7 +366,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
     if (maskwords > 0) {
       const size_t bloom_mask = maskwords - 1;
       for (size_t i = symndx; i < dynamic_symbols.size(); ++i) {
-        const uint32_t hash = dl_new_hash(dynamic_symbols[i].name().c_str());
+        const uint32_t hash = dl_new_hash(dynamic_symbols[i].name());
         const size_t pos = (hash / C) & bloom_mask;
         uint V = (static_cast<uint>(1) << (hash % C)) |
                  (static_cast<uint>(1) << ((hash >> gnu_hash->shift2()) % C));
@@ -388,7 +388,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
 
     for (size_t i = symndx; i < dynamic_symbols.size(); ++i) {
       LIEF_DEBUG("Processing symbol {}", dynamic_symbols[i].name());
-      const uint32_t hash = dl_new_hash(dynamic_symbols[i].name().c_str());
+      const uint32_t hash = dl_new_hash(dynamic_symbols[i].name());
       int bucket = hash % nb_buckets;
 
       if (bucket < previous_bucket) {
@@ -981,7 +981,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
           binary_->sections_[hdr.section_name_table_idx()];
       std::string_view sec_name = binary_->shstrtab_name();
       binary_->remove(*string_names_section, /* clear */ true);
-      Section sec_str_section(std::string(sec_name), Section::TYPE::STRTAB);
+      Section sec_str_section(sec_name, Section::TYPE::STRTAB);
       sec_str_section.content(std::vector<uint8_t>(raw_shstrtab_.size()));
       Section* sec = binary_->add(sec_str_section, /*loaded=*/false,
                                   /*pos=*/Binary::SEC_INSERT_POS::POST_SECTION);

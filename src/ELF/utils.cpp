@@ -52,10 +52,13 @@ bool is_elf(const std::vector<uint8_t>& raw) {
 }
 
 /// SYSV hash function
-unsigned long hash32(const char* name) {
+unsigned long hash32(std::string_view name) {
   unsigned long h = 0, g = 0;
-  while (*name != 0) {
-    h = (h << 4) + *name++;
+  for (char c : name) {
+    if (c == '\0') {
+      break;
+    }
+    h = (h << 4) + c;
     // NOLINTNEXTLINE(bugprone-assignment-in-if-condition)
     if ((g = h & 0xf0000000) != 0u) {
       h ^= g >> 24;
@@ -67,10 +70,13 @@ unsigned long hash32(const char* name) {
 
 /// SYSV hash function
 /// https://blogs.oracle.com/ali/entry/gnu_hash_elf_sections
-unsigned long hash64(const char* name) {
+unsigned long hash64(std::string_view name) {
   unsigned long h = 0, g = 0;
-  while (*name != 0) {
-    h = (h << 4) + *name++;
+  for (char c : name) {
+    if (c == '\0') {
+      break;
+    }
+    h = (h << 4) + c;
     // NOLINTNEXTLINE(bugprone-assignment-in-if-condition)
     if ((g = h & 0xf0000000) != 0u) {
       h ^= g >> 24;
@@ -80,10 +86,13 @@ unsigned long hash64(const char* name) {
   return h;
 }
 
-uint32_t dl_new_hash(const char* name) {
+uint32_t dl_new_hash(std::string_view name) {
   uint32_t h = 5381;
 
-  for (unsigned char c = *name; c != '\0'; c = *++name) {
+  for (unsigned char c : name) {
+    if (c == '\0') {
+      break;
+    }
     h = h * 33 + c;
   }
 
