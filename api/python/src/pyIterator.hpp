@@ -73,7 +73,7 @@ void init_ref_iterator(nanobind::handle& m, const char* it_name) {
 
     .def("__next__",
         [] (T& v) -> typename T::reference {
-          if (v == std::end(v)) {
+          if (v.is_end()) {
             throw nb::stop_iteration();
           }
           auto& value = *v;

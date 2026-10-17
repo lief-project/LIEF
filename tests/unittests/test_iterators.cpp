@@ -690,6 +690,42 @@ TEST_CASE("lief.test.iterators.value_semantics", "[lief][iterators]") {
     CHECK(&*copy != &*moved);
   }
 
+  SECTION("is_end") {
+    const auto check = [](auto it) {
+      size_t count = 0;
+      for (; !it.is_end(); ++it) {
+        CHECK(it != it.end());
+        ++count;
+      }
+      CHECK(it == it.end());
+      return count;
+    };
+    std::vector<std::string> values = {"a", "b", "a"};
+    std::vector<std::string> empty;
+    const auto is_a = [](const std::string& v) { return v == "a"; };
+    const auto is_z = [](const std::string& v) { return v == "z"; };
+
+    CHECK(check(it_ref_t{values}) == 3);
+    CHECK(check(it_ref_local_t{values}) == 3);
+    CHECK(check(it_const_ref_t{values}) == 3);
+    CHECK(check(it_ref_t{empty}) == 0);
+    CHECK(check(it_ref_t{}) == 0);
+    CHECK(check(it_ref_local_t{}) == 0);
+
+    CHECK(check(it_filter_ref{values, is_a}) == 2);
+    CHECK(check(it_filter_ref_local_t{values, is_a}) == 2);
+    CHECK(check(it_filter_ref{values, is_z}) == 0);
+    CHECK(check(it_filter_ref{values}) == 3);
+    CHECK(check(it_filter_ref{empty, is_a}) == 0);
+    CHECK(check(it_filter_ref{}) == 0);
+
+    it_ref_local_t local{values};
+    local += 3;
+    CHECK(local.is_end());
+    --local;
+    CHECK_FALSE(local.is_end());
+  }
+
   SECTION("Conversion") {
     it_ref_t bars = foo.get_bar();
     bars += 2;

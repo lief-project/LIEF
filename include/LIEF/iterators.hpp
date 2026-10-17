@@ -316,6 +316,10 @@ class ref_iterator {
     return end();
   }
 
+  bool is_end() const {
+    return distance_ == difference_type(size());
+  }
+
   bool operator==(const ref_iterator& other) const {
     // If the current iterator borrows the container we assert the equality
     // on the **address** of the container.
@@ -532,6 +536,10 @@ class filter_iterator {
 
   filter_iterator cend() const {
     return end();
+  }
+
+  bool is_end() const {
+    return distance_ == difference_type(container_size());
   }
 
   std::enable_if_t<!std::is_const_v<ref_t>, remove_const_t<ref_t>> operator*() {

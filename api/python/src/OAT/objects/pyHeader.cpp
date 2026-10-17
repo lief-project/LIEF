@@ -64,10 +64,12 @@ void create<Header>(nb::module_& m) {
 
     .def("__next__",
         [] (Header::it_key_values_t& v) {
-          if (v == std::end(v)) {
+          if (v.is_end()) {
             throw nb::stop_iteration();
           }
-          return *(v++);
+          auto value = *v;
+          ++v;
+          return value;
 
     }, nb::rv_policy::reference_internal);
 

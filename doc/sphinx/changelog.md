@@ -124,6 +124,8 @@
 :Python:
 
   * Python 3.9 is no longer supported. nanobind 3 requires Python 3.10 or newer.
+  * Fix the quadratic complexity of the iterators that own their container. This
+    results in performance improvement.
 ```
 
 ## 1.0.0 - July 12th, 2026
