@@ -7,6 +7,8 @@ import lief
 import pytest
 from utils import address_space_limiter, get_sample, parse_elf
 
+CWD = Path(__file__).parent
+
 
 def test_symbols():
     target = parse_elf("ELF/ELF32_x86_library_libshellx.so")
@@ -66,3 +68,56 @@ def test_gnu_hash_zero():
         assert gh.check_bucket(0) is False;
         assert gh.check_bloom_filter(0) is False""")
     subprocess.check_call([sys.executable, "-c", script], timeout=10.0)
+
+
+def test_section_segment_links():
+    elf = lief.ELF.parse(CWD / "hello_lief.bin")
+    assert elf is not None
+    assert sum(len(section.segments) for section in elf.sections) == 11
+
+    dynamic = elf.get_section(".dynamic")
+    assert dynamic is not None
+    assert [segment.type for segment in dynamic.segments] == [
+        lief.ELF.Segment.TYPE.LOAD,
+        lief.ELF.Segment.TYPE.DYNAMIC,
+        lief.ELF.Segment.TYPE.GNU_RELRO,
+    ]
+
+    pt_load = elf.segments[0]
+    assert [section.name for section in pt_load.sections] == [
+        ".hash",
+        ".dynsym",
+        ".dynstr",
+        ".text",
+        ".rodata",
+        ".eh_frame_hdr",
+        ".eh_frame",
+    ]
+
+
+@pytest.mark.private
+@pytest.mark.linux
+def test_section_segment_links_capped():
+    nb_sections = 0xFFFF
+    nb_segments = 10_000
+
+    fixture = Path(get_sample("private/ELF/section_segment_links.elf")).absolute()
+
+    code = dedent(f"""\
+    import lief
+    import sys
+    lief.logging.disable()
+    elf = lief.ELF.parse(sys.argv[1])
+    assert elf is not None
+    assert len(elf.sections) == {nb_sections}
+    assert len(elf.segments) == {nb_segments}
+    nb_links = sum(len(segment.sections) for segment in elf.segments)
+    assert nb_links == 1_000_000, nb_links
+    assert nb_links == sum(len(section.segments) for section in elf.sections)
+    """)
+
+    subprocess.check_call(
+        [sys.executable, "-c", code, str(fixture)],
+        timeout=60.0,
+        preexec_fn=address_space_limiter(),
+    )
