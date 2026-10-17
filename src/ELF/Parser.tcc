@@ -1037,14 +1037,26 @@ ok_error_t Parser::parse_segments() {
                                     segment->physical_size(),
                                     DataHandler::Node::SEGMENT);
     }
-
-    for (std::unique_ptr<Section>& section : binary_->sections_) {
-      if (check_section_in_segment(*section, *segment.get())) {
-        section->segments_.push_back(segment.get());
-        segment->sections_.push_back(section.get());
-      }
-    }
     binary_->segments_.push_back(std::move(segment));
+  }
+
+  uint32_t nb_links = 0;
+  for (std::unique_ptr<Segment>& segment : binary_->segments_) {
+    for (std::unique_ptr<Section>& section : binary_->sections_) {
+      if (!check_section_in_segment(*section, *segment)) {
+        continue;
+      }
+
+      if (nb_links == NB_MAX_SECTION_SEGMENT_LINKS) {
+        LIEF_WARN("The number of section-segment links exceeds the limit ({}).",
+                  NB_MAX_SECTION_SEGMENT_LINKS);
+        return ok();
+      }
+
+      ++nb_links;
+      section->segments_.push_back(segment.get());
+      segment->sections_.push_back(section.get());
+    }
   }
   return ok();
 }

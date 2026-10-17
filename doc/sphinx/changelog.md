@@ -48,6 +48,9 @@
   * Add |lief-elf-header-is_mips_n64| to check whether a binary uses this
     encoding.
   * |lief-elf-relocation-resolve| now supports ``R_MIPS_REL32``.
+  * Bound the number of links between the |lief-elf-section| and
+    |lief-elf-segment| objects created by the parser. Issue found by :zhangyan8216:
+    in advisory ``GHSA-r5x5-7225-g759``
 
 :COFF:
 
