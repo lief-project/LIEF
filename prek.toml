@@ -218,7 +218,9 @@ hooks = [
       glob = [
         "src/**/*.cpp",
         "include/**/*.hpp",
-        "src/**/*.hpp"
+        "src/**/*.hpp",
+        "modules/**/*.cpp",
+        "modules/**/*.hpp",
       ]
     },
     stages = ["pre-commit"],
