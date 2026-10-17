@@ -126,6 +126,7 @@ pub mod ffi {
         fn set_interpreter(self: Pin<&mut ELF_Binary>, name: &CxxString);
         fn get_relocated_dynamic_array(self: &ELF_Binary, tag: u64) -> UniquePtr<CxxVector<u64>>;
         fn is_targeting_android(self: &ELF_Binary) -> bool;
+        fn is_symbolic(self: &ELF_Binary) -> bool;
         fn add_library(
             self: Pin<&mut ELF_Binary>,
             library: &CxxString,

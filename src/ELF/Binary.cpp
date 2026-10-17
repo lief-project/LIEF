@@ -3610,6 +3610,22 @@ bool Binary::remove_version_requirement(std::string_view libname) {
   return true;
 }
 
+bool Binary::is_symbolic() const {
+  if (has(DynamicEntry::TAG::SYMBOLIC)) {
+    return true;
+  }
+
+  const DynamicEntry* entry = get(DynamicEntry::TAG::FLAGS);
+  if (entry == nullptr) {
+    return false;
+  }
+
+  const auto* flags = entry->cast<DynamicEntryFlags>();
+
+  return flags != nullptr && flags->has(DynamicEntryFlags::FLAG::SYMBOLIC);
+}
+
+
 std::ostream& Binary::print(std::ostream& os) const {
   os << "Header {\n" << indent(LIEF::to_string(header()), 2) << "}\n";
 

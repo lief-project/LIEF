@@ -810,6 +810,9 @@ void create<Binary>(nb::module_& m) {
       R"doc(True if the current binary is targeting Android)doc"_doc
     )
 
+    .def_prop_ro("is_symbolic", &Binary::is_symbolic,
+        "True if the binary is flagged with ``DT_SYMBOLIC`` or ``DF_SYMBOLIC``"_doc)
+
     .def("get_section_idx", [] (const Binary& self, const Section& sec) {
         return error_or(
          nb::overload_cast<const Section&>(&Binary::get_section_idx, nb::const_),

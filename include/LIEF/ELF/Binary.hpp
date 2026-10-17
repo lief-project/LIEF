@@ -1092,6 +1092,9 @@ class LIEF_API Binary : public LIEF::Binary {
 
   uint64_t layout_pagesize() const;
 
+  /// Check if the binary is flagged with `DT_SYMBOLIC` or `DF_SYMBOLIC`
+  bool is_symbolic() const;
+
   static bool classof(const LIEF::Binary* bin) {
     return bin->format() == Binary::FORMATS::ELF ||
            bin->format() == Binary::FORMATS::OAT;

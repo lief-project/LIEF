@@ -527,6 +527,10 @@ class ELF_Binary : public AbstractBinary {
     return impl().is_targeting_android();
   }
 
+  auto is_symbolic() const {
+    return impl().is_symbolic();
+  }
+
   auto add_library(const std::string& library) {
     return std::make_unique<ELF_DynamicEntryLibrary>(impl().add_library(library));
   }

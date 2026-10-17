@@ -400,6 +400,11 @@ impl Binary {
         self.ptr.is_targeting_android()
     }
 
+    /// True if the binary is flagged with `DT_SYMBOLIC` or `DF_SYMBOLIC`
+    pub fn is_symbolic(&self) -> bool {
+        self.ptr.is_symbolic()
+    }
+
     /// Get the integer value at the given virtual address
     pub fn get_int_from_virtual_address<T>(&self, addr: u64) -> Result<T, Error>
     where

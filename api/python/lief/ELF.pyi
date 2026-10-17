@@ -874,6 +874,9 @@ class Binary(lief.Binary):
     @property
     def is_targeting_android(self) -> bool: ...
 
+    @property
+    def is_symbolic(self) -> bool: ...
+
     @overload
     def get_section_idx(self, arg: Section, /) -> Union[int, lief.lief_errors]: ...
 
