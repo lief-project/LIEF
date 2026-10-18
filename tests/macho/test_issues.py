@@ -473,3 +473,37 @@ def test_add_section_corrupted_file_size(tmp_path: Path, file_size: int):
         timeout=30.0,
         preexec_fn=address_space_limiter(),
     )
+
+
+@pytest.mark.private
+@pytest.mark.parametrize(
+    "filename, cmdsize",
+    [
+        ("short_note.macho", 8),
+        ("short_encryption_info.macho", 8),
+        ("short_encryption_info_16.macho", 16),
+        ("short_encryption_info_64.macho", 8),
+    ],
+)
+def test_write_short_command(filename: str, cmdsize: int):
+    """GHSA-fffv-j425-2cv8 & GHSA-wg4r-8h56-6w6r"""
+
+    sample = get_sample(f"private/MachO/{filename}")
+    raw = Path(sample).read_bytes()
+
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-c",
+            dedent(f"""\
+            import lief
+            import sys
+            fat = lief.MachO.parse(sys.argv[1])
+            macho = fat.at(0)
+            assert macho.commands[0].size == {cmdsize}
+            output = macho.write_to_bytes()
+            assert output[32:32 + {cmdsize}] == {raw[32 : 32 + cmdsize]!r}"""),
+            str(sample),
+        ],
+        timeout=30.0,
+    )

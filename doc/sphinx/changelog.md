@@ -81,6 +81,9 @@
   * Fix an out-of-bounds write and an uncontrolled allocation in
     |lief-macho-segmentcommand-add_section| when the ``filesize`` of the
     segment is corrupted (advisory ``GHSA-4qm2-44wq-hwxw``)
+  * Fix a heap overflow when writing a |lief-macho-note-command| or a
+    |lief-macho-encryptioninfo| command whose ``cmdsize`` is smaller than its
+    structure (advisories ``GHSA-fffv-j425-2cv8`` and ``GHSA-wg4r-8h56-6w6r``)
 
 :Runtime:
 

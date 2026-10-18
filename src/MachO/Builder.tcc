@@ -528,6 +528,12 @@ ok_error_t Builder::build(NoteCommand& note) {
   LIEF_DEBUG("Build '{}'", to_string(note.command()));
   details::note_command raw_cmd{};
 
+  if (note.original_data_.size() < sizeof(raw_cmd)) {
+    LIEF_WARN("Original data size mismatch for '{}', skipping",
+              to_string(note.command()));
+    return make_error_code(lief_errors::build_error);
+  }
+
   raw_cmd.cmd = static_cast<uint32_t>(note.command());
   raw_cmd.cmdsize = uint32_t{note.size()};
 
@@ -1227,6 +1233,12 @@ ok_error_t Builder::build(ThreadCommand& tc) {
 template<class T>
 ok_error_t Builder::build(EncryptionInfo& info) {
   details::encryption_info_command raw_cmd{};
+
+  if (info.original_data_.size() < sizeof(raw_cmd)) {
+    LIEF_WARN("Original data size mismatch for '{}', skipping",
+              to_string(info.command()));
+    return make_error_code(lief_errors::build_error);
+  }
 
   raw_cmd.cmd = static_cast<uint32_t>(info.command());
   raw_cmd.cmdsize = info.size();
