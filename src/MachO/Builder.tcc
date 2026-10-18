@@ -1258,6 +1258,8 @@ ok_error_t Builder::build(EncryptionInfo& info) {
 
 template<typename T>
 ok_error_t Builder::update_fixups(DyldChainedFixups& command) {
+  static constexpr auto PTR32_REBASE = RelocationFixup::REBASE_TYPES::PTR32_REBASE;
+
   for (const auto& seg_info : command.chained_starts_in_segments()) {
     for (const std::unique_ptr<Relocation>& reloc : seg_info.segment.relocations_)
     {
@@ -1279,6 +1281,15 @@ ok_error_t Builder::update_fixups(DyldChainedFixups& command) {
       }
 
       const uint64_t rel_offset = fixup.offset_ - seg_off;
+      const size_t ptr_size =
+          fixup.rtypes_ == PTR32_REBASE ? sizeof(uint32_t) : sizeof(uint64_t);
+
+      if (rel_offset + ptr_size > sdata.size()) {
+        LIEF_WARN("Fixup at {:#08x} is located after the segment '{}'",
+                  fixup.offset_, seg_info.segment.name());
+        continue;
+      }
+
       switch (fixup.rtypes_) {
         case RelocationFixup::REBASE_TYPES::ARM64E_AUTH_REBASE:
         {
@@ -1354,6 +1365,7 @@ ok_error_t Builder::update_fixups(DyldChainedFixups& command) {
 
 template<typename T>
 ok_error_t Builder::build(DyldChainedFixups& fixups) {
+  static constexpr auto PTR32_BIND = ChainedBindingInfo::BIND_TYPES::PTR32_BIND;
   using pin_t = typename T::uint;
   /*
    * Note(romain): Most of the logic that constructs this command
@@ -1558,7 +1570,18 @@ ok_error_t Builder::build(DyldChainedFixups& fixups) {
       }
 
       const uint64_t rel_offset = binding->offset_ - seg_offset;
-      uint8_t* data_ptr = binding->segment_->content().data() + rel_offset;
+      const size_t ptr_size =
+          binding->btypes_ == PTR32_BIND ? sizeof(uint32_t) : sizeof(uint64_t);
+
+      span<uint8_t> content = binding->segment_->content();
+
+      if (rel_offset + ptr_size > content.size()) {
+        LIEF_WARN("Binding at {:#08x} is located after the segment '{}'",
+                  binding->offset_, binding->segment_->name());
+        continue;
+      }
+
+      uint8_t* data_ptr = content.data() + rel_offset;
       LIEF_DEBUG(
           "Write binding (offset={:#012x}): {:#018x} {} in {} offset={:#012x}",
           binding->offset_, binding->address(), binding->symbol()->name(),

@@ -507,3 +507,31 @@ def test_write_short_command(filename: str, cmdsize: int):
         ],
         timeout=30.0,
     )
+
+
+@pytest.mark.private
+def test_write_chained_fixups_after_segment(tmp_path: Path):
+    """GHSA-j95m-2f67-5r3h"""
+
+    sample = get_sample("private/MachO/chained_fixups_after_segment.macho")
+    output = tmp_path / "output.macho"
+
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-c",
+            dedent("""\
+            import lief
+            import sys
+            fat = lief.MachO.parse(sys.argv[1])
+            macho = fat.at(0)
+            data = macho.get_segment("__DATA")
+            assert len(data.content) == 0x10
+            assert len(data.relocations) == 5
+            macho.write(sys.argv[2])
+            assert lief.MachO.parse(sys.argv[2]) is not None"""),
+            str(sample),
+            str(output),
+        ],
+        timeout=30.0,
+    )

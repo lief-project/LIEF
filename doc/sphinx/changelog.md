@@ -84,6 +84,8 @@
   * Fix a heap overflow when writing a |lief-macho-note-command| or a
     |lief-macho-encryptioninfo| command whose ``cmdsize`` is smaller than its
     structure (advisories ``GHSA-fffv-j425-2cv8`` and ``GHSA-wg4r-8h56-6w6r``)
+  * Fix a heap overflow when writing a binary with chained fixups located after
+    the content of their segment (advisory ``GHSA-j95m-2f67-5r3h``)
 
 :Runtime:
 
