@@ -1,3 +1,4 @@
+import struct
 import subprocess
 import sys
 from pathlib import Path
@@ -432,3 +433,43 @@ def test_va_out_of_segment():
     # a valid address still returns data, truncated to what is available
     valid = segment.virtual_address + len(segment.content) - 4
     assert len(macho.get_content_from_virtual_address(valid, 16)) == 4
+
+
+@pytest.mark.parametrize("file_size", [0xFFFFFFFFFFFFFFF0, 0x40000000000])
+@pytest.mark.linux
+def test_add_section_corrupted_file_size(tmp_path: Path, file_size: int):
+    """See: GHSA-4qm2-44wq-hwxw"""
+    macho = parse_macho("MachO/MachO64_x86-64_binary_id.bin").at(0)
+    assert macho is not None
+    linkedit = macho.get_segment("__LINKEDIT")
+    assert linkedit is not None
+
+    raw = bytearray(Path(get_sample("MachO/MachO64_x86-64_binary_id.bin")).read_bytes())
+
+    # Change LC_SEGMENT_64.filesize
+    struct.pack_into("<Q", raw, linkedit.command_offset + 48, file_size)
+
+    corrupted = tmp_path / "corrupted.macho"
+    corrupted.write_bytes(raw)
+
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-c",
+            dedent(f"""\
+            import lief
+            import sys
+            fat = lief.MachO.parse(sys.argv[1])
+            linkedit = fat.at(0).get_segment("__LINKEDIT")
+            assert linkedit.file_size == {file_size}
+            assert len(linkedit.content) == 0
+            section = lief.MachO.Section.create("__lief", [0x41] * 16)
+            added = linkedit.add_section(section)
+            assert added.offset == linkedit.file_offset
+            assert linkedit.file_size == 16
+            assert bytes(linkedit.content) == b"A" * 16"""),
+            str(corrupted),
+        ],
+        timeout=30.0,
+        preexec_fn=address_space_limiter(),
+    )

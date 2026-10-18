@@ -553,6 +553,11 @@
     :py:meth:`lief.MachO.Binary.virtual_address_to_offset`
     :cpp:func:`LIEF::MachO::Binary::virtual_address_to_offset`
 
+.. |lief-macho-segmentcommand-add_section| lief-api:: lief.MachO.SegmentCommand.add_section()
+
+    :py:meth:`lief.MachO.SegmentCommand.add_section`
+    :cpp:func:`LIEF::MachO::SegmentCommand::add_section`
+
 .. |lief-pe-binary-write_to_bytes| lief-api:: lief.PE.Binary.write_to_bytes()
 
     :rust:method:`lief::pe::Binary::write_to_bytes [struct]`

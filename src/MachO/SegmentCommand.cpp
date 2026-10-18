@@ -142,15 +142,13 @@ Section& SegmentCommand::add_section(const Section& section) {
 
   new_section->size(section.content().size());
 
-  new_section->offset(file_offset() + file_size());
+  const size_t relative_offset = data_.size();
+  new_section->offset(file_offset() + relative_offset);
 
   if (section.virtual_address() == 0) {
     new_section->virtual_address(virtual_address() + new_section->offset());
   }
 
-  file_size(file_size() + new_section->size());
-
-  const size_t relative_offset = new_section->offset() - file_offset();
   span<const uint8_t> content = section.content();
 
   update_data([](std::vector<uint8_t>& inner_data, size_t w,

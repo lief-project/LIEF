@@ -76,6 +76,12 @@
     characters outside the Basic Multilingual Plane, such as emoji, were
     silently dropped.
 
+:MachO:
+
+  * Fix an out-of-bounds write and an uncontrolled allocation in
+    |lief-macho-segmentcommand-add_section| when the ``filesize`` of the
+    segment is corrupted (advisory ``GHSA-4qm2-44wq-hwxw``)
+
 :Runtime:
 
   * Add |lief-runtime-memory-mmap_hint| to allocate memory close to a given
