@@ -535,3 +535,28 @@ def test_write_chained_fixups_after_segment(tmp_path: Path):
         ],
         timeout=30.0,
     )
+
+
+def test_relocations_iterator_lifetime():
+    """GHSA-mcxr-6hpf-2w2q"""
+    sample = get_sample("MachO/MachO64_x86-64_binary_id.bin")
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-c",
+            dedent("""\
+            import lief
+            import sys
+            macho = lief.MachO.parse(sys.argv[1]).at(0)
+            expected = [r.address for r in macho.relocations]
+            assert len(expected) == 26
+            relocations = iter(macho.relocations)
+            first = next(relocations)
+            # Must not free the relocations referenced by the first iterator
+            assert len(macho.relocations) == 26
+            addresses = [first.address] + [r.address for r in relocations]
+            assert addresses == expected"""),
+            str(sample),
+        ],
+        timeout=30.0,
+    )

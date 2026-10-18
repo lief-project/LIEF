@@ -1158,6 +1158,12 @@
     :py:attr:`lief.MachO.Binary.bindings`
     :cpp:func:`LIEF::MachO::Binary::bindings`
 
+.. |lief-macho-binary-relocations| lief-api:: lief.MachO.Binary.relocations()
+
+    :rust:method:`lief::macho::Binary::relocations [struct]`
+    :py:attr:`lief.MachO.Binary.relocations`
+    :cpp:func:`LIEF::MachO::Binary::relocations`
+
 .. |lief-macho-symbol-demangled_name| lief-api:: lief.MachO.Symbol.demangled_name()
 
     :rust:method:`lief::macho::Symbol::demangled_name [struct]`

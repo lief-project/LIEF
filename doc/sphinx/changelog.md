@@ -88,6 +88,9 @@
     structure (advisories ``GHSA-fffv-j425-2cv8`` and ``GHSA-wg4r-8h56-6w6r``)
   * Fix a heap overflow when writing a binary with chained fixups located after
     the content of their segment (advisory ``GHSA-j95m-2f67-5r3h``)
+  * Fix a use-after-free when |lief-macho-binary-relocations| is called while
+    the iterator returned by a previous call is still in use (advisory
+    ``GHSA-mcxr-6hpf-2w2q``)
 
 :Runtime:
 

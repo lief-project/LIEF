@@ -269,7 +269,9 @@ Binary::it_const_relocations Binary::relocations() const {
 
   {
     std::scoped_lock lock(mu_);
-    relocations_ = std::move(result);
+    if (relocations_ != result) {
+      relocations_ = std::move(result);
+    }
   }
   return relocations_;
 }
