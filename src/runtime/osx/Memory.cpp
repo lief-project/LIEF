@@ -199,7 +199,8 @@ ok_error_t Memory::mprotect(Memory::Chunk& C, uint32_t flags) {
 Memory::Chunk& Memory::Chunk::cache_flush() {
   const uintptr_t pstart = page_start();
   const uintptr_t pend = page_end();
-  __builtin___clear_cache((char*)pstart, (char*)pend);
+  __builtin___clear_cache(reinterpret_cast<char*>(pstart),
+                          reinterpret_cast<char*>(pend));
   return *this;
 }
 

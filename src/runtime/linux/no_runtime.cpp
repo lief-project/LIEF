@@ -18,11 +18,9 @@
 #include "LIEF/runtime/linux/Module.hpp"
 #include "LIEF/runtime/linux/Process.hpp"
 
-namespace LIEF::runtime {
-namespace details {
+namespace LIEF::runtime::details {
 class ModuleIt {};
 class Module {};
-}
 }
 
 namespace LIEF::runtime::Linux {

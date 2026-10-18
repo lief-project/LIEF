@@ -226,11 +226,12 @@ class LIEF_API BinaryStream {
     }
     // Even though offset + size < ... => offset < ...
     // the addition could overflow so it's worth checking both
-    const bool read_ok = pos_ <= size() &&
-                         (pos_ + N) <= size()
+    const uint64_t offset = pos_;
+    const bool read_ok = offset <= size() &&
+                         (offset + N) <= size()
                          /* Check for an overflow */
-                         && (int64_t(pos_) >= 0 && int64_t(N) >= 0) &&
-                         (int64_t(pos_ + N) >= 0);
+                         && (int64_t(offset) >= 0 && int64_t(N) >= 0) &&
+                         (int64_t(offset + N) >= 0);
 
     if (!read_ok) {
       return make_error_code(lief_errors::read_error);

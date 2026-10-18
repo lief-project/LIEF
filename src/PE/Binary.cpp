@@ -683,6 +683,7 @@ uint32_t Binary::compute_checksum() const {
                  [](const std::unique_ptr<Section>& s) { return s.get(); });
 
   // Sort by file offset
+  // NOLINTNEXTLINE
   std::sort(sections.begin(), sections.end(),
             [](const Section* lhs, const Section* rhs) {
               return lhs->pointerto_raw_data() < rhs->pointerto_raw_data();
@@ -831,6 +832,7 @@ std::vector<uint8_t> Binary::authentihash(ALGORITHMS algo) const {
                  [](const std::unique_ptr<Section>& s) { return s.get(); });
 
   // Sort by file offset
+  // NOLINTNEXTLINE
   std::sort(sections.begin(), sections.end(),
             [](const Section* lhs, const Section* rhs) {
               return lhs->pointerto_raw_data() < rhs->pointerto_raw_data();

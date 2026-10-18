@@ -1047,6 +1047,7 @@ ok_error_t Builder::build_exports() {
                  std::back_inserter(entries),
                  [](std::unique_ptr<ExportEntry>& E) { return E.get(); });
 
+  // NOLINTNEXTLINE
   std::stable_sort(entries.begin(), entries.end(),
                    [](const ExportEntry* lhs, const ExportEntry* rhs) {
                      return lhs->name() < rhs->name();

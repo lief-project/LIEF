@@ -978,6 +978,7 @@ bool LayoutChecker::check_section_contiguity() {
       return true;
     }
 
+    // NOLINTNEXTLINE
     std::sort(sections_vec.begin(), sections_vec.end(),
               [](const Section* LHS, const Section* RHS) {
                 return LHS->offset() < RHS->offset();

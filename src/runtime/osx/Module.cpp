@@ -39,12 +39,6 @@
 
 #include "logging.hpp"
 
-extern "C" kern_return_t mach_vm_read_overwrite(vm_map_read_t target_task,
-                                                mach_vm_address_t address,
-                                                mach_vm_size_t size,
-                                                mach_vm_address_t data,
-                                                mach_vm_size_t* outsize);
-
 namespace LIEF::runtime {
 
 namespace details {
@@ -160,52 +154,6 @@ struct DyldImageInfo64 {
 using cbk = bool (*)(const module_info_t*, void* data);
 
 
-uint8_t* darwin_read(mach_port_t task, uintptr_t address, size_t len,
-                     size_t* n_bytes_read) {
-  size_t page_size = getpagesize();
-  uint8_t* result;
-  size_t offset;
-  [[maybe_unused]] mach_port_t self;
-  kern_return_t kr;
-
-  result = (uint8_t*)malloc(len);
-  offset = 0;
-
-  self = mach_task_self();
-
-  while (offset != len) {
-    uintptr_t chunk_address, page_address;
-    size_t chunk_size, page_offset;
-
-    chunk_address = address + offset;
-    page_address = chunk_address & ~(uintptr_t)(page_size - 1);
-    page_offset = chunk_address - page_address;
-    chunk_size = std::min<uintptr_t>(len - offset, page_size - page_offset);
-
-    mach_vm_size_t n_bytes_read;
-
-    /* mach_vm_read corrupts memory on iOS */
-    kr = mach_vm_read_overwrite(task, chunk_address, chunk_size,
-                                (vm_address_t)(result + offset), &n_bytes_read);
-    if (kr != KERN_SUCCESS) {
-      break;
-    }
-
-    offset += chunk_size;
-  }
-
-  if (offset == 0) {
-    free(result);
-    result = NULL;
-  }
-
-  if (n_bytes_read != NULL) {
-    *n_bytes_read = offset;
-  }
-
-  return result;
-}
-
 // Segment addresses exclude the ASLR slide: __TEXT, which maps the header,
 // starts at `load_address` once loaded. Executables place it after __PAGEZERO
 // (e.g. at 0x100000000), and dyld shared cache images at their cache address.
@@ -239,14 +187,14 @@ void enumerate_modules(mach_port_t task, F&& func) {
   static constexpr size_t DYLD_IMAGE_INFO_64_SIZE = 24;
 
   uint32_t count = 0;
-  kern_return_t kr;
-  task_dyld_info info;
-  [[maybe_unused]] size_t info_array_count, info_array_size;
-  uintptr_t info_array_address, dyld_image_load_address;
-  [[maybe_unused]] void* header_data_end = NULL;
-  const uint32_t header_data_initial_size = 4096;
+  kern_return_t kr = KERN_SUCCESS;
+  task_dyld_info info{};
+  size_t info_array_count = 0;
+  [[maybe_unused]] size_t info_array_size = 0;
+  uintptr_t info_array_address = 0;
+  uintptr_t dyld_image_load_address = 0;
   bool carry_on = true;
-  DyldInfo info_raw;
+  DyldInfo info_raw{};
   count = DYLD_INFO_COUNT;
 
   kr = task_info(task, TASK_DYLD_INFO, reinterpret_cast<task_info_t>(&info_raw),
@@ -285,10 +233,9 @@ void enumerate_modules(mach_port_t task, F&& func) {
   }
 
   if (info.all_image_info_format == TASK_DYLD_ALL_IMAGE_INFO_64) {
-    DyldAllImageInfos64* all_info;
-
-    all_info = (DyldAllImageInfos64*)info.all_image_info_addr;
-    if (all_info == NULL) {
+    const auto* all_info =
+        reinterpret_cast<const DyldAllImageInfos64*>(info.all_image_info_addr);
+    if (all_info == nullptr) {
       return;
     }
 
@@ -298,10 +245,9 @@ void enumerate_modules(mach_port_t task, F&& func) {
     dyld_image_load_address = all_info->dyld_image_load_address;
 
   } else {
-    DyldAllImageInfos32* all_info;
-
-    all_info = (DyldAllImageInfos32*)info.all_image_info_addr;
-    if (all_info == NULL) {
+    const auto* all_info =
+        reinterpret_cast<const DyldAllImageInfos32*>(info.all_image_info_addr);
+    if (all_info == nullptr) {
       return;
     }
 
@@ -321,7 +267,7 @@ void enumerate_modules(mach_port_t task, F&& func) {
     module_info_t details;
 
     if (i != info_array_count) {
-      uintptr_t file_path_address;
+      uintptr_t file_path_address = 0;
 
       if (info.all_image_info_format == TASK_DYLD_ALL_IMAGE_INFO_64) {
         const auto* info = reinterpret_cast<const DyldImageInfo64*>(
@@ -351,8 +297,6 @@ void enumerate_modules(mach_port_t task, F&& func) {
 
       module_path = "/usr/lib/dyld";
     }
-
-    header_data_end = (void*)(load_address + header_data_initial_size);
 
     carry_on = func(load_address, image_end(load_address), module_path);
   }
