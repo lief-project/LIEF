@@ -6,6 +6,9 @@ on:
     tags-ignore:
       - '**'
 
+permissions:
+  contents: read
+
 env:
   python-test-version: '3.13'
 
@@ -13,28 +16,23 @@ jobs:
   osx-sdk:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Install system dependencies
         run: |
           brew install cmake ninja ccache
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
-        shell: bash
       - name: Setup cache dir
         shell: bash
         run: |
           mkdir -p $RUNNER_TEMP/.ccache
       - name: ccache cache files
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/.ccache
-          key: osx-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
+          key: osx-${{ runner.os }}-sdk-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-              osx-${{ runner.os }}-sdk
+              osx-${{ runner.os }}-sdk-
       - name: Build SDK
         shell: bash
         env:
@@ -66,34 +64,29 @@ jobs:
           retention-days: 1
   osx-testing:
     runs-on: macos-latest
-    if: "!contains(github.event.commits[0].message, '[skip-test]')"
+    if: "!contains(github.event.head_commit.message, '[skip-test]')"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Set up Python ${{ env.python-test-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.python-test-version }}
       - name: Install system dependencies
         run: |
           brew install cmake ninja ccache
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
-        shell: bash
       - name: Setup cache dir
         shell: bash
         run: |
           mkdir -p $RUNNER_TEMP/.ccache
       - name: ccache cache files
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/.ccache
-          key: osx-${{ runner.os }}-test-${{ steps.get-date.outputs.date }}
+          key: osx-${{ runner.os }}-test-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-              osx-${{ runner.os }}-test
+              osx-${{ runner.os }}-test-
       - name: Upgrade pip
         shell: bash
         run: |
@@ -137,33 +130,28 @@ jobs:
         arch: ['x64', 'arm64']
       fail-fast: false
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install system dependencies
         run: |
           brew install cmake ninja ccache
           python -m pip install --upgrade pip
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
-        shell: bash
       - name: Setup cache dir
         shell: bash
         run: |
           mkdir -p $RUNNER_TEMP/.ccache
       - name: ccache cache files
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ runner.temp }}/.ccache
-          key: osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
+          key: osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-              osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}
+              osx-${{ runner.os }}-${{ matrix.arch }}-${{ matrix.python-version }}-
       - name: Download LIEF install dir
         uses: actions/download-artifact@v8
         with:
@@ -190,10 +178,10 @@ jobs:
           retention-days: 3
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ !cancelled() }}
     needs: [wheels]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Download artifacts

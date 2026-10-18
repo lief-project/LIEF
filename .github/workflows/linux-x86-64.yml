@@ -6,6 +6,9 @@ on:
     tags-ignore:
       - '**'
 
+permissions:
+  contents: read
+
 jobs:
   linux-sdk:
     runs-on: ubuntu-latest
@@ -19,30 +22,22 @@ jobs:
         BUILD_DIR_STATIC: "/tmp/build/linux-x86-64/static-release"
         BUILD_DIR_SHARED: "/tmp/build/linux-x86-64/shared-release"
         CLICOLOR_FORCE: "1"
-        ACTIONS_RUNTIME_URL: "${{ env.ACTIONS_RUNTIME_URL }}"
-        ACTIONS_RUNTIME_TOKEN: "${{ env.ACTIONS_RUNTIME_TOKEN }}"
-        ACTIONS_CACHE_URL: "${{ env.ACTIONS_CACHE_URL }}"
       options: --user 1001:1001
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
-        shell: bash
       - name: Prepare ccache
         shell: bash
         run: |
           mkdir -p /home/pylief/.ccache/tmp
       - name: ccache cache files
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: /home/pylief/.ccache
-          key: linux-x86-64-${{ runner.os }}-sdk-${{ steps.get-date.outputs.date }}
+          key: linux-x86-64-${{ runner.os }}-sdk-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-              linux-x86-64-${{ runner.os }}-sdk
+              linux-x86-64-${{ runner.os }}-sdk-
       - name: CMake - Static
         shell: bash
         run: |
@@ -88,11 +83,12 @@ jobs:
           path: /install
           retention-days: 1
   testing:
-    if: "!contains(github.event.commits[0].message, '[skip-test]')"
+    if: "!contains(github.event.head_commit.message, '[skip-test]')"
     runs-on: ubuntu-latest
     container:
       image: liefproject/manylinux_2_28_x86_64
       env:
+        CCACHE_DIR: "/home/pylief/.ccache"
         PYTHON_BINARY: "/opt/python/cp312-cp312/bin/python3.12"
         LIEF_SAMPLES_DIR: "/tmp/samples"
         LIEF_BUILD_DIR: "/tmp/lief-build"
@@ -101,21 +97,16 @@ jobs:
         PYTEST_ADDOPTS: "--color=yes"
       options: --user 1001:1001
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
-        shell: bash
       - name: ccache cache files
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
-          path: ~/.ccache
-          key: linux-x86-64-${{ runner.os }}-test-${{ steps.get-date.outputs.date }}
+          path: /home/pylief/.ccache
+          key: linux-x86-64-${{ runner.os }}-test-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-              linux-x86-64-${{ runner.os }}-test
+              linux-x86-64-${{ runner.os }}-test-
       - name: Prepare Python virtual env
         shell: bash
         run: |
@@ -185,33 +176,26 @@ jobs:
         CLICOLOR_FORCE: "1"
         FORCE_COLOR: "1"
         LIEF_BUILD_DIR: "/tmp/lief-build"
-        ACTIONS_RUNTIME_URL: "${{ env.ACTIONS_RUNTIME_URL }}"
-        ACTIONS_RUNTIME_TOKEN: "${{ env.ACTIONS_RUNTIME_TOKEN }}"
-        ACTIONS_CACHE_URL: "${{ env.ACTIONS_CACHE_URL }}"
       options: --user 1001:1001
     strategy:
       matrix:
         python-version: ['3.12', '3.13', '3.14']
+      fail-fast: false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Get Date
-        id: get-date
-        run: |
-          echo "date=$(/bin/date -u "+%Y-%m-%d-%H;%M;%S")" >> $GITHUB_OUTPUT
-        shell: bash
       - name: Prepare ccache
         shell: bash
         run: |
           mkdir -p /home/pylief/.ccache/tmp
       - name: ccache cache files
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: /home/pylief/.ccache
-          key: linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}-${{ steps.get-date.outputs.date }}
+          key: linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-              linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}
+              linux-x86-64-${{ runner.os }}-${{ matrix.python-version }}-
       - name: Download LIEF install dir
         uses: actions/download-artifact@v8
         with:
@@ -232,8 +216,8 @@ jobs:
         shell: bash
         run: |
           ls -alh $GITHUB_WORKSPACE/wheel_stage
-          find $GITHUB_WORKSPACE/wheel_stage -exec \
-               auditwheel repair -w $GITHUB_WORKSPACE/dist {} \;
+          auditwheel repair -w $GITHUB_WORKSPACE/dist \
+                     $GITHUB_WORKSPACE/wheel_stage/*.whl
           ls -alh $GITHUB_WORKSPACE/dist
       - name: 'Artifact'
         uses: actions/upload-artifact@v7
@@ -243,10 +227,10 @@ jobs:
           retention-days: 3
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ !cancelled() }}
     needs: [pywheels]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Download artifacts

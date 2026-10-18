@@ -7,12 +7,14 @@ mkdir -p build/osx-aarch64/static-release && mkdir -p build/osx-aarch64/shared-r
 # ================================================
 
 cmake -B build/osx-x86-64/shared-release -GNinja  \
+  -DCMAKE_OSX_ARCHITECTURES=x86_64                \
   -DBUILD_SHARED_LIBS=on                          \
   -DLIEF_PYTHON_API=off                           \
   -DLIEF_INSTALL_COMPILED_EXAMPLES=off            \
   -DCMAKE_BUILD_TYPE=Release
 
 cmake -B build/osx-x86-64/static-release -GNinja  \
+  -DCMAKE_OSX_ARCHITECTURES=x86_64                \
   -DBUILD_SHARED_LIBS=off                         \
   -DLIEF_PYTHON_API=off                           \
   -DLIEF_INSTALL_COMPILED_EXAMPLES=on             \

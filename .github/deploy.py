@@ -131,7 +131,8 @@ class S3Manager:
                 if 0 < maxdepth < depth:
                     logger.debug("Maximum iteration depth reached")
                 else:
-                    self.process_sdk_wheels(item, maxdepth, depth + 1, recurse)
+                    self.process_sdk_wheels(item, maxdepth, depth + 1, recurse,
+                                            skip_sdk)
             elif item.is_file():
                 extension = item.suffix
                 if extension in (".zip", ".gz") and not skip_sdk:
@@ -189,7 +190,7 @@ class GithubDeploy:
 
 
     @classmethod
-    def from_config(cls, config_file: Path):
+    def from_config(cls, config_file: Path, dry_run: bool = False):
         with open(config_file, "rb") as f:
             toml_config = tomli.load(f)
 
@@ -214,7 +215,8 @@ class GithubDeploy:
         s3_bucket = s3_config["bucket"]
         s3_endpoint = s3_config["endpoint"]
 
-        s3_manager = S3Manager(default_dir, s3_bucket, s3_region, s3_endpoint)
+        s3_manager = S3Manager(default_dir, s3_bucket, s3_region, s3_endpoint,
+                               dry_run)
         return cls(branches, main_branches, default_dir, s3_manager)
 
     @staticmethod
@@ -298,10 +300,10 @@ def main():
         config_path = DEFAULT_CONFIG
 
     if not config_path.is_file():
-        logger.error("'%s' is not a valid config path")
+        logger.error("'%s' is not a valid config path", config_path)
         sys.exit(1)
 
-    gh_deploy = GithubDeploy.from_config(config_path)
+    gh_deploy = GithubDeploy.from_config(config_path, args.dry_run)
     gh_deploy.deploy(args.directories, args.skip_sdk)
 
 if __name__ == "__main__":

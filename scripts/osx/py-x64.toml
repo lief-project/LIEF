@@ -22,3 +22,6 @@ frozen  = true
 [lief.logging]
 enabled = true
 debug   = false
+
+[lief.cross-compilation]
+osx-arch = "x86_64"

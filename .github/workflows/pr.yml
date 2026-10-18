@@ -1,6 +1,13 @@
 name: LIEF PR
 on: [pull_request, workflow_dispatch]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   python-osx-version: '3.12'
   python-win-version: '3.12'
@@ -9,11 +16,11 @@ jobs:
   osx:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+      - name: Set up Python ${{ env.python-osx-version }}
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ env.python-osx-version }}
       - name: Install system dependencies
@@ -36,7 +43,7 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Build & Test
@@ -45,17 +52,19 @@ jobs:
           PYTHON_VERSION: 312
         run: |
           docker run --rm                                       \
+           --user "$(id -u):$(id -g)"                           \
+           -e HOME=/tmp                                         \
            -e PYTHON_VERSION=$PYTHON_VERSION                    \
            -e PYTHON_BINARY=/opt/python/cp312-cp312/bin/python3.12 \
            -v $GITHUB_WORKSPACE:/src                            \
            liefproject/manylinux_2_28_x86_64                    \
            bash /src/scripts/docker/test-linux-x64
   windows:
-    runs-on: windows-latest
+    runs-on: windows-2022
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up Python ${{ env.python-win-version }}
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ env.python-win-version }}
         architecture: x64
