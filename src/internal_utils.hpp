@@ -89,12 +89,12 @@ inline std::string to_hex(const T& container, size_t maxsize = 0) {
   return out;
 }
 
-template<typename HANDLER>
+template<typename HANDLER,
+         typename MAP = std::unordered_map<std::string_view, size_t>>
 std::vector<std::string>
     optimize(const HANDLER& container,
              std::string_view (*getter)(const typename HANDLER::value_type&),
-             size_t& offset_counter,
-             std::unordered_map<std::string_view, size_t>* of_map_p = nullptr) {
+             size_t& offset_counter, MAP* of_map_p = nullptr) {
   if (container.empty()) {
     return {};
   }
@@ -163,14 +163,15 @@ std::vector<std::string>
   std::sort(string_table_optimized.begin(), string_table_optimized.end());
 
   if (of_map_p != nullptr) {
-    std::unordered_map<std::string_view, size_t>& offset_map = *of_map_p;
+    using key_t = typename MAP::key_type;
+    MAP& offset_map = *of_map_p;
     offset_map[""] = 0;
 
     for (const auto& v : string_table_optimized) {
       if (!v.empty()) {
         auto it_v = string_table.find(v);
         assert(it_v != string_table.end());
-        offset_map[*it_v] = offset_counter;
+        offset_map[key_t(*it_v)] = offset_counter;
         offset_counter += v.size() + 1;
       }
     }
@@ -180,8 +181,8 @@ std::vector<std::string>
         auto it_kv_second = string_table.find(kv.second);
         assert(it_kv_first != string_table.end() &&
                it_kv_second != string_table.end());
-        offset_map[*it_kv_first] =
-            offset_map[*it_kv_second] + (kv.second.size() - kv.first.size());
+        offset_map[key_t(*it_kv_first)] = offset_map[key_t(*it_kv_second)] +
+                                          (kv.second.size() - kv.first.size());
       }
     }
   }

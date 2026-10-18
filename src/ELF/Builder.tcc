@@ -801,8 +801,7 @@ ok_error_t Builder::build_sections() {
   vector_iostream section_headers(/*endian_swap=*/ios_.endian_swap());
   section_headers.reserve(nb_sections * sizeof(Elf_Shdr));
 
-  const std::unordered_map<std::string_view, size_t>& shstr_map =
-      layout_->shstr_map();
+  const std::unordered_map<std::string, size_t>& shstr_map = layout_->shstr_map();
   for (size_t i = 0; i < nb_sections; ++i) {
     const std::unique_ptr<Section>& section = binary_->sections_[i];
     LIEF_DEBUG("[FRAME  ] {}", section->is_frame());
@@ -823,7 +822,9 @@ ok_error_t Builder::build_sections() {
     }
 
     Elf_Off offset_name = 0;
-    if (auto it = shstr_map.find(section->name()); it != shstr_map.end()) {
+    if (auto it = shstr_map.find(std::string(section->name()));
+        it != shstr_map.end())
+    {
       offset_name = it->second;
     } else {
       LIEF_WARN("Can't find string offset for section name '{}'", section->name());
@@ -992,7 +993,7 @@ ok_error_t Builder::build_symtab_symbols() {
 
   // On recent compilers, the symtab string table is merged with the section name
   // table
-  const std::unordered_map<std::string_view, size_t>* str_map =
+  const std::unordered_map<std::string, size_t>* str_map =
       layout->is_strtab_shared_shstrtab() ? &layout->shstr_map() :
                                             &layout->strtab_map();
 
@@ -1343,7 +1344,7 @@ ok_error_t Builder::build_obj_symbols() {
 
   using Elf_Sym = typename ELF_T::Elf_Sym;
   const auto* layout = static_cast<const ObjectFileLayout*>(layout_.get());
-  const std::unordered_map<std::string_view, size_t>* str_map = nullptr;
+  const std::unordered_map<std::string, size_t>* str_map = nullptr;
 
   if (layout->is_strtab_shared_shstrtab()) {
     str_map = &layout->shstr_map();

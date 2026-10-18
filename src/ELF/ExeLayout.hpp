@@ -979,7 +979,7 @@ class LIEF_LOCAL ExeLayout : public Layout {
       }
       std::unique_ptr<Section>& string_names_section =
           binary_->sections_[hdr.section_name_table_idx()];
-      std::string_view sec_name = binary_->shstrtab_name();
+      std::string sec_name{binary_->shstrtab_name()};
       binary_->remove(*string_names_section, /* clear */ true);
       Section sec_str_section(sec_name, Section::TYPE::STRTAB);
       sec_str_section.content(std::vector<uint8_t>(raw_shstrtab_.size()));

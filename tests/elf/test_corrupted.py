@@ -121,3 +121,24 @@ def test_section_segment_links_capped():
         timeout=60.0,
         preexec_fn=address_space_limiter(),
     )
+
+
+def test_relocate_shstrtab_name(tmp_path: Path):
+    """GHSA-jrqq-qr56-xgcv"""
+    elf = parse_elf(CWD / "hello_lief.bin")
+    names = [section.name for section in elf.sections]
+
+    new_name = ".shstrtab.lief.non.regression.with.a.long.name"
+    shstrtab = elf.get_section(".shstrtab")
+    assert shstrtab is not None
+    shstrtab.name = new_name
+
+    output = tmp_path / "hello_lief.bin"
+    elf.write(output)
+
+    new = lief.ELF.parse(output)
+    assert new is not None
+    assert new.sections[new.header.section_name_table_idx].name == new_name
+    assert sorted(section.name for section in new.sections) == sorted(
+        new_name if name == ".shstrtab" else name for name in names
+    )

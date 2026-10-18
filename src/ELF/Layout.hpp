@@ -18,6 +18,7 @@
 #include "LIEF/ELF/Builder.hpp"
 #include <unordered_map>
 #include <cstdint>
+#include <string>
 #include <vector>
 
 
@@ -31,11 +32,11 @@ class Layout {
     should_swap_(should_swap),
     config_(&config) {}
 
-  virtual const std::unordered_map<std::string_view, size_t>& shstr_map() const {
+  virtual const std::unordered_map<std::string, size_t>& shstr_map() const {
     return shstr_name_map_;
   }
 
-  virtual const std::unordered_map<std::string_view, size_t>& strtab_map() const {
+  virtual const std::unordered_map<std::string, size_t>& strtab_map() const {
     return strtab_name_map_;
   }
 
@@ -69,8 +70,8 @@ class Layout {
   protected:
   Binary* binary_ = nullptr;
 
-  std::unordered_map<std::string_view, size_t> shstr_name_map_;
-  std::unordered_map<std::string_view, size_t> strtab_name_map_;
+  std::unordered_map<std::string, size_t> shstr_name_map_;
+  std::unordered_map<std::string, size_t> strtab_name_map_;
 
   std::vector<uint8_t> raw_shstrtab_;
   std::vector<uint8_t> raw_strtab_;

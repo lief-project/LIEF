@@ -51,6 +51,8 @@
   * Bound the number of links between the |lief-elf-section| and
     |lief-elf-segment| objects created by the parser. Issue found by :zhangyan8216:
     in advisory ``GHSA-r5x5-7225-g759``
+  * Fix a use-after-free of the section names when ``.shstrtab`` is relocated
+    while writing the binary (advisory ``GHSA-jrqq-qr56-xgcv``)
 
 :COFF:
 
