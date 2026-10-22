@@ -101,7 +101,7 @@ def test_wrong_io():
         def seek(self, offset: int, whence: int = 0) -> int:
             return 0
 
-        def read(self):  # pragma: no cover
+        def read(self):  # type: ignore  # pragma: no cover
             return None
 
         def readinto(self, size):  # pragma: no cover
