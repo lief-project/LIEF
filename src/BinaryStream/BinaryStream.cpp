@@ -135,7 +135,7 @@ result<uint64_t> BinaryStream::read_sleb128(size_t* size) const {
   } while (*byte_read >= 128);
 
   if (shift < 64u && (*byte_read & 0x40) != 0) {
-    value |= (int64_t)-1llu << shift;
+    value |= (int64_t)(~0llu << shift);
   }
 
   if (size != nullptr) {
