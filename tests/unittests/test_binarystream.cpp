@@ -179,6 +179,23 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     CHECK(sz == 3);
   }
 
+  SECTION("BinaryStream-read_sleb128-sign-extension") {
+    const std::vector<std::pair<std::vector<uint8_t>, int64_t>> cases = {
+        {{0x7f}, -1},
+        {{0x40}, -64},
+        {{0xbf, 0x7f}, -65},
+        {{0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x7f}, INT64_MIN},
+    };
+    for (const auto& [buffer, expected] : cases) {
+      SpanStream ss(buffer);
+      size_t sz = 0;
+      auto val = ss.read_sleb128(&sz);
+      REQUIRE(val);
+      CHECK(static_cast<int64_t>(*val) == expected);
+      CHECK(sz == buffer.size());
+    }
+  }
+
   SECTION("BinaryStream-read_dwarf_encoded") {
     // UDATA2 = 0x02
     {
