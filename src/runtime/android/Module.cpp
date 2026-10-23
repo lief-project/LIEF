@@ -213,7 +213,10 @@ class LinkerModuleIt : public ModuleIt {
 
 
 linker_modules_t& linker_modules() {
-  static thread_local linker_modules_t modules;
+  // Android Bionic requires the TLS segment alignment to be at least 64 bytes
+  // on AArch64. Keep the container aligned in the Android static library so
+  // Rust binaries linking the precompiled archive remain loadable.
+  alignas(64) static thread_local linker_modules_t modules;
   modules.clear();
 
   dl_iterate_phdr(
