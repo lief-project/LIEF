@@ -3730,6 +3730,10 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
   cmd.original_nb_symbols_ = cmd.numberof_symbols();
   cmd.original_str_size_ = cmd.strings_size();
 
+  if (cmd.numberof_symbols() == 0 && cmd.strings_size() == 0) {
+    return ok();
+  }
+
   SegmentCommand* nlist_linkedit =
       config_.from_dyld_shared_cache ?
           binary_->get_segment("__LINKEDIT") :
