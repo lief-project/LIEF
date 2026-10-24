@@ -140,7 +140,16 @@ hooks = [
     entry = "uv run internal/scripts/harper_lint.py",
     additional_dependencies = ["myst-parser==5.1.0"],
     files = "\\.(cpp|hpp|tcc|c)$",
-    exclude = "(third-party/|nanobind/extra/|^src/frozen\\.hpp$)",
+    exclude = """(?x)(
+      third-party/
+      | nanobind/extra/
+      | ^src/frozen\\.hpp$
+      | ^modules/dyld-shared-cache/(
+          src/(patch_)?structures\\.hpp
+          | src/ObjC/lookup8\\.cpp
+          | include/dyldsc/iterator_range\\.hpp
+        )$
+    )""",
     stages = ["pre-commit"],
   },
   {
