@@ -429,13 +429,18 @@ std::unique_ptr<Note> Note::create(BinaryStream& stream, std::string section_nam
 
   std::string name(reinterpret_cast<const char*>(name_buffer.data()),
                    name_buffer.size());
+  // namesz includes the null byte that terminates the name
+  if (name.back() == '\0') {
+    name.pop_back();
+  }
   LIEF_DEBUG("Name: {}", name);
 
   stream.align(sizeof(uint32_t));
 
   std::vector<uint32_t> description;
+  std::vector<uint8_t> desc_tail;
   if (descsz > 0) {
-    const size_t nb_chunks = (descsz - 1) / sizeof(uint32_t) + 1;
+    const size_t nb_chunks = descsz / sizeof(uint32_t);
     description.reserve(nb_chunks);
     for (size_t i = 0; i < nb_chunks; ++i) {
       if (const auto chunk = stream.read<uint32_t>()) {
@@ -444,6 +449,11 @@ std::unique_ptr<Note> Note::create(BinaryStream& stream, std::string section_nam
         break;
       }
     }
+    // The bytes after the last full chunk are followed by padding, which is
+    // not part of the description
+    if (descsz % sizeof(uint32_t) != 0 && description.size() == nb_chunks) {
+      stream.read_data(desc_tail, descsz % sizeof(uint32_t));
+    }
     stream.align(sizeof(uint32_t));
   }
   std::vector<uint8_t> desc_bytes;
@@ -451,6 +461,7 @@ std::unique_ptr<Note> Note::create(BinaryStream& stream, std::string section_nam
     const auto* start_ptr = reinterpret_cast<const uint8_t*>(description.data());
     desc_bytes = {start_ptr, start_ptr + description.size() * sizeof(uint32_t)};
   }
+  desc_bytes.insert(desc_bytes.end(), desc_tail.begin(), desc_tail.end());
 
   return create(name, type, std::move(desc_bytes), std::move(section_name), ftype,
                 arch, cls);

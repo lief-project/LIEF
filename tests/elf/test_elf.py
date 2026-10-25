@@ -220,7 +220,7 @@ def test_notes():
         0xC8,
     ]
 
-    assert "".join(map(chr, n3.description)) == "gold 1.12\x00\x00\x00"
+    assert "".join(map(chr, n3.description)) == "gold 1.12"
 
 
 def test_symbols_access():

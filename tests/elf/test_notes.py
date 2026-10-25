@@ -132,6 +132,19 @@ def test_crashpad():
     assert note.name == "Crashpad"
 
 
+def test_note_sizes():
+    # namesz counts the null byte that ends the name, and descsz leaves out
+    # the padding that follows the description
+    raw = bytes.fromhex("04000000050000003412000041424300") + bytes(
+        [1, 2, 3, 4, 5, 0, 0, 0]
+    )
+    note = lief.ELF.Note.create(raw)
+    assert note is not None
+    assert note.name == "ABC"
+    assert bytes(note.description) == bytes([1, 2, 3, 4, 5])
+    assert note.size == len(raw)
+
+
 def test_note_aarch64_features():
     GNU_PROPERTY_AARCH64_FEATURE_1_AND = (
         "040000001000000005000000474e5500000000c0040000000100000000000000"
@@ -340,9 +353,9 @@ def test_create_custom_note(tmp_path: Path):
 
     notes = new.notes
     assert len(notes) == 4
-    assert notes[2].name == "lief-testing\x00"
-    assert bytes(notes[2].description) == b"some descriptions\x00\x00\x00"
-    assert notes[3].name == "lief-testing-alt\x00"
+    assert notes[2].name == "lief-testing"
+    assert bytes(notes[2].description) == b"some descriptions"
+    assert notes[3].name == "lief-testing-alt"
     assert (
         bytes(notes[3].description)
         == b"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed"
