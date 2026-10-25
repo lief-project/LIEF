@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/COFF/String.hpp"
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Builder.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/Debug.hpp"
-#include "LIEF/PE/ExceptionInfo.hpp"
+#include "LIEF/PE/ExceptionInfo.hpp" // IWYU pragma: keep
 #include "LIEF/PE/Export.hpp"
-#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp"
+#include "LIEF/PE/LoadConfigurations/LoadConfiguration.hpp" // IWYU pragma: keep
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Relocation.hpp"
-#include "LIEF/PE/RelocationEntry.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/Section.hpp"

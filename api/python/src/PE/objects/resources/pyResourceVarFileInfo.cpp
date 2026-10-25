@@ -16,14 +16,11 @@
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
 
-#include "LIEF/PE/resources/ResourceVar.hpp"
 #include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
 
 #include <nanobind/extra/stl/u16string.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

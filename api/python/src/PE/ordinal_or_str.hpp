@@ -1,4 +1,6 @@
 #pragma once
+// nanobind uses this type_caster implicitly
+// IWYU pragma: always_keep
 
 #include <nanobind/nanobind.h>
 #include <string>

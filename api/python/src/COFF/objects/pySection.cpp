@@ -17,14 +17,12 @@
 
 #include "LIEF/COFF/Relocation.hpp"
 #include "LIEF/COFF/Section.hpp"
-#include "LIEF/COFF/String.hpp"
+#include "LIEF/COFF/String.hpp" // IWYU pragma: keep
 #include "LIEF/COFF/Symbol.hpp"
 
 #include <nanobind/stl/optional.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "nanobind/utils.hpp"
 

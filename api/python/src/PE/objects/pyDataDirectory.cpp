@@ -15,11 +15,9 @@
  */
 #include "nanobind/extra/stl/lief_span.h"
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/PE/DataDirectory.hpp"
-#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/Section.hpp" // IWYU pragma: keep
 #include "enums_wrapper.hpp"
 
 #include "PE/pyPE.hpp"

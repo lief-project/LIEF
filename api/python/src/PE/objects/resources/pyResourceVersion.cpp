@@ -15,12 +15,7 @@
  */
 #include "PE/pyPE.hpp"
 
-#include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
-#include "LIEF/PE/resources/ResourceVarFileInfo.hpp"
 #include "LIEF/PE/resources/ResourceVersion.hpp"
-
-#include <sstream>
-#include <string>
 
 #include <nanobind/extra/stl/u16string.h>
 #include <nanobind/stl/string.h>

@@ -1,4 +1,6 @@
 #pragma once
+// nanobind uses this type_hook implicitly
+// IWYU pragma: always_keep
 
 #include "LIEF/DWARF/types/Array.hpp"
 #include "LIEF/DWARF/types/Base.hpp"

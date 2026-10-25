@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
-#include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"

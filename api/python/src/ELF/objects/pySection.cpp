@@ -28,9 +28,6 @@
 #include "LIEF/ELF/Section.hpp"
 #include "LIEF/ELF/Segment.hpp"
 
-#include <sstream>
-#include <string>
-
 namespace LIEF::ELF::py {
 
 template<>

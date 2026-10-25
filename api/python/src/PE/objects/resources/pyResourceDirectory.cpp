@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
-#include "pyIterator.hpp"
 
 #include "LIEF/PE/ResourceDirectory.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

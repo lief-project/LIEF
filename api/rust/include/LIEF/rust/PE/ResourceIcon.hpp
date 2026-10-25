@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 #pragma once
-#include <cstdint>
 
 #include "LIEF/PE/resources/ResourceIcon.hpp"
 #include "LIEF/rust/Mirror.hpp"

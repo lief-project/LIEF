@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 #include "pyIterator.hpp"
-#include <sstream>
 
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/FunctionOverrideInfo.hpp"
-#include "LIEF/PE/Relocation.hpp"
-#include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/Relocation.hpp" // IWYU pragma: keep
 #include "PE/pyPE.hpp"
 
 #include <nanobind/stl/string.h>

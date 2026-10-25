@@ -12,8 +12,6 @@
 #include "nanobind/utils.hpp"
 
 #include "pyErr.hpp"
-#include "pyutils.hpp"
-#include "typing.hpp"
 
 #include "pyOwningIterator.hpp"
 

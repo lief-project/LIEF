@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/DEX/File.hpp"
+#include "LIEF/DEX/File.hpp" // IWYU pragma: keep
 #include "LIEF/OAT/DexFile.hpp"
 #include <string_view>
 
@@ -21,7 +21,6 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <sstream>
 
 namespace LIEF::OAT::py {
 template<>

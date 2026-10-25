@@ -16,8 +16,6 @@
 #include <nanobind/stl/map.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"

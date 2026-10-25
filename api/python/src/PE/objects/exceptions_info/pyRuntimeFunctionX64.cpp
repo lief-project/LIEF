@@ -16,14 +16,12 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/exceptions_info/RuntimeFunctionX64.hpp"
-#include "LIEF/PE/exceptions_info/UnwindCodeX64.hpp"
+#include "LIEF/PE/exceptions_info/UnwindCodeX64.hpp" // IWYU pragma: keep
 #include "enums_wrapper.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include <nanobind/stl/optional.h>
 

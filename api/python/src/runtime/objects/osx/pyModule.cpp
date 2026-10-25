@@ -1,4 +1,4 @@
-#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/Binary.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/ParserConfig.hpp"
 #include "LIEF/runtime/osx/Module.hpp"
 #include "runtime/pyRuntime.hpp"

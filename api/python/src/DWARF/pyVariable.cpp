@@ -1,8 +1,7 @@
 #include "DWARF/pyDwarf.hpp"
 #include "DWARF/pyLocation.hpp"
 #include "DWARF/pyTypes.hpp"
-#include "LIEF/DWARF/Scope.hpp"
-#include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/Scope.hpp" // IWYU pragma: keep
 #include "LIEF/DWARF/Variable.hpp"
 #include "pyErr.hpp"
 

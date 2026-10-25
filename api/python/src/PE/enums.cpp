@@ -16,7 +16,6 @@
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/PE/EnumToString.hpp"
 #include "enums_wrapper.hpp"
-#include "pyPE.hpp"
 
 #define PY_ENUM(x) to_string(x), x
 

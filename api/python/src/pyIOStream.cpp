@@ -15,7 +15,6 @@
  */
 #include "pyIOStream.hpp"
 #include "LIEF/logging.hpp"
-#include "pyutils.hpp"
 #include "nanobind/extra/memoryview.hpp"
 
 static constexpr int PY_SEEK_SET = 0;

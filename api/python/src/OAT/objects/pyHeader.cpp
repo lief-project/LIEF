@@ -23,7 +23,6 @@
 #include <nanobind/stl/pair.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 
 namespace LIEF::OAT::py {
 

@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/SegmentCommand.hpp" // IWYU pragma: keep
 
 #include "MachO/pyMachO.hpp"
 #include "pyIterator.hpp"

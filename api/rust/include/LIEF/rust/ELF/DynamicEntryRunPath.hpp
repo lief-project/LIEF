@@ -17,7 +17,6 @@
 #include "LIEF/rust/ELF/DynamicEntry.hpp"
 
 #include <string>
-#include <vector>
 
 class ELF_DynamicEntryRunPath : public ELF_DynamicEntry {
   public:

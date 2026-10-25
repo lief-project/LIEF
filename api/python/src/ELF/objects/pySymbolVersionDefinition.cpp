@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "pyIterator.hpp"
 
-#include "LIEF/ELF/SymbolVersionAux.hpp"
+#include "LIEF/ELF/SymbolVersionAux.hpp" // IWYU pragma: keep
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 
 namespace LIEF::ELF::py {

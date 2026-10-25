@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
-#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/Symbol.hpp" // IWYU pragma: keep
 
 #include "MachO/pyMachO.hpp"
 #include "enums_wrapper.hpp"

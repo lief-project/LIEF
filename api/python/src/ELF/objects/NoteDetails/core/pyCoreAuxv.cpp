@@ -15,8 +15,6 @@
  */
 #include <nanobind/stl/map.h>
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "ELF/pyELF.hpp"
 

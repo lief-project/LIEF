@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <sstream>
 #include <string>
 
 #include "LIEF/MachO/DyldEnvironment.hpp"

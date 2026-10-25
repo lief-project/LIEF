@@ -1,5 +1,5 @@
-#include "LIEF/DWARF/Location.hpp"
-#include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/DWARF/Location.hpp"    // IWYU pragma: keep
+#include "LIEF/DWARF/editor/Type.hpp" // IWYU pragma: keep
 #include "LIEF/DWARF/editor/Variable.hpp"
 
 #include "DWARF/pyDwarf.hpp"

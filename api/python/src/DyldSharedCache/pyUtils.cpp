@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "DyldSharedCache/init.hpp"
-#include "DyldSharedCache/pyDyldSharedCache.hpp"
+#include "pyLIEF.hpp"
 
 #include "LIEF/DyldSharedCache/utils.hpp"
 

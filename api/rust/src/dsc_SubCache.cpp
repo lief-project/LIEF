@@ -1,4 +1,3 @@
-#include "LIEF/MachO/Binary.hpp"
 #include "LIEF/rust/DyldSharedCache/DyldSharedCache.hpp"
 #include "LIEF/rust/DyldSharedCache/SubCache.hpp"
 

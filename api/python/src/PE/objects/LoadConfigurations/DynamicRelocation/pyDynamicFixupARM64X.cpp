@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include "pyIterator.hpp"
-#include <sstream>
 
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupARM64X.hpp"
 #include "PE/pyPE.hpp"

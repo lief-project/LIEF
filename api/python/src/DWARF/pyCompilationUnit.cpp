@@ -1,9 +1,6 @@
 #include "DWARF/pyDwarf.hpp"
 #include "DWARF/pyTypes.hpp"
 #include "LIEF/DWARF/CompilationUnit.hpp"
-#include "LIEF/DWARF/Function.hpp"
-#include "LIEF/DWARF/Type.hpp"
-#include "LIEF/DWARF/Variable.hpp"
 #include "LIEF/DebugDeclOpt.hpp"
 
 #include "enums_wrapper.hpp"

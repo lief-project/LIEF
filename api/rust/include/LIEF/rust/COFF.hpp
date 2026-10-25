@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/rust/COFF/Binary.hpp"
 #include "LIEF/rust/COFF/Header.hpp"
@@ -29,3 +30,4 @@
 #include "LIEF/rust/COFF/AuxiliarySymbols/AuxiliarybfAndefSymbol.hpp"
 
 #include "LIEF/rust/COFF/utils.hpp"
+// IWYU pragma: end_exports

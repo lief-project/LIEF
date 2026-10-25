@@ -1,5 +1,4 @@
 #include "LIEF/asm/riscv/Instruction.hpp"
-#include "LIEF/asm/riscv/Operand.hpp"
 #include "pyOwningIterator.hpp"
 
 #include <nanobind/make_iterator.h>

@@ -16,13 +16,9 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/signature/ContentInfo.hpp"
-#include "LIEF/PE/signature/GenericContent.hpp"
-#include "LIEF/PE/signature/SpcIndirectData.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
-#include <sstream>
-#include <string>
 
 #include "nanobind/utils.hpp"
 

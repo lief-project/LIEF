@@ -17,14 +17,12 @@
 
 #include "LIEF/COFF/Relocation.hpp"
 #include "LIEF/COFF/Section.hpp"
-#include "LIEF/COFF/Symbol.hpp"
+#include "LIEF/COFF/Symbol.hpp" // IWYU pragma: keep
 
 #include "enums_wrapper.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::COFF::py {
 

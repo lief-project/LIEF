@@ -1,4 +1,4 @@
-#include "LIEF/Abstract/Binary.hpp"
+#include "LIEF/Abstract/Binary.hpp" // IWYU pragma: keep
 #include "LIEF/DWARF/Editor.hpp"
 #include "LIEF/DWARF/editor/CompilationUnit.hpp"
 

@@ -15,7 +15,6 @@
  */
 
 #include <nanobind/stl/string.h>
-#include <sstream>
 #include <string>
 
 #include "LIEF/PE/ImportEntry.hpp"

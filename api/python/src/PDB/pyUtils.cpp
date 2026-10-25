@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/PDB/utils.hpp"
-#include "PDB/pyPDB.hpp"
+#include "pyLIEF.hpp"
 
 #include "nanobind/extra/stl/pathlike.h"
 #include <nanobind/stl/string.h>

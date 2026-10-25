@@ -16,7 +16,6 @@
 #include <LIEF/asm/powerpc/operands/PCRelative.hpp>
 
 #include "LIEF/rust/asm/powerpc/Operand.hpp"
-#include "LIEF/rust/helpers.hpp"
 
 class asm_powerpc_operands_PCRelative : public asm_powerpc_Operand {
   public:

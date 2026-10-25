@@ -19,7 +19,6 @@
 
 #include <nanobind/stl/array.h>
 #include <nanobind/stl/string.h>
-#include <sstream>
 
 namespace LIEF::ART::py {
 

@@ -15,14 +15,13 @@
  */
 #include "PE/pyPE.hpp"
 
-#include "LIEF/COFF/String.hpp"
+#include "LIEF/COFF/String.hpp" // IWYU pragma: keep
 #include "LIEF/PE/Section.hpp"
 #include "enums_wrapper.hpp"
 
 #include "nanobind/utils.hpp"
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 #include <string>
 
 #define PY_ENUM(x) to_string(x), x

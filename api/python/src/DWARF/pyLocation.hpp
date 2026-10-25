@@ -1,5 +1,8 @@
 #ifndef PY_LIEF_DWARF_LOCATION_H
 #define PY_LIEF_DWARF_LOCATION_H
+// nanobind uses this type_hook implicitly
+// IWYU pragma: always_keep
+
 #include "LIEF/DWARF/Location.hpp"
 
 #include <typeinfo>

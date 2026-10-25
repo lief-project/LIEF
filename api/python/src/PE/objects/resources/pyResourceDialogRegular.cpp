@@ -20,8 +20,6 @@
 
 #include "nanobind/extra/stl/u16string.h"
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

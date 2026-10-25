@@ -3,8 +3,6 @@
 
 #include "nanobind/stl/string.h"
 
-#include <sstream>
-
 namespace LIEF::runtime::osx::py {
 
 template<>

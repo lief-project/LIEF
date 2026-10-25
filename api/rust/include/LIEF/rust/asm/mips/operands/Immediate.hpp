@@ -16,7 +16,6 @@
 #include <LIEF/asm/mips/operands/Immediate.hpp>
 
 #include "LIEF/rust/asm/mips/Operand.hpp"
-#include "LIEF/rust/helpers.hpp"
 
 class asm_mips_operands_Immediate : public asm_mips_Operand {
   public:

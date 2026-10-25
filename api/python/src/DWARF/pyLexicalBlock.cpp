@@ -1,6 +1,5 @@
 #include "DWARF/pyDwarf.hpp"
 #include "LIEF/DWARF/LexicalBlock.hpp"
-#include "pyErr.hpp"
 
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/optional.h>

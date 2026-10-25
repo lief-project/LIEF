@@ -1,7 +1,6 @@
 #include "DWARF/pyDwarf.hpp"
 #include "DWARF/pyLocation.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
-#include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/types.hpp"
 
 #include <nanobind/stl/string.h>

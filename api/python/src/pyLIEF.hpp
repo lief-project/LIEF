@@ -15,8 +15,14 @@
  */
 #ifndef PY_LIEF_H
 #define PY_LIEF_H
+// include-cleaner can't see the uses of the `nb` namespace alias
+// IWYU pragma: always_keep
 
 #include <nanobind/nanobind.h>
+
+// Used by LIEF_DEFAULT_STR
+#include <nanobind/stl/string.h>
+#include <sstream> // IWYU pragma: keep
 
 #define LIEF_MOD_NAME "lief"
 

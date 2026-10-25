@@ -15,12 +15,10 @@
  */
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "nanobind/extra/stl/lief_span.h"
 
-#include "LIEF/MachO/ChainedBindingInfo.hpp"
+#include "LIEF/MachO/ChainedBindingInfo.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/DyldChainedFixups.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
 #include "pyIterator.hpp"

@@ -19,8 +19,6 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "nanobind/extra/stl/lief_span.h"
 

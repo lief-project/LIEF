@@ -17,8 +17,6 @@
 #include <nanobind/extra/stl/lief_span.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/ThreadCommand.hpp"
 

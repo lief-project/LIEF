@@ -16,10 +16,7 @@
 #include <string_view>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <sstream>
-#include <string>
 
-#include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
 

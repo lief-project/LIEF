@@ -16,9 +16,6 @@
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataARM64.hpp"
 #include "PE/pyPE.hpp"
 
-#include <sstream>
-#include <string>
-
 #include <nanobind/stl/string.h>
 
 #include "pyIterator.hpp"

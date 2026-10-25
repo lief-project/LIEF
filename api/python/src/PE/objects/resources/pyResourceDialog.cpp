@@ -23,8 +23,6 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "PE/ordinal_or_str.hpp"
 #include "nanobind/extra/stl/lief_span.h"

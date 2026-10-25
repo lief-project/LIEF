@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/SignerInfo.hpp"
-#include "LIEF/PE/signature/x509.hpp"
+#include "LIEF/PE/signature/x509.hpp" // IWYU pragma: keep
 
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
@@ -23,8 +22,6 @@
 
 #include "nanobind/utils.hpp"
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

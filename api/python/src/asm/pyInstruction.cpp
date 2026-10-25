@@ -3,8 +3,6 @@
 #include "enums_wrapper.hpp"
 #include "pyErr.hpp"
 #include "pyLIEF.hpp"
-#include <ostream>
-#include <sstream>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>

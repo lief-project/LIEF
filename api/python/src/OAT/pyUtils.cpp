@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyOAT.hpp"
+#include "pyLIEF.hpp"
 
-#include "LIEF/OAT/Binary.hpp"
+#include "LIEF/ELF/Binary.hpp" // IWYU pragma: keep
 #include "LIEF/OAT/utils.hpp"
 
 #include <nanobind/stl/string.h>

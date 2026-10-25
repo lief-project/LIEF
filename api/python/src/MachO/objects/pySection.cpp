@@ -20,7 +20,6 @@
 #include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 #include <string>
 
 #include "LIEF/MachO/Relocation.hpp"

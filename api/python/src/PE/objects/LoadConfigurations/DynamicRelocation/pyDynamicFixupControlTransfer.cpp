@@ -16,7 +16,6 @@
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupControlTransfer.hpp"
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
-#include <sstream>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>

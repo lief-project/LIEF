@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
-#include "pyErr.hpp"
 #include "pyIterator.hpp"
 #include "pySafeString.hpp"
 #include <string_view>
@@ -23,9 +22,6 @@
 #include "LIEF/PE/ResourceNode.hpp"
 #include "LIEF/PE/ResourcesManager.hpp"
 #include "enums_wrapper.hpp"
-
-#include <sstream>
-#include <string>
 
 #include "nanobind/extra/stl/u16string.h"
 #include <nanobind/stl/set.h>

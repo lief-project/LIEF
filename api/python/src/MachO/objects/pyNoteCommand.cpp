@@ -16,8 +16,6 @@
 #include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/utils.hpp"
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/NoteCommand.hpp"
 

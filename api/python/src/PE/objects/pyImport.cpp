@@ -20,11 +20,10 @@
 #include <string_view>
 #include <nanobind/stl/string_view.h>
 
-#include "LIEF/PE/DataDirectory.hpp"
+#include "LIEF/PE/DataDirectory.hpp" // IWYU pragma: keep
 #include "LIEF/PE/Import.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
 #include <string>
 
 namespace LIEF::PE::py {

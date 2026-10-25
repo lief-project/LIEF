@@ -18,8 +18,6 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE {
 class RuntimeFunctionX64;

@@ -16,7 +16,6 @@
 #include "LIEF/PE/LoadConfigurations/EnclaveImport.hpp"
 #include "PE/pyPE.hpp"
 
-#include <sstream>
 #include <string>
 
 #include <nanobind/stl/array.h>

@@ -23,7 +23,7 @@
 #include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Parser.hpp"
 
-#include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp" // IWYU pragma: keep
 
 #include "MachO/pyMachO.hpp"
 

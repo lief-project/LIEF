@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/Prototype.hpp"
-#include "LIEF/DEX/Type.hpp"
+#include "LIEF/DEX/Type.hpp" // IWYU pragma: keep
 
 #include "DEX/pyDEX.hpp"
 #include "pyIterator.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::DEX::py {
 

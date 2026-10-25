@@ -16,9 +16,6 @@
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp"
 #include "PE/pyPE.hpp"
 
-#include <sstream>
-#include <string>
-
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 

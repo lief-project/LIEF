@@ -1,7 +1,6 @@
 #include "DWARF/pyDwarf.hpp"
 #include "LIEF/Abstract/DebugInfo.hpp"
 #include "LIEF/DWARF/DebugInfo.hpp"
-#include "LIEF/DWARF/Function.hpp"
 
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/string.h>

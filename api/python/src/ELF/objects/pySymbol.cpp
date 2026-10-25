@@ -15,15 +15,12 @@
  */
 #include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
-#include "pyIterator.hpp"
 
-#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Section.hpp" // IWYU pragma: keep
 #include "LIEF/ELF/Symbol.hpp"
-#include "LIEF/ELF/SymbolVersion.hpp"
+#include "LIEF/ELF/SymbolVersion.hpp" // IWYU pragma: keep
 
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::ELF::py {
 

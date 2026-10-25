@@ -27,7 +27,6 @@
 #include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unordered_map.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 
 namespace LIEF::DEX::py {
 

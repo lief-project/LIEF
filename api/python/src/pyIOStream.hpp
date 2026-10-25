@@ -16,7 +16,6 @@
 #ifndef LIEF_PY_IO_STREAM_H
 #define LIEF_PY_IO_STREAM_H
 
-#include <string>
 #include <vector>
 
 #include "LIEF/BinaryStream/VectorStream.hpp"

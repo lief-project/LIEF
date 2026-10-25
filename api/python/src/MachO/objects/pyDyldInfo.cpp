@@ -15,12 +15,10 @@
  */
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
-#include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "LIEF/MachO/DyldBindingInfo.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/DyldInfo.hpp"
-#include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/ExportInfo.hpp" // IWYU pragma: keep
 
 #include "pyIterator.hpp"
 #include "nanobind/extra/stl/lief_span.h"

@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "pyIterator.hpp"
 #include "nanobind/extra/stl/lief_span.h"
 
 #include "LIEF/MachO/DyldExportsTrie.hpp"
-#include "LIEF/MachO/ExportInfo.hpp"
+#include "LIEF/MachO/ExportInfo.hpp" // IWYU pragma: keep
 
 #include "MachO/pyMachO.hpp"
 

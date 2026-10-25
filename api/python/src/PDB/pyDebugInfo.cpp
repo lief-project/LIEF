@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include "LIEF/Abstract/DebugInfo.hpp"
 #include "LIEF/PDB/DebugInfo.hpp"
 #include "PDB/pyPDB.hpp"

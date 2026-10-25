@@ -17,8 +17,6 @@
 #include "nanobind/utils.hpp"
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/LoadCommand.hpp"
 

@@ -1,7 +1,6 @@
 #include "runtime/objects/pyModule.hpp"
 #include "LIEF/runtime/Module.hpp"
 #include "runtime/pyRuntime.hpp"
-#include <sstream>
 
 #include "nanobind/utils.hpp"
 #include <nanobind/make_iterator.h>

@@ -1,5 +1,4 @@
 #include "LIEF/asm/x86/Instruction.hpp"
-#include "LIEF/asm/x86/Operand.hpp"
 
 #include "asm/x86/init.hpp"
 #include "pyOwningIterator.hpp"

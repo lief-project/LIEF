@@ -17,9 +17,6 @@
 
 #include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
 
-#include <sstream>
-#include <string>
-
 #include <nanobind/stl/string.h>
 
 namespace LIEF::PE::py {

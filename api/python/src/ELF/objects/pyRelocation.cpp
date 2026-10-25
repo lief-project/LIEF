@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
 #include "pyErr.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"
-#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Section.hpp" // IWYU pragma: keep
 #include "LIEF/ELF/Symbol.hpp"
 
 namespace LIEF::ELF::py {

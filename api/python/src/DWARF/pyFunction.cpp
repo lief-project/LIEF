@@ -1,10 +1,8 @@
 #include "DWARF/pyDwarf.hpp"
 #include "LIEF/DWARF/DebugInfo.hpp"
 #include "LIEF/DWARF/Function.hpp"
-#include "LIEF/DWARF/Parameter.hpp"
-#include "LIEF/DWARF/Scope.hpp"
-#include "LIEF/DWARF/Type.hpp"
-#include "LIEF/DWARF/Variable.hpp"
+#include "LIEF/DWARF/Parameter.hpp" // IWYU pragma: keep
+#include "LIEF/DWARF/Scope.hpp"     // IWYU pragma: keep
 #include "pyErr.hpp"
 #include "pyutils.hpp"
 

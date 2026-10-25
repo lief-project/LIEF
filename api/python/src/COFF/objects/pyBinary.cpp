@@ -23,15 +23,9 @@
 #include "LIEF/COFF/Binary.hpp"
 #include "LIEF/COFF/Relocation.hpp"
 #include "LIEF/COFF/Section.hpp"
-#include "LIEF/COFF/String.hpp"
 #include "LIEF/COFF/Symbol.hpp"
 
-#include "LIEF/asm/Engine.hpp"
-#include "LIEF/asm/Instruction.hpp"
-
 #include "pyOwningIterator.hpp"
-
-#include <sstream>
 
 #include <nanobind/stl/string.h>
 

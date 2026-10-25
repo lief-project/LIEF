@@ -16,9 +16,6 @@
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataX86.hpp"
 #include "PE/pyPE.hpp"
 
-#include <sstream>
-#include <string>
-
 #include <nanobind/stl/optional.h>
 #include <nanobind/stl/string.h>
 

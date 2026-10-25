@@ -15,7 +15,6 @@
  */
 #include <string_view>
 #include <sstream>
-#include <string>
 
 #include "nanobind/extra/random_access_iterator.hpp"
 #include "nanobind/extra/stl/lief_span.h"
@@ -26,50 +25,48 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 
-#include "LIEF/MachO/AtomInfo.hpp"
+#include "LIEF/MachO/AtomInfo.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/BuildVersion.hpp"
 #include "LIEF/MachO/Builder.hpp"
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 #include "LIEF/MachO/CodeSignature.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
-#include "LIEF/MachO/DataInCode.hpp"
-#include "LIEF/MachO/DyldBindingInfo.hpp"
+#include "LIEF/MachO/DataInCode.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/DyldChainedFixups.hpp"
-#include "LIEF/MachO/DyldEnvironment.hpp"
+#include "LIEF/MachO/DyldEnvironment.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/DyldExportsTrie.hpp"
 #include "LIEF/MachO/DyldInfo.hpp"
 #include "LIEF/MachO/DylibCommand.hpp"
-#include "LIEF/MachO/DylinkerCommand.hpp"
+#include "LIEF/MachO/DylinkerCommand.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
-#include "LIEF/MachO/EncryptionInfo.hpp"
+#include "LIEF/MachO/EncryptionInfo.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/ExportInfo.hpp"
-#include "LIEF/MachO/FunctionStarts.hpp"
+#include "LIEF/MachO/FunctionStarts.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/FunctionVariantFixups.hpp"
-#include "LIEF/MachO/FunctionVariants.hpp"
+#include "LIEF/MachO/FunctionVariants.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/LazyLoadDylibInfo.hpp"
 #include "LIEF/MachO/LinkEdit.hpp"
 #include "LIEF/MachO/LinkerOptHint.hpp"
-#include "LIEF/MachO/MainCommand.hpp"
-#include "LIEF/MachO/NoteCommand.hpp"
-#include "LIEF/MachO/RPathCommand.hpp"
+#include "LIEF/MachO/MainCommand.hpp"  // IWYU pragma: keep
+#include "LIEF/MachO/NoteCommand.hpp"  // IWYU pragma: keep
+#include "LIEF/MachO/RPathCommand.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/Relocation.hpp"
 #include "LIEF/MachO/RelocationFixup.hpp"
-#include "LIEF/MachO/Routine.hpp"
+#include "LIEF/MachO/Routine.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/SegmentCommand.hpp"
-#include "LIEF/MachO/SegmentSplitInfo.hpp"
-#include "LIEF/MachO/SourceVersion.hpp"
-#include "LIEF/MachO/SubClient.hpp"
-#include "LIEF/MachO/SubFramework.hpp"
+#include "LIEF/MachO/SegmentSplitInfo.hpp" // IWYU pragma: keep
+#include "LIEF/MachO/SourceVersion.hpp"    // IWYU pragma: keep
+#include "LIEF/MachO/SubClient.hpp"        // IWYU pragma: keep
+#include "LIEF/MachO/SubFramework.hpp"     // IWYU pragma: keep
 #include "LIEF/MachO/Symbol.hpp"
-#include "LIEF/MachO/SymbolCommand.hpp"
-#include "LIEF/MachO/ThreadCommand.hpp"
+#include "LIEF/MachO/SymbolCommand.hpp" // IWYU pragma: keep
+#include "LIEF/MachO/ThreadCommand.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/TwoLevelHints.hpp"
-#include "LIEF/MachO/UUIDCommand.hpp"
-#include "LIEF/MachO/VersionMin.hpp"
+#include "LIEF/MachO/UUIDCommand.hpp" // IWYU pragma: keep
+#include "LIEF/MachO/VersionMin.hpp"  // IWYU pragma: keep
 
-#include "LIEF/ObjC/Metadata.hpp"
+#include "LIEF/ObjC/Metadata.hpp" // IWYU pragma: keep
 
 #include "MachO/pyMachO.hpp"
 #include "pyErr.hpp"

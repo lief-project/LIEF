@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
 
 #include "Abstract/init.hpp"
 #include "pyLIEF.hpp"

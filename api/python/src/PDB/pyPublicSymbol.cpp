@@ -1,6 +1,5 @@
 #include "LIEF/PDB/PublicSymbol.hpp"
 #include "PDB/pyPDB.hpp"
-#include <sstream>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>

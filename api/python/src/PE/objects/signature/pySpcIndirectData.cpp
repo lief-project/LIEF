@@ -1,4 +1,3 @@
-
 /* Copyright 2017 - 2026 R. Thomas
  * Copyright 2017 - 2026 Quarkslab
  *
@@ -21,8 +20,6 @@
 #include <nanobind/extra/stl/lief_span.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

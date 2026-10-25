@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "PE/pyPE.hpp"
+#include "pyLIEF.hpp"
 #include <nanobind/stl/unique_ptr.h>
 
 #include "LIEF/PE/exceptions_info/UnwindCodeX64.hpp"
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::unwind_x64::py {
 template<class T>

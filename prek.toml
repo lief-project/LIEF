@@ -225,11 +225,14 @@ hooks = [
     ],
     files = {
       glob = [
+        "api/**/*.cpp",
+        "api/**/*.hpp",
+        "api/**/*.h",
         "src/**/*.cpp",
-        "include/**/*.hpp",
         "src/**/*.hpp",
         "modules/**/*.cpp",
         "modules/**/*.hpp",
+        "include/**/*.hpp",
       ]
     },
     stages = ["pre-commit"],

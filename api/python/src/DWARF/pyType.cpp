@@ -1,5 +1,5 @@
 #include "DWARF/pyDwarf.hpp"
-#include "LIEF/DWARF/Scope.hpp"
+#include "LIEF/DWARF/Scope.hpp" // IWYU pragma: keep
 #include "LIEF/DWARF/Type.hpp"
 #include "pyErr.hpp"
 

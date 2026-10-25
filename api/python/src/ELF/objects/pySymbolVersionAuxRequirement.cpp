@@ -18,8 +18,6 @@
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::ELF::py {
 

@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/BindingInfo.hpp"
-#include "LIEF/MachO/DylibCommand.hpp"
-#include "LIEF/MachO/SegmentCommand.hpp"
+#include "LIEF/MachO/DylibCommand.hpp"   // IWYU pragma: keep
+#include "LIEF/MachO/SegmentCommand.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/Symbol.hpp"
 
 #include "MachO/pyMachO.hpp"

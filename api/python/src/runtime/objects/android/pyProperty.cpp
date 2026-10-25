@@ -1,8 +1,6 @@
 #include "LIEF/runtime/android/Property.hpp"
 #include "runtime/pyRuntime.hpp"
 
-#include <sstream>
-
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
 

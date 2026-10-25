@@ -37,12 +37,6 @@
   #include "LIEF/ELF/utils.hpp"
 #endif
 
-#if LIEF_OAT_SUPPORT
-  #include "LIEF/OAT/Binary.hpp"
-  #include "LIEF/OAT/Parser.hpp"
-  #include "LIEF/OAT/utils.hpp"
-#endif
-
 #if LIEF_MACHO_SUPPORT
   #include "LIEF/MachO/Binary.hpp"
   #include "LIEF/MachO/FatBinary.hpp"

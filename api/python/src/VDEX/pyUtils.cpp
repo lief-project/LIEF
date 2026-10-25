@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "VDEX/pyVDEX.hpp"
+#include "pyLIEF.hpp"
 
 #include "LIEF/VDEX/utils.hpp"
 #include <nanobind/stl/string.h>

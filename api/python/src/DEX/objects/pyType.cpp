@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/Class.hpp" // IWYU pragma: keep
 #include "LIEF/DEX/Type.hpp"
 
 #include "LIEF/DEX/EnumToString.hpp"
@@ -21,8 +21,6 @@
 #include "DEX/pyDEX.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #define PY_ENUM(x) to_string(x), x
 

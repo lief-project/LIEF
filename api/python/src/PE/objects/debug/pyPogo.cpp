@@ -20,8 +20,6 @@
 #include "LIEF/PE/debug/Pogo.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #define PY_ENUM(x) to_string(x), x
 

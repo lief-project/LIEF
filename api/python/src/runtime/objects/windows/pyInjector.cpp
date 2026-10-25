@@ -1,6 +1,6 @@
 #include "LIEF/runtime/windows/injector.hpp"
 #include "pyErr.hpp"
-#include "runtime/pyRuntime.hpp"
+#include "pyLIEF.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unordered_map.h>

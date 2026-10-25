@@ -18,9 +18,6 @@
 
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 
-#include <sstream>
-#include <string>
-
 #include "enums_wrapper.hpp"
 
 #include "nanobind/extra/stl/lief_span.h"

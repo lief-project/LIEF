@@ -24,8 +24,6 @@
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "pyIterator.hpp"
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/DEX/Method.hpp"
+#include "LIEF/DEX/Method.hpp" // IWYU pragma: keep
 #include "LIEF/OAT/Class.hpp"
 #include "LIEF/OAT/Method.hpp"
 
@@ -21,7 +21,6 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 
 namespace LIEF::OAT::py {
 

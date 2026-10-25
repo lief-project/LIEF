@@ -1,3 +1,4 @@
+// IWYU pragma: begin_exports
 #if defined __cplusplus
   #include <nanobind/make_iterator.h>
   #include <nanobind/nanobind.h>
@@ -15,3 +16,4 @@
   #include <stddef.h>
   #include <stdint.h>
 #endif
+// IWYU pragma: end_exports

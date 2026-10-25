@@ -16,7 +16,6 @@
 #include <LIEF/asm/powerpc/operands/Immediate.hpp>
 
 #include "LIEF/rust/asm/powerpc/Operand.hpp"
-#include "LIEF/rust/helpers.hpp"
 
 class asm_powerpc_operands_Immediate : public asm_powerpc_Operand {
   public:

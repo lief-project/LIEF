@@ -15,14 +15,13 @@
  */
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Prototype.hpp"
+#include "LIEF/DEX/Prototype.hpp" // IWYU pragma: keep
 
 #include "DEX/pyDEX.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 
 namespace LIEF::DEX::py {
 

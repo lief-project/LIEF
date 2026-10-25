@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <string_view>
-#include <sstream>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
@@ -30,18 +29,13 @@
 #include "nanobind/extra/stl/pathlike.h"
 #include "nanobind/utils.hpp"
 
-#include "LIEF/logging.hpp"
-
 #include "LIEF/Abstract/Binary.hpp"
-#include "LIEF/Abstract/Header.hpp"
-#include "LIEF/Abstract/Relocation.hpp"
-#include "LIEF/Abstract/Section.hpp"
-#include "LIEF/Abstract/Symbol.hpp"
+#include "LIEF/Abstract/Relocation.hpp" // IWYU pragma: keep
+#include "LIEF/Abstract/Section.hpp"    // IWYU pragma: keep
 
 #include "LIEF/Abstract/DebugInfo.hpp"
 
 #include "LIEF/asm/Engine.hpp"
-#include "LIEF/asm/Instruction.hpp"
 
 #include "pyOwningIterator.hpp"
 

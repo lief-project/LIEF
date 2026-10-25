@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/DynamicSymbolCommand.hpp"
-#include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/Symbol.hpp" // IWYU pragma: keep
 
 #include "MachO/pyMachO.hpp"
 #include "pyIterator.hpp"

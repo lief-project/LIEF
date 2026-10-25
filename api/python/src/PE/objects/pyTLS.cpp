@@ -17,12 +17,9 @@
 
 #include "nanobind/extra/stl/lief_span.h"
 
-#include "LIEF/PE/DataDirectory.hpp"
-#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/DataDirectory.hpp" // IWYU pragma: keep
+#include "LIEF/PE/Section.hpp"       // IWYU pragma: keep
 #include "LIEF/PE/TLS.hpp"
-
-#include <sstream>
-#include <string>
 
 #include <nanobind/stl/pair.h>
 #include <nanobind/stl/string.h>

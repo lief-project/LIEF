@@ -1,6 +1,3 @@
-#include <ostream>
-#include <sstream>
-
 #include "LIEF/asm/powerpc/Operand.hpp"
 
 #include "asm/powerpc/init.hpp"

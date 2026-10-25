@@ -1,8 +1,7 @@
 #include "LIEF/DebugDeclOpt.hpp"
-#include "LIEF/PDB/BuildMetadata.hpp"
+#include "LIEF/PDB/BuildMetadata.hpp" // IWYU pragma: keep
 #include "LIEF/PDB/CompilationUnit.hpp"
 #include "PDB/pyPDB.hpp"
-#include <sstream>
 
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/string.h>

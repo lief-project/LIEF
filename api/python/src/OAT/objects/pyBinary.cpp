@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/DEX/File.hpp"
+#include "LIEF/DEX/File.hpp" // IWYU pragma: keep
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/OAT/Binary.hpp"
-#include "LIEF/OAT/Class.hpp"
-#include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/OAT/Method.hpp"
+#include "LIEF/OAT/Class.hpp"   // IWYU pragma: keep
+#include "LIEF/OAT/DexFile.hpp" // IWYU pragma: keep
+#include "LIEF/OAT/Method.hpp"  // IWYU pragma: keep
 #include "pyIterator.hpp"
 #include <string_view>
 #include <nanobind/stl/string_view.h>
@@ -26,7 +26,6 @@
 #include "OAT/pyOAT.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
 
 namespace LIEF::OAT::py {
 template<>

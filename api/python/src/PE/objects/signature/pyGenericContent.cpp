@@ -1,4 +1,3 @@
-
 /* Copyright 2017 - 2026 R. Thomas
  * Copyright 2017 - 2026 Quarkslab
  *
@@ -19,8 +18,6 @@
 #include "LIEF/PE/signature/GenericContent.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

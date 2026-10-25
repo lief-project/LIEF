@@ -30,12 +30,7 @@
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
-#include "LIEF/ELF/DynamicEntryArray.hpp"
-#include "LIEF/ELF/DynamicEntryFlags.hpp"
-#include "LIEF/ELF/DynamicEntryLibrary.hpp"
-#include "LIEF/ELF/DynamicEntryRpath.hpp"
-#include "LIEF/ELF/DynamicEntryRunPath.hpp"
-#include "LIEF/ELF/DynamicSharedObject.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp" // IWYU pragma: keep
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/Relocation.hpp"
@@ -43,9 +38,8 @@
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
-#include "LIEF/ELF/SymbolVersionDefinition.hpp"
-#include "LIEF/ELF/SymbolVersionRequirement.hpp"
+#include "LIEF/ELF/SymbolVersionDefinition.hpp"  // IWYU pragma: keep
+#include "LIEF/ELF/SymbolVersionRequirement.hpp" // IWYU pragma: keep
 #include "LIEF/ELF/SysvHash.hpp"
 
 #include "pyErr.hpp"

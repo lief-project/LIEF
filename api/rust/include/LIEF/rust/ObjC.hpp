@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/ObjC/Class.hpp"
 #include "LIEF/rust/ObjC/DeclOpt.hpp"
 #include "LIEF/rust/ObjC/IVar.hpp"
@@ -20,3 +21,4 @@
 #include "LIEF/rust/ObjC/Method.hpp"
 #include "LIEF/rust/ObjC/Property.hpp"
 #include "LIEF/rust/ObjC/Protocol.hpp"
+// IWYU pragma: end_exports

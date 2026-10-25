@@ -17,13 +17,10 @@
 #include "pyIterator.hpp"
 
 #include "LIEF/PE/resources/ResourceStringFileInfo.hpp"
-#include "LIEF/PE/resources/ResourceStringTable.hpp"
 
 #include <nanobind/extra/stl/u16string.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

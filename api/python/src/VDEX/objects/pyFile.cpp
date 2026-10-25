@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/DEX/File.hpp"
+#include "LIEF/DEX/File.hpp" // IWYU pragma: keep
 #include "LIEF/VDEX/File.hpp"
 
 #include "pyIterator.hpp"
@@ -21,7 +21,6 @@
 #include "VDEX/pyVDEX.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
 
 namespace LIEF::VDEX::py {
 template<>

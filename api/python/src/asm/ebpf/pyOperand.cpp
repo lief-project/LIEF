@@ -1,6 +1,3 @@
-#include <ostream>
-#include <sstream>
-
 #include "LIEF/asm/ebpf/Operand.hpp"
 
 #include "asm/ebpf/init.hpp"

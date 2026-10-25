@@ -15,6 +15,8 @@
  */
 #ifndef PY_LIEF_RUNTIME_MODULE_H
 #define PY_LIEF_RUNTIME_MODULE_H
+// nanobind uses this type_hook implicitly
+// IWYU pragma: always_keep
 
 #include <nanobind/nanobind.h>
 

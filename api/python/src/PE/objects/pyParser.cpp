@@ -1,4 +1,3 @@
-
 /* Copyright 2017 - 2026 R. Thomas
  * Copyright 2017 - 2026 Quarkslab
  *
@@ -26,7 +25,7 @@
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/Parser.hpp"
 
-#include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp" // IWYU pragma: keep
 
 namespace LIEF::PE::py {
 

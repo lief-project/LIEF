@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include "LIEF/runtime/windows/LdrDataTableEntry.hpp"
 #include "runtime/pyRuntime.hpp"
 

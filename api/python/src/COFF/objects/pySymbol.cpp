@@ -17,14 +17,12 @@
 
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
 #include "LIEF/COFF/Section.hpp"
-#include "LIEF/COFF/String.hpp"
+#include "LIEF/COFF/String.hpp" // IWYU pragma: keep
 #include "LIEF/COFF/Symbol.hpp"
 
 #include <nanobind/extra/stl/wstring.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <sstream>
-#include <string>
 
 #include "enums_wrapper.hpp"
 #include "pyIterator.hpp"

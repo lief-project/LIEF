@@ -15,8 +15,6 @@
  */
 #include <nanobind/stl/optional.h>
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/PE/ParserConfig.hpp"
 

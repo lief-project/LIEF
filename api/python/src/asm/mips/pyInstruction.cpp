@@ -1,5 +1,4 @@
 #include "LIEF/asm/mips/Instruction.hpp"
-#include "LIEF/asm/mips/Operand.hpp"
 #include "pyOwningIterator.hpp"
 
 #include <nanobind/make_iterator.h>

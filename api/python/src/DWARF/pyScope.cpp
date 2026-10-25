@@ -1,6 +1,5 @@
 #include "DWARF/pyDwarf.hpp"
 #include "LIEF/DWARF/Scope.hpp"
-#include "pyErr.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>

@@ -16,7 +16,6 @@
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupARM64Kernel.hpp"
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
-#include <sstream>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>

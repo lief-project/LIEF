@@ -1,4 +1,3 @@
-#include "LIEF/ObjC/Class.hpp"
 #include "LIEF/ObjC/Metadata.hpp"
 #include "ObjC/pyObjC.hpp"
 

@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/DEX/Class.hpp"
-#include "LIEF/DEX/Field.hpp"
+#include "LIEF/DEX/Class.hpp" // IWYU pragma: keep
+#include "LIEF/DEX/Field.hpp" // IWYU pragma: keep
 #include "LIEF/DEX/File.hpp"
-#include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Prototype.hpp"
-#include "LIEF/DEX/Type.hpp"
+#include "LIEF/DEX/Method.hpp"    // IWYU pragma: keep
+#include "LIEF/DEX/Prototype.hpp" // IWYU pragma: keep
+#include "LIEF/DEX/Type.hpp"      // IWYU pragma: keep
 #include <string_view>
 
 #include "DEX/pyDEX.hpp"
 #include "pyIterator.hpp"
-
-#include <sstream>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>

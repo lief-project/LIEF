@@ -19,8 +19,6 @@
 
 #include "enums_wrapper.hpp"
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

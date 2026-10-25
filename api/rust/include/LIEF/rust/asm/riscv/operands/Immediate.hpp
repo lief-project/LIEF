@@ -16,7 +16,6 @@
 #include <LIEF/asm/riscv/operands/Immediate.hpp>
 
 #include "LIEF/rust/asm/riscv/Operand.hpp"
-#include "LIEF/rust/helpers.hpp"
 
 class asm_riscv_operands_Immediate : public asm_riscv_Operand {
   public:

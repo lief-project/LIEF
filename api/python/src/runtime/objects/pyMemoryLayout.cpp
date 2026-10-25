@@ -1,7 +1,6 @@
 #include "LIEF/runtime/Memory.hpp"
 #include "LIEF/runtime/MemoryLayout.hpp"
 #include "runtime/pyRuntime.hpp"
-#include <sstream>
 
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/string.h>

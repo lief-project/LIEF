@@ -18,8 +18,6 @@
 #include "LIEF/PE/signature/attributes/ContentType.hpp"
 
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

@@ -16,9 +16,6 @@
 #include "LIEF/PE/LoadConfigurations/EnclaveConfiguration.hpp"
 #include "PE/pyPE.hpp"
 
-#include <sstream>
-#include <string>
-
 #include "pyIterator.hpp"
 
 #include <nanobind/stl/array.h>

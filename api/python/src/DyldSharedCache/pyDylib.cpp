@@ -1,6 +1,6 @@
 #include "DyldSharedCache/pyDyldSharedCache.hpp"
 #include "LIEF/DyldSharedCache/Dylib.hpp"
-#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/Binary.hpp" // IWYU pragma: keep
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>

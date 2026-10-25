@@ -17,9 +17,6 @@
 #include <nanobind/stl/unique_ptr.h>
 
 #include "LIEF/COFF/Header.hpp"
-#include "enums_wrapper.hpp"
-
-#include <sstream>
 
 namespace LIEF::COFF {
 class BigObjHeader;

@@ -1,13 +1,11 @@
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Field.hpp"
-#include "LIEF/DEX/Type.hpp"
 
 #include "DEX/pyDEX.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 
 namespace LIEF::DEX::py {
 

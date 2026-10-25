@@ -22,8 +22,6 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 #include <vector>
 
 namespace LIEF::PE::py {

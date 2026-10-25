@@ -19,8 +19,6 @@
 
 #include <nanobind/stl/array.h>
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::VDEX::py {
 

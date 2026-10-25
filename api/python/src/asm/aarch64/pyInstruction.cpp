@@ -1,5 +1,4 @@
 #include "LIEF/asm/aarch64/Instruction.hpp"
-#include "LIEF/asm/aarch64/Operand.hpp"
 #include "pyOwningIterator.hpp"
 
 #include <nanobind/make_iterator.h>

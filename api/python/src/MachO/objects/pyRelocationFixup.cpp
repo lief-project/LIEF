@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 #include <nanobind/stl/string.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/RelocationFixup.hpp"
 

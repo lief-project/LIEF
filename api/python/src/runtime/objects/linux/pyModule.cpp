@@ -1,4 +1,4 @@
-#include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Binary.hpp" // IWYU pragma: keep
 #include "LIEF/ELF/ParserConfig.hpp"
 #include "LIEF/runtime/linux/Module.hpp"
 #include "runtime/pyRuntime.hpp"

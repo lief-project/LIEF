@@ -16,8 +16,6 @@
 #include "runtime/objects/android/init.hpp"
 #include "runtime/pyRuntime.hpp"
 
-#include "LIEF/config.h"
-
 namespace LIEF::runtime::android {
 class Module;
 class Host;

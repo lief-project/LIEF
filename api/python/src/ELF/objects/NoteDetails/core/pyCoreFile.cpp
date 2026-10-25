@@ -16,7 +16,6 @@
 #include <nanobind/make_iterator.h>
 #include <nanobind/stl/bind_vector.h>
 #include <nanobind/stl/string.h>
-#include <sstream>
 #include <string>
 #include <vector>
 

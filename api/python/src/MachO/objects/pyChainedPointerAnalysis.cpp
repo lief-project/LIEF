@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 #include <type_traits>
-#include <algorithm>
 #include <variant>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/ChainedPointerAnalysis.hpp"
 

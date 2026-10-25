@@ -20,13 +20,11 @@
 #include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 #include <string>
 
 #include "ELF/pyELF.hpp"
 
 #include "LIEF/ELF/Note.hpp"
-#include "LIEF/ELF/NoteDetails.hpp"
 
 #include "enums_wrapper.hpp"
 

@@ -1,5 +1,4 @@
 #include "LIEF/asm/powerpc/Instruction.hpp"
-#include "LIEF/asm/powerpc/Operand.hpp"
 #include "pyOwningIterator.hpp"
 
 #include <nanobind/make_iterator.h>

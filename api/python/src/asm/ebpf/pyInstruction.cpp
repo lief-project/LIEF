@@ -1,5 +1,4 @@
 #include "LIEF/asm/ebpf/Instruction.hpp"
-#include "LIEF/asm/ebpf/Operand.hpp"
 #include "pyOwningIterator.hpp"
 
 #include <nanobind/make_iterator.h>

@@ -16,7 +16,6 @@
 #include "LIEF/MachO/enums.hpp"
 #include "LIEF/MachO/DyldChainedFormat.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
-#include "MachO/pyMachO.hpp"
 
 #include "enums_wrapper.hpp"
 

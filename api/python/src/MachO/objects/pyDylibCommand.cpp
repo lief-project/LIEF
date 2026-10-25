@@ -16,7 +16,6 @@
 #include <nanobind/stl/array.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <sstream>
 #include <string>
 
 #include "LIEF/MachO/DylibCommand.hpp"

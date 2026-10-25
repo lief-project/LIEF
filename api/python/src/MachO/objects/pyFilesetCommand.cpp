@@ -15,10 +15,9 @@
  */
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <sstream>
 #include <string>
 
-#include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/Binary.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/FilesetCommand.hpp"
 
 #include "MachO/pyMachO.hpp"

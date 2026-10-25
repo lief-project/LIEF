@@ -1,6 +1,5 @@
 #include "LIEF/runtime/Memory.hpp"
 #include "runtime/pyRuntime.hpp"
-#include <sstream>
 
 #include <nanobind/extra/memoryview.hpp>
 #include <nanobind/stl/optional.h>

@@ -24,7 +24,7 @@
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Parser.hpp"
 
-#include "LIEF/BinaryStream/BinaryStream.hpp"
+#include "LIEF/BinaryStream/BinaryStream.hpp" // IWYU pragma: keep
 
 namespace LIEF::ELF::py {
 

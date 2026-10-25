@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
 #include <nanobind/stl/array.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 #include "LIEF/MachO/BuildVersion.hpp"
-#include "LIEF/MachO/EnumToString.hpp"
 
 #include "enums_wrapper.hpp"
 

@@ -15,7 +15,6 @@
 #pragma once
 
 #include "LIEF/runtime/android/Host.hpp"
-#include "LIEF/rust/helpers.hpp"
 
 class runtime_android_Host {
   public:

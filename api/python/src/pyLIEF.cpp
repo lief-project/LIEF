@@ -19,7 +19,6 @@
 #include "spdlog/sinks/python_sink.h"
 #include <nanobind/stl/string_view.h>
 #include <spdlog/logger.h>
-#include <sstream>
 
 #include "nanobind/extra/stl/pathlike.h"
 #include <nanobind/extra/memoryview.hpp>
@@ -29,7 +28,6 @@
 
 #include "LIEF/Object.hpp"
 #include "LIEF/debug_loc.hpp"
-#include "LIEF/errors.hpp"
 #include "LIEF/hash.hpp"
 #include "LIEF/json.hpp"
 #include "LIEF/logging.hpp"

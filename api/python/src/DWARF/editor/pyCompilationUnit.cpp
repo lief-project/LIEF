@@ -1,12 +1,10 @@
-#include "LIEF/DWARF/editor/ArrayType.hpp"
+#include "LIEF/DWARF/editor/ArrayType.hpp" // IWYU pragma: keep
 #include "LIEF/DWARF/editor/CompilationUnit.hpp"
-#include "LIEF/DWARF/editor/EnumType.hpp"
-#include "LIEF/DWARF/editor/Function.hpp"
-#include "LIEF/DWARF/editor/PointerType.hpp"
+#include "LIEF/DWARF/editor/EnumType.hpp" // IWYU pragma: keep
+#include "LIEF/DWARF/editor/Function.hpp" // IWYU pragma: keep
 #include "LIEF/DWARF/editor/StructType.hpp"
-#include "LIEF/DWARF/editor/Type.hpp"
-#include "LIEF/DWARF/editor/TypeDef.hpp"
-#include "LIEF/DWARF/editor/Variable.hpp"
+#include "LIEF/DWARF/editor/TypeDef.hpp"  // IWYU pragma: keep
+#include "LIEF/DWARF/editor/Variable.hpp" // IWYU pragma: keep
 
 #include "DWARF/pyDwarf.hpp"
 

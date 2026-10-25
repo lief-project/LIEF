@@ -20,7 +20,6 @@
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
 
 namespace LIEF::DEX::py {
 

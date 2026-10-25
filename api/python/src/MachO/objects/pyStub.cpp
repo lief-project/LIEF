@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include "LIEF/MachO/Stub.hpp"
-#include <sstream>
 
 #include "nanobind/utils.hpp"
 #include <nanobind/extra/stl/lief_span.h>

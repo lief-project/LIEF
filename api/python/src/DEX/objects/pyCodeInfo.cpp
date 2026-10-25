@@ -17,9 +17,6 @@
 
 #include "DEX/pyDEX.hpp"
 
-#include <sstream>
-#include <string>
-
 #include <nanobind/stl/string.h>
 
 namespace LIEF::DEX::py {

@@ -15,7 +15,7 @@
  */
 #include "LIEF/OAT/EnumToString.hpp"
 #include "LIEF/OAT/enums.hpp"
-#include "OAT/pyOAT.hpp"
+#include "pyLIEF.hpp"
 
 #define PY_ENUM(x) to_string(x), x
 

@@ -1,4 +1,3 @@
-
 /* Copyright 2017 - 2026 R. Thomas
  * Copyright 2017 - 2026 Quarkslab
  *
@@ -16,17 +15,10 @@
  */
 #include "PE/pyPE.hpp"
 #include "pyIterator.hpp"
-#include "pySafeString.hpp"
 #include <string_view>
 #include <nanobind/stl/string_view.h>
 
-#include "LIEF/PE/ResourceData.hpp"
-#include "LIEF/PE/ResourceDirectory.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
-#include "LIEF/utils.hpp"
-
-#include <sstream>
-#include <string>
 
 #include <nanobind/operators.h>
 #include <nanobind/stl/string.h>

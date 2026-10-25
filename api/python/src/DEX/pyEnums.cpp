@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "DEX/pyDEX.hpp"
 #include "LIEF/DEX/EnumToString.hpp"
 #include "LIEF/DEX/enums.hpp"
+#include "pyLIEF.hpp"
 
 #define PY_ENUM(x) to_string(x), x
 

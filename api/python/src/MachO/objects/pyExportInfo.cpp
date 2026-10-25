@@ -15,16 +15,13 @@
  */
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
-#include "LIEF/MachO/DylibCommand.hpp"
+#include "LIEF/MachO/DylibCommand.hpp" // IWYU pragma: keep
 #include "LIEF/MachO/ExportInfo.hpp"
 #include "LIEF/MachO/Symbol.hpp"
 
 #include "MachO/pyMachO.hpp"
 #include "enums_wrapper.hpp"
-#include "pyIterator.hpp"
 
 namespace LIEF::MachO::py {
 

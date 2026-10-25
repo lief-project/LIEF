@@ -16,14 +16,12 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/Debug.hpp"
-#include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/Section.hpp" // IWYU pragma: keep
 
 #include "enums_wrapper.hpp"
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
-#include <sstream>
-#include <string>
 
 #include "nanobind/extra/stl/lief_span.h"
 

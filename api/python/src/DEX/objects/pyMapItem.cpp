@@ -19,8 +19,6 @@
 #include "DEX/pyDEX.hpp"
 #include "enums_wrapper.hpp"
 
-#include <sstream>
-
 #define PY_ENUM(x) to_string(x), x
 
 namespace LIEF::DEX::py {

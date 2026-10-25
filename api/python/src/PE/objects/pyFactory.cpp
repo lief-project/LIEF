@@ -16,25 +16,13 @@
 #include "PE/pyPE.hpp"
 
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/Debug.hpp"
-#include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Factory.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
-#include "LIEF/PE/Relocation.hpp"
-#include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/ResourceNode.hpp"
-#include "LIEF/PE/RichHeader.hpp"
-#include "LIEF/PE/Section.hpp"
-#include "LIEF/PE/TLS.hpp"
-#include "pyErr.hpp"
 
 #include "nanobind/utils.hpp"
 #include <nanobind/stl/function.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
-#include <sstream>
-#include <string>
 
 namespace LIEF::PE::py {
 

@@ -13,11 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <algorithm>
-
-#include <sstream>
-#include <string>
-
 #include "LIEF/MachO/CodeSignatureDir.hpp"
 #include "LIEF/MachO/hash.hpp"
 
