@@ -211,7 +211,7 @@ uint64_t Binary::entrypoint() const {
     return imagebase() + cmd->pc();
   }
 
-  LIEF_WARN("Neither LC_MAIN nor LC_THREAD/LC_UNIXTHREAD found");
+  LIEF_DEBUG("Neither LC_MAIN nor LC_THREAD/LC_UNIXTHREAD found");
   return 0;
 }
 
