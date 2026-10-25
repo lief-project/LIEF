@@ -15,9 +15,9 @@
  */
 #include <algorithm>
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/ChainedBindingInfo.hpp"
 
@@ -27,7 +27,8 @@ namespace LIEF::MachO::py {
 
 template<>
 void create<ChainedBindingInfo>(nb::module_& m) {
-  nb::class_<ChainedBindingInfo, BindingInfo>(m, "ChainedBindingInfo",
+  nb::class_<ChainedBindingInfo, BindingInfo>(
+      m, "ChainedBindingInfo",
       R"delim(
       This class represents a symbol binding operation associated with
       the LC_DYLD_CHAINED_FIXUPS command.
@@ -36,24 +37,26 @@ void create<ChainedBindingInfo>(nb::module_& m) {
       specifications but it provides a *view* on an entry.
 
       See also: :class:`~lief.MachO.BindingInfo`
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def_prop_ro("format", &ChainedBindingInfo::format,
-        R"delim(:class:`~lief.MachO.DYLD_CHAINED_FORMAT` of the import)delim"_doc)
+      .def_prop_ro("format", &ChainedBindingInfo::format,
+                   ":class:`~lief.MachO.DYLD_CHAINED_FORMAT` of the import"_doc)
 
-    .def_prop_ro("ptr_format", &ChainedBindingInfo::ptr_format,
-        R"delim(:class:`~lief.MachO.DYLD_CHAINED_PTR_FORMAT` of the import)delim"_doc)
+      .def_prop_ro(
+          "ptr_format", &ChainedBindingInfo::ptr_format,
+          ":class:`~lief.MachO.DYLD_CHAINED_PTR_FORMAT` of the import"_doc
+      )
 
-    .def_prop_rw("offset",
-        nb::overload_cast<>(&ChainedBindingInfo::offset, nb::const_),
-        nb::overload_cast<uint32_t>(&ChainedBindingInfo::offset),
-        R"delim(Offset of the entry in the chained fixups)delim"_doc)
+      .def_prop_rw("offset",
+                   nb::overload_cast<>(&ChainedBindingInfo::offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&ChainedBindingInfo::offset),
+                   "Offset of the entry in the chained fixups"_doc)
 
-    .def_prop_ro("sign_extended_addend",
-        &ChainedBindingInfo::sign_extended_addend)
+      .def_prop_ro("sign_extended_addend",
+                   &ChainedBindingInfo::sign_extended_addend)
 
-    LIEF_DEFAULT_STR(ChainedBindingInfo);
-
+      .LIEF_DEFAULT_STR(ChainedBindingInfo);
 }
 
 }

@@ -1,23 +1,20 @@
 #include "PDB/init.hpp"
 #include "PDB/pyPDB.hpp"
 
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
 
-#include "LIEF/PDB/DebugInfo.hpp"
 #include "LIEF/PDB/BuildMetadata.hpp"
+#include "LIEF/PDB/DebugInfo.hpp"
 #include "LIEF/PDB/Type.hpp"
 
 namespace LIEF::pdb::py {
 void init(nb::module_& m) {
   nb::module_ pdb = m.def_submodule("pdb");
 
-  pdb.def("load", &LIEF::pdb::load,
-    R"doc(
-    Load the PDB from the given path
-    )doc"_doc, "path"_a
-  );
+  pdb.def("load", &LIEF::pdb::load, "Load the PDB from the given path"_doc,
+          "path"_a);
   init_utils(m);
 
   create<LIEF::pdb::BuildMetadata>(pdb);

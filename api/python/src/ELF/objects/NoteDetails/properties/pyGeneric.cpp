@@ -21,16 +21,16 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<Generic>(nb::module_& m) {
-  nb::class_<Generic, NoteGnuProperty::Property>(m, "Generic",
-      R"doc(
-      This class represents a property which doesn't have a concrete LIEF implementation.
-      )doc")
-    .def_prop_ro("raw_type", &Generic::type,
-        R"doc(
-        The original raw type as an integer. This value might depend
-        on the architecture and/or the file type.
-        )doc");
-
+  nb::class_<Generic, NoteGnuProperty::Property>(
+      m, "Generic",
+      "This class represents a property which doesn't have a concrete LIEF "
+      "implementation."
+  )
+      .def_prop_ro("raw_type", &Generic::type,
+                   R"doc(
+                   The original raw type as an integer. This value might depend
+                   on the architecture and/or the file type.
+                   )doc");
 }
 
 }

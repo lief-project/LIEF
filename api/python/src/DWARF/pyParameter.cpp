@@ -1,68 +1,59 @@
+#include "DWARF/pyDwarf.hpp"
+#include "DWARF/pyLocation.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
 #include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/types.hpp"
-#include "DWARF/pyDwarf.hpp"
-#include "DWARF/pyLocation.hpp"
 
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::Parameter>(nb::module_& m) {
-  nb::class_<dw::Parameter> param(m, "Parameter",
-    R"doc(
-    This class represents a DWARF parameter which can be either:
-    - A regular function parameter (see: :class:`.parameters.Formal`)
-    - A template type parameter (see: :class:`.parameters.TemplateType`)
-    - A template value parameter (see: :class:`.parameters.TemplateValue`)
-    )doc"_doc
+  nb::class_<dw::Parameter> param(
+      m, "Parameter",
+      R"doc(
+      This class represents a DWARF parameter which can be either:
+      - A regular function parameter (see: :class:`.parameters.Formal`)
+      - A template type parameter (see: :class:`.parameters.TemplateType`)
+      - A template value parameter (see: :class:`.parameters.TemplateValue`)
+      )doc"_doc
   );
 
   param.attr("Location") = m.attr("Location");
   param.attr("RegisterLoc") = m.attr("RegisterLoc");
 
-  param
-    .def_prop_ro("name", &dw::Parameter::name,
-      R"doc(
-      Name of the parameter
-      )doc"_doc
-    )
+  param.def_prop_ro("name", &dw::Parameter::name, "Name of the parameter"_doc)
 
-    .def_prop_ro("type", &dw::Parameter::type,
-      R"doc(
-      Type of this parameter
-      )doc"_doc, nb::keep_alive<0, 1>()
-    )
+      .def_prop_ro("type", &dw::Parameter::type, "Type of this parameter"_doc,
+                   nb::keep_alive<0, 1>())
 
-    .def_prop_ro("location",
-      nb::overload_cast<>(&dw::Parameter::location, nb::const_),
-      R"doc(
-      Location of this parameter. For instance it can be a specific register
-      that is not following the calling convention.
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "location", nb::overload_cast<>(&dw::Parameter::location, nb::const_),
+          R"doc(
+          Location of this parameter. For instance it can be a specific register
+          that is not following the calling convention.
+          )doc"_doc
+      )
 
-    .def("location_at",
-      nb::overload_cast<uint64_t>(&dw::Parameter::location, nb::const_),
-      R"doc(
-      Location of this parameter when the program counter is at the given
-      address.
-      )doc"_doc, "pc"_a
-    )
+      .def("location_at",
+           nb::overload_cast<uint64_t>(&dw::Parameter::location, nb::const_),
+           R"doc(
+           Location of this parameter when the program counter is at the given
+           address.
+           )doc"_doc,
+           "pc"_a)
 
-    .def_prop_ro("locations", &dw::Parameter::locations,
-      R"doc(
-      All the location entries of this parameter.
-      )doc"_doc
-    )
-  ;
+      .def_prop_ro("locations", &dw::Parameter::locations,
+                   "All the location entries of this parameter."_doc);
 
   nb::module_ m_params = m.def_submodule("parameters");
   /* Formal */ {
-    nb::class_<dw::parameters::Formal, dw::Parameter>(m_params, "Formal",
+    nb::class_<
+        dw::parameters::Formal, dw::Parameter
+    >(m_params, "Formal",
       R"doc(
       This class represents a regular function parameter.
 
@@ -78,52 +69,53 @@ void create<dw::Parameter>(nb::module_& m) {
           (:class:`~lief.dwarf.types.Base` from :attr:`lief.dwarf.Parameter.type`)
       2. ``argv`` (:attr:`lief.dwarf.Parameter.name`) typed as ``const char**``
           (:class:`~lief.dwarf.types.Const`)
-      )doc"_doc
-    )
-      /* NOT NEEDED but dirty workaround to void stubgen generating this
-       * kind of error:
-       * lief/dwarf/parameters.pyi:1: error: Name "lief" is not defined  [name-defined]
-       *
-       * CAN BE REMOVED if one of these classes are API enhanced
-       */
-      .def_prop_ro("type", &dw::parameters::Formal::type, nb::keep_alive<0, 1>())
-    ;
+      )doc"_doc)
+        /* NOT NEEDED but dirty workaround to void stubgen generating this
+         * kind of error:
+         * lief/dwarf/parameters.pyi:1: error: Name "lief" is not defined
+         * [name-defined]
+         *
+         * CAN BE REMOVED if one of these classes are API enhanced
+         */
+        .def_prop_ro("type", &dw::parameters::Formal::type,
+                     nb::keep_alive<0, 1>());
   }
 
   /* TemplateValue */ {
-    nb::class_<dw::parameters::TemplateValue, dw::Parameter>(m_params, "TemplateValue",
-      R"doc(
-      This class represents a template **value** parameter.
+    nb::class_<dw::parameters::TemplateValue, dw::Parameter>(
+        m_params, "TemplateValue",
+        R"doc(
+        This class represents a template **value** parameter.
 
-      For instance, given this prototype:
+        For instance, given this prototype:
 
-      .. code-block:: cpp
+        .. code-block:: cpp
 
-        template<int X = 5>
-        void generic();
+          template<int X = 5>
+          void generic();
 
-      The function ``generic`` has one :class:`.TemplateValue` parameter: ``X``
-      )doc"_doc
+        The function ``generic`` has one :class:`.TemplateValue` parameter: ``X``
+        )doc"_doc
     );
   }
 
   /* TemplateType */ {
-    nb::class_<dw::parameters::TemplateType, dw::Parameter>(m_params, "TemplateType",
-      R"doc(
-      This class represents a template **type** parameter.
+    nb::class_<dw::parameters::TemplateType, dw::Parameter>(
+        m_params, "TemplateType",
+        R"doc(
+        This class represents a template **type** parameter.
 
-      For instance, given this prototype:
+        For instance, given this prototype:
 
-      .. code-block:: cpp
+        .. code-block:: cpp
 
-        template<class Y>
-        void generic();
+          template<class Y>
+          void generic();
 
-      The function ``generic`` has one :class:`.TemplateType` parameter: ``Y``
-      )doc"_doc
+        The function ``generic`` has one :class:`.TemplateType` parameter: ``Y``
+        )doc"_doc
     );
   }
-
 }
 
 }

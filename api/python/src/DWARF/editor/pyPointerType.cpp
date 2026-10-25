@@ -5,10 +5,8 @@
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::editor::PointerType>(nb::module_& m) {
-  nb::class_<dw::editor::PointerType, dw::editor::Type>(m, "PointerType",
-    R"doc(
-    This class represents a pointer to another type.
-    )doc"_doc
+  nb::class_<dw::editor::PointerType, dw::editor::Type>(
+      m, "PointerType", "This class represents a pointer to another type."_doc
   );
 }
 

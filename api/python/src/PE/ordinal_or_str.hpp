@@ -11,15 +11,15 @@ NAMESPACE_BEGIN(detail)
 
 template<>
 struct type_caster<LIEF::PE::ResourceDialog::ordinal_or_str_t> {
-  NB_TYPE_CASTER(LIEF::PE::ResourceDialog::ordinal_or_str_t, const_name("Optional[Union[int, str]]"));
+  NB_TYPE_CASTER(LIEF::PE::ResourceDialog::ordinal_or_str_t,
+                 const_name("Optional[Union[int, str]]"));
 
-  bool from_python(handle, uint32_t, cleanup_list *) noexcept {
+  bool from_python(handle, uint32_t, cleanup_list*) noexcept {
     return false;
   }
 
   static handle from_cpp(const LIEF::PE::ResourceDialog::ordinal_or_str_t& val,
-                         rv_policy rp, cleanup_list *cl) noexcept
-  {
+                         rv_policy rp, cleanup_list* cl) noexcept {
     if (val.ordinal) {
       return int_(*val.ordinal).release();
     }

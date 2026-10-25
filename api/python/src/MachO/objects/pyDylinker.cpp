@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/DylinkerCommand.hpp"
 
@@ -27,19 +27,20 @@ namespace LIEF::MachO::py {
 template<>
 void create<DylinkerCommand>(nb::module_& m) {
 
-  nb::class_<DylinkerCommand, LoadCommand>(m, "DylinkerCommand",
+  nb::class_<DylinkerCommand, LoadCommand>(
+      m, "DylinkerCommand",
       R"delim(
       Class that represents the Mach-O linker, also named loader
       Most of the time, :attr:`~lief.MachO.DylinkerCommand.name` returns ``/usr/lib/dyld``
-      )delim"_doc)
-    .def(nb::init<const std::string&>())
+      )delim"_doc
+  )
+      .def(nb::init<const std::string&>())
 
-    .def_prop_rw("name",
-        nb::overload_cast<>(&DylinkerCommand::name, nb::const_),
-        nb::overload_cast<std::string>(&DylinkerCommand::name),
-        "Path to the loader/linker"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_rw("name", nb::overload_cast<>(&DylinkerCommand::name, nb::const_),
+                   nb::overload_cast<std::string>(&DylinkerCommand::name),
+                   "Path to the loader/linker"_doc,
+                   nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(DylinkerCommand);
+      .LIEF_DEFAULT_STR(DylinkerCommand);
 }
 }

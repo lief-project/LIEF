@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "ART/pyART.hpp"
 #include "ART/init.hpp"
+#include "ART/pyART.hpp"
 
-#include "LIEF/ART/Parser.hpp"
+#include "LIEF/ART/EnumToString.hpp"
 #include "LIEF/ART/File.hpp"
 #include "LIEF/ART/Header.hpp"
+#include "LIEF/ART/Parser.hpp"
 #include "LIEF/ART/enums.hpp"
-#include "LIEF/ART/EnumToString.hpp"
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
-#define PY_ENUM(x) to_string(x), x
+#define PY_ENUM(x)   to_string(x), x
 
 namespace LIEF::ART::py {
 
@@ -36,9 +36,9 @@ inline void init_objects(nb::module_& m) {
 
 inline void init_enums(nb::module_& m) {
   nb::enum_<STORAGE_MODES>(m, "STORAGE_MODES")
-    .value(PY_ENUM(STORAGE_MODES::STORAGE_UNCOMPRESSED))
-    .value(PY_ENUM(STORAGE_MODES::STORAGE_LZ4))
-    .value(PY_ENUM(STORAGE_MODES::STORAGE_LZ4HC));
+      .value(PY_ENUM(STORAGE_MODES::STORAGE_UNCOMPRESSED))
+      .value(PY_ENUM(STORAGE_MODES::STORAGE_LZ4))
+      .value(PY_ENUM(STORAGE_MODES::STORAGE_LZ4HC));
 }
 
 void init(nb::module_& m) {

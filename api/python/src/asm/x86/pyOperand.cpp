@@ -19,16 +19,14 @@ class PCRelative;
 namespace LIEF::assembly::x86::py {
 template<>
 void create<x86::Operand>(nb::module_& m) {
-  nb::class_<x86::Operand> obj(m, "Operand",
-    R"doc(This class represents an operand for an x86/x86-64 instruction)doc"_doc
+  nb::class_<x86::Operand> obj(
+      m, "Operand",
+      "This class represents an operand for an x86/x86-64 instruction"_doc
   );
 
-  obj
-    .def_prop_ro("to_string", &Operand::to_string,
-      R"doc(Pretty representation of the operand)doc"_doc
-    )
-    LIEF_DEFAULT_STR(x86::Operand)
-  ;
+  obj.def_prop_ro("to_string", &Operand::to_string,
+                  "Pretty representation of the operand"_doc)
+      .LIEF_DEFAULT_STR(x86::Operand);
 
   nb::module_ operands = m.def_submodule("operands");
   create<x86::operands::Immediate>(operands);

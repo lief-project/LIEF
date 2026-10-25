@@ -18,59 +18,68 @@
 
 #include "LIEF/PE/ResourceDirectory.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<ResourceDirectory>(nb::module_& m) {
   nb::class_<ResourceDirectory, ResourceNode>(m, "ResourceDirectory")
-    .def(nb::init<>(),
-        "Default constructor"_doc)
+      .def(nb::init<>(), "Default constructor"_doc)
 
-    .def(nb::init<uint32_t>(),
-        "Constructor from an ID"_doc)
+      .def(nb::init<uint32_t>(), "Constructor from an ID"_doc)
 
-    .def_prop_rw("characteristics",
-        nb::overload_cast<>(&ResourceDirectory::characteristics, nb::const_),
-        nb::overload_cast<uint32_t>(&ResourceDirectory::characteristics),
-        "Resource characteristics. This field is reserved for future use. "
-        "It is currently set to zero."_doc)
+      .def_prop_rw(
+          "characteristics",
+          nb::overload_cast<>(&ResourceDirectory::characteristics, nb::const_),
+          nb::overload_cast<uint32_t>(&ResourceDirectory::characteristics),
+          "Resource characteristics. This field is reserved for future use. "
+          "It is currently set to zero."_doc
+      )
 
-    .def_prop_rw("time_date_stamp",
-        nb::overload_cast<>(&ResourceDirectory::time_date_stamp, nb::const_),
-        nb::overload_cast<uint32_t>(&ResourceDirectory::time_date_stamp),
-        "The time that the resource data was created by the "
-        "resource compiler."_doc)
+      .def_prop_rw(
+          "time_date_stamp",
+          nb::overload_cast<>(&ResourceDirectory::time_date_stamp, nb::const_),
+          nb::overload_cast<uint32_t>(&ResourceDirectory::time_date_stamp),
+          "The time that the resource data was created by the "
+          "resource compiler."_doc
+      )
 
-    .def_prop_rw("major_version",
-        nb::overload_cast<>(&ResourceDirectory::major_version, nb::const_),
-        nb::overload_cast<uint16_t>(&ResourceDirectory::major_version),
-        "The major version number, set by the user."_doc)
+      .def_prop_rw("major_version",
+                   nb::overload_cast<>(&ResourceDirectory::major_version,
+                                       nb::const_),
+                   nb::overload_cast<uint16_t>(&ResourceDirectory::major_version),
+                   "The major version number, set by the user."_doc)
 
-    .def_prop_rw("minor_version",
-        nb::overload_cast<>(&ResourceDirectory::minor_version, nb::const_),
-        nb::overload_cast<uint16_t>(&ResourceDirectory::minor_version),
-        "The minor version number, set by the user."_doc)
+      .def_prop_rw("minor_version",
+                   nb::overload_cast<>(&ResourceDirectory::minor_version,
+                                       nb::const_),
+                   nb::overload_cast<uint16_t>(&ResourceDirectory::minor_version),
+                   "The minor version number, set by the user."_doc)
 
-    .def_prop_rw("numberof_name_entries",
-        nb::overload_cast<>(&ResourceDirectory::numberof_name_entries, nb::const_),
-        nb::overload_cast<uint16_t>(&ResourceDirectory::numberof_name_entries),
-        "The number of directory entries immediately "
-        "following the table that use strings to identify Type, "
-        "Name, or Language entries (depending on the level "
-        "of the table"_doc)
+      .def_prop_rw(
+          "numberof_name_entries",
+          nb::overload_cast<>(&ResourceDirectory::numberof_name_entries,
+                              nb::const_),
+          nb::overload_cast<uint16_t>(&ResourceDirectory::numberof_name_entries),
+          "The number of directory entries immediately "
+          "following the table that use strings to identify Type, "
+          "Name, or Language entries (depending on the level "
+          "of the table"_doc
+      )
 
-    .def_prop_rw("numberof_id_entries",
-        nb::overload_cast<>(&ResourceDirectory::numberof_id_entries, nb::const_),
-        nb::overload_cast<uint16_t>(&ResourceDirectory::numberof_id_entries),
-        "The number of directory entries immediately "
-        "following the Name entries that use numeric IDs for "
-        "Type, Name, or Language entries."_doc)
+      .def_prop_rw(
+          "numberof_id_entries",
+          nb::overload_cast<>(&ResourceDirectory::numberof_id_entries, nb::const_),
+          nb::overload_cast<uint16_t>(&ResourceDirectory::numberof_id_entries),
+          "The number of directory entries immediately "
+          "following the Name entries that use numeric IDs for "
+          "Type, Name, or Language entries."_doc
+      )
 
-    LIEF_DEFAULT_STR(ResourceDirectory);
+      .LIEF_DEFAULT_STR(ResourceDirectory);
 }
 
 }

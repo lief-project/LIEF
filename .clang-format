@@ -103,6 +103,7 @@ RemoveEmptyLinesInUnwrappedLines: true
 RemoveSemicolon: true
 QualifierAlignment: Left
 
+ReindentRawStrings: [doc, delim]
 
 # Includes - preserve existing order
 SortIncludes: true

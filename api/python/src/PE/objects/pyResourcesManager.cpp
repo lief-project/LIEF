@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <nanobind/stl/string_view.h>
-#include <string_view>
 #include "PE/pyPE.hpp"
-#include "pyIterator.hpp"
 #include "pyErr.hpp"
+#include "pyIterator.hpp"
 #include "pySafeString.hpp"
+#include <string_view>
+#include <nanobind/stl/string_view.h>
 
-#include "LIEF/PE/ResourcesManager.hpp"
 #include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/ResourcesManager.hpp"
 #include "enums_wrapper.hpp"
 
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "nanobind/extra/stl/u16string.h"
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/set.h>
+#include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
 namespace LIEF::PE::py {
@@ -37,19 +37,25 @@ namespace LIEF::PE::py {
 template<>
 void create<ResourcesManager>(nb::module_& m) {
   using namespace LIEF::py;
-  nb::class_<ResourcesManager, LIEF::Object> manager(m, "ResourcesManager",
-      "The Resource Manager provides an enhanced API to manipulate the resource tree"_doc);
+  nb::class_<ResourcesManager, LIEF::Object> manager(
+      m, "ResourcesManager",
+      "The Resource Manager provides an enhanced API to manipulate the resource tree"_doc
+  );
 
-  init_ref_iterator<ResourcesManager::it_const_dialogs>(manager, "it_const_dialogs");
+  init_ref_iterator<ResourcesManager::it_const_dialogs>(manager,
+                                                        "it_const_dialogs");
   init_ref_iterator<ResourcesManager::it_const_icons>(manager, "it_const_icons");
-  init_ref_iterator<ResourcesManager::it_const_accelerators>(manager, "it_const_accelerators");
+  init_ref_iterator<ResourcesManager::it_const_accelerators>(
+      manager, "it_const_accelerators"
+  );
 
   nb::class_<ResourcesManager::string_entry_t>(manager, "string_entry_t")
-    .def_rw("string", &ResourcesManager::string_entry_t::string)
-    .def_rw("id", &ResourcesManager::string_entry_t::id)
-    LIEF_DEFAULT_STR(ResourcesManager::string_entry_t);
+      .def_rw("string", &ResourcesManager::string_entry_t::string)
+      .def_rw("id", &ResourcesManager::string_entry_t::id)
+      .LIEF_DEFAULT_STR(ResourcesManager::string_entry_t);
   ;
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(ResourcesManager::TYPE::X), ResourcesManager::TYPE::X)
   enum_<ResourcesManager::TYPE>(manager, "TYPE")
     ENTRY(CURSOR)
@@ -75,102 +81,103 @@ void create<ResourcesManager>(nb::module_& m) {
     ENTRY(MANIFEST)
   ;
   #undef ENTRY
+  // clang-format on
 
-  manager
-    .def(nb::init<ResourceNode&>(), nb::keep_alive<0, 1>(),
-         "node"_a)
+  manager.def(nb::init<ResourceNode&>(), nb::keep_alive<0, 1>(), "node"_a)
 
-    .def_prop_ro("has_manifest",
-        &ResourcesManager::has_manifest,
-        "``True`` if the resources contain a Manifest element"_doc)
+      .def_prop_ro("has_manifest", &ResourcesManager::has_manifest,
+                   "``True`` if the resources contain a Manifest element"_doc)
 
-    .def_prop_rw("manifest",
-        [] (const ResourcesManager& obj) {
-          return safe_string(obj.manifest());
-        },
-        nb::overload_cast<std::string_view>(&ResourcesManager::manifest),
-        "Manifest as a ``string``"_doc)
+      .def_prop_rw(
+          "manifest",
+          [](const ResourcesManager& obj) { return safe_string(obj.manifest()); },
+          nb::overload_cast<std::string_view>(&ResourcesManager::manifest),
+          "Manifest as a ``string``"_doc
+      )
 
 
-    .def_prop_ro("has_version",
-        &ResourcesManager::has_version,
-        "``True`` if the resources contain a " RST_CLASS_REF(lief.PE.ResourceVersion) ""_doc)
+      .def_prop_ro(
+          "has_version", &ResourcesManager::has_version,
+          "``True`` if the resources contain a :class:`~lief.PE.ResourceVersion`"_doc
+      )
 
-    .def_prop_ro("version", &ResourcesManager::version,
-                 "Return a list of version info (``VS_VERSIONINFO``)."_doc)
+      .def_prop_ro("version", &ResourcesManager::version,
+                   "Return a list of version info (``VS_VERSIONINFO``)."_doc)
 
-    .def_prop_ro("has_icons",
-        &ResourcesManager::has_icons,
-        "``True`` if the resources contain " RST_CLASS_REF(lief.PE.ResourceIcon) ""_doc)
+      .def_prop_ro(
+          "has_icons", &ResourcesManager::has_icons,
+          "``True`` if the resources contain :class:`~lief.PE.ResourceIcon`"_doc
+      )
 
-    .def_prop_ro("icons", &ResourcesManager::icons,
-      "Return the list of the " RST_CLASS_REF(lief.PE.ResourceIcon) " present in the resource"_doc,
-      nb::keep_alive<0, 1>())
+      .def_prop_ro(
+          "icons", &ResourcesManager::icons,
+          "Return the list of the :class:`~lief.PE.ResourceIcon` present in the resource"_doc,
+          nb::keep_alive<0, 1>()
+      )
 
-    .def("change_icon",
-        &ResourcesManager::change_icon,
-        "Switch the given icons"_doc,
-        "old_one"_a, "new_one"_a)
+      .def("change_icon", &ResourcesManager::change_icon,
+           "Switch the given icons"_doc, "old_one"_a, "new_one"_a)
 
-    .def_prop_ro("has_dialogs",
-        &ResourcesManager::has_dialogs,
-        "``True`` if the resources contain " RST_CLASS_REF(lief.PE.ResourceDialog) ""_doc)
+      .def_prop_ro(
+          "has_dialogs", &ResourcesManager::has_dialogs,
+          "``True`` if the resources contain :class:`~lief.PE.ResourceDialog`"_doc
+      )
 
-    .def_prop_ro("dialogs",
-      &ResourcesManager::dialogs,
-      "Return the list of the " RST_CLASS_REF(lief.PE.ResourceDialog) " present in the resource"_doc,
-      nb::keep_alive<0, 1>())
+      .def_prop_ro(
+          "dialogs", &ResourcesManager::dialogs,
+          "Return the list of the :class:`~lief.PE.ResourceDialog` present in the resource"_doc,
+          nb::keep_alive<0, 1>()
+      )
 
-    .def_prop_ro("types",
-      &ResourcesManager::get_types,
-      "Return list of :class:`~.TYPE` present in the resources"_doc)
+      .def_prop_ro("types", &ResourcesManager::get_types,
+                   "Return list of :class:`~.TYPE` present in the resources"_doc)
 
-    .def("add_icon",
-      &ResourcesManager::add_icon,
-      "Add an icon to the resources"_doc,
-      "icon"_a)
+      .def("add_icon", &ResourcesManager::add_icon,
+           "Add an icon to the resources"_doc, "icon"_a)
 
-    .def("has_type",
-      &ResourcesManager::has_type,
-      "``True`` if the resource has the given :class:`~.TYPE`"_doc,
-      "type"_a)
+      .def("has_type", &ResourcesManager::has_type,
+           "``True`` if the resource has the given :class:`~.TYPE`"_doc, "type"_a)
 
-    .def_prop_ro("has_string_table",
-      &ResourcesManager::has_string_table,
-      "``True`` if resources contain " RST_CLASS_REF(lief.PE.ResourceStringTable) ""_doc)
+      .def_prop_ro(
+          "has_string_table", &ResourcesManager::has_string_table,
+          "``True`` if resources contain :class:`~lief.PE.ResourceStringTable`"_doc
+      )
 
-    .def_prop_ro("string_table", &ResourcesManager::string_table,
-      "Return the list of the strings embedded in the string table (``RT_STRING``)"_doc)
+      .def_prop_ro(
+          "string_table", &ResourcesManager::string_table,
+          "Return the list of the strings embedded in the string table (``RT_STRING``)"_doc
+      )
 
-    .def_prop_ro("has_html",
-      &ResourcesManager::has_html,
-      "``True`` if resources contain HTML resource"_doc)
+      .def_prop_ro("has_html", &ResourcesManager::has_html,
+                   "``True`` if resources contain HTML resource"_doc)
 
-    .def_prop_ro("html",
-      &ResourcesManager::html,
-      "HTML resource as the list of ``string``"_doc)
+      .def_prop_ro("html", &ResourcesManager::html,
+                   "HTML resource as the list of ``string``"_doc)
 
-    .def_prop_ro("has_accelerator",
-      &ResourcesManager::has_accelerator,
-      "``True`` if resources contain " RST_CLASS_REF(lief.PE.ResourceAccelerator) ""_doc)
+      .def_prop_ro(
+          "has_accelerator", &ResourcesManager::has_accelerator,
+          "``True`` if resources contain :class:`~lief.PE.ResourceAccelerator`"_doc
+      )
 
-    .def_prop_ro("accelerator", &ResourcesManager::accelerator,
-      "Return list of " RST_CLASS_REF(lief.PE.ResourceAccelerator) " present in the resource"_doc,
-      nb::keep_alive<1, 0>())
+      .def_prop_ro(
+          "accelerator", &ResourcesManager::accelerator,
+          "Return list of :class:`~lief.PE.ResourceAccelerator` present in the resource"_doc,
+          nb::keep_alive<1, 0>()
+      )
 
-    .def("get_node_type",
-      nb::overload_cast<ResourcesManager::TYPE>(&ResourcesManager::get_node_type),
-      R"delim(
-      Return :class:`~lief.PE.ResourceNode` with the given :class:`~.TYPE`
-      or None if not found.
-      )delim"_doc,
-      "type"_a,
-      nb::rv_policy::reference_internal)
+      .def("get_node_type",
+           nb::overload_cast<ResourcesManager::TYPE>(
+               &ResourcesManager::get_node_type
+           ),
+           R"delim(
+           Return :class:`~lief.PE.ResourceNode` with the given :class:`~.TYPE`
+           or None if not found.
+           )delim"_doc,
+           "type"_a, nb::rv_policy::reference_internal)
 
-    .def("print", &ResourcesManager::print,
-         "Print the current resource tree",
-         "max_depth"_a = 0)
+      .def("print", &ResourcesManager::print, "Print the current resource tree",
+           "max_depth"_a = 0)
 
-    LIEF_DEFAULT_STR(ResourcesManager);
+      .LIEF_DEFAULT_STR(ResourcesManager);
 }
 }

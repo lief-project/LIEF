@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/RelocationFixup.hpp"
 
@@ -25,7 +25,8 @@ namespace LIEF::MachO::py {
 
 template<>
 void create<RelocationFixup>(nb::module_& m) {
-  nb::class_<RelocationFixup, Relocation>(m, "RelocationFixup",
+  nb::class_<RelocationFixup, Relocation>(
+      m, "RelocationFixup",
       R"delim(
       Class that represents a rebase relocation found in the LC_DYLD_CHAINED_FIXUPS command.
 
@@ -39,19 +40,17 @@ void create<RelocationFixup>(nb::module_& m) {
 
       If the Mach-O loader chooses another base address (like ``0x7ff100000``), it must set
       ``0x10000d270`` to ``0x7ff1073a8``.
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def_prop_rw("target",
-        nb::overload_cast<>(&RelocationFixup::target, nb::const_),
-        nb::overload_cast<uint64_t>(&RelocationFixup::target))
+      .def_prop_rw("target",
+                   nb::overload_cast<>(&RelocationFixup::target, nb::const_),
+                   nb::overload_cast<uint64_t>(&RelocationFixup::target))
 
-    .def_prop_rw("next",
-        nb::overload_cast<>(&RelocationFixup::next, nb::const_),
-        nb::overload_cast<uint32_t>(&RelocationFixup::next),
-        "(unscaled) next offset in the chain"_doc
-    )
+      .def_prop_rw("next", nb::overload_cast<>(&RelocationFixup::next, nb::const_),
+                   nb::overload_cast<uint32_t>(&RelocationFixup::next),
+                   "(unscaled) next offset in the chain"_doc)
 
-    LIEF_DEFAULT_STR(RelocationFixup);
-
+      .LIEF_DEFAULT_STR(RelocationFixup);
 }
 }

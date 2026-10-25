@@ -15,14 +15,14 @@
  */
 #include <algorithm>
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/DataInCode.hpp"
 
-#include "pyIterator.hpp"
 #include "MachO/pyMachO.hpp"
+#include "pyIterator.hpp"
 
 #include "nanobind/extra/stl/lief_span.h"
 
@@ -34,39 +34,38 @@ void create<DataInCode>(nb::module_& m) {
 
   init_ref_iterator<DataInCode::it_entries>(m, "it_data_in_code_entries");
 
-  nb::class_<DataInCode, LoadCommand>(m, "DataInCode",
+  nb::class_<DataInCode, LoadCommand>(
+      m, "DataInCode",
       R"delim(
       Interface of the LC_DATA_IN_CODE command
 
       This command is used to list slices of code sections that contain data. The *slices*
       information are stored as an array of :class:`~lief.MachO.DataCodeEntry`
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def_prop_rw("data_offset",
-        nb::overload_cast<>(&DataInCode::data_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&DataInCode::data_offset),
-        "Start of the array of the DataCodeEntry entries"_doc)
+      .def_prop_rw("data_offset",
+                   nb::overload_cast<>(&DataInCode::data_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&DataInCode::data_offset),
+                   "Start of the array of the DataCodeEntry entries"_doc)
 
-    .def_prop_rw("data_size",
-        nb::overload_cast<>(&DataInCode::data_size, nb::const_),
-        nb::overload_cast<uint32_t>(&DataInCode::data_size),
-        "Whole size of the array (``size = sizeof(DataCodeEntry) * nb_elements``)"_doc)
+      .def_prop_rw(
+          "data_size", nb::overload_cast<>(&DataInCode::data_size, nb::const_),
+          nb::overload_cast<uint32_t>(&DataInCode::data_size),
+          "Whole size of the array (``size = sizeof(DataCodeEntry) * nb_elements``)"_doc
+      )
 
-    .def_prop_ro("entries",
-        nb::overload_cast<>(&DataInCode::entries),
-        "Iterator over " RST_CLASS_REF(lief.MachO.DataCodeEntry) ""_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_ro("entries", nb::overload_cast<>(&DataInCode::entries),
+                   "Iterator over :class:`~lief.MachO.DataCodeEntry`"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def("add", &DataInCode::add,
-        "Add a new " RST_CLASS_REF(lief.MachO.DataCodeEntry) ""_doc,
-        "entry"_a)
+      .def("add", &DataInCode::add,
+           "Add a new :class:`~lief.MachO.DataCodeEntry`"_doc, "entry"_a)
 
-    .def_prop_ro("content",
-        nb::overload_cast<>(&DataInCode::content, nb::const_),
-        "The original content as a bytes stream"_doc)
+      .def_prop_ro("content",
+                   nb::overload_cast<>(&DataInCode::content, nb::const_),
+                   "The original content as a bytes stream"_doc)
 
-  LIEF_DEFAULT_STR(DataInCode);
-
-
+      .LIEF_DEFAULT_STR(DataInCode);
 }
 }

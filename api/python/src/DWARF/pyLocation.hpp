@@ -7,7 +7,8 @@
 #include <nanobind/nanobind.h>
 
 namespace nanobind::detail {
-template<> struct type_hook<LIEF::dwarf::Location> {
+template<>
+struct type_hook<LIEF::dwarf::Location> {
   static const std::type_info* get(const LIEF::dwarf::Location* src) {
     namespace dw = LIEF::dwarf;
     if (src == nullptr) {

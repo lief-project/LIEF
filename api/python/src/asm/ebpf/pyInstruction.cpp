@@ -11,25 +11,25 @@
 namespace LIEF::assembly::ebpf::py {
 template<>
 void create<ebpf::Instruction>(nb::module_& m) {
-  nb::class_<ebpf::Instruction, assembly::Instruction> obj(m, "Instruction",
-    R"doc(This class represents an eBPF instruction)doc"_doc
+  nb::class_<ebpf::Instruction, assembly::Instruction> obj(
+      m, "Instruction", "This class represents an eBPF instruction"_doc
   );
 
   obj.attr("__match_args__") = nb::make_tuple("opcode", "operands");
 
-  obj
-    .def_prop_ro("opcode", &Instruction::opcode,
-      R"doc(The instruction opcode as defined in LLVM)doc"_doc
-    )
-    .def_prop_ro("operands", [] (const ebpf::Instruction& self) {
-        auto ops = LIEF::py::owning_range(self.operands());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<ebpf::Instruction>(), "operands_it", ops.begin(), ops.end(),
-          nb::keep_alive<0, 1>()
-        );
-      }, nb::keep_alive<0, 1>(),
-      R"doc(Iterator over the operands of the current instruction)doc"_doc
-    )
-  ;
+  obj.def_prop_ro("opcode", &Instruction::opcode,
+                  "The instruction opcode as defined in LLVM"_doc)
+      .def_prop_ro(
+          "operands",
+          [](const ebpf::Instruction& self) {
+            auto ops = LIEF::py::owning_range(self.operands());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<ebpf::Instruction>(), "operands_it", ops.begin(),
+                ops.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          "Iterator over the operands of the current instruction"_doc
+      );
 }
 }

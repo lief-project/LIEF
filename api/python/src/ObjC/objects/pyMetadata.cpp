@@ -1,11 +1,11 @@
-#include "ObjC/pyObjC.hpp"
-#include "LIEF/ObjC/Metadata.hpp"
 #include "LIEF/ObjC/Class.hpp"
+#include "LIEF/ObjC/Metadata.hpp"
+#include "ObjC/pyObjC.hpp"
 
-#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/make_iterator.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <nanobind/make_iterator.h>
+#include <nanobind/stl/unique_ptr.h>
 
 #include "pyOwningIterator.hpp"
 
@@ -13,74 +13,79 @@
 namespace LIEF::objc::py {
 template<>
 void create<objc::Metadata>(nb::module_& m) {
-  nb::class_<objc::Metadata> meta(m, "Metadata",
-    R"doc(
-    This class is the main interface to inspect Objective-C metadata
+  nb::class_<objc::Metadata> meta(
+      m, "Metadata",
+      R"doc(
+      This class is the main interface to inspect Objective-C metadata
 
-    It can be instantiated using the function :attr:`lief.MachO.Binary.objc_metadata`
-    )doc"_doc
+      It can be instantiated using the function :attr:`lief.MachO.Binary.objc_metadata`
+      )doc"_doc
   );
-  meta
-    .def("to_decl", &Metadata::to_decl,
-      R"doc(
-      Generate a header-like of all the Objective-C metadata identified in the
-      binary.
+  meta.def("to_decl", &Metadata::to_decl,
+           R"doc(
+           Generate a header-like of all the Objective-C metadata identified in the
+           binary.
 
-      The generated output can be configured with the provided :class:`~.DeclOpt`
-      parameter.
-      )doc"_doc, "opt"_a = DeclOpt()
-    )
-    .def_prop_ro("classes",
-        [] (objc::Metadata& self) {
-          auto classes = LIEF::py::owning_range(self.classes());
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Metadata>(), "classes_it", classes.begin(), classes.end(),
-            nb::keep_alive<0, 1>()
-          );
-        }, nb::keep_alive<0, 1>(),
-        R"doc(
-        Return an iterator over the different Objective-C classes (``@interface``).
-        )doc"_doc
-    )
-    .def_prop_ro("protocols",
-        [] (objc::Metadata& self) {
-          auto protocols = LIEF::py::owning_range(self.protocols());
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Metadata>(), "protocols_it", protocols.begin(), protocols.end(),
-            nb::keep_alive<0, 1>()
-          );
-        }, nb::keep_alive<0, 1>(),
-        R"doc(
-        Return an iterator over the Objective-C protocols declared in this
-        binary (``@protocol``).
-        )doc"_doc
-    )
-    .def_prop_ro("categories",
-        [] (objc::Metadata& self) {
-          auto categories = LIEF::py::owning_range(self.categories());
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<objc::Metadata>(), "categories_it", categories.begin(), categories.end(),
-            nb::keep_alive<0, 1>()
-          );
-        }, nb::keep_alive<0, 1>(),
-        R"doc(
-        Return an iterator over the Objective-C categories declared in this
-        binary (e.g. ``@interface NSString (MyAdditions)``).
-        )doc"_doc
-    )
+           The generated output can be configured with the provided :class:`~.DeclOpt`
+           parameter.
+           )doc"_doc,
+           "opt"_a = DeclOpt())
+      .def_prop_ro(
+          "classes",
+          [](objc::Metadata& self) {
+            auto classes = LIEF::py::owning_range(self.classes());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<objc::Metadata>(), "classes_it", classes.begin(),
+                classes.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          R"doc(
+          Return an iterator over the different Objective-C classes (``@interface``).
+          )doc"_doc
+      )
+      .def_prop_ro(
+          "protocols",
+          [](objc::Metadata& self) {
+            auto protocols = LIEF::py::owning_range(self.protocols());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<objc::Metadata>(), "protocols_it", protocols.begin(),
+                protocols.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          R"doc(
+          Return an iterator over the Objective-C protocols declared in this
+          binary (``@protocol``).
+          )doc"_doc
+      )
+      .def_prop_ro(
+          "categories",
+          [](objc::Metadata& self) {
+            auto categories = LIEF::py::owning_range(self.categories());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<objc::Metadata>(), "categories_it", categories.begin(),
+                categories.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          R"doc(
+          Return an iterator over the Objective-C categories declared in this
+          binary (e.g. ``@interface NSString (MyAdditions)``).
+          )doc"_doc
+      )
 
-    .def("get_class", &objc::Metadata::get_class,
-      R"doc(
-      Try to find the Objective-C class with the given **mangled** name.
-      )doc"_doc, "name"_a, nb::keep_alive<0, 1>()
-    )
+      .def(
+          "get_class", &objc::Metadata::get_class,
+          "Try to find the Objective-C class with the given **mangled** name."_doc,
+          "name"_a, nb::keep_alive<0, 1>()
+      )
 
-    .def("get_protocol", &objc::Metadata::get_protocol,
-      R"doc(
-      Try to find the Objective-C protocol with the given **mangled** name.
-      )doc"_doc, "name"_a, nb::keep_alive<0, 1>()
-    )
-  ;
+      .def("get_protocol", &objc::Metadata::get_protocol,
+           R"doc(
+           Try to find the Objective-C protocol with the given **mangled** name.
+           )doc"_doc,
+           "name"_a, nb::keep_alive<0, 1>());
 }
 
 }

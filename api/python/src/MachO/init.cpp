@@ -17,11 +17,13 @@
 #include "MachO/enums.hpp"
 #include "MachO/pyMachO.hpp"
 
+#include <LIEF/MachO/AtomInfo.hpp>
 #include <LIEF/MachO/Binary.hpp>
 #include <LIEF/MachO/BindingInfo.hpp>
 #include <LIEF/MachO/BuildVersion.hpp>
 #include <LIEF/MachO/Builder.hpp>
 #include <LIEF/MachO/ChainedBindingInfo.hpp>
+#include <LIEF/MachO/ChainedPointerAnalysis.hpp>
 #include <LIEF/MachO/CodeSignature.hpp>
 #include <LIEF/MachO/CodeSignatureDir.hpp>
 #include <LIEF/MachO/DataCodeEntry.hpp>
@@ -39,12 +41,11 @@
 #include <LIEF/MachO/FatBinary.hpp>
 #include <LIEF/MachO/FilesetCommand.hpp>
 #include <LIEF/MachO/FunctionStarts.hpp>
-#include <LIEF/MachO/FunctionVariants.hpp>
 #include <LIEF/MachO/FunctionVariantFixups.hpp>
-#include <LIEF/MachO/LazyLoadDylibInfo.hpp>
-#include <LIEF/MachO/AtomInfo.hpp>
+#include <LIEF/MachO/FunctionVariants.hpp>
 #include <LIEF/MachO/Header.hpp>
 #include <LIEF/MachO/IndirectBindingInfo.hpp>
+#include <LIEF/MachO/LazyLoadDylibInfo.hpp>
 #include <LIEF/MachO/LinkerOptHint.hpp>
 #include <LIEF/MachO/LoadCommand.hpp>
 #include <LIEF/MachO/MainCommand.hpp>
@@ -72,9 +73,8 @@
 #include <LIEF/MachO/UUIDCommand.hpp>
 #include <LIEF/MachO/UnknownCommand.hpp>
 #include <LIEF/MachO/VersionMin.hpp>
-#include <LIEF/MachO/ChainedPointerAnalysis.hpp>
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF::MachO::py {
 
@@ -139,7 +139,8 @@ void init_objects(nb::module_& m) {
 }
 
 void init(nb::module_& m) {
-  nb::module_ macho_mod = m.def_submodule("MachO", "Python API for the MachO format");
+  nb::module_ macho_mod =
+      m.def_submodule("MachO", "Python API for the MachO format");
   init_enums(macho_mod);
   init_objects(macho_mod);
   init_utils(macho_mod);

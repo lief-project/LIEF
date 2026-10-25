@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/pair.h>
+#include <nanobind/stl/vector.h>
 
-#include "enums_wrapper.hpp"
 #include "ELF/pyELF.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/NoteDetails/properties/X86Feature.hpp"
 
@@ -28,40 +28,40 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<X86Features>(nb::module_& m) {
-  nb::class_<X86Features, NoteGnuProperty::Property> Class(m, "X86Features",
-    R"doc(
-    This class interfaces the different ``GNU_PROPERTY_X86_FEATURE_*``
-    properties which includes:
+  nb::class_<X86Features, NoteGnuProperty::Property> Class(
+      m, "X86Features",
+      R"doc(
+      This class interfaces the different ``GNU_PROPERTY_X86_FEATURE_*``
+      properties which includes:
 
-    - ``GNU_PROPERTY_X86_FEATURE_1_AND``
-    - ``GNU_PROPERTY_X86_FEATURE_2_USED``
-    - ``GNU_PROPERTY_X86_FEATURE_2_NEEDED``
-    )doc"_doc
+      - ``GNU_PROPERTY_X86_FEATURE_1_AND``
+      - ``GNU_PROPERTY_X86_FEATURE_2_USED``
+      - ``GNU_PROPERTY_X86_FEATURE_2_NEEDED``
+      )doc"_doc
   );
-  Class
-    .def_prop_ro("features", &X86Features::features,
+  Class.def_prop_ro(
+      "features", &X86Features::features,
       R"doc(
       List of the features as a pair of (:class:`~.FLAG`, :class:`~.FEATURE`).
       )doc"_doc
-    );
+  );
 
+  // clang-format off
 # define ENTRY(X,D) .value(to_string(X86Features::FLAG::X), X86Features::FLAG::X, D)
   enum_<X86Features::FLAG>(Class, "FLAG",
-    R"doc(
-    Flag according to the ``_AND``, ``_USED`` or ``_NEEDED`` suffixes
-    )doc"_doc
+    "Flag according to the ``_AND``, ``_USED`` or ``_NEEDED`` suffixes"_doc
   )
     ENTRY(NONE, "For the original ``GNU_PROPERTY_X86_FEATURE_1_AND`` property")
     ENTRY(NEEDED, "For the original ``GNU_PROPERTY_X86_FEATURE_2_NEEDED`` property")
     ENTRY(USED, "For the original ``GNU_PROPERTY_X86_FEATURE_2_USED`` property")
   ;
 # undef ENTRY
+  // clang-format on
 
+  // clang-format off
 # define ENTRY(X) .value(to_string(X86Features::FEATURE::X), X86Features::FEATURE::X)
   enum_<X86Features::FEATURE>(Class, "FEATURE",
-    R"doc(
-    Features provided by these different properties
-    )doc"
+    "Features provided by these different properties"
   )
     ENTRY(UNKNOWN)
     ENTRY(IBT)
@@ -82,6 +82,7 @@ void create<X86Features>(nb::module_& m) {
     ENTRY(MASK)
   ;
 # undef ENTRY
+  // clang-format on
 }
 
 }

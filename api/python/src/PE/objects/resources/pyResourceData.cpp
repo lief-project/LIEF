@@ -19,54 +19,54 @@
 
 #include "LIEF/PE/ResourceData.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<ResourceData>(nb::module_& m) {
-  nb::class_<ResourceData, ResourceNode>(m, "ResourceData",
-      R"delim(
-      Class which represents a Data Node in the PE resources tree
-      )delim"_doc)
-    .def(nb::init<>(),
-        "Default constructor"_doc)
+  nb::class_<ResourceData, ResourceNode>(
+      m, "ResourceData",
+      "Class which represents a Data Node in the PE resources tree"_doc
+  )
+      .def(nb::init<>(), "Default constructor"_doc)
 
-    .def(nb::init<const std::vector<uint8_t>&, uint32_t>(),
-        "content"_a, "code_page"_a = 0)
+      .def(nb::init<const std::vector<uint8_t>&, uint32_t>(), "content"_a,
+           "code_page"_a = 0)
 
-    .def_prop_rw("code_page",
-        nb::overload_cast<>(&ResourceData::code_page, nb::const_),
-        nb::overload_cast<uint32_t>(&ResourceData::code_page),
-        R"delim(
-        Return the code page that is used to decode code point
-        values within the resource data. Typically, the code page is the Unicode code page.
-        )delim"_doc)
+      .def_prop_rw("code_page",
+                   nb::overload_cast<>(&ResourceData::code_page, nb::const_),
+                   nb::overload_cast<uint32_t>(&ResourceData::code_page),
+                   R"delim(
+                   Return the code page that is used to decode code point
+                   values within the resource data. Typically, the code page is the Unicode code page.
+                   )delim"_doc)
 
-    .def_prop_rw("content",
-        nb::overload_cast<>(&ResourceData::content, nb::const_),
-        [] (ResourceData& self, nb::bytes bytes) {
-          self.content(nanobind::to_vector(bytes));
-        }, "Resource content"_doc)
+      .def_prop_rw(
+          "content", nb::overload_cast<>(&ResourceData::content, nb::const_),
+          [](ResourceData& self, nb::bytes bytes) {
+            self.content(nanobind::to_vector(bytes));
+          },
+          "Resource content"_doc
+      )
 
-    .def_prop_rw("reserved",
-        nb::overload_cast<>(&ResourceData::reserved, nb::const_),
-        nb::overload_cast<uint32_t>(&ResourceData::reserved),
-        "Reserved value. Should be ``0``"_doc)
+      .def_prop_rw("reserved",
+                   nb::overload_cast<>(&ResourceData::reserved, nb::const_),
+                   nb::overload_cast<uint32_t>(&ResourceData::reserved),
+                   "Reserved value. Should be ``0``"_doc)
 
-    .def_prop_ro("offset",
-        &ResourceData::offset,
-        R"delim(
-        Offset of the content within the resource
+      .def_prop_ro("offset", &ResourceData::offset,
+                   R"delim(
+                   Offset of the content within the resource
 
-        .. warning::
+                   .. warning::
 
-            This value can change when re-building the resource table
-        )delim"_doc)
+                       This value can change when re-building the resource table
+                   )delim"_doc)
 
-    LIEF_DEFAULT_STR(ResourceData);
+      .LIEF_DEFAULT_STR(ResourceData);
 }
 }

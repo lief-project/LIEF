@@ -15,26 +15,26 @@
  */
 #include "PE/pyPE.hpp"
 
-#include "pyErr.hpp"
-#include "LIEF/PE/Factory.hpp"
 #include "LIEF/PE/Binary.hpp"
-#include "LIEF/PE/LoadConfigurations.hpp"
-#include "LIEF/PE/TLS.hpp"
-#include "LIEF/PE/RichHeader.hpp"
-#include "LIEF/PE/ResourceNode.hpp"
-#include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/Debug.hpp"
+#include "LIEF/PE/Export.hpp"
+#include "LIEF/PE/Factory.hpp"
+#include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
+#include "LIEF/PE/ResourceNode.hpp"
+#include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/Section.hpp"
+#include "LIEF/PE/TLS.hpp"
+#include "pyErr.hpp"
 
-#include <string>
-#include <sstream>
 #include "nanobind/utils.hpp"
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/function.h>
+#include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
@@ -43,12 +43,8 @@ void create<Factory>(nb::module_& m) {
   using namespace LIEF::py;
   nb::class_<Factory> factory(m, "Factory");
 
-  factory
-    .def_static("create", &Factory::create)
-    .def("add_section", &Factory::add_section,
-         nb::rv_policy::reference)
-    .def("get", &Factory::get)
-  ;
-
+  factory.def_static("create", &Factory::create)
+      .def("add_section", &Factory::add_section, nb::rv_policy::reference)
+      .def("get", &Factory::get);
 }
 }

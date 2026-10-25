@@ -21,33 +21,33 @@ namespace LIEF::PE::py {
 
 template<>
 void create<SigningCertificateV2>(nb::module_& m) {
-  nb::class_<SigningCertificateV2, Attribute>(m, "SigningCertificateV2",
-    R"doc(
-    .. code-block:: text
+  nb::class_<SigningCertificateV2, Attribute>(
+      m, "SigningCertificateV2",
+      R"doc(
+      .. code-block:: text
 
-      SigningCertificateV2 ::= SEQUENCE {
-        certs    SEQUENCE OF ESSCertIDv2,
-        policies SEQUENCE OF PolicyInformation OPTIONAL
-      }
+        SigningCertificateV2 ::= SEQUENCE {
+          certs    SEQUENCE OF ESSCertIDv2,
+          policies SEQUENCE OF PolicyInformation OPTIONAL
+        }
 
-      ESSCertIDv2 ::= SEQUENCE {
-        hashAlgorithm AlgorithmIdentifier DEFAULT {algorithm id-sha256},
-        certHash      OCTET STRING,
-        issuerSerial  IssuerSerial OPTIONAL
-      }
+        ESSCertIDv2 ::= SEQUENCE {
+          hashAlgorithm AlgorithmIdentifier DEFAULT {algorithm id-sha256},
+          certHash      OCTET STRING,
+          issuerSerial  IssuerSerial OPTIONAL
+        }
 
-      IssuerSerial ::= SEQUENCE {
-        issuer       GeneralNames,
-        serialNumber CertificateSerialNumber
-      }
+        IssuerSerial ::= SEQUENCE {
+          issuer       GeneralNames,
+          serialNumber CertificateSerialNumber
+        }
 
-      PolicyInformation ::= SEQUENCE {
-        policyIdentifier   OBJECT IDENTIFIER,
-        policyQualifiers   SEQUENCE SIZE (1..MAX) OF PolicyQualifierInfo OPTIONAL
-      }
-    )doc"_doc
-  )
-  ;
+        PolicyInformation ::= SEQUENCE {
+          policyIdentifier   OBJECT IDENTIFIER,
+          policyQualifiers   SEQUENCE SIZE (1..MAX) OF PolicyQualifierInfo OPTIONAL
+        }
+      )doc"_doc
+  );
 }
 
 }

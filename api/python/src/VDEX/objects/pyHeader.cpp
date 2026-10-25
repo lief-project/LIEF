@@ -17,10 +17,10 @@
 
 #include "VDEX/pyVDEX.hpp"
 
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::VDEX::py {
 
@@ -29,32 +29,28 @@ void create<Header>(nb::module_& m) {
 
   nb::class_<Header, Object>(m, "Header", "VDEX Header representation"_doc)
 
-    .def_prop_ro("magic",
-        nb::overload_cast<>(&Header::magic, nb::const_),
-        "Magic value used to identify VDEX"_doc)
+      .def_prop_ro("magic", nb::overload_cast<>(&Header::magic, nb::const_),
+                   "Magic value used to identify VDEX"_doc)
 
-    .def_prop_ro("version",
-        nb::overload_cast<>(&Header::version, nb::const_),
-        "VDEX version number"_doc)
+      .def_prop_ro("version", nb::overload_cast<>(&Header::version, nb::const_),
+                   "VDEX version number"_doc)
 
-    .def_prop_ro("nb_dex_files",
-        nb::overload_cast<>(&Header::nb_dex_files, nb::const_),
-        "Number of " RST_CLASS_REF(lief.DEX.File) " files registered"_doc)
+      .def_prop_ro("nb_dex_files",
+                   nb::overload_cast<>(&Header::nb_dex_files, nb::const_),
+                   "Number of :class:`~lief.DEX.File` files registered"_doc)
 
-    .def_prop_ro("dex_size",
-        nb::overload_cast<>(&Header::dex_size, nb::const_),
-        "Size of **all** " RST_CLASS_REF(lief.DEX.File) ""_doc)
+      .def_prop_ro("dex_size", nb::overload_cast<>(&Header::dex_size, nb::const_),
+                   "Size of **all** :class:`~lief.DEX.File`"_doc)
 
-    .def_prop_ro("verifier_deps_size",
-        nb::overload_cast<>(&Header::verifier_deps_size, nb::const_),
-        "Size of verifier deps section"_doc)
+      .def_prop_ro("verifier_deps_size",
+                   nb::overload_cast<>(&Header::verifier_deps_size, nb::const_),
+                   "Size of verifier deps section"_doc)
 
-    .def_prop_ro("quickening_info_size",
-        nb::overload_cast<>(&Header::quickening_info_size, nb::const_),
-        "Size of quickening info section"_doc)
+      .def_prop_ro("quickening_info_size",
+                   nb::overload_cast<>(&Header::quickening_info_size, nb::const_),
+                   "Size of quickening info section"_doc)
 
-    LIEF_DEFAULT_STR(Header);
-
+      .LIEF_DEFAULT_STR(Header);
 }
 
 }

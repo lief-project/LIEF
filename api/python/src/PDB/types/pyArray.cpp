@@ -7,25 +7,18 @@ namespace LIEF::pdb::py {
 template<>
 void create<pdb::types::Array>(nb::module_& m) {
   using Array = pdb::types::Array;
-  nb::class_<pdb::types::Array, pdb::Type> type(m, "Array",
-    R"doc(
-    This class represents a ``LF_ARRAY`` PDB type.
-    )doc"_doc
+  nb::class_<pdb::types::Array, pdb::Type> type(
+      m, "Array", "This class represents a ``LF_ARRAY`` PDB type."_doc
   );
 
-  type
-    .def_prop_ro("numberof_elements", &Array::numberof_elements,
-      "Number of elements in this array"_doc
-    )
+  type.def_prop_ro("numberof_elements", &Array::numberof_elements,
+                   "Number of elements in this array"_doc)
 
-    .def_prop_ro("element_type", &Array::element_type,
-      "Type of the elements"_doc, nb::keep_alive<0, 1>()
-    )
+      .def_prop_ro("element_type", &Array::element_type,
+                   "Type of the elements"_doc, nb::keep_alive<0, 1>())
 
-    .def_prop_ro("index_type", &Array::index_type,
-      "Type of the index"_doc, nb::keep_alive<0, 1>()
-    )
-  ;
+      .def_prop_ro("index_type", &Array::index_type, "Type of the index"_doc,
+                   nb::keep_alive<0, 1>());
 }
 
 }

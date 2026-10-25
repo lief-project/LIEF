@@ -17,11 +17,11 @@
 
 #include <nanobind/stl/vector.h>
 
-#include "typing/InputParser.hpp"
 #include "LIEF/BinaryStream/SpanStream.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
 #include "pyIOStream.hpp"
 #include "pyutils.hpp"
+#include "typing/InputParser.hpp"
 
 namespace LIEF::py::typing {
 std::unique_ptr<BinaryStream> InputParser::into_stream() {
@@ -34,9 +34,8 @@ std::unique_ptr<BinaryStream> InputParser::into_stream() {
 
   if (nb::isinstance<nb::bytes>(*this)) {
     auto bytes = nb::cast<nb::bytes>(*this);
-    return std::make_unique<SpanStream>(
-      static_cast<const uint8_t*>(bytes.data()), bytes.size()
-    );
+    return std::make_unique<SpanStream>(static_cast<const uint8_t*>(bytes.data()),
+                                        bytes.size());
   }
 
   if (nb::isinstance<nb::list>(*this)) {
@@ -50,7 +49,7 @@ std::unique_ptr<BinaryStream> InputParser::into_stream() {
 
   logging::log(logging::Level::Err,
                "LIEF parser interface does not support this Python object: " +
-               type2str(*this));
+                   type2str(*this));
   return nullptr;
 }
 }

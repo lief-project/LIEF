@@ -13,59 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "PE/pyPE.hpp"
 #include "LIEF/PE/debug/VCFeature.hpp"
+#include "PE/pyPE.hpp"
 
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
-#include <nanobind/extra/memoryview.hpp>
 #include "nanobind/utils.hpp"
+#include <nanobind/extra/memoryview.hpp>
+#include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<VCFeature>(nb::module_& m) {
-  nb::class_<VCFeature, Debug>(m, "VCFeature",
-    R"delim(
-    This class represents the ``IMAGE_DEBUG_TYPE_VC_FEATURE`` debug entry
-    )delim"_doc)
-    .def_prop_rw("pre_vcpp",
-      nb::overload_cast<>(&VCFeature::pre_vcpp, nb::const_),
-      nb::overload_cast<uint32_t>(&VCFeature::pre_vcpp),
-      "Count for ``Pre-VC++ 11.00``"_doc, nb::rv_policy::reference_internal
-    )
-    .def_prop_rw("c_cpp",
-      nb::overload_cast<>(&VCFeature::c_cpp, nb::const_),
-      nb::overload_cast<uint32_t>(&VCFeature::c_cpp),
-      "Count for ``C/C++``"_doc,
-      nb::rv_policy::reference_internal
-    )
-    .def_prop_rw("gs",
-      nb::overload_cast<>(&VCFeature::gs, nb::const_),
-      nb::overload_cast<uint32_t>(&VCFeature::gs),
-      "Count for ``/GS`` (number of guard stack)"_doc,
-      nb::rv_policy::reference_internal
-    )
-    .def_prop_rw("sdl",
-      nb::overload_cast<>(&VCFeature::sdl, nb::const_),
-      nb::overload_cast<uint32_t>(&VCFeature::sdl),
-      R"doc(
-      Whether ``/sdl`` was enabled for this binary.
+  nb::class_<VCFeature, Debug>(
+      m, "VCFeature",
+      "This class represents the ``IMAGE_DEBUG_TYPE_VC_FEATURE`` debug entry"_doc
+  )
+      .def_prop_rw("pre_vcpp",
+                   nb::overload_cast<>(&VCFeature::pre_vcpp, nb::const_),
+                   nb::overload_cast<uint32_t>(&VCFeature::pre_vcpp),
+                   "Count for ``Pre-VC++ 11.00``"_doc,
+                   nb::rv_policy::reference_internal)
+      .def_prop_rw("c_cpp", nb::overload_cast<>(&VCFeature::c_cpp, nb::const_),
+                   nb::overload_cast<uint32_t>(&VCFeature::c_cpp),
+                   "Count for ``C/C++``"_doc, nb::rv_policy::reference_internal)
+      .def_prop_rw("gs", nb::overload_cast<>(&VCFeature::gs, nb::const_),
+                   nb::overload_cast<uint32_t>(&VCFeature::gs),
+                   "Count for ``/GS`` (number of guard stack)"_doc,
+                   nb::rv_policy::reference_internal)
+      .def_prop_rw(
+          "sdl", nb::overload_cast<>(&VCFeature::sdl, nb::const_),
+          nb::overload_cast<uint32_t>(&VCFeature::sdl),
+          R"doc(
+          Whether ``/sdl`` was enabled for this binary.
 
-      ``sdl`` stands for Security Development Lifecycle and provides enhanced
-      security features like changing security-relevant warnings into errors or
-      enforcing guard stack.
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
-    .def_prop_rw("guards",
-      nb::overload_cast<>(&VCFeature::guards, nb::const_),
-      nb::overload_cast<uint32_t>(&VCFeature::guards),
-      "Count for ``/guardN``"_doc,
-      nb::rv_policy::reference_internal
-    )
-  ;
-
+          ``sdl`` stands for Security Development Lifecycle and provides enhanced
+          security features like changing security-relevant warnings into errors or
+          enforcing guard stack.
+          )doc"_doc,
+          nb::rv_policy::reference_internal
+      )
+      .def_prop_rw("guards", nb::overload_cast<>(&VCFeature::guards, nb::const_),
+                   nb::overload_cast<uint32_t>(&VCFeature::guards),
+                   "Count for ``/guardN``"_doc, nb::rv_policy::reference_internal);
 }
 }

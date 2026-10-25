@@ -15,12 +15,12 @@
  */
 #include <sstream>
 
+#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
 #include "PE/pyPE.hpp"
 #include "enums_wrapper.hpp"
-#include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixup.hpp"
 
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
 
 namespace LIEF::PE {
 class DynamicFixupARM64Kernel;
@@ -36,47 +36,38 @@ namespace LIEF::PE::py {
 template<>
 void create<DynamicFixup>(nb::module_& m) {
   nb::class_<DynamicFixup> obj(m, "DynamicFixup",
-    R"doc(
-    This is the base class for any fixups located in :class:`~lief.PE.DynamicRelocation`
-    )doc"_doc
-  );
+                               R"doc(
+                               This is the base class for any fixups located in :class:`~lief.PE.DynamicRelocation`
+                               )doc"_doc);
   using KIND = DynamicFixup::KIND;
   enum_<KIND>(obj, "KIND")
-    .value("UNKNOWN", KIND::UNKNOWN,
-      R"doc(
-      If the :class:`~lief.PE.DynamicRelocation.symbol` is a special value that is not
-      supported by LIEF.
-      )doc"_doc
-    )
-    .value("GENERIC", KIND::GENERIC,
-      R"doc(
-      If :class:`~lief.PE.DynamicRelocation.symbol` is not a special value.
-      )doc"_doc
-    )
-    .value("ARM64X", KIND::ARM64X,
-      R"doc(
-      If :class:`~lief.PE.DynamicRelocation.symbol` is set to ``IMAGE_DYNAMIC_RELOCATION_ARM64X``.
-      )doc"_doc
-    )
-    .value("FUNCTION_OVERRIDE", KIND::FUNCTION_OVERRIDE,
-      R"doc(
-      If :class:`~lief.PE.DynamicRelocation.symbol` is set to ``IMAGE_DYNAMIC_RELOCATION_FUNCTION_OVERRIDE``.
-      )doc"_doc
-    )
-    .value("ARM64_KERNEL_IMPORT_CALL_TRANSFER", KIND::ARM64_KERNEL_IMPORT_CALL_TRANSFER,
-      R"doc(
-      If :class:`~lief.PE.DynamicRelocation.symbol` is set to ``IMAGE_DYNAMIC_RELOCATION_ARM64_KERNEL_IMPORT_CALL_TRANSFER``.
-      )doc"_doc
-    )
-  ;
+      .value("UNKNOWN", KIND::UNKNOWN,
+             R"doc(
+             If the :class:`~lief.PE.DynamicRelocation.symbol` is a special value that is not
+             supported by LIEF.
+             )doc"_doc)
+      .value("GENERIC", KIND::GENERIC,
+             R"doc(
+             If :class:`~lief.PE.DynamicRelocation.symbol` is not a special value.
+             )doc"_doc)
+      .value("ARM64X", KIND::ARM64X,
+             R"doc(
+             If :class:`~lief.PE.DynamicRelocation.symbol` is set to ``IMAGE_DYNAMIC_RELOCATION_ARM64X``.
+             )doc"_doc)
+      .value("FUNCTION_OVERRIDE", KIND::FUNCTION_OVERRIDE,
+             R"doc(
+             If :class:`~lief.PE.DynamicRelocation.symbol` is set to ``IMAGE_DYNAMIC_RELOCATION_FUNCTION_OVERRIDE``.
+             )doc"_doc)
+      .value("ARM64_KERNEL_IMPORT_CALL_TRANSFER",
+             KIND::ARM64_KERNEL_IMPORT_CALL_TRANSFER,
+             R"doc(
+             If :class:`~lief.PE.DynamicRelocation.symbol` is set to ``IMAGE_DYNAMIC_RELOCATION_ARM64_KERNEL_IMPORT_CALL_TRANSFER``.
+             )doc"_doc);
 
-  obj
-    .def_prop_ro("kind", &DynamicFixup::kind,
-      "Encoding of the fixups"_doc
-    )
+  obj.def_prop_ro("kind", &DynamicFixup::kind, "Encoding of the fixups"_doc)
 
-  LIEF_DEFAULT_STR(DynamicFixup)
-  LIEF_CLONABLE(DynamicFixup);
+      .LIEF_DEFAULT_STR(DynamicFixup)
+      .LIEF_CLONABLE(DynamicFixup);
 
   create<DynamicFixupARM64X>(m);
   create<DynamicFixupControlTransfer>(m);

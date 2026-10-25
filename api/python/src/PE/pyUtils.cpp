@@ -16,86 +16,98 @@
 #include "PE/pyPE.hpp"
 #include "pyErr.hpp"
 
-#include "LIEF/PE/utils.hpp"
-#include "LIEF/PE/Import.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Import.hpp"
+#include "LIEF/PE/utils.hpp"
 
 #include "LIEF/PE/signature/OIDToString.hpp"
 
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/pair.h>
-#include <nanobind/stl/vector.h>
 #include "nanobind/extra/stl/pathlike.h"
+#include <nanobind/stl/pair.h>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 namespace LIEF::PE::py {
 
 void init_utils(nb::module_& m) {
   using namespace LIEF::py;
 
-  nb::enum_<IMPHASH_MODE>(m, "IMPHASH_MODE",
-      "Enum to define the behavior of :func:`~lief.PE.get_imphash`"_doc)
-    .value("DEFAULT", IMPHASH_MODE::DEFAULT, "Default implementation")
-    .value("LIEF",    IMPHASH_MODE::LIEF,    "Same as DEFAULT")
-    .value("PEFILE",  IMPHASH_MODE::PEFILE,  "Use pefile algorithm")
-    .value("VT",      IMPHASH_MODE::VT,      "Same as PEFILE since Virus Total is using pefile");
+  nb::enum_<IMPHASH_MODE>(
+      m, "IMPHASH_MODE",
+      "Enum to define the behavior of :func:`~lief.PE.get_imphash`"_doc
+  )
+      .value("DEFAULT", IMPHASH_MODE::DEFAULT, "Default implementation")
+      .value("LIEF", IMPHASH_MODE::LIEF, "Same as DEFAULT")
+      .value("PEFILE", IMPHASH_MODE::PEFILE, "Use pefile algorithm")
+      .value("VT", IMPHASH_MODE::VT,
+             "Same as PEFILE since Virus Total is using pefile");
 
   m.def("oid_to_string", &oid_to_string,
         "Convert an OID to a human-readable string"_doc);
 
 
-  lief_mod->def("is_pe",
-    [] (nb::PathLike path) { return is_pe(path.to_string()); },
-    "Check if the given file is a ``PE``"_doc,
-    "file"_a);
+  lief_mod->def(
+      "is_pe", [](nb::PathLike path) { return is_pe(path.to_string()); },
+      "Check if the given file is a ``PE``"_doc, "file"_a
+  );
 
-  lief_mod->def("is_pe",
-      nb::overload_cast<const std::vector<uint8_t>&>(&is_pe),
-      "Check if the given raw data is a ``PE``"_doc,
-      "raw"_a);
+  lief_mod->def("is_pe", nb::overload_cast<const std::vector<uint8_t>&>(&is_pe),
+                "Check if the given raw data is a ``PE``"_doc, "raw"_a);
 
-  m.def("get_type",
-      [] (nb::PathLike file) {
-        return error_or(static_cast<result<PE_TYPE> (*)(std::string_view)>(&get_type),
-                        file.to_string());
+  m.def(
+      "get_type",
+      [](nb::PathLike file) {
+        return error_or(
+            static_cast<result<PE_TYPE> (*)(std::string_view)>(&get_type),
+            file.to_string()
+        );
       },
       R"delim(
       If the input file is a valid ``PE``, return the :class:`~.lief.PE.PE_TYPE`.
       Otherwise, return a :class:`lief.lief_errors`.
       )delim"_doc,
-      "file"_a);
+      "file"_a
+  );
 
 
-  m.def("get_type",
-      [] (const std::vector<uint8_t>& raw) {
-        return error_or(static_cast<result<PE_TYPE> (*)(const std::vector<uint8_t>&)>(&get_type), raw);
+  m.def(
+      "get_type",
+      [](const std::vector<uint8_t>& raw) {
+        return error_or(
+            static_cast<result<PE_TYPE> (*)(const std::vector<uint8_t>&)>(
+                &get_type
+            ),
+            raw
+        );
       },
-      "raw"_a);
+      "raw"_a
+  );
 
-  m.def("get_imphash",
-      &get_imphash,
-      R"delim(
-      Compute the hash of imported functions
+  m.def("get_imphash", &get_imphash,
+        R"delim(
+        Compute the hash of imported functions
 
-      Properties of the hash generated:
+        Properties of the hash generated:
 
-        * Order agnostic
-        * Case agnostic
-        * Ordinal (**in some extent**) agnostic
+          * Order agnostic
+          * Case agnostic
+          * Ordinal (**in some extent**) agnostic
 
-      If one needs the same output as Virus Total (i.e. pefile), you can use :attr:`~lief.PE.IMPHASH_MODE.PEFILE`
-      as second parameter.
+        If one needs the same output as Virus Total (i.e. pefile), you can use :attr:`~lief.PE.IMPHASH_MODE.PEFILE`
+        as second parameter.
 
-      .. warning::
-          The algorithm used to compute the *imphash* value has some variations compared to Yara, pefile,
-          VT implementation
+        .. warning::
+            The algorithm used to compute the *imphash* value has some variations compared to Yara, pefile,
+            VT implementation
 
-      .. seealso::
-          https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
-      )delim"_doc,
-      "binary"_a, "mode"_a = IMPHASH_MODE::DEFAULT);
+        .. seealso::
+            https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html
+        )delim"_doc,
+        "binary"_a, "mode"_a = IMPHASH_MODE::DEFAULT);
 
-  m.def("resolve_ordinals",
-      [] (const Import& import, bool strict = false, bool use_std = false) {
+  m.def(
+      "resolve_ordinals",
+      [](const Import& import, bool strict = false, bool use_std = false) {
         return error_or(resolve_ordinals, import, strict, use_std);
       },
       R"delim(
@@ -104,19 +116,23 @@ void init_utils(nb::module_& m) {
       If the ``strict`` boolean parameter is set, a :attr:`lief.lief_errors.not_found` error is
       returned upon the first non-resolvable ordinal.
       )delim",
-      "imp"_a, "strict"_a = false, "use_std"_a = false,
-      nb::rv_policy::copy);
+      "imp"_a, "strict"_a = false, "use_std"_a = false, nb::rv_policy::copy
+  );
 
-  m.def("check_layout", [] (const Binary& bin) -> std::pair<bool, std::string> {
-    std::string error;
-    if (!check_layout(bin, &error)) {
-      return std::make_pair(false, std::move(error));
-    }
-    return std::make_pair(true, "");
-  },
-  R"doc(
-  Check that the layout of the given binary is correct from the Windows loader
-  perspective.
-  )doc"_doc, "binary"_a);
+  m.def(
+      "check_layout",
+      [](const Binary& bin) -> std::pair<bool, std::string> {
+        std::string error;
+        if (!check_layout(bin, &error)) {
+          return std::make_pair(false, std::move(error));
+        }
+        return std::make_pair(true, "");
+      },
+      R"doc(
+      Check that the layout of the given binary is correct from the Windows loader
+      perspective.
+      )doc"_doc,
+      "binary"_a
+  );
 }
 }

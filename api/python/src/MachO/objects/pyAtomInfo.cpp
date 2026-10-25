@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/AtomInfo.hpp"
 
@@ -26,26 +26,23 @@ namespace LIEF::MachO::py {
 
 template<>
 void create<AtomInfo>(nb::module_& m) {
-  nb::class_<AtomInfo, LoadCommand>(m, "AtomInfo",
-      R"delim(
-      Class which represents the LC_ATOM_INFO command
-      )delim"_doc)
+  nb::class_<AtomInfo, LoadCommand>(
+      m, "AtomInfo", "Class which represents the LC_ATOM_INFO command"_doc
+  )
 
-    .def_prop_rw("data_offset",
-        nb::overload_cast<>(&AtomInfo::data_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&AtomInfo::data_offset),
-        "Offset in the binary where the payload starts"_doc)
+      .def_prop_rw("data_offset",
+                   nb::overload_cast<>(&AtomInfo::data_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&AtomInfo::data_offset),
+                   "Offset in the binary where the payload starts"_doc)
 
-    .def_prop_rw("data_size",
-        nb::overload_cast<>(&AtomInfo::data_size, nb::const_),
-        nb::overload_cast<uint32_t>(&AtomInfo::data_size),
-        "Size of the payload"_doc)
+      .def_prop_rw("data_size",
+                   nb::overload_cast<>(&AtomInfo::data_size, nb::const_),
+                   nb::overload_cast<uint32_t>(&AtomInfo::data_size),
+                   "Size of the payload"_doc)
 
-    .def_prop_ro("content",
-        nb::overload_cast<>(&AtomInfo::content, nb::const_),
-        "The original payload"_doc)
+      .def_prop_ro("content", nb::overload_cast<>(&AtomInfo::content, nb::const_),
+                   "The original payload"_doc)
 
-  LIEF_DEFAULT_STR(AtomInfo);
-
+      .LIEF_DEFAULT_STR(AtomInfo);
 }
 }

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <nanobind/stl/string_view.h>
 #include <string_view>
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
 #include <nanobind/stl/vector.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 
@@ -28,68 +28,58 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<GnuHash>(nb::module_& m) {
-  nb::class_<GnuHash, LIEF::Object>(m, "GnuHash",
+  nb::class_<GnuHash, LIEF::Object>(
+      m, "GnuHash",
       R"delim(
       Class which provides a view over the GNU Hash implementation.
       Most of the fields are read-only since the values are re-computed by the :class:`lief.ELF.Builder`.
-      )delim"_doc)
-    .def(nb::init<>())
+      )delim"_doc
+  )
+      .def(nb::init<>())
 
-    .def_prop_ro("nb_buckets",
-      &GnuHash::nb_buckets,
-      "Return the number of buckets"_doc)
+      .def_prop_ro("nb_buckets", &GnuHash::nb_buckets,
+                   "Return the number of buckets"_doc)
 
-    .def_prop_ro("symbol_index",
-      &GnuHash::symbol_index,
-      "Index of the first symbol in the dynamic symbols table which is accessible with the hash table"_doc)
+      .def_prop_ro(
+          "symbol_index", &GnuHash::symbol_index,
+          "Index of the first symbol in the dynamic symbols table which is accessible with the hash table"_doc
+      )
 
-    .def_prop_ro("shift2",
-      &GnuHash::shift2,
-      "Shift count used in the bloom filter"_doc)
+      .def_prop_ro("shift2", &GnuHash::shift2,
+                   "Shift count used in the bloom filter"_doc)
 
-    .def_prop_ro("bloom_filters",
-      &GnuHash::bloom_filters,
-      "Bloom filters"_doc,
-      nb::rv_policy::reference_internal)
+      .def_prop_ro("bloom_filters", &GnuHash::bloom_filters, "Bloom filters"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_ro("buckets",
-      &GnuHash::buckets,
-      "hash buckets"_doc,
-      nb::rv_policy::reference_internal)
+      .def_prop_ro("buckets", &GnuHash::buckets, "hash buckets"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_ro("hash_values",
-      &GnuHash::hash_values,
-      "Hash values"_doc,
-      nb::rv_policy::reference_internal)
+      .def_prop_ro("hash_values", &GnuHash::hash_values, "Hash values"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def("check_bloom_filter",
-        &GnuHash::check_bloom_filter,
-        "Check if the given hash passes the bloom filter"_doc,
-        "hash"_a)
+      .def("check_bloom_filter", &GnuHash::check_bloom_filter,
+           "Check if the given hash passes the bloom filter"_doc, "hash"_a)
 
-    .def("check_bucket",
-        &GnuHash::check_bucket,
-        "Check if the given hash passes the bucket filter"_doc,
-        "hash"_a)
+      .def("check_bucket", &GnuHash::check_bucket,
+           "Check if the given hash passes the bucket filter"_doc, "hash"_a)
 
-    .def("check",
-        nb::overload_cast<std::string_view>(&GnuHash::check, nb::const_),
-        "Check if the symbol *probably* exists. If "
-        "the returned value is ``false`` you can assume at ``100%`` that "
-        "the symbol with the given name doesn't exist. If ``true`` you can't "
-        "do any assumption"_doc,
-        "symbol_name"_a)
+      .def("check",
+           nb::overload_cast<std::string_view>(&GnuHash::check, nb::const_),
+           "Check if the symbol *probably* exists. If "
+           "the returned value is ``false`` you can assume at ``100%`` that "
+           "the symbol with the given name doesn't exist. If ``true`` you can't "
+           "do any assumption"_doc,
+           "symbol_name"_a)
 
-    .def("check",
-        nb::overload_cast<uint32_t>(&GnuHash::check, nb::const_),
-        "Check if the symbol associated with the given hash *probably* exists. If "
-        "the returned value is ``false`` you can assume at ``100%`` that "
-        "the symbol doesn't exist. If ``true`` you can't "
-        "do any assumption"_doc,
-        "hash_value"_a)
+      .def("check", nb::overload_cast<uint32_t>(&GnuHash::check, nb::const_),
+           "Check if the symbol associated with the given hash *probably* exists. "
+           "If "
+           "the returned value is ``false`` you can assume at ``100%`` that "
+           "the symbol doesn't exist. If ``true`` you can't "
+           "do any assumption"_doc,
+           "hash_value"_a)
 
-    LIEF_DEFAULT_STR(GnuHash);
+      .LIEF_DEFAULT_STR(GnuHash);
 }
 
 }
-

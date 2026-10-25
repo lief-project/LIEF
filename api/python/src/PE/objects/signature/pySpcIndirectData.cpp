@@ -18,28 +18,28 @@
 
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
 
-#include <string>
-#include <sstream>
+#include <nanobind/extra/stl/lief_span.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <nanobind/extra/stl/lief_span.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<SpcIndirectData>(nb::module_& m) {
   nb::class_<SpcIndirectData, ContentInfo::Content>(m, "SpcIndirectData")
-    .def_prop_ro("digest_algorithm", &SpcIndirectData::digest_algorithm,
-                 R"delim(
-                 Digest used to hash the file. This should match
-                 :attr:`~lief.PE.SignerInfo.digest_algorithm`
-                 )delim"_doc)
+      .def_prop_ro("digest_algorithm", &SpcIndirectData::digest_algorithm,
+                   R"delim(
+                   Digest used to hash the file. This should match
+                   :attr:`~lief.PE.SignerInfo.digest_algorithm`
+                   )delim"_doc)
 
-    .def_prop_ro("digest",
-                 nb::overload_cast<>(&SpcIndirectData::digest, nb::const_))
-    .def_prop_ro("file", &SpcIndirectData::file)
-    .def_prop_ro("url", &SpcIndirectData::url)
-    LIEF_DEFAULT_STR(SpcIndirectData);
+      .def_prop_ro("digest",
+                   nb::overload_cast<>(&SpcIndirectData::digest, nb::const_))
+      .def_prop_ro("file", &SpcIndirectData::file)
+      .def_prop_ro("url", &SpcIndirectData::url)
+      .LIEF_DEFAULT_STR(SpcIndirectData);
 }
 
 }

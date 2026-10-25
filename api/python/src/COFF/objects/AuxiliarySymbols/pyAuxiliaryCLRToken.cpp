@@ -23,33 +23,27 @@ namespace LIEF::COFF::py {
 
 template<>
 void create<AuxiliaryCLRToken>(nb::module_& m) {
-  nb::class_<AuxiliaryCLRToken, AuxiliarySymbol> aux(m, "AuxiliaryCLRToken",
-    R"doc(
-    Auxiliary symbol associated with the ``CLR_TOKEN`` storage class
-    )doc"_doc
+  nb::class_<AuxiliaryCLRToken, AuxiliarySymbol> aux(
+      m, "AuxiliaryCLRToken",
+      "Auxiliary symbol associated with the ``CLR_TOKEN`` storage class"_doc
   );
 
-  aux
-    .def_prop_ro("aux_type", &AuxiliaryCLRToken::aux_type,
-      "``IMAGE_AUX_SYMBOL_TYPE`` which should be ``IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF`` (1)"_doc
-    )
+  aux.def_prop_ro(
+         "aux_type", &AuxiliaryCLRToken::aux_type,
+         "``IMAGE_AUX_SYMBOL_TYPE`` which should be ``IMAGE_AUX_SYMBOL_TYPE_TOKEN_DEF`` (1)"_doc
+  )
 
-    .def_prop_ro("reserved", &AuxiliaryCLRToken::reserved,
-      "Reserved value (should be 0)"_doc
-    )
+      .def_prop_ro("reserved", &AuxiliaryCLRToken::reserved,
+                   "Reserved value (should be 0)"_doc)
 
-    .def_prop_ro("symbol_idx", &AuxiliaryCLRToken::symbol_idx,
-      "Index in the symbol table"_doc
-    )
+      .def_prop_ro("symbol_idx", &AuxiliaryCLRToken::symbol_idx,
+                   "Index in the symbol table"_doc)
 
-    .def_prop_ro("symbol", nb::overload_cast<>(&AuxiliaryCLRToken::symbol),
-      "Symbol referenced by :attr:`~.symbol_idx` (if resolved)"_doc
-    )
+      .def_prop_ro("symbol", nb::overload_cast<>(&AuxiliaryCLRToken::symbol),
+                   "Symbol referenced by :attr:`~.symbol_idx` (if resolved)"_doc)
 
-    .def_prop_ro("rgb_reserved", &AuxiliaryCLRToken::rgb_reserved,
-      "Reserved (padding) values. Should be 0"_doc
-    )
-  ;
+      .def_prop_ro("rgb_reserved", &AuxiliaryCLRToken::rgb_reserved,
+                   "Reserved (padding) values. Should be 0"_doc);
 }
 
 }

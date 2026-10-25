@@ -17,8 +17,8 @@
 
 #include "DEX/pyDEX.hpp"
 
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <nanobind/stl/string.h>
 
@@ -27,10 +27,12 @@ namespace LIEF::DEX::py {
 template<>
 void create<CodeInfo>(nb::module_& m) {
 
-  nb::class_<CodeInfo, LIEF::Object>(m, "CodeInfo", "DEX CodeInfo representation"_doc)
-    .def_prop_ro("nb_registers", nb::overload_cast<>(&CodeInfo::nb_registers, nb::const_),
-    "Number of registers used by the method"_doc)
+  nb::class_<CodeInfo, LIEF::Object>(m, "CodeInfo",
+                                     "DEX CodeInfo representation"_doc)
+      .def_prop_ro("nb_registers",
+                   nb::overload_cast<>(&CodeInfo::nb_registers, nb::const_),
+                   "Number of registers used by the method"_doc)
 
-    LIEF_DEFAULT_STR(CodeInfo);
+      .LIEF_DEFAULT_STR(CodeInfo);
 }
 }

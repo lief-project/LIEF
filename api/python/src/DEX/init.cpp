@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "DEX/pyDEX.hpp"
 #include "DEX/init.hpp"
+#include "DEX/pyDEX.hpp"
 
-#include "LIEF/DEX/Parser.hpp"
+#include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/CodeInfo.hpp"
+#include "LIEF/DEX/Field.hpp"
 #include "LIEF/DEX/File.hpp"
 #include "LIEF/DEX/Header.hpp"
-#include "LIEF/DEX/Class.hpp"
+#include "LIEF/DEX/MapItem.hpp"
+#include "LIEF/DEX/MapList.hpp"
 #include "LIEF/DEX/Method.hpp"
-#include "LIEF/DEX/Field.hpp"
+#include "LIEF/DEX/Parser.hpp"
 #include "LIEF/DEX/Prototype.hpp"
 #include "LIEF/DEX/Type.hpp"
-#include "LIEF/DEX/MapList.hpp"
-#include "LIEF/DEX/MapItem.hpp"
-#include "LIEF/DEX/CodeInfo.hpp"
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF::DEX::py {
 void init_objects(nb::module_& m) {

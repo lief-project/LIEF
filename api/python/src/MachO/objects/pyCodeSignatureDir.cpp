@@ -15,11 +15,11 @@
  */
 #include <algorithm>
 
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/CodeSignatureDir.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "MachO/pyMachO.hpp"
 #include "nanobind/extra/stl/lief_span.h"
@@ -31,20 +31,20 @@ template<>
 void create<CodeSignatureDir>(nb::module_& m) {
 
   nb::class_<CodeSignatureDir, LoadCommand>(m, "CodeSignatureDir")
-    .def_prop_rw("data_offset",
-        nb::overload_cast<>(&CodeSignatureDir::data_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&CodeSignatureDir::data_offset),
-        "Offset in the binary where the signature starts"_doc)
+      .def_prop_rw("data_offset",
+                   nb::overload_cast<>(&CodeSignatureDir::data_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&CodeSignatureDir::data_offset),
+                   "Offset in the binary where the signature starts"_doc)
 
-    .def_prop_rw("data_size",
-        nb::overload_cast<>(&CodeSignatureDir::data_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&CodeSignatureDir::data_offset),
-        "Size of the raw signature"_doc)
+      .def_prop_rw("data_size",
+                   nb::overload_cast<>(&CodeSignatureDir::data_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&CodeSignatureDir::data_offset),
+                   "Size of the raw signature"_doc)
 
-    .def_prop_ro("content",
-        nb::overload_cast<>(&CodeSignatureDir::content, nb::const_),
-        "The raw signature as a bytes stream"_doc)
+      .def_prop_ro("content",
+                   nb::overload_cast<>(&CodeSignatureDir::content, nb::const_),
+                   "The raw signature as a bytes stream"_doc)
 
-  LIEF_DEFAULT_STR(CodeSignatureDir);
+      .LIEF_DEFAULT_STR(CodeSignatureDir);
 }
 }

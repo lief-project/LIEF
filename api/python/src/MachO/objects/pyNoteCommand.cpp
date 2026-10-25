@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
 #include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/utils.hpp"
+#include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/NoteCommand.hpp"
 
@@ -28,37 +28,39 @@ namespace LIEF::MachO::py {
 template<>
 void create<NoteCommand>(nb::module_& m) {
 
-  nb::class_<NoteCommand, LoadCommand>(m, "NoteCommand",
+  nb::class_<NoteCommand, LoadCommand>(
+      m, "NoteCommand",
       R"delim(
       Class that represent the ``LC_NOTE`` command.
 
       This command is used to include arbitrary notes or metadata within a binary.
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def_prop_rw("note_offset",
-        nb::overload_cast<>(&NoteCommand::note_offset, nb::const_),
-        nb::overload_cast<uint64_t>(&NoteCommand::note_offset),
-        "Offset of the data associated with this note"_doc)
+      .def_prop_rw("note_offset",
+                   nb::overload_cast<>(&NoteCommand::note_offset, nb::const_),
+                   nb::overload_cast<uint64_t>(&NoteCommand::note_offset),
+                   "Offset of the data associated with this note"_doc)
 
-    .def_prop_rw("note_size",
-        nb::overload_cast<>(&NoteCommand::note_size, nb::const_),
-        nb::overload_cast<uint64_t>(&NoteCommand::note_size),
-        "Size of the data referenced by the :attr:`~.note_offset`"_doc)
+      .def_prop_rw("note_size",
+                   nb::overload_cast<>(&NoteCommand::note_size, nb::const_),
+                   nb::overload_cast<uint64_t>(&NoteCommand::note_size),
+                   "Size of the data referenced by the :attr:`~.note_offset`"_doc)
 
-    .def_prop_ro("owner_str", &NoteCommand::owner_str,
-      "Owner as a zero-terminated string"_doc)
+      .def_prop_ro("owner_str", &NoteCommand::owner_str,
+                   "Owner as a zero-terminated string"_doc)
 
-    .def_prop_rw("owner",
-        nb::overload_cast<>(&NoteCommand::owner, nb::const_),
-        [] (NoteCommand& self, nb::bytes owner_bytes) {
-          std::vector<uint8_t> owner = to_vector(owner_bytes);
-          span<char> note_owner = self.owner();
-          owner.resize(note_owner.size());
-          std::copy(owner.begin(), owner.end(), note_owner.begin());
-        },
-        "Owner of the note (e.g. ``AIR_METALLIB``)"_doc)
+      .def_prop_rw(
+          "owner", nb::overload_cast<>(&NoteCommand::owner, nb::const_),
+          [](NoteCommand& self, nb::bytes owner_bytes) {
+            std::vector<uint8_t> owner = to_vector(owner_bytes);
+            span<char> note_owner = self.owner();
+            owner.resize(note_owner.size());
+            std::copy(owner.begin(), owner.end(), note_owner.begin());
+          },
+          "Owner of the note (e.g. ``AIR_METALLIB``)"_doc
+      )
 
-    LIEF_DEFAULT_STR(NoteCommand);
-
+      .LIEF_DEFAULT_STR(NoteCommand);
 }
 }

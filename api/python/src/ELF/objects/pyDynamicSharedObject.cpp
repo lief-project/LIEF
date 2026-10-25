@@ -13,40 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "pySafeString.hpp"
 
-#include "LIEF/ELF/DynamicSharedObject.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicSharedObject.hpp"
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<DynamicSharedObject>(nb::module_& m) {
-  nb::class_<DynamicSharedObject, DynamicEntry>(m, "DynamicSharedObject",
+  nb::class_<DynamicSharedObject, DynamicEntry>(
+      m, "DynamicSharedObject",
       R"delim(
       Class which represents a ``DT_SONAME`` entry in the dynamic table
       This kind of entry is usually used to name the original library.
 
       This entry is not present for executables.
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def(nb::init<const std::string &>(),
-        "Constructor from library name"_doc,
-        "library_name"_a)
+      .def(nb::init<const std::string&>(), "Constructor from library name"_doc,
+           "library_name"_a)
 
-    .def_prop_rw("name",
-        [] (const DynamicSharedObject& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<std::string>(&DynamicSharedObject::name),
-        "Return the library name"_doc)
+      .def_prop_rw(
+          "name",
+          [](const DynamicSharedObject& obj) {
+            return LIEF::py::safe_string(obj.name());
+          },
+          nb::overload_cast<std::string>(&DynamicSharedObject::name),
+          "Return the library name"_doc
+      )
 
-    LIEF_DEFAULT_STR(DynamicSharedObject);
+      .LIEF_DEFAULT_STR(DynamicSharedObject);
 }
 
 }

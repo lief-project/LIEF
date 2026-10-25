@@ -17,38 +17,45 @@
 
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<SymbolVersionAuxRequirement>(nb::module_& m) {
-  nb::class_<SymbolVersionAuxRequirement, SymbolVersionAux>(m, "SymbolVersionAuxRequirement")
-    .def(nb::init<>(),"Default constructor"_doc)
+  nb::class_<SymbolVersionAuxRequirement, SymbolVersionAux>(
+      m, "SymbolVersionAuxRequirement"
+  )
+      .def(nb::init<>(), "Default constructor"_doc)
 
-    .def_prop_rw("hash",
-        nb::overload_cast<>(&SymbolVersionAuxRequirement::hash, nb::const_),
-        nb::overload_cast<uint32_t>(&SymbolVersionAuxRequirement::hash),
-        "Hash value of the dependency name (use ELF hashing function)"_doc)
+      .def_prop_rw(
+          "hash",
+          nb::overload_cast<>(&SymbolVersionAuxRequirement::hash, nb::const_),
+          nb::overload_cast<uint32_t>(&SymbolVersionAuxRequirement::hash),
+          "Hash value of the dependency name (use ELF hashing function)"_doc
+      )
 
-    .def_prop_rw("flags",
-        nb::overload_cast<>(&SymbolVersionAuxRequirement::flags, nb::const_),
-        nb::overload_cast<uint16_t>(&SymbolVersionAuxRequirement::flags),
-        "Bitmask of flags"_doc)
+      .def_prop_rw(
+          "flags",
+          nb::overload_cast<>(&SymbolVersionAuxRequirement::flags, nb::const_),
+          nb::overload_cast<uint16_t>(&SymbolVersionAuxRequirement::flags),
+          "Bitmask of flags"_doc
+      )
 
-    .def_prop_rw("other",
-        nb::overload_cast<>(&SymbolVersionAuxRequirement::other, nb::const_),
-        nb::overload_cast<uint16_t>(&SymbolVersionAuxRequirement::other),
-        R"delim(
-        It returns the unique version index for the file which is used in the
-        version symbol table. If the highest bit (bit 15) is set this
-        is a hidden symbol which cannot be referenced from outside the
-        object.
-        )delim"_doc)
+      .def_prop_rw(
+          "other",
+          nb::overload_cast<>(&SymbolVersionAuxRequirement::other, nb::const_),
+          nb::overload_cast<uint16_t>(&SymbolVersionAuxRequirement::other),
+          R"delim(
+          It returns the unique version index for the file which is used in the
+          version symbol table. If the highest bit (bit 15) is set this
+          is a hidden symbol which cannot be referenced from outside the
+          object.
+          )delim"_doc
+      )
 
-    LIEF_DEFAULT_STR(SymbolVersionAuxRequirement);
-
+      .LIEF_DEFAULT_STR(SymbolVersionAuxRequirement);
 }
 }

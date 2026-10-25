@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 
@@ -26,22 +26,22 @@ namespace LIEF::ELF::py {
 template<>
 void create<QNXStack>(nb::module_& m) {
   nb::class_<QNXStack, Note>(m, "QNXStack")
-    .def_prop_rw("stack_size",
-        nb::overload_cast<>(&QNXStack::stack_size, nb::const_),
-        nb::overload_cast<uint32_t>(&QNXStack::stack_size),
-        "Size of the stack"_doc)
+      .def_prop_rw("stack_size",
+                   nb::overload_cast<>(&QNXStack::stack_size, nb::const_),
+                   nb::overload_cast<uint32_t>(&QNXStack::stack_size),
+                   "Size of the stack"_doc)
 
-    .def_prop_rw("stack_allocated",
-        nb::overload_cast<>(&QNXStack::stack_allocated, nb::const_),
-        nb::overload_cast<uint32_t>(&QNXStack::stack_allocated),
-        "Size of the stack pre-allocated (upfront)"_doc)
+      .def_prop_rw("stack_allocated",
+                   nb::overload_cast<>(&QNXStack::stack_allocated, nb::const_),
+                   nb::overload_cast<uint32_t>(&QNXStack::stack_allocated),
+                   "Size of the stack pre-allocated (upfront)"_doc)
 
-    .def_prop_rw("is_executable",
-        nb::overload_cast<>(&QNXStack::is_executable, nb::const_),
-        nb::overload_cast<bool>(&QNXStack::set_is_executable),
-        "Whether the stack is executable"_doc)
+      .def_prop_rw("is_executable",
+                   nb::overload_cast<>(&QNXStack::is_executable, nb::const_),
+                   nb::overload_cast<bool>(&QNXStack::set_is_executable),
+                   "Whether the stack is executable"_doc)
 
-    LIEF_DEFAULT_STR(QNXStack);
+      .LIEF_DEFAULT_STR(QNXStack);
 }
 
 }

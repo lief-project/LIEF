@@ -18,9 +18,9 @@
 #include "DEX/pyDEX.hpp"
 #include "pyIterator.hpp"
 
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <sstream>
 
 namespace LIEF::DEX::py {
 
@@ -29,28 +29,27 @@ void create<MapList>(nb::module_& m) {
   using namespace LIEF::py;
 
   nb::class_<MapList, LIEF::Object> map_list(m, "MapList",
-      "DEX MapList representation"_doc);
+                                             "DEX MapList representation"_doc);
 
   init_ref_iterator<MapList::it_items_t>(map_list, "it_items_t");
 
   map_list
-    .def_prop_ro("items", nb::overload_cast<>(&MapList::items),
-        "Iterator over " RST_CLASS_REF(lief.DEX.MapItem) ""_doc)
+      .def_prop_ro("items", nb::overload_cast<>(&MapList::items),
+                   "Iterator over :class:`~lief.DEX.MapItem`"_doc)
 
-    .def("has", &MapList::has,
-        "Check if the given " RST_CLASS_REF(lief.DEX.MapItem.TYPES) " is present"_doc,
-        "type"_a)
+      .def("has", &MapList::has,
+           "Check if the given :class:`~lief.DEX.MapItem.TYPES` is present"_doc,
+           "type"_a)
 
-    .def("get", nb::overload_cast<MapItem::TYPES>(&MapList::get),
-        R"delim(
-        Return the :class:`~lief.DEX.MapItem` from the given
-        :class:`~lief.DEX.MapItem.TYPES`
-        )delim"_doc, "type"_a, nb::rv_policy::reference_internal)
+      .def("get", nb::overload_cast<MapItem::TYPES>(&MapList::get),
+           R"delim(
+           Return the :class:`~lief.DEX.MapItem` from the given
+           :class:`~lief.DEX.MapItem.TYPES`
+           )delim"_doc,
+           "type"_a, nb::rv_policy::reference_internal)
 
-    .def("__getitem__",
-        nb::overload_cast<MapItem::TYPES>(&MapList::get))
+      .def("__getitem__", nb::overload_cast<MapItem::TYPES>(&MapList::get))
 
-    LIEF_DEFAULT_STR(MapList);
-
+      .LIEF_DEFAULT_STR(MapList);
 }
 }

@@ -22,11 +22,10 @@ namespace LIEF::PE::py {
 template<>
 void create<SpcRelaxedPeMarkerCheck>(nb::module_& m) {
   nb::class_<SpcRelaxedPeMarkerCheck, Attribute>(m, "SpcRelaxedPeMarkerCheck",
-    R"delim(
-    )delim"_doc
-  )
-    .def_prop_ro("value", nb::overload_cast<>(&SpcRelaxedPeMarkerCheck::value, nb::const_))
-  ;
+                                                 R"delim(
+                                                 )delim"_doc)
+      .def_prop_ro("value", nb::overload_cast<>(&SpcRelaxedPeMarkerCheck::value,
+                                                nb::const_));
 }
 
 }

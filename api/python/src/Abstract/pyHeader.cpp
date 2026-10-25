@@ -28,11 +28,11 @@ namespace LIEF::py {
 
 template<>
 void create<Header>(nb::module_& m) {
-  nb::class_<Header, Object> obj(m, "Header",
-     R"delim(
-     Class which represents an abstracted Header
-     )delim"_doc);
+  nb::class_<Header, Object> obj(
+      m, "Header", "Class which represents an abstracted Header"_doc
+  );
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Header::ARCHITECTURES::X), Header::ARCHITECTURES::X)
   enum_<Header::ARCHITECTURES>(obj, "ARCHITECTURES")
     ENTRY(UNKNOWN)
@@ -50,7 +50,9 @@ void create<Header>(nb::module_& m) {
     ENTRY(PPC64)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Header::ENDIANNESS::X), Header::ENDIANNESS::X)
   enum_<Header::ENDIANNESS>(obj, "ENDIANNESS")
     ENTRY(UNKNOWN)
@@ -58,7 +60,9 @@ void create<Header>(nb::module_& m) {
     ENTRY(LITTLE)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Header::MODES::X), Header::MODES::X)
   enum_<Header::MODES>(obj, "MODES")
     ENTRY(NONE)
@@ -69,7 +73,9 @@ void create<Header>(nb::module_& m) {
     ENTRY(ARM64E)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Header::OBJECT_TYPES::X), Header::OBJECT_TYPES::X)
   enum_<Header::OBJECT_TYPES>(obj, "OBJECT_TYPES")
     ENTRY(UNKNOWN)
@@ -78,40 +84,37 @@ void create<Header>(nb::module_& m) {
     ENTRY(OBJECT)
   ;
   #undef ENTRY
+  // clang-format on
 
-  obj
-    .def_prop_ro("architecture",
-        nb::overload_cast<>(&Header::architecture, nb::const_),
-        "Target architecture"_doc)
+  obj.def_prop_ro("architecture",
+                  nb::overload_cast<>(&Header::architecture, nb::const_),
+                  "Target architecture"_doc)
 
-    .def_prop_ro("modes",
-        nb::overload_cast<>(&Header::modes, nb::const_),
-        "Architecture details"_doc)
+      .def_prop_ro("modes", nb::overload_cast<>(&Header::modes, nb::const_),
+                   "Architecture details"_doc)
 
-    .def_prop_ro("modes_list",
-        nb::overload_cast<>(&Header::modes_list, nb::const_),
-        "*Modes* as a list"_doc)
+      .def_prop_ro("modes_list",
+                   nb::overload_cast<>(&Header::modes_list, nb::const_),
+                   "*Modes* as a list"_doc)
 
-    .def_prop_ro("entrypoint",
-        nb::overload_cast<>(&Header::entrypoint, nb::const_),
-        "Binary entrypoint"_doc)
+      .def_prop_ro("entrypoint",
+                   nb::overload_cast<>(&Header::entrypoint, nb::const_),
+                   "Binary entrypoint"_doc)
 
-    .def_prop_ro("object_type",
-        nb::overload_cast<>(&Header::object_type, nb::const_),
-        "Type of the binary (executable, library...)"_doc)
+      .def_prop_ro("object_type",
+                   nb::overload_cast<>(&Header::object_type, nb::const_),
+                   "Type of the binary (executable, library...)"_doc)
 
-    .def_prop_ro("endianness",
-        nb::overload_cast<>(&Header::endianness, nb::const_),
-        "Binary endianness"_doc)
+      .def_prop_ro("endianness",
+                   nb::overload_cast<>(&Header::endianness, nb::const_),
+                   "Binary endianness"_doc)
 
-    .def_prop_ro("is_32",
-        &Header::is_32,
-        "``True`` if the binary targets a ``32-bits`` architecture"_doc)
+      .def_prop_ro("is_32", &Header::is_32,
+                   "``True`` if the binary targets a ``32-bits`` architecture"_doc)
 
-    .def_prop_ro("is_64",
-        &Header::is_64,
-        "``True`` if the binary targets a ``64-bits`` architecture"_doc)
+      .def_prop_ro("is_64", &Header::is_64,
+                   "``True`` if the binary targets a ``64-bits`` architecture"_doc)
 
-    LIEF_DEFAULT_STR(Header);
+      .LIEF_DEFAULT_STR(Header);
 }
 }

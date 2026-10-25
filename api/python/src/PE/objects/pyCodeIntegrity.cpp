@@ -18,37 +18,36 @@
 
 #include "LIEF/PE/CodeIntegrity.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<CodeIntegrity>(nb::module_& m) {
   nb::class_<CodeIntegrity, LIEF::Object>(m, "CodeIntegrity")
-    .def(nb::init<>())
+      .def(nb::init<>())
 
-    .def_prop_rw("flags",
-        nb::overload_cast<>(&CodeIntegrity::flags, nb::const_),
-        nb::overload_cast<uint16_t>(&CodeIntegrity::flags),
-        "Flags to indicate if CI information is available, etc."_doc)
+      .def_prop_rw("flags", nb::overload_cast<>(&CodeIntegrity::flags, nb::const_),
+                   nb::overload_cast<uint16_t>(&CodeIntegrity::flags),
+                   "Flags to indicate if CI information is available, etc."_doc)
 
-    .def_prop_rw("catalog",
-        nb::overload_cast<>(&CodeIntegrity::catalog, nb::const_),
-        nb::overload_cast<uint16_t>(&CodeIntegrity::catalog),
-        "``0xFFFF`` means not available"_doc)
+      .def_prop_rw("catalog",
+                   nb::overload_cast<>(&CodeIntegrity::catalog, nb::const_),
+                   nb::overload_cast<uint16_t>(&CodeIntegrity::catalog),
+                   "``0xFFFF`` means not available"_doc)
 
-    .def_prop_rw("catalog_offset",
-        nb::overload_cast<>(&CodeIntegrity::catalog_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&CodeIntegrity::catalog_offset))
+      .def_prop_rw("catalog_offset",
+                   nb::overload_cast<>(&CodeIntegrity::catalog_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&CodeIntegrity::catalog_offset))
 
-    .def_prop_rw("reserved",
-        nb::overload_cast<>(&CodeIntegrity::reserved, nb::const_),
-        nb::overload_cast<uint32_t>(&CodeIntegrity::reserved),
-        "Additional bitmask to be defined later"_doc)
+      .def_prop_rw("reserved",
+                   nb::overload_cast<>(&CodeIntegrity::reserved, nb::const_),
+                   nb::overload_cast<uint32_t>(&CodeIntegrity::reserved),
+                   "Additional bitmask to be defined later"_doc)
 
-    LIEF_DEFAULT_STR(CodeIntegrity);
+      .LIEF_DEFAULT_STR(CodeIntegrity);
 }
 
 }

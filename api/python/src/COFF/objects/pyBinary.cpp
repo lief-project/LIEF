@@ -16,15 +16,15 @@
 #include <string_view>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
 
 #include "COFF/pyCOFF.hpp"
 #include "LIEF/COFF/Binary.hpp"
 #include "LIEF/COFF/Relocation.hpp"
-#include "LIEF/COFF/Symbol.hpp"
 #include "LIEF/COFF/Section.hpp"
 #include "LIEF/COFF/String.hpp"
+#include "LIEF/COFF/Symbol.hpp"
 
 #include "LIEF/asm/Engine.hpp"
 #include "LIEF/asm/Instruction.hpp"
@@ -43,8 +43,7 @@ template<>
 void create<Binary>(nb::module_& m) {
   using namespace LIEF::py;
 
-  nb::class_<Binary> bin(m, "Binary",
-    "Class that represents a COFF Binary"_doc);
+  nb::class_<Binary> bin(m, "Binary", "Class that represents a COFF Binary"_doc);
 
   struct it_symbols : public Binary::it_symbols {
     using Binary::it_symbols::it_symbols;
@@ -60,145 +59,150 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<it_strings_table>(bin, "it_strings_table");
   init_ref_iterator<Binary::it_functions>(bin, "it_functions");
 
-  bin
-    .def_prop_ro("header", nb::overload_cast<>(&Binary::header),
-      "The COFF header"_doc
-    )
-    .def_prop_ro("sections",
-      nb::overload_cast<>(&Binary::sections),
-      "Iterator over the different sections located in this COFF binary"_doc,
-      nb::keep_alive<0, 1>()
-    )
-
-    .def("get_section",
-      nb::overload_cast<std::string_view>(&Binary::get_section),
-      R"doc(
-      Return the :class:`~lief.COFF.Section` matching the given name.
-
-      Section names that do not fit in the 8 bytes allocated by the COFF format
-      are stored in the COFF string table while the section itself only holds a
-      ``/<offset>`` placeholder. This function transparently resolves both
-      forms, so a long name can be looked up with its **regular** value:
-
-      .. code-block:: python
-
-        sec = binary.get_section(".debug_rnglists")
-        sec.name               # '/18'
-        sec.coff_string.string # '.debug_rnglists'
-      )doc"_doc, "name"_a,
-      nb::rv_policy::reference_internal
-    )
-
-    .def_prop_ro("relocations",
-      nb::overload_cast<>(&Binary::relocations),
-      "Iterator over **all** the relocations used by this COFF binary"_doc,
-      nb::keep_alive<0, 1>()
-    )
-
-    .def_prop_ro("symbols",
-      nb::overload_cast<>(&Binary::symbols),
-      "Iterator over the COFF's symbols"_doc,
-      nb::keep_alive<0, 1>()
-    )
-
-    .def_prop_ro("functions",
-        nb::overload_cast<>(&Binary::functions),
-        "Iterator over the functions implemented in this COFF",
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("string_table",
-      nb::overload_cast<>(&Binary::string_table),
-      "Iterator over the COFF's strings"_doc,
-      nb::keep_alive<0, 1>()
-    )
-
-    .def("find_string", nb::overload_cast<uint32_t>(&Binary::find_string),
-        R"doc(
-        Try to find the COFF string at the given offset in the COFF string table.
-
-        .. warning::
-
-            This offset must include the first 4 bytes holding the size of
-            the table. Hence, the first string starts a the offset 4.
-        )doc"_doc, "offset"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("find_function",
-         nb::overload_cast<std::string_view>(&Binary::find_function),
-         "Try to find the function (symbol) with the given name"_doc,
-         "name"_a, nb::rv_policy::reference_internal
+  bin.def_prop_ro("header", nb::overload_cast<>(&Binary::header),
+                  "The COFF header"_doc)
+      .def_prop_ro(
+          "sections", nb::overload_cast<>(&Binary::sections),
+          "Iterator over the different sections located in this COFF binary"_doc,
+          nb::keep_alive<0, 1>()
       )
 
-    .def("find_demangled_function",
-         nb::overload_cast<std::string_view>(&Binary::find_demangled_function),
-         "Try to find the function (symbol) with the given **demangled** name"_doc,
-         "name"_a, nb::rv_policy::reference_internal
+      .def(
+          "get_section", nb::overload_cast<std::string_view>(&Binary::get_section),
+          R"doc(
+          Return the :class:`~lief.COFF.Section` matching the given name.
+
+          Section names that do not fit in the 8 bytes allocated by the COFF format
+          are stored in the COFF string table while the section itself only holds a
+          ``/<offset>`` placeholder. This function transparently resolves both
+          forms, so a long name can be looked up with its **regular** value:
+
+          .. code-block:: python
+
+            sec = binary.get_section(".debug_rnglists")
+            sec.name               # '/18'
+            sec.coff_string.string # '.debug_rnglists'
+          )doc"_doc,
+          "name"_a, nb::rv_policy::reference_internal
+      )
+
+      .def_prop_ro(
+          "relocations", nb::overload_cast<>(&Binary::relocations),
+          "Iterator over **all** the relocations used by this COFF binary"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro("symbols", nb::overload_cast<>(&Binary::symbols),
+                   "Iterator over the COFF's symbols"_doc, nb::keep_alive<0, 1>())
+
+      .def_prop_ro("functions", nb::overload_cast<>(&Binary::functions),
+                   "Iterator over the functions implemented in this COFF",
+                   nb::keep_alive<0, 1>())
+
+      .def_prop_ro("string_table", nb::overload_cast<>(&Binary::string_table),
+                   "Iterator over the COFF's strings"_doc, nb::keep_alive<0, 1>())
+
+      .def(
+          "find_string", nb::overload_cast<uint32_t>(&Binary::find_string),
+          R"doc(
+          Try to find the COFF string at the given offset in the COFF string table.
+
+          .. warning::
+
+              This offset must include the first 4 bytes holding the size of
+              the table. Hence, the first string starts a the offset 4.
+          )doc"_doc,
+          "offset"_a, nb::rv_policy::reference_internal
+      )
+
+      .def("find_function",
+           nb::overload_cast<std::string_view>(&Binary::find_function),
+           "Try to find the function (symbol) with the given name"_doc, "name"_a,
+           nb::rv_policy::reference_internal)
+
+      .def(
+          "find_demangled_function",
+          nb::overload_cast<std::string_view>(&Binary::find_demangled_function),
+          "Try to find the function (symbol) with the given **demangled** name"_doc,
+          "name"_a, nb::rv_policy::reference_internal
       )
 
 
-    .def("disassemble", [] (const Binary& self, const Symbol& function) {
-          auto insts = LIEF::py::owning_range(self.disassemble(function));
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
-              nb::keep_alive<0, 1>());
-      }, "function"_a, nb::keep_alive<0, 1>(),
-      R"doc(
-      Disassemble code for the given symbol
+      .def(
+          "disassemble",
+          [](const Binary& self, const Symbol& function) {
+            auto insts = LIEF::py::owning_range(self.disassemble(function));
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
+                nb::keep_alive<0, 1>()
+            );
+          },
+          "function"_a, nb::keep_alive<0, 1>(),
+          R"doc(
+          Disassemble code for the given symbol
 
-      .. code-block:: python
+          .. code-block:: python
 
-        func = binary.find_demangled_function("int __cdecl my_function(int, int)");
-        insts = binary.disassemble("main");
-        for inst in insts:
-            print(inst)
+            func = binary.find_demangled_function("int __cdecl my_function(int, int)");
+            insts = binary.disassemble("main");
+            for inst in insts:
+                print(inst)
 
-      .. seealso:: :class:`lief.assembly.Instruction`
-      )doc"_doc)
+          .. seealso:: :class:`lief.assembly.Instruction`
+          )doc"_doc
+      )
 
-    .def("disassemble", [] (const Binary& self, std::string_view function) {
-          auto insts = LIEF::py::owning_range(self.disassemble(function));
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
-              nb::keep_alive<0, 1>());
-      }, "function_name"_a, nb::keep_alive<0, 1>(),
-      R"doc(
-      Disassemble code for the given symbol name
+      .def(
+          "disassemble",
+          [](const Binary& self, std::string_view function) {
+            auto insts = LIEF::py::owning_range(self.disassemble(function));
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
+                nb::keep_alive<0, 1>()
+            );
+          },
+          "function_name"_a, nb::keep_alive<0, 1>(),
+          R"doc(
+          Disassemble code for the given symbol name
 
-      .. code-block:: python
+          .. code-block:: python
 
-        insts = binary.disassemble("main");
-        for inst in insts:
-            print(inst)
+            insts = binary.disassemble("main");
+            for inst in insts:
+                print(inst)
 
-      .. seealso:: :class:`lief.assembly.Instruction`
-      )doc"_doc
-    )
+          .. seealso:: :class:`lief.assembly.Instruction`
+          )doc"_doc
+      )
 
-    .def("disassemble_from_bytes",
-         [] (const Binary& self, const nb::bytes& buffer, uint64_t address) {
-          auto insts = LIEF::py::owning_range(self.disassemble(
-            reinterpret_cast<const uint8_t*>(buffer.c_str()),
-            buffer.size(), address
-          ));
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
-              nb::keep_alive<0, 1>());
-      }, "buffer"_a, "address"_a = 0, nb::keep_alive<0, 1>(), nb::keep_alive<0, 2>(),
-      R"doc(
-      Disassemble code from the provided bytes
+      .def(
+          "disassemble_from_bytes",
+          [](const Binary& self, const nb::bytes& buffer, uint64_t address) {
+            auto insts = LIEF::py::owning_range(
+                self.disassemble(reinterpret_cast<const uint8_t*>(buffer.c_str()),
+                                 buffer.size(), address)
+            );
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<Binary>(), "instructions_it", insts.begin(), insts.end(),
+                nb::keep_alive<0, 1>()
+            );
+          },
+          "buffer"_a, "address"_a = 0, nb::keep_alive<0, 1>(),
+          nb::keep_alive<0, 2>(),
+          R"doc(
+          Disassemble code from the provided bytes
 
-      .. code-block:: python
+          .. code-block:: python
 
-        raw = bytes(binary.get_section(".text").content)
-        insts = binary.disassemble_from_bytes(raw);
-        for inst in insts:
-            print(inst)
+            raw = bytes(binary.get_section(".text").content)
+            insts = binary.disassemble_from_bytes(raw);
+            for inst in insts:
+                print(inst)
 
-      .. seealso:: :class:`lief.assembly.Instruction`
-      )doc"_doc
-    )
-  LIEF_DEFAULT_STR(Binary);
-
+          .. seealso:: :class:`lief.assembly.Instruction`
+          )doc"_doc
+      )
+      .LIEF_DEFAULT_STR(Binary);
 }
 
 }

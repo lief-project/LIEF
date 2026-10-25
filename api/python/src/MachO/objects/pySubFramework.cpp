@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/SubFramework.hpp"
 
@@ -27,7 +27,8 @@ namespace LIEF::MachO::py {
 template<>
 void create<SubFramework>(nb::module_& m) {
 
-  nb::class_<SubFramework, LoadCommand>(m, "SubFramework",
+  nb::class_<SubFramework, LoadCommand>(
+      m, "SubFramework",
       R"delim(
       Class that represents the SubFramework command.
       According to the Mach-O ``loader.h`` documentation:
@@ -41,13 +42,14 @@ void create<SubFramework>(nb::module_& m) {
       > editor produces an error and states to link against the umbrella framework.
       > The name of the umbrella framework for subframeworks is recorded in the
       > following structure.
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def_prop_rw("umbrella",
-        nb::overload_cast<>(&SubFramework::umbrella, nb::const_),
-        nb::overload_cast<std::string>(&SubFramework::umbrella),
-        "Name of the umbrella framework"_doc)
+      .def_prop_rw("umbrella",
+                   nb::overload_cast<>(&SubFramework::umbrella, nb::const_),
+                   nb::overload_cast<std::string>(&SubFramework::umbrella),
+                   "Name of the umbrella framework"_doc)
 
-    LIEF_DEFAULT_STR(SubFramework);
+      .LIEF_DEFAULT_STR(SubFramework);
 }
 }

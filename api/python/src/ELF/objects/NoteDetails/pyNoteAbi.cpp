@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 
@@ -29,11 +29,9 @@ namespace LIEF::ELF::py {
 template<>
 void create<NoteAbi>(nb::module_& m) {
   nb::class_<NoteAbi, Note> nabi(m, "NoteAbi",
-    R"doc(
-    Class that wraps the `NT_GNU_ABI_TAG` note
-    )doc"_doc
-  );
+                                 "Class that wraps the `NT_GNU_ABI_TAG` note"_doc);
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(NoteAbi::ABI::X), NoteAbi::ABI::X)
   enum_<NoteAbi::ABI>(nabi, "ABI", "ABI recognized by this note"_doc)
     ENTRY(LINUX)
@@ -45,20 +43,28 @@ void create<NoteAbi>(nb::module_& m) {
     ENTRY(NACL)
   ;
   #undef ENTRY
+  // clang-format on
 
-  nabi
-    .def_prop_ro("abi",
-        [] (const NoteAbi& self) {
-          return LIEF::py::value_or_none(nb::overload_cast<>(&NoteAbi::abi, nb::const_), self);
-        },
-        R"doc(Return the target :class:`~.ABI`)doc"_doc)
+  nabi.def_prop_ro(
+          "abi",
+          [](const NoteAbi& self) {
+            return LIEF::py::value_or_none(
+                nb::overload_cast<>(&NoteAbi::abi, nb::const_), self
+            );
+          },
+          "Return the target :class:`~.ABI`"_doc
+  )
 
-    .def_prop_ro("version",
-        [] (const NoteAbi& self) {
-          return LIEF::py::value_or_none(nb::overload_cast<>(&NoteAbi::version, nb::const_), self);
-        },
-        "Return the target version as ``(Major, Minor, Patch)``"_doc)
+      .def_prop_ro(
+          "version",
+          [](const NoteAbi& self) {
+            return LIEF::py::value_or_none(
+                nb::overload_cast<>(&NoteAbi::version, nb::const_), self
+            );
+          },
+          "Return the target version as ``(Major, Minor, Patch)``"_doc
+      )
 
-    LIEF_DEFAULT_STR(NoteAbi);
+      .LIEF_DEFAULT_STR(NoteAbi);
 }
 }

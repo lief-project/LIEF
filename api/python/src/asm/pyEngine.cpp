@@ -7,10 +7,8 @@
 namespace LIEF::assembly::py {
 template<>
 void create<assembly::Engine>(nb::module_& m) {
-  nb::class_<assembly::Engine> obj(m, "Engine",
-    R"doc(
-    This class interfaces the assembler/disassembler support
-    )doc"_doc
+  nb::class_<assembly::Engine> obj(
+      m, "Engine", "This class interfaces the assembler/disassembler support"_doc
   );
 }
 }

@@ -16,15 +16,15 @@
 #include "COFF/pyCOFF.hpp"
 
 #include "LIEF/COFF/Relocation.hpp"
-#include "LIEF/COFF/Symbol.hpp"
 #include "LIEF/COFF/Section.hpp"
+#include "LIEF/COFF/Symbol.hpp"
 
 #include "enums_wrapper.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::COFF::py {
 
@@ -34,6 +34,7 @@ void create<Relocation>(nb::module_& m) {
 
   nb::class_<Relocation, LIEF::Relocation> relocation(m, "Relocation");
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Relocation::TYPE::X), Relocation::TYPE::X)
   enum_<Relocation::TYPE>(relocation, "TYPE")
     ENTRY(UNKNOWN)
@@ -122,21 +123,17 @@ void create<Relocation>(nb::module_& m) {
     ENTRY(MIPS_SECTION)
   ;
   #undef ENTRY
+  // clang-format on
 
   relocation
-    .def_prop_ro("symbol_idx", &Relocation::symbol_idx,
-      "Symbol index associated with this relocation"_doc
-    )
-    .def_prop_ro("symbol", nb::overload_cast<>(&Relocation::symbol),
-      "Symbol associated with the relocation (if any)"_doc
-    )
-    .def_prop_ro("type", &Relocation::type,
-      "Type of the relocation"_doc
-    )
-    .def_prop_ro("section", nb::overload_cast<>(&Relocation::section),
-      "Section in which the relocation takes place"_doc
-    )
-    LIEF_DEFAULT_STR(Relocation);
+      .def_prop_ro("symbol_idx", &Relocation::symbol_idx,
+                   "Symbol index associated with this relocation"_doc)
+      .def_prop_ro("symbol", nb::overload_cast<>(&Relocation::symbol),
+                   "Symbol associated with the relocation (if any)"_doc)
+      .def_prop_ro("type", &Relocation::type, "Type of the relocation"_doc)
+      .def_prop_ro("section", nb::overload_cast<>(&Relocation::section),
+                   "Section in which the relocation takes place"_doc)
+      .LIEF_DEFAULT_STR(Relocation);
 }
 
 }

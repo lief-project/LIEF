@@ -16,14 +16,14 @@
 #include <string_view>
 #include <sstream>
 
-#include "nanobind/utils.hpp"
-#include <nanobind/operators.h>
-#include <nanobind/stl/unique_ptr.h>
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/string_view.h>
 #include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/extra/stl/pathlike.h"
+#include "nanobind/utils.hpp"
+#include <nanobind/operators.h>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
 
 #include "ELF/pyELF.hpp"
 
@@ -43,13 +43,13 @@
 #include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
+#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
-#include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SysvHash.hpp"
 
-#include "pyIterator.hpp"
 #include "pyErr.hpp"
+#include "pyIterator.hpp"
 #include "pySafeString.hpp"
 
 namespace LIEF::ELF::py {
@@ -58,13 +58,15 @@ using namespace LIEF::py;
 template<>
 void create<Binary>(nb::module_& m) {
   nb::class_<Binary, LIEF::Binary> bin(m, "Binary",
-  R"delim(
-  Class which represents an ELF binary
-  )delim"_doc);
+                                       "Class which represents an ELF binary"_doc);
 
   init_ref_iterator<Binary::it_notes>(bin, "it_notes");
-  init_ref_iterator<Binary::it_symbols_version_requirement>(bin, "it_symbols_version_requirement");
-  init_ref_iterator<Binary::it_symbols_version_definition>(bin, "it_symbols_version_definition");
+  init_ref_iterator<Binary::it_symbols_version_requirement>(
+      bin, "it_symbols_version_requirement"
+  );
+  init_ref_iterator<Binary::it_symbols_version_definition>(
+      bin, "it_symbols_version_definition"
+  );
   init_ref_iterator<Binary::it_segments>(bin, "it_segments");
   init_ref_iterator<Binary::it_sections>(bin, "it_sections");
   init_ref_iterator<Binary::it_dynamic_entries>(bin, "it_dynamic_entries");
@@ -76,856 +78,882 @@ void create<Binary>(nb::module_& m) {
   init_ref_iterator<Binary::it_relocations>(bin, "it_relocations");
 
   init_ref_iterator<Binary::it_symbols>(bin, "it_dyn_symtab_symbols");
-  init_ref_iterator<Binary::it_dynamic_symbols>(bin, "it_symbols");        // For it_dynamic_symbols / it_symtab_symbols
-  init_ref_iterator<Binary::it_exported_symbols>(bin, "it_filter_symbols"); // For it_imported_symbols
+  init_ref_iterator<Binary::it_dynamic_symbols>(
+      bin, "it_symbols"
+  ); // For it_dynamic_symbols / it_symtab_symbols
+  init_ref_iterator<Binary::it_exported_symbols>(
+      bin, "it_filter_symbols"
+  ); // For it_imported_symbols
 
-  nb::enum_<Binary::PHDR_RELOC>(bin, "PHDR_RELOC", R"delim(
-    This enum describes the different ways to relocate the segments table.
-    )delim"_doc)
-    .value("AUTO", Binary::PHDR_RELOC::AUTO,
-           R"delim(
-           Defer the choice of the layout to LIEF.
-           )delim"_doc)
-    .value("PIE_SHIFT", Binary::PHDR_RELOC::PIE_SHIFT,
-           R"delim(
-           The content of the binary right after the segments table is shifted
-           and the relocations are updated accordingly.
-           This kind of shift only works with PIE binaries.
-           )delim"_doc)
-    .value("BSS_END", Binary::PHDR_RELOC::BSS_END,
-           R"delim(
-           The new segments table is relocated right after the first bss-like
-           segments.
-           )delim"_doc)
-    .value("FILE_END", Binary::PHDR_RELOC::BINARY_END,
-           R"delim(
-           The new segments table is relocated at the end of the binary.
-           )delim"_doc)
-    .value("SEGMENT_GAP", Binary::PHDR_RELOC::SEGMENT_GAP,
-           R"delim(
-           The new segments table is relocated between two LOAD segments.
-           This kind of relocation is only doable when there is an alignment
-           enforcement.
-           )delim"_doc);
+  nb::enum_<Binary::PHDR_RELOC>(
+      bin, "PHDR_RELOC",
+      "This enum describes the different ways to relocate the segments table."_doc
+  )
+      .value("AUTO", Binary::PHDR_RELOC::AUTO,
+             "Defer the choice of the layout to LIEF."_doc)
+      .value("PIE_SHIFT", Binary::PHDR_RELOC::PIE_SHIFT,
+             R"delim(
+             The content of the binary right after the segments table is shifted
+             and the relocations are updated accordingly.
+             This kind of shift only works with PIE binaries.
+             )delim"_doc)
+      .value("BSS_END", Binary::PHDR_RELOC::BSS_END,
+             R"delim(
+             The new segments table is relocated right after the first bss-like
+             segments.
+             )delim"_doc)
+      .value("FILE_END", Binary::PHDR_RELOC::BINARY_END,
+             "The new segments table is relocated at the end of the binary."_doc)
+      .value("SEGMENT_GAP", Binary::PHDR_RELOC::SEGMENT_GAP,
+             R"delim(
+             The new segments table is relocated between two LOAD segments.
+             This kind of relocation is only doable when there is an alignment
+             enforcement.
+             )delim"_doc);
 
   nb::enum_<Binary::SEC_INSERT_POS>(bin, "SEC_INSERT_POS", R"delim(
     This enum defines where the content of a newly added section should be
     inserted.
     )delim"_doc)
-    .value("AUTO", Binary::SEC_INSERT_POS::AUTO,
-      "Defer the choice to LIEF"_doc
-    )
-    .value("POST_SECTION", Binary::SEC_INSERT_POS::POST_SECTION,
-      R"doc(
-      Insert the section after the last valid offset in the **segments** table.
-
-      With this choice, the section is inserted after the loaded content but
-      before any debug information.
-      )doc"_doc
-    )
-    .value("POST_SEGMENT", Binary::SEC_INSERT_POS::POST_SEGMENT,
-      R"doc(
-      Insert the section after the last valid offset in the **section** table.
-
-      With this choice, the section is inserted at the very end of the binary.
-      )doc"_doc
-    )
-  ;
-
-  bin
-    .def_prop_ro("type",
-        &Binary::type,
-        "Return the binary's " RST_CLASS_REF(lief.ELF.ELF_CLASS) ""_doc)
-
-    .def_prop_ro("header",
-        nb::overload_cast<>(&Binary::header),
-        "Return " RST_CLASS_REF(lief.ELF.Header) " object"_doc,
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("sections",
-        nb::overload_cast<>(&Binary::sections),
-        "Return an iterator over binary's " RST_CLASS_REF(lief.ELF.Section) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("segments",
-        nb::overload_cast<>(&Binary::segments),
-        "Return an iterator to binary's " RST_CLASS_REF(lief.ELF.Segment) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("dynamic_entries",
-        nb::overload_cast<>(&Binary::dynamic_entries),
-        "Return an iterator to " RST_CLASS_REF(lief.ELF.DynamicEntry) " entries"_doc,
-        nb::keep_alive<0, 1>())
-
-    .def("add",
-        nb::overload_cast<const DynamicEntry&>(&Binary::add),
-        "Add a new " RST_CLASS_REF(lief.ELF.DynamicEntry) " in the binary"_doc,
-        "dynamic_entry",
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("symtab_symbols",
-        nb::overload_cast<>(&Binary::symtab_symbols),
-        "Return an iterator to static " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("dynamic_symbols",
-        nb::overload_cast<>(&Binary::dynamic_symbols),
-        "Return an iterator to dynamic " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("symbols",
-        nb::overload_cast<>(&Binary::symbols),
-        "Return an iterator over both **static** and **dynamic** " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("exported_symbols",
-        nb::overload_cast<>(&Binary::exported_symbols),
-        "Return dynamic " RST_CLASS_REF(lief.ELF.Symbol) " which are exported"_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("imported_symbols",
-        nb::overload_cast<>(&Binary::imported_symbols),
-        "Return dynamic " RST_CLASS_REF(lief.ELF.Symbol) " which are imported"_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("dynamic_relocations",
-        nb::overload_cast<>(&Binary::dynamic_relocations),
-        "Return an iterator over dynamic " RST_CLASS_REF(lief.ELF.Relocation) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def("add_dynamic_relocation",
-        &Binary::add_dynamic_relocation, R"delim(
-        Add a new *dynamic* relocation.
-
-        We consider a dynamic relocation as a relocation which is not plt-related.
-
-        See: :meth:`lief.ELF.Binary.add_pltgot_relocation`
-        )delim"_doc,
-        "relocation"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("add_pltgot_relocation",
-        &Binary::add_pltgot_relocation, R"delim(
-        Add a .plt.got relocation. This kind of relocation is usually
-        associated with a PLT stub that aims at resolving the underlying symbol.
-
-        See: :meth:`lief.ELF.Binary.add_dynamic_relocation`
-        )delim"_doc,
-        "relocation"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("add_object_relocation",
-        &Binary::add_object_relocation,
-        R"delim(
-        Add relocation for object file (.o)
-
-        The first parameter is the relocation to add while the second parameter
-        is the :class:`~lief.ELF.Section` associated with the relocation.
-
-        If there is an error, this function returns a nullptr. Otherwise, it returns
-        the relocation added.
-        )delim"_doc,
-        "relocation"_a, "section"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("pltgot_relocations",
-        nb::overload_cast<>(&Binary::pltgot_relocations),
-        "Return an iterator over PLT/GOT " RST_CLASS_REF(lief.ELF.Relocation) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("object_relocations",
-        nb::overload_cast<>(&Binary::object_relocations),
-        "Return an iterator over object " RST_CLASS_REF(lief.ELF.Relocation) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("relocations",
-        nb::overload_cast<>(&Binary::relocations),
-        "Return an iterator over **all** " RST_CLASS_REF(lief.ELF.Relocation) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("symbols_version",
-        nb::overload_cast<>(&Binary::symbols_version),
-        "Return an iterator over " RST_CLASS_REF(lief.ELF.SymbolVersion) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("symbols_version_requirement",
-        nb::overload_cast<>(&Binary::symbols_version_requirement),
-        "Return an iterator to " RST_CLASS_REF(lief.ELF.SymbolVersionRequirement) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("symbols_version_definition",
-        nb::overload_cast<>(&Binary::symbols_version_definition),
-        "Return an iterator to " RST_CLASS_REF(lief.ELF.SymbolVersionDefinition) ""_doc,
-        nb::keep_alive<0, 1>())
-
-    .def_prop_ro("use_gnu_hash",
-        &Binary::use_gnu_hash,
-        "``True`` if GNU hash is used"_doc)
-
-    .def_prop_ro("gnu_hash",
-        &Binary::gnu_hash,
-        "Return the " RST_CLASS_REF(lief.ELF.GnuHash) " object\n\n"
-        "Hashes are used by the loader to speed up symbol resolution (GNU Version)"_doc,
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("use_sysv_hash",
-        &Binary::use_sysv_hash,
-        "``True`` if SYSV hash is used")
-
-    .def_prop_ro("sysv_hash",
-        &Binary::sysv_hash,
-        "Return the " RST_CLASS_REF(lief.ELF.SysvHash) " object\n\n"
-        "Hashes are used by the loader to speed up symbol resolution (SYSV version)"_doc,
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("imagebase",
-        &Binary::imagebase,
-       "Return the program image base. (e.g. ``0x400000``)"_doc)
-
-    .def_prop_ro("virtual_size",
-        &Binary::virtual_size,
-       "Return the size of the mapped binary"_doc)
-
-    .def_prop_ro("is_pie",
-        &Binary::is_pie,
-        R"delim(
-        Check if the binary has been compiled with `-fpie -pie` flags
-
-        To do so we check if there is a `PT_INTERP` segment and if
-        the binary type is `ET_DYN` (Shared object)
-        )delim"_doc)
-
-    .def_prop_ro("has_interpreter",
-        &Binary::has_interpreter,
-       "Check if the binary uses a loader (also named linker or interpreter)"_doc)
-
-    .def_prop_ro("functions",
-        &Binary::functions,
-       "List of the functions found in the binary"_doc)
-
-    .def_prop_rw("interpreter",
-        nb::overload_cast<>(&Binary::interpreter, nb::const_),
-        nb::overload_cast<std::string_view>(&Binary::interpreter),
-       "ELF interpreter (loader) if any. (e.g. ``/lib64/ld-linux-x86-64.so.2``)"_doc)
-
-    .def("section_from_offset",
-        nb::overload_cast<uint64_t, bool>(&Binary::section_from_offset),
-        R"delim(
-        Return the :class:`~lief.ELF.Section` which encompasses the given offset.
-        It returns None if a section can't be found.
-
-        If ``skip_nobits`` is set (which is the case by default), this function won't
-        consider sections for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
-        )delim"_doc,
-        "offset"_a, "skip_nobits"_a = true,
-        nb::rv_policy::reference_internal)
-
-    .def("section_from_virtual_address",
-        nb::overload_cast<uint64_t, bool>(&Binary::section_from_virtual_address),
-        R"delim(
-        Return the :class:`~lief.ELF.Section` which encompasses the given virtual address.
-        It returns None if a section can't be found.
-
-        If ``skip_nobits`` is set (which is the case by default), this function won't
-        consider sections for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
-        )delim"_doc,
-        "address"_a, "skip_nobits"_a = true,
-        nb::rv_policy::reference_internal)
-
-    .def("segment_from_virtual_address",
-        nb::overload_cast<uint64_t>(&Binary::segment_from_virtual_address),
-        R"delim(
-        Return the :class:`~lief.ELF.Segment` which encompasses the given virtual address.
-        It returns None if a segment can't be found.
-        )delim"_doc,
-        "address"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("segment_from_offset",
-        nb::overload_cast<uint64_t>(&Binary::segment_from_offset),
-        R"delim(
-        Return the :class:`~lief.ELF.Segment` which encompasses the given offset.
-        It returns None if a segment can't be found.
-        )delim"_doc,
-        "offset"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("get",
-        nb::overload_cast<DynamicEntry::TAG>(&Binary::get),
-        R"delim(
-        Return the first binary's :class:`~lief.ELF.DynamicEntry` from the given
-        :class:`~lief.ELF.DynamicEntry.TAG`.
-
-        It returns None if the dynamic entry can't be found.
-        )delim"_doc,
-        "tag"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("get",
-        nb::overload_cast<Segment::TYPE>(&Binary::get),
-        R"delim(
-        Return the first binary's :class:`~lief.ELF.Segment` from the given
-        :class:`~lief.ELF.SEGMENT_TYPES`
-
-        It returns None if the segment can't be found.
-        )delim"_doc,
-        "type"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("get",
-        nb::overload_cast<Note::TYPE>(&Binary::get),
-        R"delim(
-        Return the first binary's :class:`~lief.ELF.Note` from the given
-        :class:`~lief.ELF.Note.TYPE`.
-
-        It returns None if the note can't be found.
-        )delim"_doc,
-        "type"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("get",
-        nb::overload_cast<Section::TYPE>(&Binary::get),
-        R"delim(
-        Return the first binary's :class:`~lief.ELF.Section` from the given
-        :class:`~lief.ELF.ELF_SECTION_TYPES`
-
-        It returns None if the section can't be found.
-        )delim"_doc,
-        "type"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("has",
-        nb::overload_cast<DynamicEntry::TAG>(&Binary::has, nb::const_),
-        R"delim(
-        Check if there exists a :class:`~lief.ELF.DynamicEntry` with the given
-        :class:`~lief.ELF.DynamicEntry.TAG`
-        )delim"_doc,
-        "tag"_a)
-
-    .def("has",
-        nb::overload_cast<Segment::TYPE>(&Binary::has, nb::const_),
-        "Check if a " RST_CLASS_REF(lief.ELF.Segment) " of *type* (" RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) ") exists"_doc,
-        "type"_a)
-
-    .def("has",
-        nb::overload_cast<Note::TYPE>(&Binary::has, nb::const_),
-        "Check if a " RST_CLASS_REF(lief.ELF.Note) " of *type* (" RST_CLASS_REF(lief.ELF.Note.TYPE) ") exists"_doc,
-        "type"_a)
-
-    .def("has",
-        nb::overload_cast<Section::TYPE>(&Binary::has, nb::const_),
-        "Check if a " RST_CLASS_REF(lief.ELF.Section) " of *type* (" RST_CLASS_REF(lief.ELF.SECTION_TYPES) ") exists"_doc,
-        "type"_a)
-
-    .def("patch_pltgot",
-        nb::overload_cast<std::string_view, uint64_t>(&Binary::patch_pltgot),
-        "Patch the imported symbol's name with the ``address``"_doc,
-        "symbol_name"_a, "address"_a, nb::lock_self())
-
-    .def("patch_pltgot",
-        nb::overload_cast<const Symbol&, uint64_t>(&Binary::patch_pltgot),
-        "Patch the imported " RST_CLASS_REF(lief.ELF.Symbol) " with the ``address``"_doc,
-        "symbol"_a, "address"_a, nb::lock_self())
-
-    .def("dynsym_idx",
-        nb::overload_cast<std::string_view>(&Binary::dynsym_idx, nb::const_),
-        R"doc(
-        Get the symbol index in the **dynamic** symbol from the given name or
-        return -1 if the symbol does not exist.
-        )doc"_doc, "name"_a)
-
-    .def("dynsym_idx",
-        nb::overload_cast<const Symbol&>(&Binary::dynsym_idx, nb::const_),
-        R"doc(
-        Get the symbol index in the **dynamic** symbol table for the given symbol
-        or return -1 if the symbol does not exist
-        )doc"_doc, "symbol"_a)
-
-    .def("symtab_idx",
-        nb::overload_cast<std::string_view>(&Binary::symtab_idx, nb::const_),
-        R"doc(
-        Get the symbol index in the ``.symtab`` section from the given name or
-        return -1 if the symbol does not exist.
-        )doc"_doc, "name"_a)
-
-    .def("symtab_idx",
-        nb::overload_cast<const Symbol&>(&Binary::symtab_idx, nb::const_),
-        R"doc(
-        Get the symbol index in the ``.symtab`` section or return -1 if the
-        symbol does not exist
-        )doc"_doc, "symbol"_a)
-
-    .def("has_section",
-        &Binary::has_section,
-        "Check if a " RST_CLASS_REF(lief.ELF.Section) " with the given name exists in the binary"_doc,
-        "section_name"_a)
-
-    .def("has_section_with_offset",
-        &Binary::has_section_with_offset,
-        "Check if a " RST_CLASS_REF(lief.ELF.Section) " that encompasses the given offset exists"_doc,
-        "offset"_a)
-
-    .def("has_section_with_va",
-        &Binary::has_section_with_va,
-        "Check if a " RST_CLASS_REF(lief.ELF.Section) " that encompasses the given virtual address exists"_doc,
-        "virtual_address"_a)
-
-    .def("get_section",
-        nb::overload_cast<std::string_view>(&Binary::get_section),
-        R"delim(
-        Return the :class:`~lief.ELF.Section` with the given ``name``
-
-        It returns None if the section can't be found.
-        )delim"_doc,
-        "section_name"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("add_symtab_symbol",
-        &Binary::add_symtab_symbol,
-        "Add a **static** " RST_CLASS_REF(lief.ELF.Symbol) " to the binary"_doc,
-        "symbol"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("add_dynamic_symbol",
-        nb::overload_cast<const Symbol&, const SymbolVersion*>(&Binary::add_dynamic_symbol),
-        R"delim(
-        Add a **dynamic** :class:`~lief.ELF.Symbol` to the binary
-
-        The function also takes an optional :class:`lief.ELF.SymbolVersion`
-        )delim"_doc,
-        "symbol"_a, "symbol_version"_a = nullptr,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("virtual_address_to_offset",
-        [] (const Binary& self, uint64_t address) {
-          return error_or(&Binary::virtual_address_to_offset, self, address);
-        },
-        "Convert the virtual address to a file offset"_doc,
-        "virtual_address"_a)
-
-    .def("add",
-        nb::overload_cast<const Section&, bool, Binary::SEC_INSERT_POS>(&Binary::add),
-        R"delim(
-        Add the given :class:`~lief.ELF.Section` to the binary.
-
-        If the section does not aim at being loaded in memory,
-        the ``loaded`` parameter has to be set to ``False`` (default: ``True``)
-        )delim"_doc,
-        "section"_a, "loaded"_a = true, "pos"_a = Binary::SEC_INSERT_POS::AUTO,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("add",
-        nb::overload_cast<const Segment&, uint64_t>(&Binary::add),
-        "Add a new " RST_CLASS_REF(lief.ELF.Segment) " in the binary"_doc,
-        "segment"_a, "base"_a = 0,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("add",
-        nb::overload_cast<const Note&>(&Binary::add),
-        "Add a new " RST_CLASS_REF(lief.ELF.Note) " in the binary"_doc,
-        "note"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("replace",
-        nb::overload_cast<const Segment&, const Segment&, uint64_t>(&Binary::replace),
-        R"delim(
-        Replace the :class:`~lief.ELF.Segment` given in 2nd parameter with the
-        :class:`~lief.ELF.Segment` given in the first parameter and return the updated segment.
-
-        .. warning::
-
-            The ``original_segment`` is no longer valid after this function
-        )delim"_doc,
-        "new_segment"_a, "original_segment"_a, "base"_a = 0,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("extend",
-        nb::overload_cast<const Segment&, uint64_t>(&Binary::extend),
-        "Extend the given " RST_CLASS_REF(lief.ELF.Segment) " by the given size"_doc,
-        "segment"_a, "size"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("extend",
-        nb::overload_cast<const Section&, uint64_t>(&Binary::extend),
-        "Extend the given " RST_CLASS_REF(lief.ELF.Section) " by the given size"_doc,
-        "segment"_a, "size"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("remove",
-        nb::overload_cast<const DynamicEntry&>(&Binary::remove),
-        "Remove the given " RST_CLASS_REF(lief.ELF.DynamicEntry) " from the dynamic table"_doc,
-        "dynamic_entry"_a, nb::lock_self())
-
-    .def("remove",
-        nb::overload_cast<DynamicEntry::TAG>(&Binary::remove),
-        "Remove **all** the " RST_CLASS_REF(lief.ELF.DynamicEntry) " with the given " RST_CLASS_REF(lief.ELF.DynamicEntry.TAG) ""_doc,
-        "tag"_a, nb::lock_self())
-
-    .def("remove",
-        nb::overload_cast<const Section&, bool>(&Binary::remove),
-        "Remove the given " RST_CLASS_REF(lief.ELF.Section) ". The ``clear`` parameter specifies whether or not "
-        "we must fill its content with ``0`` before removing"_doc,
-        "section"_a, "clear"_a = false, nb::lock_self())
-
-    .def("remove",
-        nb::overload_cast<const Segment&, bool>(&Binary::remove),
-        R"doc(
-        Remove the segment provided in parameter. If ``clear`` is set, the
-        original content of the segment will be filled with zeros before removal.
-        )doc"_doc, "segment"_a, "clear"_a = false, nb::lock_self())
-
-
-    .def("remove",
-        nb::overload_cast<Segment::TYPE, bool>(&Binary::remove),
-        R"doc(
-        Remove **all** segments with the given type. If ``clear`` is set, the
-        original content of the segment will be filled with zeros before removal.
-        )doc"_doc, "type"_a, "clear"_a = false, nb::lock_self())
-
-    .def("remove",
-        nb::overload_cast<const Note&>(&Binary::remove),
-        "Remove the given " RST_CLASS_REF(lief.ELF.Note) ""_doc,
-        "note"_a, nb::lock_self())
-
-    .def("remove",
-        nb::overload_cast<Note::TYPE>(&Binary::remove),
-        "Remove **all** the " RST_CLASS_REF(lief.ELF.Note) " with the given " RST_CLASS_REF(lief.ELF.Note.TYPE) ""_doc,
-        "type"_a, nb::lock_self())
-
-    .def_prop_ro("has_notes",
-        &Binary::has_notes,
-        "``True`` if the binary contains notes"_doc)
-
-    .def_prop_ro("notes",
-        nb::overload_cast<>(&Binary::notes),
-        "Return an iterator over the " RST_CLASS_REF(lief.ELF.Note) " entries"_doc,
-        nb::keep_alive<0, 1>())
-
-    .def("strip",
-        &Binary::strip,
-        "Strip the binary"_doc, nb::lock_self())
-
-    .def("permute_dynamic_symbols",
-        &Binary::permute_dynamic_symbols,
-        "Apply the given permutation on the dynamic symbols table"_doc,
-        "permutation"_a, nb::lock_self())
-
-    .def("write",
-        [] (Binary& self, nb::PathLike path) { return self.write(path); },
-        "Rebuild the binary and write it in a file"_doc,
-        "output"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("write",
-        [] (Binary& self, nb::PathLike path, const Builder::config_t& config) {
-          return self.write(path, config);
-        },
-        "Rebuild the binary with the given configuration and write it in a file"_doc,
-        "output"_a, "config"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("write_to_bytes", [] (Binary& bin, const Builder::config_t& config) -> nb::bytes {
-          std::ostringstream out;
-          bin.write(out, config);
-          return nb::to_bytes(out.str());
-        }, "config"_a, nb::lock_self())
-
-    .def("write_to_bytes", [] (Binary& bin) -> nb::bytes {
-          std::ostringstream out;
-          bin.write(out);
-          return nb::to_bytes(out.str());
-        }, nb::lock_self())
-
-    .def_prop_ro("last_offset_section",
-        &Binary::last_offset_section,
-        "Return the last offset used in binary according to **sections table**"_doc)
-
-    .def_prop_ro("last_offset_segment",
-        &Binary::last_offset_segment,
-        "Return the last offset used in binary according to **segments table**"_doc)
-
-    .def_prop_ro("next_virtual_address",
-        &Binary::next_virtual_address,
-        "Return the next virtual address available"_doc)
-
-    .def("add_library",
-        &Binary::add_library,
-        "Add a library with the given name as dependency"_doc,
-        "library_name"_a, nb::lock_self())
-
-    .def("has_library",
-        &Binary::has_library,
-        "Check if the given library name exists in the current binary"_doc,
-        "library_name"_a)
-
-    .def("remove_library",
-        &Binary::remove_library,
-        "Remove the given library"_doc,
-        "library_name"_a, nb::lock_self())
-
-    .def("get_library",
-        nb::overload_cast<std::string_view>(&Binary::get_library),
-        R"delim(
-        Return the :class:`~lief.ELF.DynamicEntryLibrary` with the given ``name``
-
-        It returns None if the library can't be found.
-        )delim"_doc,
-        "library_name"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("has_dynamic_symbol",
-        &Binary::has_dynamic_symbol,
-        "Check if the symbol with the given ``name`` exists in the **dynamic** symbol table"_doc,
-        "symbol_name"_a)
-
-    .def("get_dynamic_symbol",
-        nb::overload_cast<std::string_view>(&Binary::get_dynamic_symbol),
-        R"delim(
-        Get the dynamic symbol from the given name.
-
-        It returns None if it can't be found.
-        )delim"_doc,
-        "symbol_name"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("has_symtab_symbol",
-        &Binary::has_symtab_symbol,
-        "Check if the symbol with the given ``name`` exists in the **static** symbol table"_doc,
-        "symbol_name"_a)
-
-    .def("get_symtab_symbol",
-        nb::overload_cast<std::string_view>(&Binary::get_symtab_symbol),
-        R"delim(
-        Get the **static** symbol from the given ``name``.
-
-        It returns None if it can't be found.
-        )delim"_doc,
-        "symbol_name"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("get_strings",
-        nb::overload_cast<const size_t>(&Binary::strings, nb::const_),
-        "Return list of strings used in the current ELF file with a minimal size given in first parameter (Default: 5)\n"
-        "It looks for strings in the ``.rodata`` section"_doc,
-        "min_size"_a = 5,
-        nb::rv_policy::move)
-
-    .def_prop_ro("strings",
-        [] (const Binary& bin) {
-          const std::vector<std::string>& elf_strings = bin.strings();
-          std::vector<safe_string_t> elf_strings_encoded;
-          elf_strings_encoded.reserve(elf_strings.size());
-
-          std::transform(std::begin(elf_strings), std::end(elf_strings),
-                         std::back_inserter(elf_strings_encoded),
-                         &safe_string);
-
-          return elf_strings_encoded;
-        },
-        "Return list of strings used in the current ELF file.\n"
-        "Basically this function looks for strings in the ``.rodata`` section"_doc,
-        nb::rv_policy::move)
-
-    .def("remove_symtab_symbol",
-        nb::overload_cast<Symbol*>(&Binary::remove_symtab_symbol),
-        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.symtab`` section"_doc,
-        nb::lock_self())
-
-    .def("remove_dynamic_symbol",
-        nb::overload_cast<Symbol*>(&Binary::remove_dynamic_symbol),
-        "Remove the given " RST_CLASS_REF(lief.ELF.Symbol) " from the ``.dynsym`` section"_doc,
-        nb::lock_self())
-
-    .def("remove_dynamic_symbol",
-        nb::overload_cast<std::string_view>(&Binary::remove_dynamic_symbol),
-        "Remove the " RST_CLASS_REF(lief.ELF.Symbol) " with the name given in parameter from the ``.dynsym`` section"_doc,
-        nb::lock_self())
-
-    .def("add_exported_function",
-        &Binary::add_exported_function,
-        "Create a symbol for the function at the given ``address`` and create an export"_doc,
-        "address"_a, "name"_a = "",
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("export_symbol",
-        nb::overload_cast<const Symbol&>(&Binary::export_symbol),
-        "Export the given symbol and create an entry if it doesn't exist"_doc,
-        "symbol"_a,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("export_symbol",
-        nb::overload_cast<std::string_view, uint64_t>(&Binary::export_symbol),
-        "Export the symbol with the given name and create an entry if it doesn't exist"_doc,
-        "symbol_name"_a, "value"_a = 0,
-        nb::lock_self(),
-        nb::rv_policy::reference_internal)
-
-    .def("get_relocation",
-        nb::overload_cast<std::string_view>(&Binary::get_relocation),
-        "Return the " RST_CLASS_REF(lief.ELF.Relocation) " associated with the given symbol name"_doc,
-        "symbol_name"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("get_relocation",
-        nb::overload_cast<const Symbol&>(&Binary::get_relocation),
-        "Return the " RST_CLASS_REF(lief.ELF.Relocation) " associated with the given " RST_CLASS_REF(lief.ELF.Symbol) ""_doc,
-        "symbol"_a,
-        nb::rv_policy::reference_internal)
-
-    .def("get_relocation",
-        nb::overload_cast<uint64_t>(&Binary::get_relocation),
-        "Return the " RST_CLASS_REF(lief.ELF.Relocation) " associated with the given address"_doc,
-        "address"_a,
-        nb::rv_policy::reference_internal)
-
-    .def_prop_ro("dtor_functions",
-        &Binary::dtor_functions,
-        "List of the binary destructors (typically, the functions located in the ``.fini_array``)"_doc)
-
-    .def_prop_ro("eof_offset",
-        &Binary::eof_offset,
-        "Return the last offset used by the ELF binary according to both, the sections table "
-        "and the segments table."_doc)
-
-    .def_prop_ro("has_overlay",
-        &Binary::has_overlay,
-        "True if data are appended to the end of the binary"_doc)
-
-    .def_prop_ro("is_targeting_android", &Binary::is_targeting_android,
-      R"doc(True if the current binary is targeting Android)doc"_doc
-    )
-
-    .def_prop_ro("is_symbolic", &Binary::is_symbolic,
-        "True if the binary is flagged with ``DT_SYMBOLIC`` or ``DF_SYMBOLIC``"_doc)
-
-    .def("get_section_idx", [] (const Binary& self, const Section& sec) {
-        return error_or(
-         nb::overload_cast<const Section&>(&Binary::get_section_idx, nb::const_),
-         self, sec);
-      },
-      R"doc(Find the index of the section given in the first parameter)doc"_doc
-    )
-
-    .def("get_section_idx", [] (const Binary& self, std::string_view name) {
-        return error_or(
-         nb::overload_cast<std::string_view>(&Binary::get_section_idx, nb::const_),
-         self, name);
-      },
-      R"doc(Find the index of the section with the name given in the first parameter)doc"_doc
-    )
-
-    .def_prop_rw("overlay",
-        nb::overload_cast<>(&Binary::overlay, nb::const_),
-        [] (Binary& self, nb::bytes& bytes) {
-          const auto* ptr = reinterpret_cast<const uint8_t*>(bytes.c_str());
-          std::vector<uint8_t> buffer(ptr, ptr + bytes.size());
-          self.overlay(std::move(buffer));
-        },
-        "Overlay data that is not part of the ELF format"_doc)
-
-    .def("relocate_phdr_table",
-         &Binary::relocate_phdr_table,
-         R"delim(
-         Force relocating the segments table in a specific way
-         (see: :class:`~lief.ELF.Binary.PHDR_RELOC`).
-
-         This function can be used to enforce a specific relocation of the
-         segments table. Upon successful relocation, the function returns
-         the offset of the relocated segments table. Otherwise, if the function
-         fails, it returns 0
-         )delim"_doc, "type"_a = Binary::PHDR_RELOC::AUTO, nb::lock_self())
-
-    .def("get_relocated_dynamic_array", &Binary::get_relocated_dynamic_array,
-      R"doc(
-      Return the array defined by the given tag (e.g.
-      :attr:`~.DynamicEntry.TAG.INIT_ARRAY`) with relocations applied (if any)
-      )doc"_doc,
-      "array_tag"_a
-    )
-
-    .def("find_version_requirement",
-      nb::overload_cast<std::string_view>(&Binary::find_version_requirement),
-      R"doc(
-      Try to find the :class:`~.SymbolVersionRequirement` associated with the given library
-      name (e.g. ``libc.so.6``)
-      )doc"_doc, "libname"_a, nb::rv_policy::reference_internal
-    )
-
-    .def("remove_version_requirement", &Binary::remove_version_requirement,
-      R"doc(
-      Deletes all required symbol versions linked to the specified library name.
-      The function returns true if the operation succeeds, false otherwise.
-
-      .. warning::
-
-          To maintain consistency, this function also removes versions associated
-          with dynamic symbols that are linked to the specified library name.
-      )doc"_doc, "libname"_a, nb::lock_self()
-    )
-
-    .def(nb::self += Segment(), nb::rv_policy::reference_internal)
-    .def(nb::self += Section(), nb::rv_policy::reference_internal)
-    .def(nb::self += DynamicEntry(), nb::rv_policy::reference_internal)
-    .def("__iadd__", [] (Binary& self, const Note& note) {
-        self += note;
-        return &self;
-    }, nb::rv_policy::reference_internal)
-    .def(nb::self -= DynamicEntry(), nb::rv_policy::reference_internal)
-    .def(nb::self -= DynamicEntry::TAG(), nb::rv_policy::reference_internal)
-    .def("__isub__", [] (Binary& self, const Note& note) {
-        self -= note;
-        return &self;
-    }, nb::rv_policy::reference_internal)
-    .def(nb::self -= Note::TYPE(), nb::rv_policy::reference_internal)
-
-    .def("__getitem__",
-        nb::overload_cast<Segment::TYPE>(&Binary::operator[]),
-        nb::rv_policy::reference_internal)
-
-    .def("__getitem__",
-        nb::overload_cast<Note::TYPE>(&Binary::operator[]),
-        nb::rv_policy::reference_internal)
-
-    .def("__getitem__",
-        nb::overload_cast<DynamicEntry::TAG>(&Binary::operator[]),
-        nb::rv_policy::reference_internal)
-
-    .def("__getitem__",
-        nb::overload_cast<Section::TYPE>(&Binary::operator[]),
-        nb::rv_policy::reference_internal)
-
-    .def("__contains__",
-        nb::overload_cast<Segment::TYPE>(&Binary::has, nb::const_),
-        "Check if a " RST_CLASS_REF(lief.ELF.Segment) " of *type* (" RST_CLASS_REF(lief.ELF.SEGMENT_TYPES) ") exists"_doc)
-
-    .def("__contains__",
-        nb::overload_cast<DynamicEntry::TAG>(&Binary::has, nb::const_),
-        "Check if the " RST_CLASS_REF(lief.ELF.DynamicEntry) " associated with the given " RST_CLASS_REF(lief.ELF.DynamicEntry.TAG) " exists"_doc)
-
-    .def("__contains__",
-        nb::overload_cast<Note::TYPE>(&Binary::has, nb::const_),
-        "Check if the " RST_CLASS_REF(lief.ELF.Note) " associated with the given " RST_CLASS_REF(lief.ELF.Note.TYPE) " exists"_doc)
-
-    .def("__contains__",
-        nb::overload_cast<Section::TYPE>(&Binary::has, nb::const_),
-        "Check if the " RST_CLASS_REF(lief.ELF.Section) " associated with the given " RST_CLASS_REF(lief.ELF.SECTION_TYPES) " exists"_doc)
-
-    LIEF_DEFAULT_STR(Binary);
-
+      .value("AUTO", Binary::SEC_INSERT_POS::AUTO, "Defer the choice to LIEF"_doc)
+      .value(
+          "POST_SECTION", Binary::SEC_INSERT_POS::POST_SECTION,
+          R"doc(
+          Insert the section after the last valid offset in the **segments** table.
+
+          With this choice, the section is inserted after the loaded content but
+          before any debug information.
+          )doc"_doc
+      )
+      .value(
+          "POST_SEGMENT", Binary::SEC_INSERT_POS::POST_SEGMENT,
+          R"doc(
+          Insert the section after the last valid offset in the **section** table.
+
+          With this choice, the section is inserted at the very end of the binary.
+          )doc"_doc
+      );
+
+  bin.def_prop_ro("type", &Binary::type,
+                  "Return the binary's :class:`~lief.ELF.ELF_CLASS`"_doc)
+
+      .def_prop_ro("header", nb::overload_cast<>(&Binary::header),
+                   "Return :class:`~lief.ELF.Header` object"_doc,
+                   nb::rv_policy::reference_internal)
+
+      .def_prop_ro(
+          "sections", nb::overload_cast<>(&Binary::sections),
+          "Return an iterator over binary's :class:`~lief.ELF.Section`"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro("segments", nb::overload_cast<>(&Binary::segments),
+                   "Return an iterator to binary's :class:`~lief.ELF.Segment`"_doc,
+                   nb::keep_alive<0, 1>())
+
+      .def_prop_ro(
+          "dynamic_entries", nb::overload_cast<>(&Binary::dynamic_entries),
+          "Return an iterator to :class:`~lief.ELF.DynamicEntry` entries"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def("add", nb::overload_cast<const DynamicEntry&>(&Binary::add),
+           "Add a new :class:`~lief.ELF.DynamicEntry` in the binary"_doc,
+           "dynamic_entry", nb::rv_policy::reference_internal)
+
+      .def_prop_ro("symtab_symbols", nb::overload_cast<>(&Binary::symtab_symbols),
+                   "Return an iterator to static :class:`~lief.ELF.Symbol`"_doc,
+                   nb::keep_alive<0, 1>())
+
+      .def_prop_ro("dynamic_symbols",
+                   nb::overload_cast<>(&Binary::dynamic_symbols),
+                   "Return an iterator to dynamic :class:`~lief.ELF.Symbol`"_doc,
+                   nb::keep_alive<0, 1>())
+
+      .def_prop_ro(
+          "symbols", nb::overload_cast<>(&Binary::symbols),
+          "Return an iterator over both **static** and **dynamic** :class:`~lief.ELF.Symbol`"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro(
+          "exported_symbols", nb::overload_cast<>(&Binary::exported_symbols),
+          "Return dynamic :class:`~lief.ELF.Symbol` which are exported"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro(
+          "imported_symbols", nb::overload_cast<>(&Binary::imported_symbols),
+          "Return dynamic :class:`~lief.ELF.Symbol` which are imported"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro(
+          "dynamic_relocations", nb::overload_cast<>(&Binary::dynamic_relocations),
+          "Return an iterator over dynamic :class:`~lief.ELF.Relocation`"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def("add_dynamic_relocation", &Binary::add_dynamic_relocation, R"delim(
+      Add a new *dynamic* relocation.
+
+      We consider a dynamic relocation as a relocation which is not plt-related.
+
+      See: :meth:`lief.ELF.Binary.add_pltgot_relocation`
+      )delim"_doc,
+           "relocation"_a, nb::lock_self(), nb::rv_policy::reference_internal)
+
+      .def("add_pltgot_relocation", &Binary::add_pltgot_relocation, R"delim(
+      Add a .plt.got relocation. This kind of relocation is usually
+      associated with a PLT stub that aims at resolving the underlying symbol.
+
+      See: :meth:`lief.ELF.Binary.add_dynamic_relocation`
+      )delim"_doc,
+           "relocation"_a, nb::lock_self(), nb::rv_policy::reference_internal)
+
+      .def("add_object_relocation", &Binary::add_object_relocation,
+           R"delim(
+           Add relocation for object file (.o)
+
+           The first parameter is the relocation to add while the second parameter
+           is the :class:`~lief.ELF.Section` associated with the relocation.
+
+           If there is an error, this function returns a nullptr. Otherwise, it returns
+           the relocation added.
+           )delim"_doc,
+           "relocation"_a, "section"_a, nb::lock_self(),
+           nb::rv_policy::reference_internal)
+
+      .def_prop_ro(
+          "pltgot_relocations", nb::overload_cast<>(&Binary::pltgot_relocations),
+          "Return an iterator over PLT/GOT :class:`~lief.ELF.Relocation`"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro(
+          "object_relocations", nb::overload_cast<>(&Binary::object_relocations),
+          "Return an iterator over object :class:`~lief.ELF.Relocation`"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro(
+          "relocations", nb::overload_cast<>(&Binary::relocations),
+          "Return an iterator over **all** :class:`~lief.ELF.Relocation`"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro("symbols_version",
+                   nb::overload_cast<>(&Binary::symbols_version),
+                   "Return an iterator over :class:`~lief.ELF.SymbolVersion`"_doc,
+                   nb::keep_alive<0, 1>())
+
+      .def_prop_ro(
+          "symbols_version_requirement",
+          nb::overload_cast<>(&Binary::symbols_version_requirement),
+          "Return an iterator to :class:`~lief.ELF.SymbolVersionRequirement`"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro(
+          "symbols_version_definition",
+          nb::overload_cast<>(&Binary::symbols_version_definition),
+          "Return an iterator to :class:`~lief.ELF.SymbolVersionDefinition`"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def_prop_ro("use_gnu_hash", &Binary::use_gnu_hash,
+                   "``True`` if GNU hash is used"_doc)
+
+      .def_prop_ro(
+          "gnu_hash", &Binary::gnu_hash,
+          "Return the :class:`~lief.ELF.GnuHash` object\n\n"
+          "Hashes are used by the loader to speed up symbol resolution (GNU Version)"_doc,
+          nb::rv_policy::reference_internal
+      )
+
+      .def_prop_ro("use_sysv_hash", &Binary::use_sysv_hash,
+                   "``True`` if SYSV hash is used")
+
+      .def_prop_ro(
+          "sysv_hash", &Binary::sysv_hash,
+          "Return the :class:`~lief.ELF.SysvHash` object\n\n"
+          "Hashes are used by the loader to speed up symbol resolution (SYSV version)"_doc,
+          nb::rv_policy::reference_internal
+      )
+
+      .def_prop_ro("imagebase", &Binary::imagebase,
+                   "Return the program image base. (e.g. ``0x400000``)"_doc)
+
+      .def_prop_ro("virtual_size", &Binary::virtual_size,
+                   "Return the size of the mapped binary"_doc)
+
+      .def_prop_ro("is_pie", &Binary::is_pie,
+                   R"delim(
+                   Check if the binary has been compiled with `-fpie -pie` flags
+
+                   To do so we check if there is a `PT_INTERP` segment and if
+                   the binary type is `ET_DYN` (Shared object)
+                   )delim"_doc)
+
+      .def_prop_ro(
+          "has_interpreter", &Binary::has_interpreter,
+          "Check if the binary uses a loader (also named linker or interpreter)"_doc
+      )
+
+      .def_prop_ro("functions", &Binary::functions,
+                   "List of the functions found in the binary"_doc)
+
+      .def_prop_rw(
+          "interpreter", nb::overload_cast<>(&Binary::interpreter, nb::const_),
+          nb::overload_cast<std::string_view>(&Binary::interpreter),
+          "ELF interpreter (loader) if any. (e.g. ``/lib64/ld-linux-x86-64.so.2``)"_doc
+      )
+
+      .def(
+          "section_from_offset",
+          nb::overload_cast<uint64_t, bool>(&Binary::section_from_offset),
+          R"delim(
+          Return the :class:`~lief.ELF.Section` which encompasses the given offset.
+          It returns None if a section can't be found.
+
+          If ``skip_nobits`` is set (which is the case by default), this function won't
+          consider sections for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
+          )delim"_doc,
+          "offset"_a, "skip_nobits"_a = true, nb::rv_policy::reference_internal
+      )
+
+      .def(
+          "section_from_virtual_address",
+          nb::overload_cast<uint64_t, bool>(&Binary::section_from_virtual_address),
+          R"delim(
+          Return the :class:`~lief.ELF.Section` which encompasses the given virtual address.
+          It returns None if a section can't be found.
+
+          If ``skip_nobits`` is set (which is the case by default), this function won't
+          consider sections for which the type is ``SHT_NOBITS`` (like ``.bss, .tbss, ...``)
+          )delim"_doc,
+          "address"_a, "skip_nobits"_a = true, nb::rv_policy::reference_internal
+      )
+
+      .def("segment_from_virtual_address",
+           nb::overload_cast<uint64_t>(&Binary::segment_from_virtual_address),
+           R"delim(
+           Return the :class:`~lief.ELF.Segment` which encompasses the given virtual address.
+           It returns None if a segment can't be found.
+           )delim"_doc,
+           "address"_a, nb::rv_policy::reference_internal)
+
+      .def(
+          "segment_from_offset",
+          nb::overload_cast<uint64_t>(&Binary::segment_from_offset),
+          R"delim(
+          Return the :class:`~lief.ELF.Segment` which encompasses the given offset.
+          It returns None if a segment can't be found.
+          )delim"_doc,
+          "offset"_a, nb::rv_policy::reference_internal
+      )
+
+      .def("get", nb::overload_cast<DynamicEntry::TAG>(&Binary::get),
+           R"delim(
+           Return the first binary's :class:`~lief.ELF.DynamicEntry` from the given
+           :class:`~lief.ELF.DynamicEntry.TAG`.
+
+           It returns None if the dynamic entry can't be found.
+           )delim"_doc,
+           "tag"_a, nb::rv_policy::reference_internal)
+
+      .def("get", nb::overload_cast<Segment::TYPE>(&Binary::get),
+           R"delim(
+           Return the first binary's :class:`~lief.ELF.Segment` from the given
+           :class:`~lief.ELF.SEGMENT_TYPES`
+
+           It returns None if the segment can't be found.
+           )delim"_doc,
+           "type"_a, nb::rv_policy::reference_internal)
+
+      .def("get", nb::overload_cast<Note::TYPE>(&Binary::get),
+           R"delim(
+           Return the first binary's :class:`~lief.ELF.Note` from the given
+           :class:`~lief.ELF.Note.TYPE`.
+
+           It returns None if the note can't be found.
+           )delim"_doc,
+           "type"_a, nb::rv_policy::reference_internal)
+
+      .def("get", nb::overload_cast<Section::TYPE>(&Binary::get),
+           R"delim(
+           Return the first binary's :class:`~lief.ELF.Section` from the given
+           :class:`~lief.ELF.ELF_SECTION_TYPES`
+
+           It returns None if the section can't be found.
+           )delim"_doc,
+           "type"_a, nb::rv_policy::reference_internal)
+
+      .def("has", nb::overload_cast<DynamicEntry::TAG>(&Binary::has, nb::const_),
+           R"delim(
+           Check if there exists a :class:`~lief.ELF.DynamicEntry` with the given
+           :class:`~lief.ELF.DynamicEntry.TAG`
+           )delim"_doc,
+           "tag"_a)
+
+      .def(
+          "has", nb::overload_cast<Segment::TYPE>(&Binary::has, nb::const_),
+          "Check if a :class:`~lief.ELF.Segment` of *type* (:class:`~lief.ELF.SEGMENT_TYPES`) exists"_doc,
+          "type"_a
+      )
+
+      .def(
+          "has", nb::overload_cast<Note::TYPE>(&Binary::has, nb::const_),
+          "Check if a :class:`~lief.ELF.Note` of *type* (:class:`~lief.ELF.Note.TYPE`) exists"_doc,
+          "type"_a
+      )
+
+      .def(
+          "has", nb::overload_cast<Section::TYPE>(&Binary::has, nb::const_),
+          "Check if a :class:`~lief.ELF.Section` of *type* (:class:`~lief.ELF.SECTION_TYPES`) exists"_doc,
+          "type"_a
+      )
+
+      .def("patch_pltgot",
+           nb::overload_cast<std::string_view, uint64_t>(&Binary::patch_pltgot),
+           "Patch the imported symbol's name with the ``address``"_doc,
+           "symbol_name"_a, "address"_a, nb::lock_self())
+
+      .def("patch_pltgot",
+           nb::overload_cast<const Symbol&, uint64_t>(&Binary::patch_pltgot),
+           "Patch the imported :class:`~lief.ELF.Symbol` with the ``address``"_doc,
+           "symbol"_a, "address"_a, nb::lock_self())
+
+      .def("dynsym_idx",
+           nb::overload_cast<std::string_view>(&Binary::dynsym_idx, nb::const_),
+           R"doc(
+           Get the symbol index in the **dynamic** symbol from the given name or
+           return -1 if the symbol does not exist.
+           )doc"_doc,
+           "name"_a)
+
+      .def(
+          "dynsym_idx",
+          nb::overload_cast<const Symbol&>(&Binary::dynsym_idx, nb::const_),
+          R"doc(
+          Get the symbol index in the **dynamic** symbol table for the given symbol
+          or return -1 if the symbol does not exist
+          )doc"_doc,
+          "symbol"_a
+      )
+
+      .def("symtab_idx",
+           nb::overload_cast<std::string_view>(&Binary::symtab_idx, nb::const_),
+           R"doc(
+           Get the symbol index in the ``.symtab`` section from the given name or
+           return -1 if the symbol does not exist.
+           )doc"_doc,
+           "name"_a)
+
+      .def("symtab_idx",
+           nb::overload_cast<const Symbol&>(&Binary::symtab_idx, nb::const_),
+           R"doc(
+           Get the symbol index in the ``.symtab`` section or return -1 if the
+           symbol does not exist
+           )doc"_doc,
+           "symbol"_a)
+
+      .def(
+          "has_section", &Binary::has_section,
+          "Check if a :class:`~lief.ELF.Section` with the given name exists in the binary"_doc,
+          "section_name"_a
+      )
+
+      .def(
+          "has_section_with_offset", &Binary::has_section_with_offset,
+          "Check if a :class:`~lief.ELF.Section` that encompasses the given offset exists"_doc,
+          "offset"_a
+      )
+
+      .def(
+          "has_section_with_va", &Binary::has_section_with_va,
+          "Check if a :class:`~lief.ELF.Section` that encompasses the given virtual address exists"_doc,
+          "virtual_address"_a
+      )
+
+      .def("get_section",
+           nb::overload_cast<std::string_view>(&Binary::get_section),
+           R"delim(
+           Return the :class:`~lief.ELF.Section` with the given ``name``
+
+           It returns None if the section can't be found.
+           )delim"_doc,
+           "section_name"_a, nb::rv_policy::reference_internal)
+
+      .def("add_symtab_symbol", &Binary::add_symtab_symbol,
+           "Add a **static** :class:`~lief.ELF.Symbol` to the binary"_doc,
+           "symbol"_a, nb::lock_self(), nb::rv_policy::reference_internal)
+
+      .def("add_dynamic_symbol",
+           nb::overload_cast<const Symbol&, const SymbolVersion*>(
+               &Binary::add_dynamic_symbol
+           ),
+           R"delim(
+           Add a **dynamic** :class:`~lief.ELF.Symbol` to the binary
+
+           The function also takes an optional :class:`lief.ELF.SymbolVersion`
+           )delim"_doc,
+           "symbol"_a, "symbol_version"_a = nullptr, nb::lock_self(),
+           nb::rv_policy::reference_internal)
+
+      .def(
+          "virtual_address_to_offset",
+          [](const Binary& self, uint64_t address) {
+            return error_or(&Binary::virtual_address_to_offset, self, address);
+          },
+          "Convert the virtual address to a file offset"_doc, "virtual_address"_a
+      )
+
+      .def("add",
+           nb::overload_cast<const Section&, bool, Binary::SEC_INSERT_POS>(
+               &Binary::add
+           ),
+           R"delim(
+           Add the given :class:`~lief.ELF.Section` to the binary.
+
+           If the section does not aim at being loaded in memory,
+           the ``loaded`` parameter has to be set to ``False`` (default: ``True``)
+           )delim"_doc,
+           "section"_a, "loaded"_a = true, "pos"_a = Binary::SEC_INSERT_POS::AUTO,
+           nb::lock_self(), nb::rv_policy::reference_internal)
+
+      .def("add", nb::overload_cast<const Segment&, uint64_t>(&Binary::add),
+           "Add a new :class:`~lief.ELF.Segment` in the binary"_doc, "segment"_a,
+           "base"_a = 0, nb::lock_self(), nb::rv_policy::reference_internal)
+
+      .def("add", nb::overload_cast<const Note&>(&Binary::add),
+           "Add a new :class:`~lief.ELF.Note` in the binary"_doc, "note"_a,
+           nb::lock_self(), nb::rv_policy::reference_internal)
+
+      .def("replace",
+           nb::overload_cast<const Segment&, const Segment&, uint64_t>(
+               &Binary::replace
+           ),
+           R"delim(
+           Replace the :class:`~lief.ELF.Segment` given in 2nd parameter with the
+           :class:`~lief.ELF.Segment` given in the first parameter and return the updated segment.
+
+           .. warning::
+
+               The ``original_segment`` is no longer valid after this function
+           )delim"_doc,
+           "new_segment"_a, "original_segment"_a, "base"_a = 0, nb::lock_self(),
+           nb::rv_policy::reference_internal)
+
+      .def("extend", nb::overload_cast<const Segment&, uint64_t>(&Binary::extend),
+           "Extend the given :class:`~lief.ELF.Segment` by the given size"_doc,
+           "segment"_a, "size"_a, nb::lock_self(),
+           nb::rv_policy::reference_internal)
+
+      .def("extend", nb::overload_cast<const Section&, uint64_t>(&Binary::extend),
+           "Extend the given :class:`~lief.ELF.Section` by the given size"_doc,
+           "segment"_a, "size"_a, nb::lock_self(),
+           nb::rv_policy::reference_internal)
+
+      .def(
+          "remove", nb::overload_cast<const DynamicEntry&>(&Binary::remove),
+          "Remove the given :class:`~lief.ELF.DynamicEntry` from the dynamic table"_doc,
+          "dynamic_entry"_a, nb::lock_self()
+      )
+
+      .def(
+          "remove", nb::overload_cast<DynamicEntry::TAG>(&Binary::remove),
+          "Remove **all** the :class:`~lief.ELF.DynamicEntry` with the given :class:`~lief.ELF.DynamicEntry.TAG`"_doc,
+          "tag"_a, nb::lock_self()
+      )
+
+      .def("remove", nb::overload_cast<const Section&, bool>(&Binary::remove),
+           "Remove the given :class:`~lief.ELF.Section`. The ``clear`` parameter "
+           "specifies whether or not "
+           "we must fill its content with ``0`` before removing"_doc,
+           "section"_a, "clear"_a = false, nb::lock_self())
+
+      .def(
+          "remove", nb::overload_cast<const Segment&, bool>(&Binary::remove),
+          R"doc(
+          Remove the segment provided in parameter. If ``clear`` is set, the
+          original content of the segment will be filled with zeros before removal.
+          )doc"_doc,
+          "segment"_a, "clear"_a = false, nb::lock_self()
+      )
+
+
+      .def(
+          "remove", nb::overload_cast<Segment::TYPE, bool>(&Binary::remove),
+          R"doc(
+          Remove **all** segments with the given type. If ``clear`` is set, the
+          original content of the segment will be filled with zeros before removal.
+          )doc"_doc,
+          "type"_a, "clear"_a = false, nb::lock_self()
+      )
+
+      .def("remove", nb::overload_cast<const Note&>(&Binary::remove),
+           "Remove the given :class:`~lief.ELF.Note`"_doc, "note"_a,
+           nb::lock_self())
+
+      .def(
+          "remove", nb::overload_cast<Note::TYPE>(&Binary::remove),
+          "Remove **all** the :class:`~lief.ELF.Note` with the given :class:`~lief.ELF.Note.TYPE`"_doc,
+          "type"_a, nb::lock_self()
+      )
+
+      .def_prop_ro("has_notes", &Binary::has_notes,
+                   "``True`` if the binary contains notes"_doc)
+
+      .def_prop_ro(
+          "notes", nb::overload_cast<>(&Binary::notes),
+          "Return an iterator over the :class:`~lief.ELF.Note` entries"_doc,
+          nb::keep_alive<0, 1>()
+      )
+
+      .def("strip", &Binary::strip, "Strip the binary"_doc, nb::lock_self())
+
+      .def("permute_dynamic_symbols", &Binary::permute_dynamic_symbols,
+           "Apply the given permutation on the dynamic symbols table"_doc,
+           "permutation"_a, nb::lock_self())
+
+      .def(
+          "write",
+          [](Binary& self, nb::PathLike path) { return self.write(path); },
+          "Rebuild the binary and write it in a file"_doc, "output"_a,
+          nb::lock_self(), nb::rv_policy::reference_internal
+      )
+
+      .def(
+          "write",
+          [](Binary& self, nb::PathLike path, const Builder::config_t& config) {
+            return self.write(path, config);
+          },
+          "Rebuild the binary with the given configuration and write it in a file"_doc,
+          "output"_a, "config"_a, nb::lock_self(),
+          nb::rv_policy::reference_internal
+      )
+
+      .def(
+          "write_to_bytes",
+          [](Binary& bin, const Builder::config_t& config) -> nb::bytes {
+            std::ostringstream out;
+            bin.write(out, config);
+            return nb::to_bytes(out.str());
+          },
+          "config"_a, nb::lock_self()
+      )
+
+      .def(
+          "write_to_bytes",
+          [](Binary& bin) -> nb::bytes {
+            std::ostringstream out;
+            bin.write(out);
+            return nb::to_bytes(out.str());
+          },
+          nb::lock_self()
+      )
+
+      .def_prop_ro(
+          "last_offset_section", &Binary::last_offset_section,
+          "Return the last offset used in binary according to **sections table**"_doc
+      )
+
+      .def_prop_ro(
+          "last_offset_segment", &Binary::last_offset_segment,
+          "Return the last offset used in binary according to **segments table**"_doc
+      )
+
+      .def_prop_ro("next_virtual_address", &Binary::next_virtual_address,
+                   "Return the next virtual address available"_doc)
+
+      .def("add_library", &Binary::add_library,
+           "Add a library with the given name as dependency"_doc, "library_name"_a,
+           nb::lock_self())
+
+      .def("has_library", &Binary::has_library,
+           "Check if the given library name exists in the current binary"_doc,
+           "library_name"_a)
+
+      .def("remove_library", &Binary::remove_library,
+           "Remove the given library"_doc, "library_name"_a, nb::lock_self())
+
+      .def(
+          "get_library", nb::overload_cast<std::string_view>(&Binary::get_library),
+          R"delim(
+          Return the :class:`~lief.ELF.DynamicEntryLibrary` with the given ``name``
+
+          It returns None if the library can't be found.
+          )delim"_doc,
+          "library_name"_a, nb::rv_policy::reference_internal
+      )
+
+      .def(
+          "has_dynamic_symbol", &Binary::has_dynamic_symbol,
+          "Check if the symbol with the given ``name`` exists in the **dynamic** symbol table"_doc,
+          "symbol_name"_a
+      )
+
+      .def("get_dynamic_symbol",
+           nb::overload_cast<std::string_view>(&Binary::get_dynamic_symbol),
+           R"delim(
+           Get the dynamic symbol from the given name.
+
+           It returns None if it can't be found.
+           )delim"_doc,
+           "symbol_name"_a, nb::rv_policy::reference_internal)
+
+      .def(
+          "has_symtab_symbol", &Binary::has_symtab_symbol,
+          "Check if the symbol with the given ``name`` exists in the **static** symbol table"_doc,
+          "symbol_name"_a
+      )
+
+      .def("get_symtab_symbol",
+           nb::overload_cast<std::string_view>(&Binary::get_symtab_symbol),
+           R"delim(
+           Get the **static** symbol from the given ``name``.
+
+           It returns None if it can't be found.
+           )delim"_doc,
+           "symbol_name"_a, nb::rv_policy::reference_internal)
+
+      .def("get_strings",
+           nb::overload_cast<const size_t>(&Binary::strings, nb::const_),
+           "Return list of strings used in the current ELF file with a minimal "
+           "size given in first parameter (Default: 5)\n"
+           "It looks for strings in the ``.rodata`` section"_doc,
+           "min_size"_a = 5, nb::rv_policy::move)
+
+      .def_prop_ro(
+          "strings",
+          [](const Binary& bin) {
+            const std::vector<std::string>& elf_strings = bin.strings();
+            std::vector<safe_string_t> elf_strings_encoded;
+            elf_strings_encoded.reserve(elf_strings.size());
+
+            std::transform(std::begin(elf_strings), std::end(elf_strings),
+                           std::back_inserter(elf_strings_encoded), &safe_string);
+
+            return elf_strings_encoded;
+          },
+          "Return list of strings used in the current ELF file.\n"
+          "Basically this function looks for strings in the ``.rodata`` section"_doc,
+          nb::rv_policy::move
+      )
+
+      .def(
+          "remove_symtab_symbol",
+          nb::overload_cast<Symbol*>(&Binary::remove_symtab_symbol),
+          "Remove the given :class:`~lief.ELF.Symbol` from the ``.symtab`` section"_doc,
+          nb::lock_self()
+      )
+
+      .def(
+          "remove_dynamic_symbol",
+          nb::overload_cast<Symbol*>(&Binary::remove_dynamic_symbol),
+          "Remove the given :class:`~lief.ELF.Symbol` from the ``.dynsym`` section"_doc,
+          nb::lock_self()
+      )
+
+      .def(
+          "remove_dynamic_symbol",
+          nb::overload_cast<std::string_view>(&Binary::remove_dynamic_symbol),
+          "Remove the :class:`~lief.ELF.Symbol` with the name given in parameter from the ``.dynsym`` section"_doc,
+          nb::lock_self()
+      )
+
+      .def(
+          "add_exported_function", &Binary::add_exported_function,
+          "Create a symbol for the function at the given ``address`` and create an export"_doc,
+          "address"_a, "name"_a = "", nb::lock_self(),
+          nb::rv_policy::reference_internal
+      )
+
+      .def("export_symbol",
+           nb::overload_cast<const Symbol&>(&Binary::export_symbol),
+           "Export the given symbol and create an entry if it doesn't exist"_doc,
+           "symbol"_a, nb::lock_self(), nb::rv_policy::reference_internal)
+
+      .def(
+          "export_symbol",
+          nb::overload_cast<std::string_view, uint64_t>(&Binary::export_symbol),
+          "Export the symbol with the given name and create an entry if it doesn't exist"_doc,
+          "symbol_name"_a, "value"_a = 0, nb::lock_self(),
+          nb::rv_policy::reference_internal
+      )
+
+      .def(
+          "get_relocation",
+          nb::overload_cast<std::string_view>(&Binary::get_relocation),
+          "Return the :class:`~lief.ELF.Relocation` associated with the given symbol name"_doc,
+          "symbol_name"_a, nb::rv_policy::reference_internal
+      )
+
+      .def(
+          "get_relocation",
+          nb::overload_cast<const Symbol&>(&Binary::get_relocation),
+          "Return the :class:`~lief.ELF.Relocation` associated with the given :class:`~lief.ELF.Symbol`"_doc,
+          "symbol"_a, nb::rv_policy::reference_internal
+      )
+
+      .def(
+          "get_relocation", nb::overload_cast<uint64_t>(&Binary::get_relocation),
+          "Return the :class:`~lief.ELF.Relocation` associated with the given address"_doc,
+          "address"_a, nb::rv_policy::reference_internal
+      )
+
+      .def_prop_ro(
+          "dtor_functions", &Binary::dtor_functions,
+          "List of the binary destructors (typically, the functions located in the ``.fini_array``)"_doc
+      )
+
+      .def_prop_ro("eof_offset", &Binary::eof_offset,
+                   "Return the last offset used by the ELF binary according to "
+                   "both, the sections table "
+                   "and the segments table."_doc)
+
+      .def_prop_ro("has_overlay", &Binary::has_overlay,
+                   "True if data are appended to the end of the binary"_doc)
+
+      .def_prop_ro("is_targeting_android", &Binary::is_targeting_android,
+                   "True if the current binary is targeting Android"_doc)
+
+      .def_prop_ro(
+          "is_symbolic", &Binary::is_symbolic,
+          "True if the binary is flagged with ``DT_SYMBOLIC`` or ``DF_SYMBOLIC``"_doc
+      )
+
+      .def(
+          "get_section_idx",
+          [](const Binary& self, const Section& sec) {
+            return error_or(nb::overload_cast<const Section&>(
+                                &Binary::get_section_idx, nb::const_
+                            ),
+                            self, sec);
+          },
+          "Find the index of the section given in the first parameter"_doc
+      )
+
+      .def(
+          "get_section_idx",
+          [](const Binary& self, std::string_view name) {
+            return error_or(nb::overload_cast<std::string_view>(
+                                &Binary::get_section_idx, nb::const_
+                            ),
+                            self, name);
+          },
+          R"doc(Find the index of the section with the name given in the first parameter)doc"_doc
+      )
+
+      .def_prop_rw(
+          "overlay", nb::overload_cast<>(&Binary::overlay, nb::const_),
+          [](Binary& self, nb::bytes& bytes) {
+            const auto* ptr = reinterpret_cast<const uint8_t*>(bytes.c_str());
+            std::vector<uint8_t> buffer(ptr, ptr + bytes.size());
+            self.overlay(std::move(buffer));
+          },
+          "Overlay data that is not part of the ELF format"_doc
+      )
+
+      .def("relocate_phdr_table", &Binary::relocate_phdr_table,
+           R"delim(
+           Force relocating the segments table in a specific way
+           (see: :class:`~lief.ELF.Binary.PHDR_RELOC`).
+
+           This function can be used to enforce a specific relocation of the
+           segments table. Upon successful relocation, the function returns
+           the offset of the relocated segments table. Otherwise, if the function
+           fails, it returns 0
+           )delim"_doc,
+           "type"_a = Binary::PHDR_RELOC::AUTO, nb::lock_self())
+
+      .def("get_relocated_dynamic_array", &Binary::get_relocated_dynamic_array,
+           R"doc(
+           Return the array defined by the given tag (e.g.
+           :attr:`~.DynamicEntry.TAG.INIT_ARRAY`) with relocations applied (if any)
+           )doc"_doc,
+           "array_tag"_a)
+
+      .def("find_version_requirement",
+           nb::overload_cast<std::string_view>(&Binary::find_version_requirement),
+           R"doc(
+           Try to find the :class:`~.SymbolVersionRequirement` associated with the given library
+           name (e.g. ``libc.so.6``)
+           )doc"_doc,
+           "libname"_a, nb::rv_policy::reference_internal)
+
+      .def("remove_version_requirement", &Binary::remove_version_requirement,
+           R"doc(
+           Deletes all required symbol versions linked to the specified library name.
+           The function returns true if the operation succeeds, false otherwise.
+
+           .. warning::
+
+               To maintain consistency, this function also removes versions associated
+               with dynamic symbols that are linked to the specified library name.
+           )doc"_doc,
+           "libname"_a, nb::lock_self())
+
+      .def(nb::self += Segment(), nb::rv_policy::reference_internal)
+      .def(nb::self += Section(), nb::rv_policy::reference_internal)
+      .def(nb::self += DynamicEntry(), nb::rv_policy::reference_internal)
+      .def(
+          "__iadd__",
+          [](Binary& self, const Note& note) {
+            self += note;
+            return &self;
+          },
+          nb::rv_policy::reference_internal
+      )
+      .def(nb::self -= DynamicEntry(), nb::rv_policy::reference_internal)
+      .def(nb::self -= DynamicEntry::TAG(), nb::rv_policy::reference_internal)
+      .def(
+          "__isub__",
+          [](Binary& self, const Note& note) {
+            self -= note;
+            return &self;
+          },
+          nb::rv_policy::reference_internal
+      )
+      .def(nb::self -= Note::TYPE(), nb::rv_policy::reference_internal)
+
+      .def("__getitem__", nb::overload_cast<Segment::TYPE>(&Binary::operator[]),
+           nb::rv_policy::reference_internal)
+
+      .def("__getitem__", nb::overload_cast<Note::TYPE>(&Binary::operator[]),
+           nb::rv_policy::reference_internal)
+
+      .def("__getitem__",
+           nb::overload_cast<DynamicEntry::TAG>(&Binary::operator[]),
+           nb::rv_policy::reference_internal)
+
+      .def("__getitem__", nb::overload_cast<Section::TYPE>(&Binary::operator[]),
+           nb::rv_policy::reference_internal)
+
+      .def(
+          "__contains__",
+          nb::overload_cast<Segment::TYPE>(&Binary::has, nb::const_),
+          "Check if a :class:`~lief.ELF.Segment` of *type* (:class:`~lief.ELF.SEGMENT_TYPES`) exists"_doc
+      )
+
+      .def(
+          "__contains__",
+          nb::overload_cast<DynamicEntry::TAG>(&Binary::has, nb::const_),
+          "Check if the :class:`~lief.ELF.DynamicEntry` associated with the given :class:`~lief.ELF.DynamicEntry.TAG` exists"_doc
+      )
+
+      .def(
+          "__contains__", nb::overload_cast<Note::TYPE>(&Binary::has, nb::const_),
+          "Check if the :class:`~lief.ELF.Note` associated with the given :class:`~lief.ELF.Note.TYPE` exists"_doc
+      )
+
+      .def(
+          "__contains__",
+          nb::overload_cast<Section::TYPE>(&Binary::has, nb::const_),
+          "Check if the :class:`~lief.ELF.Section` associated with the given :class:`~lief.ELF.SECTION_TYPES` exists"_doc
+      )
+
+      .LIEF_DEFAULT_STR(Binary);
 }
 }

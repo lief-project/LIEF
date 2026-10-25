@@ -17,8 +17,8 @@
 
 #include "ART/pyART.hpp"
 
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
 
 namespace LIEF::ART::py {
 
@@ -26,11 +26,10 @@ template<>
 void create<File>(nb::module_& m) {
   nb::class_<File, LIEF::Object>(m, "File", "ART File representation"_doc)
 
-    .def_prop_ro("header",
-        nb::overload_cast<>(&File::header),
-        "Return the ART " RST_CLASS_REF(lief.ART.Header) ""_doc,
-        nb::rv_policy::reference_internal)
-    LIEF_DEFAULT_STR(Header);
+      .def_prop_ro("header", nb::overload_cast<>(&File::header),
+                   "Return the ART :class:`~lief.ART.Header`"_doc,
+                   nb::rv_policy::reference_internal)
+      .LIEF_DEFAULT_STR(Header);
 }
 
 }

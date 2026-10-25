@@ -17,8 +17,8 @@
 
 #include "LIEF/PE/signature/attributes/MsSpcNestedSignature.hpp"
 
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <nanobind/stl/string.h>
 
@@ -26,21 +26,23 @@ namespace LIEF::PE::py {
 
 template<>
 void create<MsSpcNestedSignature>(nb::module_& m) {
-  nb::class_<MsSpcNestedSignature, Attribute>(m, "MsSpcNestedSignature",
-    R"delim(
-    Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
+  nb::class_<MsSpcNestedSignature, Attribute>(
+      m, "MsSpcNestedSignature",
+      R"delim(
+      Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.4.1``
 
-    The internal structure is not documented but we can infer the following structure:
+      The internal structure is not documented but we can infer the following structure:
 
-    .. code-block:: text
+      .. code-block:: text
 
-        MsSpcNestedSignature ::= SET OF SignedData
+          MsSpcNestedSignature ::= SET OF SignedData
 
-    With ``SignedData``, the structure described in PKCS #7 RFC (See: :class:`lief.PE.Signature`)
-    )delim"_doc)
-    .def_prop_ro("signature", &MsSpcNestedSignature::sig,
-        "Underlying " RST_CLASS_REF(lief.PE.Signature) " object"_doc,
-        nb::rv_policy::reference_internal);
+      With ``SignedData``, the structure described in PKCS #7 RFC (See: :class:`lief.PE.Signature`)
+      )delim"_doc
+  )
+      .def_prop_ro("signature", &MsSpcNestedSignature::sig,
+                   "Underlying :class:`~lief.PE.Signature` object"_doc,
+                   nb::rv_policy::reference_internal);
 }
 
 }

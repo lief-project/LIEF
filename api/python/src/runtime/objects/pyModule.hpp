@@ -18,13 +18,14 @@
 
 #include <nanobind/nanobind.h>
 
-#include "LIEF/runtime/linux/Module.hpp"
-#include "LIEF/runtime/windows/Module.hpp"
 #include "LIEF/runtime/android/Module.hpp"
+#include "LIEF/runtime/linux/Module.hpp"
 #include "LIEF/runtime/osx/Module.hpp"
+#include "LIEF/runtime/windows/Module.hpp"
 
 namespace nanobind::detail {
-template<> struct type_hook<LIEF::runtime::Module> {
+template<>
+struct type_hook<LIEF::runtime::Module> {
   static const std::type_info* get(const LIEF::runtime::Module* M) {
     using namespace LIEF::runtime;
     if (M) {

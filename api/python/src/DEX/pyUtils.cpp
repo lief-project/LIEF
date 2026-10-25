@@ -24,25 +24,19 @@
 namespace LIEF::DEX::py {
 
 void init_utils(nb::module_& m) {
-  lief_mod->def("is_dex",
-      nb::overload_cast<std::string_view>(&is_dex),
-      "Check if the **file** given in parameter is a DEX"_doc,
-      "path"_a);
+  lief_mod->def("is_dex", nb::overload_cast<std::string_view>(&is_dex),
+                "Check if the **file** given in parameter is a DEX"_doc, "path"_a);
 
-  lief_mod->def("is_dex",
-      nb::overload_cast<const std::vector<uint8_t>&>(&is_dex),
-      "Check if the **raw data** given in parameter is a DEX"_doc,
-      "raw"_a);
+  lief_mod->def("is_dex", nb::overload_cast<const std::vector<uint8_t>&>(&is_dex),
+                "Check if the **raw data** given in parameter is a DEX"_doc,
+                "raw"_a);
 
-  m.def("version",
-      nb::overload_cast<std::string_view>(&version),
-      "Return the DEX version of the **file** given in parameter"_doc,
-      "file"_a);
+  m.def("version", nb::overload_cast<std::string_view>(&version),
+        "Return the DEX version of the **file** given in parameter"_doc, "file"_a);
 
-  m.def("version",
-      nb::overload_cast<const std::vector<uint8_t>&>(&version),
-      "Return the DEX version of the **raw data** given in parameter"_doc,
-      "raw"_a);
+  m.def("version", nb::overload_cast<const std::vector<uint8_t>&>(&version),
+        "Return the DEX version of the **raw data** given in parameter"_doc,
+        "raw"_a);
 }
 
 }

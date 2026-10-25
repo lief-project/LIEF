@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/SegmentSplitInfo.hpp"
 
@@ -27,24 +27,25 @@ namespace LIEF::MachO::py {
 template<>
 void create<SegmentSplitInfo>(nb::module_& m) {
 
-  nb::class_<SegmentSplitInfo, LoadCommand>(m, "SegmentSplitInfo",
-      "Class that represents the :attr:`~.LoadCommand.TYPE.SEGMENT_SPLIT_INFO` command"_doc)
+  nb::class_<SegmentSplitInfo, LoadCommand>(
+      m, "SegmentSplitInfo",
+      "Class that represents the :attr:`~.LoadCommand.TYPE.SEGMENT_SPLIT_INFO` command"_doc
+  )
 
-    .def_prop_rw("data_offset",
-        nb::overload_cast<>(&SegmentSplitInfo::data_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&SegmentSplitInfo::data_offset),
-        "Offset in the binary where the data start"_doc)
+      .def_prop_rw("data_offset",
+                   nb::overload_cast<>(&SegmentSplitInfo::data_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&SegmentSplitInfo::data_offset),
+                   "Offset in the binary where the data start"_doc)
 
-    .def_prop_rw("data_size",
-        nb::overload_cast<>(&SegmentSplitInfo::data_size, nb::const_),
-        nb::overload_cast<uint32_t>(&SegmentSplitInfo::data_size),
-        "Size of the raw data"_doc)
+      .def_prop_rw("data_size",
+                   nb::overload_cast<>(&SegmentSplitInfo::data_size, nb::const_),
+                   nb::overload_cast<uint32_t>(&SegmentSplitInfo::data_size),
+                   "Size of the raw data"_doc)
 
-    .def_prop_ro("content",
-        nb::overload_cast<>(&SegmentSplitInfo::content, nb::const_),
-        "The original content as a bytes stream"_doc)
+      .def_prop_ro("content",
+                   nb::overload_cast<>(&SegmentSplitInfo::content, nb::const_),
+                   "The original content as a bytes stream"_doc)
 
-    LIEF_DEFAULT_STR(SegmentSplitInfo);
-
+      .LIEF_DEFAULT_STR(SegmentSplitInfo);
 }
 }

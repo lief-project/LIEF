@@ -1,175 +1,172 @@
+#include "DWARF/pyDwarf.hpp"
 #include "LIEF/DWARF/DebugInfo.hpp"
 #include "LIEF/DWARF/Function.hpp"
-#include "LIEF/DWARF/Scope.hpp"
-#include "LIEF/DWARF/Variable.hpp"
-#include "LIEF/DWARF/Type.hpp"
 #include "LIEF/DWARF/Parameter.hpp"
-#include "DWARF/pyDwarf.hpp"
+#include "LIEF/DWARF/Scope.hpp"
+#include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/Variable.hpp"
 #include "pyErr.hpp"
 #include "pyutils.hpp"
 
 #include <nanobind/make_iterator.h>
-#include <nanobind/stl/unique_ptr.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
 
 #include "pyOwningIterator.hpp"
 
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::Function>(nb::module_& m) {
-  nb::class_<dw::Function> func(m, "Function",
-    R"doc(
-    This class represents a DWARF function which can be associated with either:
-    ``DW_TAG_subprogram`` or ``DW_TAG_inlined_subroutine``.
-    )doc"_doc
+  nb::class_<dw::Function> func(
+      m, "Function",
+      R"doc(
+      This class represents a DWARF function which can be associated with either:
+      ``DW_TAG_subprogram`` or ``DW_TAG_inlined_subroutine``.
+      )doc"_doc
   );
 
-  func
-    .def_prop_ro("name", &dw::Function::name,
-      R"doc(
-      The name of the function (``DW_AT_name``)
-      )doc"_doc
-    )
+  func.def_prop_ro("name", &dw::Function::name,
+                   "The name of the function (``DW_AT_name``)"_doc)
 
-    .def_prop_ro("linkage_name", &dw::Function::linkage_name,
-      R"doc(
-      The name of the function which is used for linking (`DW_AT_linkage_name`).
+      .def_prop_ro("linkage_name", &dw::Function::linkage_name,
+                   R"doc(
+                   The name of the function which is used for linking (`DW_AT_linkage_name`).
 
-      This name differs from :attr:`~.name` as it is usually mangled. The function
-      returns an empty string if the linkage name is not available.
-      )doc"_doc
-    )
+                   This name differs from :attr:`~.name` as it is usually mangled. The function
+                   returns an empty string if the linkage name is not available.
+                   )doc"_doc)
 
-    .def_prop_ro("address",
-      [] (const dw::Function& self) {
-          return LIEF::py::value_or_none(&dw::Function::address, self);
-      },
-      R"doc(
-      Return the address of the function (``DW_AT_entry_pc`` or ``DW_AT_low_pc``) or
-      ``None`` if it's not available.
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "address",
+          [](const dw::Function& self) {
+            return LIEF::py::value_or_none(&dw::Function::address, self);
+          },
+          R"doc(
+          Return the address of the function (``DW_AT_entry_pc`` or ``DW_AT_low_pc``) or
+          ``None`` if it's not available.
+          )doc"_doc
+      )
 
-    .def_prop_ro("variables",
-        [] (dw::Function& self) {
-          auto vars = LIEF::py::owning_range(self.variables());
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<dw::Function>(), "variables_it", vars.begin(), vars.end(),
-            nb::keep_alive<0, 1>());
-        }, nb::keep_alive<0, 1>(),
-        R"delim(
-        Return an iterator over the variables (``DW_TAG_variable``) defined within the
-        scope of this function. This includes regular stack-based variables as
-        well as static ones.
-        )delim"_doc
-    )
+      .def_prop_ro(
+          "variables",
+          [](dw::Function& self) {
+            auto vars = LIEF::py::owning_range(self.variables());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<dw::Function>(), "variables_it", vars.begin(), vars.end(),
+                nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          R"delim(
+          Return an iterator over the variables (``DW_TAG_variable``) defined within the
+          scope of this function. This includes regular stack-based variables as
+          well as static ones.
+          )delim"_doc
+      )
 
-    .def_prop_ro("is_artificial", &dw::Function::is_artificial,
-      R"doc(
-      Whether this function is created by the compiler and not
-      present in the original source code.
-      )doc"_doc
-    )
+      .def_prop_ro("is_artificial", &dw::Function::is_artificial,
+                   R"doc(
+                   Whether this function is created by the compiler and not
+                   present in the original source code.
+                   )doc"_doc)
 
-    .def_prop_ro("is_external", &dw::Function::is_external,
-      R"doc(
-      Whether the function is defined **outside** the current compilation unit
-      (``DW_AT_external``).
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "is_external", &dw::Function::is_external,
+          R"doc(
+          Whether the function is defined **outside** the current compilation unit
+          (``DW_AT_external``).
+          )doc"_doc
+      )
 
-    .def_prop_ro("size", &dw::Function::size,
-      R"doc(
-      Return the size taken by this function in the binary.
-      )doc"_doc
-    )
+      .def_prop_ro("size", &dw::Function::size,
+                   "Return the size taken by this function in the binary."_doc)
 
-    .def_prop_ro("ranges", &dw::Function::ranges,
-      R"doc(
-      Ranges of virtual addresses owned by this function.
-      )doc"_doc
-    )
+      .def_prop_ro("ranges", &dw::Function::ranges,
+                   "Ranges of virtual addresses owned by this function."_doc)
 
-    .def_prop_ro("debug_location", &dw::Function::debug_location,
-      R"doc(
-      Original source code location.
-      )doc"_doc
-    )
+      .def_prop_ro("debug_location", &dw::Function::debug_location,
+                   "Original source code location."_doc)
 
-    .def_prop_ro("type", &dw::Function::type,
-      R"doc(
-      Return the :class:`~.Type` associated with the **return type** of this
-      function
-      )doc"_doc, nb::keep_alive<0, 1>()
-    )
+      .def_prop_ro(
+          "type", &dw::Function::type,
+          R"doc(
+          Return the :class:`~.Type` associated with the **return type** of this
+          function
+          )doc"_doc,
+          nb::keep_alive<0, 1>()
+      )
 
-    .def_prop_ro("parameters", &dw::Function::parameters,
-      R"doc(
-      Return the list of parameters used by this function
-      (including template parameters)
-      )doc"_doc, nb::call_policy<LIEF::py::returns_references_to<1>>()
-    )
+      .def_prop_ro("parameters", &dw::Function::parameters,
+                   R"doc(
+                   Return the list of parameters used by this function
+                   (including template parameters)
+                   )doc"_doc,
+                   nb::call_policy<LIEF::py::returns_references_to<1>>())
 
-    .def_prop_ro("thrown_types", &dw::Function::thrown_types,
-      R"doc(
-      List of exceptions (types) that can be thrown by the function.
-      For instance, given this Swift code:
+      .def_prop_ro("thrown_types", &dw::Function::thrown_types,
+                   R"doc(
+                   List of exceptions (types) that can be thrown by the function.
+                   For instance, given this Swift code:
 
-      .. code-block:: swift
+                   .. code-block:: swift
 
-        func summarize(_ ratings: [Int]) throws(StatisticsError) {
-          // ...
-        }
+                     func summarize(_ ratings: [Int]) throws(StatisticsError) {
+                       // ...
+                     }
 
-      :attr:`~.thrown_types` returns one element associated with the
-      :class:`~.Type`: ``StatisticsError``.
-      )doc"_doc, nb::call_policy<LIEF::py::returns_references_to<1>>()
-    )
+                   :attr:`~.thrown_types` returns one element associated with the
+                   :class:`~.Type`: ``StatisticsError``.
+                   )doc"_doc,
+                   nb::call_policy<LIEF::py::returns_references_to<1>>())
 
-    .def_prop_ro("scope", &dw::Function::scope,
-      R"doc(
-      Scope in which this function is defined
-      )doc"_doc, nb::keep_alive<0, 1>()
-    )
-    .def_prop_ro("instructions",
-      [] (dw::Function& self) {
-        auto insts = LIEF::py::owning_range(self.instructions());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<dw::Function>(), "instructions_it", insts.begin(), insts.end(),
-            nb::keep_alive<0, 1>());
-      }, nb::keep_alive<0, 1>(),
-      R"doc(
-      Disassemble the current function by returning an iterator over the
-      :class:`lief.assembly.Instruction`.
-      )doc"_doc
-    )
+      .def_prop_ro("scope", &dw::Function::scope,
+                   "Scope in which this function is defined"_doc,
+                   nb::keep_alive<0, 1>())
+      .def_prop_ro(
+          "instructions",
+          [](dw::Function& self) {
+            auto insts = LIEF::py::owning_range(self.instructions());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<dw::Function>(), "instructions_it", insts.begin(),
+                insts.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          R"doc(
+          Disassemble the current function by returning an iterator over the
+          :class:`lief.assembly.Instruction`.
+          )doc"_doc
+      )
 
-    .def_prop_ro("lexical_blocks",
-      [] (dw::Function& self) {
-        auto lexical_blocks = LIEF::py::owning_range(self.lexical_blocks());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<dw::Function>(), "lexical_blocks_it", lexical_blocks.begin(), lexical_blocks.end(),
-            nb::keep_alive<0, 1>());
-      }, nb::keep_alive<0, 1>(),
-      R"delim(
-      Iterator over the :class:`~.LexicalBlock` owned by this function
-      )delim"_doc
-    )
+      .def_prop_ro(
+          "lexical_blocks",
+          [](dw::Function& self) {
+            auto lexical_blocks = LIEF::py::owning_range(self.lexical_blocks());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<dw::Function>(), "lexical_blocks_it",
+                lexical_blocks.begin(), lexical_blocks.end(),
+                nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          "Iterator over the :class:`~.LexicalBlock` owned by this function"_doc
+      )
 
-    .def_prop_ro("description", &dw::Function::description,
-      "Description (``DW_AT_description``) of this function or an empty string"_doc
-    )
+      .def_prop_ro(
+          "description", &dw::Function::description,
+          "Description (``DW_AT_description``) of this function or an empty string"_doc
+      )
 
-    .def("to_decl",
-      [] (const dw::Function& self, const DeclOpt* opt) {
-        return opt ? self.to_decl(*opt) : self.to_decl();
-      },
-      "Generates a C/C++ definition for this function"_doc,
-      "opt"_a.none() = nb::none()
-    )
-  ;
+      .def(
+          "to_decl",
+          [](const dw::Function& self, const DeclOpt* opt) {
+            return opt ? self.to_decl(*opt) : self.to_decl();
+          },
+          "Generates a C/C++ definition for this function"_doc,
+          "opt"_a.none() = nb::none()
+      );
 }
 
 }

@@ -16,76 +16,126 @@
 #include "LIEF/PE/LoadConfigurations/CHPEMetadata/MetadataX86.hpp"
 #include "PE/pyPE.hpp"
 
-#include <string>
 #include <sstream>
+#include <string>
 
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/optional.h>
+#include <nanobind/stl/string.h>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<CHPEMetadataX86>(nb::module_& m) {
-  nb::class_<CHPEMetadataX86, CHPEMetadata> meta(m, "CHPEMetadataX86",
-    R"doc(
-    This class represents hybrid metadata for X86.
-    )doc"_doc);
+  nb::class_<CHPEMetadataX86, CHPEMetadata> meta(
+      m, "CHPEMetadataX86", "This class represents hybrid metadata for X86."_doc
+  );
 
-  meta
-    .def_prop_rw("chpe_code_address_range_offset",
-      nb::overload_cast<>(&CHPEMetadataX86::chpe_code_address_range_offset, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::chpe_code_address_range_offset),
-      nb::rv_policy::reference_internal)
+  meta.def_prop_rw("chpe_code_address_range_offset",
+                   nb::overload_cast<>(
+                       &CHPEMetadataX86::chpe_code_address_range_offset, nb::const_
+                   ),
+                   nb::overload_cast<uint32_t>(
+                       &CHPEMetadataX86::chpe_code_address_range_offset
+                   ),
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("chpe_code_address_range_count",
-      nb::overload_cast<>(&CHPEMetadataX86::chpe_code_address_range_count, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::chpe_code_address_range_count),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw("chpe_code_address_range_count",
+                   nb::overload_cast<>(
+                       &CHPEMetadataX86::chpe_code_address_range_count, nb::const_
+                   ),
+                   nb::overload_cast<uint32_t>(
+                       &CHPEMetadataX86::chpe_code_address_range_count
+                   ),
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("wowa64_exception_handler_function_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::wowa64_exception_handler_function_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::wowa64_exception_handler_function_pointer),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw("wowa64_exception_handler_function_pointer",
+                   nb::overload_cast<>(
+                       &CHPEMetadataX86::wowa64_exception_handler_function_pointer,
+                       nb::const_
+                   ),
+                   nb::overload_cast<uint32_t>(
+                       &CHPEMetadataX86::wowa64_exception_handler_function_pointer
+                   ),
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("wowa64_dispatch_call_function_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::wowa64_dispatch_call_function_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::wowa64_dispatch_call_function_pointer),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw("wowa64_dispatch_call_function_pointer",
+                   nb::overload_cast<>(
+                       &CHPEMetadataX86::wowa64_dispatch_call_function_pointer,
+                       nb::const_
+                   ),
+                   nb::overload_cast<uint32_t>(
+                       &CHPEMetadataX86::wowa64_dispatch_call_function_pointer
+                   ),
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("wowa64_dispatch_indirect_call_function_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::wowa64_dispatch_indirect_call_function_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::wowa64_dispatch_indirect_call_function_pointer),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw(
+          "wowa64_dispatch_indirect_call_function_pointer",
+          nb::overload_cast<>(
+              &CHPEMetadataX86::wowa64_dispatch_indirect_call_function_pointer,
+              nb::const_
+          ),
+          nb::overload_cast<uint32_t>(
+              &CHPEMetadataX86::wowa64_dispatch_indirect_call_function_pointer
+          ),
+          nb::rv_policy::reference_internal
+      )
 
-    .def_prop_rw("wowa64_dispatch_indirect_call_cfg_function_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::wowa64_dispatch_indirect_call_cfg_function_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::wowa64_dispatch_indirect_call_cfg_function_pointer),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw(
+          "wowa64_dispatch_indirect_call_cfg_function_pointer",
+          nb::overload_cast<>(
+              &CHPEMetadataX86::wowa64_dispatch_indirect_call_cfg_function_pointer,
+              nb::const_
+          ),
+          nb::overload_cast<uint32_t>(
+              &CHPEMetadataX86::wowa64_dispatch_indirect_call_cfg_function_pointer
+          ),
+          nb::rv_policy::reference_internal
+      )
 
-    .def_prop_rw("wowa64_dispatch_ret_function_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::wowa64_dispatch_ret_function_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::wowa64_dispatch_ret_function_pointer),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw("wowa64_dispatch_ret_function_pointer",
+                   nb::overload_cast<>(
+                       &CHPEMetadataX86::wowa64_dispatch_ret_function_pointer,
+                       nb::const_
+                   ),
+                   nb::overload_cast<uint32_t>(
+                       &CHPEMetadataX86::wowa64_dispatch_ret_function_pointer
+                   ),
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("wowa64_dispatch_ret_leaf_function_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::wowa64_dispatch_ret_leaf_function_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::wowa64_dispatch_ret_leaf_function_pointer),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw("wowa64_dispatch_ret_leaf_function_pointer",
+                   nb::overload_cast<>(
+                       &CHPEMetadataX86::wowa64_dispatch_ret_leaf_function_pointer,
+                       nb::const_
+                   ),
+                   nb::overload_cast<uint32_t>(
+                       &CHPEMetadataX86::wowa64_dispatch_ret_leaf_function_pointer
+                   ),
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("wowa64_dispatch_jump_function_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::wowa64_dispatch_jump_function_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::wowa64_dispatch_jump_function_pointer),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw("wowa64_dispatch_jump_function_pointer",
+                   nb::overload_cast<>(
+                       &CHPEMetadataX86::wowa64_dispatch_jump_function_pointer,
+                       nb::const_
+                   ),
+                   nb::overload_cast<uint32_t>(
+                       &CHPEMetadataX86::wowa64_dispatch_jump_function_pointer
+                   ),
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("compiler_iat_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::compiler_iat_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::compiler_iat_pointer),
-      nb::rv_policy::reference_internal)
+      .def_prop_rw(
+          "compiler_iat_pointer",
+          nb::overload_cast<>(&CHPEMetadataX86::compiler_iat_pointer, nb::const_),
+          nb::overload_cast<uint32_t>(&CHPEMetadataX86::compiler_iat_pointer),
+          nb::rv_policy::reference_internal
+      )
 
-    .def_prop_rw("wowa64_rdtsc_function_pointer",
-      nb::overload_cast<>(&CHPEMetadataX86::wowa64_rdtsc_function_pointer, nb::const_),
-      nb::overload_cast<uint32_t>(&CHPEMetadataX86::wowa64_rdtsc_function_pointer),
-      nb::rv_policy::reference_internal)
-  ;
+      .def_prop_rw("wowa64_rdtsc_function_pointer",
+                   nb::overload_cast<>(
+                       &CHPEMetadataX86::wowa64_rdtsc_function_pointer, nb::const_
+                   ),
+                   nb::overload_cast<uint32_t>(
+                       &CHPEMetadataX86::wowa64_rdtsc_function_pointer
+                   ),
+                   nb::rv_policy::reference_internal);
 }
 }

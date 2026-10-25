@@ -24,21 +24,21 @@ namespace LIEF::COFF::py {
 
 template<>
 void create<AuxiliaryFile>(nb::module_& m) {
-  nb::class_<AuxiliaryFile, AuxiliarySymbol> aux(m, "AuxiliaryFile",
-    R"doc(
-    This auxiliary symbol represents a filename (auxiliary format 4)
+  nb::class_<AuxiliaryFile, AuxiliarySymbol> aux(
+      m, "AuxiliaryFile",
+      R"doc(
+      This auxiliary symbol represents a filename (auxiliary format 4)
 
-    The :attr:`lief.Symbol.name` itself should start with ``.file``, and this
-    auxiliary record gives the name of a source-code file.
+      The :attr:`lief.Symbol.name` itself should start with ``.file``, and this
+      auxiliary record gives the name of a source-code file.
 
-    Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#auxiliary-format-4-files
-    )doc"_doc
+      Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#auxiliary-format-4-files
+      )doc"_doc
   );
 
-  aux
-    .def_prop_ro("filename", nb::overload_cast<>(&AuxiliaryFile::filename, nb::const_),
-                 "The associated filename"_doc)
-  ;
+  aux.def_prop_ro("filename",
+                  nb::overload_cast<>(&AuxiliaryFile::filename, nb::const_),
+                  "The associated filename"_doc);
 }
 
 }

@@ -18,69 +18,64 @@
 
 #include "LIEF/PE/ExportEntry.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<ExportEntry>(nb::module_& m) {
-  nb::class_<ExportEntry, LIEF::Symbol> export_entry(m, "ExportEntry",
-      R"delim(
-      Class which represents a PE Export entry (cf. :class:`lief.PE.Export`)
-      )delim"_doc);
+  nb::class_<ExportEntry, LIEF::Symbol> export_entry(
+      m, "ExportEntry",
+      "Class which represents a PE Export entry (cf. :class:`lief.PE.Export`)"_doc
+  );
 
-  nb::class_<ExportEntry::forward_information_t>(export_entry, "forward_information_t")
-    .def_rw("library", &ExportEntry::forward_information_t::library)
-    .def_rw("function", &ExportEntry::forward_information_t::function)
-    LIEF_DEFAULT_STR(ExportEntry::forward_information_t);
+  nb::class_<ExportEntry::forward_information_t>(export_entry,
+                                                 "forward_information_t")
+      .def_rw("library", &ExportEntry::forward_information_t::library)
+      .def_rw("function", &ExportEntry::forward_information_t::function)
+      .LIEF_DEFAULT_STR(ExportEntry::forward_information_t);
 
-  export_entry
-    .def(nb::init<>(), "Default constructor"_doc)
-    .def(nb::init<std::string, uint32_t>(),
-         "name"_a, "addr"_a,
-         "Constructor with export name and address"_doc)
+  export_entry.def(nb::init<>(), "Default constructor"_doc)
+      .def(nb::init<std::string, uint32_t>(), "name"_a, "addr"_a,
+           "Constructor with export name and address"_doc)
 
-    .def_prop_rw("name",
-        [] (const ExportEntry& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<std::string>(&ExportEntry::name))
+      .def_prop_rw(
+          "name",
+          [](const ExportEntry& obj) { return LIEF::py::safe_string(obj.name()); },
+          nb::overload_cast<std::string>(&ExportEntry::name)
+      )
 
-    .def_prop_rw("ordinal",
-        nb::overload_cast<>(&ExportEntry::ordinal, nb::const_),
-        nb::overload_cast<uint16_t>(&ExportEntry::ordinal))
+      .def_prop_rw("ordinal",
+                   nb::overload_cast<>(&ExportEntry::ordinal, nb::const_),
+                   nb::overload_cast<uint16_t>(&ExportEntry::ordinal))
 
-    .def_prop_rw("address",
-        nb::overload_cast<>(&ExportEntry::address, nb::const_),
-        nb::overload_cast<uint32_t>(&ExportEntry::address))
+      .def_prop_rw("address",
+                   nb::overload_cast<>(&ExportEntry::address, nb::const_),
+                   nb::overload_cast<uint32_t>(&ExportEntry::address))
 
-    .def_prop_rw("is_extern",
-        nb::overload_cast<>(&ExportEntry::is_extern, nb::const_),
-        nb::overload_cast<bool>(&ExportEntry::is_extern))
+      .def_prop_rw("is_extern",
+                   nb::overload_cast<>(&ExportEntry::is_extern, nb::const_),
+                   nb::overload_cast<bool>(&ExportEntry::is_extern))
 
-    .def_prop_ro("is_forwarded",
-        &ExportEntry::is_forwarded)
+      .def_prop_ro("is_forwarded", &ExportEntry::is_forwarded)
 
-    .def_prop_ro("forward_information",
-        &ExportEntry::forward_information)
+      .def_prop_ro("forward_information", &ExportEntry::forward_information)
 
-    .def_prop_ro("function_rva",
-        &ExportEntry::function_rva)
+      .def_prop_ro("function_rva", &ExportEntry::function_rva)
 
-    .def_prop_ro("demangled_name",
-      &ExportEntry::demangled_name,
-      R"doc(
-      Demangled representation of the symbol or an empty string if it can't
-      be demangled.
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "demangled_name", &ExportEntry::demangled_name,
+          R"doc(
+          Demangled representation of the symbol or an empty string if it can't
+          be demangled.
+          )doc"_doc
+      )
 
-    .def("set_forward_info", &ExportEntry::set_forward_info,
-         "lib"_a, "function"_a)
+      .def("set_forward_info", &ExportEntry::set_forward_info, "lib"_a,
+           "function"_a)
 
-    LIEF_DEFAULT_STR(ExportEntry);
-
+      .LIEF_DEFAULT_STR(ExportEntry);
 }
 }

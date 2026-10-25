@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include "pyIterator.hpp"
+#include <sstream>
 
-#include "PE/pyPE.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/FunctionOverrideInfo.hpp"
 #include "LIEF/PE/Relocation.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
+#include "PE/pyPE.hpp"
 
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 namespace LIEF::PE::py {
 
@@ -34,35 +34,41 @@ void create<FunctionOverrideInfo>(nb::module_& m) {
 
   init_ref_iterator<FunctionOverrideInfo::it_relocations>(obj, "it_relocations");
 
-  obj
-    .def_prop_rw("original_rva",
-      nb::overload_cast<>(&FunctionOverrideInfo::original_rva, nb::const_),
-      nb::overload_cast<uint32_t>(&FunctionOverrideInfo::original_rva),
-      "RVA of original function"_doc, nb::rv_policy::reference_internal)
+  obj.def_prop_rw(
+         "original_rva",
+         nb::overload_cast<>(&FunctionOverrideInfo::original_rva, nb::const_),
+         nb::overload_cast<uint32_t>(&FunctionOverrideInfo::original_rva),
+         "RVA of original function"_doc, nb::rv_policy::reference_internal
+  )
 
-    .def_prop_rw("bdd_offset",
-      nb::overload_cast<>(&FunctionOverrideInfo::bdd_offset, nb::const_),
-      nb::overload_cast<uint32_t>(&FunctionOverrideInfo::bdd_offset),
-      "Offset into the BDD region"_doc, nb::rv_policy::reference_internal)
+      .def_prop_rw(
+          "bdd_offset",
+          nb::overload_cast<>(&FunctionOverrideInfo::bdd_offset, nb::const_),
+          nb::overload_cast<uint32_t>(&FunctionOverrideInfo::bdd_offset),
+          "Offset into the BDD region"_doc, nb::rv_policy::reference_internal
+      )
 
-    .def_prop_ro("rva_size",
-      nb::overload_cast<>(&FunctionOverrideInfo::rva_size, nb::const_),
-      "Size in bytes taken by RVAs"_doc, nb::rv_policy::reference_internal)
+      .def_prop_ro(
+          "rva_size",
+          nb::overload_cast<>(&FunctionOverrideInfo::rva_size, nb::const_),
+          "Size in bytes taken by RVAs"_doc, nb::rv_policy::reference_internal
+      )
 
-    .def_prop_ro("base_reloc_size",
-      nb::overload_cast<>(&FunctionOverrideInfo::base_reloc_size, nb::const_),
-      "Size in bytes taken by BaseRelocs"_doc, nb::rv_policy::reference_internal)
+      .def_prop_ro("base_reloc_size",
+                   nb::overload_cast<>(&FunctionOverrideInfo::base_reloc_size,
+                                       nb::const_),
+                   "Size in bytes taken by BaseRelocs"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_ro("relocations",
-      nb::overload_cast<>(&FunctionOverrideInfo::relocations),
-      nb::rv_policy::reference_internal, nb::keep_alive<0, 1>()
-    )
+      .def_prop_ro("relocations",
+                   nb::overload_cast<>(&FunctionOverrideInfo::relocations),
+                   nb::rv_policy::reference_internal, nb::keep_alive<0, 1>())
 
-    .def_prop_ro("functions_rva",
-      nb::overload_cast<>(&FunctionOverrideInfo::functions_rva, nb::const_)
-    )
+      .def_prop_ro("functions_rva",
+                   nb::overload_cast<>(&FunctionOverrideInfo::functions_rva,
+                                       nb::const_))
 
-  LIEF_DEFAULT_STR(FunctionOverrideInfo);
+      .LIEF_DEFAULT_STR(FunctionOverrideInfo);
 }
 
 }

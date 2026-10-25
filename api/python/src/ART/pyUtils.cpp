@@ -24,32 +24,27 @@
 namespace LIEF::ART::py {
 
 void init_utils(nb::module_& m) {
-  lief_mod->def("is_art",
-      nb::overload_cast<std::string_view>(&is_art),
-      "Check if the **file** given in parameter is an ART"_doc,
-      "path"_a);
+  lief_mod->def("is_art", nb::overload_cast<std::string_view>(&is_art),
+                "Check if the **file** given in parameter is an ART"_doc,
+                "path"_a);
 
-  lief_mod->def("is_art",
-      nb::overload_cast<const std::vector<uint8_t>&>(&is_art),
-      "Check if the **raw data** given in parameter is an ART"_doc,
-      "raw"_a);
+  lief_mod->def("is_art", nb::overload_cast<const std::vector<uint8_t>&>(&is_art),
+                "Check if the **raw data** given in parameter is an ART"_doc,
+                "raw"_a);
 
-  m.def("version",
-      nb::overload_cast<std::string_view>(&version),
-      "Return the ART version of the **file** given in parameter"_doc,
-      "file"_a);
+  m.def("version", nb::overload_cast<std::string_view>(&version),
+        "Return the ART version of the **file** given in parameter"_doc, "file"_a);
 
-  m.def("version",
-      nb::overload_cast<const std::vector<uint8_t>&>(&version),
-      "Return the ART version of the **raw data** given in parameter"_doc,
-      "raw"_a);
+  m.def("version", nb::overload_cast<const std::vector<uint8_t>&>(&version),
+        "Return the ART version of the **raw data** given in parameter"_doc,
+        "raw"_a);
 
 
-  m.def("android_version",
-      &android_version,
-      "Return the " RST_CLASS_REF(lief.Android.ANDROID_VERSIONS) " associated with the given ART version "_doc,
-      "art_version"_a);
+  m.def(
+      "android_version", &android_version,
+      "Return the :class:`~lief.Android.ANDROID_VERSIONS` associated with the given ART version "_doc,
+      "art_version"_a
+  );
 }
 
 }
-

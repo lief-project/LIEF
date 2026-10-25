@@ -19,18 +19,20 @@ namespace LIEF::COFF::py {
 
 template<>
 void create<ParserConfig>(nb::module_& m) {
-  nb::class_<ParserConfig>(m, "ParserConfig",
-      R"delim(
-      )delim"_doc)
-    .def(nb::init<>())
-    .def_prop_ro_static("default_conf",
-      [] (const nb::object& /* self */) { return ParserConfig::default_conf(); },
-      "Default configuration"_doc)
+  nb::class_<ParserConfig>(m, "ParserConfig")
+      .def(nb::init<>())
+      .def_prop_ro_static(
+          "default_conf",
+          [](const nb::object& /* self */) {
+            return ParserConfig::default_conf();
+          },
+          "Default configuration"_doc
+      )
 
-    .def_prop_ro_static("all",
-      [] (const nb::object& /* self */) { return ParserConfig::all(); },
-      "All parsing options enabled"_doc);
-
+      .def_prop_ro_static(
+          "all", [](const nb::object& /* self */) { return ParserConfig::all(); },
+          "All parsing options enabled"_doc
+      );
 }
 
 }

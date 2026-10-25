@@ -13,49 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "PE/pyPE.hpp"
 #include "LIEF/PE/debug/ExDllCharacteristics.hpp"
+#include "PE/pyPE.hpp"
 
-#include <string>
-#include <sstream>
+#include "enums_wrapper.hpp"
+#include "nanobind/utils.hpp"
+#include <nanobind/extra/memoryview.hpp>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include <nanobind/extra/memoryview.hpp>
-#include "nanobind/utils.hpp"
-#include "enums_wrapper.hpp"
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<ExDllCharacteristics>(nb::module_& m) {
-  nb::class_<ExDllCharacteristics, Debug> dbg(m, "ExDllCharacteristics",
-    R"delim(
-    This class represents the ``IMAGE_DEBUG_TYPE_EX_DLLCHARACTERISTICS`` debug
-    entry
-    )delim"_doc);
+  nb::class_<ExDllCharacteristics, Debug> dbg(
+      m, "ExDllCharacteristics",
+      R"delim(
+      This class represents the ``IMAGE_DEBUG_TYPE_EX_DLLCHARACTERISTICS`` debug
+      entry
+      )delim"_doc
+  );
 
   using CHARACTERISTICS = ExDllCharacteristics::CHARACTERISTICS;
   enum_<CHARACTERISTICS>(dbg, "CHARACTERISTICS", nb::is_flag(),
-    "Extended DLL Characteristics"_doc
-  )
-    .value("CET_COMPAT", CHARACTERISTICS::CET_COMPAT)
-    .value("CET_COMPAT_STRICT_MODE", CHARACTERISTICS::CET_COMPAT_STRICT_MODE)
-    .value("CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE", CHARACTERISTICS::CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE)
-    .value("CET_DYNAMIC_APIS_ALLOW_IN_PROC", CHARACTERISTICS::CET_DYNAMIC_APIS_ALLOW_IN_PROC)
-    .value("CET_RESERVED_1", CHARACTERISTICS::CET_RESERVED_1)
-    .value("CET_RESERVED_2", CHARACTERISTICS::CET_RESERVED_2)
-    .value("FORWARD_CFI_COMPAT", CHARACTERISTICS::FORWARD_CFI_COMPAT)
-    .value("HOTPATCH_COMPATIBLE", CHARACTERISTICS::HOTPATCH_COMPATIBLE);
+                         "Extended DLL Characteristics"_doc)
+      .value("CET_COMPAT", CHARACTERISTICS::CET_COMPAT)
+      .value("CET_COMPAT_STRICT_MODE", CHARACTERISTICS::CET_COMPAT_STRICT_MODE)
+      .value("CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE",
+             CHARACTERISTICS::CET_SET_CONTEXT_IP_VALIDATION_RELAXED_MODE)
+      .value("CET_DYNAMIC_APIS_ALLOW_IN_PROC",
+             CHARACTERISTICS::CET_DYNAMIC_APIS_ALLOW_IN_PROC)
+      .value("CET_RESERVED_1", CHARACTERISTICS::CET_RESERVED_1)
+      .value("CET_RESERVED_2", CHARACTERISTICS::CET_RESERVED_2)
+      .value("FORWARD_CFI_COMPAT", CHARACTERISTICS::FORWARD_CFI_COMPAT)
+      .value("HOTPATCH_COMPATIBLE", CHARACTERISTICS::HOTPATCH_COMPATIBLE);
 
-  dbg
-    .def("has", &ExDllCharacteristics::has,
-      "Check if the given CHARACTERISTICS is used"_doc, "characteristic"_a
-    )
-    .def_prop_ro("ex_characteristics", &ExDllCharacteristics::characteristics,
-      "The extended characteristics"_doc
-    )
-    .def_prop_ro("ex_characteristics_list", &ExDllCharacteristics::characteristics_list,
-      "Characteristics as a vector"_doc
-    );
+  dbg.def("has", &ExDllCharacteristics::has,
+          "Check if the given CHARACTERISTICS is used"_doc, "characteristic"_a)
+      .def_prop_ro("ex_characteristics", &ExDllCharacteristics::characteristics,
+                   "The extended characteristics"_doc)
+      .def_prop_ro("ex_characteristics_list",
+                   &ExDllCharacteristics::characteristics_list,
+                   "Characteristics as a vector"_doc);
 }
 }

@@ -19,16 +19,14 @@ class PCRelative;
 namespace LIEF::assembly::aarch64::py {
 template<>
 void create<aarch64::Operand>(nb::module_& m) {
-  nb::class_<aarch64::Operand> obj(m, "Operand",
-    R"doc(This class represents an operand for an AArch64 instruction)doc"_doc
+  nb::class_<aarch64::Operand> obj(
+      m, "Operand",
+      "This class represents an operand for an AArch64 instruction"_doc
   );
 
-  obj
-    .def_prop_ro("to_string", &Operand::to_string,
-      R"doc(Pretty representation of the operand)doc"_doc
-    )
-    LIEF_DEFAULT_STR(aarch64::Operand)
-  ;
+  obj.def_prop_ro("to_string", &Operand::to_string,
+                  "Pretty representation of the operand"_doc)
+      .LIEF_DEFAULT_STR(aarch64::Operand);
 
   nb::module_ operands = m.def_submodule("operands");
   create<aarch64::operands::Immediate>(operands);

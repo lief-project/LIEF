@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/unique_ptr.h>
 #include "nanobind/extra/stl/pathlike.h"
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
+#include <sstream>
+#include <string>
 
-#include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 
-#include "pyIterator.hpp"
 #include "MachO/pyMachO.hpp"
+#include "pyIterator.hpp"
 
 namespace LIEF::MachO::py {
 
@@ -33,70 +33,68 @@ void create<FatBinary>(nb::module_& m) {
   using namespace LIEF::py;
 
   nb::class_<FatBinary> fat(m, "FatBinary",
-      R"delim(
-      Class which represents a Mach-O (fat) binary
-      This object is also used for representing Mach-O binaries that are **NOT FAT**
-      )delim"_doc);
+                            R"delim(
+                            Class which represents a Mach-O (fat) binary
+                            This object is also used for representing Mach-O binaries that are **NOT FAT**
+                            )delim"_doc);
 
-    init_ref_iterator<FatBinary::it_binaries>(fat, "it_binaries");
+  init_ref_iterator<FatBinary::it_binaries>(fat, "it_binaries");
 
-  fat
-    .def_static("create",
-        [] (FatBinary::binaries_t binaries) {
-          return FatBinary::create(std::move(binaries));
-        },
-        R"delim(
-        Create a :class:`~lief.MachO.FatBinary` from the provided list of
-        :class:`~lief.MachO.Binary` objects.
+  fat.def_static(
+         "create",
+         [](FatBinary::binaries_t binaries) {
+           return FatBinary::create(std::move(binaries));
+         },
+         R"delim(
+         Create a :class:`~lief.MachO.FatBinary` from the provided list of
+         :class:`~lief.MachO.Binary` objects.
 
-        The binaries **must** target different architectures (i.e. unique
-        cpu_type / cpu_subtype pairs). If a duplicate architecture is detected,
-        this function returns None.
-        )delim"_doc,
-        "binaries"_a)
+         The binaries **must** target different architectures (i.e. unique
+         cpu_type / cpu_subtype pairs). If a duplicate architecture is detected,
+         this function returns None.
+         )delim"_doc,
+         "binaries"_a
+  )
 
-    .def_prop_ro("size", &FatBinary::size,
-      "Number of " RST_CLASS_REF(lief.MachO.Binary) " registered"_doc)
+      .def_prop_ro("size", &FatBinary::size,
+                   "Number of :class:`~lief.MachO.Binary` registered"_doc)
 
-    .def("at",
-      nb::overload_cast<size_t>(&FatBinary::at),
-      "Return the " RST_CLASS_REF(lief.MachO.Binary) " at the given index or None if it is not present"_doc,
-      "index"_a,
-      nb::rv_policy::reference_internal)
+      .def(
+          "at", nb::overload_cast<size_t>(&FatBinary::at),
+          "Return the :class:`~lief.MachO.Binary` at the given index or None if it is not present"_doc,
+          "index"_a, nb::rv_policy::reference_internal
+      )
 
-    .def("take",
-        nb::overload_cast<Header::CPU_TYPE>(&FatBinary::take),
-        "Return the " RST_CLASS_REF(lief.MachO.Binary) " that matches the "
-        "given " RST_CLASS_REF(lief.MachO.Header.CPU_TYPE) ""_doc,
-        "cpu"_a, nb::rv_policy::take_ownership)
+      .def("take", nb::overload_cast<Header::CPU_TYPE>(&FatBinary::take),
+           "Return the :class:`~lief.MachO.Binary` that matches the "
+           "given :class:`~lief.MachO.Header.CPU_TYPE`"_doc,
+           "cpu"_a, nb::rv_policy::take_ownership)
 
-    .def("write", [] (FatBinary& fat, nb::PathLike path) { fat.write(path); },
-        "Build a Mach-O universal binary"_doc,
-        "filename"_a, nb::lock_self())
+      .def(
+          "write", [](FatBinary& fat, nb::PathLike path) { fat.write(path); },
+          "Build a Mach-O universal binary"_doc, "filename"_a, nb::lock_self()
+      )
 
-    .def("raw", &FatBinary::raw,
-        "Build a Mach-O universal binary and return its bytes"_doc,
-        nb::lock_self())
+      .def("raw", &FatBinary::raw,
+           "Build a Mach-O universal binary and return its bytes"_doc,
+           nb::lock_self())
 
-    .def("get", nb::overload_cast<Header::CPU_TYPE>(&FatBinary::get),
-        "Gets the :class:`~.Binary` that matches the given architecture"_doc,
-        nb::rv_policy::reference_internal)
+      .def("get", nb::overload_cast<Header::CPU_TYPE>(&FatBinary::get),
+           "Gets the :class:`~.Binary` that matches the given architecture"_doc,
+           nb::rv_policy::reference_internal)
 
-    .def("__len__", &FatBinary::size)
+      .def("__len__", &FatBinary::size)
 
-    .def("__getitem__",
-        nb::overload_cast<size_t>(&FatBinary::operator[]),
-        nb::rv_policy::reference_internal)
+      .def("__getitem__", nb::overload_cast<size_t>(&FatBinary::operator[]),
+           nb::rv_policy::reference_internal)
 
-    .def("__getitem__",
-        nb::overload_cast<Header::CPU_TYPE>(&FatBinary::operator[]),
-        nb::rv_policy::reference_internal)
+      .def("__getitem__",
+           nb::overload_cast<Header::CPU_TYPE>(&FatBinary::operator[]),
+           nb::rv_policy::reference_internal)
 
-    .def("__iter__",
-        nb::overload_cast<>(&FatBinary::begin),
-        nb::rv_policy::reference_internal)
+      .def("__iter__", nb::overload_cast<>(&FatBinary::begin),
+           nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(FatBinary);
-
+      .LIEF_DEFAULT_STR(FatBinary);
 }
 }

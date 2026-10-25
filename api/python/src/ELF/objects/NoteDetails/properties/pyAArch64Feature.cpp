@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <nanobind/stl/vector.h>
 
-#include "enums_wrapper.hpp"
 #include "ELF/pyELF.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/NoteDetails/properties/AArch64Feature.hpp"
 
@@ -27,18 +27,15 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<AArch64Feature>(nb::module_& m) {
-  nb::class_<AArch64Feature, NoteGnuProperty::Property>
-    Class(m, "AArch64Feature",
-      R"doc(
-      This class represents the ``GNU_PROPERTY_AARCH64_FEATURE_1_AND`` note.
-      )doc"_doc);
+  nb::class_<AArch64Feature, NoteGnuProperty::Property> Class(
+      m, "AArch64Feature",
+      "This class represents the ``GNU_PROPERTY_AARCH64_FEATURE_1_AND`` note."_doc
+  );
 
-  Class
-    .def_prop_ro("features", &AArch64Feature::features,
-        R"doc(
-        Return the list of the supported features.
-        )doc"_doc);
+  Class.def_prop_ro("features", &AArch64Feature::features,
+                    "Return the list of the supported features."_doc);
 
+  // clang-format off
 # define ENTRY(X, D) .value(to_string(AArch64Feature::FEATURE::X), AArch64Feature::FEATURE::X, D)
   enum_<AArch64Feature::FEATURE>(Class, "FEATURE")
     ENTRY(UNKNOWN, "")
@@ -47,6 +44,7 @@ void create<AArch64Feature>(nb::module_& m) {
     ENTRY(GCS, "Support Guarded Control Stack (GCS)")
   ;
 # undef ENTRY
+  // clang-format on
 }
 
 }

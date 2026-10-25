@@ -19,8 +19,8 @@
 #include <string>
 #include <vector>
 
-#include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/errors.hpp"
 #include "pyLIEF.hpp"
 
 namespace LIEF::py {

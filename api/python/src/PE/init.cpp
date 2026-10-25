@@ -19,30 +19,30 @@
 
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
+#include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/Export.hpp"
 #include "LIEF/PE/LoadConfigurations.hpp"
 #include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/ParserConfig.hpp"
 #include "LIEF/PE/RelocationEntry.hpp"
-#include "LIEF/PE/ExceptionInfo.hpp"
 #include "LIEF/PE/RichHeader.hpp"
 #include "LIEF/PE/TLS.hpp"
 #include "LIEF/PE/debug/CodeView.hpp"
-#include "LIEF/PE/debug/Repro.hpp"
-#include "LIEF/PE/debug/FPO.hpp"
-#include "LIEF/PE/debug/ExDllCharacteristics.hpp"
-#include "LIEF/PE/debug/VCFeature.hpp"
 #include "LIEF/PE/debug/CodeViewPDB.hpp"
+#include "LIEF/PE/debug/ExDllCharacteristics.hpp"
+#include "LIEF/PE/debug/FPO.hpp"
+#include "LIEF/PE/debug/PDBChecksum.hpp"
 #include "LIEF/PE/debug/Pogo.hpp"
 #include "LIEF/PE/debug/PogoEntry.hpp"
-#include "LIEF/PE/debug/PDBChecksum.hpp"
+#include "LIEF/PE/debug/Repro.hpp"
+#include "LIEF/PE/debug/VCFeature.hpp"
 #include "LIEF/PE/resources/langs.hpp"
-#include "LIEF/PE/signature/attributes.hpp"
+#include "LIEF/PE/signature/GenericContent.hpp"
 #include "LIEF/PE/signature/PKCS9TSTInfo.hpp"
 #include "LIEF/PE/signature/SpcIndirectData.hpp"
-#include "LIEF/PE/signature/GenericContent.hpp"
+#include "LIEF/PE/signature/attributes.hpp"
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF::PE::py {
 

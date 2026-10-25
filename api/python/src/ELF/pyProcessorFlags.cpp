@@ -24,6 +24,7 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<PROCESSOR_FLAGS>(nb::module_& m) {
+  // clang-format off
   #define ENTRY(X) .value(to_string(PROCESSOR_FLAGS::X), PROCESSOR_FLAGS::X)
   enum_<PROCESSOR_FLAGS>(m, "PROCESSOR_FLAGS")
     ENTRY(ARM_EABI_UNKNOWN)
@@ -97,7 +98,7 @@ void create<PROCESSOR_FLAGS>(nb::module_& m) {
     ENTRY(RISCV_FLOAT_ABI_TSO)
   ;
   #undef ENTRY
-
+  // clang-format on
 }
 
 }

@@ -1,11 +1,11 @@
-#include "LIEF/DWARF/editor/Type.hpp"
-#include "LIEF/DWARF/editor/PointerType.hpp"
-#include "LIEF/DWARF/editor/EnumType.hpp"
-#include "LIEF/DWARF/editor/BaseType.hpp"
 #include "LIEF/DWARF/editor/ArrayType.hpp"
+#include "LIEF/DWARF/editor/BaseType.hpp"
+#include "LIEF/DWARF/editor/EnumType.hpp"
 #include "LIEF/DWARF/editor/FunctionType.hpp"
-#include "LIEF/DWARF/editor/TypeDef.hpp"
+#include "LIEF/DWARF/editor/PointerType.hpp"
 #include "LIEF/DWARF/editor/StructType.hpp"
+#include "LIEF/DWARF/editor/Type.hpp"
+#include "LIEF/DWARF/editor/TypeDef.hpp"
 
 #include "DWARF/pyDwarf.hpp"
 
@@ -14,18 +14,19 @@
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::editor::Type>(nb::module_& m) {
-  nb::class_<dw::editor::Type>(m, "Type",
-    R"doc(
-    This class is the base class for any types created when editing DWARF debug
-    info.
+  nb::class_<dw::editor::Type>(
+      m, "Type",
+      R"doc(
+      This class is the base class for any types created when editing DWARF debug
+      info.
 
-    A type is owned by a :class:`lief.dwarf.editor.CompilationUnit` and should be
-    created from this class.
-    )doc"_doc
+      A type is owned by a :class:`lief.dwarf.editor.CompilationUnit` and should be
+      created from this class.
+      )doc"_doc
   )
-    .def("pointer_to", &dw::editor::Type::pointer_to,
-         "Create a pointer type pointing to this type"_doc, nb::keep_alive<0, 1>())
-  ;
+      .def("pointer_to", &dw::editor::Type::pointer_to,
+           "Create a pointer type pointing to this type"_doc,
+           nb::keep_alive<0, 1>());
 
   create<LIEF::dwarf::editor::PointerType>(m);
   create<LIEF::dwarf::editor::EnumType>(m);

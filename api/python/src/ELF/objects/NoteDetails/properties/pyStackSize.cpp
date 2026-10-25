@@ -21,13 +21,14 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<StackSize>(nb::module_& m) {
-  nb::class_<StackSize, NoteGnuProperty::Property>(m, "StackSize",
+  nb::class_<
+      StackSize, NoteGnuProperty::Property
+  >(m, "StackSize",
     R"doc(
     This class provides an interface over the ``GNU_PROPERTY_STACK_SIZE`` property
     This property can be used by the loader to raise the stack limit.
     )doc")
-    .def_prop_ro("stack_size", &StackSize::stack_size);
-
+      .def_prop_ro("stack_size", &StackSize::stack_size);
 }
 
 }

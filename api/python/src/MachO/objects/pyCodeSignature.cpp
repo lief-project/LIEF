@@ -15,9 +15,9 @@
  */
 #include <algorithm>
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/CodeSignature.hpp"
 
@@ -29,20 +29,20 @@ namespace LIEF::MachO::py {
 template<>
 void create<CodeSignature>(nb::module_& m) {
   nb::class_<CodeSignature, LoadCommand>(m, "CodeSignature")
-    .def_prop_rw("data_offset",
-        nb::overload_cast<>(&CodeSignature::data_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&CodeSignature::data_offset),
-        "Offset in the binary where the signature starts"_doc)
+      .def_prop_rw("data_offset",
+                   nb::overload_cast<>(&CodeSignature::data_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&CodeSignature::data_offset),
+                   "Offset in the binary where the signature starts"_doc)
 
-    .def_prop_rw("data_size",
-        nb::overload_cast<>(&CodeSignature::data_size, nb::const_),
-        nb::overload_cast<uint32_t>(&CodeSignature::data_size),
-        "Size of the raw signature"_doc)
+      .def_prop_rw("data_size",
+                   nb::overload_cast<>(&CodeSignature::data_size, nb::const_),
+                   nb::overload_cast<uint32_t>(&CodeSignature::data_size),
+                   "Size of the raw signature"_doc)
 
-    .def_prop_ro("content",
-        nb::overload_cast<>(&CodeSignature::content, nb::const_),
-        "The raw signature as a bytes stream"_doc)
+      .def_prop_ro("content",
+                   nb::overload_cast<>(&CodeSignature::content, nb::const_),
+                   "The raw signature as a bytes stream"_doc)
 
-  LIEF_DEFAULT_STR(CodeSignature);
+      .LIEF_DEFAULT_STR(CodeSignature);
 }
 }

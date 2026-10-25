@@ -13,33 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/TwoLevelHints.hpp"
 
 #include "MachO/pyMachO.hpp"
-#include "nanobind/extra/stl/lief_span.h"
 #include "pyIterator.hpp"
+#include "nanobind/extra/stl/lief_span.h"
 
 namespace LIEF::MachO::py {
 template<>
 void create<TwoLevelHints>(nb::module_& m) {
   using namespace LIEF::py;
 
-  nb::class_<TwoLevelHints, LoadCommand> cmd(m, "TwoLevelHints",
-    R"delim(Class which represents the `LC_TWOLEVEL_HINTS` command)delim"_doc);
+  nb::class_<TwoLevelHints, LoadCommand> cmd(
+      m, "TwoLevelHints",
+      "Class which represents the `LC_TWOLEVEL_HINTS` command"_doc
+  );
 
   init_ref_iterator<TwoLevelHints::it_hints_t>(cmd, "it_hints_t");
 
-  cmd
-    .def_prop_ro("hints", nb::overload_cast<>(&TwoLevelHints::hints))
-    .def_prop_ro("content",
-        nb::overload_cast<>(&TwoLevelHints::content, nb::const_),
-        "The original content as a bytes stream"_doc)
+  cmd.def_prop_ro("hints", nb::overload_cast<>(&TwoLevelHints::hints))
+      .def_prop_ro("content",
+                   nb::overload_cast<>(&TwoLevelHints::content, nb::const_),
+                   "The original content as a bytes stream"_doc)
 
-  LIEF_DEFAULT_STR(TwoLevelHints);
-
+      .LIEF_DEFAULT_STR(TwoLevelHints);
 }
 }

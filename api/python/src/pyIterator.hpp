@@ -16,8 +16,8 @@
 #ifndef PY_LIEF_ITERATORS_H
 #define PY_LIEF_ITERATORS_H
 
-#include "nanobind/nanobind.h"
 #include "nanobind/make_iterator.h"
+#include "nanobind/nanobind.h"
 
 #include <string>
 
@@ -38,48 +38,52 @@ void init_ref_iterator(nanobind::handle& m, const char* it_name) {
   }
 
   nb::class_<T>(m, it_name)
-    .def_prop_ro_static("__doc__",
-        [] (const nb::object&) -> std::string {
-          using namespace std::literals;
-          if (auto type = nb::type<ElementTy>(); type.is_valid()) {
-            nb::str name = nb::type_name(type);
-            return "Iterator over :class:`"s + name.c_str() + "`";
-          }
-          return "";
-        })
+      .def_prop_ro_static("__doc__",
+                          [](const nb::object&) -> std::string {
+                            using namespace std::literals;
+                            if (auto type = nb::type<ElementTy>();
+                                type.is_valid()) {
+                              nb::str name = nb::type_name(type);
+                              return "Iterator over :class:`"s + name.c_str() +
+                                     "`";
+                            }
+                            return "";
+                          })
 
-    .def("__getitem__",
-        [] (T& v, Py_ssize_t i) -> typename T::reference {
-          const size_t size = v.size();
-          if (i < 0) {
-            i += static_cast<Py_ssize_t>(size);
-          }
-          if (i < 0 || static_cast<size_t>(i) >= size) {
-            throw nb::index_error();
-          }
-          return v[i];
-        },
-        nb::rv_policy::reference_internal)
+      .def(
+          "__getitem__",
+          [](T& v, Py_ssize_t i) -> typename T::reference {
+            const size_t size = v.size();
+            if (i < 0) {
+              i += static_cast<Py_ssize_t>(size);
+            }
+            if (i < 0 || static_cast<size_t>(i) >= size) {
+              throw nb::index_error();
+            }
+            return v[i];
+          },
+          nb::rv_policy::reference_internal
+      )
 
-    .def("__len__",
-        [] (T& v) {
-          return v.size();
-        })
+      .def("__len__", [](T& v) { return v.size(); })
 
-    .def("__iter__",
-        [] (const T& v) {
-          return v;
-        }, nb::rv_policy::reference_internal)
+      .def(
+          "__iter__", [](const T& v) { return v; },
+          nb::rv_policy::reference_internal
+      )
 
-    .def("__next__",
-        [] (T& v) -> typename T::reference {
-          if (v.is_end()) {
-            throw nb::stop_iteration();
-          }
-          auto& value = *v;
-          ++v;
-          return value;
-        }, nb::rv_policy::reference_internal);
+      .def(
+          "__next__",
+          [](T& v) -> typename T::reference {
+            if (v.is_end()) {
+              throw nb::stop_iteration();
+            }
+            auto& value = *v;
+            ++v;
+            return value;
+          },
+          nb::rv_policy::reference_internal
+      );
 }
 }
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include <string_view>
 #include "DEX/pyDEX.hpp"
+#include <string_view>
 
 #include "LIEF/DEX/Class.hpp"
 #include "LIEF/DEX/Field.hpp"
@@ -23,11 +23,11 @@
 
 #include "pyIterator.hpp"
 
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/unordered_map.h>
+#include <nanobind/stl/vector.h>
+#include <sstream>
 
 namespace LIEF::DEX::py {
 
@@ -43,56 +43,60 @@ void create<Class>(nb::module_& m) {
   init_ref_iterator<Class::it_named_methods>(cls, "it_named_methods");
   init_ref_iterator<Class::it_named_fields>(cls, "it_named_fields");
 
-  cls
-    .def_prop_ro("fullname", &Class::fullname,
-        "Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)"_doc)
+  cls.def_prop_ro(
+         "fullname", &Class::fullname,
+         "Mangled class name (e.g. ``Lcom/example/android/MyActivity;``)"_doc
+  )
 
-    .def_prop_ro("pretty_name", &Class::pretty_name,
-        "Demangled class name (e.g. ``com.example.android.MyActivity``)"_doc)
+      .def_prop_ro(
+          "pretty_name", &Class::pretty_name,
+          "Demangled class name (e.g. ``com.example.android.MyActivity``)"_doc
+      )
 
-    .def_prop_ro("name", &Class::name,
-        "Class name (e.g. ``MyActivity``)"_doc)
+      .def_prop_ro("name", &Class::name, "Class name (e.g. ``MyActivity``)"_doc)
 
-    .def_prop_ro("source_filename", &Class::source_filename,
-        "Original filename"_doc)
+      .def_prop_ro("source_filename", &Class::source_filename,
+                   "Original filename"_doc)
 
-    .def_prop_ro("package_name", &Class::package_name,
-        "Package Name (e.g. ``com.example.android``)"_doc)
+      .def_prop_ro("package_name", &Class::package_name,
+                   "Package Name (e.g. ``com.example.android``)"_doc)
 
-    .def_prop_ro("has_parent", &Class::has_parent,
-        "True if the current class extends another one"_doc)
+      .def_prop_ro("has_parent", &Class::has_parent,
+                   "True if the current class extends another one"_doc)
 
-    .def_prop_ro("parent", nb::overload_cast<>(&Class::parent),
-        "" RST_CLASS_REF(lief.DEX.Class) " parent class"_doc)
+      .def_prop_ro("parent", nb::overload_cast<>(&Class::parent),
+                   ":class:`~lief.DEX.Class` parent class"_doc)
 
-    .def_prop_ro("methods", nb::overload_cast<>(&Class::methods),
-        "Iterator over " RST_CLASS_REF(lief.DEX.Method) " implemented in this class"_doc)
+      .def_prop_ro(
+          "methods", nb::overload_cast<>(&Class::methods),
+          "Iterator over :class:`~lief.DEX.Method` implemented in this class"_doc
+      )
 
-    .def("get_method", nb::overload_cast<std::string_view>(&Class::methods),
-        "Iterator over " RST_CLASS_REF(lief.DEX.Method) " (s) having the given name"_doc,
-        "name"_a)
+      .def("get_method", nb::overload_cast<std::string_view>(&Class::methods),
+           "Iterator over :class:`~lief.DEX.Method` (s) having the given name"_doc,
+           "name"_a)
 
-    .def_prop_ro("fields", nb::overload_cast<>(&Class::fields),
-        "Iterator over " RST_CLASS_REF(lief.DEX.Field) " in this class"_doc)
+      .def_prop_ro("fields", nb::overload_cast<>(&Class::fields),
+                   "Iterator over :class:`~lief.DEX.Field` in this class"_doc)
 
-    .def("get_field", nb::overload_cast<std::string_view>(&Class::fields),
-        "Iterator over " RST_CLASS_REF(lief.DEX.Field) " (s) having the given name"_doc,
-        "name"_a)
+      .def("get_field", nb::overload_cast<std::string_view>(&Class::fields),
+           "Iterator over :class:`~lief.DEX.Field` (s) having the given name"_doc,
+           "name"_a)
 
-    .def_prop_ro("access_flags",
-        nb::overload_cast<>(&Class::access_flags, nb::const_),
-        "List of " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) ""_doc)
+      .def_prop_ro("access_flags",
+                   nb::overload_cast<>(&Class::access_flags, nb::const_),
+                   "List of :class:`~lief.DEX.ACCESS_FLAGS`"_doc)
 
-    .def_prop_ro("dex2dex_info", &Class::dex2dex_info,
-        "De-optimize information"_doc)
+      .def_prop_ro("dex2dex_info", &Class::dex2dex_info,
+                   "De-optimize information"_doc)
 
-    .def_prop_ro("index", &Class::index,
-        "Original index in the DEX class pool"_doc)
+      .def_prop_ro("index", &Class::index,
+                   "Original index in the DEX class pool"_doc)
 
-    .def("has", nb::overload_cast<ACCESS_FLAGS>(&Class::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.DEX.ACCESS_FLAGS) " is present"_doc,
-        "flag"_a)
+      .def("has", nb::overload_cast<ACCESS_FLAGS>(&Class::has, nb::const_),
+           "Check if the given :class:`~lief.DEX.ACCESS_FLAGS` is present"_doc,
+           "flag"_a)
 
-    LIEF_DEFAULT_STR(Class);
+      .LIEF_DEFAULT_STR(Class);
 }
 }

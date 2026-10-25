@@ -18,36 +18,30 @@
 
 #include <nanobind/nanobind.h>
 
-#define RST_CLASS_REF(X) ":class:`~"#X"`"
-#define RST_CLASS_REF_FULL(X) ":class:`"#X"`"
-
-#define RST_ATTR_REF(X) ":attr:`~"#X"`"
-#define RST_ATTR_REF_FULL(X) ":attr:`"#X"`"
-
-#define RST_METH_REF(X) ":class:`~"#X"`"
-#define RST_METH_REF_FULL(X) ":class:`"#X"`"
-
 #define LIEF_MOD_NAME "lief"
 
-#define LIEF_DEFAULT_STR(OBJ)        \
-    .def("__str__",                  \
-        [] (const OBJ& O) {          \
-          std::ostringstream stream; \
-          stream << O;               \
-          return stream.str();       \
-        })
+// Members of a nb::class_ chain: obj.def(...).LIEF_DEFAULT_STR(Class)
+#define LIEF_DEFAULT_STR(OBJ)                                                     \
+  def("__str__", [](const OBJ& O) {                                               \
+    std::ostringstream stream;                                                    \
+    stream << O;                                                                  \
+    return stream.str();                                                          \
+  })
 
-#define LIEF_COPYABLE(OBJ) \
-    .def("copy", [] (OBJ& self) { return OBJ(self); },       \
-        "Duplicate the current instance of this object"_doc, \
-        nb::rv_policy::move)
+#define LIEF_COPYABLE(OBJ)                                                        \
+  def(                                                                            \
+      "copy", [](OBJ& self) { return OBJ(self); },                                \
+      "Duplicate the current instance of this object"_doc, nb::rv_policy::move    \
+  )
 
-#define LIEF_CLONABLE(OBJ) \
-    .def("copy", [] (OBJ& self) {return self.clone(); },    \
-        "Duplicate the current instance of this object"_doc, \
-        nb::rv_policy::take_ownership)
+#define LIEF_CLONABLE(OBJ)                                                        \
+  def(                                                                            \
+      "copy", [](OBJ& self) { return self.clone(); },                             \
+      "Duplicate the current instance of this object"_doc,                        \
+      nb::rv_policy::take_ownership                                               \
+  )
 
-constexpr const char* operator ""_doc(const char* value, size_t) {
+constexpr const char* operator""_doc(const char* value, size_t) {
   return value;
 }
 

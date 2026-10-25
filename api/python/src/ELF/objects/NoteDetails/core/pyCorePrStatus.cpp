@@ -13,28 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/map.h>
+#include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
+#include <sstream>
+#include <string>
 
-#include "pyErr.hpp"
 #include "ELF/pyELF.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
+#include "pyErr.hpp"
 
 #include "enums_wrapper.hpp"
 
-#define GET_SET_REGISTER(ARCH)                                                                                                         \
-    .def("get", [] (const CorePrStatus& self, CorePrStatus::Registers::ARCH reg) {                                                     \
-          return LIEF::py::value_or_none(nb::overload_cast<CorePrStatus::Registers::ARCH>(&CorePrStatus::get, nb::const_), self, reg); \
-        }, "Get the register value or non if it is not present", "reg"_a)                                                              \
-    .def("__getitem__", [] (const CorePrStatus& self, CorePrStatus::Registers::ARCH reg) {                                             \
-          return LIEF::py::value_or_none(nb::overload_cast<CorePrStatus::Registers::ARCH>(&CorePrStatus::get, nb::const_), self, reg); \
-        })                                                                                                                             \
-    .def("set", nb::overload_cast<CorePrStatus::Registers::ARCH, uint64_t>(&CorePrStatus::set),                                        \
-         "Change the register value", "reg"_a, "value"_a)                                                                              \
-    .def("__setitem__", nb::overload_cast<CorePrStatus::Registers::ARCH, uint64_t>(&CorePrStatus::set))
+#define GET_SET_REGISTER(ARCH)                                                    \
+  def(                                                                            \
+      "get",                                                                      \
+      [](const CorePrStatus& self, CorePrStatus::Registers::ARCH reg) {           \
+        return LIEF::py::value_or_none(                                           \
+            nb::overload_cast<CorePrStatus::Registers::ARCH>(&CorePrStatus::get,  \
+                                                             nb::const_),         \
+            self, reg                                                             \
+        );                                                                        \
+      },                                                                          \
+      "Get the register value or non if it is not present", "reg"_a               \
+  )                                                                               \
+      .def("__getitem__",                                                         \
+           [](const CorePrStatus& self, CorePrStatus::Registers::ARCH reg) {      \
+             return LIEF::py::value_or_none(                                      \
+                 nb::overload_cast<CorePrStatus::Registers::ARCH>(                \
+                     &CorePrStatus::get, nb::const_                               \
+                 ),                                                               \
+                 self, reg                                                        \
+             );                                                                   \
+           })                                                                     \
+      .def("set",                                                                 \
+           nb::overload_cast<CorePrStatus::Registers::ARCH, uint64_t>(            \
+               &CorePrStatus::set                                                 \
+           ),                                                                     \
+           "Change the register value", "reg"_a, "value"_a)                       \
+      .def("__setitem__",                                                         \
+           nb::overload_cast<CorePrStatus::Registers::ARCH, uint64_t>(            \
+               &CorePrStatus::set                                                 \
+           ))
 
 namespace LIEF::ELF::py {
 
@@ -43,94 +63,97 @@ void create<CorePrStatus>(nb::module_& m) {
   nb::class_<CorePrStatus, Note> cls(m, "CorePrStatus");
 
   nb::class_<CorePrStatus::timeval_t>(cls, "timeval_t")
-    .def_rw("sec",  &CorePrStatus::timeval_t::sec)
-    .def_rw("usec", &CorePrStatus::timeval_t::usec);
+      .def_rw("sec", &CorePrStatus::timeval_t::sec)
+      .def_rw("usec", &CorePrStatus::timeval_t::usec);
 
   nb::class_<CorePrStatus::siginfo_t>(cls, "siginfo_t")
-    .def_rw("sicode", &CorePrStatus::siginfo_t::code)
-    .def_rw("errno",  &CorePrStatus::siginfo_t::err)
-    .def_rw("signo",  &CorePrStatus::siginfo_t::signo);
+      .def_rw("sicode", &CorePrStatus::siginfo_t::code)
+      .def_rw("errno", &CorePrStatus::siginfo_t::err)
+      .def_rw("signo", &CorePrStatus::siginfo_t::signo);
 
   nb::class_<CorePrStatus::pr_status_t>(cls, "pr_status_t")
-    .def_rw("info",  &CorePrStatus::pr_status_t::info)
-    .def_rw("cursig",  &CorePrStatus::pr_status_t::cursig)
-    .def_rw("reserved",  &CorePrStatus::pr_status_t::reserved)
-    .def_rw("sigpend",  &CorePrStatus::pr_status_t::sigpend)
-    .def_rw("sighold",  &CorePrStatus::pr_status_t::sighold)
-    .def_rw("pid",  &CorePrStatus::pr_status_t::pid)
-    .def_rw("ppid",  &CorePrStatus::pr_status_t::ppid)
-    .def_rw("pgrp",  &CorePrStatus::pr_status_t::pgrp)
-    .def_rw("sid",  &CorePrStatus::pr_status_t::sid)
-    .def_rw("utime",  &CorePrStatus::pr_status_t::utime)
-    .def_rw("stime",  &CorePrStatus::pr_status_t::stime)
-    .def_rw("cutime",  &CorePrStatus::pr_status_t::cutime)
-    .def_rw("cstime",  &CorePrStatus::pr_status_t::cstime);
+      .def_rw("info", &CorePrStatus::pr_status_t::info)
+      .def_rw("cursig", &CorePrStatus::pr_status_t::cursig)
+      .def_rw("reserved", &CorePrStatus::pr_status_t::reserved)
+      .def_rw("sigpend", &CorePrStatus::pr_status_t::sigpend)
+      .def_rw("sighold", &CorePrStatus::pr_status_t::sighold)
+      .def_rw("pid", &CorePrStatus::pr_status_t::pid)
+      .def_rw("ppid", &CorePrStatus::pr_status_t::ppid)
+      .def_rw("pgrp", &CorePrStatus::pr_status_t::pgrp)
+      .def_rw("sid", &CorePrStatus::pr_status_t::sid)
+      .def_rw("utime", &CorePrStatus::pr_status_t::utime)
+      .def_rw("stime", &CorePrStatus::pr_status_t::stime)
+      .def_rw("cutime", &CorePrStatus::pr_status_t::cutime)
+      .def_rw("cstime", &CorePrStatus::pr_status_t::cstime);
 
   nb::class_<CorePrStatus::Registers> Registers(cls, "Registers");
-  cls
-    .def_prop_rw("status",
-        nb::overload_cast<>(&CorePrStatus::status, nb::const_),
-        nb::overload_cast<const CorePrStatus::pr_status_t&>(&CorePrStatus::status),
-        R"doc(
-        Status information from a core dump
+  cls.def_prop_rw("status", nb::overload_cast<>(&CorePrStatus::status, nb::const_),
+                  nb::overload_cast<const CorePrStatus::pr_status_t&>(
+                      &CorePrStatus::status
+                  ),
+                  R"doc(
+                  Status information from a core dump
 
-        This structure mirrors the kernel's ``prstatus`` data embedded in
-        ``NT_PRSTATUS`` core-dump notes and exposes signal state, process
-        identifiers, and CPU-time accounting.
-        )doc"_doc)
+                  This structure mirrors the kernel's ``prstatus`` data embedded in
+                  ``NT_PRSTATUS`` core-dump notes and exposes signal state, process
+                  identifiers, and CPU-time accounting.
+                  )doc"_doc)
 
-    .def_prop_ro("architecture", &CorePrStatus::architecture,
-        R"doc(Original target architecture.)doc"_doc)
+      .def_prop_ro("architecture", &CorePrStatus::architecture,
+                   "Original target architecture."_doc)
 
-    .def_prop_ro("pc", [] (const CorePrStatus& self) {
-          return LIEF::py::value_or_none(&CorePrStatus::pc, self);
-        },
-        R"doc(
-        Return the program counter value (`rip`, `pc`, `eip` etc)
-        )doc"_doc)
+      .def_prop_ro(
+          "pc",
+          [](const CorePrStatus& self) {
+            return LIEF::py::value_or_none(&CorePrStatus::pc, self);
+          },
+          "Return the program counter value (`rip`, `pc`, `eip` etc)"_doc
+      )
 
-    .def_prop_ro("sp", [] (const CorePrStatus& self) {
-          return LIEF::py::value_or_none(&CorePrStatus::sp, self);
-        },
-        R"doc(
-        Return the stack pointer value
-        )doc"_doc)
+      .def_prop_ro(
+          "sp",
+          [](const CorePrStatus& self) {
+            return LIEF::py::value_or_none(&CorePrStatus::sp, self);
+          },
+          "Return the stack pointer value"_doc
+      )
 
-    .def_prop_ro("return_value", [] (const CorePrStatus& self) {
-          return LIEF::py::value_or_none(&CorePrStatus::return_value, self);
-        },
-        R"doc(
-        The value of the register that holds the return value according to
-        the calling convention.
-        )doc"_doc)
+      .def_prop_ro(
+          "return_value",
+          [](const CorePrStatus& self) {
+            return LIEF::py::value_or_none(&CorePrStatus::return_value, self);
+          },
+          R"doc(
+          The value of the register that holds the return value according to
+          the calling convention.
+          )doc"_doc
+      )
 
-    .def_prop_ro("register_values", &CorePrStatus::register_values,
-      R"doc(
-      List of the register values.
-      This list is **guaranteed** to be as long as the number of registers defined
-      in the :class:`~.Registers` or empty if it can't be resolved.
+      .def_prop_ro("register_values", &CorePrStatus::register_values,
+                   R"doc(
+                   List of the register values.
+                   This list is **guaranteed** to be as long as the number of registers defined
+                   in the :class:`~.Registers` or empty if it can't be resolved.
 
-      Thus, one can access a specific register through:
+                   Thus, one can access a specific register through:
 
-      .. code-block:: python
+                   .. code-block:: python
 
-        reg_vals: list[int] = note.register_values()
-        x20 = reg_vals[CorePrStatus.Registers.AARCH64.X20.value]
-      )doc"_doc
-    )
+                     reg_vals: list[int] = note.register_values()
+                     x20 = reg_vals[CorePrStatus.Registers.AARCH64.X20.value]
+                   )doc"_doc)
 
-    GET_SET_REGISTER(X86)
-    GET_SET_REGISTER(X86_64)
-    GET_SET_REGISTER(ARM)
-    GET_SET_REGISTER(AARCH64)
-    LIEF_DEFAULT_STR(CorePrStatus);
+      .GET_SET_REGISTER(X86)
+      .GET_SET_REGISTER(X86_64)
+      .GET_SET_REGISTER(ARM)
+      .GET_SET_REGISTER(AARCH64)
+      .LIEF_DEFAULT_STR(CorePrStatus);
 
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(CorePrStatus::Registers::X86::X), CorePrStatus::Registers::X86::X)
   enum_<CorePrStatus::Registers::X86>(Registers, "X86",
-    R"doc(
-    Registers for the x86 architecture (:attr:`~.ARCH.i386`)
-    )doc"_doc)
+    "Registers for the x86 architecture (:attr:`~.ARCH.i386`)"_doc)
     ENTRY(EBX)
     ENTRY(ECX)
     ENTRY(EDX)
@@ -150,12 +173,12 @@ void create<CorePrStatus>(nb::module_& m) {
     ENTRY(SS)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(CorePrStatus::Registers::X86_64::X), CorePrStatus::Registers::X86_64::X)
   enum_<CorePrStatus::Registers::X86_64>(Registers, "X86_64",
-    R"doc(
-    Registers for the x86-64 architecture (:attr:`~.ARCH.x86_64`)
-    )doc"_doc)
+    "Registers for the x86-64 architecture (:attr:`~.ARCH.x86_64`)"_doc)
     ENTRY(R15)
     ENTRY(R14)
     ENTRY(R13)
@@ -183,12 +206,12 @@ void create<CorePrStatus>(nb::module_& m) {
     ENTRY(ES)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(CorePrStatus::Registers::ARM::X), CorePrStatus::Registers::ARM::X)
   enum_<CorePrStatus::Registers::ARM>(Registers, "ARM",
-    R"doc(
-    Registers for the ARM architecture (:attr:`~.ARCH.ARM`)
-    )doc"_doc)
+    "Registers for the ARM architecture (:attr:`~.ARCH.ARM`)"_doc)
     ENTRY(R0)
     ENTRY(R1)
     ENTRY(R2)
@@ -208,12 +231,12 @@ void create<CorePrStatus>(nb::module_& m) {
     ENTRY(CPSR)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(CorePrStatus::Registers::AARCH64::X), CorePrStatus::Registers::AARCH64::X)
   enum_<CorePrStatus::Registers::AARCH64>(Registers, "AARCH64",
-    R"doc(
-    Registers for the AARCH64 architecture (:attr:`~.ARCH.AARCH64`)
-    )doc"_doc)
+    "Registers for the AARCH64 architecture (:attr:`~.ARCH.AARCH64`)"_doc)
     ENTRY(X0)
     ENTRY(X1)
     ENTRY(X2)
@@ -250,7 +273,6 @@ void create<CorePrStatus>(nb::module_& m) {
     ENTRY(PSTATE)
   ;
   #undef ENTRY
-
-
+  // clang-format on
 }
 }

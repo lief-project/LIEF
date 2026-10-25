@@ -13,39 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "pySafeString.hpp"
 
-#include "LIEF/ELF/DynamicEntryFilter.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<DynamicEntryFilter>(nb::module_& m) {
-  nb::class_<DynamicEntryFilter, DynamicEntry>(m, "DynamicEntryFilter",
+  nb::class_<DynamicEntryFilter, DynamicEntry>(
+      m, "DynamicEntryFilter",
       R"doc(
       Class which represents a ``DT_FILTER`` entry in the dynamic table.
       This kind of entry is used to specify a shared object for which the
       current one is a filter.
-      )doc"_doc)
+      )doc"_doc
+  )
 
-    .def(nb::init<const std::string &>(),
-        "Constructor from library name"_doc,
-        "library_name"_a)
+      .def(nb::init<const std::string&>(), "Constructor from library name"_doc,
+           "library_name"_a)
 
-    .def_prop_rw("name",
-        [] (const DynamicEntryFilter& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<std::string>(&DynamicEntryFilter::name),
-        "Return the library name"_doc)
+      .def_prop_rw(
+          "name",
+          [](const DynamicEntryFilter& obj) {
+            return LIEF::py::safe_string(obj.name());
+          },
+          nb::overload_cast<std::string>(&DynamicEntryFilter::name),
+          "Return the library name"_doc
+      )
 
-    LIEF_DEFAULT_STR(DynamicEntryFilter);
+      .LIEF_DEFAULT_STR(DynamicEntryFilter);
 }
 
 }

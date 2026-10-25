@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 #include <string_view>
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/unique_ptr.h>
-#include <nanobind/stl/string_view.h>
 #include "nanobind/extra/stl/lief_span.h"
 #include "nanobind/utils.hpp"
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 
@@ -35,10 +35,9 @@ namespace LIEF::ELF::py {
 template<>
 void create<Note>(nb::module_& m) {
   nb::class_<Note, Object> note(m, "Note",
-      R"delim(
-      Class which represents an ELF note.
-      )delim"_doc);
+                                "Class which represents an ELF note."_doc);
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Note::TYPE::X), Note::TYPE::X)
   enum_<Note::TYPE>(note, "TYPE", "LIEF representation of the ELF `NT_` values.")
     ENTRY(UNKNOWN)
@@ -87,77 +86,85 @@ void create<Note>(nb::module_& m) {
     ENTRY(QNX_STACK)
   ;
   #undef ENTRY
+  // clang-format on
 
-  const auto create_overload_0 = nb::overload_cast<std::string_view, uint32_t, Note::description_t, std::string, Header::FILE_TYPE, ARCH, Header::CLASS>(&Note::create);
-  const auto create_overload_1 = nb::overload_cast<std::string_view, Note::TYPE, Note::description_t, std::string, ARCH, Header::CLASS>(&Note::create);
-  note
-    .def_static("create", create_overload_0,
-      R"doc(
-      Create a note from the owner name, the original type (`NT_xxx` value)
-      and the description.
+  const auto create_overload_0 =
+      nb::overload_cast<std::string_view, uint32_t, Note::description_t,
+                        std::string, Header::FILE_TYPE, ARCH, Header::CLASS>(
+          &Note::create
+      );
+  const auto create_overload_1 =
+      nb::overload_cast<std::string_view, Note::TYPE, Note::description_t,
+                        std::string, ARCH, Header::CLASS>(&Note::create);
+  note.def_static(
+          "create", create_overload_0,
+          R"doc(
+          Create a note from the owner name, the original type (`NT_xxx` value)
+          and the description.
 
-      Depending on the note, the filetype, the architecture and the ELF class might be needed.
-      )doc"_doc,
-      "name"_a, "original_type"_a, "description"_a, "section_name"_a,
-      "file_type"_a = Header::FILE_TYPE::NONE, "arch"_a = ARCH::NONE, "cls"_a = Header::CLASS::NONE)
+          Depending on the note, the filetype, the architecture and the ELF class might be needed.
+          )doc"_doc,
+          "name"_a, "original_type"_a, "description"_a, "section_name"_a,
+          "file_type"_a = Header::FILE_TYPE::NONE, "arch"_a = ARCH::NONE,
+          "cls"_a = Header::CLASS::NONE
+  )
 
-    .def_static("create",
-      [] (nb::bytes bytes, std::string section, Header::FILE_TYPE ftype, ARCH arch, Header::CLASS cls) -> std::unique_ptr<Note> {
-        std::unique_ptr<LIEF::SpanStream> stream = to_stream(bytes);
-        if (!stream) {
-          return nullptr;
-        }
-        return Note::create(*stream, std::move(section), ftype, arch, cls);
-      },
-      R"doc(
-      Create a note from the given `bytes` buffer.
+      .def_static(
+          "create",
+          [](nb::bytes bytes, std::string section, Header::FILE_TYPE ftype,
+             ARCH arch, Header::CLASS cls) -> std::unique_ptr<Note> {
+            std::unique_ptr<LIEF::SpanStream> stream = to_stream(bytes);
+            if (!stream) {
+              return nullptr;
+            }
+            return Note::create(*stream, std::move(section), ftype, arch, cls);
+          },
+          R"doc(
+          Create a note from the given `bytes` buffer.
 
-      Depending on the note, the filetype, the architecture and the ELF class might
-      be needed.
-      )doc"_doc,
-      "raw"_a, "section_name"_a = "",
-      "file_type"_a = Header::FILE_TYPE::NONE, "arch"_a = ARCH::NONE,
-      "cls"_a = Header::CLASS::NONE)
+          Depending on the note, the filetype, the architecture and the ELF class might
+          be needed.
+          )doc"_doc,
+          "raw"_a, "section_name"_a = "", "file_type"_a = Header::FILE_TYPE::NONE,
+          "arch"_a = ARCH::NONE, "cls"_a = Header::CLASS::NONE
+      )
 
-    .def_static("create", create_overload_1,
-      R"doc(
-      Create a note from the owner name, the type, and the description
+      .def_static("create", create_overload_1,
+                  R"doc(
+                  Create a note from the owner name, the type, and the description
 
-      Depending on the note, the filetype, the architecture and the ELF class might
-      be needed.
-      )doc"_doc,
-      "name"_a, "type"_a, "description"_a, "section_name"_a,
-      "arch"_a = ARCH::NONE, "cls"_a = Header::CLASS::NONE)
+                  Depending on the note, the filetype, the architecture and the ELF class might
+                  be needed.
+                  )doc"_doc,
+                  "name"_a, "type"_a, "description"_a, "section_name"_a,
+                  "arch"_a = ARCH::NONE, "cls"_a = Header::CLASS::NONE)
 
-    .def_prop_rw("name",
-        nb::overload_cast<>(&Note::name, nb::const_),
-        nb::overload_cast<std::string>(&Note::name),
-        "Return the *name* of the note also known as the owner."_doc)
+      .def_prop_rw("name", nb::overload_cast<>(&Note::name, nb::const_),
+                   nb::overload_cast<std::string>(&Note::name),
+                   "Return the *name* of the note also known as the owner."_doc)
 
-    .def_prop_ro("original_type",
-        nb::overload_cast<>(&Note::original_type, nb::const_),
-        R"doc(
-        Return the original `NT_` value of the note.
+      .def_prop_ro(
+          "original_type", nb::overload_cast<>(&Note::original_type, nb::const_),
+          R"doc(
+          Return the original `NT_` value of the note.
 
-        This value should be interpreted according the :attr:`~.name` of the
-        note.
-        )doc"_doc)
+          This value should be interpreted according the :attr:`~.name` of the
+          note.
+          )doc"_doc
+      )
 
-    .def_prop_ro("type",
-        nb::overload_cast<>(&Note::type, nb::const_),
-        R"doc(
-        Return the LIEF type representation of the note.
-        )doc"_doc)
+      .def_prop_ro("type", nb::overload_cast<>(&Note::type, nb::const_),
+                   "Return the LIEF type representation of the note."_doc)
 
-    .def_prop_rw("description",
-        nb::overload_cast<>(&Note::description, nb::const_),
-        nb::overload_cast<Note::description_t>(&Note::description),
-        "Return the description associated with the note"_doc)
+      .def_prop_rw("description",
+                   nb::overload_cast<>(&Note::description, nb::const_),
+                   nb::overload_cast<Note::description_t>(&Note::description),
+                   "Return the description associated with the note"_doc)
 
-    .def_prop_ro("size", &Note::size, "Size of the **raw** note"_doc)
+      .def_prop_ro("size", &Note::size, "Size of the **raw** note"_doc)
 
-    LIEF_CLONABLE(Note)
-    LIEF_DEFAULT_STR(Note);
+      .LIEF_CLONABLE(Note)
+      .LIEF_DEFAULT_STR(Note);
 }
 
 }

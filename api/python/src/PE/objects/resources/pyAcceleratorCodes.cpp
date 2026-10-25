@@ -21,6 +21,7 @@
 namespace LIEF::PE::py {
 template<>
 void create<ACCELERATOR_CODES>(nb::module_& m) {
+  // clang-format off
   #define ENTRY(X) .value(to_string(ACCELERATOR_CODES::X), ACCELERATOR_CODES::X)
   enum_<ACCELERATOR_CODES>(m, "ACCELERATOR_CODES")
     ENTRY(LBUTTON)
@@ -196,6 +197,6 @@ void create<ACCELERATOR_CODES>(nb::module_& m) {
     ENTRY(OEM_CLEAR)
   ;
   #undef ENTRY
+  // clang-format on
 }
 }
-

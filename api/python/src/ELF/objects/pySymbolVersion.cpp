@@ -19,96 +19,96 @@
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<SymbolVersion>(nb::module_& m) {
   nb::class_<SymbolVersion, LIEF::Object>(m, "SymbolVersion")
-    .def(nb::init<>(),"Default constructor")
-    .def(nb::init<uint16_t>(), "Constructor from :attr:`~lief.SymbolVersion.value`"_doc)
+      .def(nb::init<>(), "Default constructor")
+      .def(nb::init<uint16_t>(),
+           "Constructor from :attr:`~lief.SymbolVersion.value`"_doc)
 
-    .def_prop_ro_static("local",
-        [] (const nb::object&) {
-          return SymbolVersion::local();
-        },
-        "Generate a *local* " RST_CLASS_REF(lief.ELF.SymbolVersion) ""_doc)
+      .def_prop_ro_static(
+          "local", [](const nb::object&) { return SymbolVersion::local(); },
+          "Generate a *local* :class:`~lief.ELF.SymbolVersion`"_doc
+      )
 
-    .def_prop_ro_static("global_",
-        [] (const nb::object&) {
-          return SymbolVersion::global();
-        },
-        "Generate a *global* " RST_CLASS_REF(lief.ELF.SymbolVersion) ""_doc)
+      .def_prop_ro_static(
+          "global_", [](const nb::object&) { return SymbolVersion::global(); },
+          "Generate a *global* :class:`~lief.ELF.SymbolVersion`"_doc
+      )
 
-    .def_prop_rw("value",
-        nb::overload_cast<>(&SymbolVersion::value, nb::const_),
-        nb::overload_cast<uint16_t>(&SymbolVersion::value),
-        R"delim(
-        Value associated with the symbol.
+      .def_prop_rw(
+          "value", nb::overload_cast<>(&SymbolVersion::value, nb::const_),
+          nb::overload_cast<uint16_t>(&SymbolVersion::value),
+          R"delim(
+          Value associated with the symbol.
 
-        If the given SymbolVersion has no auxiliary version:
+          If the given SymbolVersion has no auxiliary version:
 
-        - `0` : The symbol is local
-        - `1` : The symbol is global
+          - `0` : The symbol is local
+          - `1` : The symbol is global
 
-        All other values are used for versions in the own object or in any of
-        the dependencies. This is the version the symbol is tied to.
-        )delim"_doc)
+          All other values are used for versions in the own object or in any of
+          the dependencies. This is the version the symbol is tied to.
+          )delim"_doc
+      )
 
-    .def_prop_ro("version",
-        &SymbolVersion::version,
-        "Version index without the GNU ``VERSYM_HIDDEN`` bit"_doc)
+      .def_prop_ro("version", &SymbolVersion::version,
+                   "Version index without the GNU ``VERSYM_HIDDEN`` bit"_doc)
 
-    .def_prop_ro("is_local",
-        &SymbolVersion::is_local,
-        "Whether this symbol version is local"_doc)
+      .def_prop_ro("is_local", &SymbolVersion::is_local,
+                   "Whether this symbol version is local"_doc)
 
-    .def_prop_ro("is_global",
-        &SymbolVersion::is_global,
-        "Whether this symbol version is global or the base version"_doc)
+      .def_prop_ro("is_global", &SymbolVersion::is_global,
+                   "Whether this symbol version is global or the base version"_doc)
 
-    .def_prop_rw("is_hidden",
-        &SymbolVersion::is_hidden,
-        &SymbolVersion::set_hidden,
-        R"delim(
-        Whether the GNU ``VERSYM_HIDDEN`` bit is set.
+      .def_prop_rw(
+          "is_hidden", &SymbolVersion::is_hidden, &SymbolVersion::set_hidden,
+          R"delim(
+          Whether the GNU ``VERSYM_HIDDEN`` bit is set.
 
-        A hidden version is only available when explicitly referenced by its
-        version name.
-        )delim"_doc)
+          A hidden version is only available when explicitly referenced by its
+          version name.
+          )delim"_doc
+      )
 
-    .def_prop_ro("has_auxiliary_version",
-        &SymbolVersion::has_auxiliary_version,
-        "Check if this symbols has a " RST_CLASS_REF(lief.ELF.SymbolVersionAux) ""_doc)
+      .def_prop_ro(
+          "has_auxiliary_version", &SymbolVersion::has_auxiliary_version,
+          "Check if this symbols has a :class:`~lief.ELF.SymbolVersionAux`"_doc
+      )
 
-    .def_prop_rw(
-        "symbol_version_auxiliary",
-        nb::overload_cast<>(&SymbolVersion::symbol_version_auxiliary),
-        nb::overload_cast<SymbolVersionAuxRequirement&>(&SymbolVersion::symbol_version_auxiliary),
-        R"delim(
-        Return the :class:`~lief.ELF.SymbolVersionAux` associated with this version or None if not present.
+      .def_prop_rw("symbol_version_auxiliary",
+                   nb::overload_cast<>(&SymbolVersion::symbol_version_auxiliary),
+                   nb::overload_cast<SymbolVersionAuxRequirement&>(
+                       &SymbolVersion::symbol_version_auxiliary
+                   ),
+                   R"delim(
+                   Return the :class:`~lief.ELF.SymbolVersionAux` associated with this version or None if not present.
 
-        The value can be changed by assigning a :class:`~lief.ELF.SymbolVersionAuxRequirement` which
-        must already exist in the :class:`~lief.ELF.SymbolVersionRequirement`. One can use
-        :meth:`~lief.ELF.SymbolVersionAuxRequirement.add_aux_requirement` to add a new
-        :class:`~lief.ELF.SymbolVersionAuxRequirement`.
-        )delim"_doc,
-        nb::rv_policy::reference_internal)
+                   The value can be changed by assigning a :class:`~lief.ELF.SymbolVersionAuxRequirement` which
+                   must already exist in the :class:`~lief.ELF.SymbolVersionRequirement`. One can use
+                   :meth:`~lief.ELF.SymbolVersionAuxRequirement.add_aux_requirement` to add a new
+                   :class:`~lief.ELF.SymbolVersionAuxRequirement`.
+                   )delim"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def("drop_version", &SymbolVersion::drop_version,
-         "Drop the versioning requirement and replace the value (local/global)"_doc,
-         "value"_a)
+      .def(
+          "drop_version", &SymbolVersion::drop_version,
+          "Drop the versioning requirement and replace the value (local/global)"_doc,
+          "value"_a
+      )
 
-    .def("as_global", &SymbolVersion::as_global,
-         "Redefine this version as global by dropping its auxiliary version"_doc)
+      .def("as_global", &SymbolVersion::as_global,
+           "Redefine this version as global by dropping its auxiliary version"_doc)
 
-    .def("as_local", &SymbolVersion::as_local,
-         "Redefine this version as local by dropping its auxiliary version"_doc)
+      .def("as_local", &SymbolVersion::as_local,
+           "Redefine this version as local by dropping its auxiliary version"_doc)
 
-    LIEF_DEFAULT_STR(SymbolVersion);
-
+      .LIEF_DEFAULT_STR(SymbolVersion);
 }
 }

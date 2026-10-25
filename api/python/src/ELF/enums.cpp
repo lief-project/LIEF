@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 #include "ELF/enums.hpp"
-#include "LIEF/ELF/enums.hpp"
 #include "LIEF/ELF/EnumToString.hpp"
+#include "LIEF/ELF/enums.hpp"
 #include "enums_wrapper.hpp"
 
 namespace LIEF::ELF::py {
 void init_enums(nb::module_& m) {
+  // clang-format off
   #define ENTRY(X) .value(to_string(ARCH::X), ARCH::X)
   enum_<ARCH>(m, "ARCH")
     ENTRY(NONE)
@@ -204,5 +205,6 @@ void init_enums(nb::module_& m) {
     ENTRY(ALPHA_ALT)
   ;
   #undef ENTRY
+  // clang-format on
 }
 }

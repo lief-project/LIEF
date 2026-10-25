@@ -1,74 +1,83 @@
-#include <sstream>
-#include "LIEF/PDB/CompilationUnit.hpp"
-#include "LIEF/PDB/BuildMetadata.hpp"
 #include "LIEF/DebugDeclOpt.hpp"
+#include "LIEF/PDB/BuildMetadata.hpp"
+#include "LIEF/PDB/CompilationUnit.hpp"
 #include "PDB/pyPDB.hpp"
+#include <sstream>
 
+#include <nanobind/make_iterator.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
 #include <nanobind/stl/unique_ptr.h>
-#include <nanobind/make_iterator.h>
 
 #include "pyOwningIterator.hpp"
 
 namespace LIEF::pdb::py {
 template<>
 void create<pdb::CompilationUnit>(nb::module_& m) {
-  nb::class_<pdb::CompilationUnit>(m, "CompilationUnit",
-    R"doc(
-    This class represents a Compilation Unit (or Module) in a PDB file
-    )doc"_doc
+  nb::class_<pdb::CompilationUnit>(
+      m, "CompilationUnit",
+      "This class represents a Compilation Unit (or Module) in a PDB file"_doc
   )
-    .def_prop_ro("module_name", &pdb::CompilationUnit::module_name,
-      R"doc(
-      Name (or path) to the COFF object (``.obj``) associated with this
-      compilation unit (e.g. ``e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvlp.obj``)
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "module_name", &pdb::CompilationUnit::module_name,
+          R"doc(
+          Name (or path) to the COFF object (``.obj``) associated with this
+          compilation unit (e.g. ``e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvlp.obj``)
+          )doc"_doc
+      )
 
-    .def_prop_ro("object_filename", &pdb::CompilationUnit::object_filename,
-      R"doc(
-      Name of path to the original binary object (COFF, Archive) in which
-      the compilation unit was located before being linked.
-      e.g. ``e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvl.lib``
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "object_filename", &pdb::CompilationUnit::object_filename,
+          R"doc(
+          Name of path to the original binary object (COFF, Archive) in which
+          the compilation unit was located before being linked.
+          e.g. ``e:\obj.amd64fre\minkernel\ntos\hvl\mp\objfre\amd64\hvl.lib``
+          )doc"_doc
+      )
 
-    .def_prop_ro("sources",
-        [] (const pdb::CompilationUnit& self) {
-          auto sources = self.sources();
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<pdb::CompilationUnit>(), "sources_it", sources);
-        },
-      R"doc(
-      Iterator over the sources files that compose this compilation unit.
-      These files include **headers** (``.h, .hpp``, ...).
-      )doc"_doc, nb::keep_alive<0, 1>()
-    )
-    .def_prop_ro("functions",
-        [] (const pdb::CompilationUnit& self) {
-          auto functions = LIEF::py::owning_range(self.functions());
-          return nb::make_iterator<nb::rv_policy::reference_internal>(
-              nb::type<pdb::CompilationUnit>(), "functions_it", functions.begin(), functions.end(),
-            nb::keep_alive<0, 1>());
-        },
-      R"doc(
-      Return an iterator over the functions defined in this compilation unit.
-      If the PDB does not contain or has an empty DBI stream, it returns
-      an empty iterator.
-      )doc"_doc, nb::keep_alive<0, 1>()
-    )
-    .def_prop_ro("build_metadata", &CompilationUnit::build_metadata,
-                 nb::rv_policy::take_ownership, nb::keep_alive<0, 1>())
+      .def_prop_ro(
+          "sources",
+          [](const pdb::CompilationUnit& self) {
+            auto sources = self.sources();
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<pdb::CompilationUnit>(), "sources_it", sources
+            );
+          },
+          R"doc(
+          Iterator over the sources files that compose this compilation unit.
+          These files include **headers** (``.h, .hpp``, ...).
+          )doc"_doc,
+          nb::keep_alive<0, 1>()
+      )
+      .def_prop_ro(
+          "functions",
+          [](const pdb::CompilationUnit& self) {
+            auto functions = LIEF::py::owning_range(self.functions());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<pdb::CompilationUnit>(), "functions_it",
+                functions.begin(), functions.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          R"doc(
+          Return an iterator over the functions defined in this compilation unit.
+          If the PDB does not contain or has an empty DBI stream, it returns
+          an empty iterator.
+          )doc"_doc,
+          nb::keep_alive<0, 1>()
+      )
+      .def_prop_ro("build_metadata", &CompilationUnit::build_metadata,
+                   nb::rv_policy::take_ownership, nb::keep_alive<0, 1>())
 
-    .def("to_decl",
-         [] (const pdb::CompilationUnit& self, const DeclOpt* opt) {
-           return opt ? self.to_decl(*opt) : self.to_decl();
-         },
-         "Generates a C/C++ definition for the functions defined in this "
-         "compilation unit"_doc,
-         "opt"_a.none() = nb::none())
-  LIEF_DEFAULT_STR(CompilationUnit);
+      .def(
+          "to_decl",
+          [](const pdb::CompilationUnit& self, const DeclOpt* opt) {
+            return opt ? self.to_decl(*opt) : self.to_decl();
+          },
+          "Generates a C/C++ definition for the functions defined in this "
+          "compilation unit"_doc,
+          "opt"_a.none() = nb::none()
+      )
+      .LIEF_DEFAULT_STR(CompilationUnit);
 }
 
 }

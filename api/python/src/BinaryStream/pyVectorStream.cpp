@@ -19,31 +19,40 @@
 #include <nanobind/stl/unique_ptr.h>
 #include <nanobind/utils.hpp>
 
+#include "typing/StrOrPath.hpp"
 #include "nanobind/extra/memoryview.hpp"
 #include "nanobind/extra/stl/lief_result.h"
-#include "typing/StrOrPath.hpp"
 
 namespace LIEF::py {
 template<>
 void create<VectorStream>(nb::module_& m) {
   nb::class_<VectorStream, BinaryStream>(m, "VectorStream")
-    .def_static("from_file", [] (typing::StrOrPath path) {
-      return VectorStream::from_file(*path.to_string());
-    }, "path"_a)
+      .def_static(
+          "from_file",
+          [](typing::StrOrPath path) {
+            return VectorStream::from_file(*path.to_string());
+          },
+          "path"_a
+      )
 
-    .def_static("from_bytes", [] (nb::bytes buffer) {
-      return std::make_unique<VectorStream>(nb::to_vector(buffer));
-    }, "buffer"_a)
+      .def_static(
+          "from_bytes",
+          [](nb::bytes buffer) {
+            return std::make_unique<VectorStream>(nb::to_vector(buffer));
+          },
+          "buffer"_a
+      )
 
-    .def_prop_ro("content", [] (VectorStream& self) {
-      return nb::to_memoryview(self.content());
-    })
+      .def_prop_ro("content",
+                   [](VectorStream& self) {
+                     return nb::to_memoryview(self.content());
+                   })
 
-    .def("slice", nb::overload_cast<uint32_t, size_t>(&VectorStream::slice, nb::const_),
-        "offset", "size")
+      .def("slice",
+           nb::overload_cast<uint32_t, size_t>(&VectorStream::slice, nb::const_),
+           "offset", "size")
 
-    .def("slice", nb::overload_cast<uint32_t>(&VectorStream::slice, nb::const_),
-        "offset")
-  ;
+      .def("slice", nb::overload_cast<uint32_t>(&VectorStream::slice, nb::const_),
+           "offset");
 }
 }

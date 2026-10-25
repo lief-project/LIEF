@@ -4,95 +4,112 @@
 #include "LIEF/PDB/DebugInfo.hpp"
 #include "PDB/pyPDB.hpp"
 
+#include <nanobind/extra/stl/pathlike.h>
 #include <nanobind/make_iterator.h>
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <nanobind/extra/stl/pathlike.h>
+#include <nanobind/stl/unique_ptr.h>
 
 #include "pyOwningIterator.hpp"
 
 namespace LIEF::pdb::py {
 template<>
 void create<pdb::DebugInfo>(nb::module_& m) {
-  nb::class_<pdb::DebugInfo, LIEF::DebugInfo> dbg_info(m, "DebugInfo",
-    R"doc(
-    This class provides an interface for PDB files.
+  nb::class_<pdb::DebugInfo, LIEF::DebugInfo> dbg_info(
+      m, "DebugInfo",
+      R"doc(
+      This class provides an interface for PDB files.
 
-    One can instantiate this class using :func:`lief.pdb.load` or
-    :meth:`lief.pdb.DebugInfo.from_file`
-    )doc"_doc
+      One can instantiate this class using :func:`lief.pdb.load` or
+      :meth:`lief.pdb.DebugInfo.from_file`
+      )doc"_doc
   );
   dbg_info
-    .def_prop_ro("age", &pdb::DebugInfo::age,
-                 "The number of times the PDB file has been written."_doc)
+      .def_prop_ro("age", &pdb::DebugInfo::age,
+                   "The number of times the PDB file has been written."_doc)
 
-    .def_prop_ro("guid", &pdb::DebugInfo::guid,
-                 "Unique identifier of the PDB file."_doc)
+      .def_prop_ro("guid", &pdb::DebugInfo::guid,
+                   "Unique identifier of the PDB file."_doc)
 
-    .def_static("from_file",
-      [] (nb::PathLike path) { return pdb::DebugInfo::from_file(path.to_string()); },
-      R"doc(
-      Instantiate this class from the given PDB file. It returns ``None``
-      if the PDB can't be processed.
-      )doc"_doc, "filepath"_a
-    )
+      .def_static(
+          "from_file",
+          [](nb::PathLike path) {
+            return pdb::DebugInfo::from_file(path.to_string());
+          },
+          R"doc(
+          Instantiate this class from the given PDB file. It returns ``None``
+          if the PDB can't be processed.
+          )doc"_doc,
+          "filepath"_a
+      )
 
-    .def("find_type", nb::overload_cast<std::string_view>(&pdb::DebugInfo::find_type, nb::const_),
-      "Find the type with the given name"_doc, "name"_a, nb::keep_alive<0, 1>()
-    )
+      .def("find_type",
+           nb::overload_cast<std::string_view>(&pdb::DebugInfo::find_type,
+                                               nb::const_),
+           "Find the type with the given name"_doc, "name"_a,
+           nb::keep_alive<0, 1>())
 
-    .def("find_type", nb::overload_cast<uint32_t>(&pdb::DebugInfo::find_type, nb::const_),
-      "Find type at the given index"_doc, "index"_a, nb::keep_alive<0, 1>()
-    )
+      .def("find_type",
+           nb::overload_cast<uint32_t>(&pdb::DebugInfo::find_type, nb::const_),
+           "Find type at the given index"_doc, "index"_a, nb::keep_alive<0, 1>())
 
-    .def("find_public_symbol", &pdb::DebugInfo::find_public_symbol,
-      R"doc(
-      Try to find the PublicSymbol from the given name (based on the public symbol stream)
-      The function returns ``None`` if the symbol can't be found.
+      .def("find_public_symbol", &pdb::DebugInfo::find_public_symbol,
+           R"doc(
+           Try to find the PublicSymbol from the given name (based on the public symbol stream)
+           The function returns ``None`` if the symbol can't be found.
 
-      .. code-block:: python
+           .. code-block:: python
 
-        debug_info: lief.pdb.DebugInfo = ...
-        if sym := debug_info.find_public_symbol("MiSyncSystemPdes"):
-            print("found")
-      )doc"_doc, "name"_a, nb::keep_alive<0, 1>()
-    )
-    .def_prop_ro("public_symbols",
-      [] (pdb::DebugInfo& self) {
-        auto symbols = LIEF::py::owning_range(self.public_symbols());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<pdb::DebugInfo>(), "public_symbols_it", symbols.begin(), symbols.end(),
-            nb::keep_alive<0, 1>());
-      },
-      R"doc(
-      Return an iterator over the public symbol stream.
-      )doc"_doc, nb::keep_alive<0, 1>())
+             debug_info: lief.pdb.DebugInfo = ...
+             if sym := debug_info.find_public_symbol("MiSyncSystemPdes"):
+                 print("found")
+           )doc"_doc,
+           "name"_a, nb::keep_alive<0, 1>())
+      .def_prop_ro(
+          "public_symbols",
+          [](pdb::DebugInfo& self) {
+            auto symbols = LIEF::py::owning_range(self.public_symbols());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<pdb::DebugInfo>(), "public_symbols_it", symbols.begin(),
+                symbols.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          "Return an iterator over the public symbol stream."_doc,
+          nb::keep_alive<0, 1>()
+      )
 
-    .def_prop_ro("compilation_units",
-      [] (pdb::DebugInfo& self) {
-        auto units = LIEF::py::owning_range(self.compilation_units());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<pdb::DebugInfo>(), "compilation_units_it", units.begin(), units.end(),
-            nb::keep_alive<0, 1>());
-      },
-      R"doc(
-      Iterator over the :class:`.CompilationUnit` from the PDB's DBI stream.
-      CompilationUnit are also named "Module" in the PDB's official documentation
-      )doc"_doc, nb::keep_alive<0, 1>())
+      .def_prop_ro(
+          "compilation_units",
+          [](pdb::DebugInfo& self) {
+            auto units = LIEF::py::owning_range(self.compilation_units());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<pdb::DebugInfo>(), "compilation_units_it", units.begin(),
+                units.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          R"doc(
+          Iterator over the :class:`.CompilationUnit` from the PDB's DBI stream.
+          CompilationUnit are also named "Module" in the PDB's official documentation
+          )doc"_doc,
+          nb::keep_alive<0, 1>()
+      )
 
-    .def_prop_ro("types",
-      [] (pdb::DebugInfo& self) {
-        auto types = LIEF::py::owning_range(self.types());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-            nb::type<pdb::DebugInfo>(), "types_it", types.begin(), types.end(),
-            nb::keep_alive<0, 1>());
-      },
-      R"doc(
-      Return an iterator over the different types registered in this PDB file
-      )doc"_doc, nb::keep_alive<0, 1>())
+      .def_prop_ro(
+          "types",
+          [](pdb::DebugInfo& self) {
+            auto types = LIEF::py::owning_range(self.types());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<pdb::DebugInfo>(), "types_it", types.begin(), types.end(),
+                nb::keep_alive<0, 1>()
+            );
+          },
+          R"doc(
+          Return an iterator over the different types registered in this PDB file
+          )doc"_doc,
+          nb::keep_alive<0, 1>()
+      )
 
-    LIEF_DEFAULT_STR(DebugInfo);
+      .LIEF_DEFAULT_STR(DebugInfo);
 }
 
 }

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/DylibCommand.hpp"
 
@@ -26,67 +26,82 @@
 namespace LIEF::MachO::py {
 template<>
 void create<DylibCommand>(nb::module_& m) {
-  nb::class_<DylibCommand, LoadCommand>(m, "DylibCommand",
-      R"delim(Class which represents a library dependency)delim"_doc)
+  nb::class_<DylibCommand, LoadCommand>(
+      m, "DylibCommand", "Class which represents a library dependency"_doc
+  )
 
-    .def_prop_rw("name",
-        nb::overload_cast<>(&DylibCommand::name, nb::const_),
-        nb::overload_cast<std::string>(&DylibCommand::name),
-        "Library's name"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_rw("name", nb::overload_cast<>(&DylibCommand::name, nb::const_),
+                   nb::overload_cast<std::string>(&DylibCommand::name),
+                   "Library's name"_doc, nb::rv_policy::reference_internal)
 
-    .def_prop_ro("name_offset", &DylibCommand::name_offset,
-                 "Original string offset of the name")
+      .def_prop_ro("name_offset", &DylibCommand::name_offset,
+                   "Original string offset of the name")
 
-    .def_prop_rw("timestamp",
-        nb::overload_cast<>(&DylibCommand::timestamp, nb::const_),
-        nb::overload_cast<uint32_t>(&DylibCommand::timestamp),
-        "Library's timestamp"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_rw("timestamp",
+                   nb::overload_cast<>(&DylibCommand::timestamp, nb::const_),
+                   nb::overload_cast<uint32_t>(&DylibCommand::timestamp),
+                   "Library's timestamp"_doc, nb::rv_policy::reference_internal)
 
-    .def_prop_rw("current_version",
-        nb::overload_cast<>(&DylibCommand::current_version, nb::const_),
-        nb::overload_cast<DylibCommand::version_t>(&DylibCommand::current_version),
-        "Library's current version"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_rw("current_version",
+                   nb::overload_cast<>(&DylibCommand::current_version, nb::const_),
+                   nb::overload_cast<DylibCommand::version_t>(
+                       &DylibCommand::current_version
+                   ),
+                   "Library's current version"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("compatibility_version",
-        nb::overload_cast<>(&DylibCommand::compatibility_version, nb::const_),
-        nb::overload_cast<DylibCommand::version_t>(&DylibCommand::compatibility_version),
-        "Library's compatibility version"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_rw(
+          "compatibility_version",
+          nb::overload_cast<>(&DylibCommand::compatibility_version, nb::const_),
+          nb::overload_cast<DylibCommand::version_t>(
+              &DylibCommand::compatibility_version
+          ),
+          "Library's compatibility version"_doc, nb::rv_policy::reference_internal
+      )
 
-    .def_static("weak_lib",
-        &DylibCommand::weak_dylib,
-        "Factory function to generate a " RST_CLASS_REF(lief.MachO.LoadCommand.TYPE.LOAD_WEAK_DYLIB) " library"_doc,
-        "name"_a, "timestamp"_a = 0, "current_version"_a = 0, "compat_version"_a = 0)
+      .def_static(
+          "weak_lib", &DylibCommand::weak_dylib,
+          "Factory function to generate a :class:`~lief.MachO.LoadCommand.TYPE.LOAD_WEAK_DYLIB` library"_doc,
+          "name"_a, "timestamp"_a = 0, "current_version"_a = 0,
+          "compat_version"_a = 0
+      )
 
-    .def_static("id_dylib",
-        &DylibCommand::id_dylib,
-        "Factory function to generate a " RST_CLASS_REF(lief.MachO.LoadCommand.TYPE.ID_DYLIB) " library"_doc,
-        "name"_a, "timestamp"_a = 0, "current_version"_a = 0, "compat_version"_a = 0)
+      .def_static(
+          "id_dylib", &DylibCommand::id_dylib,
+          "Factory function to generate a :class:`~lief.MachO.LoadCommand.TYPE.ID_DYLIB` library"_doc,
+          "name"_a, "timestamp"_a = 0, "current_version"_a = 0,
+          "compat_version"_a = 0
+      )
 
-    .def_static("load_dylib",
-        &DylibCommand::load_dylib,
-        "Factory function to generate a " RST_CLASS_REF(lief.MachO.LoadCommand.TYPE.LOAD_DYLIB) " library"_doc,
-        "name"_a, "timestamp"_a = 0, "current_version"_a = 0, "compat_version"_a = 0)
+      .def_static(
+          "load_dylib", &DylibCommand::load_dylib,
+          "Factory function to generate a :class:`~lief.MachO.LoadCommand.TYPE.LOAD_DYLIB` library"_doc,
+          "name"_a, "timestamp"_a = 0, "current_version"_a = 0,
+          "compat_version"_a = 0
+      )
 
-    .def_static("reexport_dylib",
-        &DylibCommand::reexport_dylib,
-        "Factory function to generate a " RST_CLASS_REF(lief.MachO.LoadCommand.TYPE.REEXPORT_DYLIB) " library"_doc,
-        "name"_a, "timestamp"_a = 0, "current_version"_a = 0, "compat_version"_a = 0)
+      .def_static(
+          "reexport_dylib", &DylibCommand::reexport_dylib,
+          "Factory function to generate a :class:`~lief.MachO.LoadCommand.TYPE.REEXPORT_DYLIB` library"_doc,
+          "name"_a, "timestamp"_a = 0, "current_version"_a = 0,
+          "compat_version"_a = 0
+      )
 
-    .def_static("load_upward_dylib",
-        &DylibCommand::load_upward_dylib,
-        "Factory function to generate a " RST_CLASS_REF(lief.MachO.LoadCommand.TYPE.LOAD_UPWARD_DYLIB) " library"_doc,
-        "name"_a, "timestamp"_a = 0, "current_version"_a = 0, "compat_version"_a = 0)
+      .def_static(
+          "load_upward_dylib", &DylibCommand::load_upward_dylib,
+          "Factory function to generate a :class:`~lief.MachO.LoadCommand.TYPE.LOAD_UPWARD_DYLIB` library"_doc,
+          "name"_a, "timestamp"_a = 0, "current_version"_a = 0,
+          "compat_version"_a = 0
+      )
 
-    .def_static("lazy_load_dylib",
-        &DylibCommand::lazy_load_dylib,
-        "Factory function to generate a " RST_CLASS_REF(lief.MachO.LoadCommand.TYPE.LAZY_LOAD_DYLIB) " library"_doc,
-        "name"_a, "timestamp"_a = 0, "current_version"_a = 0, "compat_version"_a = 0)
+      .def_static(
+          "lazy_load_dylib", &DylibCommand::lazy_load_dylib,
+          "Factory function to generate a :class:`~lief.MachO.LoadCommand.TYPE.LAZY_LOAD_DYLIB` library"_doc,
+          "name"_a, "timestamp"_a = 0, "current_version"_a = 0,
+          "compat_version"_a = 0
+      )
 
-    LIEF_DEFAULT_STR(DylibCommand);
+      .LIEF_DEFAULT_STR(DylibCommand);
 }
 
 }

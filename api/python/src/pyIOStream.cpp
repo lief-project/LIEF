@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 #include "pyIOStream.hpp"
-#include "nanobind/extra/memoryview.hpp"
-#include "pyutils.hpp"
 #include "LIEF/logging.hpp"
+#include "pyutils.hpp"
+#include "nanobind/extra/memoryview.hpp"
 
 static constexpr int PY_SEEK_SET = 0;
 static constexpr int PY_SEEK_END = 2;
@@ -31,13 +31,13 @@ result<PyIOStream> PyIOStream::from_python(nb::object object) {
 
   if (!nb::isinstance(object, IOBase)) {
     logging::log(logging::Level::Err,
-        "The provided io object does not sub-class io.IOBase");
+                 "The provided io object does not sub-class io.IOBase");
     return make_error_code(lief_errors::read_error);
   }
 
   if (!nb::hasattr(object, "read") && !nb::hasattr(object, "readinto")) {
     logging::log(logging::Level::Err,
-        "The provided io object does not implement read() or readinto()");
+                 "The provided io object does not implement read() or readinto()");
     return make_error_code(lief_errors::read_error);
   }
 
@@ -57,8 +57,7 @@ result<PyIOStream> PyIOStream::from_python(nb::object object) {
   if (nb::hasattr(object, "readinto")) {
     auto view = nb::extra::memoryview::from_memory(data.data(), size);
     object.attr("readinto")(view);
-  }
-  else if (nb::hasattr(object, "read")) {
+  } else if (nb::hasattr(object, "read")) {
     auto content = nb::cast<nb::bytes>(object.attr("read")(size));
     std::string tmp(content.c_str(), content.size());
     std::move(std::begin(tmp), std::end(tmp), data.data());
@@ -69,8 +68,7 @@ result<PyIOStream> PyIOStream::from_python(nb::object object) {
 
 PyIOStream::PyIOStream(nb::object io, std::vector<uint8_t> data) :
   VectorStream(std::move(data)),
-  io_{std::move(io)}
-{}
+  io_{std::move(io)} {}
 
 
 PyIOStream::~PyIOStream() = default;

@@ -19,15 +19,15 @@
 #include "pyutils.hpp"
 #include "typing/InputParser.hpp"
 
-#include "LIEF/OAT/Parser.hpp"
 #include "LIEF/OAT/Binary.hpp"
+#include "LIEF/OAT/Parser.hpp"
 #include "LIEF/logging.hpp"
 
-#include <string>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
+#include <string>
 
 namespace LIEF::OAT::py {
 
@@ -35,38 +35,48 @@ template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
-  m.def("parse",
-    static_cast<std::unique_ptr<Binary>(*)(std::string_view)>(&Parser::parse),
-    "Parse the given OAT file and return a " RST_CLASS_REF(lief.OAT.Binary) " object"_doc,
-    "oat_file"_a, nb::rv_policy::take_ownership);
+  m.def(
+      "parse",
+      static_cast<std::unique_ptr<Binary> (*)(std::string_view)>(&Parser::parse),
+      "Parse the given OAT file and return a :class:`~lief.OAT.Binary` object"_doc,
+      "oat_file"_a, nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-    static_cast<std::unique_ptr<Binary>(*)(std::string_view, std::string_view)>(
-        &Parser::parse),
-    "Parse the given OAT with its VDEX file and return a " RST_CLASS_REF(lief.OAT.Binary) " object"_doc,
-    "oat_file"_a, "vdex_file"_a, nb::rv_policy::take_ownership);
+  m.def(
+      "parse",
+      static_cast<std::unique_ptr<Binary> (*)(std::string_view, std::string_view)>(
+          &Parser::parse
+      ),
+      "Parse the given OAT with its VDEX file and return a :class:`~lief.OAT.Binary` object"_doc,
+      "oat_file"_a, "vdex_file"_a, nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-    static_cast<std::unique_ptr<Binary>(*)(std::vector<uint8_t>)>(&Parser::parse),
-    "Parse the given raw data and return a " RST_CLASS_REF(lief.OAT.Binary) " object"_doc,
-    "raw"_a, nb::rv_policy::take_ownership);
+  m.def(
+      "parse",
+      static_cast<std::unique_ptr<Binary> (*)(std::vector<uint8_t>)>(
+          &Parser::parse
+      ),
+      "Parse the given raw data and return a :class:`~lief.OAT.Binary` object"_doc,
+      "raw"_a, nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-    [] (typing::InputParser obj) -> std::unique_ptr<Binary> {
-      if (auto path_str = path_to_str(obj)) {
-        return Parser::parse(std::move(*path_str));
-      }
+  m.def(
+      "parse",
+      [](typing::InputParser obj) -> std::unique_ptr<Binary> {
+        if (auto path_str = path_to_str(obj)) {
+          return Parser::parse(std::move(*path_str));
+        }
 
-      if (auto stream = PyIOStream::from_python(obj)) {
-        auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-        return Parser::parse(stream->content());
-      }
-      logging::log(logging::Level::Err,
-                   "LIEF parser interface does not support Python object: " +
-                   type2str(obj));
-      return nullptr;
-    },
-    "obj"_a,
-    nb::rv_policy::take_ownership);
+        if (auto stream = PyIOStream::from_python(obj)) {
+          auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
+          return Parser::parse(stream->content());
+        }
+        logging::log(logging::Level::Err,
+                     "LIEF parser interface does not support Python object: " +
+                         type2str(obj));
+        return nullptr;
+      },
+      "obj"_a, nb::rv_policy::take_ownership
+  );
 }
 }

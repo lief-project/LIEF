@@ -1,126 +1,106 @@
-#include "LIEF/DWARF/Variable.hpp"
-#include "LIEF/DWARF/Scope.hpp"
-#include "LIEF/DWARF/Type.hpp"
 #include "DWARF/pyDwarf.hpp"
 #include "DWARF/pyLocation.hpp"
-#include "pyErr.hpp"
 #include "DWARF/pyTypes.hpp"
+#include "LIEF/DWARF/Scope.hpp"
+#include "LIEF/DWARF/Type.hpp"
+#include "LIEF/DWARF/Variable.hpp"
+#include "pyErr.hpp"
 
 
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
 
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::Variable>(nb::module_& m) {
-  nb::class_<dw::Variable> var(m, "Variable",
-    R"doc(
-    This class represents a DWARF variable which can be owned by a
-    :class:`~.Function` or a :class:`~.CompilationUnit`.
-    )doc"_doc
+  nb::class_<dw::Variable> var(
+      m, "Variable",
+      R"doc(
+      This class represents a DWARF variable which can be owned by a
+      :class:`~.Function` or a :class:`~.CompilationUnit`.
+      )doc"_doc
   );
 
-  var
-    .def_prop_ro("name", &dw::Variable::name,
-      R"doc(
-      Name of the variable (usually demangled)
-      )doc"_doc
-    )
-    .def_prop_ro("linkage_name", &dw::Variable::linkage_name,
-      R"doc(
-      The name of the variable which is used for linking (``DW_AT_linkage_name``).
+  var.def_prop_ro("name", &dw::Variable::name,
+                  "Name of the variable (usually demangled)"_doc)
+      .def_prop_ro("linkage_name", &dw::Variable::linkage_name,
+                   R"doc(
+                   The name of the variable which is used for linking (``DW_AT_linkage_name``).
 
-      This name differs from :attr:`~.name` as it is usually mangled. The function
-      returns an empty string if the linkage name is not available.
-      )doc"_doc
-    )
-    .def_prop_ro("address",
-      [] (const dw::Variable& self) {
-          return LIEF::py::value_or_none(&dw::Variable::address, self);
-      },
-      R"doc(
-      Address of the variable.
+                   This name differs from :attr:`~.name` as it is usually mangled. The function
+                   returns an empty string if the linkage name is not available.
+                   )doc"_doc)
+      .def_prop_ro(
+          "address",
+          [](const dw::Variable& self) {
+            return LIEF::py::value_or_none(&dw::Variable::address, self);
+          },
+          R"doc(
+          Address of the variable.
 
-      If the variable is **static**, it returns the **virtual address**
-      where it is defined.
-      If the variable is stack-based, it returns the **relative offset** from
-      the frame-base register.
+          If the variable is **static**, it returns the **virtual address**
+          where it is defined.
+          If the variable is stack-based, it returns the **relative offset** from
+          the frame-base register.
 
-      If the address can't be resolved, it returns ``None``.
-      )doc"_doc
-    )
-    .def_prop_ro("size",
-      [] (const dw::Variable& self) {
-          return LIEF::py::value_or_none(&dw::Variable::size, self);
-      },
-      R"doc(
-      Return the size of the variable (or a lief_errors if it can't be
-      resolved).
+          If the address can't be resolved, it returns ``None``.
+          )doc"_doc
+      )
+      .def_prop_ro(
+          "size",
+          [](const dw::Variable& self) {
+            return LIEF::py::value_or_none(&dw::Variable::size, self);
+          },
+          R"doc(
+          Return the size of the variable (or a lief_errors if it can't be
+          resolved).
 
-      This size is defined by the type of the variable.
-      )doc"_doc
-    )
-    .def_prop_ro("is_constexpr",
-      &dw::Variable::is_constexpr,
-      R"doc(
-      Whether it's a ``constexpr`` variable.
-      )doc"_doc
-    )
-    .def_prop_ro("is_stack_based",
-      &dw::Variable::is_stack_based,
-      "Whether this variable is allocated on the stack"_doc
-    )
-    .def_prop_ro("location",
-      nb::overload_cast<>(&dw::Variable::location, nb::const_),
-      R"doc(
-      Location of this variable.
-      )doc"_doc
-    )
-    .def("location_at",
-      nb::overload_cast<uint64_t>(&dw::Variable::location, nb::const_),
-      R"doc(
-      Location of this variable when PC is at the given
-      address.
-      )doc"_doc, "pc"_a
-    )
-    .def_prop_ro("locations", &dw::Variable::locations,
-      R"doc(
-      All the location entries of this variable.
-      )doc"_doc
-    )
-    .def_prop_ro("debug_location",
-      &dw::Variable::debug_location,
-      R"doc(
-      The original source location where the variable is defined.
-      )doc"_doc
-    )
-    .def_prop_ro("type", &dw::Variable::type,
-      R"doc(
-      Return the type of this variable.
-      )doc"_doc, nb::keep_alive<0, 1>()
-    )
-    .def_prop_ro("scope", &dw::Variable::scope,
-      R"doc(
-      Scope in which this variable is defined
-      )doc"_doc, nb::keep_alive<0, 1>()
-    )
+          This size is defined by the type of the variable.
+          )doc"_doc
+      )
+      .def_prop_ro("is_constexpr", &dw::Variable::is_constexpr,
+                   "Whether it's a ``constexpr`` variable."_doc)
+      .def_prop_ro("is_stack_based", &dw::Variable::is_stack_based,
+                   "Whether this variable is allocated on the stack"_doc)
+      .def_prop_ro("location",
+                   nb::overload_cast<>(&dw::Variable::location, nb::const_),
+                   "Location of this variable."_doc)
+      .def("location_at",
+           nb::overload_cast<uint64_t>(&dw::Variable::location, nb::const_),
+           R"doc(
+           Location of this variable when PC is at the given
+           address.
+           )doc"_doc,
+           "pc"_a)
+      .def_prop_ro("locations", &dw::Variable::locations,
+                   "All the location entries of this variable."_doc)
+      .def_prop_ro(
+          "debug_location", &dw::Variable::debug_location,
+          "The original source location where the variable is defined."_doc
+      )
+      .def_prop_ro("type", &dw::Variable::type,
+                   "Return the type of this variable."_doc, nb::keep_alive<0, 1>())
+      .def_prop_ro("scope", &dw::Variable::scope,
+                   "Scope in which this variable is defined"_doc,
+                   nb::keep_alive<0, 1>())
 
-    .def_prop_ro("description", &dw::Variable::description,
-      R"doc(
-      Description (``DW_AT_description``) of the variable or an empty string.
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "description", &dw::Variable::description,
+          R"doc(
+          Description (``DW_AT_description``) of the variable or an empty string.
+          )doc"_doc
+      )
 
-    .def("to_decl",
-      [] (const dw::Variable& self, const DeclOpt* opt) {
-        return opt ? self.to_decl(*opt) : self.to_decl();
-      },
-      "Generates a C/C++ definition for this variable"_doc,
-      "opt"_a.none() = nb::none()
-    )
-  ;
+      .def(
+          "to_decl",
+          [](const dw::Variable& self, const DeclOpt* opt) {
+            return opt ? self.to_decl(*opt) : self.to_decl();
+          },
+          "Generates a C/C++ definition for this variable"_doc,
+          "opt"_a.none() = nb::none()
+      );
 }
 
 }

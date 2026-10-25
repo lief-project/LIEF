@@ -18,27 +18,28 @@
 #include "LIEF/PE/signature/Attribute.hpp"
 #include "LIEF/PE/signature/attributes/GenericType.hpp"
 
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
 #include "nanobind/utils.hpp"
+#include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<GenericType>(nb::module_& m) {
   nb::class_<GenericType, Attribute>(m, "GenericType",
-    R"delim(
-    Interface over an attribute for which the internal structure is not supported by LIEF
-    )delim"_doc)
-    .def_prop_ro("oid",
-        &GenericType::oid,
-        "OID of the original attribute"_doc)
+                                     R"delim(
+                                     Interface over an attribute for which the internal structure is not supported by LIEF
+                                     )delim"_doc)
+      .def_prop_ro("oid", &GenericType::oid, "OID of the original attribute"_doc)
 
-    .def_prop_ro("raw_content",
-        [] (const GenericType& type) {
-          return nb::to_memoryview(type.raw_content());
-        }, "Original DER blob of the attribute"_doc);
+      .def_prop_ro(
+          "raw_content",
+          [](const GenericType& type) {
+            return nb::to_memoryview(type.raw_content());
+          },
+          "Original DER blob of the attribute"_doc
+      );
 }
 
 }

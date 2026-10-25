@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <nanobind/stl/string_view.h>
-#include <string_view>
-#include <sstream>
 #include "pyLIEF.hpp"
 #include "pyErr.hpp"
-#include <spdlog/logger.h>
+#include <string_view>
 #include "spdlog/sinks/python_sink.h"
+#include <nanobind/stl/string_view.h>
+#include <spdlog/logger.h>
+#include <sstream>
 
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/unique_ptr.h>
-#include <nanobind/extra/memoryview.hpp>
 #include "nanobind/extra/stl/pathlike.h"
+#include <nanobind/extra/memoryview.hpp>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
 
-#include "LIEF/utils.hpp"
-#include "LIEF/hash.hpp"
 #include "LIEF/Object.hpp"
-#include "LIEF/range.hpp"
 #include "LIEF/debug_loc.hpp"
 #include "LIEF/errors.hpp"
-#include "LIEF/logging.hpp"
-#include "LIEF/version.h"
+#include "LIEF/hash.hpp"
 #include "LIEF/json.hpp"
+#include "LIEF/logging.hpp"
+#include "LIEF/range.hpp"
+#include "LIEF/utils.hpp"
+#include "LIEF/version.h"
 
 #include "platforms/pyPlatform.hpp"
 
 #include "Abstract/init.hpp"
-#include "DWARF/init.hpp"
-#include "PDB/init.hpp"
-#include "ObjC/init.hpp"
-#include "DyldSharedCache/init.hpp"
-#include "asm/init.hpp"
 #include "BinaryStream/init.hpp"
+#include "DWARF/init.hpp"
+#include "DyldSharedCache/init.hpp"
+#include "ObjC/init.hpp"
+#include "PDB/init.hpp"
+#include "asm/init.hpp"
 #include "runtime/init.hpp"
 
 #include "pyWriteStream.hpp"
@@ -98,13 +98,10 @@ void init_extension(nb::module_& m) {
 
 void init_object(nb::module_& m) {
   nb::class_<Object>(m, "Object")
-    .def("__hash__", [] (const Object& self) {
-        return hash(self);
-    })
-    .def("__eq__",
-        [] (const Object& lhs, const Object& rhs) {
-          return hash(lhs) == hash(rhs);
-        });
+      .def("__hash__", [](const Object& self) { return hash(self); })
+      .def("__eq__", [](const Object& lhs, const Object& rhs) {
+        return hash(lhs) == hash(rhs);
+      });
 }
 
 void init_python_sink() {
@@ -132,25 +129,25 @@ void log_impl(nb::args args) {
 void init_logger(nb::module_& m) {
   nb::module_ logging = m.def_submodule("logging");
 
-  #define PY_ENUM(x) LIEF::logging::to_string(x), x
+#define PY_ENUM(x) LIEF::logging::to_string(x), x
   nb::enum_<logging::Level>(logging, "Level")
-    .value(PY_ENUM(logging::Level::Off))
-    .value(PY_ENUM(logging::Level::Trace))
-    .value(PY_ENUM(logging::Level::Debug))
-    .value(PY_ENUM(logging::Level::Critical))
-    .value(PY_ENUM(logging::Level::Err))
-    .value(PY_ENUM(logging::Level::Warn))
-    .value(PY_ENUM(logging::Level::Info));
-  #undef PY_ENUM
+      .value(PY_ENUM(logging::Level::Off))
+      .value(PY_ENUM(logging::Level::Trace))
+      .value(PY_ENUM(logging::Level::Debug))
+      .value(PY_ENUM(logging::Level::Critical))
+      .value(PY_ENUM(logging::Level::Err))
+      .value(PY_ENUM(logging::Level::Warn))
+      .value(PY_ENUM(logging::Level::Info));
+#undef PY_ENUM
 
   nb::class_<logging::Scoped>(logging, "Scoped")
-    .def("__enter__", [] (logging::Scoped& self) {
-      return &self;
-    }, nb::rv_policy::reference)
+      .def(
+          "__enter__", [](logging::Scoped& self) { return &self; },
+          nb::rv_policy::reference
+      )
 
-    .def("__exit__", [] (logging::Scoped& self, const nb::args& /*args*/) {
-      self.reset();
-    });
+      .def("__exit__",
+           [](logging::Scoped& self, const nb::args& /*args*/) { self.reset(); });
 
   logging.def("disable", nb::overload_cast<>(&logging::disable),
               "Disable the logger globally"_doc);
@@ -161,47 +158,50 @@ void init_logger(nb::module_& m) {
   logging.def("set_level", nb::overload_cast<logging::Level>(&logging::set_level),
               "Change logging level", "level"_a);
 
-  logging.def("level_scope",
-    [] (logging::Level lvl) {
-      return std::make_unique<logging::Scoped>(lvl);
-    },
-    "level"_a, nb::rv_policy::take_ownership,
-    nb::sig("def level_scope(level: Level) -> Scoped")
+  logging.def(
+      "level_scope",
+      [](logging::Level lvl) { return std::make_unique<logging::Scoped>(lvl); },
+      "level"_a, nb::rv_policy::take_ownership,
+      nb::sig("def level_scope(level: Level) -> Scoped")
   );
 
-  logging.def("level_scope",
-    [] (const std::string& name, logging::Level lvl) {
-      return std::make_unique<logging::Scoped>(lvl, name);
-    }, "name"_a, "lvl"_a, nb::rv_policy::take_ownership,
-    nb::sig("def level_scope(name: str, lvl: Level) -> Scoped")
+  logging.def(
+      "level_scope",
+      [](const std::string& name, logging::Level lvl) {
+        return std::make_unique<logging::Scoped>(lvl, name);
+      },
+      "name"_a, "lvl"_a, nb::rv_policy::take_ownership,
+      nb::sig("def level_scope(name: str, lvl: Level) -> Scoped")
   );
 
   logging.def("get_level", nb::overload_cast<>(&logging::get_level),
               "Get current logging level");
 
-  logging.def("set_path", [] (nb::PathLike path) { logging::set_path(path); },
-              "Change the logger as a file-base logging and set its path"_doc,
-              "path"_a);
+  logging.def(
+      "set_path", [](nb::PathLike path) { logging::set_path(path); },
+      "Change the logger as a file-base logging and set its path"_doc, "path"_a
+  );
 
-  logging.def("log",
-              static_cast<void(*)(LIEF::logging::Level, std::string_view)>(&logging::log),
-              "Log a message with the LIEF's logger"_doc,
-              "level"_a, "msg"_a);
+  logging.def(
+      "log",
+      static_cast<void (*)(LIEF::logging::Level, std::string_view)>(&logging::log),
+      "Log a message with the LIEF's logger"_doc, "level"_a, "msg"_a
+  );
 
   logging.def("debug", &log_impl<logging::Level::Debug>,
-    "Log a :attr:`~.Level.Debug` message"_doc, "msg"_a);
+              "Log a :attr:`~.Level.Debug` message"_doc, "msg"_a);
 
   logging.def("info", &log_impl<logging::Level::Info>,
-      "Log an :attr:`~.Level.Info` message"_doc, "args"_a);
+              "Log an :attr:`~.Level.Info` message"_doc, "args"_a);
 
   logging.def("warn", &log_impl<logging::Level::Warn>,
-    "Log a :attr:`~.Level.Warn` message"_doc, "msg"_a);
+              "Log a :attr:`~.Level.Warn` message"_doc, "msg"_a);
 
   logging.def("err", &log_impl<logging::Level::Err>,
-    "Log an :attr:`~.Level.Err` message"_doc, "msg"_a);
+              "Log an :attr:`~.Level.Err` message"_doc, "msg"_a);
 
   logging.def("critical", &log_impl<logging::Level::Critical>,
-    "Log an :attr:`~.Level.Critical` message"_doc, "msg"_a);
+              "Log an :attr:`~.Level.Critical` message"_doc, "msg"_a);
 
   logging.def("enable_debug", nb::overload_cast<>(&logging::enable_debug),
               "Enable :attr:`~.Level.Debug` log level"_doc);
@@ -215,18 +215,16 @@ void init_logger(nb::module_& m) {
 void init_hash(nb::module_& m) {
   m.def("hash", nb::overload_cast<const Object&>(&hash));
   m.def("hash", nb::overload_cast<const std::vector<uint8_t>&>(&hash));
-  m.def("hash",
-        [] (nb::bytes bytes) {
-          const auto* begin = reinterpret_cast<const uint8_t*>(bytes.c_str());
-          const auto* end = begin + bytes.size();
-          return LIEF::hash(std::vector<uint8_t>(begin, end));
-        });
+  m.def("hash", [](nb::bytes bytes) {
+    const auto* begin = reinterpret_cast<const uint8_t*>(bytes.c_str());
+    const auto* end = begin + bytes.size();
+    return LIEF::hash(std::vector<uint8_t>(begin, end));
+  });
 
-  m.def("hash",
-        [] (const std::string& bytes) {
-          const std::vector<uint8_t> data = {std::begin(bytes), std::end(bytes)};
-          return hash(data);
-        });
+  m.def("hash", [](const std::string& bytes) {
+    const std::vector<uint8_t> data = {std::begin(bytes), std::end(bytes)};
+    return hash(data);
+  });
 }
 
 
@@ -236,68 +234,58 @@ void init_json(nb::module_& m) {
 
 void init_range(nb::module_& m) {
   nb::class_<LIEF::range_t>(m, "range_t")
-    .def_rw("low", &LIEF::range_t::low)
-    .def_rw("high", &LIEF::range_t::high)
-    .def_prop_ro("size", &LIEF::range_t::size)
-    .def("__repr__",
-      [] (const LIEF::range_t& R) {
-        return fmt::format("<range: 0x{:04x}-0x{:04x}>", R.low, R.high);
-      }
-    )
+      .def_rw("low", &LIEF::range_t::low)
+      .def_rw("high", &LIEF::range_t::high)
+      .def_prop_ro("size", &LIEF::range_t::size)
+      .def("__repr__",
+           [](const LIEF::range_t& R) {
+             return fmt::format("<range: 0x{:04x}-0x{:04x}>", R.low, R.high);
+           })
 
-    LIEF_DEFAULT_STR(LIEF::range_t);
+      .LIEF_DEFAULT_STR(LIEF::range_t);
   ;
 }
 
 void init_debug_location(nb::module_& m) {
   nb::class_<LIEF::debug_location_t>(m, "debug_location_t")
-    .def_rw("line", &LIEF::debug_location_t::line)
-    .def_rw("file", &LIEF::debug_location_t::file)
-    .def("__repr__",
-      [] (const LIEF::debug_location_t& loc) {
+      .def_rw("line", &LIEF::debug_location_t::line)
+      .def_rw("file", &LIEF::debug_location_t::file)
+      .def("__repr__", [](const LIEF::debug_location_t& loc) {
         return fmt::format("<debug_location_t: {}:{}>", loc.file, loc.line);
-      }
-    )
-  ;
+      });
 }
 
 
 void init(nb::module_& m) {
   lief_mod = &m;
-  m.attr("__version__")   = nb::str(LIEF_VERSION);
-  m.attr("__tag__")       = nb::str(LIEF_TAG);
-  m.attr("__commit__")    = nb::str(LIEF_COMMIT);
+  m.attr("__version__") = nb::str(LIEF_VERSION);
+  m.attr("__tag__") = nb::str(LIEF_TAG);
+  m.attr("__commit__") = nb::str(LIEF_COMMIT);
   m.attr("__is_tagged__") = bool(LIEF_TAGGED);
   m.doc() = "LIEF Python API";
 
 // This attribute reflects whether LIEF was compiled with free-threading support
-#if defined (NB_FREE_THREADED)
+#if defined(NB_FREE_THREADED)
   m.attr("__free_threaded__") = true;
 #else
   m.attr("__free_threaded__") = false;
 #endif
 
   nb::class_<LIEF::lief_version_t>(m, "lief_version_t")
-    .def_rw("major", &LIEF::lief_version_t::major)
-    .def_rw("minor", &LIEF::lief_version_t::minor)
-    .def_rw("patch", &LIEF::lief_version_t::patch)
-    .def_rw("id",    &LIEF::lief_version_t::id)
-    .def("__repr__",
-      [] (const LIEF::lief_version_t& version) {
-        return fmt::format("<lief_version_t: {}>", version.to_string());
-      }
-    )
-    .def("__str__",
-      [] (const LIEF::lief_version_t& version) {
-         return version.to_string();
-      }
-    )
-  ;
+      .def_rw("major", &LIEF::lief_version_t::major)
+      .def_rw("minor", &LIEF::lief_version_t::minor)
+      .def_rw("patch", &LIEF::lief_version_t::patch)
+      .def_rw("id", &LIEF::lief_version_t::id)
+      .def("__repr__",
+           [](const LIEF::lief_version_t& version) {
+             return fmt::format("<lief_version_t: {}>", version.to_string());
+           })
+      .def("__str__", [](const LIEF::lief_version_t& version) {
+        return version.to_string();
+      });
 
 
-  m.def("disable_leak_warning", [] {
-    nb::set_leak_warnings(false);
-  }, R"doc(
+  m.def("disable_leak_warning", [] { nb::set_leak_warnings(false); }, R"doc(
   Disable nanobind warnings about leaked objects.
   For instance:
 
@@ -314,56 +302,62 @@ void init(nb::module_& m) {
       nanobind: this is likely caused by a reference counting issue in the binding code.
   )doc"_doc);
 
-  m.def("demangle",
-    [] (const std::string& mangled) {
-      return LIEF::py::value_or_none(&LIEF::demangle, mangled);
-    },
-    R"doc(
-    Demangle the given input.
+  m.def(
+      "demangle",
+      [](const std::string& mangled) {
+        return LIEF::py::value_or_none(&LIEF::demangle, mangled);
+      },
+      R"doc(
+      Demangle the given input.
 
-    .. warning::
+      .. warning::
 
-        This function only works with the extended version of LIEF
-    )doc"_doc,
-    "mangled"_a
+          This function only works with the extended version of LIEF
+      )doc"_doc,
+      "mangled"_a
   );
 
-  m.def("dump", [] (nb::extra::memoryview view, std::string_view title,
-                    std::string_view prefix, size_t limit)
-    {
-      return LIEF::dump(view.data(), view.size(), title, prefix, limit);
-    }, "buffer"_a, "title"_a = "", "prefix"_a = "", "limit"_a = 0,
-    R"doc(
-    Hexdump the provided buffer:
+  m.def(
+      "dump",
+      [](nb::extra::memoryview view, std::string_view title,
+         std::string_view prefix, size_t limit) {
+        return LIEF::dump(view.data(), view.size(), title, prefix, limit);
+      },
+      "buffer"_a, "title"_a = "", "prefix"_a = "", "limit"_a = 0,
+      R"doc(
+      Hexdump the provided buffer:
 
-    .. code-block:: text
+      .. code-block:: text
 
-      +---------------------------------------------------------------------+
-      | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
-      | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
-      | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
-      | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
-      +---------------------------------------------------------------------+
-    )doc"_doc
+        +---------------------------------------------------------------------+
+        | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
+        | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
+        | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
+        | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
+        +---------------------------------------------------------------------+
+      )doc"_doc
   );
 
-  m.def("dump", [] (const nb::bytes& bytes, std::string_view title,
-                    std::string_view prefix, size_t limit)
-    {
-      return LIEF::dump(reinterpret_cast<const uint8_t*>(bytes.data()), bytes.size(), title, prefix, limit);
-    }, "buffer"_a, "title"_a = "", "prefix"_a = "", "limit"_a = 0,
-    R"doc(
-    Hexdump the provided buffer:
+  m.def(
+      "dump",
+      [](const nb::bytes& bytes, std::string_view title, std::string_view prefix,
+         size_t limit) {
+        return LIEF::dump(reinterpret_cast<const uint8_t*>(bytes.data()),
+                          bytes.size(), title, prefix, limit);
+      },
+      "buffer"_a, "title"_a = "", "prefix"_a = "", "limit"_a = 0,
+      R"doc(
+      Hexdump the provided buffer:
 
-    .. code-block:: text
+      .. code-block:: text
 
-      +---------------------------------------------------------------------+
-      | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
-      | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
-      | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
-      | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
-      +---------------------------------------------------------------------+
-    )doc"_doc
+        +---------------------------------------------------------------------+
+        | 88 56 05 00 00 00 00 00 00 00 00 00 22 58 05 00  | .V.........."X.. |
+        | 10 71 02 00 78 55 05 00 00 00 00 00 00 00 00 00  | .q..xU.......... |
+        | 68 5c 05 00 00 70 02 00 00 00 00 00 00 00 00 00  | h\...p.......... |
+        | 00 00 00 00 00 00 00 00 00 00 00 00              | ............     |
+        +---------------------------------------------------------------------+
+      )doc"_doc
   );
 
   m.def("extended_version_info", &LIEF::extended_version_info,
@@ -372,13 +366,15 @@ void init(nb::module_& m) {
   m.def("extended_version", &LIEF::extended_version,
         "Return the extended version"_doc);
 
-  m.def("to_int", [] (const void* ptr) {
-    return reinterpret_cast<uintptr_t>(ptr);
-  }, "ptr"_a, "Convert an opaque pointer into an address (int)"_doc);
+  m.def(
+      "to_int", [](const void* ptr) { return reinterpret_cast<uintptr_t>(ptr); },
+      "ptr"_a, "Convert an opaque pointer into an address (int)"_doc
+  );
 
-  m.def("to_ptr", [] (uintptr_t ptr) {
-    return reinterpret_cast<void*>(ptr);
-  }, "ptr"_a, "Convert an integer into an opaque pointer (``void*``)"_doc);
+  m.def(
+      "to_ptr", [](uintptr_t ptr) { return reinterpret_cast<void*>(ptr); },
+      "ptr"_a, "Convert an integer into an opaque pointer (``void*``)"_doc
+  );
 
   LIEF::py::init_extension(m);
 
@@ -440,7 +436,6 @@ void init(nb::module_& m) {
 #if defined(LIEF_COFF_SUPPORT)
   LIEF::COFF::py::init(m);
 #endif
-
 }
 
 }

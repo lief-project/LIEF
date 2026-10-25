@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/RelocationDyld.hpp"
 
@@ -26,7 +26,8 @@ namespace LIEF::MachO::py {
 template<>
 void create<RelocationDyld>(nb::module_& m) {
 
-  nb::class_<RelocationDyld, Relocation>(m, "RelocationDyld",
+  nb::class_<RelocationDyld, Relocation>(
+      m, "RelocationDyld",
       R"delim(
       Class that represents a relocation found in the :class:`~lief.MachO.DyldInfo` structure.
 
@@ -34,15 +35,22 @@ void create<RelocationDyld>(nb::module_& m) {
       it provides a convenient interface for the :attr:`lief.MachO.DyldInfo.rebase` values
 
       See also: :class:`~lief.MachO.RelocationObject`
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def("__le__", nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator<=, nb::const_))
-    .def("__lt__", nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator<, nb::const_))
-    .def("__ge__", nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator>=, nb::const_))
-    .def("__gt__", nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator>, nb::const_))
+      .def("__le__",
+           nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator<=,
+                                                    nb::const_))
+      .def("__lt__",
+           nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator<,
+                                                    nb::const_))
+      .def("__ge__",
+           nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator>=,
+                                                    nb::const_))
+      .def("__gt__",
+           nb::overload_cast<const RelocationDyld&>(&RelocationDyld::operator>,
+                                                    nb::const_))
 
-    LIEF_DEFAULT_STR(RelocationDyld);
-
-
+      .LIEF_DEFAULT_STR(RelocationDyld);
 }
 }

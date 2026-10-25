@@ -18,17 +18,15 @@
 
 #include "LIEF/PE/signature/GenericContent.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<GenericContent>(nb::module_& m) {
   nb::class_<GenericContent, ContentInfo::Content>(m, "GenericContent");
-
 }
 
 }
-

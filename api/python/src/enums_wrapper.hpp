@@ -24,7 +24,7 @@ namespace nb = nanobind;
 
 namespace LIEF {
 
-template <class Type>
+template<class Type>
 class LIEF_LOCAL enum_ : public nanobind::enum_<Type> {
   public:
   using Base = typename nanobind::enum_<Type>::Base;
@@ -33,11 +33,11 @@ class LIEF_LOCAL enum_ : public nanobind::enum_<Type> {
   using nanobind::enum_<Type>::def_static;
   using nanobind::enum_<Type>::def;
 
-  template <typename... Extra>
-  NB_INLINE enum_(nanobind::handle scope, const char *name, const Extra &... extra) :
-    nanobind::enum_<Type>{scope, name, extra...}
-  {
-    def_static("from_value", [] (Underlying i) -> Type {
+  template<typename... Extra>
+  NB_INLINE enum_(nanobind::handle scope, const char* name,
+                  const Extra&... extra) :
+    nanobind::enum_<Type>{scope, name, extra...} {
+    def_static("from_value", [](Underlying i) -> Type {
       nb::object out = nb::cast(static_cast<Type>(i));
       if (nb::isinstance<nb::int_>(out)) {
         throw nb::value_error("Conversion error");
@@ -45,13 +45,21 @@ class LIEF_LOCAL enum_ : public nanobind::enum_<Type> {
       return static_cast<Type>(i);
     });
 
-    def("__eq__", [](const Type &value, Underlying value2) { return (Underlying) value == value2; });
-    def("__eq__", [](const Type &value, Type value2) { return (Underlying) value == (Underlying) value2; });
+    def("__eq__", [](const Type& value, Underlying value2) {
+      return (Underlying)value == value2;
+    });
+    def("__eq__", [](const Type& value, Type value2) {
+      return (Underlying)value == (Underlying)value2;
+    });
 
-    def("__ne__", [](const Type &value, Underlying value2) { return (Underlying) value != value2; });
-    def("__ne__", [](const Type &value, Type value2) { return (Underlying) value != (Underlying) value2; });
+    def("__ne__", [](const Type& value, Underlying value2) {
+      return (Underlying)value != value2;
+    });
+    def("__ne__", [](const Type& value, Type value2) {
+      return (Underlying)value != (Underlying)value2;
+    });
 
-    def("__int__", [](const Type &value) { return (Underlying) value; });
+    def("__int__", [](const Type& value) { return (Underlying)value; });
   }
 };
 

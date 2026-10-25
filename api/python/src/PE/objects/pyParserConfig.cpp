@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <nanobind/stl/optional.h>
+#include <nanobind/stl/string.h>
 #include <sstream>
 #include <string>
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/optional.h>
 
 #include "LIEF/PE/ParserConfig.hpp"
 
@@ -28,59 +28,69 @@ template<>
 void create<ParserConfig>(nb::module_& m) {
 
   nb::class_<ParserConfig>(m, "ParserConfig",
-      R"delim(
-      This class is used to configure the behavior of the PE Parser (:func:`lief.PE.parse`)
-      )delim"_doc)
+                           R"delim(
+                           This class is used to configure the behavior of the PE Parser (:func:`lief.PE.parse`)
+                           )delim"_doc)
 
-    .def(nb::init<>())
-    .def_rw("parse_signature", &ParserConfig::parse_signature,
-            "Whether to parse the PE Authenticode signature."_doc)
+      .def(nb::init<>())
+      .def_rw("parse_signature", &ParserConfig::parse_signature,
+              "Whether to parse the PE Authenticode signature."_doc)
 
-    .def_rw("parse_exports", &ParserConfig::parse_exports,
-            "Whether to parse the PE Export Directory."_doc)
+      .def_rw("parse_exports", &ParserConfig::parse_exports,
+              "Whether to parse the PE Export Directory."_doc)
 
-    .def_rw("parse_imports", &ParserConfig::parse_imports,
-            "Whether to parse the PE Import Directory."_doc)
+      .def_rw("parse_imports", &ParserConfig::parse_imports,
+              "Whether to parse the PE Import Directory."_doc)
 
-    .def_rw("parse_rsrc", &ParserConfig::parse_rsrc,
-            "Whether to parse the PE resources tree."_doc)
+      .def_rw("parse_rsrc", &ParserConfig::parse_rsrc,
+              "Whether to parse the PE resources tree."_doc)
 
-    .def_rw("parse_reloc", &ParserConfig::parse_reloc,
-             "Whether to parse PE relocations."_doc)
+      .def_rw("parse_reloc", &ParserConfig::parse_reloc,
+              "Whether to parse PE relocations."_doc)
 
-    .def_rw("parse_exceptions", &ParserConfig::parse_exceptions,
-      R"doc(
-      Whether to parse in-depth exception metadata.
+      .def_rw(
+          "parse_exceptions", &ParserConfig::parse_exceptions,
+          R"doc(
+          Whether to parse in-depth exception metadata.
 
-      This option is disabled by default because it can introduce significant
-      parsing overhead.
-      )doc"_doc
-    )
+          This option is disabled by default because it can introduce significant
+          parsing overhead.
+          )doc"_doc
+      )
 
-    .def_rw("parse_arm64x_binary", &ParserConfig::parse_arm64x_binary,
-      R"doc(
-      Whether to parse nested ARM64X binaries.
+      .def_rw(
+          "parse_arm64x_binary", &ParserConfig::parse_arm64x_binary,
+          R"doc(
+          Whether to parse nested ARM64X binaries.
 
-      This option is disabled by default because it can introduce significant
-      parsing overhead.
-      )doc"_doc)
+          This option is disabled by default because it can introduce significant
+          parsing overhead.
+          )doc"_doc
+      )
 
-    .def_rw("rebase", &ParserConfig::rebase,
-      R"doc(
-      If set, this value holds the original image base from which the binary
-      should be rebased. This is used to *undo* relocations and IAT bindings
-      when parsing a PE loaded in memory.
-      )doc"_doc)
+      .def_rw(
+          "rebase", &ParserConfig::rebase,
+          R"doc(
+          If set, this value holds the original image base from which the binary
+          should be rebased. This is used to *undo* relocations and IAT bindings
+          when parsing a PE loaded in memory.
+          )doc"_doc
+      )
 
-    .def_prop_ro_static("default_conf",
-      [] (const nb::object& /* self */) { return ParserConfig::default_conf(); },
-      "Default configuration for the PE Parser."_doc)
+      .def_prop_ro_static(
+          "default_conf",
+          [](const nb::object& /* self */) {
+            return ParserConfig::default_conf();
+          },
+          "Default configuration for the PE Parser."_doc
+      )
 
-    .def_prop_ro_static("all",
-      [] (const nb::object& /* self */) { return ParserConfig::all(); },
-      "Configuration that enables **all** optional parsing features."_doc)
+      .def_prop_ro_static(
+          "all", [](const nb::object& /* self */) { return ParserConfig::all(); },
+          "Configuration that enables **all** optional parsing features."_doc
+      )
 
-    LIEF_DEFAULT_STR(ParserConfig);
+      .LIEF_DEFAULT_STR(ParserConfig);
 }
 
 }

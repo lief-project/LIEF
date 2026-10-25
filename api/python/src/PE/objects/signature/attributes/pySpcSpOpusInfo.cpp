@@ -18,38 +18,43 @@
 
 #include "LIEF/PE/signature/attributes/SpcSpOpusInfo.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<SpcSpOpusInfo>(nb::module_& m) {
-  nb::class_<SpcSpOpusInfo, Attribute>(m, "SpcSpOpusInfo",
-    R"delim(
-    Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.12``
-    The internal structure is described in the official document: `Windows Authenticode Portable Executable Signature Format <http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx>`_
+  nb::class_<SpcSpOpusInfo, Attribute>(
+      m, "SpcSpOpusInfo",
+      R"delim(
+      Interface over the structure described by the OID ``1.3.6.1.4.1.311.2.1.12``
+      The internal structure is described in the official document: `Windows Authenticode Portable Executable Signature Format <http://download.microsoft.com/download/9/c/5/9c5b2167-8017-4bae-9fde-d599bac8184a/Authenticode_PE.docx>`_
 
-    .. code-block:: text
+      .. code-block:: text
 
-        SpcSpOpusInfo ::= SEQUENCE {
-            programName  [0] EXPLICIT SpcString OPTIONAL,
-            moreInfo     [1] EXPLICIT SpcLink OPTIONAL
-        }
-    )delim"_doc
+          SpcSpOpusInfo ::= SEQUENCE {
+              programName  [0] EXPLICIT SpcString OPTIONAL,
+              moreInfo     [1] EXPLICIT SpcLink OPTIONAL
+          }
+      )delim"_doc
   )
-    .def_prop_ro("program_name",
-        [] (const SpcSpOpusInfo& info) {
-          return LIEF::py::safe_string(info.program_name());
-        },
-        "Program description provided by the publisher"_doc)
+      .def_prop_ro(
+          "program_name",
+          [](const SpcSpOpusInfo& info) {
+            return LIEF::py::safe_string(info.program_name());
+          },
+          "Program description provided by the publisher"_doc
+      )
 
-    .def_prop_ro("more_info",
-        [] (const SpcSpOpusInfo& info) {
-          return LIEF::py::safe_string(info.more_info());
-        },
-        "Other information such as an URL"_doc);
+      .def_prop_ro(
+          "more_info",
+          [](const SpcSpOpusInfo& info) {
+            return LIEF::py::safe_string(info.more_info());
+          },
+          "Other information such as an URL"_doc
+      );
 }
 
 }

@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 
@@ -24,8 +24,8 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<AArch64PAuth>(nb::module_& m) {
-  nb::class_<AArch64PAuth, NoteGnuProperty::Property>
-    Class(m, "AArch64PAuth",
+  nb::class_<AArch64PAuth, NoteGnuProperty::Property> Class(
+      m, "AArch64PAuth",
       R"doc(
       This class represents the ``GNU_PROPERTY_AARCH64_FEATURE_PAUTH`` note.
 
@@ -33,23 +33,24 @@ void create<AArch64PAuth>(nb::module_& m) {
 
         If both: :attr:`.AArch64PAuth.platform` and :attr:`.AArch64PAuth.version` are set to
         0, this means that the binary is incompatible with PAuth ABI extension.
-      )doc"_doc);
+      )doc"_doc
+  );
 
   Class
-    .def_prop_ro("platform", &AArch64PAuth::platform,
-        R"doc(
-        64-bit value that specifies the platform vendor.
+      .def_prop_ro("platform", &AArch64PAuth::platform,
+                   R"doc(
+                   64-bit value that specifies the platform vendor.
 
-        A ``0`` value is associated with an *invalid* platform while the value ``1``
-        is associated with a baremetal platform.
-        )doc"_doc)
+                   A ``0`` value is associated with an *invalid* platform while the value ``1``
+                   is associated with a baremetal platform.
+                   )doc"_doc)
 
-    .def_prop_ro("version", &AArch64PAuth::version,
-        R"doc(
-        64-bit value that identifies the signing schema used by the ELF file.
-        )doc"_doc)
-    ;
-
+      .def_prop_ro(
+          "version", &AArch64PAuth::version,
+          R"doc(
+          64-bit value that identifies the signing schema used by the ELF file.
+          )doc"_doc
+      );
 }
 
 }

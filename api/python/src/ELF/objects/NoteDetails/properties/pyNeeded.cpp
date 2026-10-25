@@ -17,8 +17,8 @@
 
 #include <nanobind/stl/vector.h>
 
-#include "enums_wrapper.hpp"
 #include "ELF/pyELF.hpp"
+#include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/NoteDetails/properties/Needed.hpp"
 
@@ -27,25 +27,22 @@ namespace LIEF::ELF::py {
 template<>
 void create<Needed>(nb::module_& m) {
   using NEED = Needed::NEED;
-  nb::class_<Needed, NoteGnuProperty::Property>
-    Class(m, "Needed",
+  nb::class_<Needed, NoteGnuProperty::Property> Class(
+      m, "Needed",
       R"doc(
       This class represents the ``GNU_PROPERTY_1_NEEDED`` note property
       which provides information about additional features the object file
       needs at runtime.
-      )doc"_doc);
+      )doc"_doc
+  );
 
   enum_<NEED>(Class, "NEED")
-    .value("NEED", NEED::UNKNOWN, "")
-    .value("INDIRECT_EXTERN_ACCESS", NEED::INDIRECT_EXTERN_ACCESS,
-           "The object needs indirect external access")
-  ;
+      .value("NEED", NEED::UNKNOWN, "")
+      .value("INDIRECT_EXTERN_ACCESS", NEED::INDIRECT_EXTERN_ACCESS,
+             "The object needs indirect external access");
 
-  Class
-    .def_prop_ro("needs", &Needed::needs,
-        R"doc(
-        Return the list of the needed features.
-        )doc"_doc);
+  Class.def_prop_ro("needs", &Needed::needs,
+                    "Return the list of the needed features."_doc);
 }
 
 }

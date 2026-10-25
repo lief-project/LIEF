@@ -1,8 +1,8 @@
 #include "ObjC/init.hpp"
 #include "ObjC/pyObjC.hpp"
 
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
 
 namespace LIEF::objc {
 class Metadata;

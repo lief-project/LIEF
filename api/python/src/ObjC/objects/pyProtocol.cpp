@@ -1,88 +1,84 @@
-#include "ObjC/pyObjC.hpp"
 #include "LIEF/ObjC/Protocol.hpp"
+#include "ObjC/pyObjC.hpp"
 
+#include <nanobind/make_iterator.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/unique_ptr.h>
-#include <nanobind/make_iterator.h>
 
 #include "pyOwningIterator.hpp"
 
 namespace LIEF::objc::py {
 template<>
 void create<objc::Protocol>(nb::module_& m) {
-  nb::class_<objc::Protocol> protocol(m, "Protocol",
-    R"doc(
-    This class represents an Objective-C ``@protocol``
-    )doc"_doc
+  nb::class_<objc::Protocol> protocol(
+      m, "Protocol", "This class represents an Objective-C ``@protocol``"_doc
   );
 
   protocol
-    .def_prop_ro("mangled_name", &objc::Protocol::mangled_name,
-      R"doc(
-      Mangled name of the protocol
-      )doc"_doc
-    )
+      .def_prop_ro("mangled_name", &objc::Protocol::mangled_name,
+                   "Mangled name of the protocol"_doc)
 
-    .def_prop_ro("protocols",
-      [] (objc::Protocol& self) {
-        auto protocols = LIEF::py::owning_range(self.protocols());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<objc::Protocol>(), "protocols_it", protocols.begin(), protocols.end(),
-          nb::keep_alive<0, 1>()
-        );
-      }, nb::keep_alive<0, 1>(),
-      R"doc(
-      Iterator over the protocols adopted by this protocol (e.g. the
-      ``<Bar, Baz>`` in ``@protocol Foo <Bar, Baz>``).
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "protocols",
+          [](objc::Protocol& self) {
+            auto protocols = LIEF::py::owning_range(self.protocols());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<objc::Protocol>(), "protocols_it", protocols.begin(),
+                protocols.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          R"doc(
+          Iterator over the protocols adopted by this protocol (e.g. the
+          ``<Bar, Baz>`` in ``@protocol Foo <Bar, Baz>``).
+          )doc"_doc
+      )
 
-    .def_prop_ro("optional_methods",
-      [] (objc::Protocol& self) {
-        auto methods = LIEF::py::owning_range(self.optional_methods());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<objc::Protocol>(), "optional_methods_it", methods.begin(), methods.end(),
-          nb::keep_alive<0, 1>()
-        );
-      }, nb::keep_alive<0, 1>(),
-      R"doc(
-      Iterator over the methods that could be overridden
-      )doc"_doc
-    )
-    .def_prop_ro("required_methods",
-      [] (objc::Protocol& self) {
-        auto methods = LIEF::py::owning_range(self.required_methods());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<objc::Protocol>(), "required_methods_it", methods.begin(), methods.end(),
-          nb::keep_alive<0, 1>()
-        );
-      }, nb::keep_alive<0, 1>(),
-      R"doc(
-      Iterator over the methods of this protocol that must be implemented
-      )doc"_doc
-    )
-    .def_prop_ro("properties",
-      [] (objc::Protocol& self) {
-        auto props = LIEF::py::owning_range(self.properties());
-        return nb::make_iterator<nb::rv_policy::reference_internal>(
-          nb::type<objc::Protocol>(), "properties_it", props.begin(), props.end(),
-          nb::keep_alive<0, 1>()
-        );
-      }, nb::keep_alive<0, 1>(),
-      R"doc(
-      Iterator over the properties defined in this protocol
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "optional_methods",
+          [](objc::Protocol& self) {
+            auto methods = LIEF::py::owning_range(self.optional_methods());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<objc::Protocol>(), "optional_methods_it", methods.begin(),
+                methods.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          "Iterator over the methods that could be overridden"_doc
+      )
+      .def_prop_ro(
+          "required_methods",
+          [](objc::Protocol& self) {
+            auto methods = LIEF::py::owning_range(self.required_methods());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<objc::Protocol>(), "required_methods_it", methods.begin(),
+                methods.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          "Iterator over the methods of this protocol that must be implemented"_doc
+      )
+      .def_prop_ro(
+          "properties",
+          [](objc::Protocol& self) {
+            auto props = LIEF::py::owning_range(self.properties());
+            return nb::make_iterator<nb::rv_policy::reference_internal>(
+                nb::type<objc::Protocol>(), "properties_it", props.begin(),
+                props.end(), nb::keep_alive<0, 1>()
+            );
+          },
+          nb::keep_alive<0, 1>(),
+          "Iterator over the properties defined in this protocol"_doc
+      )
 
-    .def("to_decl", &Protocol::to_decl,
-      R"doc(
-      Generate a header-like string for this specific protocol.
+      .def("to_decl", &Protocol::to_decl,
+           R"doc(
+           Generate a header-like string for this specific protocol.
 
-      The generated output can be configured with the provided :class:`~.DeclOpt`
-      parameter.
-      )doc"_doc, "opt"_a = DeclOpt()
-    )
-  ;
+           The generated output can be configured with the provided :class:`~.DeclOpt`
+           parameter.
+           )doc"_doc,
+           "opt"_a = DeclOpt());
 }
 
 }

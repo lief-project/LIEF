@@ -19,16 +19,13 @@ class PCRelative;
 namespace LIEF::assembly::ebpf::py {
 template<>
 void create<ebpf::Operand>(nb::module_& m) {
-  nb::class_<ebpf::Operand> obj(m, "Operand",
-    R"doc(This class represents an operand for an eBPF instruction)doc"_doc
+  nb::class_<ebpf::Operand> obj(
+      m, "Operand", "This class represents an operand for an eBPF instruction"_doc
   );
 
-  obj
-    .def_prop_ro("to_string", &Operand::to_string,
-      R"doc(Pretty representation of the operand)doc"_doc
-    )
-    LIEF_DEFAULT_STR(ebpf::Operand)
-  ;
+  obj.def_prop_ro("to_string", &Operand::to_string,
+                  "Pretty representation of the operand"_doc)
+      .LIEF_DEFAULT_STR(ebpf::Operand);
 
   nb::module_ operands = m.def_submodule("operands");
   create<ebpf::operands::Immediate>(operands);

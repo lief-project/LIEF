@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/LinkerOptHint.hpp"
 
@@ -27,26 +27,26 @@ namespace LIEF::MachO::py {
 template<>
 void create<LinkerOptHint>(nb::module_& m) {
 
-  nb::class_<LinkerOptHint, LoadCommand>(m, "LinkerOptHint",
-    R"delim(
-    Class which represents the `LC_LINKER_OPTIMIZATION_HINT` command
-    )delim"_doc)
+  nb::class_<LinkerOptHint, LoadCommand>(
+      m, "LinkerOptHint",
+      "Class which represents the `LC_LINKER_OPTIMIZATION_HINT` command"_doc
+  )
 
-    .def_prop_rw("data_offset",
-        nb::overload_cast<>(&LinkerOptHint::data_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&LinkerOptHint::data_offset),
-        "Offset in the binary where the payload starts"_doc)
+      .def_prop_rw("data_offset",
+                   nb::overload_cast<>(&LinkerOptHint::data_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&LinkerOptHint::data_offset),
+                   "Offset in the binary where the payload starts"_doc)
 
-    .def_prop_rw("data_size",
-        nb::overload_cast<>(&LinkerOptHint::data_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&LinkerOptHint::data_offset),
-        "Size of the raw payload"_doc)
+      .def_prop_rw("data_size",
+                   nb::overload_cast<>(&LinkerOptHint::data_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&LinkerOptHint::data_offset),
+                   "Size of the raw payload"_doc)
 
-    .def_prop_ro("content",
-        nb::overload_cast<>(&LinkerOptHint::content, nb::const_),
-        "The raw payload"_doc)
+      .def_prop_ro("content",
+                   nb::overload_cast<>(&LinkerOptHint::content, nb::const_),
+                   "The raw payload"_doc)
 
-    LIEF_DEFAULT_STR(LinkerOptHint);
+      .LIEF_DEFAULT_STR(LinkerOptHint);
 }
 
 }

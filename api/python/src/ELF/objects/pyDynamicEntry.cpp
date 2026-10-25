@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
@@ -26,12 +26,15 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<DynamicEntry>(nb::module_& m) {
-  nb::class_<DynamicEntry, LIEF::Object> entry(m, "DynamicEntry",
+  nb::class_<DynamicEntry, LIEF::Object> entry(
+      m, "DynamicEntry",
       R"delim(
       Class which represents an entry in the dynamic table
       These entries are located in the ``.dynamic`` section or the ``PT_DYNAMIC`` segment
-      )delim"_doc);
+      )delim"_doc
+  );
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(DynamicEntry::TAG::X), DynamicEntry::TAG::X)
   enum_<DynamicEntry::TAG>(entry, "TAG")
     ENTRY(UNKNOWN)
@@ -201,31 +204,30 @@ void create<DynamicEntry>(nb::module_& m) {
     ENTRY(IA_64_VMS_FPMODE)
   ;
   #undef ENTRY
+  // clang-format on
 
-  entry
-    .def(nb::init<>(),
-        "Default constructor"_doc)
+  entry.def(nb::init<>(), "Default constructor"_doc)
 
-    .def(nb::init<DynamicEntry::TAG, uint64_t>(),
-        "Constructor from a " RST_CLASS_REF(lief.ELF.DynamicEntry.TAG) " and value"_doc,
-        "tag"_a, "value"_a)
+      .def(nb::init<DynamicEntry::TAG, uint64_t>(),
+           "Constructor from a :class:`~lief.ELF.DynamicEntry.TAG` and value"_doc,
+           "tag"_a, "value"_a)
 
-    .def_prop_rw("tag",
-        nb::overload_cast<>(&DynamicEntry::tag, nb::const_),
-        nb::overload_cast<DynamicEntry::TAG>(&DynamicEntry::tag),
-        "Return the entry's " RST_CLASS_REF(lief.ELF.DynamicEntry.TAG) " which represent the entry type"_doc)
+      .def_prop_rw(
+          "tag", nb::overload_cast<>(&DynamicEntry::tag, nb::const_),
+          nb::overload_cast<DynamicEntry::TAG>(&DynamicEntry::tag),
+          "Return the entry's :class:`~lief.ELF.DynamicEntry.TAG` which represent the entry type"_doc
+      )
 
-    .def_prop_rw("value",
-        nb::overload_cast<>(&DynamicEntry::value, nb::const_),
-        nb::overload_cast<uint64_t>(&DynamicEntry::value),
-        R"delim(
-        Return the entry's value
+      .def_prop_rw("value", nb::overload_cast<>(&DynamicEntry::value, nb::const_),
+                   nb::overload_cast<uint64_t>(&DynamicEntry::value),
+                   R"delim(
+                   Return the entry's value
 
-        The meaning of the value strongly depends on the tag.
-        It can be an offset, an index, a flag, ...
-        )delim"_doc)
+                   The meaning of the value strongly depends on the tag.
+                   It can be an offset, an index, a flag, ...
+                   )delim"_doc)
 
-    LIEF_DEFAULT_STR(DynamicEntry);
+      .LIEF_DEFAULT_STR(DynamicEntry);
 }
 
 }

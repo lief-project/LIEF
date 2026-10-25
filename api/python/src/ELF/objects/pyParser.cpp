@@ -16,13 +16,13 @@
 #include "ELF/pyELF.hpp"
 
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
 
 #include "typing/InputParser.hpp"
 
-#include "LIEF/ELF/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Parser.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
@@ -33,32 +33,41 @@ void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
   m.def("parse_from_memory",
-    nb::overload_cast<uintptr_t, const ParserConfig&>(&Parser::parse_from_memory),
-    "Parse the ELF binary at the given memory address"_doc,
-    "address"_a, "config"_a = ParserConfig::all(),
-    nb::rv_policy::take_ownership);
+        nb::overload_cast<uintptr_t, const ParserConfig&>(
+            &Parser::parse_from_memory
+        ),
+        "Parse the ELF binary at the given memory address"_doc, "address"_a,
+        "config"_a = ParserConfig::all(), nb::rv_policy::take_ownership);
 
-  m.def("parse_from_memory",
-    nb::overload_cast<uintptr_t, size_t, const ParserConfig&>(&Parser::parse_from_memory),
-    "Parse the ELF binary at the given memory address and with the given size"_doc,
-    "address"_a, "size"_a, "config"_a = ParserConfig::all(),
-    nb::rv_policy::take_ownership);
+  m.def(
+      "parse_from_memory",
+      nb::overload_cast<uintptr_t, size_t, const ParserConfig&>(
+          &Parser::parse_from_memory
+      ),
+      "Parse the ELF binary at the given memory address and with the given size"_doc,
+      "address"_a, "size"_a, "config"_a = ParserConfig::all(),
+      nb::rv_policy::take_ownership
+  );
 
-  m.def("parse_from_dump",
-    [] (typing::InputParser obj, uint64_t addr, const ParserConfig& config) {
-      return Parser::parse_from_dump(obj.into_stream(), addr, config);
-    },
-    R"delim(
-    Parse the ELF binary from a memory dump given in the first parameter.
+  m.def(
+      "parse_from_dump",
+      [](typing::InputParser obj, uint64_t addr, const ParserConfig& config) {
+        return Parser::parse_from_dump(obj.into_stream(), addr, config);
+      },
+      R"delim(
+      Parse the ELF binary from a memory dump given in the first parameter.
 
-    A dump is a raw capture of the process' memory that was mapped starting at
-    the virtual address given in the second parameter.
-    )delim"_doc,
-    "obj"_a, "addr"_a, "config"_a = ParserConfig::all(),
-    nb::rv_policy::take_ownership);
+      A dump is a raw capture of the process' memory that was mapped starting at
+      the virtual address given in the second parameter.
+      )delim"_doc,
+      "obj"_a, "addr"_a, "config"_a = ParserConfig::all(),
+      nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-      [] (typing::InputParser obj, const ParserConfig& config) -> std::unique_ptr<Binary> {
+  m.def(
+      "parse",
+      [](typing::InputParser obj,
+         const ParserConfig& config) -> std::unique_ptr<Binary> {
         return Parser::parse(obj.into_stream(), config);
       },
       R"delim(
@@ -67,7 +76,7 @@ void create<Parser>(nb::module_& m) {
       The second argument is an optional configuration (:class:`~lief.ELF.ParserConfig`)
       that can be used to define which part(s) of the ELF should be parsed or skipped.
       )delim"_doc,
-      "obj"_a, "config"_a = ParserConfig::all(),
-      nb::rv_policy::take_ownership);
+      "obj"_a, "config"_a = ParserConfig::all(), nb::rv_policy::take_ownership
+  );
 }
 }

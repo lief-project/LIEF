@@ -13,39 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "pySafeString.hpp"
 
-#include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryLibrary.hpp"
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<DynamicEntryLibrary>(nb::module_& m) {
-  nb::class_<DynamicEntryLibrary, DynamicEntry>(m, "DynamicEntryLibrary",
+  nb::class_<DynamicEntryLibrary, DynamicEntry>(
+      m, "DynamicEntryLibrary",
       R"delim(
       Class which represents a ``DT_NEEDED`` entry in the dynamic table.
 
       This kind of entry is usually used to create library dependency.
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def(nb::init<const std::string &>(),
-        "Constructor from a library name"_doc,
-        "library_name"_a)
+      .def(nb::init<const std::string&>(), "Constructor from a library name"_doc,
+           "library_name"_a)
 
-    .def_prop_rw("name",
-        [] (const DynamicEntryLibrary& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<std::string>(&DynamicEntryLibrary::name),
-        "Library associated with this entry (e.g. ``libc.so.6``)"_doc)
+      .def_prop_rw(
+          "name",
+          [](const DynamicEntryLibrary& obj) {
+            return LIEF::py::safe_string(obj.name());
+          },
+          nb::overload_cast<std::string>(&DynamicEntryLibrary::name),
+          "Library associated with this entry (e.g. ``libc.so.6``)"_doc
+      )
 
-    LIEF_DEFAULT_STR(DynamicEntryLibrary);
+      .LIEF_DEFAULT_STR(DynamicEntryLibrary);
 }
 
 }

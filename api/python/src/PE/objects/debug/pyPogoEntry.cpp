@@ -18,32 +18,31 @@
 
 #include "LIEF/PE/debug/PogoEntry.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<PogoEntry>(nb::module_& m) {
   nb::class_<PogoEntry, Object>(m, "PogoEntry")
-    .def(nb::init<>())
+      .def(nb::init<>())
 
-    .def_prop_rw("name",
-        [] (const PogoEntry& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<std::string>(&PogoEntry::name))
+      .def_prop_rw(
+          "name",
+          [](const PogoEntry& obj) { return LIEF::py::safe_string(obj.name()); },
+          nb::overload_cast<std::string>(&PogoEntry::name)
+      )
 
-    .def_prop_rw("start_rva",
-        nb::overload_cast<>(&PogoEntry::start_rva, nb::const_),
-        nb::overload_cast<uint32_t>(&PogoEntry::start_rva))
+      .def_prop_rw("start_rva",
+                   nb::overload_cast<>(&PogoEntry::start_rva, nb::const_),
+                   nb::overload_cast<uint32_t>(&PogoEntry::start_rva))
 
-    .def_prop_rw("size",
-        nb::overload_cast<>(&PogoEntry::size, nb::const_),
-        nb::overload_cast<uint32_t>(&PogoEntry::size))
+      .def_prop_rw("size", nb::overload_cast<>(&PogoEntry::size, nb::const_),
+                   nb::overload_cast<uint32_t>(&PogoEntry::size))
 
-    LIEF_COPYABLE(PogoEntry)
-    LIEF_DEFAULT_STR(PogoEntry);
+      .LIEF_COPYABLE(PogoEntry)
+      .LIEF_DEFAULT_STR(PogoEntry);
 }
 }

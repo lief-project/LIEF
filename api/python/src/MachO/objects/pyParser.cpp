@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <memory>
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/vector.h>
+#include <memory>
 
 #include "typing/InputParser.hpp"
 
-#include "LIEF/MachO/Parser.hpp"
 #include "LIEF/MachO/FatBinary.hpp"
+#include "LIEF/MachO/Parser.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
@@ -34,37 +34,43 @@ void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
 
-  m.def("parse_from_memory",
-    nb::overload_cast<uintptr_t, const ParserConfig&>(&MachO::Parser::parse_from_memory),
-    R"delim(
-    Parse the Mach-O binary from the address given in the first parameter
-    )delim"_doc, "address"_a, "config"_a = ParserConfig::deep(),
-    nb::rv_policy::take_ownership);
+  m.def(
+      "parse_from_memory",
+      nb::overload_cast<uintptr_t, const ParserConfig&>(
+          &MachO::Parser::parse_from_memory
+      ),
+      "Parse the Mach-O binary from the address given in the first parameter"_doc,
+      "address"_a, "config"_a = ParserConfig::deep(), nb::rv_policy::take_ownership
+  );
 
-  m.def("parse_from_dump",
-    [] (typing::InputParser obj, uint64_t addr, const ParserConfig& config) {
-      return Parser::parse_from_dump(obj.into_stream(), addr, config);
-    },
-    R"delim(
-    Parse the Mach-O binary from a memory dump given in the first parameter.
+  m.def(
+      "parse_from_dump",
+      [](typing::InputParser obj, uint64_t addr, const ParserConfig& config) {
+        return Parser::parse_from_dump(obj.into_stream(), addr, config);
+      },
+      R"delim(
+      Parse the Mach-O binary from a memory dump given in the first parameter.
 
-    A dump is a raw capture of the process memory that was mapped starting at
-    the virtual address given in the second parameter.
-    )delim"_doc,
-    "obj"_a, "addr"_a, "config"_a = ParserConfig::deep(),
-    nb::rv_policy::take_ownership);
+      A dump is a raw capture of the process memory that was mapped starting at
+      the virtual address given in the second parameter.
+      )delim"_doc,
+      "obj"_a, "addr"_a, "config"_a = ParserConfig::deep(),
+      nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-    [] (typing::InputParser obj, const ParserConfig& config) -> std::unique_ptr<FatBinary> {
-      return Parser::parse(obj.into_stream(), config);
-    },
-    R"delim(
-    Parse the given binary from the given input and return a :class:`~lief.MachO.FatBinary` object
+  m.def(
+      "parse",
+      [](typing::InputParser obj,
+         const ParserConfig& config) -> std::unique_ptr<FatBinary> {
+        return Parser::parse(obj.into_stream(), config);
+      },
+      R"delim(
+      Parse the given binary from the given input and return a :class:`~lief.MachO.FatBinary` object
 
-    One can configure the parser with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
-    )delim"_doc,
-    "obj"_a, "config"_a = ParserConfig::deep(),
-    nb::rv_policy::take_ownership);
+      One can configure the parser with the ``config`` parameter. See :class:`~lief.MachO.ParserConfig`
+      )delim"_doc,
+      "obj"_a, "config"_a = ParserConfig::deep(), nb::rv_policy::take_ownership
+  );
 }
 
 }

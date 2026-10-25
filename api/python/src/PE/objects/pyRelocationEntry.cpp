@@ -19,21 +19,24 @@
 
 #include "enums_wrapper.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<RelocationEntry>(nb::module_& m) {
-  nb::class_<RelocationEntry, LIEF::Relocation> entry(m, "RelocationEntry",
+  nb::class_<RelocationEntry, LIEF::Relocation> entry(
+      m, "RelocationEntry",
       R"delim(
       Class which represents an entry of the PE relocation table.
 
       It extends the :class:`lief.Relocation` object to provide an uniform API across the file formats.
-      )delim"_doc);
+      )delim"_doc
+  );
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(RelocationEntry::BASE_TYPES::X), RelocationEntry::BASE_TYPES::X)
   enum_<RelocationEntry::BASE_TYPES>(entry, "BASE_TYPES")
     ENTRY(UNKNOWN)
@@ -53,29 +56,30 @@ void create<RelocationEntry>(nb::module_& m) {
     ENTRY(DIR64)
     ENTRY(HIGH3ADJ);
   #undef ENTRY
+  // clang-format on
 
-  entry
-    .def(nb::init<>())
-    .def(nb::init<uint16_t, RelocationEntry::BASE_TYPES>())
-    .def_prop_ro("data",
-        nb::overload_cast<>(&RelocationEntry::data, nb::const_),
-        R"delim(
-        Raw data of the relocation:
+  entry.def(nb::init<>())
+      .def(nb::init<uint16_t, RelocationEntry::BASE_TYPES>())
+      .def_prop_ro("data", nb::overload_cast<>(&RelocationEntry::data, nb::const_),
+                   R"delim(
+                   Raw data of the relocation:
 
-          * The **high** 4 bits store the relocation :attr:`~lief.PE.RelocationEntry.type`
-          * The **low** 12 bits store the relocation offset (:attr:`~lief.PE.RelocationEntry.position`)
-        )delim"_doc)
+                     * The **high** 4 bits store the relocation :attr:`~lief.PE.RelocationEntry.type`
+                     * The **low** 12 bits store the relocation offset (:attr:`~lief.PE.RelocationEntry.position`)
+                   )delim"_doc)
 
-    .def_prop_rw("position",
-        nb::overload_cast<>(&RelocationEntry::position, nb::const_),
-        nb::overload_cast<uint16_t>(&RelocationEntry::position),
-        "Offset - relative to :attr:`~lief.PE.Relocation.virtual_address` - where the relocation occurs"_doc)
+      .def_prop_rw(
+          "position", nb::overload_cast<>(&RelocationEntry::position, nb::const_),
+          nb::overload_cast<uint16_t>(&RelocationEntry::position),
+          "Offset - relative to :attr:`~lief.PE.Relocation.virtual_address` - where the relocation occurs"_doc
+      )
 
-    .def_prop_rw("type",
-        nb::overload_cast<>(&RelocationEntry::type, nb::const_),
-        nb::overload_cast<RelocationEntry::BASE_TYPES>(&RelocationEntry::type),
-        "Type of the relocation"_doc)
+      .def_prop_rw(
+          "type", nb::overload_cast<>(&RelocationEntry::type, nb::const_),
+          nb::overload_cast<RelocationEntry::BASE_TYPES>(&RelocationEntry::type),
+          "Type of the relocation"_doc
+      )
 
-    LIEF_DEFAULT_STR(RelocationEntry);
+      .LIEF_DEFAULT_STR(RelocationEntry);
 }
 }

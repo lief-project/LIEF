@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/ART/Parser.hpp"
 #include "LIEF/ART/File.hpp"
+#include "LIEF/ART/Parser.hpp"
 #include "LIEF/logging.hpp"
 
 #include "ART/pyART.hpp"
 
-#include "typing/InputParser.hpp"
-#include "pyutils.hpp"
 #include "pyIOStream.hpp"
+#include "pyutils.hpp"
+#include "typing/InputParser.hpp"
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
 
 namespace LIEF::ART::py {
 
@@ -37,34 +37,39 @@ template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
-  m.def("parse",
-    static_cast<std::unique_ptr<File>(*)(std::string_view)>(&Parser::parse),
-    "Parse the given filename and return an " RST_CLASS_REF(lief.ART.File) " object"_doc,
-    "filename"_a,
-    nb::rv_policy::take_ownership);
+  m.def(
+      "parse",
+      static_cast<std::unique_ptr<File> (*)(std::string_view)>(&Parser::parse),
+      "Parse the given filename and return an :class:`~lief.ART.File` object"_doc,
+      "filename"_a, nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-    static_cast<std::unique_ptr<File>(*)(std::vector<uint8_t>, std::string_view)>(
-        &Parser::parse),
-    "Parse the given raw data and return an " RST_CLASS_REF(lief.ART.File) " object"_doc,
-    "raw"_a, "name"_a = "",
-    nb::rv_policy::take_ownership);
+  m.def(
+      "parse",
+      static_cast<std::unique_ptr<File> (*)(std::vector<uint8_t>,
+                                            std::string_view)>(&Parser::parse),
+      "Parse the given raw data and return an :class:`~lief.ART.File` object"_doc,
+      "raw"_a, "name"_a = "", nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-    [] (typing::InputParser obj, const std::string& name) -> std::unique_ptr<File> {
-      if (auto path_str = path_to_str(obj)) {
-        return Parser::parse(std::move(*path_str));
-      }
+  m.def(
+      "parse",
+      [](typing::InputParser obj,
+         const std::string& name) -> std::unique_ptr<File> {
+        if (auto path_str = path_to_str(obj)) {
+          return Parser::parse(std::move(*path_str));
+        }
 
-      if (auto stream = PyIOStream::from_python(obj)) {
-        auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-        return Parser::parse(stream->content(), name);
-      }
-      logging::log(logging::Level::Err,
-                   "LIEF parser interface does not support Python object: " +
-                   type2str(obj));
-      return nullptr;
-    },
-    "obj"_a, "name"_a = "", nb::rv_policy::take_ownership);
+        if (auto stream = PyIOStream::from_python(obj)) {
+          auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
+          return Parser::parse(stream->content(), name);
+        }
+        logging::log(logging::Level::Err,
+                     "LIEF parser interface does not support Python object: " +
+                         type2str(obj));
+        return nullptr;
+      },
+      "obj"_a, "name"_a = "", nb::rv_policy::take_ownership
+  );
 }
 }

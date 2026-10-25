@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 #include <string_view>
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 #include "LIEF/ELF/SymbolVersionAuxRequirement.hpp"
 #include "LIEF/ELF/SymbolVersionRequirement.hpp"
 
-#include "pyIterator.hpp"
 #include "ELF/pyELF.hpp"
+#include "pyIterator.hpp"
 
 namespace LIEF::ELF::py {
 
@@ -33,66 +33,87 @@ void create<SymbolVersionRequirement>(nb::module_& m) {
   using namespace LIEF::py;
 
   // Symbol Version Requirement object
-  nb::class_<SymbolVersionRequirement, LIEF::Object> sym_ver_req(m, "SymbolVersionRequirement",
-      "Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r`` table"_doc);
+  nb::class_<SymbolVersionRequirement, LIEF::Object> sym_ver_req(
+      m, "SymbolVersionRequirement",
+      "Class which represents an entry in the ``DT_VERNEED`` or ``.gnu.version_r`` table"_doc
+  );
 
-  init_ref_iterator<SymbolVersionRequirement::it_aux_requirement>(sym_ver_req, "it_aux_requirement");
+  init_ref_iterator<SymbolVersionRequirement::it_aux_requirement>(
+      sym_ver_req, "it_aux_requirement"
+  );
 
   sym_ver_req
-    .def_prop_rw("version",
-        nb::overload_cast<>(&SymbolVersionRequirement::version, nb::const_),
-        nb::overload_cast<uint16_t>(&SymbolVersionRequirement::version),
-        "Version revision. Should be 1"_doc)
+      .def_prop_rw("version",
+                   nb::overload_cast<>(&SymbolVersionRequirement::version,
+                                       nb::const_),
+                   nb::overload_cast<uint16_t>(&SymbolVersionRequirement::version),
+                   "Version revision. Should be 1"_doc)
 
-    .def_prop_rw("name",
-        nb::overload_cast<>(&SymbolVersionRequirement::name, nb::const_),
-        nb::overload_cast<std::string_view>(&SymbolVersionRequirement::name),
-        "Library's name associated with this requirement (e.g. ``libc.so.6``)"_doc)
+      .def_prop_rw(
+          "name", nb::overload_cast<>(&SymbolVersionRequirement::name, nb::const_),
+          nb::overload_cast<std::string_view>(&SymbolVersionRequirement::name),
+          "Library's name associated with this requirement (e.g. ``libc.so.6``)"_doc
+      )
 
-    .def("get_auxiliary_symbols",
-        nb::overload_cast<>(&SymbolVersionRequirement::auxiliary_symbols),
-        "Auxiliary entries (iterator over " RST_CLASS_REF(lief.ELF.SymbolVersionAuxRequirement) ")"_doc,
-        nb::rv_policy::reference_internal)
+      .def(
+          "get_auxiliary_symbols",
+          nb::overload_cast<>(&SymbolVersionRequirement::auxiliary_symbols),
+          "Auxiliary entries (iterator over :class:`~lief.ELF.SymbolVersionAuxRequirement`)"_doc,
+          nb::rv_policy::reference_internal
+      )
 
-    .def("add_auxiliary_requirement",
-        static_cast<SymbolVersionAuxRequirement& (SymbolVersionRequirement::*)(const SymbolVersionAuxRequirement&)>(&SymbolVersionRequirement::add_aux_requirement),
-        "Add an auxiliary version requirement to the existing entries"_doc,
-        nb::lock_self())
+      .def("add_auxiliary_requirement",
+           static_cast<SymbolVersionAuxRequirement& (SymbolVersionRequirement::*)(
+               const SymbolVersionAuxRequirement&
+           )>(&SymbolVersionRequirement::add_aux_requirement),
+           "Add an auxiliary version requirement to the existing entries"_doc,
+           nb::lock_self())
 
-    .def("find_aux", nb::overload_cast<std::string_view>(&SymbolVersionRequirement::find_aux),
-        R"doc(
-        Try to find the :class:`~.SymbolVersionAuxRequirement` with the given name
-        (e.g. ``GLIBC_2.27``)
-        )doc"_doc,
-        nb::rv_policy::reference_internal, "name"_a)
+      .def(
+          "find_aux",
+          nb::overload_cast<std::string_view>(&SymbolVersionRequirement::find_aux),
+          R"doc(
+          Try to find the :class:`~.SymbolVersionAuxRequirement` with the given name
+          (e.g. ``GLIBC_2.27``)
+          )doc"_doc,
+          nb::rv_policy::reference_internal, "name"_a
+      )
 
-    .def("remove_aux_requirement", nb::overload_cast<std::string_view>(&SymbolVersionRequirement::remove_aux_requirement),
-        R"doc(
-        Try to remove the auxiliary requirement symbol with the given name.
-        The function returns true if the operation succeeds, false otherwise.
+      .def("remove_aux_requirement",
+           nb::overload_cast<std::string_view>(
+               &SymbolVersionRequirement::remove_aux_requirement
+           ),
+           R"doc(
+           Try to remove the auxiliary requirement symbol with the given name.
+           The function returns true if the operation succeeds, false otherwise.
 
-        .. warning::
+           .. warning::
 
-            This function invalidates all the references (pointers) of
-            :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is responsible
-            to ensure that the auxiliary requirement is no longer used in the
-            ELF binary (e.g. in :class:`~.SymbolVersion`)
-        )doc"_doc, "name"_a, nb::lock_self())
+               This function invalidates all the references (pointers) of
+               :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is responsible
+               to ensure that the auxiliary requirement is no longer used in the
+               ELF binary (e.g. in :class:`~.SymbolVersion`)
+           )doc"_doc,
+           "name"_a, nb::lock_self())
 
-    .def("remove_aux_requirement", nb::overload_cast<SymbolVersionAuxRequirement&>(&SymbolVersionRequirement::remove_aux_requirement),
-        R"doc(
-        Try to remove the given auxiliary requirement symbol.
-        The function returns true if the operation succeeds, false otherwise.
+      .def("remove_aux_requirement",
+           nb::overload_cast<SymbolVersionAuxRequirement&>(
+               &SymbolVersionRequirement::remove_aux_requirement
+           ),
+           R"doc(
+           Try to remove the given auxiliary requirement symbol.
+           The function returns true if the operation succeeds, false otherwise.
 
-        .. warning::
+           .. warning::
 
-            This function invalidates all the references (pointers) of
-            :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is responsible
-            to ensure that the auxiliary requirement is no longer used in the
-            ELF binary (e.g. in :class:`~.SymbolVersion`)
-        )doc"_doc, "aux"_a, nb::lock_self())
+               This function invalidates all the references (pointers) of
+               :class:`~.SymbolVersionAuxRequirement`. Therefore, the user is responsible
+               to ensure that the auxiliary requirement is no longer used in the
+               ELF binary (e.g. in :class:`~.SymbolVersion`)
+           )doc"_doc,
+           "aux"_a, nb::lock_self())
 
-    LIEF_DEFAULT_STR(SymbolVersionRequirement);
+      .LIEF_DEFAULT_STR(SymbolVersionRequirement);
 }
 
 }

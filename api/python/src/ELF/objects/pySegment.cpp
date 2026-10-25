@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <nanobind/stl/string_view.h>
 #include <string_view>
-#include <string>
+#include <nanobind/stl/string_view.h>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include <nanobind/operators.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
-#include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
 
 #include "ELF/pyELF.hpp"
 #include "pyErr.hpp"
@@ -39,14 +39,13 @@ template<>
 void create<Segment>(nb::module_& m) {
   using namespace LIEF::py;
 
-  nb::class_<Segment, LIEF::Object> seg(m, "Segment",
-    R"delim(
-    Class which represents the ELF segments
-    )delim"_doc
+  nb::class_<Segment, LIEF::Object> seg(
+      m, "Segment", "Class which represents the ELF segments"_doc
   );
 
   init_ref_iterator<Segment::it_sections>(seg, "it_sections");
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Segment::TYPE::X), Segment::TYPE::X)
   enum_<Segment::TYPE>(seg, "TYPE")
     ENTRY(PT_NULL_)
@@ -90,7 +89,9 @@ void create<Segment>(nb::module_& m) {
     ENTRY(HP_CORE_UTSNAME)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Segment::FLAGS::X), Segment::FLAGS::X)
   enum_<Segment::FLAGS>(seg, "FLAGS", nb::is_flag())
     ENTRY(R)
@@ -99,142 +100,153 @@ void create<Segment>(nb::module_& m) {
     ENTRY(NONE)
   ;
   #undef ENTRY
+  // clang-format on
 
-  seg
-    .def(nb::init<>())
-    .def_static("from_raw",
-        [] (nb::bytes raw) {
-          const std::vector<uint8_t>& cpp_raw = {raw.c_str(), raw.c_str() + raw.size()};
-          auto* f_ptr = nb::overload_cast<const std::vector<uint8_t>&>(&Segment::from_raw);
-          return error_or(f_ptr, cpp_raw);
-        })
+  seg.def(nb::init<>())
+      .def_static(
+          "from_raw",
+          [](nb::bytes raw) {
+            const std::vector<uint8_t>& cpp_raw = {raw.c_str(),
+                                                   raw.c_str() + raw.size()};
+            auto* f_ptr =
+                nb::overload_cast<const std::vector<uint8_t>&>(&Segment::from_raw);
+            return error_or(f_ptr, cpp_raw);
+          }
+      )
 
-    .def_prop_rw("type",
-        nb::overload_cast<>(&Segment::type, nb::const_),
-        nb::overload_cast<Segment::TYPE>(&Segment::type),
-        "Segment's type"_doc)
+      .def_prop_rw("type", nb::overload_cast<>(&Segment::type, nb::const_),
+                   nb::overload_cast<Segment::TYPE>(&Segment::type),
+                   "Segment's type"_doc)
 
-    .def_prop_rw("flags",
-        [] (const Segment& S) { return (Segment::FLAGS)((uint32_t)S.flags() & 7); },
-        nb::overload_cast<Segment::FLAGS>(&Segment::flags),
-        "The flag permissions associated with this segment"_doc)
+      .def_prop_rw(
+          "flags",
+          [](const Segment& S) {
+            return (Segment::FLAGS)((uint32_t)S.flags() & 7);
+          },
+          nb::overload_cast<Segment::FLAGS>(&Segment::flags),
+          "The flag permissions associated with this segment"_doc
+      )
 
-    .def_prop_rw("raw_flags",
-        [] (const Segment& S) { return (uint32_t)S.flags(); },
-        nb::overload_cast<uint32_t>(&Segment::flags),
-        "The flag permissions as an integer"_doc)
+      .def_prop_rw(
+          "raw_flags", [](const Segment& S) { return (uint32_t)S.flags(); },
+          nb::overload_cast<uint32_t>(&Segment::flags),
+          "The flag permissions as an integer"_doc
+      )
 
-    .def_prop_rw("file_offset",
-        nb::overload_cast<>(&Segment::file_offset, nb::const_),
-        nb::overload_cast<uint64_t>(&Segment::file_offset),
-        "The file offset of the data associated with this segment"_doc)
+      .def_prop_rw("file_offset",
+                   nb::overload_cast<>(&Segment::file_offset, nb::const_),
+                   nb::overload_cast<uint64_t>(&Segment::file_offset),
+                   "The file offset of the data associated with this segment"_doc)
 
-    .def_prop_rw("virtual_address",
-        nb::overload_cast<>(&Segment::virtual_address, nb::const_),
-        nb::overload_cast<uint64_t>(&Segment::virtual_address),
-        R"delim(
-        The virtual address of the segment.
+      .def_prop_rw(
+          "virtual_address",
+          nb::overload_cast<>(&Segment::virtual_address, nb::const_),
+          nb::overload_cast<uint64_t>(&Segment::virtual_address),
+          R"delim(
+          The virtual address of the segment.
 
-        .. warning::
-            The ELF format specifications require the following relationship:
+          .. warning::
+              The ELF format specifications require the following relationship:
 
-            .. math::
-                \text{virtual address} \equiv \text{file offset} \pmod{\text{page size}}
-                \text{virtual address} \equiv \text{file offset} \pmod{\text{alignment}}
-        )delim"_doc)
+              .. math::
+                  \text{virtual address} \equiv \text{file offset} \pmod{\text{page size}}
+                  \text{virtual address} \equiv \text{file offset} \pmod{\text{alignment}}
+          )delim"_doc
+      )
 
-    .def_prop_rw("physical_address",
-        nb::overload_cast<>(&Segment::physical_address, nb::const_),
-        nb::overload_cast<uint64_t>(&Segment::physical_address),
-        R"delim(
-        The physical address of the segment. This value is not really relevant
-        on systems like Linux or Android. On the other hand, Qualcomm trustlets
-        might use this value.
+      .def_prop_rw(
+          "physical_address",
+          nb::overload_cast<>(&Segment::physical_address, nb::const_),
+          nb::overload_cast<uint64_t>(&Segment::physical_address),
+          R"delim(
+          The physical address of the segment. This value is not really relevant
+          on systems like Linux or Android. On the other hand, Qualcomm trustlets
+          might use this value.
 
-        Usually this value matches :attr:`~lief.ELF.Segment.virtual_address`
-        )delim"_doc)
+          Usually this value matches :attr:`~lief.ELF.Segment.virtual_address`
+          )delim"_doc
+      )
 
-    .def_prop_rw("physical_size",
-        nb::overload_cast<>(&Segment::physical_size, nb::const_),
-        nb::overload_cast<uint64_t>(&Segment::physical_size),
-        "The **file** size of the data associated with this segment"_doc)
+      .def_prop_rw(
+          "physical_size",
+          nb::overload_cast<>(&Segment::physical_size, nb::const_),
+          nb::overload_cast<uint64_t>(&Segment::physical_size),
+          "The **file** size of the data associated with this segment"_doc
+      )
 
-    .def_prop_rw("virtual_size",
-        nb::overload_cast<>(&Segment::virtual_size, nb::const_),
-        nb::overload_cast<uint64_t>(&Segment::virtual_size),
-        R"delim(
-        The in-memory size of this segment.
+      .def_prop_rw("virtual_size",
+                   nb::overload_cast<>(&Segment::virtual_size, nb::const_),
+                   nb::overload_cast<uint64_t>(&Segment::virtual_size),
+                   R"delim(
+                   The in-memory size of this segment.
 
-        Usually, if the ``.bss`` segment is wrapped by this segment
-        then, virtual_size is larger than physical_size
-        )delim"_doc)
+                   Usually, if the ``.bss`` segment is wrapped by this segment
+                   then, virtual_size is larger than physical_size
+                   )delim"_doc)
 
-    .def_prop_rw("alignment",
-        nb::overload_cast<>(&Segment::alignment, nb::const_),
-        nb::overload_cast<uint64_t>(&Segment::alignment),
-        "The offset alignment of the segment"_doc)
+      .def_prop_rw("alignment",
+                   nb::overload_cast<>(&Segment::alignment, nb::const_),
+                   nb::overload_cast<uint64_t>(&Segment::alignment),
+                   "The offset alignment of the segment"_doc)
 
-    .def_prop_rw("content",
-        nb::overload_cast<>(&Segment::content, nb::const_),
-        nb::overload_cast<std::vector<uint8_t>>(&Segment::content),
-        "The raw data associated with this segment."_doc)
+      .def_prop_rw("content", nb::overload_cast<>(&Segment::content, nb::const_),
+                   nb::overload_cast<std::vector<uint8_t>>(&Segment::content),
+                   "The raw data associated with this segment."_doc)
 
-    .def("add", &Segment::add,
-        "Add the given flag to the list of :attr:`~lief.ELF.Segment.flags`"_doc,
-        "flag"_a)
+      .def("add", &Segment::add,
+           "Add the given flag to the list of :attr:`~lief.ELF.Segment.flags`"_doc,
+           "flag"_a)
 
-    .def("remove", &Segment::remove,
-        "Remove the given flag from the list of :attr:`~lief.ELF.Segment.flags`"_doc,
-        "flag"_a)
+      .def(
+          "remove", &Segment::remove,
+          "Remove the given flag from the list of :attr:`~lief.ELF.Segment.flags`"_doc,
+          "flag"_a
+      )
 
-    .def("has",
-        nb::overload_cast<Segment::FLAGS>(&Segment::has, nb::const_),
-        "Check if the given flag is present"_doc,
-        "flag"_a)
+      .def("has", nb::overload_cast<Segment::FLAGS>(&Segment::has, nb::const_),
+           "Check if the given flag is present"_doc, "flag"_a)
 
-    .def("has",
-        nb::overload_cast<const Section&>(&Segment::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.Section) " is present "
-        "in :attr:`~lief.ELF.Segment.sections`"_doc,
-        "section"_a)
+      .def("has", nb::overload_cast<const Section&>(&Segment::has, nb::const_),
+           "Check if the given :class:`~lief.ELF.Section` is present "
+           "in :attr:`~lief.ELF.Segment.sections`"_doc,
+           "section"_a)
 
-    .def("has",
-        nb::overload_cast<std::string_view>(&Segment::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.Section) " 's name is present "
-        "in :attr:`~lief.ELF.Segment.sections`"_doc,
-        "section_name"_a)
+      .def("has", nb::overload_cast<std::string_view>(&Segment::has, nb::const_),
+           "Check if the given :class:`~lief.ELF.Section` 's name is present "
+           "in :attr:`~lief.ELF.Segment.sections`"_doc,
+           "section_name"_a)
 
-    .def("clear", &Segment::clear, "Clear the content of this segment"_doc)
+      .def("clear", &Segment::clear, "Clear the content of this segment"_doc)
 
-    .def("fill", &Segment::fill,
-      "value"_a,
-      "Fill the content of this segment with the value provided in parameter"_doc
-    )
+      .def(
+          "fill", &Segment::fill, "value"_a,
+          "Fill the content of this segment with the value provided in parameter"_doc
+      )
 
-    .def_prop_ro("sections",
-      nb::overload_cast<>(&Segment::sections),
-      "Iterator over the " RST_CLASS_REF(lief.ELF.Section) " wrapped by this segment"_doc,
-      nb::keep_alive<0, 1>())
+      .def_prop_ro(
+          "sections", nb::overload_cast<>(&Segment::sections),
+          "Iterator over the :class:`~lief.ELF.Section` wrapped by this segment"_doc,
+          nb::keep_alive<0, 1>()
+      )
 
-    .def(nb::self += Segment::FLAGS())
-    .def(nb::self -= Segment::FLAGS())
+      .def(nb::self += Segment::FLAGS())
+      .def(nb::self -= Segment::FLAGS())
 
-    .def("__contains__",
-        nb::overload_cast<Segment::FLAGS>(&Segment::has, nb::const_),
-        "Check if the given flag is present"_doc)
+      .def("__contains__",
+           nb::overload_cast<Segment::FLAGS>(&Segment::has, nb::const_),
+           "Check if the given flag is present"_doc)
 
-    .def("__contains__",
-        nb::overload_cast<const Section&>(&Segment::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.Section) " is present "
-        "in :attr:`~lief.ELF.Segment.sections`"_doc)
+      .def("__contains__",
+           nb::overload_cast<const Section&>(&Segment::has, nb::const_),
+           "Check if the given :class:`~lief.ELF.Section` is present "
+           "in :attr:`~lief.ELF.Segment.sections`"_doc)
 
-    .def("__contains__",
-        nb::overload_cast<std::string_view>(&Segment::has, nb::const_),
-        "Check if the given " RST_CLASS_REF(lief.ELF.Section) " 's name is present "
-        "in :attr:`~lief.ELF.Segment.sections`"_doc)
+      .def("__contains__",
+           nb::overload_cast<std::string_view>(&Segment::has, nb::const_),
+           "Check if the given :class:`~lief.ELF.Section` 's name is present "
+           "in :attr:`~lief.ELF.Segment.sections`"_doc)
 
-    LIEF_DEFAULT_STR(Segment);
-
+      .LIEF_DEFAULT_STR(Segment);
 }
 
 }

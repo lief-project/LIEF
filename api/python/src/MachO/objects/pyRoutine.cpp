@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "LIEF/MachO/Routine.hpp"
 
@@ -27,7 +27,8 @@ namespace LIEF::MachO::py {
 template<>
 void create<Routine>(nb::module_& m) {
 
-  nb::class_<Routine, LoadCommand>(m, "Routine",
+  nb::class_<Routine, LoadCommand>(
+      m, "Routine",
       R"delim(
       Class that represents the ``LC_ROUTINE/LC_ROUTINE64`` commands.
       According to the Mach-O ``loader.h`` documentation:
@@ -38,42 +39,44 @@ void create<Routine>(nb::module_& m) {
       dynamic linker fully binds the module that defines the initialization routine
       and then calls it. This gets called before any module initialization
       routines (used for C++ static constructors) in the library.
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def_prop_rw("init_address",
-        nb::overload_cast<>(&Routine::init_address, nb::const_),
-        nb::overload_cast<uint64_t>(&Routine::init_address),
-        "Address of initialization routine"_doc)
+      .def_prop_rw("init_address",
+                   nb::overload_cast<>(&Routine::init_address, nb::const_),
+                   nb::overload_cast<uint64_t>(&Routine::init_address),
+                   "Address of initialization routine"_doc)
 
-    .def_prop_rw("init_module",
-        nb::overload_cast<>(&Routine::init_module, nb::const_),
-        nb::overload_cast<uint64_t>(&Routine::init_module),
-        "Index into the module table that the init routine is defined in"_doc)
+      .def_prop_rw(
+          "init_module", nb::overload_cast<>(&Routine::init_module, nb::const_),
+          nb::overload_cast<uint64_t>(&Routine::init_module),
+          "Index into the module table that the init routine is defined in"_doc
+      )
 
-    .def_prop_rw("reserved1",
-        nb::overload_cast<>(&Routine::reserved1, nb::const_),
-        nb::overload_cast<uint64_t>(&Routine::reserved1))
+      .def_prop_rw("reserved1",
+                   nb::overload_cast<>(&Routine::reserved1, nb::const_),
+                   nb::overload_cast<uint64_t>(&Routine::reserved1))
 
-    .def_prop_rw("reserved2",
-        nb::overload_cast<>(&Routine::reserved2, nb::const_),
-        nb::overload_cast<uint64_t>(&Routine::reserved2))
+      .def_prop_rw("reserved2",
+                   nb::overload_cast<>(&Routine::reserved2, nb::const_),
+                   nb::overload_cast<uint64_t>(&Routine::reserved2))
 
-    .def_prop_rw("reserved3",
-        nb::overload_cast<>(&Routine::reserved3, nb::const_),
-        nb::overload_cast<uint64_t>(&Routine::reserved3))
+      .def_prop_rw("reserved3",
+                   nb::overload_cast<>(&Routine::reserved3, nb::const_),
+                   nb::overload_cast<uint64_t>(&Routine::reserved3))
 
-    .def_prop_rw("reserved4",
-        nb::overload_cast<>(&Routine::reserved4, nb::const_),
-        nb::overload_cast<uint64_t>(&Routine::reserved4))
+      .def_prop_rw("reserved4",
+                   nb::overload_cast<>(&Routine::reserved4, nb::const_),
+                   nb::overload_cast<uint64_t>(&Routine::reserved4))
 
-    .def_prop_rw("reserved5",
-        nb::overload_cast<>(&Routine::reserved5, nb::const_),
-        nb::overload_cast<uint64_t>(&Routine::reserved5))
+      .def_prop_rw("reserved5",
+                   nb::overload_cast<>(&Routine::reserved5, nb::const_),
+                   nb::overload_cast<uint64_t>(&Routine::reserved5))
 
-    .def_prop_rw("reserved6",
-        nb::overload_cast<>(&Routine::reserved6, nb::const_),
-        nb::overload_cast<uint64_t>(&Routine::reserved6))
+      .def_prop_rw("reserved6",
+                   nb::overload_cast<>(&Routine::reserved6, nb::const_),
+                   nb::overload_cast<uint64_t>(&Routine::reserved6))
 
-    LIEF_DEFAULT_STR(Routine);
+      .LIEF_DEFAULT_STR(Routine);
 }
 }

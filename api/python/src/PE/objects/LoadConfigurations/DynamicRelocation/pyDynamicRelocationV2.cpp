@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "PE/pyPE.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicRelocationV2.hpp"
+#include "PE/pyPE.hpp"
 
 namespace LIEF::PE::py {
 
 template<>
 void create<DynamicRelocationV2>(nb::module_& m) {
-  nb::class_<DynamicRelocationV2, DynamicRelocation> obj(m, "DynamicRelocationV2",
-    R"doc(
-    This class represents a dynamic relocation (``IMAGE_DYNAMIC_RELOCATION64_V2`` or
-    ``IMAGE_DYNAMIC_RELOCATION32_V2``)
-    )doc"_doc
+  nb::class_<DynamicRelocationV2, DynamicRelocation> obj(
+      m, "DynamicRelocationV2",
+      R"doc(
+      This class represents a dynamic relocation (``IMAGE_DYNAMIC_RELOCATION64_V2`` or
+      ``IMAGE_DYNAMIC_RELOCATION32_V2``)
+      )doc"_doc
   );
 }
 

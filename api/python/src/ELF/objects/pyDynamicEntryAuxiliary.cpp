@@ -13,39 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "pySafeString.hpp"
 
-#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<DynamicEntryAuxiliary>(nb::module_& m) {
-  nb::class_<DynamicEntryAuxiliary, DynamicEntry>(m, "DynamicEntryAuxiliary",
+  nb::class_<DynamicEntryAuxiliary, DynamicEntry>(
+      m, "DynamicEntryAuxiliary",
       R"doc(
       Class which represents a ``DT_AUXILIARY`` entry in the dynamic table.
       This kind of entry is used to specify a shared object that should be
       loaded before the current one.
-      )doc"_doc)
+      )doc"_doc
+  )
 
-    .def(nb::init<const std::string &>(),
-        "Constructor from library name"_doc,
-        "library_name"_a)
+      .def(nb::init<const std::string&>(), "Constructor from library name"_doc,
+           "library_name"_a)
 
-    .def_prop_rw("name",
-        [] (const DynamicEntryAuxiliary& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<std::string>(&DynamicEntryAuxiliary::name),
-        "Return the library name"_doc)
+      .def_prop_rw(
+          "name",
+          [](const DynamicEntryAuxiliary& obj) {
+            return LIEF::py::safe_string(obj.name());
+          },
+          nb::overload_cast<std::string>(&DynamicEntryAuxiliary::name),
+          "Return the library name"_doc
+      )
 
-    LIEF_DEFAULT_STR(DynamicEntryAuxiliary);
+      .LIEF_DEFAULT_STR(DynamicEntryAuxiliary);
 }
 
 }

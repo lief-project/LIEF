@@ -26,24 +26,19 @@ namespace LIEF::py {
 template<>
 void create<SpanStream>(nb::module_& m) {
   nb::class_<SpanStream, BinaryStream>(m, "SpanStream")
-    .def("slice", nb::overload_cast<size_t, size_t>(&SpanStream::slice, nb::const_),
-      "offset"_a, "size"_a
-    )
+      .def("slice",
+           nb::overload_cast<size_t, size_t>(&SpanStream::slice, nb::const_),
+           "offset"_a, "size"_a)
 
-    .def("slice", nb::overload_cast<size_t>(&SpanStream::slice, nb::const_),
-      "offset"_a
-    )
+      .def("slice", nb::overload_cast<size_t>(&SpanStream::slice, nb::const_),
+           "offset"_a)
 
-    .def("to_vector", &SpanStream::to_vector)
+      .def("to_vector", &SpanStream::to_vector)
 
-    .def_prop_ro("content", [] (SpanStream& self) {
-      return nb::to_bytes(self.content());
-    })
+      .def_prop_ro("content",
+                   [](SpanStream& self) { return nb::to_bytes(self.content()); })
 
-    .def_prop_ro("__bytes__", [] (SpanStream& self) {
-      return nb::to_bytes(self.content());
-    })
-
-  ;
+      .def_prop_ro("__bytes__",
+                   [](SpanStream& self) { return nb::to_bytes(self.content()); });
 }
 }

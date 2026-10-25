@@ -19,24 +19,23 @@ namespace LIEF::COFF::py {
 
 template<>
 void create<RegularHeader>(nb::module_& m) {
-  nb::class_<RegularHeader, Header>(m, "RegularHeader",
-    R"doc(
-    This class represents the COFF header for non-bigobj
-    )doc"_doc)
+  nb::class_<RegularHeader, Header>(
+      m, "RegularHeader",
+      "This class represents the COFF header for non-bigobj"_doc
+  )
 
-    .def_prop_rw("sizeof_optionalheader",
-      nb::overload_cast<>(&RegularHeader::sizeof_optionalheader, nb::const_),
-      nb::overload_cast<uint16_t>(&RegularHeader::sizeof_optionalheader),
-      "The size of the optional header that follows this header (should be 0)"_doc
-    )
+      .def_prop_rw(
+          "sizeof_optionalheader",
+          nb::overload_cast<>(&RegularHeader::sizeof_optionalheader, nb::const_),
+          nb::overload_cast<uint16_t>(&RegularHeader::sizeof_optionalheader),
+          "The size of the optional header that follows this header (should be 0)"_doc
+      )
 
-    .def_prop_rw("characteristics",
-      nb::overload_cast<>(&RegularHeader::characteristics, nb::const_),
-      nb::overload_cast<uint16_t>(&RegularHeader::characteristics),
-      "Characteristics"_doc
-    )
-  ;
-
+      .def_prop_rw("characteristics",
+                   nb::overload_cast<>(&RegularHeader::characteristics,
+                                       nb::const_),
+                   nb::overload_cast<uint16_t>(&RegularHeader::characteristics),
+                   "Characteristics"_doc);
 }
 
 }

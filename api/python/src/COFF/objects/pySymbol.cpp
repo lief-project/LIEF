@@ -15,16 +15,16 @@
  */
 #include "COFF/pyCOFF.hpp"
 
-#include "LIEF/COFF/Symbol.hpp"
-#include "LIEF/COFF/String.hpp"
-#include "LIEF/COFF/Section.hpp"
 #include "LIEF/COFF/AuxiliarySymbol.hpp"
+#include "LIEF/COFF/Section.hpp"
+#include "LIEF/COFF/String.hpp"
+#include "LIEF/COFF/Symbol.hpp"
 
-#include <string>
-#include <sstream>
+#include <nanobind/extra/stl/wstring.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <nanobind/extra/stl/wstring.h>
+#include <sstream>
+#include <string>
 
 #include "enums_wrapper.hpp"
 #include "pyIterator.hpp"
@@ -33,21 +33,25 @@ namespace LIEF::COFF::py {
 
 template<>
 void create<Symbol>(nb::module_& m) {
-  nb::class_<Symbol, LIEF::Symbol> sym(m, "Symbol",
-    R"doc(
-    Class that represents a COFF symbol.
+  nb::class_<Symbol, LIEF::Symbol> sym(
+      m, "Symbol",
+      R"doc(
+      Class that represents a COFF symbol.
 
-    .. warning::
+      .. warning::
 
-        The :attr:`lief.Symbol.value` should be interpreted in perspective of
-        the :attr:`~.Symbol.storage_class`
+          The :attr:`lief.Symbol.value` should be interpreted in perspective of
+          the :attr:`~.Symbol.storage_class`
 
-    Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#coff-symbol-table
-    )doc"_doc
+      Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#coff-symbol-table
+      )doc"_doc
   );
 
-  LIEF::py::init_ref_iterator<Symbol::it_auxiliary_symbols_t>(sym, "it_auxiliary_symbols_t");
+  LIEF::py::init_ref_iterator<Symbol::it_auxiliary_symbols_t>(
+      sym, "it_auxiliary_symbols_t"
+  );
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Symbol::STORAGE_CLASS::X), Symbol::STORAGE_CLASS::X)
   enum_<Symbol::STORAGE_CLASS>(sym, "STORAGE_CLASS",
     "Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#storage-class"_doc
@@ -81,7 +85,9 @@ void create<Symbol>(nb::module_& m) {
     ENTRY(CLR_TOKEN)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Symbol::BASE_TYPE::X), Symbol::BASE_TYPE::X)
   enum_<Symbol::BASE_TYPE>(sym, "BASE_TYPE")
     ENTRY(TY_NULL)
@@ -102,7 +108,9 @@ void create<Symbol>(nb::module_& m) {
     ENTRY(TY_DWORD)
   ;
   #undef ENTRY
+  // clang-format on
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Symbol::COMPLEX_TYPE::X), Symbol::COMPLEX_TYPE::X)
   enum_<Symbol::COMPLEX_TYPE>(sym, "COMPLEX_TYPE")
     ENTRY(TY_NULL)
@@ -111,76 +119,87 @@ void create<Symbol>(nb::module_& m) {
     ENTRY(TY_ARRAY)
   ;
   #undef ENTRY
+  // clang-format on
 
-  sym
-    .def_prop_rw("type", nb::overload_cast<>(&Symbol::type, nb::const_),
-                 nb::overload_cast<uint16_t>(&Symbol::type),
-                 nb::rv_policy::reference,
-      R"doc(
-      The symbol type. The first byte represents the base type (see: :attr:`~.base_type`)
-      while the upper byte represents the complex type, if any (see: :attr:`~.complex_type`).
-      )doc"_doc
-    )
+  sym.def_prop_rw("type", nb::overload_cast<>(&Symbol::type, nb::const_),
+                  nb::overload_cast<uint16_t>(&Symbol::type),
+                  nb::rv_policy::reference,
+                  R"doc(
+                  The symbol type. The first byte represents the base type (see: :attr:`~.base_type`)
+                  while the upper byte represents the complex type, if any (see: :attr:`~.complex_type`).
+                  )doc"_doc)
 
-    .def_prop_ro("base_type", nb::overload_cast<>(&Symbol::base_type, nb::const_),
-                 "The simple (base) data type"_doc)
+      .def_prop_ro("base_type",
+                   nb::overload_cast<>(&Symbol::base_type, nb::const_),
+                   "The simple (base) data type"_doc)
 
-    .def_prop_ro("complex_type", nb::overload_cast<>(&Symbol::complex_type, nb::const_),
-                 "The complex type (if any)"_doc)
+      .def_prop_ro("complex_type",
+                   nb::overload_cast<>(&Symbol::complex_type, nb::const_),
+                   "The complex type (if any)"_doc)
 
-    .def_prop_ro("storage_class", nb::overload_cast<>(&Symbol::storage_class, nb::const_),
-      R"doc(
-      Storage class of the symbol which indicates what kind of definition a
-      symbol represents.
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "storage_class", nb::overload_cast<>(&Symbol::storage_class, nb::const_),
+          R"doc(
+          Storage class of the symbol which indicates what kind of definition a
+          symbol represents.
+          )doc"_doc
+      )
 
-    .def_prop_rw("section_idx", nb::overload_cast<>(&Symbol::section_idx, nb::const_),
-                 nb::overload_cast<int16_t>(&Symbol::section_idx),
-                 nb::rv_policy::reference,
-      R"doc(
-      The signed integer that identifies the section, using a one-based index
-      into the section table. Some values have special meaning:
+      .def_prop_rw(
+          "section_idx", nb::overload_cast<>(&Symbol::section_idx, nb::const_),
+          nb::overload_cast<int16_t>(&Symbol::section_idx),
+          nb::rv_policy::reference,
+          R"doc(
+          The signed integer that identifies the section, using a one-based index
+          into the section table. Some values have special meaning:
 
-      *  0: The symbol record is not yet assigned a section. A value of zero
-            indicates that a reference to an external symbol is defined elsewhere.
-            A value of non-zero is a common symbol with a size that is specified
-            by the value.
-      * -1: The symbol has an absolute (non-relocatable) value and is not an
-            address.
-      * -2: The symbol provides general type or debugging information but does
-            not correspond to a section. Microsoft tools use this setting along
-            with ``.file`` records
-      )doc"_doc
-    )
+          *  0: The symbol record is not yet assigned a section. A value of zero
+                indicates that a reference to an external symbol is defined elsewhere.
+                A value of non-zero is a common symbol with a size that is specified
+                by the value.
+          * -1: The symbol has an absolute (non-relocatable) value and is not an
+                address.
+          * -2: The symbol provides general type or debugging information but does
+                not correspond to a section. Microsoft tools use this setting along
+                with ``.file`` records
+          )doc"_doc
+      )
 
-    .def_prop_ro("section", nb::overload_cast<>(&Symbol::section),
-      "Section associated with this symbol (if any)"
-    )
+      .def_prop_ro("section", nb::overload_cast<>(&Symbol::section),
+                   "Section associated with this symbol (if any)")
 
-    .def_prop_ro("is_external", nb::overload_cast<>(&Symbol::is_external, nb::const_))
-    .def_prop_ro("is_absolute", nb::overload_cast<>(&Symbol::is_absolute, nb::const_))
-    .def_prop_ro("is_weak_external", nb::overload_cast<>(&Symbol::is_weak_external, nb::const_))
-    .def_prop_ro("is_undefined", nb::overload_cast<>(&Symbol::is_undefined, nb::const_))
-    .def_prop_ro("is_function_line_info", nb::overload_cast<>(&Symbol::is_function_line_info, nb::const_))
-    .def_prop_ro("is_file_record", nb::overload_cast<>(&Symbol::is_file_record, nb::const_))
-    .def_prop_ro("is_function", nb::overload_cast<>(&Symbol::is_function, nb::const_))
+      .def_prop_ro("is_external",
+                   nb::overload_cast<>(&Symbol::is_external, nb::const_))
+      .def_prop_ro("is_absolute",
+                   nb::overload_cast<>(&Symbol::is_absolute, nb::const_))
+      .def_prop_ro("is_weak_external",
+                   nb::overload_cast<>(&Symbol::is_weak_external, nb::const_))
+      .def_prop_ro("is_undefined",
+                   nb::overload_cast<>(&Symbol::is_undefined, nb::const_))
+      .def_prop_ro("is_function_line_info",
+                   nb::overload_cast<>(&Symbol::is_function_line_info, nb::const_))
+      .def_prop_ro("is_file_record",
+                   nb::overload_cast<>(&Symbol::is_file_record, nb::const_))
+      .def_prop_ro("is_function",
+                   nb::overload_cast<>(&Symbol::is_function, nb::const_))
 
-    .def_prop_ro("auxiliary_symbols", nb::overload_cast<>(&Symbol::auxiliary_symbols),
-                 "Auxiliary symbols associated with this symbol."_doc)
+      .def_prop_ro("auxiliary_symbols",
+                   nb::overload_cast<>(&Symbol::auxiliary_symbols),
+                   "Auxiliary symbols associated with this symbol."_doc)
 
-    .def_prop_ro("coff_name", nb::overload_cast<>(&Symbol::coff_name),
-                 "COFF string used to represents the (long) symbol name"_doc)
+      .def_prop_ro("coff_name", nb::overload_cast<>(&Symbol::coff_name),
+                   "COFF string used to represents the (long) symbol name"_doc)
 
-    .def_prop_ro("demangled_name", &Symbol::demangled_name,
-      R"doc(
-      Demangled representation of the symbol or an empty string if it can't
-      be demangled
-      )doc"
-    )
+      .def_prop_ro(
+          "demangled_name", &Symbol::demangled_name,
+          R"doc(
+          Demangled representation of the symbol or an empty string if it can't
+          be demangled
+          )doc"
+      )
 
 
-    LIEF_DEFAULT_STR(Symbol);
+      .LIEF_DEFAULT_STR(Symbol);
 }
 
 }

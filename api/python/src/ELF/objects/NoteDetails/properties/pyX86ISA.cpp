@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
 
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/pair.h>
+#include <nanobind/stl/vector.h>
 
 #include "LIEF/ELF/NoteDetails/properties/X86ISA.hpp"
 
@@ -28,26 +28,24 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<X86ISA>(nb::module_& m) {
-  nb::class_<X86ISA, NoteGnuProperty::Property> Class(m, "X86ISA",
-    R"doc(
-    This class interfaces the different ``GNU_PROPERTY_X86_ISA_*``
-    properties which includes:
-
-    - ``GNU_PROPERTY_X86_ISA_1_USED``
-    - ``GNU_PROPERTY_X86_ISA_1_NEEDED``
-    - ``GNU_PROPERTY_X86_COMPAT_ISA_1_USED``
-    - ``GNU_PROPERTY_X86_COMPAT_ISA_1_NEEDED``
-    - ``GNU_PROPERTY_X86_COMPAT_2_ISA_1_USED``
-    - ``GNU_PROPERTY_X86_COMPAT_2_ISA_1_NEEDED``
-    )doc"_doc
-  );
-  Class
-    .def_prop_ro("values", &X86ISA::values,
+  nb::class_<X86ISA, NoteGnuProperty::Property> Class(
+      m, "X86ISA",
       R"doc(
-      List of the ISA values in this property
-      )doc"
-    );
+      This class interfaces the different ``GNU_PROPERTY_X86_ISA_*``
+      properties which includes:
 
+      - ``GNU_PROPERTY_X86_ISA_1_USED``
+      - ``GNU_PROPERTY_X86_ISA_1_NEEDED``
+      - ``GNU_PROPERTY_X86_COMPAT_ISA_1_USED``
+      - ``GNU_PROPERTY_X86_COMPAT_ISA_1_NEEDED``
+      - ``GNU_PROPERTY_X86_COMPAT_2_ISA_1_USED``
+      - ``GNU_PROPERTY_X86_COMPAT_2_ISA_1_NEEDED``
+      )doc"_doc
+  );
+  Class.def_prop_ro("values", &X86ISA::values,
+                    "List of the ISA values in this property");
+
+  // clang-format off
 # define ENTRY(X) .value(to_string(X86ISA::FLAG::X), X86ISA::FLAG::X)
   enum_<X86ISA::FLAG>(Class, "FLAG")
     ENTRY(NONE)
@@ -55,7 +53,9 @@ void create<X86ISA>(nb::module_& m) {
     ENTRY(USED)
   ;
 # undef ENTRY
+  // clang-format on
 
+  // clang-format off
 # define ENTRY(X) .value(to_string(X86ISA::ISA::X), X86ISA::ISA::X)
   enum_<X86ISA::ISA>(Class, "ISA")
     ENTRY(UNKNOWN)
@@ -93,7 +93,7 @@ void create<X86ISA>(nb::module_& m) {
     ENTRY(AVX512_BF16)
   ;
 # undef ENTRY
-
+  // clang-format on
 }
 
 }

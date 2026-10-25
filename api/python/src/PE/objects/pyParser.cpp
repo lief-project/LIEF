@@ -16,15 +16,15 @@
  */
 #include "PE/pyPE.hpp"
 
-#include <memory>
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
+#include <memory>
 
 #include "typing/InputParser.hpp"
 
-#include "LIEF/PE/Parser.hpp"
 #include "LIEF/PE/Binary.hpp"
+#include "LIEF/PE/Parser.hpp"
 
 #include "LIEF/BinaryStream/BinaryStream.hpp"
 
@@ -34,34 +34,47 @@ template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
-  m.def("parse_from_memory", nb::overload_cast<uintptr_t, const ParserConfig&>(&Parser::parse_from_memory),
-    "Parse the PE binary at the given memory address"_doc,
-    "address"_a, "config"_a = ParserConfig::default_conf());
+  m.def("parse_from_memory",
+        nb::overload_cast<uintptr_t, const ParserConfig&>(
+            &Parser::parse_from_memory
+        ),
+        "Parse the PE binary at the given memory address"_doc, "address"_a,
+        "config"_a = ParserConfig::default_conf());
 
-  m.def("parse_from_memory", nb::overload_cast<uintptr_t, size_t, const ParserConfig&>(&Parser::parse_from_memory),
-    "Parse the PE binary at the given memory address and with the given size"_doc,
-    "address"_a, "size"_a, "config"_a = ParserConfig::default_conf());
+  m.def(
+      "parse_from_memory",
+      nb::overload_cast<uintptr_t, size_t, const ParserConfig&>(
+          &Parser::parse_from_memory
+      ),
+      "Parse the PE binary at the given memory address and with the given size"_doc,
+      "address"_a, "size"_a, "config"_a = ParserConfig::default_conf()
+  );
 
-  m.def("parse_from_dump",
-    [] (typing::InputParser obj, uint64_t addr, const ParserConfig& config) {
-      return Parser::parse_from_dump(obj.into_stream(), addr, config);
-    },
-    R"delim(
-    Parse the PE binary from a memory dump given in the first parameter.
+  m.def(
+      "parse_from_dump",
+      [](typing::InputParser obj, uint64_t addr, const ParserConfig& config) {
+        return Parser::parse_from_dump(obj.into_stream(), addr, config);
+      },
+      R"delim(
+      Parse the PE binary from a memory dump given in the first parameter.
 
-    A dump is a raw capture of the process' memory that was mapped starting at
-    the virtual address given in the second parameter.
-    )delim"_doc,
-    "obj"_a, "addr"_a, "config"_a = ParserConfig::default_conf(),
-    nb::rv_policy::take_ownership);
+      A dump is a raw capture of the process' memory that was mapped starting at
+      the virtual address given in the second parameter.
+      )delim"_doc,
+      "obj"_a, "addr"_a, "config"_a = ParserConfig::default_conf(),
+      nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-    [] (typing::InputParser obj, const ParserConfig& config) -> std::unique_ptr<Binary> {
+  m.def(
+      "parse",
+      [](typing::InputParser obj,
+         const ParserConfig& config) -> std::unique_ptr<Binary> {
         return Parser::parse(obj.into_stream(), config);
-    },
-    "Parse the PE binary from the given parameter and return a :class:`lief.PE.Binary` object"_doc,
-    "obj"_a, "config"_a = ParserConfig::default_conf(),
-    nb::rv_policy::take_ownership);
+      },
+      "Parse the PE binary from the given parameter and return a :class:`lief.PE.Binary` object"_doc,
+      "obj"_a, "config"_a = ParserConfig::default_conf(),
+      nb::rv_policy::take_ownership
+  );
 }
 
 }

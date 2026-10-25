@@ -7,19 +7,13 @@
 namespace LIEF::pdb::py {
 template<>
 void create<pdb::types::Pointer>(nb::module_& m) {
-  nb::class_<pdb::types::Pointer, pdb::Type> type(m, "Pointer",
-    R"doc(
-    This class represents a ``LF_POINTER`` PDB type
-    )doc"_doc
+  nb::class_<pdb::types::Pointer, pdb::Type> type(
+      m, "Pointer", "This class represents a ``LF_POINTER`` PDB type"_doc
   );
 
-  type
-    .def_prop_ro("underlying_type", &pdb::types::Pointer::underlying_type,
-      R"doc(
-      The underlying type pointed to by this pointer
-      )doc"_doc, nb::keep_alive<0, 1>()
-    )
-  ;
+  type.def_prop_ro("underlying_type", &pdb::types::Pointer::underlying_type,
+                   "The underlying type pointed to by this pointer"_doc,
+                   nb::keep_alive<0, 1>());
 }
 
 }

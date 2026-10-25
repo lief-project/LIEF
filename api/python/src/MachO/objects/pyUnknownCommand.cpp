@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/UnknownCommand.hpp"
 
@@ -27,13 +27,16 @@ namespace LIEF::MachO::py {
 template<>
 void create<UnknownCommand>(nb::module_& m) {
 
-  nb::class_<UnknownCommand, LoadCommand>(m, "UnknownCommand",
-      "Generic class when the command is not recognized by LIEF"_doc)
+  nb::class_<UnknownCommand, LoadCommand>(
+      m, "UnknownCommand",
+      "Generic class when the command is not recognized by LIEF"_doc
+  )
 
-    .def_prop_ro("original_command",
-        nb::overload_cast<>(&UnknownCommand::original_command, nb::const_))
+      .def_prop_ro("original_command",
+                   nb::overload_cast<>(&UnknownCommand::original_command,
+                                       nb::const_))
 
-    LIEF_DEFAULT_STR(UnknownCommand);
+      .LIEF_DEFAULT_STR(UnknownCommand);
 }
 
 }

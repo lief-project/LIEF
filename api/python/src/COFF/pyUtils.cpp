@@ -17,17 +17,16 @@
 
 #include "LIEF/COFF/utils.hpp"
 
+#include "nanobind/extra/stl/pathlike.h"
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
-#include "nanobind/extra/stl/pathlike.h"
 
 namespace LIEF::COFF::py {
 
 void init_utils(nb::module_&) {
-  lief_mod->def("is_coff",
-    [] (nb::PathLike path) { return is_coff(path.to_string()); },
-    "Check if the given file is a COFF"_doc,
-    "file"_a
+  lief_mod->def(
+      "is_coff", [](nb::PathLike path) { return is_coff(path.to_string()); },
+      "Check if the given file is a COFF"_doc, "file"_a
   );
 }
 }

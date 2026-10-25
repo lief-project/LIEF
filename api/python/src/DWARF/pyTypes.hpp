@@ -1,17 +1,17 @@
 #pragma once
 
-#include <nanobind/nanobind.h>
-#include "LIEF/DWARF/types/Base.hpp"
 #include "LIEF/DWARF/types/Array.hpp"
+#include "LIEF/DWARF/types/Base.hpp"
 #include "LIEF/DWARF/types/ClassLike.hpp"
-#include "LIEF/DWARF/types/Pointer.hpp"
 #include "LIEF/DWARF/types/Const.hpp"
+#include "LIEF/DWARF/types/Pointer.hpp"
+#include <nanobind/nanobind.h>
 
 
-#include "LIEF/DWARF/types/Typedef.hpp"
 #include "LIEF/DWARF/types/Atomic.hpp"
 #include "LIEF/DWARF/types/Coarray.hpp"
 #include "LIEF/DWARF/types/Dynamic.hpp"
+#include "LIEF/DWARF/types/Enum.hpp"
 #include "LIEF/DWARF/types/File.hpp"
 #include "LIEF/DWARF/types/Immutable.hpp"
 #include "LIEF/DWARF/types/Interface.hpp"
@@ -25,12 +25,13 @@
 #include "LIEF/DWARF/types/Subroutine.hpp"
 #include "LIEF/DWARF/types/TemplateAlias.hpp"
 #include "LIEF/DWARF/types/Thrown.hpp"
+#include "LIEF/DWARF/types/Typedef.hpp"
 #include "LIEF/DWARF/types/Volatile.hpp"
-#include "LIEF/DWARF/types/Enum.hpp"
 
 namespace nanobind::detail {
-template<> struct type_hook<LIEF::dwarf::Type> {
-  static const std::type_info* get(const LIEF::dwarf::Type *src) {
+template<>
+struct type_hook<LIEF::dwarf::Type> {
+  static const std::type_info* get(const LIEF::dwarf::Type* src) {
     using namespace LIEF::dwarf::types;
     if (src) {
       if (Base::classof(src)) {

@@ -15,10 +15,10 @@
  */
 #include <algorithm>
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/DyldEnvironment.hpp"
 
@@ -29,18 +29,20 @@ namespace LIEF::MachO::py {
 template<>
 void create<DyldEnvironment>(nb::module_& m) {
 
-  nb::class_<DyldEnvironment, LoadCommand>(m, "DyldEnvironment",
+  nb::class_<DyldEnvironment, LoadCommand>(
+      m, "DyldEnvironment",
       R"delim(
       Class that represents a LC_DYLD_ENVIRONMENT which is
       used by the Mach-O linker/loader to initialize an environment variable
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def_prop_rw("value",
-        nb::overload_cast<>(&DyldEnvironment::value, nb::const_),
-        nb::overload_cast<std::string>(&DyldEnvironment::value),
-        "Environment variable as a string"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_rw("value",
+                   nb::overload_cast<>(&DyldEnvironment::value, nb::const_),
+                   nb::overload_cast<std::string>(&DyldEnvironment::value),
+                   "Environment variable as a string"_doc,
+                   nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(DyldEnvironment);
+      .LIEF_DEFAULT_STR(DyldEnvironment);
 }
 }

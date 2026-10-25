@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <nanobind/stl/string.h>
 
-#include "pyErr.hpp"
 #include "ELF/pyELF.hpp"
+#include "pyErr.hpp"
 
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
 
@@ -29,30 +29,32 @@ template<>
 void create<CorePrPsInfo>(nb::module_& m) {
   nb::class_<CorePrPsInfo, Note> cls(m, "CorePrPsInfo");
   nb::class_<CorePrPsInfo::info_t>(cls, "info_t")
-    .def_rw("state", &CorePrPsInfo::info_t::state)
-    .def_rw("sname", &CorePrPsInfo::info_t::sname)
-    .def_rw("zombie", &CorePrPsInfo::info_t::zombie)
-    .def_rw("nice", &CorePrPsInfo::info_t::nice)
-    .def_rw("flag", &CorePrPsInfo::info_t::flag)
-    .def_rw("uid", &CorePrPsInfo::info_t::uid)
-    .def_rw("gid", &CorePrPsInfo::info_t::gid)
-    .def_rw("pid", &CorePrPsInfo::info_t::pid)
-    .def_rw("ppid", &CorePrPsInfo::info_t::ppid)
-    .def_rw("pgrp", &CorePrPsInfo::info_t::pgrp)
-    .def_rw("sid", &CorePrPsInfo::info_t::sid)
-    .def_rw("filename", &CorePrPsInfo::info_t::filename)
-    .def_rw("args", &CorePrPsInfo::info_t::args)
-    .def_prop_ro("filename_stripped", &CorePrPsInfo::info_t::filename_stripped)
-    .def_prop_ro("args_stripped", &CorePrPsInfo::info_t::args_stripped);
+      .def_rw("state", &CorePrPsInfo::info_t::state)
+      .def_rw("sname", &CorePrPsInfo::info_t::sname)
+      .def_rw("zombie", &CorePrPsInfo::info_t::zombie)
+      .def_rw("nice", &CorePrPsInfo::info_t::nice)
+      .def_rw("flag", &CorePrPsInfo::info_t::flag)
+      .def_rw("uid", &CorePrPsInfo::info_t::uid)
+      .def_rw("gid", &CorePrPsInfo::info_t::gid)
+      .def_rw("pid", &CorePrPsInfo::info_t::pid)
+      .def_rw("ppid", &CorePrPsInfo::info_t::ppid)
+      .def_rw("pgrp", &CorePrPsInfo::info_t::pgrp)
+      .def_rw("sid", &CorePrPsInfo::info_t::sid)
+      .def_rw("filename", &CorePrPsInfo::info_t::filename)
+      .def_rw("args", &CorePrPsInfo::info_t::args)
+      .def_prop_ro("filename_stripped", &CorePrPsInfo::info_t::filename_stripped)
+      .def_prop_ro("args_stripped", &CorePrPsInfo::info_t::args_stripped);
 
-  cls
-    .def_prop_rw("info",
-        [] (const CorePrPsInfo& self) {
-          return LIEF::py::value_or_none(nb::overload_cast<>(&CorePrPsInfo::info, nb::const_), self);
-        },
-        nb::overload_cast<const CorePrPsInfo::info_t&>(&CorePrPsInfo::info)
-    )
-    LIEF_DEFAULT_STR(CorePrPsInfo);
+  cls.def_prop_rw(
+         "info",
+         [](const CorePrPsInfo& self) {
+           return LIEF::py::value_or_none(
+               nb::overload_cast<>(&CorePrPsInfo::info, nb::const_), self
+           );
+         },
+         nb::overload_cast<const CorePrPsInfo::info_t&>(&CorePrPsInfo::info)
+  )
+      .LIEF_DEFAULT_STR(CorePrPsInfo);
 }
 
 }

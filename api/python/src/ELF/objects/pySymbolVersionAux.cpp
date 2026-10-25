@@ -18,24 +18,28 @@
 
 #include "LIEF/ELF/SymbolVersionAux.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 namespace LIEF::ELF::py {
 
 template<>
 void create<SymbolVersionAux>(nb::module_& m) {
-  nb::class_<SymbolVersionAux, LIEF::Object>(m, "SymbolVersionAux",
-      "Class which represents an Auxiliary Symbol version"_doc)
+  nb::class_<SymbolVersionAux, LIEF::Object>(
+      m, "SymbolVersionAux",
+      "Class which represents an Auxiliary Symbol version"_doc
+  )
 
-    .def_prop_rw("name",
-        [] (const SymbolVersionAux& obj) {
-          return LIEF::py::safe_string(obj.name());
-        },
-        nb::overload_cast<std::string>(&SymbolVersionAux::name),
-        "Symbol's name (e.g. ``GLIBC_2.2.5``)"_doc)
+      .def_prop_rw(
+          "name",
+          [](const SymbolVersionAux& obj) {
+            return LIEF::py::safe_string(obj.name());
+          },
+          nb::overload_cast<std::string>(&SymbolVersionAux::name),
+          "Symbol's name (e.g. ``GLIBC_2.2.5``)"_doc
+      )
 
-    LIEF_DEFAULT_STR(SymbolVersionAux);
+      .LIEF_DEFAULT_STR(SymbolVersionAux);
 }
 }

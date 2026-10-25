@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <nanobind/operators.h>
 #include <nanobind/stl/string.h>
@@ -23,8 +23,8 @@
 #include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
 
-#include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
+#include "LIEF/ELF/DynamicEntryFlags.hpp"
 
 namespace LIEF::ELF::py {
 
@@ -32,6 +32,7 @@ template<>
 void create<DynamicEntryFlags>(nb::module_& m) {
   nb::class_<DynamicEntryFlags, DynamicEntry> entry(m, "DynamicEntryFlags");
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(DynamicEntryFlags::FLAG::X), DynamicEntryFlags::FLAG::X)
   enum_<DynamicEntryFlags::FLAG>(entry, "FLAG")
     ENTRY(ORIGIN)
@@ -71,37 +72,35 @@ void create<DynamicEntryFlags>(nb::module_& m) {
     ENTRY(NOCOMMON)
   ;
   #undef ENTRY
+  // clang-format on
 
   entry
-    .def_prop_ro("flags",
-        &DynamicEntryFlags::flags,
-        "Return list of :class:`~.FLAG`"_doc,
-        nb::rv_policy::move)
+      .def_prop_ro("flags", &DynamicEntryFlags::flags,
+                   "Return list of :class:`~.FLAG`"_doc, nb::rv_policy::move)
 
-    .def("has",
-        nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::has, nb::const_),
-        "Check if this entry contains the given :class:`~.FLAG`"_doc,
-        "flag"_a)
+      .def("has",
+           nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::has,
+                                                      nb::const_),
+           "Check if this entry contains the given :class:`~.FLAG`"_doc, "flag"_a)
 
 
-    .def("add",
-        nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::add),
-        "Add the given :class:`~.FLAG`"_doc,
-        "flag"_a)
+      .def("add",
+           nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::add),
+           "Add the given :class:`~.FLAG`"_doc, "flag"_a)
 
-    .def("remove",
-        nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::remove),
-        "Remove the given :class:`~.FLAG`"_doc,
-        "flag"_a)
+      .def("remove",
+           nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::remove),
+           "Remove the given :class:`~.FLAG`"_doc, "flag"_a)
 
-    .def(nb::self += DynamicEntryFlags::FLAG())
-    .def(nb::self -= DynamicEntryFlags::FLAG())
+      .def(nb::self += DynamicEntryFlags::FLAG())
+      .def(nb::self -= DynamicEntryFlags::FLAG())
 
-    .def("__contains__",
-        nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::has, nb::const_),
-        "Check if the given :class:`~.FLAG` is present"_doc)
+      .def("__contains__",
+           nb::overload_cast<DynamicEntryFlags::FLAG>(&DynamicEntryFlags::has,
+                                                      nb::const_),
+           "Check if the given :class:`~.FLAG` is present"_doc)
 
-    LIEF_DEFAULT_STR(DynamicEntryFlags);
+      .LIEF_DEFAULT_STR(DynamicEntryFlags);
 }
 
 }

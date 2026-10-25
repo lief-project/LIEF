@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <nanobind/stl/string_view.h>
 #include <string_view>
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/string_view.h>
+#include <sstream>
+#include <string>
 
 #include "ELF/pyELF.hpp"
 
@@ -28,22 +28,24 @@ namespace LIEF::ELF::py {
 template<>
 void create<AndroidIdent>(nb::module_& m) {
   nb::class_<AndroidIdent, Note>(m, "AndroidIdent")
-    .def_prop_rw("sdk_version",
-        nb::overload_cast<>(&AndroidIdent::sdk_version, nb::const_),
-        nb::overload_cast<uint32_t>(&AndroidIdent::sdk_version),
-        "Target SDK platform"_doc)
+      .def_prop_rw("sdk_version",
+                   nb::overload_cast<>(&AndroidIdent::sdk_version, nb::const_),
+                   nb::overload_cast<uint32_t>(&AndroidIdent::sdk_version),
+                   "Target SDK platform"_doc)
 
-    .def_prop_rw("ndk_version",
-        nb::overload_cast<>(&AndroidIdent::ndk_version, nb::const_),
-        nb::overload_cast<std::string_view>(&AndroidIdent::ndk_version),
-        "Android NDK version used to build the current binary"_doc)
+      .def_prop_rw("ndk_version",
+                   nb::overload_cast<>(&AndroidIdent::ndk_version, nb::const_),
+                   nb::overload_cast<std::string_view>(&AndroidIdent::ndk_version),
+                   "Android NDK version used to build the current binary"_doc)
 
-    .def_prop_rw("ndk_build_number",
-        nb::overload_cast<>(&AndroidIdent::ndk_build_number, nb::const_),
-        nb::overload_cast<std::string_view>(&AndroidIdent::ndk_build_number),
-        "Android NDK build number"_doc)
+      .def_prop_rw(
+          "ndk_build_number",
+          nb::overload_cast<>(&AndroidIdent::ndk_build_number, nb::const_),
+          nb::overload_cast<std::string_view>(&AndroidIdent::ndk_build_number),
+          "Android NDK build number"_doc
+      )
 
-    LIEF_DEFAULT_STR(AndroidIdent);
+      .LIEF_DEFAULT_STR(AndroidIdent);
 }
 
 }

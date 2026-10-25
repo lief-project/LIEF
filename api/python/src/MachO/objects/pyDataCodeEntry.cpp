@@ -15,9 +15,9 @@
  */
 #include <algorithm>
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/DataCodeEntry.hpp"
 #include "LIEF/MachO/EnumToString.hpp"
@@ -32,41 +32,39 @@ namespace LIEF::MachO::py {
 
 template<>
 void create<DataCodeEntry>(nb::module_& m) {
-  nb::class_<DataCodeEntry, Object> cls(m, "DataCodeEntry",
-      R"delim(
-      Interface over an entry in the :class:`~lief.MachO.DataInCode` command
-      )delim"_doc);
+  nb::class_<DataCodeEntry, Object> cls(
+      m, "DataCodeEntry",
+      "Interface over an entry in the :class:`~lief.MachO.DataInCode` command"_doc
+  );
 
   enum_<DataCodeEntry::TYPES>(cls, "TYPES")
-    .value(PY_ENUM(DataCodeEntry::TYPES::UNKNOWN))
-    .value(PY_ENUM(DataCodeEntry::TYPES::DATA))
-    .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_8))
-    .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_16))
-    .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_32))
-    .value(PY_ENUM(DataCodeEntry::TYPES::ABS_JUMP_TABLE_32));
+      .value(PY_ENUM(DataCodeEntry::TYPES::UNKNOWN))
+      .value(PY_ENUM(DataCodeEntry::TYPES::DATA))
+      .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_8))
+      .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_16))
+      .value(PY_ENUM(DataCodeEntry::TYPES::JUMP_TABLE_32))
+      .value(PY_ENUM(DataCodeEntry::TYPES::ABS_JUMP_TABLE_32));
 
   cls
-    // TODO(romain):
-    //.def(nb::init<uint32_t, uint32_t, DataCodeEntry::TYPES>())
-    .def_prop_rw("offset",
-        nb::overload_cast<>(&DataCodeEntry::offset, nb::const_),
-        nb::overload_cast<uint32_t>(&DataCodeEntry::offset),
-        "Offset of the data"_doc)
+      // TODO(romain):
+      //.def(nb::init<uint32_t, uint32_t, DataCodeEntry::TYPES>())
+      .def_prop_rw("offset",
+                   nb::overload_cast<>(&DataCodeEntry::offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&DataCodeEntry::offset),
+                   "Offset of the data"_doc)
 
-    .def_prop_rw("length",
-        nb::overload_cast<>(&DataCodeEntry::length, nb::const_),
-        nb::overload_cast<uint16_t>(&DataCodeEntry::length),
-        "Length of the data"_doc)
+      .def_prop_rw("length",
+                   nb::overload_cast<>(&DataCodeEntry::length, nb::const_),
+                   nb::overload_cast<uint16_t>(&DataCodeEntry::length),
+                   "Length of the data"_doc)
 
-    .def_prop_rw("type",
-        nb::overload_cast<>(&DataCodeEntry::type, nb::const_),
-        nb::overload_cast<DataCodeEntry::TYPES>(&DataCodeEntry::type),
-        "Type of the data (" RST_CLASS_REF(lief.MachO.DataCodeEntry.TYPES) ""_doc)
+      .def_prop_rw(
+          "type", nb::overload_cast<>(&DataCodeEntry::type, nb::const_),
+          nb::overload_cast<DataCodeEntry::TYPES>(&DataCodeEntry::type),
+          "Type of the data (:class:`~lief.MachO.DataCodeEntry.TYPES`"_doc
+      )
 
-    LIEF_DEFAULT_STR(DataCodeEntry);
-
-
-
+      .LIEF_DEFAULT_STR(DataCodeEntry);
 }
 
 }

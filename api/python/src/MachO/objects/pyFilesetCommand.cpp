@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <sstream>
+#include <string>
 
-#include "LIEF/MachO/FilesetCommand.hpp"
 #include "LIEF/MachO/Binary.hpp"
+#include "LIEF/MachO/FilesetCommand.hpp"
 
 #include "MachO/pyMachO.hpp"
 
@@ -27,28 +27,31 @@ namespace LIEF::MachO::py {
 
 template<>
 void create<FilesetCommand>(nb::module_& m) {
-  nb::class_<FilesetCommand, LoadCommand>(m, "FilesetCommand",
-     "Class associated with the LC_FILESET_ENTRY commands"_doc)
-    .def_prop_rw("name",
-        nb::overload_cast<>(&FilesetCommand::name, nb::const_),
-        nb::overload_cast<std::string>(&FilesetCommand::name),
-        "Name of the underlying MachO binary"_doc)
+  nb::class_<FilesetCommand, LoadCommand>(
+      m, "FilesetCommand",
+      "Class associated with the LC_FILESET_ENTRY commands"_doc
+  )
+      .def_prop_rw("name", nb::overload_cast<>(&FilesetCommand::name, nb::const_),
+                   nb::overload_cast<std::string>(&FilesetCommand::name),
+                   "Name of the underlying MachO binary"_doc)
 
-    .def_prop_rw("virtual_address",
-        nb::overload_cast<>(&FilesetCommand::virtual_address, nb::const_),
-        nb::overload_cast<uint64_t>(&FilesetCommand::virtual_address),
-        "Memory address where the MachO file should be mapped"_doc)
+      .def_prop_rw("virtual_address",
+                   nb::overload_cast<>(&FilesetCommand::virtual_address,
+                                       nb::const_),
+                   nb::overload_cast<uint64_t>(&FilesetCommand::virtual_address),
+                   "Memory address where the MachO file should be mapped"_doc)
 
-    .def_prop_rw("file_offset",
-        nb::overload_cast<>(&FilesetCommand::file_offset, nb::const_),
-        nb::overload_cast<uint64_t>(&FilesetCommand::file_offset),
-        "Original offset in the kernel cache"_doc)
+      .def_prop_rw("file_offset",
+                   nb::overload_cast<>(&FilesetCommand::file_offset, nb::const_),
+                   nb::overload_cast<uint64_t>(&FilesetCommand::file_offset),
+                   "Original offset in the kernel cache"_doc)
 
-    .def_prop_ro("binary",
-        nb::overload_cast<>(&FilesetCommand::binary, nb::const_),
-        "Return the " RST_CLASS_REF(lief.MachO.Binary) " object associated with the entry"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_ro(
+          "binary", nb::overload_cast<>(&FilesetCommand::binary, nb::const_),
+          "Return the :class:`~lief.MachO.Binary` object associated with the entry"_doc,
+          nb::rv_policy::reference_internal
+      )
 
-    LIEF_DEFAULT_STR(FilesetCommand);
+      .LIEF_DEFAULT_STR(FilesetCommand);
 }
 }

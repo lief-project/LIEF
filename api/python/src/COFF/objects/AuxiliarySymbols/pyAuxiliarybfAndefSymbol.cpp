@@ -21,7 +21,9 @@ namespace LIEF::COFF::py {
 
 template<>
 void create<AuxiliarybfAndefSymbol>(nb::module_& m) {
-  nb::class_<AuxiliarybfAndefSymbol, AuxiliarySymbol> aux(m, "AuxiliarybfAndefSymbol");
+  nb::class_<AuxiliarybfAndefSymbol, AuxiliarySymbol> aux(
+      m, "AuxiliarybfAndefSymbol"
+  );
 }
 
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 #include "PE/pyPE.hpp"
-#include "pyIterator.hpp"
 #include "enums_wrapper.hpp"
+#include "pyIterator.hpp"
 
 #include "LIEF/PE/debug/Pogo.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #define PY_ENUM(x) to_string(x), x
 
@@ -35,25 +35,22 @@ void create<Pogo>(nb::module_& m) {
   init_ref_iterator<Pogo::it_entries>(pogo, "it_entries");
 
   enum_<Pogo::SIGNATURES>(pogo, "SIGNATURES")
-    .value(PY_ENUM(Pogo::SIGNATURES::UNKNOWN))
-    .value(PY_ENUM(Pogo::SIGNATURES::ZERO))
-    .value(PY_ENUM(Pogo::SIGNATURES::LCTG))
-    .value(PY_ENUM(Pogo::SIGNATURES::PGI))
-    .value(PY_ENUM(Pogo::SIGNATURES::PGO))
-    .value(PY_ENUM(Pogo::SIGNATURES::PGU))
-    .value(PY_ENUM(Pogo::SIGNATURES::SPGO));
+      .value(PY_ENUM(Pogo::SIGNATURES::UNKNOWN))
+      .value(PY_ENUM(Pogo::SIGNATURES::ZERO))
+      .value(PY_ENUM(Pogo::SIGNATURES::LCTG))
+      .value(PY_ENUM(Pogo::SIGNATURES::PGI))
+      .value(PY_ENUM(Pogo::SIGNATURES::PGO))
+      .value(PY_ENUM(Pogo::SIGNATURES::PGU))
+      .value(PY_ENUM(Pogo::SIGNATURES::SPGO));
 
-  pogo
-    .def(nb::init<>())
+  pogo.def(nb::init<>())
 
-    .def_prop_ro("entries",
-        nb::overload_cast<>(&Pogo::entries),
-        nb::keep_alive<0, 1>())
+      .def_prop_ro("entries", nb::overload_cast<>(&Pogo::entries),
+                   nb::keep_alive<0, 1>())
 
-    .def_prop_ro("signature",
-        nb::overload_cast<>(&Pogo::signature, nb::const_),
-        "Type of the pogo (" RST_CLASS_REF(lief.PE.Pogo.SIGNATURES) ")"_doc)
+      .def_prop_ro("signature", nb::overload_cast<>(&Pogo::signature, nb::const_),
+                   "Type of the pogo (:class:`~lief.PE.Pogo.SIGNATURES`)"_doc)
 
-    LIEF_DEFAULT_STR(Pogo);
+      .LIEF_DEFAULT_STR(Pogo);
 }
 }

@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <sstream>
 #include <nanobind/stl/string.h>
+#include <sstream>
 
 #include "Abstract/init.hpp"
 #include "pyLIEF.hpp"
 
-#include "LIEF/Abstract/hash.hpp"
 #include "LIEF/Abstract/Relocation.hpp"
+#include "LIEF/Abstract/hash.hpp"
 
 namespace LIEF::py {
 
 template<>
 void create<Relocation>(nb::module_& m) {
   nb::class_<Relocation, Object>(m, "Relocation",
-      R"delim(
-      Class which represents an abstracted Relocation
-      )delim")
+                                 "Class which represents an abstracted Relocation")
 
-    .def_prop_rw("address",
-        nb::overload_cast<>(&Relocation::address, nb::const_),
-        nb::overload_cast<uint64_t>(&Relocation::address),
-        "Relocation's address"_doc)
+      .def_prop_rw("address",
+                   nb::overload_cast<>(&Relocation::address, nb::const_),
+                   nb::overload_cast<uint64_t>(&Relocation::address),
+                   "Relocation's address"_doc)
 
-    .def_prop_rw("size",
-        nb::overload_cast<>(&Relocation::size, nb::const_),
-        nb::overload_cast<size_t>(&Relocation::size),
-        "Relocation's size (in **bits**)"_doc)
+      .def_prop_rw("size", nb::overload_cast<>(&Relocation::size, nb::const_),
+                   nb::overload_cast<size_t>(&Relocation::size),
+                   "Relocation's size (in **bits**)"_doc)
 
-    LIEF_DEFAULT_STR(Relocation);
+      .LIEF_DEFAULT_STR(Relocation);
 }
 }

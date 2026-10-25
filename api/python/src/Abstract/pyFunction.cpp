@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <nanobind/stl/string_view.h>
 #include <string_view>
-#include <string>
+#include <nanobind/stl/string_view.h>
 #include <sstream>
+#include <string>
 
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/set.h>
+#include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
 #include "Abstract/init.hpp"
@@ -34,45 +34,39 @@ namespace LIEF::py {
 
 template<>
 void create<Function>(nb::module_& m) {
-  nb::class_<Function, Symbol> pyfunction(m, "Function",
-      R"delim(
-      Class which represents a Function in an executable file format.
-      )delim"_doc);
+  nb::class_<Function, Symbol> pyfunction(
+      m, "Function",
+      "Class which represents a Function in an executable file format."_doc
+  );
 
   enum_<Function::FLAGS>(pyfunction, "FLAGS", nb::is_flag())
-    .value(PY_ENUM(Function::FLAGS::NONE))
-    .value(PY_ENUM(Function::FLAGS::IMPORTED))
-    .value(PY_ENUM(Function::FLAGS::EXPORTED))
-    .value(PY_ENUM(Function::FLAGS::CONSTRUCTOR))
-    .value(PY_ENUM(Function::FLAGS::DESTRUCTOR))
-    .value(PY_ENUM(Function::FLAGS::DEBUG_INFO));
+      .value(PY_ENUM(Function::FLAGS::NONE))
+      .value(PY_ENUM(Function::FLAGS::IMPORTED))
+      .value(PY_ENUM(Function::FLAGS::EXPORTED))
+      .value(PY_ENUM(Function::FLAGS::CONSTRUCTOR))
+      .value(PY_ENUM(Function::FLAGS::DESTRUCTOR))
+      .value(PY_ENUM(Function::FLAGS::DEBUG_INFO));
 
-    pyfunction
-    .def(nb::init())
-    .def(nb::init<std::string_view>())
-    .def(nb::init<uint64_t>())
-    .def(nb::init<std::string_view, uint64_t>())
+  pyfunction.def(nb::init())
+      .def(nb::init<std::string_view>())
+      .def(nb::init<uint64_t>())
+      .def(nb::init<std::string_view, uint64_t>())
 
-    .def("add", &Function::add,
-        "Add the given " RST_CLASS_REF(lief.Function.FLAGS) ""_doc,
-        "flag"_a)
+      .def("add", &Function::add,
+           "Add the given :class:`~lief.Function.FLAGS`"_doc, "flag"_a)
 
-    .def("has", &Function::has,
-        "Check if the function has the given flag"_doc,
-        "flag"_a)
+      .def("has", &Function::has, "Check if the function has the given flag"_doc,
+           "flag"_a)
 
-    .def_prop_ro("flags", &Function::flags,
-        "Function flags"_doc)
+      .def_prop_ro("flags", &Function::flags, "Function flags"_doc)
 
-    .def_prop_ro("flags_list",
-        &Function::flags_list,
-        "Function flags as a list of " RST_CLASS_REF(lief.Function.FLAGS) ""_doc)
+      .def_prop_ro("flags_list", &Function::flags_list,
+                   "Function flags as a list of :class:`~lief.Function.FLAGS`"_doc)
 
-    .def_prop_rw("address",
-        nb::overload_cast<>(&Function::address, nb::const_),
-        nb::overload_cast<uint64_t>(&Function::address),
-        "Function's address"_doc)
+      .def_prop_rw("address", nb::overload_cast<>(&Function::address, nb::const_),
+                   nb::overload_cast<uint64_t>(&Function::address),
+                   "Function's address"_doc)
 
-    LIEF_DEFAULT_STR(Function);
+      .LIEF_DEFAULT_STR(Function);
 }
 }

@@ -1,12 +1,12 @@
+#include "LIEF/Abstract/Binary.hpp"
 #include "LIEF/DWARF/Editor.hpp"
 #include "LIEF/DWARF/editor/CompilationUnit.hpp"
-#include "LIEF/Abstract/Binary.hpp"
 
 #include "DWARF/pyDwarf.hpp"
 
-#include <nanobind/stl/unique_ptr.h>
-#include <nanobind/stl/string.h>
 #include "nanobind/extra/stl/pathlike.h"
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/unique_ptr.h>
 
 namespace LIEF::dwarf::py {
 template<>
@@ -18,46 +18,40 @@ void create<dw::Editor>(nb::module_& m) {
   create<LIEF::dwarf::editor::Variable>(m_editor);
   create<LIEF::dwarf::editor::CompilationUnit>(m_editor);
 
-  nb::class_<dw::Editor> editor(m, "Editor",
-    R"doc(
-    This class exposes the main API to create DWARF information
-    )doc"_doc
+  nb::class_<dw::Editor> editor(
+      m, "Editor",
+      "This class exposes the main API to create DWARF information"_doc
   );
 
   nb::enum_<dw::Editor::ARCH>(editor, "ARCH")
-    .value("UNKNOWN", dw::Editor::ARCH::UNKNOWN)
-    .value("X64", dw::Editor::ARCH::X64)
-    .value("X86", dw::Editor::ARCH::X86)
-    .value("AARCH64", dw::Editor::ARCH::AARCH64)
-    .value("ARM", dw::Editor::ARCH::ARM)
-  ;
+      .value("UNKNOWN", dw::Editor::ARCH::UNKNOWN)
+      .value("X64", dw::Editor::ARCH::X64)
+      .value("X86", dw::Editor::ARCH::X86)
+      .value("AARCH64", dw::Editor::ARCH::AARCH64)
+      .value("ARM", dw::Editor::ARCH::ARM);
 
   nb::enum_<dw::Editor::FORMAT>(editor, "FORMAT")
-    .value("ELF", dw::Editor::FORMAT::ELF)
-    .value("PE", dw::Editor::FORMAT::PE)
-    .value("MACHO", dw::Editor::FORMAT::MACHO)
-  ;
+      .value("ELF", dw::Editor::FORMAT::ELF)
+      .value("PE", dw::Editor::FORMAT::PE)
+      .value("MACHO", dw::Editor::FORMAT::MACHO);
 
   editor
-    .def_static("from_binary", &dw::Editor::from_binary,
-      "Instantiate an editor for the given binary object"_doc,
-      "bin"_a
-    )
-    .def_static("create", &dw::Editor::create,
-      "Instantiate an editor for the given format and arch"_doc,
-      "fmt"_a, "arch"_a
-    )
-    .def("create_compilation_unit", &dw::Editor::create_compilation_unit,
-      "Create a new compilation unit"_doc, nb::lock_self(), nb::keep_alive<0, 1>()
-    )
-    .def("write", [] (dw::Editor& self, nb::PathLike path) {
-        self.write(path.to_string());
-      },
-      "Write the DWARF file to the specified output"_doc,
-      "output"_a, nb::lock_self()
-    )
-  ;
-
+      .def_static("from_binary", &dw::Editor::from_binary,
+                  "Instantiate an editor for the given binary object"_doc, "bin"_a)
+      .def_static("create", &dw::Editor::create,
+                  "Instantiate an editor for the given format and arch"_doc,
+                  "fmt"_a, "arch"_a)
+      .def("create_compilation_unit", &dw::Editor::create_compilation_unit,
+           "Create a new compilation unit"_doc, nb::lock_self(),
+           nb::keep_alive<0, 1>())
+      .def(
+          "write",
+          [](dw::Editor& self, nb::PathLike path) {
+            self.write(path.to_string());
+          },
+          "Write the DWARF file to the specified output"_doc, "output"_a,
+          nb::lock_self()
+      );
 }
 
 }

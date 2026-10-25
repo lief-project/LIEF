@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/unique_ptr.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <sstream>
+#include <string>
 
-#include "LIEF/MachO/hash.hpp"
 #include "LIEF/MachO/RPathCommand.hpp"
+#include "LIEF/MachO/hash.hpp"
 
 #include "MachO/pyMachO.hpp"
 
@@ -30,19 +30,17 @@ template<>
 void create<RPathCommand>(nb::module_& m) {
   nb::class_<RPathCommand, LoadCommand>(m, "RPathCommand")
 
-    .def_static("create", &RPathCommand::create,
-      "Create a new RPathCommand for the provided ``path``"_doc,
-      "path"_a
-    )
+      .def_static("create", &RPathCommand::create,
+                  "Create a new RPathCommand for the provided ``path``"_doc,
+                  "path"_a)
 
-    .def_prop_ro("path_offset", &RPathCommand::path_offset,
-                 "Original string offset of the path")
+      .def_prop_ro("path_offset", &RPathCommand::path_offset,
+                   "Original string offset of the path")
 
-    .def_prop_rw("path",
-        nb::overload_cast<>(&RPathCommand::path, nb::const_),
-        nb::overload_cast<std::string>(&RPathCommand::path),
-        "@rpath path"_doc, nb::rv_policy::reference_internal)
+      .def_prop_rw("path", nb::overload_cast<>(&RPathCommand::path, nb::const_),
+                   nb::overload_cast<std::string>(&RPathCommand::path),
+                   "@rpath path"_doc, nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(RPathCommand);
+      .LIEF_DEFAULT_STR(RPathCommand);
 }
 }

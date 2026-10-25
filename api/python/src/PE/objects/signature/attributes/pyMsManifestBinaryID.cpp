@@ -13,39 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string_view>
 #include "PE/pyPE.hpp"
+#include <string_view>
 
 #include "LIEF/PE/signature/attributes/MsManifestBinaryID.hpp"
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
 
-#include <string>
 #include <sstream>
+#include <string>
 
 namespace LIEF::PE::py {
 
 template<>
 void create<MsManifestBinaryID>(nb::module_& m) {
-  nb::class_<MsManifestBinaryID, Attribute>(m, "MsManifestBinaryID",
-    R"delim(
-    Interface over the structure described by the OID ``1.3.6.1.4.1.311.10.3.28`` (``szOID_PLATFORM_MANIFEST_BINARY_ID``)
+  nb::class_<MsManifestBinaryID, Attribute>(
+      m, "MsManifestBinaryID",
+      R"delim(
+      Interface over the structure described by the OID ``1.3.6.1.4.1.311.10.3.28`` (``szOID_PLATFORM_MANIFEST_BINARY_ID``)
 
-    The internal structure is not documented but we can infer the following structure:
+      The internal structure is not documented but we can infer the following structure:
 
-    .. code-block:: text
+      .. code-block:: text
 
-        szOID_PLATFORM_MANIFEST_BINARY_ID ::= SET OF BinaryID
+          szOID_PLATFORM_MANIFEST_BINARY_ID ::= SET OF BinaryID
 
-        BinaryID ::= UTF8STRING
+          BinaryID ::= UTF8STRING
 
-    )delim")
+      )delim"
+  )
 
-    .def_prop_rw("manifest_id",
-        nb::overload_cast<>(&MsManifestBinaryID::manifest_id, nb::const_),
-        nb::overload_cast<std::string_view>(&MsManifestBinaryID::manifest_id),
-        "The manifest id")
-    LIEF_DEFAULT_STR(MsManifestBinaryID);
+      .def_prop_rw(
+          "manifest_id",
+          nb::overload_cast<>(&MsManifestBinaryID::manifest_id, nb::const_),
+          nb::overload_cast<std::string_view>(&MsManifestBinaryID::manifest_id),
+          "The manifest id"
+      )
+      .LIEF_DEFAULT_STR(MsManifestBinaryID);
 }
 
 }

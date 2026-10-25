@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
-#include <nanobind/stl/string.h>
 #include <nanobind/stl/array.h>
+#include <nanobind/stl/string.h>
+#include <sstream>
+#include <string>
 
 #include "LIEF/MachO/SourceVersion.hpp"
 
@@ -27,19 +27,23 @@ namespace LIEF::MachO::py {
 template<>
 void create<SourceVersion>(nb::module_& m) {
 
-  nb::class_<SourceVersion, LoadCommand>(m, "SourceVersion",
+  nb::class_<SourceVersion, LoadCommand>(
+      m, "SourceVersion",
       R"delim(
       Class that represents the MachO :attr:`~.LoadCommand.TYPE.SOURCE_VERSION`
       This command is used to provide the *version* of the sources used to build the binary
-      )delim"_doc)
+      )delim"_doc
+  )
 
-    .def_prop_rw("version",
-        nb::overload_cast<>(&SourceVersion::version, nb::const_),
-        nb::overload_cast<const SourceVersion::version_t&>(&SourceVersion::version),
-        "Version as a tuple of **5** integers"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_rw("version",
+                   nb::overload_cast<>(&SourceVersion::version, nb::const_),
+                   nb::overload_cast<const SourceVersion::version_t&>(
+                       &SourceVersion::version
+                   ),
+                   "Version as a tuple of **5** integers"_doc,
+                   nb::rv_policy::reference_internal)
 
-    LIEF_DEFAULT_STR(SourceVersion);
+      .LIEF_DEFAULT_STR(SourceVersion);
 }
 
 }
