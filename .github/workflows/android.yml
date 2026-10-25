@@ -76,6 +76,5 @@ jobs:
             -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY \
             -e LIEF_S3_KEY=$LIEF_S3_KEY             \
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET       \
-            liefproject/deploy:github
+            liefproject/deploy:github               \
             uv run python /src/.github/deploy.py /runner_tmp/artifacts
-
