@@ -42,6 +42,11 @@
 #include "LIEF/PE/debug/Repro.hpp"
 #include "LIEF/hash.hpp"
 
+#include <cstring>
+#include <fstream>
+#include <iterator>
+#include <sstream>
+
 #include "utils.hpp"
 
 using namespace LIEF;
@@ -110,6 +115,48 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
 
     PE::Repro repro;
     REQUIRE(PE::Repro::classof(&repro));
+  }
+
+  SECTION("truncated-codeview-pdb") {
+    // A CodeView entry whose data stops right after the RSDS signature must
+    // still be a CodeViewPDB, since CodeViewPDB::classof() trusts the signature
+    std::string path =
+        test::get_sample("PE", "PE64_x86-64_binary_mfc-application.exe");
+    std::unique_ptr<PE::Binary> pe = PE::Parser::parse(path);
+    REQUIRE(pe != nullptr);
+    REQUIRE(pe->codeview_pdb() != nullptr);
+
+    std::ifstream ifs(path, std::ios::binary);
+    std::vector<uint8_t> raw((std::istreambuf_iterator<char>(ifs)),
+                             std::istreambuf_iterator<char>());
+
+    const PE::DataDirectory* dir =
+        pe->data_directory(PE::DataDirectory::TYPES::DEBUG_DIR);
+    REQUIRE(dir != nullptr);
+    const uint64_t start = pe->rva_to_offset(dir->RVA());
+    const uint32_t sig_only = sizeof(uint32_t);
+    bool patched = false;
+    for (uint64_t pos = start; pos + 28 <= start + dir->size(); pos += 28) {
+      uint32_t type = 0;
+      std::memcpy(&type, raw.data() + pos + 12, sizeof(type));
+      if (type == static_cast<uint32_t>(PE::Debug::TYPES::CODEVIEW)) {
+        std::memcpy(raw.data() + pos + 16, &sig_only, sizeof(sig_only));
+        patched = true;
+      }
+    }
+    REQUIRE(patched);
+
+    std::unique_ptr<PE::Binary> truncated = PE::Parser::parse(std::move(raw));
+    REQUIRE(truncated != nullptr);
+    const PE::CodeViewPDB* cv = truncated->codeview_pdb();
+    REQUIRE(cv != nullptr);
+    CHECK(cv->CodeView::signature() == PE::CodeView::SIGNATURES::PDB_70);
+    CHECK(cv->age() == 0);
+    CHECK(cv->filename().empty());
+
+    std::ostringstream os;
+    truncated->write(os);
+    CHECK(!os.str().empty());
   }
 
   SECTION("classof") {

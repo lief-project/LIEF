@@ -889,7 +889,10 @@ std::unique_ptr<Debug> Parser::parse_code_view(const details::pe_debug& debug_in
     {
       const auto pdb_s = stream.read<details::pe_pdb_70>();
       if (!pdb_s) {
-        return default_value;
+        // CodeViewPDB::classof() only looks at the signature, so a truncated
+        // record must still produce a CodeViewPDB and not a bare CodeView
+        return std::make_unique<CodeViewPDB>(debug_info, details::pe_pdb_70{},
+                                             sec);
       }
 
       auto cv_pdb70 = std::make_unique<CodeViewPDB>(debug_info, *pdb_s, sec);
@@ -904,7 +907,8 @@ std::unique_ptr<Debug> Parser::parse_code_view(const details::pe_debug& debug_in
     {
       const auto pdb_s = stream.read<details::pe_pdb_20>();
       if (!pdb_s) {
-        return default_value;
+        return std::make_unique<CodeViewPDB>(debug_info, details::pe_pdb_20{},
+                                             sec);
       }
 
       auto cv_pdb20 = std::make_unique<CodeViewPDB>(debug_info, *pdb_s, sec);
