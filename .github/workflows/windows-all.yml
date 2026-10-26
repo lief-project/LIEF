@@ -29,6 +29,7 @@ jobs:
     env:
       SCCACHE_CACHE_SIZE: 2G
       SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -85,6 +86,7 @@ jobs:
     env:
       SCCACHE_CACHE_SIZE: 2G
       SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -165,6 +167,7 @@ jobs:
     env:
       SCCACHE_CACHE_SIZE: 2G
       SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
     steps:
       - uses: actions/checkout@v7
         with:

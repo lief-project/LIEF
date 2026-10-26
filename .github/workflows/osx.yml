@@ -42,6 +42,7 @@ jobs:
           CCACHE_MAXSIZE: 10.0G
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
+          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
         run: |
           bash scripts/osx/package_sdk.sh
       - name: 'Upload SDK Artifact'
@@ -106,6 +107,7 @@ jobs:
           CCACHE_MAXSIZE: 10.0G
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
+          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
         run: |
           python -m pip install -r tests/requirements.txt
           python -m pip -vvv install api/python
@@ -161,6 +163,7 @@ jobs:
         shell: bash
         env:
           MACOSX_DEPLOYMENT_TARGET: "11.0"
+          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
           FORCE_COLOR: "1"
           CLICOLOR_FORCE: "1"
           CCACHE_DIR: ${{ runner.temp }}/.ccache

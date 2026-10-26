@@ -31,15 +31,18 @@ jobs:
         shell: bash
         env:
           ARCH: ${{ matrix.arch }}
+          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
         run: |
-          docker run                  \
-           -e CCACHE_COMPRESS=1       \
-           -e CCACHE_MAXSIZE=10.0G    \
-           -e CCACHE_CPP2=1           \
-           -e CCACHE_DIR=/ccache      \
-           -v $GITHUB_WORKSPACE:/work \
-           -v $HOME/.ccache:/ccache   \
-          --rm liefproject/android-${ARCH} bash /work/scripts/docker/android-sdk-${ARCH}
+          docker run --rm                        \
+           -e CCACHE_COMPRESS=1                  \
+           -e CCACHE_MAXSIZE=10.0G               \
+           -e CCACHE_CPP2=1                      \
+           -e CCACHE_DIR=/ccache                 \
+           -e LIEF_VERSION_ENV=$LIEF_VERSION_ENV \
+           -v $GITHUB_WORKSPACE:/work            \
+           -v $HOME/.ccache:/ccache              \
+           liefproject/android-${ARCH}           \
+           bash /work/scripts/docker/android-sdk-${ARCH}
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v7
         with:

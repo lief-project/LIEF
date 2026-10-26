@@ -22,6 +22,7 @@ jobs:
         BUILD_DIR_STATIC: "/tmp/build/linux-x86-64/static-release"
         BUILD_DIR_SHARED: "/tmp/build/linux-x86-64/shared-release"
         CLICOLOR_FORCE: "1"
+        LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
       options: --user 1001:1001
     steps:
       - uses: actions/checkout@v7
@@ -95,6 +96,7 @@ jobs:
         LIEF_VENV: "/tmp/venv"
         CLICOLOR_FORCE: "1"
         PYTEST_ADDOPTS: "--color=yes"
+        LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
       options: --user 1001:1001
     steps:
       - uses: actions/checkout@v7
@@ -176,6 +178,7 @@ jobs:
         CLICOLOR_FORCE: "1"
         FORCE_COLOR: "1"
         LIEF_BUILD_DIR: "/tmp/lief-build"
+        LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
       options: --user 1001:1001
     strategy:
       matrix:
