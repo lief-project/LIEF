@@ -202,3 +202,45 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
           ) == "UNKNOWN");
   }
 }
+
+TEST_CASE("lief.test.elf.write_unreadable_content", "[lief][test][elf]") {
+  // ELF64 relocatable: header, .shstrtab, then three section headers. The
+  // .bad section points far past the end of the file, so its content can't
+  // be read; rebuilding must not grow the output up to that offset.
+  std::vector<uint8_t> raw(272, 0);
+  auto put = [&raw](size_t offset, uint64_t value, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
+      raw[offset + i] = (uint8_t)(value >> (8 * i));
+    }
+  };
+  const uint8_t ident[] = {0x7f, 'E', 'L', 'F', 2, 1, 1};
+  std::copy(std::begin(ident), std::end(ident), raw.begin());
+  put(16, 1, 2);       // e_type: ET_REL
+  put(18, 0x3e, 2);    // e_machine: x86-64
+  put(20, 1, 4);       // e_version
+  put(40, 80, 8);      // e_shoff
+  put(52, 64, 2);      // e_ehsize
+  put(58, 64, 2);      // e_shentsize
+  put(60, 3, 2);       // e_shnum
+  put(62, 1, 2);       // e_shstrndx
+  const char strtab[] = "\0.shstrtab\0.bad";
+  std::copy(std::begin(strtab), std::end(strtab), raw.begin() + 64);
+  put(80 + 64 + 0, 1, 4);                    // .shstrtab: sh_name
+  put(80 + 64 + 4, 3, 4);                    // sh_type: SHT_STRTAB
+  put(80 + 64 + 24, 64, 8);                  // sh_offset
+  put(80 + 64 + 32, sizeof(strtab), 8);      // sh_size
+  put(80 + 128 + 0, 11, 4);                  // .bad: sh_name
+  put(80 + 128 + 4, 1, 4);                   // sh_type: SHT_PROGBITS
+  put(80 + 128 + 24, 0x1000000000000000, 8); // sh_offset
+  put(80 + 128 + 32, 0x10, 8);               // sh_size
+
+  std::unique_ptr<ELF::Binary> elf = ELF::Parser::parse(raw);
+  REQUIRE(elf != nullptr);
+  const ELF::Section* bad = elf->get_section(".bad");
+  REQUIRE(bad != nullptr);
+  REQUIRE(bad->content().empty());
+
+  std::vector<uint8_t> built = elf->raw();
+  CHECK(!built.empty());
+  CHECK(built.size() < 0x10000);
+}
