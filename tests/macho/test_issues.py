@@ -115,6 +115,51 @@ def test_zero_div():
     assert macho is not None
 
 
+@pytest.mark.thread_unsafe
+@pytest.mark.parametrize("is64", [False, True])
+def test_1325(is64, capsys):
+    header_size, segment_size = (32, 72) if is64 else (28, 56)
+    raw = struct.pack(
+        "<7I",
+        0xFEEDFACF if is64 else 0xFEEDFACE,
+        0x1000007 if is64 else 7,
+        3,
+        2,
+        2,
+        segment_size + 24,
+        0,
+    )
+    if is64:
+        raw += bytes(4)
+    raw += struct.pack(
+        "<II16s" + ("QQQQ" if is64 else "IIII") + "IIII",
+        0x19 if is64 else 1,
+        segment_size,
+        b"__TEXT",
+        0,
+        0x1000,
+        0,
+        header_size + segment_size + 24,
+        7,
+        5,
+        0,
+        0,
+    )
+    raw += struct.pack("<6I", 2, 24, 0, 0, 0, 0)
+
+    with lief.logging.level_scope(lief.logging.Level.Warn):
+        fat = lief.MachO.parse(raw)
+    assert fat is not None
+    target = fat.at(0)
+    assert target is not None
+    symtab = target.symbol_command
+    assert symtab is not None
+    assert symtab.numberof_symbols == 0
+    assert symtab.strings_size == 0
+    assert len(target.symbols) == 0
+    assert capsys.readouterr().err == ""
+
+
 def test_1344(tmp_path: Path):
     sample = (
         "MachO/"
