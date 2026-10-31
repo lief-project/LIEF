@@ -117,6 +117,9 @@ class ELF_Binary : public AbstractBinary {
   ELF_Binary(std::unique_ptr<lief_t> bin) :
     AbstractBinary(std::move(bin)) {}
 
+  explicit ELF_Binary(const lief_t& bin) :
+    AbstractBinary(bin) {}
+
   static auto parse(const std::string& path) {
     return details::try_unique<ELF_Binary>(LIEF::ELF::Parser::parse(path));
   }

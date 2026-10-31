@@ -59,6 +59,10 @@ impl FromFFI<ffi::PE_Binary> for Binary {
 }
 
 impl Binary {
+    pub(crate) fn into_ffi(self) -> cxx::UniquePtr<ffi::PE_Binary> {
+        self.ptr
+    }
+
     /// Parse from a filepath given as a string
     pub fn parse<P: AsRef<Path>>(path: P) -> Option<Self> {
         cxx::let_cxx_string!(__cxx_s = path.as_ref().to_str().unwrap());

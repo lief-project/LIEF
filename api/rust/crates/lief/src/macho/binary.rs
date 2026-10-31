@@ -73,6 +73,10 @@ impl FromFFI<ffi::MachO_Binary> for Binary {
 }
 
 impl Binary {
+    pub(crate) fn into_ffi(self) -> cxx::UniquePtr<ffi::MachO_Binary> {
+        self.ptr
+    }
+
     /// Return the main Mach-O header
     pub fn header(&self) -> Header<'_> {
         Header::from_ffi(self.ptr.header())
