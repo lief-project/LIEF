@@ -67,6 +67,10 @@ DyldChainedFixupsCreator::pointer_format(const Binary& bin, size_t imp_count) {
   }
   // Logic taken from ld64 -- OutputFile::chainedPointerFormat()
   const Header::CPU_TYPE arch = bin.header().cpu_type();
+  if (arch == Header::CPU_TYPE::X86_64) {
+    return DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET;
+  }
+
   if (arch == Header::CPU_TYPE::ARM64) {
     if (bin.support_arm64_ptr_auth()) {
       if (imp_count > BIND24_THRESHOLD) {
@@ -152,6 +156,7 @@ ok_error_t DyldChainedFixupsCreator::process_relocations(
       LIEF_WARN("Segment not found for relocation at {:#018x}", fixup->address());
       continue;
     }
+    fixup->segment_ = segment;
 
     switch (ptr_fmt) {
       case DYLD_CHAINED_PTR_FORMAT::PTR_ARM64E:
@@ -163,9 +168,12 @@ ok_error_t DyldChainedFixupsCreator::process_relocations(
         break;
       }
       case DYLD_CHAINED_PTR_FORMAT::PTR_64:
+      case DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET:
       {
         details::dyld_chained_ptr_64_rebase raw{};
-        details::pack_target(raw, info.target - imagebase);
+        details::pack_target(raw, ptr_fmt == DYLD_CHAINED_PTR_FORMAT::PTR_64 ?
+                                      info.target :
+                                      info.target - imagebase);
         fixup->set(raw);
         break;
       }
@@ -358,6 +366,7 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
             }
 
             case DYLD_CHAINED_PTR_FORMAT::PTR_64:
+            case DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET:
             {
               details::dyld_chained_ptr_64_bind raw{};
               raw.bind = 1;
@@ -380,7 +389,7 @@ DyldChainedFixups* DyldChainedFixupsCreator::create(Binary& target) {
         } else {
           assert(element.is_fixup());
           element.fixup->next(next);
-          element.fixup->offset((element.binding->address() -
+          element.fixup->offset((element.fixup->address() -
                                  segment.virtual_address()) +
                                 segment.file_offset());
         }
