@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  python-test-version: '3.13'
+  python-test-version: '3.14'
 
 jobs:
   osx-sdk:
@@ -92,7 +92,7 @@ jobs:
         shell: bash
         run: |
           python -m pip install --upgrade pip
-      - name: Build Python 3.13 with tests
+      - name: Build Python ${{ env.python-test-version }} with tests
         shell: bash
         env:
           LIEF_SAMPLES_DIR: "/tmp/samples"

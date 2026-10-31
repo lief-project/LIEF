@@ -90,10 +90,11 @@ jobs:
       image: liefproject/manylinux_2_28_x86_64
       env:
         CCACHE_DIR: "/home/pylief/.ccache"
-        PYTHON_BINARY: "/opt/python/cp312-cp312/bin/python3.12"
+        PYTHON_VERSION: "3.14"
         LIEF_SAMPLES_DIR: "/tmp/samples"
         LIEF_BUILD_DIR: "/tmp/lief-build"
-        LIEF_VENV: "/tmp/venv"
+        VIRTUAL_ENV: "/tmp/venv"
+        UV_LINK_MODE: "copy"
         CLICOLOR_FORCE: "1"
         PYTEST_ADDOPTS: "--color=yes"
         LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
@@ -112,28 +113,27 @@ jobs:
       - name: Prepare Python virtual env
         shell: bash
         run: |
-          $PYTHON_BINARY -m venv ${LIEF_VENV}
-          source ${LIEF_VENV}/bin/activate
-          python -m pip install             \
-                 -r tests/requirements.txt  \
-                 -r api/python/build-requirements.txt
+          uv venv                                                \
+            --python ${PYTHON_VERSION}+gil --no-python-downloads \
+            ${VIRTUAL_ENV}
+          echo "${VIRTUAL_ENV}/bin" >> "${GITHUB_PATH}"
+          uv pip install                                     \
+            --requirements tests/requirements.txt            \
+            --requirements api/python/build-requirements.txt
       - name: Build & install LIEF
         shell: bash
         run: |
-          source ${LIEF_VENV}/bin/activate
           export PYLIEF_CONF="${GITHUB_WORKSPACE}/scripts/docker/config/pylinux-test-x64.toml"
-          python -m pip -vvv install api/python
+          uv pip install --verbose --no-build-isolation api/python
       - name: Prepare test samples
         shell: bash
         run: |
-          source ${LIEF_VENV}/bin/activate
           mkdir -p ${LIEF_SAMPLES_DIR}
           python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
       - name: Run tests
         timeout-minutes: 5
         shell: bash
         run: |
-          source ${LIEF_VENV}/bin/activate
           python tests/run_pytest.py
           python tests/run_tools_check.py ${LIEF_BUILD_DIR}/
           ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/
@@ -141,7 +141,6 @@ jobs:
         shell: bash
         timeout-minutes: 20
         run: |
-          source ${LIEF_VENV}/bin/activate
           export PYTHONPATH="${GITHUB_WORKSPACE}/tests:$PYTHONPATH"
           python tests/elf/fuzzing.py                             \
                  ${LIEF_BUILD_DIR}/tests/Melkor/src/MELKOR/melkor \
@@ -150,7 +149,6 @@ jobs:
         shell: bash
         timeout-minutes: 20
         run: |
-          source ${LIEF_VENV}/bin/activate
           export PYTHONPATH="${GITHUB_WORKSPACE}/tests:$PYTHONPATH"
           python tests/elf/fuzzing.py                             \
                  ${LIEF_BUILD_DIR}/tests/Melkor/src/MELKOR/melkor \
@@ -159,7 +157,6 @@ jobs:
         shell: bash
         timeout-minutes: 20
         run: |
-          source ${LIEF_VENV}/bin/activate
           export PYTHONPATH="${GITHUB_WORKSPACE}/tests:$PYTHONPATH"
           python tests/elf/fuzzing.py                             \
                  ${LIEF_BUILD_DIR}/tests/Melkor/src/MELKOR/melkor \

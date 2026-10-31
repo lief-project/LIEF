@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 env:
-  python-test-version: '3.13'
-  python-version: '3.13'
+  python-test-version: '3.14'
+  python-version: '3.14'
   CLICOLOR_FORCE: "1"
   FORCE_COLOR: "1"
   GCC_COLORS: "yes"
