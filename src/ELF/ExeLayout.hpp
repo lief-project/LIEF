@@ -316,6 +316,13 @@ class LIEF_LOCAL ExeLayout : public Layout {
     }
 
     const uint32_t nb_buckets = gnu_hash->nb_buckets();
+    if (nb_buckets == 0) {
+      // A zero bucket count makes the modulo operations below divide by zero.
+      // Treat it as an unusable hash table and let the builder keep the
+      // original section instead of regenerating it.
+      LIEF_ERR("GNU hash declares zero buckets");
+      return 0;
+    }
     const uint32_t symndx = first_exported_symbol_index;
     const uint32_t maskwords = gnu_hash->maskwords();
     const uint32_t shift2 = gnu_hash->shift2();
