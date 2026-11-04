@@ -1404,8 +1404,25 @@ class CodeView(Debug):
 
         CV_41 = 959464014
 
+    class KIND(enum.Enum):
+        @staticmethod
+        def from_value(arg: int, /) -> CodeView.KIND: ...
+
+        def __eq__(self, arg, /) -> bool: ...
+
+        def __ne__(self, arg, /) -> bool: ...
+
+        def __int__(self) -> int: ...
+
+        GENERIC = 0
+
+        PDB = 1
+
     @property
     def cv_signature(self) -> CodeView.SIGNATURES: ...
+
+    @property
+    def kind(self) -> CodeView.KIND: ...
 
     def __str__(self) -> str: ...
 

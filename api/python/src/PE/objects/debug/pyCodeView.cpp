@@ -18,8 +18,10 @@
 #include "LIEF/PE/debug/CodeView.hpp"
 #include "enums_wrapper.hpp"
 
-#include <nanobind/stl/array.h>
+#include <string>
+#include <sstream>
 #include <nanobind/stl/string.h>
+#include <nanobind/stl/array.h>
 
 #define PY_ENUM(x) to_string(x), x
 
@@ -35,12 +37,20 @@ void create<CodeView>(nb::module_& m) {
       .value(PY_ENUM(CodeView::SIGNATURES::PDB_20))
       .value(PY_ENUM(CodeView::SIGNATURES::CV_50))
       .value(PY_ENUM(CodeView::SIGNATURES::CV_41));
+
+  enum_<CodeView::KIND>(cv, "KIND", "Discriminator for the subclasses"_doc)
+      .value("GENERIC", CodeView::KIND::GENERIC)
+      .value("PDB", CodeView::KIND::PDB);
+
   cv.def(nb::init<>())
       .def(nb::init<CodeView::SIGNATURES>())
       .def_prop_ro(
           "cv_signature", nb::overload_cast<>(&CodeView::signature, nb::const_),
           "Type of the code view (:class:`~lief.PE.CodeView.SIGNATURES`)"_doc
       )
+
+      .def_prop_ro("kind", &CodeView::kind,
+                   "Type of the concrete implementation"_doc)
 
       .LIEF_DEFAULT_STR(CodeView);
 }

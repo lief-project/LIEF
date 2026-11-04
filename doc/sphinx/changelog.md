@@ -77,6 +77,8 @@
     |lief-pe-resource-node|) and of the Authenticode program names: the
     characters outside the Basic Multilingual Plane, such as emoji, were
     silently dropped.
+  * Fix an out-of-bounds read on the ``CodeView`` entries whose PDB whose
+    content is truncated (:pr:`1399` by :github_user:`bacescuandrei`)
 
 :MachO:
 

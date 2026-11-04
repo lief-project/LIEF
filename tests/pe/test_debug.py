@@ -5,6 +5,7 @@ from textwrap import dedent
 from typing import cast
 
 import lief
+import pytest
 from utils import get_sample, lief_logging, parse_pe
 
 
@@ -93,6 +94,7 @@ def test_code_view_pdb():
     code_view = cast(lief.PE.CodeViewPDB, debug_code_view[0])
 
     assert code_view.cv_signature == lief.PE.CodeView.SIGNATURES.PDB_70
+    assert code_view.kind == lief.PE.CodeView.KIND.PDB
     assert code_view.signature == [
         245,
         217,
@@ -162,6 +164,22 @@ def test_code_view_pdb():
     cv1 = lief.PE.CodeView()
     cv2 = lief.PE.CodeView(lief.PE.CodeView.SIGNATURES.CV_50)
     assert cv1.copy() != cv2
+
+
+@pytest.mark.private
+def test_truncated_code_view_pdb():
+    """
+    A CodeView with a PDB signature is not necessarily a CodeViewPDB
+    if its content is truncated.
+    (https://github.com/lief-project/LIEF/pull/1399)
+    """
+    new_pe = parse_pe("private/PE/truncated_code_view_pdb.exe")
+    assert new_pe.codeview_pdb is None
+    assert bytes(new_pe.debug[0].payload) == b"RSDS"
+
+    new_pe.clear_debug()
+    new_pe.add_debug_info(lief.PE.CodeView(lief.PE.CodeView.SIGNATURES.PDB_70))
+    assert new_pe.codeview_pdb is None
 
 
 @lief_logging(lief.logging.Level.Debug)
@@ -253,6 +271,7 @@ def test_overlay_dbg():
     assert cv.cv_signature == lief.PE.CodeView.SIGNATURES.PDB_20
     assert isinstance(cv, lief.PE.CodeViewPDB)
     assert cv.filename == "sqlwid.pdb"
+    assert pe.codeview_pdb is not None
 
 
 def test_pdbchecksum(tmp_path: Path):
