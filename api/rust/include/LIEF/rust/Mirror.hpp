@@ -43,6 +43,10 @@ class Mirror {
     return const_cast<T&>(*impl_);
   }
 
+  std::unique_ptr<T> take_ownership() {
+    return impl_.take_ownership();
+  }
+
   private:
   LIEF::details::canbe_unique<T> impl_;
 };

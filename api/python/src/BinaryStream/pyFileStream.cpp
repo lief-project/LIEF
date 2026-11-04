@@ -28,12 +28,11 @@ namespace LIEF::py {
 template<>
 void create<FileStream>(nb::module_& m) {
   nb::class_<FileStream, BinaryStream>(m, "FileStream")
-    .def_static("from_file", [] (typing::StrOrPath file) {
-      return FileStream::from_file(*file.to_string());
-    })
-    .def_prop_ro("content", [] (FileStream& self) {
-      return nb::to_bytes(self.content());
-    })
-  ;
+      .def_static("from_file",
+                  [](typing::StrOrPath file) {
+                    return FileStream::from_file(*file.to_string());
+                  })
+      .def_prop_ro("content",
+                   [](FileStream& self) { return nb::to_bytes(self.content()); });
 }
 }

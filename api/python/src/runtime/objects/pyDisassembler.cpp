@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LIEF/runtime/disassembler.hpp"
 #include "LIEF/asm/Instruction.hpp"
+#include "LIEF/runtime/disassembler.hpp"
 #include "pyLIEF.hpp"
 
 #include <nanobind/make_iterator.h>
@@ -24,21 +24,26 @@
 
 namespace LIEF::runtime::py {
 void init_disassembler(nb::module_& m) {
-  m.def("disassemble", [] (uintptr_t addr) {
-    auto insts = LIEF::py::owning_range(runtime::disassemble(addr));
-    return nb::make_iterator<nb::rv_policy::take_ownership>(
-      nb::type<assembly::Instruction>(), "instructions_it", insts);
-  }, "addr"_a,
-  R"doc(
-  Start disassembling instructions at the given **absolute** virtual address.
+  m.def(
+      "disassemble",
+      [](uintptr_t addr) {
+        auto insts = LIEF::py::owning_range(runtime::disassemble(addr));
+        return nb::make_iterator<nb::rv_policy::take_ownership>(
+            nb::type<assembly::Instruction>(), "instructions_it", insts
+        );
+      },
+      "addr"_a,
+      R"doc(
+      Start disassembling instructions at the given **absolute** virtual address.
 
-  .. code-block:: python
+      .. code-block:: python
 
-    from lief import runtime
-    for inst in runtime.disassemble(0x7f0011223344):
-        print(inst)
+        from lief import runtime
+        for inst in runtime.disassemble(0x7f0011223344):
+            print(inst)
 
-  .. seealso:: :class:`lief.assembly.Instruction`
-  )doc"_doc);
+      .. seealso:: :class:`lief.assembly.Instruction`
+      )doc"_doc
+  );
 }
 }

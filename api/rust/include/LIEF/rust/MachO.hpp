@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/MachO/AtomInfo.hpp"
 #include "LIEF/rust/MachO/Binary.hpp"
 #include "LIEF/rust/MachO/BindingInfo.hpp"
@@ -59,3 +60,4 @@
 #include "LIEF/rust/MachO/UnknownCommand.hpp"
 #include "LIEF/rust/MachO/VersionMin.hpp"
 #include "LIEF/rust/MachO/utils.hpp"
+// IWYU pragma: end_exports

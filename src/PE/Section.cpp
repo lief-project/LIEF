@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string_view>
 #include <spdlog/fmt/fmt.h>
 #include <algorithm>
+#include <array>
 #include <iterator>
 
 #include "PE/Structures.hpp"
@@ -122,6 +124,26 @@ std::unique_ptr<SpanStream> Section::stream() const {
 
 void Section::clear(uint8_t c) {
   std::fill(content_.begin(), content_.end(), c);
+}
+
+size_t Section::serialize(vector_iostream& ios) const {
+  std::array<char, 8> section_name{};
+
+  std::string_view sec_name = fullname();
+  sec_name.copy(section_name.data(), section_name.size());
+  ios.increase_capacity(sizeof(details::pe_section))
+      .write(section_name)
+      .write<uint32_t>(virtual_size())
+      .write<uint32_t>(virtual_address())
+      .write<uint32_t>(size())
+      .write<uint32_t>(pointerto_raw_data())
+      .write<uint32_t>(pointerto_relocation())
+      .write<uint32_t>(pointerto_line_numbers())
+      .write<uint16_t>(numberof_relocations())
+      .write<uint16_t>(numberof_line_numbers())
+      .write<uint32_t>(characteristics());
+
+  return sizeof(details::pe_section);
 }
 
 std::ostream& operator<<(std::ostream& os, const Section& section) {

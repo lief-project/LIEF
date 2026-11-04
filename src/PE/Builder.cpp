@@ -173,27 +173,7 @@ ok_error_t Builder::build() {
 ok_error_t Builder::build(const DosHeader& dos_header) {
 
   vector_iostream dos_hdr_strm;
-  dos_hdr_strm.reserve(sizeof(details::pe_dos_header));
-
-  dos_hdr_strm.write<uint16_t>(dos_header.magic())
-      .write<uint16_t>(dos_header.used_bytes_in_last_page())
-      .write<uint16_t>(dos_header.file_size_in_pages())
-      .write<uint16_t>(dos_header.numberof_relocation())
-      .write<uint16_t>(dos_header.header_size_in_paragraphs())
-      .write<uint16_t>(dos_header.minimum_extra_paragraphs())
-      .write<uint16_t>(dos_header.maximum_extra_paragraphs())
-      .write<uint16_t>(dos_header.initial_relative_ss())
-      .write<uint16_t>(dos_header.initial_sp())
-      .write<uint16_t>(dos_header.checksum())
-      .write<uint16_t>(dos_header.initial_ip())
-      .write<uint16_t>(dos_header.initial_relative_cs())
-      .write<uint16_t>(dos_header.addressof_relocation_table())
-      .write<uint16_t>(dos_header.overlay_number())
-      .write<uint16_t>(dos_header.reserved())
-      .write<uint16_t>(dos_header.oem_id())
-      .write<uint16_t>(dos_header.oem_info())
-      .write<uint16_t>(dos_header.reserved2())
-      .write<uint32_t>(dos_header.addressof_new_exeheader());
+  dos_header.serialize(dos_hdr_strm);
 
   assert(dos_hdr_strm.size() == sizeof(details::pe_dos_header));
 
@@ -217,16 +197,8 @@ ok_error_t Builder::build(const DosHeader& dos_header) {
 
 ok_error_t Builder::build(const Header& header) {
   vector_iostream pe_hdr_strm;
-  pe_hdr_strm.reserve(sizeof(details::pe_header));
 
-  pe_hdr_strm.write(header.signature())
-      .write<uint16_t>((int)header.machine())
-      .write<uint16_t>(binary_->sections_.size())
-      .write<uint32_t>(header.time_date_stamp())
-      .write<uint32_t>(header.pointerto_symbol_table())
-      .write<uint32_t>(header.numberof_symbols())
-      .write<uint16_t>(header.sizeof_optional_header())
-      .write<uint16_t>(header.characteristics());
+  header.serialize(pe_hdr_strm, binary_->sections_.size());
 
   assert(pe_hdr_strm.size() == sizeof(details::pe_header));
 
@@ -243,28 +215,12 @@ ok_error_t Builder::build(const OptionalHeader& optional_header) {
 
 
 ok_error_t Builder::build(const DataDirectory& data_directory) {
-  ios_.write<uint32_t>(data_directory.RVA())
-      .write<uint32_t>(data_directory.size());
-
+  data_directory.serialize(ios_);
   return ok();
 }
 
 ok_error_t Builder::build(const Section& section) {
-  std::array<char, 8> section_name{};
-
-  std::string_view sec_name = section.fullname();
-  sec_name.copy(section_name.data(), section_name.size());
-  ios_.increase_capacity(sizeof(details::pe_section))
-      .write(section_name)
-      .write<uint32_t>(section.virtual_size())
-      .write<uint32_t>(section.virtual_address())
-      .write<uint32_t>(section.size())
-      .write<uint32_t>(section.pointerto_raw_data())
-      .write<uint32_t>(section.pointerto_relocation())
-      .write<uint32_t>(section.pointerto_line_numbers())
-      .write<uint16_t>(section.numberof_relocations())
-      .write<uint16_t>(section.numberof_line_numbers())
-      .write<uint32_t>(section.characteristics());
+  section.serialize(ios_);
 
   size_t pad_length = 0;
   if (section.content().size() > section.size()) {

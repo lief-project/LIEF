@@ -16,6 +16,7 @@
 #ifndef LIEF_PE_OPTIONAL_HEADER_H
 #define LIEF_PE_OPTIONAL_HEADER_H
 #include <cstdint>
+#include <optional>
 #include <ostream>
 #include <vector>
 
@@ -26,6 +27,9 @@
 #include "LIEF/PE/enums.hpp"
 #include "LIEF/enums.hpp"
 
+namespace LIEF {
+class vector_iostream;
+}
 
 namespace LIEF::PE {
 class Parser;
@@ -450,6 +454,17 @@ class LIEF_API OptionalHeader : public Object {
 
   LIEF_API friend std::ostream& operator<<(std::ostream& os,
                                            const OptionalHeader& entry);
+
+  /// \private
+  template<typename PE_T>
+  LIEF_LOCAL size_t
+      serialize(vector_iostream& ios,
+                std::optional<uint64_t> imagebase = std::nullopt) const;
+
+  LIEF_LOCAL size_t
+      serialize(LIEF::PE::PE_TYPE type, vector_iostream& ios,
+                std::optional<uint64_t> imagebase = std::nullopt) const;
+
 
   private:
   OptionalHeader() = default;

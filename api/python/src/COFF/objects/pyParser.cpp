@@ -14,15 +14,15 @@
  */
 #include "COFF/pyCOFF.hpp"
 
-#include <memory>
 #include <nanobind/stl/string.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
+#include <memory>
 
 #include "typing/InputParser.hpp"
 
-#include "LIEF/COFF/Parser.hpp"
 #include "LIEF/COFF/Binary.hpp"
+#include "LIEF/COFF/Parser.hpp"
 
 namespace LIEF::COFF::py {
 
@@ -30,18 +30,20 @@ template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
-  m.def("parse",
-    [] (typing::InputParser obj, const ParserConfig& config) -> std::unique_ptr<Binary> {
-      return Parser::parse(obj.into_stream(), config);
-    },
-    R"delim(
-    Parse the COFF binary specified in the first parameter and return a :class:`lief.COFF.Binary` object
+  m.def(
+      "parse",
+      [](typing::InputParser obj,
+         const ParserConfig& config) -> std::unique_ptr<Binary> {
+        return Parser::parse(obj.into_stream(), config);
+      },
+      R"delim(
+      Parse the COFF binary specified in the first parameter and return a :class:`lief.COFF.Binary` object
 
-    The second argument is an optional configuration
-    that can be used to define which part(s) of the COFF should be parsed or skipped.
-    )delim"_doc,
-    "obj"_a, "config"_a = ParserConfig::default_conf(),
-    nb::rv_policy::take_ownership);
-
+      The second argument is an optional configuration
+      that can be used to define which part(s) of the COFF should be parsed or skipped.
+      )delim"_doc,
+      "obj"_a, "config"_a = ParserConfig::default_conf(),
+      nb::rv_policy::take_ownership
+  );
 }
 }

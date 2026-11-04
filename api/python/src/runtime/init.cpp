@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 #include "runtime/init.hpp"
-#include "runtime/pyRuntime.hpp"
-#include "runtime/objects/linux/init.hpp"
-#include "runtime/objects/windows/init.hpp"
 #include "runtime/objects/android/init.hpp"
+#include "runtime/objects/linux/init.hpp"
 #include "runtime/objects/osx/init.hpp"
+#include "runtime/objects/windows/init.hpp"
+#include "runtime/pyRuntime.hpp"
 
-#include "LIEF/runtime/utils.hpp"
 #include "LIEF/config.h"
+#include "LIEF/runtime/utils.hpp"
 
 namespace LIEF::runtime {
 class Process;
@@ -39,20 +39,18 @@ void init(nb::module_& m) {
   nb::module_ runtime_mod = m.def_submodule("runtime");
 
   nb::enum_<ARCH>(runtime_mod, "ARCH")
-    .value("NONE", ARCH::NONE)
-    .value("X86_64", ARCH::X86_64)
-    .value("ARM64", ARCH::ARM64)
-    .value("RISCV64", ARCH::RISCV64)
-  ;
+      .value("NONE", ARCH::NONE)
+      .value("X86_64", ARCH::X86_64)
+      .value("ARM64", ARCH::ARM64)
+      .value("RISCV64", ARCH::RISCV64);
 
   nb::enum_<PLATFORMS>(runtime_mod, "PLATFORMS")
-    .value("NONE", PLATFORMS::NONE)
-    .value("LINUX", PLATFORMS::LINUX)
-    .value("WINDOWS", PLATFORMS::WINDOWS)
-    .value("ANDROID", PLATFORMS::ANDROID_)
-    .value("OSX", PLATFORMS::OSX)
-    .value("IOS", PLATFORMS::IOS)
-  ;
+      .value("NONE", PLATFORMS::NONE)
+      .value("LINUX", PLATFORMS::LINUX)
+      .value("WINDOWS", PLATFORMS::WINDOWS)
+      .value("ANDROID", PLATFORMS::ANDROID_)
+      .value("OSX", PLATFORMS::OSX)
+      .value("IOS", PLATFORMS::IOS);
 
   runtime_mod.attr("enabled") = (bool)lief_runtime_support;
   runtime_mod.attr("platform") = platform();

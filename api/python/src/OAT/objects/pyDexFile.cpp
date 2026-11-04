@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string_view>
+#include "LIEF/DEX/File.hpp" // IWYU pragma: keep
 #include "LIEF/OAT/DexFile.hpp"
-#include "LIEF/DEX/File.hpp"
+#include <string_view>
 
 #include "OAT/pyOAT.hpp"
 
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
 
@@ -28,31 +27,27 @@ template<>
 void create<DexFile>(nb::module_& m) {
 
   nb::class_<DexFile, Object>(m, "DexFile", "OAT DexFile representation"_doc)
-    .def(nb::init<>())
+      .def(nb::init<>())
 
-    .def_prop_rw("location",
-        nb::overload_cast<>(&DexFile::location, nb::const_),
-        nb::overload_cast<std::string_view>(&DexFile::location),
-        "Original location of the DEX file"_doc)
+      .def_prop_rw("location", nb::overload_cast<>(&DexFile::location, nb::const_),
+                   nb::overload_cast<std::string_view>(&DexFile::location),
+                   "Original location of the DEX file"_doc)
 
-    .def_prop_rw("checksum",
-        nb::overload_cast<>(&DexFile::checksum, nb::const_),
-        nb::overload_cast<uint32_t>(&DexFile::checksum),
-        "Checksum of the underlying DEX file"_doc)
+      .def_prop_rw("checksum", nb::overload_cast<>(&DexFile::checksum, nb::const_),
+                   nb::overload_cast<uint32_t>(&DexFile::checksum),
+                   "Checksum of the underlying DEX file"_doc)
 
-    .def_prop_rw("dex_offset",
-        nb::overload_cast<>(&DexFile::dex_offset, nb::const_),
-        nb::overload_cast<uint32_t>(&DexFile::dex_offset),
-        "Offset to the raw " RST_CLASS_REF_FULL(lief.DEX.File) ""_doc)
+      .def_prop_rw("dex_offset",
+                   nb::overload_cast<>(&DexFile::dex_offset, nb::const_),
+                   nb::overload_cast<uint32_t>(&DexFile::dex_offset),
+                   "Offset to the raw :class:`lief.DEX.File`"_doc)
 
-    .def_prop_ro("has_dex_file",
-        &DexFile::has_dex_file,
-        "Check if the " RST_CLASS_REF_FULL(lief.DEX.File) " is present"_doc)
+      .def_prop_ro("has_dex_file", &DexFile::has_dex_file,
+                   "Check if the :class:`lief.DEX.File` is present"_doc)
 
-    .def_prop_ro("dex_file", nb::overload_cast<>(&DexFile::dex_file),
-        "Associated " RST_CLASS_REF_FULL(lief.DEX.File) ""_doc)
+      .def_prop_ro("dex_file", nb::overload_cast<>(&DexFile::dex_file),
+                   "Associated :class:`lief.DEX.File`"_doc)
 
-    LIEF_DEFAULT_STR(DexFile);
-
+      .LIEF_DEFAULT_STR(DexFile);
 }
 }

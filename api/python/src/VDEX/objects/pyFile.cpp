@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include "LIEF/DEX/File.hpp" // IWYU pragma: keep
 #include "LIEF/VDEX/File.hpp"
-#include "LIEF/DEX/File.hpp"
 
 #include "pyIterator.hpp"
 
 #include "VDEX/pyVDEX.hpp"
 
-#include <sstream>
 #include <nanobind/stl/string.h>
 
 namespace LIEF::VDEX::py {
@@ -39,21 +38,20 @@ void create<File>(nb::module_& m) {
    */
   try {
     init_ref_iterator<File::it_dex_files>(file, "it_dex_files");
-  } catch (const std::runtime_error&) {}
+  } catch (const std::runtime_error&) {
+  }
 
-  file
-    .def_prop_ro("header", nb::overload_cast<>(&File::header),
-        "Return the VDEX " RST_CLASS_REF(lief.VDEX.Header) ""_doc,
-        nb::rv_policy::reference_internal)
+  file.def_prop_ro("header", nb::overload_cast<>(&File::header),
+                   "Return the VDEX :class:`~lief.VDEX.Header`"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_ro("dex_files", nb::overload_cast<>(&File::dex_files),
-        "Return an iterator over " RST_CLASS_REF(lief.DEX.File) ""_doc,
-        nb::keep_alive<0, 1>())
+      .def_prop_ro("dex_files", nb::overload_cast<>(&File::dex_files),
+                   "Return an iterator over :class:`~lief.DEX.File`"_doc,
+                   nb::keep_alive<0, 1>())
 
-    .def_prop_ro("dex2dex_json_info", &File::dex2dex_json_info)
+      .def_prop_ro("dex2dex_json_info", &File::dex2dex_json_info)
 
-    LIEF_DEFAULT_STR(File);
+      .LIEF_DEFAULT_STR(File);
 }
 
 }
-

@@ -33,52 +33,14 @@ namespace LIEF::PE {
 
 template<typename PE_T>
 ok_error_t Builder::build_optional_header(const OptionalHeader& optional_header) {
-  using uint__ = typename PE_T::uint;
-  using pe_optional_header = typename PE_T::pe_optional_header;
-
   // Build optional header
   binary_->optional_header().sizeof_image(uint32_t(binary_->virtual_size()));
   binary_->optional_header().sizeof_headers(uint32_t{binary_->sizeof_headers()});
 
   vector_iostream pe_opt_hdr_strm;
-  pe_opt_hdr_strm.reserve(sizeof(pe_optional_header));
+  optional_header.serialize<PE_T>(pe_opt_hdr_strm);
 
-  pe_opt_hdr_strm.write<uint16_t>((int)optional_header.magic())
-      .write<uint8_t>(optional_header.major_linker_version())
-      .write<uint8_t>(optional_header.minor_linker_version())
-      .write<uint32_t>(optional_header.sizeof_code())
-      .write<uint32_t>(optional_header.sizeof_initialized_data())
-      .write<uint32_t>(optional_header.sizeof_uninitialized_data())
-      .write<uint32_t>(optional_header.addressof_entrypoint())
-      .write<uint32_t>(optional_header.baseof_code());
-
-  if constexpr (std::is_same_v<PE_T, details::PE32>) {
-    pe_opt_hdr_strm.write<uint32_t>(optional_header.baseof_data());
-  }
-
-  pe_opt_hdr_strm.template write<uint__>(optional_header.imagebase())
-      .template write<uint32_t>(optional_header.section_alignment())
-      .template write<uint32_t>(optional_header.file_alignment())
-      .template write<uint16_t>(optional_header.major_operating_system_version())
-      .template write<uint16_t>(optional_header.minor_operating_system_version())
-      .template write<uint16_t>(optional_header.major_image_version())
-      .template write<uint16_t>(optional_header.minor_image_version())
-      .template write<uint16_t>(optional_header.major_subsystem_version())
-      .template write<uint16_t>(optional_header.minor_subsystem_version())
-      .template write<uint32_t>(optional_header.win32_version_value())
-      .template write<uint32_t>(optional_header.sizeof_image())
-      .template write<uint32_t>(optional_header.sizeof_headers())
-      .template write<uint32_t>(optional_header.checksum())
-      .template write<uint16_t>((int)optional_header.subsystem())
-      .template write<uint16_t>((int)optional_header.dll_characteristics())
-      .template write<uint__>(optional_header.sizeof_stack_reserve())
-      .template write<uint__>(optional_header.sizeof_stack_commit())
-      .template write<uint__>(optional_header.sizeof_heap_reserve())
-      .template write<uint__>(optional_header.sizeof_heap_commit())
-      .template write<uint32_t>(optional_header.loader_flags())
-      .template write<uint32_t>(optional_header.numberof_rva_and_size());
-
-  assert(pe_opt_hdr_strm.size() == sizeof(pe_optional_header));
+  assert(pe_opt_hdr_strm.size() == sizeof(typename PE_T::pe_optional_header));
 
   const uint32_t address_next_header =
       binary_->dos_header().addressof_new_exeheader() + sizeof(details::pe_header);

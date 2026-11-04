@@ -203,6 +203,13 @@ pub trait MachOSection {
 
     /// According to the official `loader.h` file, this value is reserved
     /// for *count* or *sizeof*
+    ///
+    /// For a [`Type::SYMBOL_STUBS`] section, it returns the size of the stub.
+    /// For a x86-64 binary the stub is usually 6-bytes:
+    ///
+    /// ```
+    /// jmp qword ptr [rip + disp32]  # FF 25 followed by a 4-byte displacement
+    /// ```
     fn reserved2(&self) -> u32 {
         self.as_base().reserved2()
     }

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "VDEX/pyVDEX.hpp"
 #include "VDEX/init.hpp"
+#include "VDEX/pyVDEX.hpp"
 
-#include <LIEF/VDEX/Parser.hpp>
 #include <LIEF/VDEX/File.hpp>
 #include <LIEF/VDEX/Header.hpp>
+#include <LIEF/VDEX/Parser.hpp>
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF::VDEX::py {
 

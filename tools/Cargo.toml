@@ -18,12 +18,12 @@ resolver = "3"
 [workspace.dependencies]
 common        = { path = "common" }
 lief          = { path = "../api/rust/crates/lief" }
-anyhow        = "1.0.102"
-clap          = "4.6.1"
-clap_complete = "4.6.5"
-clap_mangen   = "0.3.0"
-thiserror     = "2.0.18"
-indoc         = "2.0.7"
+anyhow        = "1.0.104"
+clap          = "4.6.7"
+clap_complete = "4.6.11"
+clap_mangen   = "0.3.3"
+thiserror     = "2.0.21"
+indoc         = "2.0.8"
 
 [profile.release]
 debug-assertions = false

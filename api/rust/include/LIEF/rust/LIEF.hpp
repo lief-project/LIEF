@@ -14,6 +14,7 @@
  */
 #pragma once
 
+// IWYU pragma: begin_exports
 #include "LIEF/rust/ASM.hpp"
 #include "LIEF/rust/Abstract.hpp"
 #include "LIEF/rust/COFF.hpp"
@@ -32,3 +33,4 @@
 #include "LIEF/rust/debug_location.hpp"
 #include "LIEF/rust/range.hpp"
 #include "LIEF/rust/utils.hpp"
+// IWYU pragma: end_exports

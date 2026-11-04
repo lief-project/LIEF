@@ -101,6 +101,13 @@ impl FatBinary {
         }
     }
 
+    /// Remove the binary at `index` and transfer its ownership to the caller.
+    pub fn take(&mut self, index: u32) -> Option<Binary> {
+        let binary = into_optional(self.ptr.pin_mut().take(index));
+        self.nb_macho = self.ptr.size();
+        binary
+    }
+
     /// Reconstruct the FAT binary object and write it to the given path
     pub fn write<P: AsRef<Path>>(&mut self, output: P) {
         cxx::let_cxx_string!(__cxx_s = output.as_ref().to_str().unwrap());

@@ -302,6 +302,9 @@ class PE_Binary : public AbstractBinary {
   PE_Binary(std::unique_ptr<LIEF::PE::Binary> bin) :
     AbstractBinary(std::move(bin)) {}
 
+  explicit PE_Binary(const LIEF::PE::Binary& bin) :
+    AbstractBinary(bin) {}
+
   PE_Binary(std::unique_ptr<LIEF::Binary> bin) :
     AbstractBinary(std::move(bin)) {}
 

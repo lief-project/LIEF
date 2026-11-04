@@ -22,6 +22,9 @@
 #include "LIEF/Object.hpp"
 #include "LIEF/visibility.h"
 
+namespace LIEF {
+class vector_iostream;
+}
 
 namespace LIEF::PE {
 
@@ -214,6 +217,9 @@ class LIEF_API DosHeader : public Object {
 
   /// @private
   LIEF_LOCAL DosHeader() = default;
+
+  /// @private
+  LIEF_LOCAL size_t serialize(vector_iostream& ios) const;
 
   private:
   uint16_t magic_ = 0;

@@ -16,8 +16,6 @@
 #include "runtime/objects/linux/init.hpp"
 #include "runtime/pyRuntime.hpp"
 
-#include "LIEF/config.h"
-
 namespace LIEF::runtime::Linux {
 class Module;
 class Host;

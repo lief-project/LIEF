@@ -13,9 +13,11 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/Abstract/Binary.hpp"
 #include "LIEF/rust/Abstract/DebugInfo.hpp"
 #include "LIEF/rust/Abstract/Function.hpp"
 #include "LIEF/rust/Abstract/Relocation.hpp"
 #include "LIEF/rust/Abstract/Section.hpp"
 #include "LIEF/rust/Abstract/Symbol.hpp"
+// IWYU pragma: end_exports

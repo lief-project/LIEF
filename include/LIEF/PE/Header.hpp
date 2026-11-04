@@ -25,6 +25,10 @@
 #include "LIEF/enums.hpp"
 #include "LIEF/visibility.h"
 
+namespace LIEF {
+class vector_iostream;
+}
+
 
 namespace LIEF::PE {
 
@@ -313,6 +317,9 @@ class LIEF_API Header : public Object {
 
   /// @private
   LIEF_LOCAL Header() = default;
+
+  /// @private
+  LIEF_LOCAL size_t serialize(vector_iostream& ios, size_t nb_sections) const;
 
   private:
   signature_t signature_{};

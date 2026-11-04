@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: ['arm', 'arm64']
+        arch: ['armv7', 'arm64']
       fail-fast: false
     steps:
       - uses: actions/checkout@v7
@@ -31,15 +31,18 @@ jobs:
         shell: bash
         env:
           ARCH: ${{ matrix.arch }}
+          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
         run: |
-          docker run                  \
-           -e CCACHE_COMPRESS=1       \
-           -e CCACHE_MAXSIZE=10.0G    \
-           -e CCACHE_CPP2=1           \
-           -e CCACHE_DIR=/ccache      \
-           -v $GITHUB_WORKSPACE:/work \
-           -v $HOME/.ccache:/ccache   \
-          --rm liefproject/android-${ARCH} bash /work/scripts/docker/android-sdk-${ARCH}
+          docker run --rm                        \
+           -e CCACHE_COMPRESS=1                  \
+           -e CCACHE_MAXSIZE=10.0G               \
+           -e CCACHE_CPP2=1                      \
+           -e CCACHE_DIR=/ccache                 \
+           -e LIEF_VERSION_ENV=$LIEF_VERSION_ENV \
+           -v $GITHUB_WORKSPACE:/work            \
+           -v $HOME/.ccache:/ccache              \
+           liefproject/android:${ARCH}           \
+           bash /work/scripts/docker/android-sdk-${ARCH}
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v7
         with:
@@ -76,7 +79,5 @@ jobs:
             -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY \
             -e LIEF_S3_KEY=$LIEF_S3_KEY             \
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET       \
-            liefproject/deploy python3 /src/.github/deploy.py /runner_tmp/artifacts
-
-
-
+            liefproject/deploy:github               \
+            uv run python /src/.github/deploy.py /runner_tmp/artifacts

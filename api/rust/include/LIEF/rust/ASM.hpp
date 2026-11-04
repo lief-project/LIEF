@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/asm/Engine.hpp"
 #include "LIEF/rust/asm/Instruction.hpp"
 
@@ -29,3 +30,4 @@
 #include "LIEF/rust/asm/mips/Instruction.hpp"
 #include "LIEF/rust/asm/powerpc/Instruction.hpp"
 #include "LIEF/rust/asm/riscv/Instruction.hpp"
+// IWYU pragma: end_exports

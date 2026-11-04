@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/PE/Binary.hpp"
 #include "LIEF/rust/PE/CodeIntegrity.hpp"
 #include "LIEF/rust/PE/DataDirectories.hpp"
@@ -87,3 +88,4 @@
 #include "LIEF/rust/PE/LoadConfiguration/VolatileMetadata.hpp"
 
 #include "LIEF/rust/PE/Factory.hpp"
+// IWYU pragma: end_exports

@@ -212,6 +212,15 @@ impl<'a> FromFFI<ffi::PE_ImportEntry> for ImportEntry<'a> {
     }
 }
 
+impl crate::common::AsFFI<ffi::PE_ImportEntry> for ImportEntry<'_> {
+    fn as_ffi(&self) -> &ffi::PE_ImportEntry {
+        &self.ptr
+    }
+    fn as_mut_ffi(&mut self) -> Pin<&mut ffi::PE_ImportEntry> {
+        self.ptr.pin_mut()
+    }
+}
+
 impl generic::Symbol for ImportEntry<'_> {
     fn as_generic(&self) -> &ffi::AbstractSymbol {
         self.ptr.as_ref().unwrap().as_ref()

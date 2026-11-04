@@ -15,6 +15,7 @@
 #pragma once
 #include "LIEF/rust/helpers.hpp"
 
+// IWYU pragma: begin_exports
 #include "LIEF/rust/runtime/Assembler.hpp"
 #include "LIEF/rust/runtime/Disassembler.hpp"
 #include "LIEF/rust/runtime/Host.hpp"
@@ -34,6 +35,7 @@
 #include "LIEF/rust/runtime/osx/Process.hpp"
 #include "LIEF/rust/runtime/windows/Host.hpp"
 #include "LIEF/rust/runtime/windows/Module.hpp"
+// IWYU pragma: end_exports
 
 inline bool runtime_enabled() {
   return LIEF::runtime::is_enabled();

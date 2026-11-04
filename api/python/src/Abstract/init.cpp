@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "pyLIEF.hpp"
 #include "Abstract/init.hpp"
+#include "pyLIEF.hpp"
 
-#include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/Binary.hpp"
-#include "LIEF/Abstract/Section.hpp"
-#include "LIEF/Abstract/Symbol.hpp"
+#include "LIEF/Abstract/DebugInfo.hpp"
+#include "LIEF/Abstract/Function.hpp"
+#include "LIEF/Abstract/Header.hpp"
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/Abstract/Relocation.hpp"
-#include "LIEF/Abstract/Function.hpp"
-#include "LIEF/Abstract/DebugInfo.hpp"
+#include "LIEF/Abstract/Section.hpp"
+#include "LIEF/Abstract/Symbol.hpp"
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF::py {
 

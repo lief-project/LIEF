@@ -16,8 +16,8 @@
 #ifndef PY_LIEF_ERROR_H
 #define PY_LIEF_ERROR_H
 
-#include <nanobind/nanobind.h>
 #include "LIEF/errors.hpp"
+#include <nanobind/nanobind.h>
 
 #include "typing.hpp"
 
@@ -28,10 +28,10 @@ struct typing_error : public nanobind::object {
   using err_type = typename RetTy::error_type;
 
   static constexpr auto Name = nanobind::detail::const_name("Union[") +
-                 nanobind::detail::make_caster<value_type>::Name +
-      nanobind::detail::const_name(", ") +
-                 nanobind::detail::make_caster<err_type>::Name +
-      nanobind::detail::const_name("]");
+                               nanobind::detail::make_caster<value_type>::Name +
+                               nanobind::detail::const_name(", ") +
+                               nanobind::detail::make_caster<err_type>::Name +
+                               nanobind::detail::const_name("]");
 
   LIEF_PY_DEFAULT_CTOR(typing_error, nanobind::object);
   NB_OBJECT_DEFAULT_NONAME(typing_error, object, check)
@@ -47,8 +47,8 @@ struct value_or_none_t : public nanobind::object {
   using value_type = typename RetTy::value_type;
 
   static constexpr auto Name = nanobind::detail::const_name("Optional[") +
-                 nanobind::detail::make_caster<value_type>::Name +
-      nanobind::detail::const_name("]");
+                               nanobind::detail::make_caster<value_type>::Name +
+                               nanobind::detail::const_name("]");
 
   NB_OBJECT_DEFAULT_NONAME(value_or_none_t, object, check)
   static bool check(handle /*h*/) {
@@ -57,9 +57,9 @@ struct value_or_none_t : public nanobind::object {
 };
 
 
-template <class Func, typename... Ts,
-          class RetTy = std::invoke_result_t<Func, Ts...>,
-          std::enable_if_t<!std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
+template<class Func, typename... Ts,
+         class RetTy = std::invoke_result_t<Func, Ts...>,
+         std::enable_if_t<!std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
 typing_error<RetTy> error_or(Func f, Ts&&... args) {
   namespace nb = nanobind;
   auto&& ret = f(std::forward<Ts>(args)...);
@@ -69,9 +69,9 @@ typing_error<RetTy> error_or(Func f, Ts&&... args) {
   return nb::cast(ret.value());
 }
 
-template <class Func, typename... Ts,
-          class RetTy = std::invoke_result_t<Func, Ts...>,
-          std::enable_if_t<std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
+template<class Func, typename... Ts,
+         class RetTy = std::invoke_result_t<Func, Ts...>,
+         std::enable_if_t<std::is_member_pointer<std::decay_t<Func>>{}, int> = 0>
 typing_error<RetTy> error_or(Func f, Ts&&... args) {
   namespace nb = nanobind;
   auto&& ret = std::mem_fn(f)(std::forward<Ts>(args)...);
@@ -82,8 +82,8 @@ typing_error<RetTy> error_or(Func f, Ts&&... args) {
 }
 
 
-template <class Func, typename... Ts,
-          class RetTy = std::invoke_result_t<Func, Ts...> >
+template<class Func, typename... Ts,
+         class RetTy = std::invoke_result_t<Func, Ts...>>
 value_or_none_t<RetTy> value_or_none(Func f, Ts&&... args) {
   namespace nb = nanobind;
   if constexpr (std::is_member_pointer_v<std::decay_t<Func>>) {

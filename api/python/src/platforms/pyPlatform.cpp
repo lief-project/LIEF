@@ -16,22 +16,24 @@
 #include "platforms/pyPlatform.hpp"
 #include "LIEF/platforms.hpp"
 #include "enums_wrapper.hpp"
-#include "pyLIEF.hpp"
 #include "platforms/android/pyAndroid.hpp"
+#include "pyLIEF.hpp"
 
 namespace LIEF::py {
 
 void init_platforms(nb::module_& m) {
   LIEF::enum_<PLATFORMS>(m, "PLATFORMS")
-    .value("UNKNOWN", PLATFORMS::PLAT_WINDOWS)
-    .value("LINUX",   PLATFORMS::PLAT_LINUX)
-    .value("ANDROID", PLATFORMS::PLAT_ANDROID)
-    .value("WINDOWS", PLATFORMS::PLAT_WINDOWS)
-    .value("IOS",     PLATFORMS::PLAT_IOS)
-    .value("OSX",     PLATFORMS::PLAT_OSX);
+      .value("UNKNOWN", PLATFORMS::PLAT_WINDOWS)
+      .value("LINUX", PLATFORMS::PLAT_LINUX)
+      .value("ANDROID", PLATFORMS::PLAT_ANDROID)
+      .value("WINDOWS", PLATFORMS::PLAT_WINDOWS)
+      .value("IOS", PLATFORMS::PLAT_IOS)
+      .value("OSX", PLATFORMS::PLAT_OSX);
 
-  m.def("current_platform", &current_platform,
-      "Return the current platform (Linux, Windows, ...) as a :attr:`lief.PLATFORMS` enum"_doc);
+  m.def(
+      "current_platform", &current_platform,
+      "Return the current platform (Linux, Windows, ...) as a :attr:`lief.PLATFORMS` enum"_doc
+  );
 
   LIEF::Android::py::init_module(m);
 }

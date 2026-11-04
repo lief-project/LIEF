@@ -16,7 +16,6 @@
 #include <LIEF/asm/ebpf/operands/PCRelative.hpp>
 
 #include "LIEF/rust/asm/ebpf/Operand.hpp"
-#include "LIEF/rust/helpers.hpp"
 
 class asm_ebpf_operands_PCRelative : public asm_ebpf_Operand {
   public:

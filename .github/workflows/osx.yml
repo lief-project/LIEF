@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  python-test-version: '3.13'
+  python-test-version: '3.14'
 
 jobs:
   osx-sdk:
@@ -42,6 +42,7 @@ jobs:
           CCACHE_MAXSIZE: 10.0G
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
+          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
         run: |
           bash scripts/osx/package_sdk.sh
       - name: 'Upload SDK Artifact'
@@ -91,7 +92,7 @@ jobs:
         shell: bash
         run: |
           python -m pip install --upgrade pip
-      - name: Build Python 3.13 with tests
+      - name: Build Python ${{ env.python-test-version }} with tests
         shell: bash
         env:
           LIEF_SAMPLES_DIR: "/tmp/samples"
@@ -106,6 +107,7 @@ jobs:
           CCACHE_MAXSIZE: 10.0G
           CCACHE_CPP2: 1
           CCACHE_COMPRESS: 1
+          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
         run: |
           python -m pip install -r tests/requirements.txt
           python -m pip -vvv install api/python
@@ -161,6 +163,7 @@ jobs:
         shell: bash
         env:
           MACOSX_DEPLOYMENT_TARGET: "11.0"
+          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
           FORCE_COLOR: "1"
           CLICOLOR_FORCE: "1"
           CCACHE_DIR: ${{ runner.temp }}/.ccache
@@ -208,5 +211,5 @@ jobs:
             -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY           \
             -e LIEF_S3_KEY=$LIEF_S3_KEY                       \
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
-            liefproject/deploy                                \
-            python3 /src/.github/deploy.py --skip-sdk /runner_tmp/artifacts
+            liefproject/deploy:github                         \
+            uv run python /src/.github/deploy.py --skip-sdk /runner_tmp/artifacts

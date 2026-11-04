@@ -14,7 +14,6 @@
  */
 
 #pragma once
-#include <string>
 
 #include "LIEF/MachO/FilesetCommand.hpp"
 #include "LIEF/rust/MachO/LoadCommand.hpp"

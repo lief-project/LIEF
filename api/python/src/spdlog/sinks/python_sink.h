@@ -6,7 +6,7 @@
 #include <spdlog/details/synchronous_factory.h>
 #include <spdlog/details/null_mutex.h>
 
-#include <Python.h>
+#include <Python.h> // IWYU pragma: keep
 
 namespace spdlog {
 namespace sinks {

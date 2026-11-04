@@ -16,7 +16,6 @@
 #include "LIEF/rust/DWARF/Location.hpp"
 #include "LIEF/rust/Mirror.hpp"
 #include <LIEF/DWARF/editor/Function.hpp>
-#include <LIEF/range.hpp>
 #include <algorithm>
 
 #include "LIEF/rust/DWARF/editor/Type.hpp"

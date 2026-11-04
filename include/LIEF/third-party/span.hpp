@@ -16,6 +16,10 @@
 #define LIEF_THIRD_PARTY_SPAN_H
 #include "LIEF/config.h" // IWYU pragma: keep
 
+#if !defined(NDEBUG)
+  #include <exception> // IWYU pragma: keep (needed for std::terminate)
+#endif
+
 #ifndef LIEF_EXTERNAL_SPAN
   #include "LIEF/third-party/internal/span.hpp"
 #else

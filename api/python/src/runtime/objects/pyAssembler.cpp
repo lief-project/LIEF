@@ -15,36 +15,38 @@
  */
 #include <nanobind/stl/string_view.h>
 
-#include "LIEF/runtime/assembler.hpp"
 #include "LIEF/asm/AssemblerConfig.hpp"
+#include "LIEF/runtime/assembler.hpp"
 #include "pyLIEF.hpp"
 #include "nanobind/utils.hpp"
 
 namespace LIEF::runtime::py {
 void init_assembler(nb::module_& m) {
-  m.def("assemble",
-    [] (uint64_t address, std::string_view Asm,
-        assembly::AssemblerConfig& config)
-    {
-      return nb::to_bytes(runtime::assemble(address, Asm, config));
-    }, "address"_a, "assembly"_a,
-    "config"_a = assembly::AssemblerConfig::default_config(),
-    R"doc(
-    Assemble the provided assembly code at the specified (absolute) virtual
-    address.
+  m.def(
+      "assemble",
+      [](uint64_t address, std::string_view Asm,
+         assembly::AssemblerConfig& config) {
+        return nb::to_bytes(runtime::assemble(address, Asm, config));
+      },
+      "address"_a, "assembly"_a,
+      "config"_a = assembly::AssemblerConfig::default_config(),
+      R"doc(
+      Assemble the provided assembly code at the specified (absolute) virtual
+      address.
 
-    The function returns the generated assembly bytes.
+      The function returns the generated assembly bytes.
 
-    .. code-block:: python
+      .. code-block:: python
 
-      from lief import runtime
-      code = runtime.assemble(0x7f0011223344, """
-      xor rax, rbx;
-      mov rcx, rax;
-      """)
+        from lief import runtime
+        code = runtime.assemble(0x7f0011223344, """
+        xor rax, rbx;
+        mov rcx, rax;
+        """)
 
-    If you need to configure the assembly engine or to define addresses for
-    symbols, you can provide your own :class:`~.assembly.AssemblerConfig` instance.
-    )doc"_doc);
+      If you need to configure the assembly engine or to define addresses for
+      symbols, you can provide your own :class:`~.assembly.AssemblerConfig` instance.
+      )doc"_doc
+  );
 }
 }

@@ -27,8 +27,7 @@ namespace LIEF::py {
 template<class It>
 class OwningIterator {
   public:
-  using underlying_type =
-      typename std::iterator_traits<It>::value_type;
+  using underlying_type = typename std::iterator_traits<It>::value_type;
 
   using iterator_category = std::input_iterator_tag;
   using value_type = std::unique_ptr<underlying_type>;
@@ -80,19 +79,15 @@ class OwningIterator {
 /// nanobind ignores `nb::rv_policy::reference_internal` for `std::unique_ptr`
 /// values
 template<class It>
-iterator_range<OwningIterator<It>>
-    owning_range(const iterator_range<It>& range) {
-  return {
-    OwningIterator<It>(std::move(range.begin())),
-    OwningIterator<It>(std::move(range.end()))
-  };
+iterator_range<OwningIterator<It>> owning_range(const iterator_range<It>& range) {
+  return {OwningIterator<It>(std::move(range.begin())),
+          OwningIterator<It>(std::move(range.end()))};
 }
 
 template<class It>
 class OwningRandomAccessIterator {
   public:
-  using underlying_type =
-      typename std::iterator_traits<It>::value_type;
+  using underlying_type = typename std::iterator_traits<It>::value_type;
 
   using iterator_category = std::random_access_iterator_tag;
   using value_type = std::unique_ptr<underlying_type>;

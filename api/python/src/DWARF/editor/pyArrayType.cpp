@@ -5,10 +5,8 @@
 namespace LIEF::dwarf::py {
 template<>
 void create<dw::editor::ArrayType>(nb::module_& m) {
-  nb::class_<dw::editor::ArrayType, dw::editor::Type>(m, "ArrayType",
-    R"doc(
-    This class represents an array type.
-    )doc"_doc
+  nb::class_<dw::editor::ArrayType, dw::editor::Type>(
+      m, "ArrayType", "This class represents an array type."_doc
   );
 }
 

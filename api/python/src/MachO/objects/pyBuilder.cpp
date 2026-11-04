@@ -18,8 +18,8 @@
 #include "pyErr.hpp"
 
 #include "LIEF/MachO/Binary.hpp"
-#include "LIEF/MachO/FatBinary.hpp"
 #include "LIEF/MachO/Builder.hpp"
+#include "LIEF/MachO/FatBinary.hpp"
 
 #include <nanobind/stl/string.h>
 
@@ -29,48 +29,66 @@ template<>
 void create<Builder>(nb::module_& m) {
   using namespace LIEF::py;
 
-  nb::class_<Builder> builder(m, "Builder",
+  nb::class_<Builder> builder(
+      m, "Builder",
       R"delim(
       Class used to reconstruct a Mach-O binary from its object representation
-      )delim"_doc);
+      )delim"_doc
+  );
 
-  nb::class_<Builder::config_t>(builder, "config_t",
-                                "Interface to tweak the " RST_CLASS_REF(lief.MachO.Builder) ""_doc)
-    .def(nb::init<>())
-    .def_rw("linkedit", &Builder::config_t::linkedit);
+  nb::class_<Builder::config_t>(
+      builder, "config_t",
+      "Interface to tweak the :class:`~lief.MachO.Builder`"_doc
+  )
+      .def(nb::init<>())
+      .def_rw("linkedit", &Builder::config_t::linkedit);
 
   builder
-    .def_static("write",
-                [] (Binary& bin, const std::string& out) {
-                  auto target = nb::overload_cast<Binary&, const std::string&>(&Builder::write);
-                  return error_or(target, bin, out);
-                },
-                R"delim(
-                )delim",
-                "binary"_a.lock(), "output"_a)
-    .def_static("write",
-                [] (Binary& bin, const std::string& out, Builder::config_t config) {
-                  auto target = nb::overload_cast<Binary&, const std::string&, Builder::config_t>(&Builder::write);
-                  return error_or(target, bin, out, config);
-                },
-                R"delim(
-                )delim",
-                "binary"_a.lock(), "output"_a, "config"_a)
-    .def_static("write",
-                [] (FatBinary& fat, const std::string& out) {
-                  auto target = nb::overload_cast<FatBinary&, const std::string&>(&Builder::write);
-                  return error_or(target, fat, out);
-                },
-                R"delim(
-                )delim",
-                "fat_binary"_a.lock(), "output"_a)
-    .def_static("write",
-                [] (FatBinary& fat, const std::string& out, Builder::config_t config) {
-                  auto target = nb::overload_cast<FatBinary&, const std::string&, Builder::config_t>(&Builder::write);
-                  return error_or(target, fat, out, config);
-                },
-                R"delim(
-                )delim",
-                "fat_binary"_a.lock(), "output"_a, "config"_a);
+      .def_static(
+          "write",
+          [](Binary& bin, const std::string& out) {
+            auto target =
+                nb::overload_cast<Binary&, const std::string&>(&Builder::write);
+            return error_or(target, bin, out);
+          },
+          R"delim(
+          )delim",
+          "binary"_a.lock(), "output"_a
+      )
+      .def_static(
+          "write",
+          [](Binary& bin, const std::string& out, Builder::config_t config) {
+            auto target =
+                nb::overload_cast<Binary&, const std::string&, Builder::config_t>(
+                    &Builder::write
+                );
+            return error_or(target, bin, out, config);
+          },
+          R"delim(
+          )delim",
+          "binary"_a.lock(), "output"_a, "config"_a
+      )
+      .def_static(
+          "write",
+          [](FatBinary& fat, const std::string& out) {
+            auto target =
+                nb::overload_cast<FatBinary&, const std::string&>(&Builder::write);
+            return error_or(target, fat, out);
+          },
+          R"delim(
+          )delim",
+          "fat_binary"_a.lock(), "output"_a
+      )
+      .def_static(
+          "write",
+          [](FatBinary& fat, const std::string& out, Builder::config_t config) {
+            auto target = nb::overload_cast<FatBinary&, const std::string&,
+                                            Builder::config_t>(&Builder::write);
+            return error_or(target, fat, out, config);
+          },
+          R"delim(
+          )delim",
+          "fat_binary"_a.lock(), "output"_a, "config"_a
+      );
 }
 }

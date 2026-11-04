@@ -19,6 +19,7 @@
 #include "LIEF/PE/DataDirectory.hpp"
 #include "LIEF/PE/Section.hpp"
 #include "LIEF/Visitor.hpp"
+#include "LIEF/iostream.hpp"
 #include "PE/Structures.hpp"
 
 #include "frozen.hpp"
@@ -91,6 +92,12 @@ span<uint8_t> DataDirectory::content() {
   }
 
   return section_->writable_content().subspan(rel_offset, size());
+}
+
+size_t DataDirectory::serialize(vector_iostream& ios) const {
+  ios.write<uint32_t>(RVA()).write<uint32_t>(size());
+
+  return sizeof(details::pe_data_directory);
 }
 
 std::ostream& operator<<(std::ostream& os, const DataDirectory& entry) {

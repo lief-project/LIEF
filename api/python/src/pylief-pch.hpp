@@ -1,17 +1,19 @@
+// IWYU pragma: begin_exports
 #if defined __cplusplus
+  #include <nanobind/make_iterator.h>
   #include <nanobind/nanobind.h>
   #include <nanobind/stl/string.h>
   #include <nanobind/stl/unique_ptr.h>
-  #include <nanobind/make_iterator.h>
 
-  #include <string>
-  #include <sstream>
-  #include <ostream>
-  #include <memory>
-  #include <vector>
   #include <algorithm>
   #include <cstdint>
+  #include <memory>
+  #include <ostream>
+  #include <sstream>
+  #include <string>
+  #include <vector>
 #else
-  #include <stdint.h>
   #include <stddef.h>
+  #include <stdint.h>
 #endif
+// IWYU pragma: end_exports

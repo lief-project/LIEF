@@ -228,6 +228,13 @@ class LIEF_API Section : public LIEF::Section {
 
   /// According to the official ``loader.h`` file, this value is reserved
   /// for *count* or *sizeof*
+  ///
+  /// For a `S_SYMBOL_STUBS` section, it returns the size of the stub.
+  /// For a x86-64 binary the stub is usually 6-bytes:
+  ///
+  /// ```
+  /// jmp qword ptr [rip + disp32]  ; FF 25 followed by a 4-byte displacement
+  /// ```
   uint32_t reserved2() const {
     return reserved2_;
   }

@@ -2,6 +2,8 @@ import enum
 import os
 from typing import Union, overload
 
+from lief.logging import named as named
+
 
 class Level(enum.Enum):
     Off = 0

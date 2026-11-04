@@ -29,7 +29,6 @@ void create<NoteNoCopyOnProtected>(nb::module_& m) {
       against protected symbols.
       )doc"_doc
   );
-
 }
 
 }

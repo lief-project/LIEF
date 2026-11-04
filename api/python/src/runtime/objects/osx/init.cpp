@@ -16,8 +16,6 @@
 #include "runtime/objects/osx/init.hpp"
 #include "runtime/pyRuntime.hpp"
 
-#include "LIEF/config.h"
-
 namespace LIEF::runtime::osx {
 class Module;
 class Host;

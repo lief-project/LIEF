@@ -1,8 +1,9 @@
 #pragma once
+// nanobind uses this type_hook implicitly
+// IWYU pragma: always_keep
 
 #include <nanobind/nanobind.h>
 
-#include "LIEF/PDB/types/Simple.hpp"
 #include "LIEF/PDB/types/Array.hpp"
 #include "LIEF/PDB/types/BitField.hpp"
 #include "LIEF/PDB/types/ClassLike.hpp"
@@ -10,11 +11,13 @@
 #include "LIEF/PDB/types/Function.hpp"
 #include "LIEF/PDB/types/Modifier.hpp"
 #include "LIEF/PDB/types/Pointer.hpp"
+#include "LIEF/PDB/types/Simple.hpp"
 #include "LIEF/PDB/types/Union.hpp"
 
 namespace nanobind::detail {
-template<> struct type_hook<LIEF::pdb::Type> {
-  static const std::type_info* get(const LIEF::pdb::Type *src) {
+template<>
+struct type_hook<LIEF::pdb::Type> {
+  static const std::type_info* get(const LIEF::pdb::Type* src) {
     using namespace LIEF::pdb::types;
     if (src) {
       if (Simple::classof(src)) {

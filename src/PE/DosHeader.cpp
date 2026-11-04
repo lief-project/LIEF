@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "LIEF/Visitor.hpp"
+#include "LIEF/iostream.hpp"
 
 #include "LIEF/PE/DosHeader.hpp"
 #include "LIEF/PE/enums.hpp"
@@ -67,6 +68,33 @@ DosHeader DosHeader::create(PE_TYPE type) {
   hdr.addressof_new_exeheader(type == PE_TYPE::PE32 ? 0xe8 : 0xf0);
   return hdr;
 }
+
+size_t DosHeader::serialize(vector_iostream& ios) const {
+  ios.reserve(sizeof(details::pe_dos_header));
+
+  ios.write<uint16_t>(magic())
+      .write<uint16_t>(used_bytes_in_last_page())
+      .write<uint16_t>(file_size_in_pages())
+      .write<uint16_t>(numberof_relocation())
+      .write<uint16_t>(header_size_in_paragraphs())
+      .write<uint16_t>(minimum_extra_paragraphs())
+      .write<uint16_t>(maximum_extra_paragraphs())
+      .write<uint16_t>(initial_relative_ss())
+      .write<uint16_t>(initial_sp())
+      .write<uint16_t>(checksum())
+      .write<uint16_t>(initial_ip())
+      .write<uint16_t>(initial_relative_cs())
+      .write<uint16_t>(addressof_relocation_table())
+      .write<uint16_t>(overlay_number())
+      .write<uint16_t>(reserved())
+      .write<uint16_t>(oem_id())
+      .write<uint16_t>(oem_info())
+      .write<uint16_t>(reserved2())
+      .write<uint32_t>(addressof_new_exeheader());
+
+  return sizeof(details::pe_dos_header);
+}
+
 
 std::ostream& operator<<(std::ostream& os, const DosHeader& entry) {
   os << fmt::format("Magic:                       {:#x}\n", entry.magic())

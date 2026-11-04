@@ -20,6 +20,7 @@
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/OptionalHeader.hpp"
 #include "LIEF/PE/hash.hpp"
+#include "LIEF/iostream.hpp"
 #include "PE/Structures.hpp"
 
 #include <spdlog/fmt/fmt.h>
@@ -142,6 +143,57 @@ void OptionalHeader::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
 
+template<typename PE_T>
+size_t OptionalHeader::serialize(vector_iostream& ios,
+                                 std::optional<uint64_t> imagebase) const {
+  using uint__ = typename PE_T::uint;
+  using pe_optional_header = typename PE_T::pe_optional_header;
+  ios.reserve(sizeof(pe_optional_header));
+
+  ios.write<uint16_t>((int)magic())
+      .write<uint8_t>(major_linker_version())
+      .write<uint8_t>(minor_linker_version())
+      .write<uint32_t>(sizeof_code())
+      .write<uint32_t>(sizeof_initialized_data())
+      .write<uint32_t>(sizeof_uninitialized_data())
+      .write<uint32_t>(addressof_entrypoint())
+      .write<uint32_t>(baseof_code());
+
+  if constexpr (std::is_same_v<PE_T, details::PE32>) {
+    ios.write<uint32_t>(baseof_data());
+  }
+
+  ios.template write<uint__>(imagebase.value_or(this->imagebase()))
+      .template write<uint32_t>(section_alignment())
+      .template write<uint32_t>(file_alignment())
+      .template write<uint16_t>(major_operating_system_version())
+      .template write<uint16_t>(minor_operating_system_version())
+      .template write<uint16_t>(major_image_version())
+      .template write<uint16_t>(minor_image_version())
+      .template write<uint16_t>(major_subsystem_version())
+      .template write<uint16_t>(minor_subsystem_version())
+      .template write<uint32_t>(win32_version_value())
+      .template write<uint32_t>(sizeof_image())
+      .template write<uint32_t>(sizeof_headers())
+      .template write<uint32_t>(checksum())
+      .template write<uint16_t>((int)subsystem())
+      .template write<uint16_t>((int)dll_characteristics())
+      .template write<uint__>(sizeof_stack_reserve())
+      .template write<uint__>(sizeof_stack_commit())
+      .template write<uint__>(sizeof_heap_reserve())
+      .template write<uint__>(sizeof_heap_commit())
+      .template write<uint32_t>(loader_flags())
+      .template write<uint32_t>(numberof_rva_and_size());
+  return sizeof(pe_optional_header);
+}
+
+size_t OptionalHeader::serialize(PE_TYPE type, vector_iostream& ios,
+                                 std::optional<uint64_t> imagebase) const {
+  return type == PE_TYPE::PE32 ? serialize<details::PE32>(ios, imagebase) :
+                                 serialize<details::PE64>(ios, imagebase);
+}
+
+
 std::ostream& operator<<(std::ostream& os, const OptionalHeader& entry) {
   const std::vector<OptionalHeader::DLL_CHARACTERISTICS> list =
       entry.dll_characteristics_list();
@@ -241,5 +293,13 @@ const char* to_string(OptionalHeader::SUBSYSTEM e) {
   const auto it = enumStrings.find(e);
   return it == enumStrings.end() ? "UNKNOWN" : it->second;
 }
+
+template size_t
+    OptionalHeader::serialize<details::PE32>(vector_iostream&,
+                                             std::optional<uint64_t>) const;
+template size_t
+    OptionalHeader::serialize<details::PE64>(vector_iostream&,
+                                             std::optional<uint64_t>) const;
+
 
 }

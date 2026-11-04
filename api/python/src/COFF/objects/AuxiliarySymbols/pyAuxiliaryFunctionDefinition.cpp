@@ -21,52 +21,56 @@ namespace LIEF::COFF::py {
 
 template<>
 void create<AuxiliaryFunctionDefinition>(nb::module_& m) {
-  nb::class_<AuxiliaryFunctionDefinition, AuxiliarySymbol>(m, "AuxiliaryFunctionDefinition",
-    R"doc(
-    This auxiliary symbol marks the beginning of a function definition.
+  nb::class_<AuxiliaryFunctionDefinition, AuxiliarySymbol>(
+      m, "AuxiliaryFunctionDefinition",
+      R"doc(
+      This auxiliary symbol marks the beginning of a function definition.
 
-    Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#auxiliary-format-1-function-definitions
-    )doc"_doc
+      Reference: https://learn.microsoft.com/en-us/windows/win32/debug/pe-format#auxiliary-format-1-function-definitions
+      )doc"_doc
   )
-    .def_prop_ro("tag_index",
-      nb::overload_cast<>(&AuxiliaryFunctionDefinition::tag_index, nb::const_),
-      R"doc(
-      The symbol-table index of the corresponding ``.bf`` (begin function)
-      symbol record.
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "tag_index",
+          nb::overload_cast<>(&AuxiliaryFunctionDefinition::tag_index, nb::const_),
+          R"doc(
+          The symbol-table index of the corresponding ``.bf`` (begin function)
+          symbol record.
+          )doc"_doc
+      )
 
-    .def_prop_ro("total_size",
-      nb::overload_cast<>(&AuxiliaryFunctionDefinition::total_size, nb::const_),
-      R"doc(
-      The size of the executable code for the function itself.
+      .def_prop_ro("total_size",
+                   nb::overload_cast<>(&AuxiliaryFunctionDefinition::total_size,
+                                       nb::const_),
+                   R"doc(
+                   The size of the executable code for the function itself.
 
-      If the function is in its own section, the ``SizeOfRawData`` in the section
-      header is greater or equal to this field, depending on alignment considerations
-      )doc"_doc
-    )
+                   If the function is in its own section, the ``SizeOfRawData`` in the section
+                   header is greater or equal to this field, depending on alignment considerations
+                   )doc"_doc)
 
-    .def_prop_ro("ptr_to_line_number",
-      nb::overload_cast<>(&AuxiliaryFunctionDefinition::ptr_to_line_number, nb::const_),
-      R"doc(
-      The file offset of the first COFF line-number entry for the function,
-      or zero if none exists (deprecated)
-      )doc"_doc
-    )
+      .def_prop_ro(
+          "ptr_to_line_number",
+          nb::overload_cast<>(&AuxiliaryFunctionDefinition::ptr_to_line_number,
+                              nb::const_),
+          R"doc(
+          The file offset of the first COFF line-number entry for the function,
+          or zero if none exists (deprecated)
+          )doc"_doc
+      )
 
-    .def_prop_ro("ptr_to_next_func",
-      nb::overload_cast<>(&AuxiliaryFunctionDefinition::ptr_to_next_func, nb::const_),
-      R"doc(
-      The symbol-table index of the record for the next function. If the function
-      is the last in the symbol table, this field is set to zero
-      )doc"_doc
-    )
+      .def_prop_ro("ptr_to_next_func",
+                   nb::overload_cast<>(
+                       &AuxiliaryFunctionDefinition::ptr_to_next_func, nb::const_
+                   ),
+                   R"doc(
+                   The symbol-table index of the record for the next function. If the function
+                   is the last in the symbol table, this field is set to zero
+                   )doc"_doc)
 
-    .def_prop_ro("padding",
-      nb::overload_cast<>(&AuxiliaryFunctionDefinition::padding, nb::const_),
-      "Padding value (should be 0)"_doc
-    )
-  ;
+      .def_prop_ro("padding",
+                   nb::overload_cast<>(&AuxiliaryFunctionDefinition::padding,
+                                       nb::const_),
+                   "Padding value (should be 0)"_doc);
 }
 
 }

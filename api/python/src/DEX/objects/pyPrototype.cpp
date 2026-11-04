@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 #include "LIEF/DEX/Prototype.hpp"
-#include "LIEF/DEX/Type.hpp"
+#include "LIEF/DEX/Type.hpp" // IWYU pragma: keep
 
 #include "DEX/pyDEX.hpp"
 #include "pyIterator.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/vector.h>
 
@@ -31,20 +29,20 @@ void create<Prototype>(nb::module_& m) {
   using namespace LIEF::py;
 
   nb::class_<Prototype, LIEF::Object> proto(m, "Prototype",
-      "DEX Prototype representation"_doc);
+                                            "DEX Prototype representation"_doc);
 
   init_ref_iterator<Prototype::it_params>(proto, "it_params");
 
   proto
-    .def_prop_ro("return_type",
-        nb::overload_cast<>(&Prototype::return_type, nb::const_),
-        "" RST_CLASS_REF(lief.DEX.Type) " returned"_doc,
-        nb::rv_policy::reference_internal)
+      .def_prop_ro("return_type",
+                   nb::overload_cast<>(&Prototype::return_type, nb::const_),
+                   ":class:`~lief.DEX.Type` returned"_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_ro("parameters_type",
-        nb::overload_cast<>(&Prototype::parameters_type),
-        "Iterator over parameters  " RST_CLASS_REF(lief.DEX.Type) ""_doc)
+      .def_prop_ro("parameters_type",
+                   nb::overload_cast<>(&Prototype::parameters_type),
+                   "Iterator over parameters  :class:`~lief.DEX.Type`"_doc)
 
-    LIEF_DEFAULT_STR(Prototype);
+      .LIEF_DEFAULT_STR(Prototype);
 }
 }

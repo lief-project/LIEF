@@ -17,8 +17,6 @@
 
 #include "LIEF/PE/signature/Attribute.hpp"
 
-#include <string>
-#include <sstream>
 #include "enums_wrapper.hpp"
 #include <nanobind/stl/string.h>
 
@@ -26,10 +24,10 @@ namespace LIEF::PE::py {
 
 template<>
 void create<Attribute>(nb::module_& m) {
-  nb::class_<Attribute, Object> Class(m,
-      "Attribute", "Interface over PKCS #7 attribute"_doc
-  );
+  nb::class_<Attribute, Object> Class(m, "Attribute",
+                                      "Interface over PKCS #7 attribute"_doc);
 
+  // clang-format off
   #define ENTRY(X) .value(to_string(Attribute::TYPE::X), Attribute::TYPE::X)
   enum_<Attribute::TYPE>(Class, "TYPE")
     ENTRY(UNKNOWN)
@@ -48,11 +46,10 @@ void create<Attribute>(nb::module_& m) {
     ENTRY(PKCS9_SIGNING_TIME)
   ;
   #undef ENTRY
+  // clang-format on
 
-  Class
-    .def_prop_ro("type", &Attribute::type,
-        "Concrete type of the attribute"_doc)
+  Class.def_prop_ro("type", &Attribute::type, "Concrete type of the attribute"_doc)
 
-    LIEF_DEFAULT_STR(Attribute);
+      .LIEF_DEFAULT_STR(Attribute);
 }
 }

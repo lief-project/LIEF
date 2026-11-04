@@ -1,6 +1,3 @@
-#include <ostream>
-#include <sstream>
-
 #include "LIEF/asm/mips/Operand.hpp"
 
 #include "asm/mips/init.hpp"
@@ -19,16 +16,13 @@ class PCRelative;
 namespace LIEF::assembly::mips::py {
 template<>
 void create<mips::Operand>(nb::module_& m) {
-  nb::class_<mips::Operand> obj(m, "Operand",
-    R"doc(This class represents an operand for a Mips instruction)doc"_doc
+  nb::class_<mips::Operand> obj(
+      m, "Operand", "This class represents an operand for a Mips instruction"_doc
   );
 
-  obj
-    .def_prop_ro("to_string", &Operand::to_string,
-      R"doc(Pretty representation of the operand)doc"_doc
-    )
-    LIEF_DEFAULT_STR(mips::Operand)
-  ;
+  obj.def_prop_ro("to_string", &Operand::to_string,
+                  "Pretty representation of the operand"_doc)
+      .LIEF_DEFAULT_STR(mips::Operand);
 
   nb::module_ operands = m.def_submodule("operands");
   create<mips::operands::Immediate>(operands);

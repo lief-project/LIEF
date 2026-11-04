@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 
-#include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
 
 #include "LIEF/ELF/Relocation.hpp"
@@ -26,6 +23,7 @@ namespace LIEF::ELF::py {
 
 void init_relocation_types(nb::class_<Relocation, LIEF::Relocation>& m) {
 
+  // clang-format off
   #define ELF_RELOC(X, _) .value(to_string(Relocation::TYPE::X), Relocation::TYPE::X)
   enum_<Relocation::TYPE>(m, "TYPE")
     #include "LIEF/ELF/Relocations/x86_64.def"
@@ -44,6 +42,7 @@ void init_relocation_types(nb::class_<Relocation, LIEF::Relocation>& m) {
     #include "LIEF/ELF/Relocations/SH4.def"
   ;
   #undef ELF_RELOC
+  // clang-format on
 }
 
 }

@@ -13,7 +13,9 @@
  * limitations under the License.
  */
 #pragma once
+#include <cstddef>
 #include <memory>
+#include <utility>
 
 namespace lief_jni {
 template<class T>
@@ -28,26 +30,24 @@ class canbe_unique {
     return *this;
   }
 
-  canbe_unique(canbe_unique&& other) noexcept {
-    std::swap(ptr_, other.ptr_);
-    owned_ = other.owned_;
-  }
+  canbe_unique(canbe_unique&& other) noexcept :
+    ptr_(std::exchange(other.ptr_, nullptr)),
+    owned_(std::exchange(other.owned_, false)) {}
 
   canbe_unique& operator=(canbe_unique&& other) noexcept {
-    if (&other != this) {
-      std::swap(ptr_, other.ptr_);
-      owned_ = other.owned_;
-    }
+    canbe_unique tmp(std::move(other));
+    std::swap(ptr_, tmp.ptr_);
+    std::swap(owned_, tmp.owned_);
     return *this;
   }
 
   canbe_unique(T& ptr) :
-    ptr_(&ptr),
-    owned_(false) {}
+    ptr_(std::addressof(ptr)) {}
 
   canbe_unique(const T& ptr) :
-    ptr_(const_cast<T*>(&ptr)),
-    owned_(false) {}
+    ptr_(const_cast<T*>(std::addressof(ptr))) {}
+
+  canbe_unique(const T&&) = delete;
 
   canbe_unique(std::unique_ptr<T> unique_ptr) :
     ptr_(unique_ptr.release()),
@@ -55,6 +55,10 @@ class canbe_unique {
 
   T* get() {
     return ptr_;
+  }
+
+  bool is_owned() const {
+    return owned_;
   }
 
   const T* get() const {
@@ -78,16 +82,13 @@ class canbe_unique {
   }
 
   void reset() {
-    if (!owned_) {
-      return;
+    T* ptr = std::exchange(ptr_, nullptr);
+    if (std::exchange(owned_, false)) {
+      std::default_delete<T>()(ptr);
     }
-    if (ptr_ != nullptr) {
-      delete ptr_;
-    }
-    ptr_ = nullptr;
   }
 
-  operator bool() const {
+  explicit operator bool() const {
     return ptr_ != nullptr;
   }
 
@@ -108,6 +109,16 @@ inline bool operator==(const canbe_unique<T>& lhs, std::nullptr_t) {
 template<class T>
 inline bool operator==(std::nullptr_t, const canbe_unique<T>& lhs) {
   return !lhs;
+}
+
+template<class T>
+inline bool operator!=(const canbe_unique<T>& lhs, std::nullptr_t) {
+  return static_cast<bool>(lhs);
+}
+
+template<class T>
+inline bool operator!=(std::nullptr_t, const canbe_unique<T>& lhs) {
+  return static_cast<bool>(lhs);
 }
 
 }

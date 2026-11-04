@@ -1,11 +1,11 @@
 #ifndef PY_LIEF_NB_UTILS_H
 #define PY_LIEF_NB_UTILS_H
 
-#include <nanobind/nanobind.h>
 #include <LIEF/BinaryStream/SpanStream.hpp>
-#include <vector>
-#include <memory>
 #include <string_view>
+#include <nanobind/nanobind.h>
+#include <memory>
+#include <vector>
 
 #include "nanobind/extra/memoryview.hpp"
 

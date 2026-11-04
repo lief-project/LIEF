@@ -21,6 +21,7 @@ add_executable(unittests
   test_utils.cpp
   test_hash.cpp
   test_binarystream.cpp
+  test_canbe_unique.cpp
   test_iostream.cpp
   test_pe.cpp
   test_elf.cpp

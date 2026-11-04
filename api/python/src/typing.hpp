@@ -17,19 +17,21 @@
 #define PY_LIEF_TYPING_H
 #include <nanobind/nanobind.h>
 
-#define LIEF_PY_DEFAULT_CTOR(Class_, Ty) \
-  Class_(Ty obj_) : nanobind::object(obj_, nanobind::detail::borrow_t{}) {}
+#define LIEF_PY_DEFAULT_CTOR(Class_, Ty)                                          \
+  Class_(Ty obj_) :                                                               \
+    nanobind::object(obj_, nanobind::detail::borrow_t{}) {}
 
-#define NB_OBJECT_DEFAULT_NONAME(Type, Parent, Check)      \
-public:                                                    \
-    NB_INLINE Type(handle h, ::nanobind::detail::borrow_t) \
-        : Parent(h, ::nanobind::detail::borrow_t{}) { }    \
-    NB_INLINE Type(handle h, ::nanobind::detail::steal_t)  \
-        : Parent(h, ::nanobind::detail::steal_t{}) { }     \
-    NB_INLINE static bool check_(handle h) {               \
-        return Check(h.ptr());                             \
-    }                                                      \
-    NB_INLINE Type() : Parent() {}
+#define NB_OBJECT_DEFAULT_NONAME(Type, Parent, Check)                             \
+  public:                                                                         \
+  NB_INLINE Type(handle h, ::nanobind::detail::borrow_t) :                        \
+    Parent(h, ::nanobind::detail::borrow_t{}) {}                                  \
+  NB_INLINE Type(handle h, ::nanobind::detail::steal_t) :                         \
+    Parent(h, ::nanobind::detail::steal_t{}) {}                                   \
+  NB_INLINE static bool check_(handle h) {                                        \
+    return Check(h.ptr());                                                        \
+  }                                                                               \
+  NB_INLINE Type() :                                                              \
+    Parent() {}
 
 struct IntOrNone : public nanobind::object {
   LIEF_PY_DEFAULT_CTOR(IntOrNone, nanobind::object);

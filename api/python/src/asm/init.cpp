@@ -2,12 +2,12 @@
 #include "asm/pyAssembly.hpp"
 
 #include "asm/aarch64/init.hpp"
-#include "asm/x86/init.hpp"
-#include "asm/riscv/init.hpp"
-#include "asm/mips/init.hpp"
-#include "asm/powerpc/init.hpp"
 #include "asm/arm/init.hpp"
 #include "asm/ebpf/init.hpp"
+#include "asm/mips/init.hpp"
+#include "asm/powerpc/init.hpp"
+#include "asm/riscv/init.hpp"
+#include "asm/x86/init.hpp"
 
 namespace LIEF::assembly {
 class Engine;

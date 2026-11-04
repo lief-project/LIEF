@@ -25,6 +25,7 @@ pub mod ffi {
         fn size(self: &MachO_FatBinary) -> u32;
         fn write(self: Pin<&mut MachO_FatBinary>, output: &CxxString);
         fn binary_at(self: &MachO_FatBinary, index: u32) -> UniquePtr<MachO_Binary>;
+        fn take(self: Pin<&mut MachO_FatBinary>, index: u32) -> UniquePtr<MachO_Binary>;
         fn binary_from_arch(self: &MachO_FatBinary, cpu: i32) -> UniquePtr<MachO_Binary>;
 
         type MachO_ParserConfig;

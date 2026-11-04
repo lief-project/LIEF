@@ -20,8 +20,6 @@
 #include "LIEF/rust/MachO/SegmentCommand.hpp"
 #include "LIEF/rust/MachO/Symbol.hpp"
 
-#include <memory>
-
 class MachO_Relocation : public AbstractRelocation {
   public:
   using lief_t = LIEF::MachO::Relocation;

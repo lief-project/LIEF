@@ -16,6 +16,7 @@
 #include <algorithm>
 
 #include "LIEF/Visitor.hpp"
+#include "LIEF/iostream.hpp"
 
 #include "LIEF/PE/EnumToString.hpp"
 #include "LIEF/PE/Header.hpp"
@@ -90,6 +91,22 @@ std::vector<Header::CHARACTERISTICS> Header::characteristics_list() const {
 void Header::accept(LIEF::Visitor& visitor) const {
   visitor.visit(*this);
 }
+
+size_t Header::serialize(vector_iostream& ios, size_t nb_sections) const {
+  ios.reserve(sizeof(details::pe_header));
+
+  ios.write(signature())
+      .write<uint16_t>((int)machine())
+      .write<uint16_t>(nb_sections)
+      .write<uint32_t>(time_date_stamp())
+      .write<uint32_t>(pointerto_symbol_table())
+      .write<uint32_t>(numberof_symbols())
+      .write<uint16_t>(sizeof_optional_header())
+      .write<uint16_t>(characteristics());
+
+  return sizeof(details::pe_header);
+}
+
 
 std::ostream& operator<<(std::ostream& os, const Header& entry) {
   const Header::signature_t& sig = entry.signature();

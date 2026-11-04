@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/PDB/BuildMetadata.hpp"
 #include "LIEF/rust/PDB/CompilationUnit.hpp"
 #include "LIEF/rust/PDB/DebugInfo.hpp"
@@ -31,3 +32,4 @@
 #include "LIEF/rust/PDB/types/Simple.hpp"
 #include "LIEF/rust/PDB/types/Union.hpp"
 #include "LIEF/rust/PDB/utils.hpp"
+// IWYU pragma: end_exports

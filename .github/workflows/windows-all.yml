@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 env:
-  python-test-version: '3.13'
-  python-version: '3.13'
+  python-test-version: '3.14'
+  python-version: '3.14'
   CLICOLOR_FORCE: "1"
   FORCE_COLOR: "1"
   GCC_COLORS: "yes"
@@ -29,6 +29,7 @@ jobs:
     env:
       SCCACHE_CACHE_SIZE: 2G
       SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -85,6 +86,7 @@ jobs:
     env:
       SCCACHE_CACHE_SIZE: 2G
       SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -165,6 +167,7 @@ jobs:
     env:
       SCCACHE_CACHE_SIZE: 2G
       SCCACHE_DIR: ${{ vars.SCCACHE_DIR }}
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -224,7 +227,6 @@ jobs:
   deploy:
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
-    #needs: [build-sdk, wheels]
     needs: [wheels]
     steps:
       - uses: actions/checkout@v7
@@ -251,4 +253,5 @@ jobs:
             -e GITHUB_REPOSITORY=$GITHUB_REPOSITORY           \
             -e LIEF_S3_KEY=$LIEF_S3_KEY                       \
             -e LIEF_S3_SECRET=$LIEF_S3_SECRET                 \
-            liefproject/deploy python3 /src/.github/deploy.py --skip-sdk /runner_tmp/artifacts
+            liefproject/deploy:github                         \
+            uv run python /src/.github/deploy.py --skip-sdk /runner_tmp/artifacts

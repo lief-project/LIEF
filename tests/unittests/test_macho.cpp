@@ -241,6 +241,53 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
   }
 
   SECTION("DyldChainedFixupsCreator") {
+    SECTION("x86-64 relative targets and segment ownership") {
+      std::unique_ptr<LIEF::MachO::Binary> bin =
+          MachO::Parser::parse(
+              test::get_macho_sample("libsystem_blocks_x86_64.dylib")
+          )
+              ->take(0);
+
+      REQUIRE(bin != nullptr);
+      REQUIRE(bin->header().cpu_type() == MachO::Header::CPU_TYPE::X86_64);
+
+      // clang-format off
+      const std::pair<std::string, std::string> hooks[] = {
+        {"__ZL20_Block_retain_object",    "__ZL28_Block_retain_object_defaultPKv"},
+        {"__ZL21_Block_release_object",   "__ZL29_Block_release_object_defaultPKv"},
+        {"__ZL23_Block_destructInstance", "__ZL31_Block_destructInstance_defaultPKv"},
+      };
+      // clang-format on
+
+      MachO::DyldChainedFixupsCreator creator;
+      for (const auto& [ptr, impl] : hooks) {
+        creator.add_relocation(bin->get_symbol(ptr)->value(),
+                               bin->get_symbol(impl)->value());
+      }
+      REQUIRE(creator.create(*bin) != nullptr);
+
+      const auto check = [&](const MachO::Binary& image) {
+        auto relocations = image.relocations();
+        REQUIRE(relocations.size() == std::size(hooks));
+
+        for (size_t i = 0; i < std::size(hooks); ++i) {
+          const auto& fixup =
+              static_cast<const MachO::RelocationFixup&>(relocations[i]);
+          CHECK(fixup.ptr_format() ==
+                MachO::DYLD_CHAINED_PTR_FORMAT::PTR_64_OFFSET);
+          CHECK(fixup.address() == image.get_symbol(hooks[i].first)->value());
+          CHECK(fixup.target() == image.get_symbol(hooks[i].second)->value());
+          CHECK(fixup.segment() == image.get_segment("__DATA_DIRTY"));
+        }
+      };
+
+      check(*bin);
+
+      std::unique_ptr<MachO::Binary> rebuilt = reload(*bin);
+      REQUIRE(rebuilt != nullptr);
+
+      check(*rebuilt);
+    }
     {
       SECTION("Simple Imports") {
         std::string path = test::get_macho_sample("liblog_srp.dylib");

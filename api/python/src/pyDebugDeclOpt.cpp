@@ -24,127 +24,129 @@
 namespace LIEF::py {
 template<>
 void create<DeclOpt>(nb::module_& m) {
-  nb::class_<DeclOpt>(m, "DeclOpt",
-    R"doc(
-    Configuration options for generated code from debug info.
-
-    This structure configures how the debug information (DWARF/PDB) translated
-    into an AST is generated. You can use it to configure the indentation, and
-    the information to generate when translating DWARF/PDB into C++-like
-    definitions
-    )doc"_doc)
-
-    .def(nb::init<>())
-
-    .def_prop_rw("indentation",
-      nb::overload_cast<>(&DeclOpt::indentation, nb::const_),
-      nb::overload_cast<uint32_t>(&DeclOpt::indentation),
-      "The number of spaces for indentation."_doc,
-      nb::rv_policy::reference_internal
-    )
-
-    .def_prop_rw("is_cpp",
-      nb::overload_cast<>(&DeclOpt::is_cpp, nb::const_),
-      nb::overload_cast<bool>(&DeclOpt::is_cpp),
+  nb::class_<DeclOpt>(
+      m, "DeclOpt",
       R"doc(
-      Prefer C++ syntax over C syntax.
+      Configuration options for generated code from debug info.
 
-      If true, the output will use C++ features (e.g., ``bool`` keyword)
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
+      This structure configures how the debug information (DWARF/PDB) translated
+      into an AST is generated. You can use it to configure the indentation, and
+      the information to generate when translating DWARF/PDB into C++-like
+      definitions
+      )doc"_doc
+  )
 
-    .def_prop_rw("show_extended_annotations",
-      nb::overload_cast<>(&DeclOpt::show_extended_annotations, nb::const_),
-      nb::overload_cast<bool>(&DeclOpt::show_extended_annotations),
-      R"doc(
-      Enable extended comments and annotations.
+      .def(nb::init<>())
 
-      If true, the generated code will include comments containing low-level
-      details such as memory addresses, offsets, type sizes, and original
-      source locations.
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
+      .def_prop_rw("indentation",
+                   nb::overload_cast<>(&DeclOpt::indentation, nb::const_),
+                   nb::overload_cast<uint32_t>(&DeclOpt::indentation),
+                   "The number of spaces for indentation."_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("include_types",
-      nb::overload_cast<>(&DeclOpt::include_types, nb::const_),
-      nb::overload_cast<bool>(&DeclOpt::include_types),
-      R"doc(
-      Include full type definitions.
+      .def_prop_rw(
+          "is_cpp", nb::overload_cast<>(&DeclOpt::is_cpp, nb::const_),
+          nb::overload_cast<bool>(&DeclOpt::is_cpp),
+          R"doc(
+          Prefer C++ syntax over C syntax.
 
-      If true, the output will contain the full definition of types (structs,
-      enums, unions).
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
+          If true, the output will use C++ features (e.g., ``bool`` keyword)
+          )doc"_doc,
+          nb::rv_policy::reference_internal
+      )
 
-    .def_prop_rw("include_locals",
-      nb::overload_cast<>(&DeclOpt::include_locals, nb::const_),
-      nb::overload_cast<bool>(&DeclOpt::include_locals),
-      R"doc(
-      Emit a function body listing its local / stack variables.
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
+      .def_prop_rw(
+          "show_extended_annotations",
+          nb::overload_cast<>(&DeclOpt::show_extended_annotations, nb::const_),
+          nb::overload_cast<bool>(&DeclOpt::show_extended_annotations),
+          R"doc(
+          Enable extended comments and annotations.
 
-    .def_prop_rw("desugar",
-      nb::overload_cast<>(&DeclOpt::desugar, nb::const_),
-      nb::overload_cast<bool>(&DeclOpt::desugar),
-      R"doc(
-      Resolve type aliases (sugar).
+          If true, the generated code will include comments containing low-level
+          details such as memory addresses, offsets, type sizes, and original
+          source locations.
+          )doc"_doc,
+          nb::rv_policy::reference_internal
+      )
 
-      If true, typedef and type aliases are replaced by their underlying
-      canonical types (e.g., ``uint32_t`` might become ``unsigned int``).
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
+      .def_prop_rw(
+          "include_types",
+          nb::overload_cast<>(&DeclOpt::include_types, nb::const_),
+          nb::overload_cast<bool>(&DeclOpt::include_types),
+          R"doc(
+          Include full type definitions.
 
-    .def_prop_rw("show_field_offsets",
-      nb::overload_cast<>(&DeclOpt::show_field_offsets, nb::const_),
-      nb::overload_cast<bool>(&DeclOpt::show_field_offsets),
-      R"doc(
-      Show the relative offset of each field/attribute in structures.
+          If true, the output will contain the full definition of types (structs,
+          enums, unions).
+          )doc"_doc,
+          nb::rv_policy::reference_internal
+      )
 
-      If true, every member of a structure is prefixed with its byte offset
-      (e.g. ``/* 0x04 */``).
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
+      .def_prop_rw("include_locals",
+                   nb::overload_cast<>(&DeclOpt::include_locals, nb::const_),
+                   nb::overload_cast<bool>(&DeclOpt::include_locals),
+                   "Emit a function body listing its local / stack variables."_doc,
+                   nb::rv_policy::reference_internal)
 
-    .def_prop_rw("type_aliases",
-      nb::overload_cast<>(&DeclOpt::type_aliases, nb::const_),
-      nb::overload_cast<DeclOpt::type_aliases_t>(&DeclOpt::type_aliases),
-      R"doc(
-      Mapping of type names to user-friendly aliases used while
-      rendering types (e.g.
-      ``std::basic_string<char, ...>`` -> ``std::string``).
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
+      .def_prop_rw(
+          "desugar", nb::overload_cast<>(&DeclOpt::desugar, nb::const_),
+          nb::overload_cast<bool>(&DeclOpt::desugar),
+          R"doc(
+          Resolve type aliases (sugar).
 
-    .def_prop_rw("target_triple",
-      nb::overload_cast<>(&DeclOpt::target_triple, nb::const_),
-      nb::overload_cast<std::string>(&DeclOpt::target_triple),
-      R"doc(
-      The LLVM target (e.g. ``aarch64-unknown-linux-gnu``) used to build the
-      AST from which the definitions are generated.
+          If true, typedef and type aliases are replaced by their underlying
+          canonical types (e.g., ``uint32_t`` might become ``unsigned int``).
+          )doc"_doc,
+          nb::rv_policy::reference_internal
+      )
 
-      The target defines the size of the builtin types (e.g. ``long``) and the
-      register names used in the annotations. If empty (default), the target
-      is inferred from the binary associated with the debug info.
-      )doc"_doc,
-      nb::rv_policy::reference_internal
-    )
+      .def_prop_rw(
+          "show_field_offsets",
+          nb::overload_cast<>(&DeclOpt::show_field_offsets, nb::const_),
+          nb::overload_cast<bool>(&DeclOpt::show_field_offsets),
+          R"doc(
+          Show the relative offset of each field/attribute in structures.
 
-    .def("add_type_alias",
-      [] (DeclOpt& self, std::string name, std::string alias) -> DeclOpt& {
-        return self.add_type_alias(std::move(name), std::move(alias));
-      },
-      "name"_a, "alias"_a,
-      "Register a single type alias (see :attr:`~.type_aliases`)."_doc,
-      nb::rv_policy::reference_internal
-    )
-  ;
+          If true, every member of a structure is prefixed with its byte offset
+          (e.g. ``/* 0x04 */``).
+          )doc"_doc,
+          nb::rv_policy::reference_internal
+      )
+
+      .def_prop_rw(
+          "type_aliases", nb::overload_cast<>(&DeclOpt::type_aliases, nb::const_),
+          nb::overload_cast<DeclOpt::type_aliases_t>(&DeclOpt::type_aliases),
+          R"doc(
+          Mapping of type names to user-friendly aliases used while
+          rendering types (e.g.
+          ``std::basic_string<char, ...>`` -> ``std::string``).
+          )doc"_doc,
+          nb::rv_policy::reference_internal
+      )
+
+      .def_prop_rw(
+          "target_triple",
+          nb::overload_cast<>(&DeclOpt::target_triple, nb::const_),
+          nb::overload_cast<std::string>(&DeclOpt::target_triple),
+          R"doc(
+          The LLVM target (e.g. ``aarch64-unknown-linux-gnu``) used to build the
+          AST from which the definitions are generated.
+
+          The target defines the size of the builtin types (e.g. ``long``) and the
+          register names used in the annotations. If empty (default), the target
+          is inferred from the binary associated with the debug info.
+          )doc"_doc,
+          nb::rv_policy::reference_internal
+      )
+
+      .def(
+          "add_type_alias",
+          [](DeclOpt& self, std::string name, std::string alias) -> DeclOpt& {
+            return self.add_type_alias(std::move(name), std::move(alias));
+          },
+          "name"_a, "alias"_a,
+          "Register a single type alias (see :attr:`~.type_aliases`)."_doc,
+          nb::rv_policy::reference_internal
+      );
 }
 }

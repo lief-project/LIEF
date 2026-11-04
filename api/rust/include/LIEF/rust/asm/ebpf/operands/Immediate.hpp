@@ -16,7 +16,6 @@
 #include <LIEF/asm/ebpf/operands/Immediate.hpp>
 
 #include "LIEF/rust/asm/ebpf/Operand.hpp"
-#include "LIEF/rust/helpers.hpp"
 
 class asm_ebpf_operands_Immediate : public asm_ebpf_Operand {
   public:

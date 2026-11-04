@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "PE/pyPE.hpp"
 #include "LIEF/PE/LoadConfigurations/DynamicRelocation/DynamicFixupUnknown.hpp"
+#include "PE/pyPE.hpp"
 
 #include "nanobind/extra/stl/lief_span.h"
 
@@ -22,16 +22,15 @@ namespace LIEF::PE::py {
 
 template<>
 void create<DynamicFixupUnknown>(nb::module_& m) {
-  nb::class_<DynamicFixupUnknown, DynamicFixup> obj(m, "DynamicFixupUnknown",
-    R"doc(
-    This class represents a special dynamic relocation where the format of the
-    fixups is not supported by LIEF.
-    )doc"_doc
+  nb::class_<DynamicFixupUnknown, DynamicFixup> obj(
+      m, "DynamicFixupUnknown",
+      R"doc(
+      This class represents a special dynamic relocation where the format of the
+      fixups is not supported by LIEF.
+      )doc"_doc
   );
-  obj
-    .def_prop_ro("payload",
-      nb::overload_cast<>(&DynamicFixupUnknown::payload),
-      "Raw fixups"_doc);
+  obj.def_prop_ro("payload", nb::overload_cast<>(&DynamicFixupUnknown::payload),
+                  "Raw fixups"_doc);
 }
 
 }

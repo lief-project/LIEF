@@ -260,6 +260,9 @@ class LIEF_API Section : public LIEF::Section {
     return content_;
   }
 
+  /// @private
+  LIEF_LOCAL size_t serialize(vector_iostream& ios) const;
+
   span<uint8_t> writable_content() LIEF_LIFETIMEBOUND {
     return content_;
   }

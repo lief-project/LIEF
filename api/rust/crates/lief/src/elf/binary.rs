@@ -148,6 +148,10 @@ impl FromFFI<ffi::ELF_Binary> for Binary {
 }
 
 impl Binary {
+    pub(crate) fn into_ffi(self) -> cxx::UniquePtr<ffi::ELF_Binary> {
+        self.ptr
+    }
+
     /// Create a [`Binary`] from the given file path
     pub fn parse<P: AsRef<Path>>(path: P) -> Option<Self> {
         cxx::let_cxx_string!(__cxx_s = path.as_ref().to_str().unwrap());

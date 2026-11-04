@@ -1,5 +1,8 @@
 #ifndef PY_LIEF_DWARF_LOCATION_H
 #define PY_LIEF_DWARF_LOCATION_H
+// nanobind uses this type_hook implicitly
+// IWYU pragma: always_keep
+
 #include "LIEF/DWARF/Location.hpp"
 
 #include <typeinfo>
@@ -7,7 +10,8 @@
 #include <nanobind/nanobind.h>
 
 namespace nanobind::detail {
-template<> struct type_hook<LIEF::dwarf::Location> {
+template<>
+struct type_hook<LIEF::dwarf::Location> {
   static const std::type_info* get(const LIEF::dwarf::Location* src) {
     namespace dw = LIEF::dwarf;
     if (src == nullptr) {

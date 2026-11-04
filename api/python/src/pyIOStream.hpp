@@ -16,11 +16,10 @@
 #ifndef LIEF_PY_IO_STREAM_H
 #define LIEF_PY_IO_STREAM_H
 
-#include <string>
 #include <vector>
 
-#include "LIEF/errors.hpp"
 #include "LIEF/BinaryStream/VectorStream.hpp"
+#include "LIEF/errors.hpp"
 #include "pyLIEF.hpp"
 
 namespace LIEF::py {

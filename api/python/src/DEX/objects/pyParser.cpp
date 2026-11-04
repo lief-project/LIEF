@@ -15,21 +15,21 @@
  */
 #include "DEX/pyDEX.hpp"
 
-#include "LIEF/DEX/Parser.hpp"
 #include "LIEF/DEX/File.hpp"
+#include "LIEF/DEX/Parser.hpp"
 #include "LIEF/logging.hpp"
 
-#include "pyutils.hpp"
 #include "pyIOStream.hpp"
+#include "pyutils.hpp"
 #include "typing/InputParser.hpp"
 
-#include <string>
 #include <memory>
+#include <string>
 
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
 
 namespace LIEF::DEX::py {
 
@@ -38,34 +38,35 @@ void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
   m.def("parse",
-    static_cast<std::unique_ptr<File>(*)(std::string_view)>(&Parser::parse),
-    "Parse the given filename and return a " RST_CLASS_REF(lief.DEX.File) " object"_doc,
-    "filename"_a,
-    nb::rv_policy::take_ownership);
+        static_cast<std::unique_ptr<File> (*)(std::string_view)>(&Parser::parse),
+        "Parse the given filename and return a :class:`~lief.DEX.File` object"_doc,
+        "filename"_a, nb::rv_policy::take_ownership);
 
   m.def("parse",
-    static_cast<std::unique_ptr<File>(*)(std::vector<uint8_t>, std::string_view)>(
-        &Parser::parse),
-    "Parse the given raw data and return a " RST_CLASS_REF(lief.DEX.File) " object"_doc,
-    "raw"_a, "name"_a = "",
-    nb::rv_policy::take_ownership);
+        static_cast<std::unique_ptr<File> (*)(std::vector<uint8_t>,
+                                              std::string_view)>(&Parser::parse),
+        "Parse the given raw data and return a :class:`~lief.DEX.File` object"_doc,
+        "raw"_a, "name"_a = "", nb::rv_policy::take_ownership);
 
-  m.def("parse",
-    [] (typing::InputParser obj, const std::string& name) -> std::unique_ptr<File> {
-      if (auto path_str = path_to_str(obj)) {
-        return DEX::Parser::parse(std::move(*path_str));
-      }
+  m.def(
+      "parse",
+      [](typing::InputParser obj,
+         const std::string& name) -> std::unique_ptr<File> {
+        if (auto path_str = path_to_str(obj)) {
+          return DEX::Parser::parse(std::move(*path_str));
+        }
 
-      if (auto stream = PyIOStream::from_python(obj)) {
-        auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
-        return DEX::Parser::parse(stream->content(), name);
-      }
+        if (auto stream = PyIOStream::from_python(obj)) {
+          auto ptr = std::make_unique<PyIOStream>(std::move(*stream));
+          return DEX::Parser::parse(stream->content(), name);
+        }
 
-      logging::log(logging::Level::Err,
-                   "LIEF parser interface does not support Python object: " +
-                   type2str(obj));
-      return nullptr;
-    }, "obj"_a, "name"_a = "",
-    nb::rv_policy::take_ownership);
+        logging::log(logging::Level::Err,
+                     "LIEF parser interface does not support Python object: " +
+                         type2str(obj));
+        return nullptr;
+      },
+      "obj"_a, "name"_a = "", nb::rv_policy::take_ownership
+  );
 }
 }

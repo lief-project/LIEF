@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "OAT/pyOAT.hpp"
 #include "OAT/init.hpp"
+#include "OAT/pyOAT.hpp"
 
-#include "LIEF/OAT/Parser.hpp"
 #include "LIEF/OAT/Binary.hpp"
-#include "LIEF/OAT/Header.hpp"
-#include "LIEF/OAT/DexFile.hpp"
 #include "LIEF/OAT/Class.hpp"
+#include "LIEF/OAT/DexFile.hpp"
+#include "LIEF/OAT/Header.hpp"
 #include "LIEF/OAT/Method.hpp"
+#include "LIEF/OAT/Parser.hpp"
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF::OAT::py {
 

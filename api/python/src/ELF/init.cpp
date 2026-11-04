@@ -17,22 +17,22 @@
 #include "ELF/enums.hpp"
 #include "ELF/pyELF.hpp"
 
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/pair.h>
-#include <nanobind/stl/vector.h>
 #include "nanobind/extra/stl/pathlike.h"
+#include <nanobind/stl/pair.h>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
-#include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
+#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
+#include "LIEF/ELF/DynamicEntryFilter.hpp"
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
 #include "LIEF/ELF/DynamicEntryLibrary.hpp"
 #include "LIEF/ELF/DynamicEntryRpath.hpp"
 #include "LIEF/ELF/DynamicEntryRunPath.hpp"
 #include "LIEF/ELF/DynamicSharedObject.hpp"
-#include "LIEF/ELF/DynamicEntryAuxiliary.hpp"
-#include "LIEF/ELF/DynamicEntryFilter.hpp"
 #include "LIEF/ELF/GnuHash.hpp"
 #include "LIEF/ELF/Header.hpp"
 #include "LIEF/ELF/Parser.hpp"
@@ -49,16 +49,16 @@
 
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/AndroidIdent.hpp"
-#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/NoteDetails/NoteGnuProperty.hpp"
+#include "LIEF/ELF/NoteDetails/QNXStack.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreAuxv.hpp"
 #include "LIEF/ELF/NoteDetails/core/CoreFile.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrPsInfo.hpp"
-#include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 #include "LIEF/ELF/NoteDetails/core/CorePrStatus.hpp"
+#include "LIEF/ELF/NoteDetails/core/CoreSigInfo.hpp"
 
-#define CREATE(X,Y) create<X>(Y)
+#define CREATE(X, Y) create<X>(Y)
 
 namespace LIEF::ELF::py {
 
@@ -88,7 +88,7 @@ void init_objects(nb::module_& m) {
   CREATE(Relocation, m);
   CREATE(SymbolVersionAux, m);
   CREATE(SymbolVersionAuxRequirement, m);
-  CREATE(SymbolVersionDefinition,m );
+  CREATE(SymbolVersionDefinition, m);
   CREATE(SymbolVersionRequirement, m);
   CREATE(DynamicEntry, m);
   CREATE(DynamicEntryLibrary, m);
@@ -107,24 +107,25 @@ void init_objects(nb::module_& m) {
 }
 
 inline void init_utils(nb::module_& m) {
-  lief_mod->def("is_elf",
-    [] (nb::PathLike path) {
-      return is_elf(path.to_string());
-    }, "Check if the given file is an ``ELF``", "filename"_a
+  lief_mod->def(
+      "is_elf", [](nb::PathLike path) { return is_elf(path.to_string()); },
+      "Check if the given file is an ``ELF``", "filename"_a
   );
 
-  lief_mod->def("is_elf",
-      nb::overload_cast<const std::vector<uint8_t>&>(&is_elf),
-      "Check if the given raw data is an ``ELF``",
-      "raw"_a);
+  lief_mod->def("is_elf", nb::overload_cast<const std::vector<uint8_t>&>(&is_elf),
+                "Check if the given raw data is an ``ELF``", "raw"_a);
 
-  m.def("check_layout", [] (const Binary& bin) -> std::pair<bool, std::string> {
-    std::string error;
-    if (!check_layout(bin, &error)) {
-      return std::make_pair(false, std::move(error));
-    }
-    return std::make_pair(true, "");
-  }, "Check that the layout of the given binary is correct."_doc, "binary"_a);
+  m.def(
+      "check_layout",
+      [](const Binary& bin) -> std::pair<bool, std::string> {
+        std::string error;
+        if (!check_layout(bin, &error)) {
+          return std::make_pair(false, std::move(error));
+        }
+        return std::make_pair(true, "");
+      },
+      "Check that the layout of the given binary is correct."_doc, "binary"_a
+  );
 }
 
 void init(nb::module_& m) {

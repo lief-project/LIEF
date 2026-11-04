@@ -26,6 +26,7 @@
 
 namespace LIEF {
 class SpanStream;
+class vector_iostream;
 
 namespace PE {
 
@@ -136,6 +137,9 @@ class LIEF_API DataDirectory : public Object {
   /// @private
   LIEF_LOCAL
   std::unique_ptr<SpanStream> stream(bool sized = true) const;
+
+  /// @private
+  LIEF_LOCAL size_t serialize(vector_iostream& ios) const;
 
   private:
   uint32_t rva_ = 0;

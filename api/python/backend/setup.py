@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import platform
+import re
 import sys
 import sysconfig
 from functools import lru_cache
@@ -146,11 +147,13 @@ def _get_build_requirements(is_editable: bool) -> list[str]:
             file=sys.stderr,
         )
         sys.exit(1)
-    reqs = [
-        line
-        for line in build_req_file.read_text().splitlines()
-        if not line.startswith("#")
-    ]
+    # support the `uv export --hashes` format
+    content = build_req_file.read_text().replace("\\\n", " ")
+    reqs = []
+    for line in content.splitlines():
+        line = re.sub(r"(^|\s)#.*", "", line)
+        if req := line.split(" --")[0].strip():
+            reqs.append(req)
     return reqs
 
 

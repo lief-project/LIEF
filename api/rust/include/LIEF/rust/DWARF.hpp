@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/DWARF/CompilationUnit.hpp"
 #include "LIEF/rust/DWARF/DebugInfo.hpp"
 #include "LIEF/rust/DWARF/Function.hpp"
@@ -59,3 +60,4 @@
 #include "LIEF/rust/DWARF/editor/Type.hpp"
 #include "LIEF/rust/DWARF/editor/TypeDef.hpp"
 #include "LIEF/rust/DWARF/editor/Variable.hpp"
+// IWYU pragma: end_exports

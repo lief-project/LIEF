@@ -15,19 +15,19 @@
  */
 #include "VDEX/pyVDEX.hpp"
 
-#include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/VDEX/File.hpp"
+#include "LIEF/VDEX/Parser.hpp"
 #include "LIEF/logging.hpp"
 
 #include "pyIOStream.hpp"
 #include "pyutils.hpp"
 #include "typing/InputParser.hpp"
 
-#include <string>
-#include <nanobind/stl/unique_ptr.h>
-#include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
 #include <nanobind/stl/string_view.h>
+#include <nanobind/stl/unique_ptr.h>
+#include <nanobind/stl/vector.h>
+#include <string>
 
 namespace LIEF::VDEX::py {
 
@@ -35,13 +35,17 @@ template<>
 void create<Parser>(nb::module_& m) {
   using namespace LIEF::py;
 
-  m.def("parse",
-    static_cast<std::unique_ptr<File>(*)(std::string_view)>(&Parser::parse),
-    "Parse the given filename and return a " RST_CLASS_REF(lief.VDEX.File) " object"_doc,
-    "filename"_a, nb::rv_policy::take_ownership);
+  m.def(
+      "parse",
+      static_cast<std::unique_ptr<File> (*)(std::string_view)>(&Parser::parse),
+      "Parse the given filename and return a :class:`~lief.VDEX.File` object"_doc,
+      "filename"_a, nb::rv_policy::take_ownership
+  );
 
-  m.def("parse",
-      [] (typing::InputParser obj, const std::string& name) -> std::unique_ptr<File> {
+  m.def(
+      "parse",
+      [](typing::InputParser obj,
+         const std::string& name) -> std::unique_ptr<File> {
         if (auto path_str = path_to_str(obj)) {
           return Parser::parse(std::move(*path_str));
         }
@@ -52,10 +56,10 @@ void create<Parser>(nb::module_& m) {
         }
         logging::log(logging::Level::Err,
                      "LIEF parser interface does not support Python object: " +
-                     type2str(obj));
+                         type2str(obj));
         return nullptr;
       },
-      "obj"_a, "name"_a = "",
-      nb::rv_policy::take_ownership);
+      "obj"_a, "name"_a = "", nb::rv_policy::take_ownership
+  );
 }
 }

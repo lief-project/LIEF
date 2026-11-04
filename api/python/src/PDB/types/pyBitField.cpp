@@ -4,10 +4,8 @@
 namespace LIEF::pdb::py {
 template<>
 void create<pdb::types::BitField>(nb::module_& m) {
-  nb::class_<pdb::types::BitField, pdb::Type> type(m, "BitField",
-    R"doc(
-    This class represents a ``LF_BITFIELD`` PDB type
-    )doc"_doc
+  nb::class_<pdb::types::BitField, pdb::Type> type(
+      m, "BitField", "This class represents a ``LF_BITFIELD`` PDB type"_doc
   );
 }
 

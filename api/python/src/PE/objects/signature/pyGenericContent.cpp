@@ -1,4 +1,3 @@
-
 /* Copyright 2017 - 2026 R. Thomas
  * Copyright 2017 - 2026 Quarkslab
  *
@@ -18,8 +17,6 @@
 
 #include "LIEF/PE/signature/GenericContent.hpp"
 
-#include <string>
-#include <sstream>
 #include <nanobind/stl/string.h>
 
 namespace LIEF::PE::py {
@@ -27,8 +24,6 @@ namespace LIEF::PE::py {
 template<>
 void create<GenericContent>(nb::module_& m) {
   nb::class_<GenericContent, ContentInfo::Content>(m, "GenericContent");
-
 }
 
 }
-

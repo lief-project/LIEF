@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <string>
-
 #include "ELF/pyELF.hpp"
 #include "enums_wrapper.hpp"
 
@@ -24,6 +22,7 @@ namespace LIEF::ELF::py {
 
 template<>
 void create<PROCESSOR_FLAGS>(nb::module_& m) {
+  // clang-format off
   #define ENTRY(X) .value(to_string(PROCESSOR_FLAGS::X), PROCESSOR_FLAGS::X)
   enum_<PROCESSOR_FLAGS>(m, "PROCESSOR_FLAGS")
     ENTRY(ARM_EABI_UNKNOWN)
@@ -97,7 +96,7 @@ void create<PROCESSOR_FLAGS>(nb::module_& m) {
     ENTRY(RISCV_FLOAT_ABI_TSO)
   ;
   #undef ENTRY
-
+  // clang-format on
 }
 
 }

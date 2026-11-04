@@ -25,35 +25,36 @@ namespace LIEF::Android::py {
 
 void init_versions(nb::module_& m) {
   enum_<ANDROID_VERSIONS>(m, "ANDROID_VERSIONS")
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_UNKNOWN))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_601))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_700))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_710))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_712))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_800))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_810))
-    .value(PY_ENUM(ANDROID_VERSIONS::VERSION_900));
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_UNKNOWN))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_601))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_700))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_710))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_712))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_800))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_810))
+      .value(PY_ENUM(ANDROID_VERSIONS::VERSION_900));
 
-  m.def("code_name",
-      &code_name,
-      R"delim(
-      Return the Android code associated with a :class:`~.ANDROID_VERSIONS`.
+  m.def("code_name", &code_name,
+        R"delim(
+        Return the Android code associated with a :class:`~.ANDROID_VERSIONS`.
 
-      For example: ``Nougat``
-      )delim"_doc, "version"_a);
+        For example: ``Nougat``
+        )delim"_doc,
+        "version"_a);
 
-  m.def("version_string",
-      &version_string,
-      R"delim(
-      Return the :class:`~.ANDROID_VERSIONS` as a string.
+  m.def("version_string", &version_string,
+        R"delim(
+        Return the :class:`~.ANDROID_VERSIONS` as a string.
 
-      For example: ``7.0.1``
-      )delim"_doc, "version"_a);
+        For example: ``7.0.1``
+        )delim"_doc,
+        "version"_a);
 }
 
 
 void init_module(nb::module_& m) {
-  nb::module_ android = m.def_submodule("Android", "Python API for Android platform");
+  nb::module_ android =
+      m.def_submodule("Android", "Python API for Android platform");
 
   init_versions(android);
 }

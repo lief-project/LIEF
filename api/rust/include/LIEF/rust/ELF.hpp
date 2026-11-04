@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #pragma once
+// IWYU pragma: begin_exports
 #include "LIEF/rust/ELF/Binary.hpp"
 #include "LIEF/rust/ELF/CoreAuxv.hpp"
 #include "LIEF/rust/ELF/CoreFile.hpp"
@@ -34,3 +35,4 @@
 #include "LIEF/rust/ELF/NoteQNXStack.hpp"
 #include "LIEF/rust/ELF/Section.hpp"
 #include "LIEF/rust/ELF/utils.hpp"
+// IWYU pragma: end_exports
