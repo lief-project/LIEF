@@ -817,8 +817,6 @@ ok_error_t Builder::build_sections() {
       LIEF_DEBUG("[Content] {:20}: {:#012x} - {:#012x} ({:#x})", section->name(),
                  section->file_offset(), section->file_offset() + content.size(),
                  content.size());
-      // Content that could not be read (e.g. an offset past the end of the
-      // input) is empty: seeking to its offset would only grow the output
       if (!content.empty()) {
         ios_.seekp(section->file_offset());
         ios_.write(content);
