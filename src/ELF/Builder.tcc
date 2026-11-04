@@ -817,8 +817,10 @@ ok_error_t Builder::build_sections() {
       LIEF_DEBUG("[Content] {:20}: {:#012x} - {:#012x} ({:#x})", section->name(),
                  section->file_offset(), section->file_offset() + content.size(),
                  content.size());
-      ios_.seekp(section->file_offset());
-      ios_.write(content);
+      if (!content.empty()) {
+        ios_.seekp(section->file_offset());
+        ios_.write(content);
+      }
     }
 
     Elf_Off offset_name = 0;
@@ -925,8 +927,10 @@ ok_error_t Builder::build_segments() {
                  segment->file_offset(), segment->file_offset() + content.size(),
                  content.size());
 
-      ios_.seekp(segment->file_offset());
-      ios_.write(content);
+      if (!content.empty()) {
+        ios_.seekp(segment->file_offset());
+        ios_.write(content);
+      }
     }
   }
 

@@ -1,3 +1,4 @@
+import struct
 import subprocess
 import sys
 from pathlib import Path
@@ -142,3 +143,45 @@ def test_relocate_shstrtab_name(tmp_path: Path):
     assert sorted(section.name for section in new.sections) == sorted(
         new_name if name == ".shstrtab" else name for name in names
     )
+
+
+def test_write_unreadable_content():
+    def _section(name: int, sh_type: int, offset: int, size: int) -> bytes:
+        return struct.pack("<IIQQQQIIQQ", name, sh_type, 0, 0, offset, size, 0, 0, 0, 0)
+
+    shstrtab = b"\0.shstrtab\0.bad\0"
+    header = struct.pack(
+        "<16sHHIQQQIHHHHHH",
+        b"\x7fELF\x02\x01\x01",  # Magic + ELFCLASS64, ELFDATA2LSB, EV_CURRENT
+        1,                       # e_type: ET_REL
+        0x3E,                    # e_machine: x86-64
+        1,                       # e_version
+        0,                       # e_entry
+        0,                       # e_phoff
+        64 + len(shstrtab),      # e_shoff
+        0,                       # e_flags
+        64,                      # e_ehsize
+        0,                       # e_phentsize
+        0,                       # e_phnum
+        64,                      # e_shentsize
+        3,                       # e_shnum
+        1,                       # e_shstrndx
+    )  # fmt: off
+
+    raw = (
+        header
+        + shstrtab
+        + _section(0, 0, 0, 0)
+        + _section(1, 3, 64, len(shstrtab))          # .shstrtab: SHT_STRTAB
+        + _section(11, 1, 0x1000000000000000, 0x10)  # .bad:      SHT_PROGBITS
+        )  # fmt: off
+
+    elf = lief.ELF.parse(raw)
+    assert elf is not None
+
+    bad = elf.get_section(".bad")
+    assert bad is not None
+    assert len(bad.content) == 0
+
+    built = elf.write_to_bytes()
+    assert 0 < len(built) < 0x10000
