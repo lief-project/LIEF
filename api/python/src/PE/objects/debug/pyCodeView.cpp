@@ -32,19 +32,27 @@ void create<CodeView>(nb::module_& m) {
   nb::class_<CodeView, Debug> cv(m, "CodeView");
 
   enum_<CodeView::SIGNATURES>(cv, "SIGNATURES")
-    .value(PY_ENUM(CodeView::SIGNATURES::UNKNOWN))
-    .value(PY_ENUM(CodeView::SIGNATURES::PDB_70))
-    .value(PY_ENUM(CodeView::SIGNATURES::PDB_20))
-    .value(PY_ENUM(CodeView::SIGNATURES::CV_50))
-    .value(PY_ENUM(CodeView::SIGNATURES::CV_41));
-  cv
-    .def(nb::init<>())
-    .def(nb::init<CodeView::SIGNATURES>())
-    .def_prop_ro("cv_signature",
-        nb::overload_cast<>(&CodeView::signature, nb::const_),
-        "Type of the code view (" RST_CLASS_REF(lief.PE.CodeView.SIGNATURES) ")"_doc)
+      .value(PY_ENUM(CodeView::SIGNATURES::UNKNOWN))
+      .value(PY_ENUM(CodeView::SIGNATURES::PDB_70))
+      .value(PY_ENUM(CodeView::SIGNATURES::PDB_20))
+      .value(PY_ENUM(CodeView::SIGNATURES::CV_50))
+      .value(PY_ENUM(CodeView::SIGNATURES::CV_41));
 
-    LIEF_DEFAULT_STR(CodeView);
+  enum_<CodeView::KIND>(cv, "KIND", "Discriminator for the subclasses"_doc)
+      .value("GENERIC", CodeView::KIND::GENERIC)
+      .value("PDB", CodeView::KIND::PDB);
+
+  cv.def(nb::init<>())
+      .def(nb::init<CodeView::SIGNATURES>())
+      .def_prop_ro(
+          "cv_signature", nb::overload_cast<>(&CodeView::signature, nb::const_),
+          "Type of the code view (:class:`~lief.PE.CodeView.SIGNATURES`)"_doc
+      )
+
+      .def_prop_ro("kind", &CodeView::kind,
+                   "Type of the concrete implementation"_doc)
+
+      .LIEF_DEFAULT_STR(CodeView);
 }
 
 }

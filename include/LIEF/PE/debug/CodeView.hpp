@@ -39,6 +39,12 @@ class LIEF_API CodeView : public Debug {
     CV_41 = 0x3930424e,  // NB09
   };
 
+  /// Discriminator for the subclasses.
+  enum class KIND {
+    GENERIC = 0,
+    PDB,
+  };
+
   CodeView() :
     Debug(Debug::TYPES::CODEVIEW) {}
   CodeView(SIGNATURES sig) :
@@ -62,6 +68,11 @@ class LIEF_API CodeView : public Debug {
     return sig_;
   }
 
+  /// Determine the type of the concrete implementation
+  KIND kind() const {
+    return kind_;
+  }
+
   std::unique_ptr<Debug> clone() const override {
     return std::unique_ptr<Debug>(new CodeView(*this));
   }
@@ -75,7 +86,19 @@ class LIEF_API CodeView : public Debug {
   void accept(Visitor& visitor) const override;
 
   protected:
+  CodeView(KIND kind, SIGNATURES sig) :
+    Debug{Debug::TYPES::CODEVIEW},
+    sig_{sig},
+    kind_{kind} {}
+
+  CodeView(KIND kind, const details::pe_debug& debug, SIGNATURES sig,
+           Section* sec) :
+    Debug(debug, sec),
+    sig_(sig),
+    kind_(kind) {}
+
   SIGNATURES sig_ = SIGNATURES::UNKNOWN;
+  KIND kind_ = KIND::GENERIC;
 };
 
 LIEF_API const char* to_string(CodeView::SIGNATURES e);

@@ -41,10 +41,10 @@ class LIEF_API CodeViewPDB : public CodeView {
   public:
   using signature_t = std::array<uint8_t, 16>;
   CodeViewPDB() :
-    CodeView(CodeView::SIGNATURES::PDB_70) {}
+    CodeView(CodeView::KIND::PDB, CodeView::SIGNATURES::PDB_70) {}
 
   CodeViewPDB(std::string filename) :
-    CodeView(CodeView::SIGNATURES::PDB_70),
+    CodeView(CodeView::KIND::PDB, CodeView::SIGNATURES::PDB_70),
     signature_{0},
     filename_(std::move(filename)) {}
 
@@ -101,10 +101,7 @@ class LIEF_API CodeViewPDB : public CodeView {
     if (!CodeView::classof(debug)) {
       return false;
     }
-    const auto& cv = static_cast<const CodeView&>(*debug);
-
-    return cv.signature() == SIGNATURES::PDB_20 ||
-           cv.signature() == SIGNATURES::PDB_70;
+    return static_cast<const CodeView*>(debug)->kind() == KIND::PDB;
   }
 
   void accept(Visitor& visitor) const override;

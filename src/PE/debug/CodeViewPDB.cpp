@@ -30,7 +30,7 @@ namespace LIEF::PE {
 
 CodeViewPDB::CodeViewPDB(const details::pe_debug& debug_info,
                          const details::pe_pdb_70& pdb_70, Section* sec) :
-  CodeView{debug_info, SIGNATURES::PDB_70, sec},
+  CodeView{KIND::PDB, debug_info, SIGNATURES::PDB_70, sec},
   age_{pdb_70.age} {
   std::move(std::begin(pdb_70.signature), std::end(pdb_70.signature),
             std::begin(signature_));
@@ -38,7 +38,7 @@ CodeViewPDB::CodeViewPDB(const details::pe_debug& debug_info,
 
 CodeViewPDB::CodeViewPDB(const details::pe_debug& debug_info,
                          const details::pe_pdb_20& pdb_20, Section* sec) :
-  CodeView{debug_info, SIGNATURES::PDB_20, sec},
+  CodeView{KIND::PDB, debug_info, SIGNATURES::PDB_20, sec},
   age_{pdb_20.age} {}
 
 void CodeViewPDB::accept(Visitor& visitor) const {
