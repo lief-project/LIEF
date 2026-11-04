@@ -3,6 +3,7 @@ import pathlib
 import random
 import re
 import shutil
+import struct
 import subprocess
 from pathlib import Path
 from subprocess import Popen
@@ -925,3 +926,65 @@ def test_ppc_issue_1236(tmp_path: Path):
 
     checked, err = lief.MachO.check_layout(new)
     assert checked, err
+
+
+@pytest.mark.parametrize(
+    "sample",
+    [
+        "MachO/do_add.bin",
+        "MachO/fbcb7580db7bc04d695c3fd0308bb344_issue_1087",
+    ],
+)
+@pytest.mark.parametrize("modification", ["add_section", "shift"])
+def test_issue_1229(tmp_path: Path, sample: str, modification: str):
+    def _init_functions(macho: lief.MachO.Binary) -> list[bytes]:
+        functions = []
+        for section in macho.sections:
+            if section.type != lief.MachO.Section.TYPE.INIT_FUNC_OFFSETS:
+                continue
+
+            for (offset,) in struct.iter_unpack("<I", section.content):
+                code = macho.get_content_from_virtual_address(
+                    macho.imagebase + offset, 16
+                )
+                functions.append(bytes(code))
+        return functions
+
+    bin_path = pathlib.Path(get_sample(sample))
+    macho = parse_macho(bin_path).at(0)
+    assert macho is not None
+
+    functions = _init_functions(macho)
+    assert len(functions) > 0
+
+    text = macho.get_section("__text")
+    assert text is not None
+    text_address = text.virtual_address
+
+    if modification == "add_section":
+        section = lief.MachO.Section.create("__lief", [0x41] * 0x4000)
+        assert section is not None
+        assert macho.add_section(section) is not None
+    else:
+        assert isinstance(macho.shift(0x4000), lief.ok_t)
+
+    output = tmp_path / bin_path.name
+    macho.write(output)
+
+    fat = lief.MachO.parse(output)
+    assert fat is not None
+
+    new = fat.at(0)
+    assert new is not None
+
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
+
+    new_text = new.get_section("__text")
+    assert new_text is not None
+    assert new_text.virtual_address > text_address
+    assert _init_functions(new) == functions
+
+    if is_apple_m1() and bin_path.name == "do_add.bin":
+        stdout = run_program(output)
+        assert re.search(r"Counter is 0 \(1\)", stdout) is not None

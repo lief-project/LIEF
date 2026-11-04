@@ -1013,11 +1013,12 @@ ok_error_t Binary::shift(size_t value) {
     }
     span<uint8_t> content = section->content();
     for (size_t i = 0; i + sizeof(uint32_t) <= content.size();
-         i += sizeof(uint32_t)) {
+         i += sizeof(uint32_t))
+    {
       uint32_t init_off = 0;
       std::memcpy(&init_off, content.data() + i, sizeof(init_off));
       if (init_off >= loadcommands_end) {
-        init_off += static_cast<uint32_t>(value);
+        init_off += uint32_t(value);
         std::memcpy(content.data() + i, &init_off, sizeof(init_off));
       }
     }
