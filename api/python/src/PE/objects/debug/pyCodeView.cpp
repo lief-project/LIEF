@@ -18,10 +18,8 @@
 #include "LIEF/PE/debug/CodeView.hpp"
 #include "enums_wrapper.hpp"
 
-#include <string>
 #include <sstream>
-#include <nanobind/stl/string.h>
-#include <nanobind/stl/array.h>
+#include <string>
 
 #define PY_ENUM(x) to_string(x), x
 
