@@ -278,3 +278,15 @@ def test_section_search_out_of_range():
         preexec_fn=address_space_limiter(),
     )
     assert b"OK" in stdout
+
+
+def test_zero_bucket_gnu_hash(tmp_path: Path):
+    """
+    test for https://github.com/lief-project/LIEF/issues/1404
+    """
+    elf = parse_elf("ELF/zero-buckets.elf")
+
+    output = tmp_path / "rewritten.elf"
+    elf.write(output)
+
+    assert lief.ELF.parse(output) is not None

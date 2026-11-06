@@ -316,10 +316,8 @@ class LIEF_LOCAL ExeLayout : public Layout {
     }
 
     const uint32_t nb_buckets = gnu_hash->nb_buckets();
+    // Prevent the 0 div through the modulus operation
     if (nb_buckets == 0) {
-      // A zero bucket count makes the modulo operations below divide by zero.
-      // Treat it as an unusable hash table and let the builder keep the
-      // original section instead of regenerating it.
       LIEF_ERR("GNU hash declares zero buckets");
       return 0;
     }
