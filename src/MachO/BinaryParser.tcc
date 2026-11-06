@@ -3788,7 +3788,10 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
 
     if (LinkEdit::segmentof(*nlist_linkedit)) {
       static_cast<LinkEdit*>(nlist_linkedit)->symtab_ = &cmd;
-    } else {
+    } else if (cmd.numberof_symbols() > 0) {
+      // An empty LC_SYMTAB (nsyms == 0) is valid: kernel collections expose one
+      // that is meant to be consumed by boot.efi. Only warn when there are
+      // symbols that are expected to live in the __LINKEDIT segment.
       LIEF_WARN("Weird: LC_SYMTAB.n_list is not in the __LINKEDIT segment");
     }
   }
@@ -3815,7 +3818,8 @@ ok_error_t BinaryParser::post_process(SymbolCommand& cmd) {
 
     if (LinkEdit::segmentof(*strings_linkedit)) {
       static_cast<LinkEdit*>(strings_linkedit)->symtab_ = &cmd;
-    } else {
+    } else if (cmd.strings_size() > 0) {
+      // Same as above: only warn when the string table is actually populated.
       LIEF_WARN("Weird: LC_SYMTAB.strtab is not in the __LINKEDIT segment");
     }
   }
