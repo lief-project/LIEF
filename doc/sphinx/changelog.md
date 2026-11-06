@@ -53,6 +53,7 @@
     in advisory ``GHSA-r5x5-7225-g759``
   * Fix a use-after-free of the section names when ``.shstrtab`` is relocated
     while writing the binary (advisory ``GHSA-jrqq-qr56-xgcv``)
+  * Fix the sizes of the ELF note names and descriptions (:pr:`1402` by :github_user:`wleeaf`)
 
 :COFF:
 
