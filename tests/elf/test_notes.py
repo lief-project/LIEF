@@ -145,6 +145,33 @@ def test_note_sizes():
     assert note.size == len(raw)
 
 
+@pytest.mark.parametrize("original_type", [0x100, 0x101])
+def test_note_empty_name(original_type: int):
+    raw = bytes.fromhex("0800000000000000") + original_type.to_bytes(4, "little")
+    raw += b"GA$\x013a1\x00"
+
+    note = lief.ELF.Note.create(raw)
+
+    assert note is not None
+    assert note.type in (
+        lief.ELF.Note.TYPE.GNU_BUILD_ATTRIBUTE_OPEN,
+        lief.ELF.Note.TYPE.GNU_BUILD_ATTRIBUTE_FUNC,
+    )
+    assert note.name == "GA$\x013a1"
+    assert note.size == len(raw)
+
+    raw = bytes.fromhex("0100000000000000") + original_type.to_bytes(4, "little")
+    raw += bytes(4)
+
+    note = lief.ELF.Note.create(raw)
+
+    assert note is not None
+    assert note.type == lief.ELF.Note.TYPE.UNKNOWN
+    assert note.original_type == original_type
+    assert note.name == ""
+    assert note.size == len(raw)
+
+
 def test_note_aarch64_features():
     GNU_PROPERTY_AARCH64_FEATURE_1_AND = (
         "040000001000000005000000474e5500000000c0040000000100000000000000"

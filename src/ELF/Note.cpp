@@ -375,7 +375,11 @@ result<Note::TYPE> Note::convert_type(Header::FILE_TYPE ftype, uint32_t type,
     return make_error_code(lief_errors::not_found);
   }
 
-  // Generic types
+  // The GENERIC_TYPES except a nonempty name
+  if (name.empty()) {
+    return make_error_code(lief_errors::not_found);
+  }
+
   if (auto it = GENERIC_TYPES.find(type); it != GENERIC_TYPES.end()) {
     return it->second;
   }
