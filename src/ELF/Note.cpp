@@ -429,7 +429,6 @@ std::unique_ptr<Note> Note::create(BinaryStream& stream, std::string section_nam
 
   std::string name(reinterpret_cast<const char*>(name_buffer.data()),
                    name_buffer.size());
-  // namesz includes the null byte that terminates the name
   if (name.back() == '\0') {
     name.pop_back();
   }
@@ -449,11 +448,13 @@ std::unique_ptr<Note> Note::create(BinaryStream& stream, std::string section_nam
         break;
       }
     }
+
     // The bytes after the last full chunk are followed by padding, which is
     // not part of the description
     if (descsz % sizeof(uint32_t) != 0 && description.size() == nb_chunks) {
       stream.read_data(desc_tail, descsz % sizeof(uint32_t));
     }
+
     stream.align(sizeof(uint32_t));
   }
   std::vector<uint8_t> desc_bytes;

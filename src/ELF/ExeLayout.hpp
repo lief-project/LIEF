@@ -257,8 +257,6 @@ class LIEF_LOCAL ExeLayout : public Layout {
         raw_notes.write<uint32_t>(desc_ptr[i]);
       }
       if (description.size() % sizeof(uint32_t) != 0) {
-        // The bytes after the last full chunk are written as they are, as
-        // the parser reads them, followed by padding
         raw_notes.write(description.subspan(i * sizeof(uint32_t)));
         raw_notes.align(sizeof(uint32_t), 0);
       }
