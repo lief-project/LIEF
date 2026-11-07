@@ -341,7 +341,10 @@ endif()
 
 
 if(UNIX AND NOT APPLE)
-  target_link_options(LIB_LIEF PRIVATE -Wl,--gc-sections -Wl,--exclude-libs,ALL)
+  set(LIEF_VERSION_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/cmake/LIEF.map)
+  target_link_options(LIB_LIEF PRIVATE -Wl,--gc-sections -Wl,--exclude-libs,ALL
+                      -Wl,--version-script=${LIEF_VERSION_SCRIPT})
+  set_property(TARGET LIB_LIEF APPEND PROPERTY LINK_DEPENDS ${LIEF_VERSION_SCRIPT})
 endif()
 
 
