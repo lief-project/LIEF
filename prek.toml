@@ -1,5 +1,7 @@
 default_env = { RUSTUP_TOOLCHAIN = "nightly" }
 
+default_install_hook_types = ["pre-commit", "pre-push"]
+
 [[repos]]
 repo = "local"
 hooks = [
