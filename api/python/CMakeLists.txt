@@ -99,6 +99,14 @@ if(APPLE)
   )
 endif()
 
+if(APPLE)
+  target_link_options(pyLIEF PRIVATE -Wl,-exported_symbol,_PyInit__lief)
+elseif(UNIX)
+  set(PYLIEF_VERSION_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/pyLIEF.map)
+  target_link_options(pyLIEF PRIVATE -Wl,--version-script=${PYLIEF_VERSION_SCRIPT})
+  set_property(TARGET pyLIEF APPEND PROPERTY LINK_DEPENDS ${PYLIEF_VERSION_SCRIPT})
+endif()
+
 
 if (UNIX OR MUSL)
   if (LIEF_PYTHON_STATIC)
