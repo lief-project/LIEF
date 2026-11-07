@@ -9,8 +9,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  python-osx-version: '3.12'
-  python-win-version: '3.12'
+  python-osx-version: '3.14'
+  python-win-version: '3.14'
+  uv-version: '0.13.5'
 
 jobs:
   osx:
@@ -49,13 +50,13 @@ jobs:
       - name: Build & Test
         shell: bash
         env:
-          PYTHON_VERSION: 312
+          PYTHON_VERSION: 314
         run: |
           docker run --rm                                       \
            --user "$(id -u):$(id -g)"                           \
            -e HOME=/tmp                                         \
            -e PYTHON_VERSION=$PYTHON_VERSION                    \
-           -e PYTHON_BINARY=/opt/python/cp312-cp312/bin/python3.12 \
+           -e PYTHON_BINARY=/opt/python/cp314-cp314/bin/python3.14 \
            -v $GITHUB_WORKSPACE:/src                            \
            liefproject/manylinux_2_28_x86_64                    \
            bash /src/scripts/docker/test-linux-x64
@@ -69,33 +70,29 @@ jobs:
         python-version: ${{ env.python-win-version }}
         architecture: x64
     - name: Install system dependencies
-      run: |
-        choco install ninja
-        python -m pip install --upgrade pip
-    - uses: ilammy/msvc-dev-cmd@v1
+      run: python -m pip install "uv==${env:uv-version}"
+    - name: Set up MSVC environment
+      uses: ./.github/actions/msvc-env
       with:
-        vsversion: "2022"
+        arch: x64
     - name: Set env variables
       run: |
-        chcp 65001 #set code page to utf-8
         echo ("LIEF_SAMPLES_DIR=" + $env:RUNNER_TEMP + "/samples") >> $env:GITHUB_ENV
         echo ("LIEF_BUILD_DIR=" + $env:RUNNER_TEMP + "/lief-build") >> $env:GITHUB_ENV
         echo ("PYLIEF_CONF=" + $env:GITHUB_WORKSPACE + "/scripts/windows/py-x64-test.toml") >> $env:GITHUB_ENV
     - name: Build Python ${{ env.python-win-version }}
       shell: pwsh
       run: |
-        python -m pip install -r tests/requirements.txt
-        python -m pip install api/python
+        uv pip install --system -r tests/requirements.txt
+        uv pip install --system api/python
         python tests/dl_samples.py $env:LIEF_SAMPLES_DIR
     - name: Run tests - unittests
       shell: pwsh
       run: |
         cd $env:GITHUB_WORKSPACE
         ctest --output-on-failure --test-dir $env:LIEF_BUILD_DIR
-        Exit $LASTEXITCODE
     - name: Run tests - python
       shell: pwsh
       run: |
         cd $env:GITHUB_WORKSPACE
         python tests/run_pytest.py
-        Exit $LASTEXITCODE

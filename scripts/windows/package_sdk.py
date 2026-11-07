@@ -1,4 +1,5 @@
 import os
+import shlex
 import shutil
 import sys
 from pathlib import Path
@@ -53,7 +54,8 @@ BUILD_SHARED_PATH.mkdir(exist_ok=True)
 is64 = sys.maxsize > 2**32
 arch = "x64" if is64 else "x86"
 
-env.update(_get_vc_env(arch))
+if os.getenv("VSCMD_ARG_TGT_ARCH") != arch:
+    env.update(_get_vc_env(arch))
 
 cmake_config_static = [
     "-G",
@@ -78,10 +80,11 @@ cmake_config_shared = [
 
 build_args = ["--config", "Release"]
 configure_cmd = ["cmake", LIEF_SRC.resolve().as_posix()]
+env_cmake_args = shlex.split(os.getenv("CMAKE_ARGS", ""))
 
 print("Building shared version")
 check_call(
-    configure_cmd + cmake_config_shared,
+    configure_cmd + cmake_config_shared + env_cmake_args,
     cwd=BUILD_SHARED_PATH.resolve().as_posix(),
     env=env,
 )
@@ -93,7 +96,7 @@ check_call(
 
 print("Building static version")
 check_call(
-    configure_cmd + cmake_config_static,
+    configure_cmd + cmake_config_static + env_cmake_args,
     cwd=BUILD_STATIC_PATH.resolve().as_posix(),
     env=env,
 )

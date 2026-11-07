@@ -1,0 +1,18 @@
+name: Set up MSVC environment
+description: Export the environment of vcvarsall.bat to the next steps of the job
+inputs:
+  arch:
+    description: vcvarsall.bat architecture (e.g. x64, x86)
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: pwsh
+      env:
+        MSVC_ARCH: ${{ inputs.arch }}
+      run: |
+        $vs = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+        cmd /c "`"$vs\VC\Auxiliary\Build\vcvarsall.bat`" $env:MSVC_ARCH > nul && set" | ForEach-Object {
+          $name, $value = $_ -split '=', 2
+          if ([Environment]::GetEnvironmentVariable($name) -ne $value) { "$name=$value" >> $env:GITHUB_ENV }
+        }
