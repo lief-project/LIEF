@@ -385,7 +385,8 @@ ok_error_t Parser::parse_relocations() {
 
   uint32_t current_offset = offset;
   while (res_relocation_headers && current_offset < max_offset &&
-         res_relocation_headers->PageRVA != 0)
+         (res_relocation_headers->PageRVA != 0 ||
+          res_relocation_headers->BlockSize != 0))
   {
     const details::pe_base_relocation_block& raw_struct = *res_relocation_headers;
     auto relocation = std::make_unique<Relocation>(raw_struct);

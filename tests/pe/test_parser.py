@@ -602,6 +602,15 @@ def test_rich_header():
     assert lief.PE.RichEntry() == lief.PE.RichEntry(0, 0, 0)
 
 
+@pytest.mark.private
+def test_relocations_first_page():
+    pe = parse_pe("private/PE/relocations_first_page.exe")
+    assert len(pe.relocations) == 10
+    assert pe.relocations[0].virtual_address == 0
+    assert pe.relocations[0].entries[46].address == 0xEB8
+    assert pe.relocations[1].virtual_address == 0xE000
+
+
 def test_relocations():
     pe = parse_pe("PE/PE64_x86-64_binary_mfc-application.exe")
     relocations = pe.relocations

@@ -74,6 +74,7 @@
 
 :PE:
 
+  * Fix the parsing of the base relocations of the first page of the PE image
   * Fix the UTF-8 conversion of the resource strings (e.g. the names of
     |lief-pe-resource-node|) and of the Authenticode program names: the
     characters outside the Basic Multilingual Plane, such as emoji, were
