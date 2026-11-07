@@ -126,9 +126,8 @@ hooks = [
   {
     id = "harper-markdown",
     name = "lint(markdown) - Harper",
-    language = "python",
-    entry = "uv run internal/scripts/harper_lint.py",
-    additional_dependencies = ["myst-parser==5.1.0"],
+    language = "system",
+    entry = "uv run --active internal/scripts/harper_lint.py",
     files = "\\.(md|markdown)$",
     exclude = "^internal/",
     stages = ["pre-commit"],
@@ -136,9 +135,8 @@ hooks = [
   {
     id = "harper-cpp",
     name = "lint(cpp) - Harper",
-    language = "python",
-    entry = "uv run internal/scripts/harper_lint.py",
-    additional_dependencies = ["myst-parser==5.1.0"],
+    language = "system",
+    entry = "uv run --active internal/scripts/harper_lint.py",
     files = "\\.(cpp|hpp|tcc|c)$",
     exclude = """(?x)(
       third-party/
@@ -155,9 +153,8 @@ hooks = [
   {
     id = "harper-python",
     name = "lint(python) - Harper",
-    language = "python",
-    entry = "uv run internal/scripts/harper_lint.py",
-    additional_dependencies = ["myst-parser==5.1.0"],
+    language = "system",
+    entry = "uv run --active internal/scripts/harper_lint.py",
     files = "\\.py$",
     stages = ["pre-commit"],
   },
