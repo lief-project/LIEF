@@ -20,6 +20,8 @@
 
 #ifdef LIEF_JSON_SUPPORT
   #include "VDEX/json_internal.hpp"
+#else
+  #include "logging.hpp"
 #endif
 
 

@@ -18,6 +18,8 @@
 
 #ifdef LIEF_JSON_SUPPORT
   #include "DEX/json_internal.hpp"
+#else
+  #include "logging.hpp"
 #endif
 #include "LIEF/DEX.hpp"
 
