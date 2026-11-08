@@ -84,6 +84,8 @@
 
 :MachO:
 
+  * Fix the initializers of ``__TEXT,__init_offsets`` when the content of
+    ``__TEXT`` is shifted (:issue:`1229`, :pr:`1369` by :github_user:`je-empty`)
   * Fix an out-of-bounds write and an uncontrolled allocation in
     |lief-macho-segmentcommand-add_section| when the ``filesize`` of the
     segment is corrupted (advisory ``GHSA-4qm2-44wq-hwxw``)
