@@ -14,16 +14,16 @@
  */
 #pragma once
 
-#include "jni/canbe_unique.hpp"
 #include "jni/mirror.hpp"
 #include <jni_bind.h>
 
 #include <LIEF/PE/LoadConfigurations/CHPEMetadata/Metadata.hpp>
+#include <LIEF/canbe_unique.hpp>
 
 namespace lief_jni::pe {
 
 class CHPEMetadata
-  : public JNI<CHPEMetadata, canbe_unique<LIEF::PE::CHPEMetadata>> {
+  : public JNI<CHPEMetadata, LIEF::details::canbe_unique<LIEF::PE::CHPEMetadata>> {
   public:
   using JNI::JNI;
   using lief_t = LIEF::PE::CHPEMetadata;

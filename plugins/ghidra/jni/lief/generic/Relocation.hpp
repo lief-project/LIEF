@@ -14,15 +14,16 @@
  */
 #pragma once
 
-#include "jni/canbe_unique.hpp"
 #include "jni/mirror.hpp"
 #include <jni_bind.h>
 
 #include <LIEF/Abstract/Relocation.hpp>
+#include <LIEF/canbe_unique.hpp>
 
 namespace lief_jni::generic {
 
-class Relocation : public JNI<Relocation, canbe_unique<LIEF::Relocation>> {
+class Relocation
+  : public JNI<Relocation, LIEF::details::canbe_unique<LIEF::Relocation>> {
   public:
   using JNI::JNI;
   static constexpr jni::Class kClass{"lief/generic/Relocation",

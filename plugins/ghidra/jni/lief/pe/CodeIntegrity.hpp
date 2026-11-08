@@ -16,15 +16,16 @@
 
 #include <jni_bind.h>
 
-#include "jni/canbe_unique.hpp"
 #include "jni/mirror.hpp"
 
 #include <LIEF/PE/CodeIntegrity.hpp>
+#include <LIEF/canbe_unique.hpp>
 
 namespace lief_jni::pe {
 
 class CodeIntegrity
-  : public JNI<CodeIntegrity, canbe_unique<LIEF::PE::CodeIntegrity>> {
+  : public JNI<CodeIntegrity,
+               LIEF::details::canbe_unique<LIEF::PE::CodeIntegrity>> {
   public:
   using lief_t = LIEF::PE::CodeIntegrity;
 

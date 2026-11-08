@@ -14,16 +14,16 @@
  */
 #pragma once
 
-#include "jni/canbe_unique.hpp"
 #include "jni/java/util/Optional.hpp"
 #include "jni/mirror.hpp"
 #include <jni_bind.h>
 
 #include <LIEF/Abstract/Binary.hpp>
+#include <LIEF/canbe_unique.hpp>
 
 namespace lief_jni::generic {
 
-class Binary : public JNI<Binary, canbe_unique<LIEF::Binary>> {
+class Binary : public JNI<Binary, LIEF::details::canbe_unique<LIEF::Binary>> {
   public:
   using JNI::JNI;
   static constexpr jni::Class kClass{"lief/generic/Binary",

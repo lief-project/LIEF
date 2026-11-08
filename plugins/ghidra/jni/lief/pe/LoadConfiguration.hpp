@@ -16,7 +16,6 @@
 
 #include <jni_bind.h>
 
-#include "jni/canbe_unique.hpp"
 #include "jni/mirror.hpp"
 
 #include "jni/java/util/Optional.hpp"
@@ -27,11 +26,13 @@
 #include "jni/lief/pe/LoadConfigurations/CHPEMetadata/Metadata.hpp"
 
 #include <LIEF/PE/LoadConfigurations.hpp>
+#include <LIEF/canbe_unique.hpp>
 
 namespace lief_jni::pe {
 
 class LoadConfiguration
-  : public JNI<LoadConfiguration, canbe_unique<LIEF::PE::LoadConfiguration>> {
+  : public JNI<LoadConfiguration,
+               LIEF::details::canbe_unique<LIEF::PE::LoadConfiguration>> {
   public:
   using lief_t = LIEF::PE::LoadConfiguration;
 

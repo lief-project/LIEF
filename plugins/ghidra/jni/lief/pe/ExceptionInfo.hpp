@@ -16,15 +16,16 @@
 
 #include <jni_bind.h>
 
-#include "jni/canbe_unique.hpp"
 #include "jni/mirror.hpp"
 
 #include <LIEF/PE/ExceptionInfo.hpp>
+#include <LIEF/canbe_unique.hpp>
 
 namespace lief_jni::pe {
 
 class ExceptionInfo
-  : public JNI<ExceptionInfo, canbe_unique<LIEF::PE::ExceptionInfo>> {
+  : public JNI<ExceptionInfo,
+               LIEF::details::canbe_unique<LIEF::PE::ExceptionInfo>> {
   public:
   using JNI::JNI;
   using lief_t = LIEF::PE::ExceptionInfo;

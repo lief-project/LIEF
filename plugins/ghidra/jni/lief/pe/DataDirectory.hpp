@@ -16,15 +16,16 @@
 
 #include <jni_bind.h>
 
-#include "jni/canbe_unique.hpp"
 #include "jni/mirror.hpp"
 
 #include <LIEF/PE/DataDirectory.hpp>
+#include <LIEF/canbe_unique.hpp>
 
 namespace lief_jni::pe {
 
 class DataDirectory
-  : public JNI<DataDirectory, canbe_unique<LIEF::PE::DataDirectory>> {
+  : public JNI<DataDirectory,
+               LIEF::details::canbe_unique<LIEF::PE::DataDirectory>> {
   public:
   using lief_t = LIEF::PE::DataDirectory;
 
