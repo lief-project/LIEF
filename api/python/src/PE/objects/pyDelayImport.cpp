@@ -52,8 +52,22 @@ void create<DelayImport>(nb::module_& m) {
       .def_prop_rw(
           "attribute", nb::overload_cast<>(&DelayImport::attribute, nb::const_),
           nb::overload_cast<uint32_t>(&DelayImport::attribute),
-          "Reserved and **should** be zero according to the PE specifications"_doc
+          R"delim(
+          Raw ``Attributes`` value of the descriptor.
+
+          The PE specifications say that it must be zero but the delay-load
+          helpers use it to check if the addresses of the descriptor are RVAs or VAs
+
+          See: :attr:`~lief.PE.DelayImport.is_rva_based`
+          )delim"_doc
       )
+
+      .def_prop_ro("is_rva_based", &DelayImport::is_rva_based,
+                   R"delim(
+                   ``True`` if the ``dlattrRva`` flag of
+                   :attr:`~lief.PE.DelayImport.attribute` is set, i.e. if the
+                   addresses of the descriptor are RVAs.
+                   )delim"_doc)
 
       .def_prop_rw("handle", nb::overload_cast<>(&DelayImport::handle, nb::const_),
                    nb::overload_cast<uint32_t>(&DelayImport::handle),

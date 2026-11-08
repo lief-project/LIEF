@@ -8,6 +8,7 @@ pub mod ffi {
         type PE_DelayImport;
 
         fn attribute(self: &PE_DelayImport) -> u32;
+        fn is_rva_based(self: &PE_DelayImport) -> bool;
         fn name(self: &PE_DelayImport) -> UniquePtr<CxxString>;
         fn handle(self: &PE_DelayImport) -> u32;
         fn iat(self: &PE_DelayImport) -> u32;

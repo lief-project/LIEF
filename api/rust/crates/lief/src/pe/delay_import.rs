@@ -10,9 +10,20 @@ pub struct DelayImport<'a> {
 }
 
 impl DelayImport<'_> {
-    /// According to the official PE specifications, this value is reserved and should be set to 0
+    /// Raw `Attributes` value of the descriptor.
+    ///
+    /// The PE specifications say that it must be zero but the delay-load
+    /// helpers use it to check if the addresses of the descriptor are RVAs or VAs
+    ///
+    /// See: [`DelayImport::is_rva_based`]
     pub fn attribute(&self) -> u32 {
         self.ptr.attribute()
+    }
+
+    /// Check if the `dlattrRva` flag of [`DelayImport::attribute`] is set: i.e. if the addresses
+    /// of the descriptor are RVAs.
+    pub fn is_rva_based(&self) -> bool {
+        self.ptr.is_rva_based()
     }
 
     /// Return the library's name (e.g. `kernel32.dll`)
@@ -68,6 +79,7 @@ impl std::fmt::Debug for DelayImport<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("DelayImport")
             .field("attribute", &self.attribute())
+            .field("is_rva_based", &self.is_rva_based())
             .field("name", &self.name())
             .field("handle", &self.handle())
             .field("iat", &self.iat())

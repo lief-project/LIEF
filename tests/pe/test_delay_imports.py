@@ -29,6 +29,7 @@ def test_simple():
     assert shlwapi.biat == 0x23F80
     assert shlwapi.uiat == 0
     assert shlwapi.timestamp == 0
+    assert shlwapi.is_rva_based
     assert len(shlwapi.entries) == 1
 
     strstra = shlwapi.entries[0]
@@ -96,6 +97,7 @@ def test_cmd():
     assert shell32.biat == 0
     assert shell32.uiat == 0
     assert shell32.timestamp == 0
+    assert shell32.is_rva_based
     assert len(shell32.entries) == 2
 
     SHChangeNotify = shell32.entries[0]
@@ -113,6 +115,27 @@ def test_cmd():
     assert ShellExecuteExW.iat_value == 0x4AD155A0
     assert ShellExecuteExW.data == 0x2A700
     assert ShellExecuteExW.hint == 0
+
+
+@pytest.mark.private
+def test_va_based():
+    """
+    Descriptor without the ``dlattrRva`` flag (pre-VC 7.0 format)
+    """
+    pe = parse_pe("private/PE/delayed_va.exe")
+
+    shlwapi = pe.delay_imports[0]
+    assert shlwapi.attribute == 0
+    assert not shlwapi.is_rva_based
+
+    # The addresses are still parsed as RVAs
+    assert shlwapi.name == "SHLWAPI.dll"
+    assert shlwapi.entries[0].name == "StrStrA"
+
+    assert pe.delay_imports[1].is_rva_based
+
+    shlwapi.attribute = 0x3
+    assert shlwapi.is_rva_based
 
 
 @pytest.mark.private

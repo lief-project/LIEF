@@ -64,13 +64,23 @@ class LIEF_API DelayImport : public Object {
 
   void swap(DelayImport& other);
 
-  /// According to the official PE specifications,
-  /// this value is reserved and should be set to 0.
+  /// Raw `Attributes` value of the descriptor.
+  ///
+  /// The PE specifications say that it must be zero but the delay-load
+  /// helpers use it to check if the addresses of the descriptor are RVAs or VAs
+  ///
+  /// See: is_rva_based()
   uint32_t attribute() const {
     return attribute_;
   }
   void attribute(uint32_t hdl) {
     attribute_ = hdl;
+  }
+
+  /// Check if the `dlattrRva` flag of attribute() is set, i.e. if the
+  /// addresses of the descriptor are RVAs.
+  bool is_rva_based() const {
+    return (attribute_ & 0x1) != 0;
   }
 
   /// Return the library's name (e.g. `kernel32.dll`)

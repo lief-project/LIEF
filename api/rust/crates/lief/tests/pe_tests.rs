@@ -424,7 +424,10 @@ fn explore_pe(bin_name: &str, pe: &lief::pe::Binary) {
 
     if bin_name == "PE64_x86-64_binary_cmd.exe" {
         assert!(pe.delay_import_by_name("foo.dll").is_none());
-        assert!(pe.delay_import_by_name("SHELL32.dll").is_some());
+        assert!(
+            pe.delay_import_by_name("SHELL32.dll")
+                .is_some_and(|imp| imp.is_rva_based())
+        );
     }
 }
 

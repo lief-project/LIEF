@@ -1080,6 +1080,9 @@ class DelayImport(lief.Object):
 
     attribute: int
 
+    @property
+    def is_rva_based(self) -> bool: ...
+
     handle: int
 
     iat: int

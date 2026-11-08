@@ -43,6 +43,9 @@ class PE_DelayImport : private Mirror<LIEF::PE::DelayImport> {
   uint32_t attribute() const {
     return get().attribute();
   }
+  bool is_rva_based() const {
+    return get().is_rva_based();
+  }
   auto name() const {
     return to_unique_string(get().name());
   }
