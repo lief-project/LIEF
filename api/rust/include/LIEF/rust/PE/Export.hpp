@@ -32,9 +32,11 @@ class PE_Export : public Mirror<LIEF::PE::Export> {
     public:
     it_entries(const PE_Export::lief_t& src) :
       Iterator(src.entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -47,15 +49,19 @@ class PE_Export : public Mirror<LIEF::PE::Export> {
   auto export_flags() const {
     return get().export_flags();
   }
+
   auto timestamp() const {
     return get().timestamp();
   }
+
   auto major_version() const {
     return get().major_version();
   }
+
   auto minor_version() const {
     return get().minor_version();
   }
+
   auto ordinal_base() const {
     return get().ordinal_base();
   }
@@ -63,18 +69,23 @@ class PE_Export : public Mirror<LIEF::PE::Export> {
   auto name_rva() const {
     return get().name_rva();
   }
+
   auto export_addr_table_rva() const {
     return get().export_addr_table_rva();
   }
+
   auto export_addr_table_cnt() const {
     return get().export_addr_table_cnt();
   }
+
   auto names_addr_table_rva() const {
     return get().names_addr_table_rva();
   }
+
   auto names_addr_table_cnt() const {
     return get().names_addr_table_cnt();
   }
+
   auto ord_addr_table_rva() const {
     return get().ord_addr_table_rva();
   }
@@ -90,15 +101,19 @@ class PE_Export : public Mirror<LIEF::PE::Export> {
   auto set_export_flags(uint32_t flags) {
     get().export_flags(flags);
   }
+
   auto set_timestamp(uint32_t ts) {
     get().timestamp(ts);
   }
+
   auto set_major_version(uint32_t version) {
     get().major_version(version);
   }
+
   auto set_minor_version(uint32_t version) {
     get().minor_version(version);
   }
+
   auto set_name(const std::string& name) {
     get().name(name);
   }

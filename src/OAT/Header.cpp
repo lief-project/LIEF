@@ -115,6 +115,7 @@ int32_t Header::image_patch_delta() const {
 uint32_t Header::image_file_location_oat_checksum() const {
   return image_file_location_oat_checksum_;
 }
+
 uint32_t Header::image_file_location_oat_data_begin() const {
   return image_file_location_oat_data_begin_;
 }

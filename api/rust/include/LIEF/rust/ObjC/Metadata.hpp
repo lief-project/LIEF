@@ -34,9 +34,11 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
     public:
     it_classes(const ObjC_Metadata::lief_t& src) :
       ForwardIterator(src.classes()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -47,9 +49,11 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
     public:
     it_protocols(const ObjC_Metadata::lief_t& src) :
       ForwardIterator(src.protocols()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -60,9 +64,11 @@ class ObjC_Metadata : private Mirror<LIEF::objc::Metadata> {
     public:
     it_categories(const ObjC_Metadata::lief_t& src) :
       ForwardIterator(src.categories()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }

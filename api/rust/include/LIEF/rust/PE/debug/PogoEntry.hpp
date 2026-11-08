@@ -27,9 +27,11 @@ class PE_PogoEntry : private Mirror<LIEF::PE::PogoEntry> {
   uint32_t start_rva() const {
     return get().start_rva();
   }
+
   uint32_t size() const {
     return get().size();
   }
+
   auto name() const {
     return to_unique_string(get().name());
   }

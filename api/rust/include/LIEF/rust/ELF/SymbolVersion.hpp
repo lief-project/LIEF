@@ -59,6 +59,7 @@ class ELF_SymbolVersion : private Mirror<LIEF::ELF::SymbolVersion> {
   auto as_local() {
     get().as_local();
   }
+
   auto as_global() {
     get().as_global();
   }

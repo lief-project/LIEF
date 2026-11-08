@@ -27,15 +27,19 @@ class runtime_Memory_Chunk : public Mirror<LIEF::runtime::Memory::Chunk> {
   uint64_t addr() const {
     return get().addr();
   }
+
   uint64_t size() const {
     return get().size();
   }
+
   auto permissions() const {
     return get().permissions();
   }
+
   uint64_t page_start() const {
     return get().page_start();
   }
+
   uint64_t page_end() const {
     return get().page_end();
   }
@@ -47,15 +51,19 @@ class runtime_Memory_Chunk : public Mirror<LIEF::runtime::Memory::Chunk> {
   void make_x() {
     get().make_x();
   }
+
   void make_rw() {
     get().make_rw();
   }
+
   void make_rx() {
     get().make_rx();
   }
+
   void make_rwx() {
     get().make_rwx();
   }
+
   void make_ro() {
     get().make_ro();
   }

@@ -87,6 +87,7 @@ class LIEF_API FilesetCommand : public LoadCommand {
   void virtual_address(uint64_t virtual_address) {
     virtual_address_ = virtual_address;
   }
+
   void file_offset(uint64_t file_offset) {
     file_offset_ = file_offset;
   }

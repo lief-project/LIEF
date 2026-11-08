@@ -26,9 +26,11 @@ class PE_DataDirectory : private Mirror<LIEF::PE::DataDirectory> {
   uint32_t RVA() const {
     return get().RVA();
   }
+
   uint32_t size() const {
     return get().size();
   }
+
   uint32_t get_type() const {
     return to_int(get().type());
   }

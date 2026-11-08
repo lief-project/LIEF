@@ -25,9 +25,11 @@ class asm_x86_operands_Memory : public asm_x86_Operand {
   uint64_t base() const {
     return to_int(impl().base());
   }
+
   uint64_t scaled_register() const {
     return to_int(impl().scaled_register());
   }
+
   uint64_t segment_register() const {
     return to_int(impl().segment_register());
   }
@@ -35,6 +37,7 @@ class asm_x86_operands_Memory : public asm_x86_Operand {
   auto scale() const {
     return impl().scale();
   }
+
   auto displacement() const {
     return impl().displacement();
   }

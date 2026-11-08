@@ -26,6 +26,7 @@ class MachO_BuildToolVersion : Mirror<LIEF::MachO::BuildToolVersion> {
   auto tool() const {
     return as_u32(get().tool());
   }
+
   auto version() const {
     return make_unique_vector<uint64_t>(details::make_vector(get().version()));
   }

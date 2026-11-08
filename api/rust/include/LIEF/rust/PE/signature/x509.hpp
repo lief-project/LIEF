@@ -28,6 +28,7 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
   uint32_t version() const {
     return get().version();
   }
+
   auto serial_number() const {
     return make_unique_vector<uint8_t>(get().serial_number());
   }
@@ -35,6 +36,7 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
   auto signature_algorithm() const {
     return to_unique_string(get().signature_algorithm());
   }
+
   auto valid_from() const {
     return make_unique_vector<uint64_t>(details::make_vector(get().valid_from()));
   }
@@ -46,9 +48,11 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
   auto issuer() const {
     return to_unique_string(get().issuer());
   }
+
   auto subject() const {
     return to_unique_string(get().subject());
   }
+
   auto raw() const {
     return make_unique_vector<uint8_t>(get().raw());
   }
@@ -56,9 +60,11 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
   auto key_type() const {
     return as_u32(get().key_type());
   }
+
   auto is_ca() const {
     return get().is_ca();
   }
+
   auto signature() const {
     return make_unique_vector<uint8_t>(get().signature());
   }
@@ -85,10 +91,12 @@ class PE_x509 : private Mirror<LIEF::PE::x509> {
     }
     return result;
   }
+
   auto ext_key_usage() const {
     auto v = get().ext_key_usage();
     return make_unique_vector<std::string>(v.begin(), v.end());
   }
+
   auto certificate_policies() const {
     auto v = get().certificate_policies();
     return make_unique_vector<std::string>(v.begin(), v.end());

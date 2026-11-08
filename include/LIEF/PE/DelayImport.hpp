@@ -73,6 +73,7 @@ class LIEF_API DelayImport : public Object {
   uint32_t attribute() const {
     return attribute_;
   }
+
   void attribute(uint32_t hdl) {
     attribute_ = hdl;
   }
@@ -87,6 +88,7 @@ class LIEF_API DelayImport : public Object {
   std::string_view name() const LIEF_LIFETIMEBOUND {
     return name_;
   }
+
   void name(std::string name) {
     name_ = std::move(name);
   }
@@ -97,6 +99,7 @@ class LIEF_API DelayImport : public Object {
   uint32_t handle() const {
     return handle_;
   }
+
   void handle(uint32_t hdl) {
     handle_ = hdl;
   }
@@ -105,6 +108,7 @@ class LIEF_API DelayImport : public Object {
   uint32_t iat() const {
     return iat_;
   }
+
   void iat(uint32_t iat) {
     iat_ = iat;
   }
@@ -114,6 +118,7 @@ class LIEF_API DelayImport : public Object {
   uint32_t names_table() const {
     return names_table_;
   }
+
   void names_table(uint32_t value) {
     names_table_ = value;
   }
@@ -123,6 +128,7 @@ class LIEF_API DelayImport : public Object {
   uint32_t biat() const {
     return bound_iat_;
   }
+
   void biat(uint32_t value) {
     bound_iat_ = value;
   }
@@ -136,6 +142,7 @@ class LIEF_API DelayImport : public Object {
   uint32_t uiat() const {
     return unload_iat_;
   }
+
   void uiat(uint32_t value) {
     unload_iat_ = value;
   }
@@ -144,6 +151,7 @@ class LIEF_API DelayImport : public Object {
   uint32_t timestamp() const {
     return timestamp_;
   }
+
   void timestamp(uint32_t value) {
     timestamp_ = value;
   }

@@ -60,10 +60,13 @@ class LIEF_API Function : public Symbol {
   Function() = default;
   Function(std::string_view name) :
     Symbol(std::string(name)) {}
+
   Function(uint64_t address) :
     Function("", address) {}
+
   Function(std::string_view name, uint64_t address) :
     Symbol(std::string(name), address) {}
+
   Function(std::string_view name, uint64_t address, FLAGS flags) :
     Function(name, address) {
     flags_ = flags;

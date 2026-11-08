@@ -32,9 +32,11 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     public:
     it_libraries(const dsc_DyldSharedCache::lief_t& src) :
       RandomRangeIterator(src.libraries()) {}
+
     auto next() {
       return RandomRangeIterator::next();
     }
+
     auto size() const {
       return RandomRangeIterator::size();
     }
@@ -46,9 +48,11 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     public:
     it_mapping_info(const dsc_DyldSharedCache::lief_t& src) :
       RandomRangeIterator(src.mapping_info()) {}
+
     auto next() {
       return RandomRangeIterator::next();
     }
+
     auto size() const {
       return RandomRangeIterator::size();
     }
@@ -59,9 +63,11 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     public:
     it_subcaches(const dsc_DyldSharedCache::lief_t& src) :
       RandomRangeIterator(src.subcaches()) {}
+
     auto next() {
       return RandomRangeIterator::next();
     }
+
     auto size() const {
       return RandomRangeIterator::size();
     }
@@ -73,6 +79,7 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
     public:
     it_instructions(const dsc_DyldSharedCache::lief_t& src, uint64_t addr) :
       ForwardIterator(src.disassemble(addr)) {}
+
     auto next() {
       return ForwardIterator::next();
     }
@@ -99,9 +106,11 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
   auto libraries() const {
     return std::make_unique<it_libraries>(get());
   }
+
   auto mapping_info() const {
     return std::make_unique<it_mapping_info>(get());
   }
+
   auto subcaches() const {
     return std::make_unique<it_subcaches>(get());
   }
@@ -109,12 +118,15 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
   auto filename() const {
     return to_unique_string(get().filename());
   }
+
   auto version() const {
     return as_u32(get().version());
   }
+
   auto filepath() const {
     return to_unique_string(get().filepath());
   }
+
   auto load_address() const {
     return get().load_address();
   }
@@ -122,12 +134,15 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
   auto arch_name() const {
     return to_unique_string(get().arch_name());
   }
+
   auto platform() const {
     return as_u32(get().platform());
   }
+
   auto arch() const {
     return as_u32(get().arch());
   }
+
   auto has_subcaches() const {
     return get().has_subcaches();
   }
@@ -147,6 +162,7 @@ class dsc_DyldSharedCache : private Mirror<LIEF::dsc::DyldSharedCache> {
   auto enable_caching(const std::string& dir) const {
     get().enable_caching(dir);
   }
+
   auto flush_cache() const {
     get().flush_cache();
   }

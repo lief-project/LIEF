@@ -27,15 +27,19 @@ class AbstractSection : public Mirror<LIEF::Section> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   uint64_t size() const {
     return get().size();
   }
+
   uint64_t offset() const {
     return get().offset();
   }
+
   uint64_t virtual_address() const {
     return get().virtual_address();
   }
+
   Span content() const {
     return make_span(get().content());
   }

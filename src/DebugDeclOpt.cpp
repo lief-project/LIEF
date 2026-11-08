@@ -33,6 +33,7 @@ DeclOpt::~DeclOpt() = default;
 uint32_t DeclOpt::indentation() const {
   return 0;
 }
+
 DeclOpt& DeclOpt::indentation(uint32_t) {
   return *this;
 }
@@ -40,6 +41,7 @@ DeclOpt& DeclOpt::indentation(uint32_t) {
 bool DeclOpt::is_cpp() const {
   return false;
 }
+
 DeclOpt& DeclOpt::is_cpp(bool) {
   return *this;
 }
@@ -47,6 +49,7 @@ DeclOpt& DeclOpt::is_cpp(bool) {
 bool DeclOpt::show_extended_annotations() const {
   return false;
 }
+
 DeclOpt& DeclOpt::show_extended_annotations(bool) {
   return *this;
 }
@@ -54,6 +57,7 @@ DeclOpt& DeclOpt::show_extended_annotations(bool) {
 bool DeclOpt::include_types() const {
   return false;
 }
+
 DeclOpt& DeclOpt::include_types(bool) {
   return *this;
 }
@@ -61,6 +65,7 @@ DeclOpt& DeclOpt::include_types(bool) {
 bool DeclOpt::include_locals() const {
   return false;
 }
+
 DeclOpt& DeclOpt::include_locals(bool) {
   return *this;
 }
@@ -68,6 +73,7 @@ DeclOpt& DeclOpt::include_locals(bool) {
 bool DeclOpt::desugar() const {
   return false;
 }
+
 DeclOpt& DeclOpt::desugar(bool) {
   return *this;
 }
@@ -75,6 +81,7 @@ DeclOpt& DeclOpt::desugar(bool) {
 bool DeclOpt::show_field_offsets() const {
   return false;
 }
+
 DeclOpt& DeclOpt::show_field_offsets(bool) {
   return *this;
 }

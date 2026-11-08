@@ -30,6 +30,7 @@ class MachO_Routine : public MachO_Command {
   auto init_address() const {
     return impl().init_address();
   }
+
   auto init_module() const {
     return impl().init_module();
   }
@@ -37,18 +38,23 @@ class MachO_Routine : public MachO_Command {
   auto reserved1() const {
     return impl().reserved1();
   }
+
   auto reserved2() const {
     return impl().reserved2();
   }
+
   auto reserved3() const {
     return impl().reserved3();
   }
+
   auto reserved4() const {
     return impl().reserved4();
   }
+
   auto reserved5() const {
     return impl().reserved5();
   }
+
   auto reserved6() const {
     return impl().reserved6();
   }

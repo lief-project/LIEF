@@ -303,39 +303,51 @@ const llvm::MCInst& Instruction::mcinst() const {
 bool Instruction::is_memory_access() const {
   return false;
 }
+
 bool Instruction::is_move_reg() const {
   return false;
 }
+
 bool Instruction::is_add() const {
   return false;
 }
+
 bool Instruction::is_trap() const {
   return false;
 }
+
 bool Instruction::is_barrier() const {
   return false;
 }
+
 bool Instruction::is_return() const {
   return false;
 }
+
 bool Instruction::is_indirect_branch() const {
   return false;
 }
+
 bool Instruction::is_conditional_branch() const {
   return false;
 }
+
 bool Instruction::is_unconditional_branch() const {
   return false;
 }
+
 bool Instruction::is_compare() const {
   return false;
 }
+
 bool Instruction::is_move_immediate() const {
   return false;
 }
+
 bool Instruction::is_bitcast() const {
   return false;
 }
+
 Instruction::MemoryAccess Instruction::memory_access() const {
   return MemoryAccess::NONE;
 }

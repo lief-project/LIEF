@@ -31,21 +31,27 @@ class PE_Header : private Mirror<LIEF::PE::Header> {
   auto machine() const {
     return as_u32(get().machine());
   }
+
   auto numberof_sections() const {
     return get().numberof_sections();
   }
+
   auto time_date_stamp() const {
     return get().time_date_stamp();
   }
+
   auto pointerto_symbol_table() const {
     return get().pointerto_symbol_table();
   }
+
   auto numberof_symbols() const {
     return get().numberof_symbols();
   }
+
   auto sizeof_optional_header() const {
     return get().sizeof_optional_header();
   }
+
   auto characteristics() const {
     return get().characteristics();
   }

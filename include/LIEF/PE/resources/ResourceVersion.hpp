@@ -345,6 +345,7 @@ class LIEF_API ResourceVersion : public Object {
     key_ = std::move(value);
     return *this;
   }
+
   const ResourceVarFileInfo* var_file_info() const {
     return const_cast<ResourceVersion*>(this)->var_file_info();
   }

@@ -187,6 +187,7 @@ class LIEF_API Header : public Object {
   void magic(MACHO_TYPES magic) {
     magic_ = magic;
   }
+
   void cpu_type(CPU_TYPE type) {
     cputype_ = type;
   }
@@ -231,6 +232,7 @@ class LIEF_API Header : public Object {
     add(c);
     return *this;
   }
+
   Header& operator-=(FLAGS c) {
     remove(c);
     return *this;

@@ -43,9 +43,11 @@ class runtime_osx_Host_version_t {
   uint32_t get_major() const {
     return impl_.major;
   }
+
   uint32_t get_minor() const {
     return impl_.minor;
   }
+
   uint32_t get_patch() const {
     return impl_.patch;
   }

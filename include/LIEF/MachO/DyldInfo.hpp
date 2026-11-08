@@ -206,6 +206,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   span<const uint8_t> rebase_opcodes() const LIEF_LIFETIMEBOUND {
     return rebase_opcodes_;
   }
+
   span<uint8_t> rebase_opcodes() LIEF_LIFETIMEBOUND {
     return rebase_opcodes_;
   }
@@ -238,6 +239,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   span<const uint8_t> bind_opcodes() const LIEF_LIFETIMEBOUND {
     return bind_opcodes_;
   }
+
   span<uint8_t> bind_opcodes() LIEF_LIFETIMEBOUND {
     return bind_opcodes_;
   }
@@ -273,6 +275,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   span<const uint8_t> weak_bind_opcodes() const LIEF_LIFETIMEBOUND {
     return weak_bind_opcodes_;
   }
+
   span<uint8_t> weak_bind_opcodes() LIEF_LIFETIMEBOUND {
     return weak_bind_opcodes_;
   }
@@ -305,6 +308,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   span<const uint8_t> lazy_bind_opcodes() const LIEF_LIFETIMEBOUND {
     return lazy_bind_opcodes_;
   }
+
   span<uint8_t> lazy_bind_opcodes() LIEF_LIFETIMEBOUND {
     return lazy_bind_opcodes_;
   }
@@ -358,6 +362,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   it_export_info exports() LIEF_LIFETIMEBOUND {
     return export_info_;
   }
+
   it_const_export_info exports() const LIEF_LIFETIMEBOUND {
     return export_info_;
   }
@@ -366,6 +371,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   span<const uint8_t> export_trie() const LIEF_LIFETIMEBOUND {
     return export_trie_;
   }
+
   span<uint8_t> export_trie() LIEF_LIFETIMEBOUND {
     return export_trie_;
   }
@@ -379,15 +385,19 @@ class LIEF_API DyldInfo : public LoadCommand {
   void rebase(const info_t& info) {
     rebase_ = info;
   }
+
   void bind(const info_t& info) {
     bind_ = info;
   }
+
   void weak_bind(const info_t& info) {
     weak_bind_ = info;
   }
+
   void lazy_bind(const info_t& info) {
     lazy_bind_ = info;
   }
+
   void export_info(const info_t& info) {
     export_ = info;
   }
@@ -395,6 +405,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   void set_rebase_offset(uint32_t offset) {
     rebase_ = {offset, std::get<1>(rebase())};
   }
+
   void set_rebase_size(uint32_t size) {
     rebase_ = {std::get<0>(rebase()), size};
   }
@@ -402,6 +413,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   void set_bind_offset(uint32_t offset) {
     bind_ = {offset, std::get<1>(bind())};
   }
+
   void set_bind_size(uint32_t size) {
     bind_ = {std::get<0>(bind()), size};
   }
@@ -409,6 +421,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   void set_weak_bind_offset(uint32_t offset) {
     weak_bind_ = {offset, std::get<1>(weak_bind())};
   }
+
   void set_weak_bind_size(uint32_t size) {
     weak_bind_ = {std::get<0>(weak_bind()), size};
   }
@@ -416,6 +429,7 @@ class LIEF_API DyldInfo : public LoadCommand {
   void set_lazy_bind_offset(uint32_t offset) {
     lazy_bind_ = {offset, std::get<1>(lazy_bind())};
   }
+
   void set_lazy_bind_size(uint32_t size) {
     lazy_bind_ = {std::get<0>(lazy_bind()), size};
   }

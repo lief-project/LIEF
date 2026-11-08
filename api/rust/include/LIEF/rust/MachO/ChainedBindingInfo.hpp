@@ -28,12 +28,15 @@ class MachO_ChainedBindingInfo : public MachO_BindingInfo {
   auto format() const {
     return as_u32(impl().format());
   }
+
   auto ptr_format() const {
     return as_u32(impl().ptr_format());
   }
+
   uint32_t offset() const {
     return impl().offset();
   }
+
   auto sign_extended_addend() const {
     return impl().sign_extended_addend();
   }

@@ -28,6 +28,7 @@ union unwind_code_t {
   uint8_t op() const {
     return opcode.op_info & 0x0F;
   }
+
   uint8_t op_info() const {
     return (opcode.op_info >> 4) & 0x0F;
   }

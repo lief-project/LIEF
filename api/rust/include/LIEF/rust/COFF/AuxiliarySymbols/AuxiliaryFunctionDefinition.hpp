@@ -26,15 +26,19 @@ class COFF_AuxiliaryFunctionDefinition : public COFF_AuxiliarySymbol {
   auto tag_index() const {
     return impl().tag_index();
   }
+
   auto total_size() const {
     return impl().total_size();
   }
+
   auto ptr_to_line_number() const {
     return impl().ptr_to_line_number();
   }
+
   auto ptr_to_next_func() const {
     return impl().ptr_to_next_func();
   }
+
   auto padding() const {
     return impl().padding();
   }

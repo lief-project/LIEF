@@ -27,9 +27,11 @@ class dsc_SubCache : private Mirror<LIEF::dsc::SubCache> {
   auto vm_offset() const {
     return get().vm_offset();
   }
+
   auto suffix() const {
     return to_unique_string(get().suffix());
   }
+
   auto uuid() const {
     return make_unique_vector<uint64_t>(details::make_vector(get().uuid()));
   }

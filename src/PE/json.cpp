@@ -845,6 +845,7 @@ void JsonVisitor::visit(const PKCS9AtSequenceNumber& attr) {
   visit(*attr.as<Attribute>());
   node_["number"] = attr.number();
 }
+
 void JsonVisitor::visit(const PKCS9CounterSignature& attr) {
 
   visit(*attr.as<Attribute>());

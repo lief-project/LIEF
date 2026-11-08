@@ -184,9 +184,11 @@ class DWARF_CompositeLocation : public DWARF_Location {
     public:
     it_pieces(const LIEF::dwarf::CompositeLocation& src) :
       ForwardIterator(src.pieces.cbegin(), src.pieces.cend()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -243,9 +245,11 @@ class DWARF_it_locations
   using container_t = std::vector<LIEF::dwarf::LocationEntry>;
   DWARF_it_locations(container_t content) :
     ContainerIterator(std::move(content)) {}
+
   auto next() {
     return ContainerIterator::next();
   }
+
   auto size() const {
     return ContainerIterator::size();
   }

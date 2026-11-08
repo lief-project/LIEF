@@ -34,6 +34,7 @@ class ELF_DynamicEntryRunPath : public ELF_DynamicEntry {
   auto runpath() const {
     return to_unique_string(impl().runpath());
   }
+
   auto paths() const {
     return make_unique_vector<std::string>(impl().paths());
   }
@@ -62,6 +63,7 @@ class ELF_DynamicEntryRunPath : public ELF_DynamicEntry {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

@@ -40,15 +40,19 @@ class hashstream {
   hashstream& put(uint8_t c) {
     return write(&c, 1);
   }
+
   hashstream& write(const std::vector<uint8_t>& s) {
     return write(s.data(), s.size());
   }
+
   hashstream& write(const std::string& s) {
     return write(reinterpret_cast<const uint8_t*>(s.c_str()), s.size() + 1);
   }
+
   hashstream& write(size_t count, uint8_t value) {
     return write(std::vector<uint8_t>(count, value));
   }
+
   hashstream& write_sized_int(uint64_t value, size_t size) {
     return write(reinterpret_cast<const uint8_t*>(&value), size);
   }

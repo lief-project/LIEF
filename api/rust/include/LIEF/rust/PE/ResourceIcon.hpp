@@ -26,30 +26,39 @@ class PE_ResourceIcon : private Mirror<LIEF::PE::ResourceIcon> {
   auto id() const {
     return get().id();
   }
+
   auto lang() const {
     return get().lang();
   }
+
   auto sublang() const {
     return get().sublang();
   }
+
   auto width() const {
     return get().width();
   }
+
   auto height() const {
     return get().height();
   }
+
   auto color_count() const {
     return get().color_count();
   }
+
   auto reserved() const {
     return get().reserved();
   }
+
   auto planes() const {
     return get().planes();
   }
+
   auto bit_count() const {
     return get().bit_count();
   }
+
   auto size() const {
     return get().size();
   }

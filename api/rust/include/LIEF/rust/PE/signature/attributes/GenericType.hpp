@@ -13,6 +13,7 @@ class PE_GenericType : public PE_Attribute {
   auto oid() const {
     return to_unique_string(impl().oid());
   }
+
   auto raw_content() const {
     return make_span(impl().raw_content());
   }

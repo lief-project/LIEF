@@ -691,9 +691,11 @@ class iterator_range {
   IteratorT begin() const {
     return begin_;
   }
+
   IteratorT end() const {
     return end_;
   }
+
   bool empty() const {
     return begin_ == end_;
   }
@@ -912,11 +914,13 @@ class iterator_facade_base {
     tmp += n;
     return tmp;
   }
+
   friend DerivedT operator+(DifferenceTypeT n, const DerivedT& i) {
     static_assert(IsRandomAccess,
                   "The '+' operator is only defined for random access iterators.");
     return i + n;
   }
+
   DerivedT operator-(DifferenceTypeT n) const {
     static_assert(IsRandomAccess,
                   "The '-' operator is only defined for random access iterators.");
@@ -930,11 +934,13 @@ class iterator_facade_base {
                   "Must pass the derived type to this template!");
     return static_cast<DerivedT*>(this)->operator+=(1);
   }
+
   DerivedT operator++(int) {
     DerivedT tmp = *static_cast<DerivedT*>(this);
     ++*static_cast<DerivedT*>(this);
     return tmp;
   }
+
   DerivedT& operator--() {
     static_assert(
         IsBidirectional,
@@ -942,6 +948,7 @@ class iterator_facade_base {
     );
     return static_cast<DerivedT*>(this)->operator-=(1);
   }
+
   DerivedT operator--(int) {
     static_assert(
         IsBidirectional,
@@ -966,6 +973,7 @@ class iterator_facade_base {
     return !(static_cast<const DerivedT&>(*this) < RHS) &&
            !(static_cast<const DerivedT&>(*this) == RHS);
   }
+
   bool operator<=(const DerivedT& RHS) const {
     static_assert(
         IsRandomAccess,
@@ -973,6 +981,7 @@ class iterator_facade_base {
     );
     return !(static_cast<const DerivedT&>(*this) > RHS);
   }
+
   bool operator>=(const DerivedT& RHS) const {
     static_assert(
         IsRandomAccess,
@@ -984,6 +993,7 @@ class iterator_facade_base {
   PointerProxy operator->() const {
     return static_cast<const DerivedT*>(this)->operator*();
   }
+
   ReferenceProxy operator[](DifferenceTypeT n) const {
     static_assert(IsRandomAccess,
                   "Subscripting is only defined for random access iterators.");
@@ -1043,6 +1053,7 @@ class iterator_adaptor_base
     I += n;
     return *static_cast<DerivedT*>(this);
   }
+
   DerivedT& operator-=(difference_type n) {
     static_assert(
         BaseT::IsRandomAccess,
@@ -1079,6 +1090,7 @@ class iterator_adaptor_base
                          const iterator_adaptor_base& RHS) {
     return LHS.I == RHS.I;
   }
+
   friend bool operator<(const iterator_adaptor_base& LHS,
                         const iterator_adaptor_base& RHS) {
     static_assert(

@@ -97,9 +97,11 @@ class DWARF_editor_Function : public Mirror<LIEF::dwarf::editor::Function> {
   auto set_address(uint64_t addr) {
     get().set_address(addr);
   }
+
   auto set_low_high(uint64_t low, uint64_t high) {
     get().set_low_high(low, high);
   }
+
   auto set_ranges(const std::vector<DWARF_editor_Function_Range>& ranges) {
     std::vector<lief_t::range_t> conv_ranges;
     conv_ranges.reserve(ranges.size());
@@ -109,6 +111,7 @@ class DWARF_editor_Function : public Mirror<LIEF::dwarf::editor::Function> {
                    });
     get().set_ranges(std::move(conv_ranges));
   }
+
   auto set_external() {
     get().set_external();
   }

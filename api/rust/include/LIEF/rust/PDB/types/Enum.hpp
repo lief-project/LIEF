@@ -44,9 +44,11 @@ class PDB_types_Enum : public PDB_Type {
     using container_t = std::vector<LIEF::pdb::types::Enum::Entry>;
     it_entries(container_t content) :
       ContainerIterator(std::move(content)) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }

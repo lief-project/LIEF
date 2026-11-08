@@ -70,9 +70,11 @@ class LIEF_API DataCodeEntry : public LIEF::Object {
   void offset(uint32_t off) {
     offset_ = off;
   }
+
   void length(uint16_t length) {
     length_ = length;
   }
+
   void type(TYPES type) {
     type_ = type;
   }

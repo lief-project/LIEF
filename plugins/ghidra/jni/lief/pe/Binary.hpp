@@ -80,6 +80,7 @@ class Binary : public generic::Binary {
         from_jni(thiz)->cast<lief_t>().load_config_dir()
     );
   }
+
   static jobject jni_get_exceptions(JNIEnv* env, jobject thiz) {
     jni::ThreadGuard TG;
     return ExceptionsIterator::create(from_jni(thiz)->cast<lief_t>().exceptions());

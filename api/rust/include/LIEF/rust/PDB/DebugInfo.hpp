@@ -33,9 +33,11 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     public:
     it_compilation_units(const PDB_DebugInfo::lief_t& src) :
       ForwardIterator(src.compilation_units()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -46,9 +48,11 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     public:
     it_public_symbols(const PDB_DebugInfo::lief_t& src) :
       ForwardIterator(src.public_symbols()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -58,9 +62,11 @@ class PDB_DebugInfo : public AbstracDebugInfo {
     public:
     it_types(const PDB_DebugInfo::lief_t& src) :
       ForwardIterator(src.types()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -78,6 +84,7 @@ class PDB_DebugInfo : public AbstracDebugInfo {
   auto age() const {
     return impl().age();
   }
+
   auto guid() const {
     return to_unique_string(impl().guid());
   }

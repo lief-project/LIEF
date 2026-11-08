@@ -47,12 +47,15 @@ class PE_Factory {
   auto is_32bit() const {
     return factory_->is_32bit();
   }
+
   auto is_64bit() const {
     return factory_->is_64bit();
   }
+
   auto section_align() const {
     return factory_->section_align();
   }
+
   auto file_align() const {
     return factory_->file_align();
   }

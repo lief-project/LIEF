@@ -26,9 +26,11 @@ class AbstractSymbol : public Mirror<LIEF::Symbol> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto size() const {
     return get().size();
   }
+
   auto value() const {
     return get().value();
   }

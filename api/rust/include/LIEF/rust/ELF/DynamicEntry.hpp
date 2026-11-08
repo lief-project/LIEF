@@ -38,6 +38,7 @@ class ELF_DynamicEntry : public Mirror<LIEF::ELF::DynamicEntry> {
   auto tag() const {
     return as_u64(get().tag());
   }
+
   auto value() const {
     return get().value();
   }

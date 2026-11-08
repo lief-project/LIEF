@@ -38,6 +38,7 @@ class ELF_DynamicEntryLibrary : public ELF_DynamicEntry {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

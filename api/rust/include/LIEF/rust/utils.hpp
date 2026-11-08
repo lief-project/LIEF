@@ -47,6 +47,7 @@ inline LIEFVersion version() {
   auto version = LIEF::version();
   return {version.major, version.minor, version.patch, version.id};
 }
+
 inline auto dump(const uint8_t* buffer, size_t size) {
   return to_unique_string(LIEF::dump(buffer, size));
 }

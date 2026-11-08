@@ -23,6 +23,7 @@ class PE_CodeViewPDB : public PE_CodeView {
   using lief_t = LIEF::PE::CodeViewPDB;
   PE_CodeViewPDB(const lief_t& obj) :
     PE_CodeView(obj) {}
+
   PE_CodeViewPDB(std::unique_ptr<LIEF::PE::CodeViewPDB> obj) :
     PE_CodeView(std::move(obj)) {}
 
@@ -77,6 +78,7 @@ class PE_CodeViewPDB : public PE_CodeView {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

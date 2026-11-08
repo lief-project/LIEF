@@ -31,12 +31,15 @@ class MachO_FunctionVariants_RuntimeTableEntry
   auto implementation() const {
     return get().impl();
   }
+
   auto another_table() const {
     return get().another_table();
   }
+
   auto flag_bit_nums() const {
     return make_span(get().flag_bit_nums());
   }
+
   auto flags() const {
     auto out = make_unique_vector<uint32_t>();
     const std::vector<lief_t::FLAGS> flags = get().flags();
@@ -61,9 +64,11 @@ class MachO_FunctionVariants_RuntimeTable
     public:
     it_entries(const MachO_FunctionVariants_RuntimeTable::lief_t& src) :
       Iterator(src.entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -72,9 +77,11 @@ class MachO_FunctionVariants_RuntimeTable
   auto kind() const {
     return as_u32(get().kind());
   }
+
   auto offset() const {
     return get().offset();
   }
+
   auto entries() const {
     return std::make_unique<it_entries>(get());
   }
@@ -96,9 +103,11 @@ class MachO_FunctionVariants : public MachO_Command {
     public:
     it_runtime_table(const MachO_FunctionVariants::lief_t& src) :
       Iterator(src.runtime_table()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -110,6 +119,7 @@ class MachO_FunctionVariants : public MachO_Command {
   auto data_offset() const {
     return impl().data_offset();
   }
+
   auto data_size() const {
     return impl().data_size();
   }

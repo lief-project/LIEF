@@ -28,9 +28,11 @@ class PE_RelocationEntry : public AbstractRelocation {
   uint64_t position() const {
     return impl().position();
   }
+
   uint32_t get_type() const {
     return to_int(impl().type());
   }
+
   uint16_t data() const {
     return impl().data();
   }

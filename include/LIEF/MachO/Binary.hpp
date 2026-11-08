@@ -271,6 +271,7 @@ class LIEF_API Binary : public LIEF::Binary {
   it_symbols symbols() LIEF_LIFETIMEBOUND {
     return symbols_;
   }
+
   it_const_symbols symbols() const LIEF_LIFETIMEBOUND {
     return symbols_;
   }
@@ -296,6 +297,7 @@ class LIEF_API Binary : public LIEF::Binary {
               return is_exported(*symbol);
             }};
   }
+
   it_const_exported_symbols exported_symbols() const LIEF_LIFETIMEBOUND {
     return {symbols_, [](const std::unique_ptr<Symbol>& symbol) {
               return is_exported(*symbol);
@@ -341,6 +343,7 @@ class LIEF_API Binary : public LIEF::Binary {
   it_segments segments() LIEF_LIFETIMEBOUND {
     return segments_;
   }
+
   it_const_segments segments() const LIEF_LIFETIMEBOUND {
     return segments_;
   }
@@ -349,6 +352,7 @@ class LIEF_API Binary : public LIEF::Binary {
   it_sections sections() LIEF_LIFETIMEBOUND {
     return sections_;
   }
+
   it_const_sections sections() const LIEF_LIFETIMEBOUND {
     return sections_;
   }
@@ -1057,6 +1061,7 @@ class LIEF_API Binary : public LIEF::Binary {
   LoadCommand* operator[](LoadCommand::TYPE type) {
     return get(type);
   }
+
   const LoadCommand* operator[](LoadCommand::TYPE type) const {
     return get(type);
   }

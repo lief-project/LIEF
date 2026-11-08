@@ -51,6 +51,7 @@ class LIEF_API UUIDCommand : public LoadCommand {
   const uuid_t& uuid() const LIEF_LIFETIMEBOUND {
     return uuid_;
   }
+
   void uuid(const uuid_t& uuid) {
     uuid_ = uuid;
   }

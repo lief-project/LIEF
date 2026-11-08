@@ -27,9 +27,11 @@ class runtime_Module : public Mirror<LIEF::runtime::Module> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto path() const {
     return to_unique_string(get().path());
   }
+
   auto imagebase() const {
     return get().imagebase();
   }
@@ -37,6 +39,7 @@ class runtime_Module : public Mirror<LIEF::runtime::Module> {
   uint64_t size() const {
     return get().size();
   }
+
   auto end() const {
     return get().end();
   }

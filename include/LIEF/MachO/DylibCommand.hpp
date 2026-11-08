@@ -125,12 +125,15 @@ class LIEF_API DylibCommand : public LoadCommand {
   void name(std::string name) {
     name_ = std::move(name);
   }
+
   void timestamp(uint32_t timestamp) {
     timestamp_ = timestamp;
   }
+
   void current_version(version_t version) {
     current_version_ = version2int(version);
   }
+
   void compatibility_version(version_t version) {
     compatibility_version_ = version2int(version);
   }

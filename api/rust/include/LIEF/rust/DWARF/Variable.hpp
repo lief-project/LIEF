@@ -31,6 +31,7 @@ class DWARF_Variable : private Mirror<LIEF::dwarf::Variable> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto linkage_name() const {
     return to_unique_string(get().linkage_name());
   }

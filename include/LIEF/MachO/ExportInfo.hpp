@@ -101,6 +101,7 @@ class LIEF_API ExportInfo : public Object {
   uint64_t address() const {
     return address_;
   }
+
   void address(uint64_t addr) {
     address_ = addr;
   }
@@ -114,6 +115,7 @@ class LIEF_API ExportInfo : public Object {
   const Symbol* symbol() const LIEF_LIFETIMEBOUND {
     return symbol_;
   }
+
   Symbol* symbol() LIEF_LIFETIMEBOUND {
     return symbol_;
   }
@@ -123,6 +125,7 @@ class LIEF_API ExportInfo : public Object {
   Symbol* alias() LIEF_LIFETIMEBOUND {
     return alias_;
   }
+
   const Symbol* alias() const LIEF_LIFETIMEBOUND {
     return alias_;
   }
@@ -132,6 +135,7 @@ class LIEF_API ExportInfo : public Object {
   DylibCommand* alias_library() LIEF_LIFETIMEBOUND {
     return alias_location_;
   }
+
   const DylibCommand* alias_library() const LIEF_LIFETIMEBOUND {
     return alias_location_;
   }

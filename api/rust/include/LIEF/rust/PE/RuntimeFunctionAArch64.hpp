@@ -32,9 +32,11 @@ class PE_RuntimeFunctionAArch64 : public PE_ExceptionInfo {
   auto length() const {
     return impl().length();
   }
+
   auto flag() const {
     return as_u32(impl().flag());
   }
+
   auto rva_end() const {
     return impl().rva_end();
   }
@@ -56,15 +58,19 @@ class PE_unwind_aarch64_PackedFunction : public PE_RuntimeFunctionAArch64 {
   auto frame_size() const {
     return impl().frame_size();
   }
+
   auto reg_I() const {
     return impl().reg_I();
   }
+
   auto reg_F() const {
     return impl().reg_F();
   }
+
   auto H() const {
     return impl().H();
   }
+
   auto CR() const {
     return impl().CR();
   }
@@ -89,9 +95,11 @@ class PE_unwind_aarch64_UnpackedFunction_epilog_scope_t
   auto start_offset() const {
     return get().start_offset;
   }
+
   auto start_index() const {
     return get().start_index;
   }
+
   auto reserved() const {
     return get().reserved;
   }
@@ -109,9 +117,11 @@ class PE_unwind_aarch64_UnpackedFunction : public PE_RuntimeFunctionAArch64 {
     public:
     it_const_epilog_scopes(const PE_unwind_aarch64_UnpackedFunction::lief_t& src) :
       Iterator(std::move(src.epilog_scopes())) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -121,27 +131,35 @@ class PE_unwind_aarch64_UnpackedFunction : public PE_RuntimeFunctionAArch64 {
   auto xdata_rva() const {
     return impl().xdata_rva();
   }
+
   auto version() const {
     return impl().version();
   }
+
   auto X() const {
     return impl().X();
   }
+
   auto E() const {
     return impl().E();
   }
+
   auto epilog_count() const {
     return impl().epilog_count();
   }
+
   auto epilog_offset() const {
     return impl().epilog_offset();
   }
+
   auto code_words() const {
     return impl().code_words();
   }
+
   auto exception_handler() const {
     return impl().exception_handler();
   }
+
   auto unwind_code() const {
     return make_span(impl().unwind_code());
   }

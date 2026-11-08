@@ -95,6 +95,7 @@ class LIEF_API SpanStream : public BinaryStream {
     }
     return data_.subspan(offset, size);
   }
+
   result<SpanStream> slice(size_t offset) const {
     if (offset > data_.size()) {
       return make_error_code(lief_errors::read_out_of_bound);

@@ -30,24 +30,31 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
   auto stype() const {
     return as_u64(get().type());
   }
+
   auto flags() const {
     return as_u32(get().flags());
   }
+
   auto file_offset() const {
     return get().file_offset();
   }
+
   auto virtual_address() const {
     return get().virtual_address();
   }
+
   auto physical_address() const {
     return get().physical_address();
   }
+
   auto physical_size() const {
     return get().physical_size();
   }
+
   auto virtual_size() const {
     return get().virtual_size();
   }
+
   auto alignment() const {
     return get().alignment();
   }
@@ -91,6 +98,7 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
   auto fill(int8_t c) {
     get().fill(c);
   }
+
   auto clear() {
     get().clear();
   }

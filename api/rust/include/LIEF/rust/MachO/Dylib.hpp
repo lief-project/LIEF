@@ -27,6 +27,7 @@ class MachO_Dylib : public MachO_Command {
   auto name() const {
     return to_unique_string(impl().name());
   }
+
   uint32_t timestamp() const {
     return impl().timestamp();
   }
@@ -94,6 +95,7 @@ class MachO_Dylib : public MachO_Command {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

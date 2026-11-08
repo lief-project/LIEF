@@ -73,6 +73,7 @@ std::ostream&
                     (bool)chain.bind);
   return os;
 }
+
 std::ostream& operator<<(
     std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_bind24_t& chain
@@ -84,6 +85,7 @@ std::ostream& operator<<(
                     (bool)chain.bind, (bool)chain.auth);
   return os;
 }
+
 std::ostream& operator<<(
     std::ostream& os,
     const ChainedPointerAnalysis::dyld_chained_ptr_arm64e_auth_bind24_t& chain

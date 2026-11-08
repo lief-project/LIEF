@@ -30,9 +30,11 @@ class PE_MsCounterSign : public PE_Attribute {
     public:
     it_certificates(const PE_MsCounterSign::lief_t& src) :
       Iterator(std::move(src.certificates())) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -42,9 +44,11 @@ class PE_MsCounterSign : public PE_Attribute {
     public:
     it_signers(const PE_MsCounterSign::lief_t& src) :
       Iterator(std::move(src.signers())) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -57,6 +61,7 @@ class PE_MsCounterSign : public PE_Attribute {
   auto version() const {
     return impl().version();
   }
+
   auto digest_algorithm() const {
     return as_u32(impl().digest_algorithm());
   }

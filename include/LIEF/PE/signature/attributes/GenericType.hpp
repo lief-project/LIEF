@@ -37,6 +37,7 @@ class LIEF_API GenericType : public Attribute {
   public:
   GenericType() :
     Attribute(Attribute::TYPE::GENERIC_TYPE) {}
+
   GenericType(oid_t oid, std::vector<uint8_t> raw) :
     Attribute(Attribute::TYPE::GENERIC_TYPE),
     oid_{std::move(oid)},

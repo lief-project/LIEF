@@ -31,12 +31,15 @@ class MachO_LazyLoadDylibInfo_Fixup
   auto address() const {
     return get().address();
   }
+
   auto ordinal() const {
     return get().ordinal();
   }
+
   auto symbol() const {
     return to_unique_string(get().symbol());
   }
+
   auto is_auth() const {
     return get().is_auth();
   }
@@ -55,9 +58,11 @@ class MachO_LazyLoadDylibInfo : public MachO_Command {
     public:
     it_fixups(const MachO_LazyLoadDylibInfo::lief_t& src) :
       Iterator(src.fixups()) {}
+
     auto next() { // NOLINT
       return Iterator::next();
     }
+
     auto size() const { // NOLINT
       return Iterator::size();
     }
@@ -69,6 +74,7 @@ class MachO_LazyLoadDylibInfo : public MachO_Command {
   auto data_offset() const {
     return impl().data_offset();
   }
+
   auto data_size() const {
     return impl().data_size();
   }
@@ -149,6 +155,7 @@ class MachO_LazyLoadDylibInfo : public MachO_Command {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

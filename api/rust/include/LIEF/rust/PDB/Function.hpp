@@ -28,15 +28,19 @@ class PDB_Function : private Mirror<LIEF::pdb::Function> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto RVA() const {
     return get().RVA();
   }
+
   auto code_size() const {
     return get().code_size();
   }
+
   auto section_name() const {
     return to_unique_string(get().section_name());
   }
+
   auto debug_location() const {
     return details::make_location(get().debug_location());
   }

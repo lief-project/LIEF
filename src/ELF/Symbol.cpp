@@ -210,6 +210,7 @@ const char* to_string(Symbol::BINDING e) {
   }
   return "UNKNOWN";
 }
+
 const char* to_string(Symbol::TYPE e) {
 #define ENTRY(X) std::pair(Symbol::TYPE::X, #X)
   STRING_MAP enums2str{
@@ -223,6 +224,7 @@ const char* to_string(Symbol::TYPE e) {
   }
   return "UNKNOWN";
 }
+
 const char* to_string(Symbol::VISIBILITY e) {
 #define ENTRY(X) std::pair(Symbol::VISIBILITY::X, #X)
   STRING_MAP enums2str{

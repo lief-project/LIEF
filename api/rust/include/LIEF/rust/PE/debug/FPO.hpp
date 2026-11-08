@@ -28,33 +28,43 @@ class PE_FPO_entry_t : private Mirror<LIEF::PE::FPO::entry_t> {
   auto rva() const {
     return get().rva;
   }
+
   auto proc_size() const {
     return get().proc_size;
   }
+
   auto nb_locals() const {
     return get().nb_locals;
   }
+
   auto parameters_size() const {
     return get().parameters_size;
   }
+
   auto prolog_size() const {
     return get().prolog_size;
   }
+
   auto nb_saved_regs() const {
     return get().nb_saved_regs;
   }
+
   auto use_seh() const {
     return get().use_seh;
   }
+
   auto use_bp() const {
     return get().use_bp;
   }
+
   auto reserved() const {
     return get().reserved;
   }
+
   auto get_type() const {
     return as_u32(get().type);
   }
+
   auto to_string() const {
     return to_unique_string(get().to_string());
   }
@@ -71,9 +81,11 @@ class PE_FPO : public PE_Debug {
     public:
     it_entries(const PE_FPO::lief_t& src) :
       Iterator(std::move(src.entries())) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }

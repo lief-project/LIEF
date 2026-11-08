@@ -258,14 +258,17 @@ class LIEF_API ResourceDialog : public Object {
       x_ = value;
       return *this;
     }
+
     Item& y(int16_t value) {
       y_ = value;
       return *this;
     }
+
     Item& cx(int16_t value) {
       cx_ = value;
       return *this;
     }
+
     Item& cy(int16_t value) {
       cy_ = value;
       return *this;
@@ -421,14 +424,17 @@ class LIEF_API ResourceDialog : public Object {
     x_ = value;
     return *this;
   }
+
   ResourceDialog& y(int16_t value) LIEF_LIFETIMEBOUND {
     y_ = value;
     return *this;
   }
+
   ResourceDialog& cx(int16_t value) LIEF_LIFETIMEBOUND {
     cx_ = value;
     return *this;
   }
+
   ResourceDialog& cy(int16_t value) LIEF_LIFETIMEBOUND {
     cy_ = value;
     return *this;

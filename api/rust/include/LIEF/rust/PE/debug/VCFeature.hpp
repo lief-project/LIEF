@@ -25,15 +25,19 @@ class PE_VCFeature : public PE_Debug {
   auto pre_vcpp() const {
     return impl().pre_vcpp();
   }
+
   auto c_cpp() const {
     return impl().c_cpp();
   }
+
   auto gs() const {
     return impl().gs();
   }
+
   auto sdl() const {
     return impl().sdl();
   }
+
   auto guards() const {
     return impl().guards();
   }

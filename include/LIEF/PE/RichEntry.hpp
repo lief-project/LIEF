@@ -55,9 +55,11 @@ class LIEF_API RichEntry : public Object {
   void id(uint16_t id) {
     id_ = id;
   }
+
   void build_id(uint16_t build_id) {
     build_id_ = build_id;
   }
+
   void count(uint32_t count) {
     count_ = count;
   }

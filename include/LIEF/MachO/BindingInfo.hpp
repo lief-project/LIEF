@@ -70,6 +70,7 @@ class LIEF_API BindingInfo : public Object {
   const SegmentCommand* segment() const LIEF_LIFETIMEBOUND {
     return segment_;
   }
+
   SegmentCommand* segment() LIEF_LIFETIMEBOUND {
     return segment_;
   }
@@ -84,6 +85,7 @@ class LIEF_API BindingInfo : public Object {
   const DylibCommand* library() const LIEF_LIFETIMEBOUND {
     return library_;
   }
+
   DylibCommand* library() LIEF_LIFETIMEBOUND {
     return library_;
   }
@@ -98,6 +100,7 @@ class LIEF_API BindingInfo : public Object {
   const Symbol* symbol() const LIEF_LIFETIMEBOUND {
     return symbol_;
   }
+
   Symbol* symbol() LIEF_LIFETIMEBOUND {
     return symbol_;
   }

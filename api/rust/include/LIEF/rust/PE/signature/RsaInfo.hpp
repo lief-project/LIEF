@@ -27,24 +27,31 @@ class PE_RsaInfo : private Mirror<LIEF::PE::RsaInfo> {
   uint32_t key_size() const {
     return get().key_size();
   }
+
   auto has_public_key() const {
     return get().has_public_key();
   }
+
   auto has_private_key() const {
     return get().has_private_key();
   }
+
   auto N() const {
     return make_unique_vector<uint8_t>(get().N());
   }
+
   auto E() const {
     return make_unique_vector<uint8_t>(get().E());
   }
+
   auto D() const {
     return make_unique_vector<uint8_t>(get().D());
   }
+
   auto P() const {
     return make_unique_vector<uint8_t>(get().P());
   }
+
   auto Q() const {
     return make_unique_vector<uint8_t>(get().Q());
   }

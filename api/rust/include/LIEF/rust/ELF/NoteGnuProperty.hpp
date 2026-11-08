@@ -198,9 +198,11 @@ class ELF_NoteGnuProperty : public ELF_Note {
     public:
     it_properties(const lief_t& src) :
       ContainerIterator(src.properties()) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }

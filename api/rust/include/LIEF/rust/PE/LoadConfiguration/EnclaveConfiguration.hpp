@@ -28,24 +28,31 @@ class PE_EnclaveImport : public Mirror<LIEF::PE::EnclaveImport> {
   auto get_type() const {
     return as_u32(get().type());
   }
+
   auto min_security_version() const {
     return get().min_security_version();
   }
+
   auto import_name_rva() const {
     return get().import_name_rva();
   }
+
   auto import_name() const {
     return to_unique_string(get().import_name());
   }
+
   auto reserved() const {
     return get().reserved();
   }
+
   auto id() const {
     return make_span(get().id());
   }
+
   auto family_id() const {
     return make_span(get().family_id());
   }
+
   auto image_id() const {
     return make_span(get().image_id());
   }
@@ -66,9 +73,11 @@ class PE_EnclaveConfiguration : public Mirror<LIEF::PE::EnclaveConfiguration> {
     public:
     it_imports(const PE_EnclaveConfiguration::lief_t& src) :
       Iterator(src.imports()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -77,48 +86,63 @@ class PE_EnclaveConfiguration : public Mirror<LIEF::PE::EnclaveConfiguration> {
   auto size() const {
     return get().size();
   }
+
   auto min_required_config_size() const {
     return get().min_required_config_size();
   }
+
   auto policy_flags() const {
     return get().policy_flags();
   }
+
   auto is_debuggable() const {
     return get().is_debuggable();
   }
+
   auto import_list_rva() const {
     return get().import_list_rva();
   }
+
   auto import_entry_size() const {
     return get().import_entry_size();
   }
+
   uint32_t nb_imports() const {
     return get().nb_imports();
   }
+
   auto imports() const {
     return std::make_unique<it_imports>(get());
   }
+
   auto family_id() const {
     return make_span(get().family_id());
   }
+
   auto image_id() const {
     return make_span(get().image_id());
   }
+
   auto image_version() const {
     return get().image_version();
   }
+
   auto security_version() const {
     return get().security_version();
   }
+
   auto enclave_size() const {
     return get().enclave_size();
   }
+
   auto nb_threads() const {
     return get().nb_threads();
   }
+
   auto enclave_flags() const {
     return get().enclave_flags();
   }
+
   auto to_string() const {
     return to_unique_string(get().to_string());
   }

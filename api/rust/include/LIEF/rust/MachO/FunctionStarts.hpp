@@ -25,12 +25,15 @@ class MachO_FunctionStarts : public MachO_Command {
   using lief_t = LIEF::MachO::FunctionStarts;
   MachO_FunctionStarts(const lief_t& base) :
     MachO_Command(base) {}
+
   uint32_t data_offset() const {
     return impl().data_offset();
   }
+
   uint32_t data_size() const {
     return impl().data_size();
   }
+
   auto functions() const {
     return make_unique_vector<uint64_t>(impl().functions());
   }
@@ -51,6 +54,7 @@ class MachO_FunctionStarts : public MachO_Command {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

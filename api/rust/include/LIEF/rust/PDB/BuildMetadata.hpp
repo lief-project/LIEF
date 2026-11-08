@@ -56,6 +56,7 @@ class PDB_BuildMetadata : private Mirror<LIEF::pdb::BuildMetadata> {
   auto language() const {
     return as_u8(get().language());
   }
+
   auto target_cpu() const {
     return as_u16(get().target_cpu());
   }

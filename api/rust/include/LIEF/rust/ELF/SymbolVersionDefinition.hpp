@@ -31,9 +31,11 @@ class ELF_SymbolVersionDefinition
     public:
     it_auxiliary_symbols(const ELF_SymbolVersionDefinition::lief_t& src) :
       Iterator(src.symbols_aux()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -43,12 +45,15 @@ class ELF_SymbolVersionDefinition
   uint16_t version() const {
     return get().version();
   }
+
   uint16_t flags() const {
     return get().flags();
   }
+
   uint16_t ndx() const {
     return get().ndx();
   }
+
   uint32_t hash() const {
     return get().hash();
   }

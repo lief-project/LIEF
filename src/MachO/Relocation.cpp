@@ -46,6 +46,7 @@ Relocation& Relocation::operator=(const Relocation& other) {
   }
   return *this;
 }
+
 void Relocation::swap(Relocation& other) noexcept {
   LIEF::Relocation::swap(other);
 
@@ -141,6 +142,7 @@ std::ostream& Relocation::print(std::ostream& os) const {
 std::ostream& operator<<(std::ostream& os, const Relocation& reloc) {
   return reloc.print(os);
 }
+
 const char* to_string(Relocation::ORIGIN e) {
 #define ENTRY(X) std::pair(Relocation::ORIGIN::X, #X)
   STRING_MAP enums2str{

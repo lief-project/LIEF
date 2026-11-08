@@ -38,9 +38,11 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     public:
     it_relocations(const COFF_Binary::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -51,9 +53,11 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     public:
     it_symbols(const COFF_Binary::lief_t& src) :
       Iterator(src.symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -64,9 +68,11 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     public:
     it_sections(const COFF_Binary::lief_t& src) :
       Iterator(src.sections()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -77,9 +83,11 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     public:
     it_strings(const COFF_Binary::lief_t& src) :
       Iterator(src.string_table()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -90,9 +98,11 @@ class COFF_Binary : Mirror<LIEF::COFF::Binary> {
     public:
     it_functions(const COFF_Binary::lief_t& src) :
       Iterator(src.functions()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }

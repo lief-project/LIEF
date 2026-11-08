@@ -69,6 +69,7 @@ class LIEF_API EncryptionInfo : public LoadCommand {
   void crypt_size(uint32_t size) {
     csize_ = size;
   }
+
   void crypt_id(uint32_t id) {
     cid_ = id;
   }

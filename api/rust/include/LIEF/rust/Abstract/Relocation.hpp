@@ -23,6 +23,7 @@ class AbstractRelocation : public Mirror<LIEF::Relocation> {
   uint64_t size() const {
     return get().size();
   }
+
   uint64_t address() const {
     return get().address();
   }

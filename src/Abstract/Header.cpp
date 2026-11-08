@@ -300,6 +300,7 @@ const char* to_string(Header::ARCHITECTURES e) {
   }
   return "UNKNOWN";
 }
+
 const char* to_string(Header::OBJECT_TYPES e) {
 #define ENTRY(X) std::pair(Header::OBJECT_TYPES::X, #X)
   STRING_MAP enums2str{
@@ -314,6 +315,7 @@ const char* to_string(Header::OBJECT_TYPES e) {
   }
   return "UNKNOWN";
 }
+
 const char* to_string(Header::MODES e) {
 #define ENTRY(X) std::pair(Header::MODES::X, #X)
   STRING_MAP enums2str{
@@ -326,6 +328,7 @@ const char* to_string(Header::MODES e) {
   }
   return "UNKNOWN";
 }
+
 const char* to_string(Header::ENDIANNESS e) {
 #define ENTRY(X) std::pair(Header::ENDIANNESS::X, #X)
   STRING_MAP enums2str{

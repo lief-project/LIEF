@@ -25,12 +25,15 @@ class ELF_CoreFile_entry : public Mirror<LIEF::ELF::CoreFile::entry_t> {
   auto start() const {
     return get().start;
   }
+
   auto end() const {
     return get().end;
   }
+
   auto file_ofs() const {
     return get().file_ofs;
   }
+
   auto path() const {
     return to_unique_string(get().path);
   }

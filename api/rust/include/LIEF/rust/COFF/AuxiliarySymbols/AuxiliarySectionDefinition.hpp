@@ -27,21 +27,27 @@ class COFF_AuxiliarySectionDefinition : public COFF_AuxiliarySymbol {
   auto length() const {
     return impl().length();
   }
+
   auto nb_relocs() const {
     return impl().nb_relocs();
   }
+
   auto nb_line_numbers() const {
     return impl().nb_line_numbers();
   }
+
   auto checksum() const {
     return impl().checksum();
   }
+
   auto section_idx() const {
     return impl().section_idx();
   }
+
   auto selection() const {
     return to_int(impl().selection());
   }
+
   auto reserved() const {
     return impl().reserved();
   }

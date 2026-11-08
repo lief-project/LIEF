@@ -24,12 +24,15 @@ class MachO_EncryptionInfo : public MachO_Command {
   public:
   MachO_EncryptionInfo(const lief_t& base) :
     MachO_Command(base) {}
+
   uint32_t crypt_offset() const {
     return impl().crypt_offset();
   }
+
   uint32_t crypt_size() const {
     return impl().crypt_size();
   }
+
   uint32_t crypt_id() const {
     return impl().crypt_id();
   }

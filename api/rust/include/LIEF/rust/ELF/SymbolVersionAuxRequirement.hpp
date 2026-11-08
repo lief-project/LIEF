@@ -25,9 +25,11 @@ class ELF_SymbolVersionAuxRequirement : public ELF_SymbolVersionAux {
   uint32_t hash() const {
     return impl().hash();
   }
+
   uint16_t flags() const {
     return impl().flags();
   }
+
   uint16_t other() const {
     return impl().other();
   }

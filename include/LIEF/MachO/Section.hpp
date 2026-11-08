@@ -264,6 +264,7 @@ class LIEF_API Section : public LIEF::Section {
   SegmentCommand* segment() LIEF_LIFETIMEBOUND {
     return segment_;
   }
+
   const SegmentCommand* segment() const LIEF_LIFETIMEBOUND {
     return segment_;
   }
@@ -285,6 +286,7 @@ class LIEF_API Section : public LIEF::Section {
   it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
+
   it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
@@ -293,15 +295,19 @@ class LIEF_API Section : public LIEF::Section {
   void address(uint64_t address) {
     virtual_address(address);
   }
+
   void alignment(uint32_t align) {
     align_ = align;
   }
+
   void relocation_offset(uint32_t offset) {
     relocations_offset_ = offset;
   }
+
   void numberof_relocations(uint32_t nb_reloc) {
     nbof_relocations_ = nb_reloc;
   }
+
   void flags(uint32_t flags) {
     flags_ = flags_ | flags;
   }
@@ -309,12 +315,15 @@ class LIEF_API Section : public LIEF::Section {
   void type(TYPE type) {
     flags_ = (flags_ & FLAGS_MASK) | uint8_t(type);
   }
+
   void reserved1(uint32_t reserved1) {
     reserved1_ = reserved1;
   }
+
   void reserved2(uint32_t reserved2) {
     reserved2_ = reserved2;
   }
+
   void reserved3(uint32_t reserved3) {
     reserved3_ = reserved3;
   }
@@ -332,6 +341,7 @@ class LIEF_API Section : public LIEF::Section {
     add(flag);
     return *this;
   }
+
   Section& operator-=(FLAGS flag) {
     remove(flag);
     return *this;

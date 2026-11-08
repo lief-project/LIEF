@@ -30,21 +30,26 @@ class MachO_DataInCode : public MachO_Command {
     public:
     it_entries(const MachO_DataInCode::lief_t& src) :
       Iterator(src.entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
   };
   MachO_DataInCode(const lief_t& base) :
     MachO_Command(base) {}
+
   uint32_t data_offset() const {
     return impl().data_offset();
   }
+
   uint32_t data_size() const {
     return impl().data_size();
   }
+
   auto content() const {
     return make_span(impl().content());
   }

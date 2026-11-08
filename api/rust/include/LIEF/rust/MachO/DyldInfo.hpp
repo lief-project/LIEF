@@ -32,9 +32,11 @@ class MachO_DyldInfo : public MachO_Command {
     public:
     it_bindings(const MachO_DyldInfo::lief_t& src) :
       Iterator(src.bindings()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -45,9 +47,11 @@ class MachO_DyldInfo : public MachO_Command {
     public:
     it_exports(const MachO_DyldInfo::lief_t& src) :
       Iterator(src.exports()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -59,6 +63,7 @@ class MachO_DyldInfo : public MachO_Command {
   auto bindings() const {
     return std::make_unique<it_bindings>(impl());
   }
+
   auto exports() const {
     return std::make_unique<it_exports>(impl());
   }
@@ -66,15 +71,19 @@ class MachO_DyldInfo : public MachO_Command {
   auto rebase_opcodes() const {
     return make_span(impl().rebase_opcodes());
   }
+
   auto bind_opcodes() const {
     return make_span(impl().bind_opcodes());
   }
+
   auto weak_bind_opcodes() const {
     return make_span(impl().weak_bind_opcodes());
   }
+
   auto lazy_bind_opcodes() const {
     return make_span(impl().lazy_bind_opcodes());
   }
+
   auto export_trie() const {
     return make_span(impl().export_trie());
   }

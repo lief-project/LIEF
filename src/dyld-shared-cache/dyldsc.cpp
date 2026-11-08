@@ -183,6 +183,7 @@ DyldSharedCache::subcache_iterator DyldSharedCache::subcaches() const {
 }
 
 void DyldSharedCache::enable_caching(const std::string&) const {}
+
 void DyldSharedCache::flush_cache() const {}
 
 // ----------------------------------------------------------------------------
@@ -201,6 +202,7 @@ Dylib::Iterator& Dylib::Iterator::operator=(Dylib::Iterator&&) noexcept {
 }
 
 Dylib::Iterator::Iterator(const Dylib::Iterator&) {}
+
 Dylib::Iterator& Dylib::Iterator::operator=(const Dylib::Iterator&) {
   return *this;
 }
@@ -285,6 +287,7 @@ MappingInfo::Iterator&
 }
 
 MappingInfo::Iterator::Iterator(const MappingInfo::Iterator&) {}
+
 MappingInfo::Iterator&
     MappingInfo::Iterator::operator=(const MappingInfo::Iterator&) {
   return *this;
@@ -363,6 +366,7 @@ SubCache::Iterator& SubCache::Iterator::operator=(SubCache::Iterator&&) noexcept
 }
 
 SubCache::Iterator::Iterator(const SubCache::Iterator&) {}
+
 SubCache::Iterator& SubCache::Iterator::operator=(const SubCache::Iterator&) {
   return *this;
 }

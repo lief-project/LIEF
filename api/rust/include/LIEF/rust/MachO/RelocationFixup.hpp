@@ -26,12 +26,15 @@ class MachO_RelocationFixup : public MachO_Relocation {
   uint64_t target() const {
     return impl().target();
   }
+
   uint32_t ptr_format() const {
     return as_u32(impl().ptr_format());
   }
+
   uint32_t offset() const {
     return impl().offset();
   }
+
   uint32_t next() const {
     return impl().next();
   }

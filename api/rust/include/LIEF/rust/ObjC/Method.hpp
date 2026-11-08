@@ -25,12 +25,15 @@ class ObjC_Method : private Mirror<LIEF::objc::Method> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto mangled_type() const {
     return to_unique_string(get().mangled_type());
   }
+
   uint64_t address() const {
     return get().address();
   }
+
   auto is_instance() const {
     return get().is_instance();
   }

@@ -29,6 +29,7 @@ class PE_Section : public AbstractSection {
   using lief_t = LIEF::PE::Section;
   PE_Section(const lief_t& sec) :
     AbstractSection(sec) {}
+
   PE_Section(std::unique_ptr<lief_t> impl) :
     AbstractSection(std::move(impl)) {}
 
@@ -50,24 +51,31 @@ class PE_Section : public AbstractSection {
   auto sizeof_raw_data() const {
     return impl().sizeof_raw_data();
   }
+
   auto virtual_size() const {
     return impl().virtual_size();
   }
+
   auto pointerto_raw_data() const {
     return impl().pointerto_raw_data();
   }
+
   auto pointerto_relocation() const {
     return impl().pointerto_relocation();
   }
+
   auto pointerto_line_numbers() const {
     return impl().pointerto_line_numbers();
   }
+
   auto numberof_relocations() const {
     return impl().numberof_relocations();
   }
+
   auto numberof_line_numbers() const {
     return impl().numberof_line_numbers();
   }
+
   auto characteristics() const {
     return impl().characteristics();
   }
@@ -92,6 +100,7 @@ class PE_Section : public AbstractSection {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

@@ -27,6 +27,7 @@ class MachO_TwoLevelHints : public MachO_Command {
   uint32_t offset() const {
     return impl().offset();
   }
+
   uint32_t original_nb_hints() const {
     return impl().original_nb_hints();
   }

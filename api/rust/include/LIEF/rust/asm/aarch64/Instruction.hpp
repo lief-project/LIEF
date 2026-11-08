@@ -35,6 +35,7 @@ class asm_aarch64_Instruction : public asm_Instruction {
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -43,6 +44,7 @@ class asm_aarch64_Instruction : public asm_Instruction {
   uint64_t opcode() const {
     return to_int(impl().opcode());
   }
+
   auto operands() const {
     return std::make_unique<it_operands>(impl());
   }

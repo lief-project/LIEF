@@ -49,18 +49,23 @@ class PE_DynamicFixupARM64Kernel_entry
   auto rva() const {
     return get().rva;
   }
+
   auto indirect_call() const {
     return get().indirect_call;
   }
+
   auto register_index() const {
     return get().register_index;
   }
+
   uint8_t import_type() const {
     return to_int(get().import_type);
   }
+
   auto iat_index() const {
     return get().iat_index;
   }
+
   auto to_string() const {
     return to_unique_string(get().to_string());
   }
@@ -76,9 +81,11 @@ class PE_DynamicFixupARM64Kernel : public PE_DynamicFixup {
     public:
     it_relocations(const PE_DynamicFixupARM64Kernel::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -107,18 +114,23 @@ class PE_DynamicFixupARM64X_entry
   auto rva() const {
     return get().rva;
   }
+
   auto value() const {
     return get().value;
   }
+
   uint32_t size() const {
     return get().size;
   }
+
   auto get_type() const {
     return as_u32(get().type);
   }
+
   auto get_bytes() const {
     return make_span(get().bytes);
   }
+
   auto to_string() const {
     return to_unique_string(get().to_string());
   }
@@ -134,9 +146,11 @@ class PE_DynamicFixupARM64X : public PE_DynamicFixup {
     public:
     it_relocations(const PE_DynamicFixupARM64X::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -166,12 +180,15 @@ class PE_DynamicFixupControlTransfer_entry
   auto rva() const {
     return get().rva;
   }
+
   auto is_call() const {
     return get().is_call;
   }
+
   auto iat_index() const {
     return get().iat_index;
   }
+
   auto to_string() const {
     return to_unique_string(get().to_string());
   }
@@ -189,9 +206,11 @@ class PE_DynamicFixupControlTransfer : public PE_DynamicFixup {
     public:
     it_relocations(const PE_DynamicFixupControlTransfer::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -221,9 +240,11 @@ class PE_DynamicFixupGeneric : public PE_DynamicFixup {
     public:
     it_relocations(const PE_DynamicFixupGeneric::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -270,9 +291,11 @@ class PE_FunctionOverride_image_bdd_dynamic_relocation_t
   auto left() const {
     return get().left;
   }
+
   auto right() const {
     return get().right;
   }
+
   auto value() const {
     return get().value;
   }
@@ -294,9 +317,11 @@ class PE_FunctionOverride_image_bdd_info_t
         std::vector<LIEF::PE::FunctionOverride::image_bdd_dynamic_relocation_t>;
     it_relocations(container_t content) :
       ContainerIterator(std::move(content)) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }
@@ -305,12 +330,15 @@ class PE_FunctionOverride_image_bdd_info_t
   auto version() const {
     return get().version;
   }
+
   auto original_size() const {
     return get().original_size;
   }
+
   auto original_offset() const {
     return get().original_offset;
   }
+
   auto payload() const {
     return make_span(get().payload);
   }
@@ -331,9 +359,11 @@ class PE_FunctionOverrideInfo : public Mirror<LIEF::PE::FunctionOverrideInfo> {
     public:
     it_relocations(const PE_FunctionOverrideInfo::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -342,15 +372,19 @@ class PE_FunctionOverrideInfo : public Mirror<LIEF::PE::FunctionOverrideInfo> {
   auto original_rva() const {
     return get().original_rva();
   }
+
   auto bdd_offset() const {
     return get().bdd_offset();
   }
+
   auto rva_size() const {
     return get().rva_size();
   }
+
   auto base_reloc_size() const {
     return get().base_reloc_size();
   }
+
   auto functions_rva() const {
     return make_unique_vector<uint32_t>(get().functions_rva());
   }
@@ -374,9 +408,11 @@ class PE_FunctionOverride : public PE_DynamicFixup {
     public:
     it_func_overriding_info(const PE_FunctionOverride::lief_t& src) :
       Iterator(src.func_overriding_info()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -388,9 +424,11 @@ class PE_FunctionOverride : public PE_DynamicFixup {
     public:
     it_bdd_info(const PE_FunctionOverride::lief_t& src) :
       Iterator(src.bdd_info()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }

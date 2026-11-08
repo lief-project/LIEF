@@ -44,6 +44,7 @@ class LIEF_API ContentType : public Attribute {
   public:
   ContentType() :
     Attribute(Attribute::TYPE::CONTENT_TYPE) {}
+
   ContentType(oid_t oid) :
     Attribute(Attribute::TYPE::CONTENT_TYPE),
     oid_{std::move(oid)} {}

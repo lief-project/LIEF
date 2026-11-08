@@ -28,9 +28,11 @@ class MachO_Fileset : public MachO_Command {
   auto name() const {
     return to_unique_string(impl().name());
   }
+
   uint64_t virtual_address() const {
     return impl().virtual_address();
   }
+
   uint64_t file_offset() const {
     return impl().file_offset();
   }

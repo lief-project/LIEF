@@ -32,9 +32,11 @@ class PE_DelayImport : private Mirror<LIEF::PE::DelayImport> {
     public:
     it_entries(const PE_DelayImport::lief_t& src) :
       Iterator(src.entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -43,27 +45,35 @@ class PE_DelayImport : private Mirror<LIEF::PE::DelayImport> {
   uint32_t attribute() const {
     return get().attribute();
   }
+
   bool is_rva_based() const {
     return get().is_rva_based();
   }
+
   auto name() const {
     return to_unique_string(get().name());
   }
+
   uint32_t handle() const {
     return get().handle();
   }
+
   uint32_t iat() const {
     return get().iat();
   }
+
   uint32_t names_table() const {
     return get().names_table();
   }
+
   uint32_t biat() const {
     return get().biat();
   }
+
   uint32_t uiat() const {
     return get().uiat();
   }
+
   uint32_t timestamp() const {
     return get().timestamp();
   }

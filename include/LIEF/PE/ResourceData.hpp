@@ -40,6 +40,7 @@ class LIEF_API ResourceData : public ResourceNode {
   public:
   ResourceData() :
     ResourceNode(ResourceNode::TYPE::DATA) {}
+
   ResourceData(std::vector<uint8_t> content, uint32_t code_page = 0) :
     ResourceNode(ResourceNode::TYPE::DATA),
     content_(std::move(content)),

@@ -54,6 +54,7 @@ class LIEF_API VersionMin : public LoadCommand {
   const version_t& version() const LIEF_LIFETIMEBOUND {
     return version_;
   }
+
   void version(const version_t& version) {
     version_ = version;
   }
@@ -62,6 +63,7 @@ class LIEF_API VersionMin : public LoadCommand {
   const version_t& sdk() const LIEF_LIFETIMEBOUND {
     return sdk_;
   }
+
   void sdk(const version_t& sdk) {
     sdk_ = sdk;
   }

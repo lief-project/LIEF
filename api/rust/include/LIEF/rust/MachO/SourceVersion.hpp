@@ -23,6 +23,7 @@ class MachO_SourceVersion : public MachO_Command {
   using lief_t = LIEF::MachO::SourceVersion;
   MachO_SourceVersion(const lief_t& base) :
     MachO_Command(base) {}
+
   auto version() const {
     return make_unique_vector<uint64_t>(details::make_vector(impl().version()));
   }

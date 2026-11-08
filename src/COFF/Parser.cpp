@@ -290,6 +290,7 @@ ok_error_t Parser::parse_symbols() {
 
   return ok();
 }
+
 void Parser::memoize(String str) {
   const uint32_t offset = str.offset();
   memoize_coff_str_[offset] = bin_->strings_table_.size();

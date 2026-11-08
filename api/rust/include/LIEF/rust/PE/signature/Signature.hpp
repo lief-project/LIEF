@@ -37,9 +37,11 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
     public:
     it_certificates(const PE_Signature::lief_t& src) :
       Iterator(src.certificates()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -50,9 +52,11 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
     public:
     it_signers(const PE_Signature::lief_t& src) :
       Iterator(src.signers()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -80,9 +84,11 @@ class PE_Signature : private Mirror<LIEF::PE::Signature> {
   auto version() const {
     return get().version();
   }
+
   auto digest_algorithm() const {
     return as_u32(get().digest_algorithm());
   }
+
   auto raw_der() const {
     return make_span(get().raw_der());
   }

@@ -32,21 +32,27 @@ class MachO_FunctionVariantFixups_Fixup
   auto seg_offset() const {
     return get().seg_offset();
   }
+
   auto seg_index() const {
     return get().seg_index();
   }
+
   auto variant_index() const {
     return get().variant_index();
   }
+
   auto pac_auth() const {
     return get().pac_auth();
   }
+
   auto pac_address() const {
     return get().pac_address();
   }
+
   auto pac_key() const {
     return get().pac_key();
   }
+
   auto pac_diversity() const {
     return get().pac_diversity();
   }
@@ -69,9 +75,11 @@ class MachO_FunctionVariantFixups : public MachO_Command {
     public:
     it_fixups(const MachO_FunctionVariantFixups::lief_t& src) :
       Iterator(src.fixups()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -79,9 +87,11 @@ class MachO_FunctionVariantFixups : public MachO_Command {
 
   MachO_FunctionVariantFixups(const lief_t& base) :
     MachO_Command(base) {}
+
   uint32_t data_offset() const {
     return impl().data_offset();
   }
+
   uint32_t data_size() const {
     return impl().data_size();
   }

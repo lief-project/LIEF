@@ -34,9 +34,11 @@ class ELF_SymbolVersionRequirement
     public:
     it_auxiliary_symbols(const ELF_SymbolVersionRequirement::lief_t& src) :
       Iterator(src.auxiliary_symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -45,9 +47,11 @@ class ELF_SymbolVersionRequirement
   auto version() const {
     return get().version();
   }
+
   uint32_t cnt() const {
     return get().cnt();
   }
+
   auto name() const {
     return to_unique_string(get().name());
   }

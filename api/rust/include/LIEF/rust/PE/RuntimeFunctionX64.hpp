@@ -72,9 +72,11 @@ class PE_RuntimeFunctionX64_unwind_info_t
     using container_t = std::vector<std::unique_ptr<LIEF::PE::unwind_x64::Code>>;
     it_opcodes(container_t content) :
       ContainerIterator(std::move(content)) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }
@@ -103,6 +105,7 @@ class PE_RuntimeFunctionX64_unwind_info_t
   auto frame_reg_offset() const {
     return get().frame_reg_offset;
   }
+
   auto raw_opcodes() const {
     return make_span(get().raw_opcodes);
   }

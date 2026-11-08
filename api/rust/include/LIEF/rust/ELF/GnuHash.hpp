@@ -25,12 +25,15 @@ class ELF_GnuHash : private Mirror<LIEF::ELF::GnuHash> {
   uint32_t nb_buckets() const {
     return get().nb_buckets();
   }
+
   uint32_t symbol_index() const {
     return get().symbol_index();
   }
+
   uint32_t shift2() const {
     return get().shift2();
   }
+
   uint32_t maskwords() const {
     return get().maskwords();
   }
@@ -38,9 +41,11 @@ class ELF_GnuHash : private Mirror<LIEF::ELF::GnuHash> {
   auto bloom_filters() const {
     return make_unique_vector<uint64_t>(get().bloom_filters());
   }
+
   auto buckets() const {
     return make_unique_vector<uint32_t>(get().buckets());
   }
+
   auto hash_values() const {
     return make_unique_vector<uint32_t>(get().hash_values());
   }

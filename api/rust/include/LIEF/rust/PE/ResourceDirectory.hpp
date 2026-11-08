@@ -23,6 +23,7 @@ class PE_ResourceDirectory : public PE_ResourceNode {
   using lief_t = LIEF::PE::ResourceDirectory;
   PE_ResourceDirectory(const lief_t& obj) :
     PE_ResourceNode(obj) {}
+
   PE_ResourceDirectory(std::unique_ptr<lief_t> obj) :
     PE_ResourceNode(std::move(obj)) {}
 
@@ -38,18 +39,23 @@ class PE_ResourceDirectory : public PE_ResourceNode {
   uint32_t characteristics() const {
     return impl().characteristics();
   }
+
   uint32_t time_date_stamp() const {
     return impl().time_date_stamp();
   }
+
   uint32_t major_version() const {
     return impl().major_version();
   }
+
   uint32_t minor_version() const {
     return impl().minor_version();
   }
+
   uint32_t numberof_name_entries() const {
     return impl().numberof_name_entries();
   }
+
   uint32_t numberof_id_entries() const {
     return impl().numberof_id_entries();
   }

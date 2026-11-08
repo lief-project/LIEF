@@ -30,9 +30,11 @@ class MachO_BuildVersion : public MachO_Command {
     public:
     it_tools(const MachO_BuildVersion::lief_t& src) :
       ContainerIterator(std::vector<LIEF::MachO::BuildToolVersion>(src.tools())) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }
@@ -44,12 +46,15 @@ class MachO_BuildVersion : public MachO_Command {
   auto sdk() const {
     return make_unique_vector<uint64_t>(details::make_vector(impl().sdk()));
   }
+
   auto minos() const {
     return make_unique_vector<uint64_t>(details::make_vector(impl().minos()));
   }
+
   auto platform() const {
     return as_u32(impl().platform());
   }
+
   auto tools() const {
     return std::make_unique<it_tools>(impl());
   }

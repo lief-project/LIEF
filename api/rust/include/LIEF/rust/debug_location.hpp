@@ -25,6 +25,7 @@ class DebugLocation {
   auto file() const {
     return std::make_unique<std::string>(file_);
   }
+
   auto line() const {
     return line_;
   }

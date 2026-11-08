@@ -35,9 +35,11 @@ class runtime_windows_Host_version_t
   auto get_major() const {
     return get().major;
   }
+
   auto get_minor() const {
     return get().minor;
   }
+
   auto get_build_number() const {
     return get().build_number;
   }

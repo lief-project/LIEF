@@ -25,12 +25,15 @@ class DWARF_Scope : private Mirror<LIEF::dwarf::Scope> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto parent() const {
     return details::try_unique<DWARF_Scope>(get().parent());
   }
+
   auto get_type() const {
     return as_u32(get().type());
   }
+
   auto chained(const std::string& sep) const {
     return to_unique_string(get().chained(sep));
   }

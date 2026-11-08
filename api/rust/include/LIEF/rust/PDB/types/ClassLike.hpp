@@ -31,9 +31,11 @@ class PDB_types_ClassLike : public PDB_Type {
     public:
     it_attributes(const PDB_types_ClassLike::lief_t& src) :
       ForwardIterator(src.attributes()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -44,9 +46,11 @@ class PDB_types_ClassLike : public PDB_Type {
     public:
     it_methods(const PDB_types_ClassLike::lief_t& src) :
       ForwardIterator(src.methods()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }

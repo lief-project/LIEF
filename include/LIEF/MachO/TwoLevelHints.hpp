@@ -62,6 +62,7 @@ class LIEF_API TwoLevelHints : public LoadCommand {
   span<const uint8_t> content() const LIEF_LIFETIMEBOUND {
     return content_;
   }
+
   span<uint8_t> content() LIEF_LIFETIMEBOUND {
     return content_;
   }
@@ -70,6 +71,7 @@ class LIEF_API TwoLevelHints : public LoadCommand {
   it_hints_t hints() {
     return hints_;
   }
+
   it_const_hints_t hints() const {
     return hints_;
   }
@@ -79,6 +81,7 @@ class LIEF_API TwoLevelHints : public LoadCommand {
   uint32_t offset() const {
     return offset_;
   }
+
   void offset(uint32_t offset) {
     offset_ = offset;
   }

@@ -29,9 +29,11 @@ class MachO_Relocation : public AbstractRelocation {
   auto is_pc_relative() const {
     return impl().is_pc_relative();
   }
+
   auto architecture() const {
     return as_u32(impl().architecture());
   }
+
   auto origin() const {
     return as_u32(impl().origin());
   }

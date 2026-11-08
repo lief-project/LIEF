@@ -67,6 +67,7 @@ class LIEF_API DyldBindingInfo : public BindingInfo {
   CLASS binding_class() const {
     return class_;
   }
+
   void binding_class(CLASS bind_class) {
     class_ = bind_class;
   }

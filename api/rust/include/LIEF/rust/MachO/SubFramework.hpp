@@ -23,6 +23,7 @@ class MachO_SubFramework : public MachO_Command {
   using lief_t = LIEF::MachO::SubFramework;
   MachO_SubFramework(const lief_t& base) :
     MachO_Command(base) {}
+
   auto umbrella() const {
     return to_unique_string(impl().umbrella());
   }

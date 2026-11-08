@@ -40,6 +40,7 @@ class LIEF_LOCAL Node {
   uint64_t size() const {
     return size_;
   }
+
   uint64_t offset() const {
     return offset_;
   }

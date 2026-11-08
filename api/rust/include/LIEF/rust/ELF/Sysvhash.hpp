@@ -26,12 +26,15 @@ class ELF_SysvHash : private Mirror<LIEF::ELF::SysvHash> {
   uint32_t nbucket() const {
     return get().nbucket();
   }
+
   uint32_t nchain() const {
     return get().nchain();
   }
+
   auto buckets() const {
     return make_unique_vector<uint32_t>(get().buckets());
   }
+
   auto chains() const {
     return make_unique_vector<uint32_t>(get().chains());
   }

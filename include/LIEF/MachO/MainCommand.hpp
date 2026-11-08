@@ -60,6 +60,7 @@ class LIEF_API MainCommand : public LoadCommand {
   void entrypoint(uint64_t entrypoint) {
     entrypoint_ = entrypoint;
   }
+
   void stack_size(uint64_t stacksize) {
     stack_size_ = stacksize;
   }

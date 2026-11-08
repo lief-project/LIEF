@@ -125,6 +125,7 @@ class PE_unwind_x64_SaveNonVolatile : public PE_unwind_x64_Code {
   auto reg() const {
     return to_int(impl().reg());
   }
+
   auto offset() const {
     return impl().offset();
   }

@@ -149,9 +149,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_sections(const ELF_Binary::lief_t& src) :
       Iterator(src.sections()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -162,9 +164,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_segments(const ELF_Binary::lief_t& src) :
       Iterator(src.segments()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -176,9 +180,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_dynamic_entries(const ELF_Binary::lief_t& src) :
       Iterator(src.dynamic_entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -189,9 +195,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_dynamic_symbols(const ELF_Binary::lief_t& src) :
       Iterator(src.dynamic_symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -202,9 +210,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_exported_symbols(const ELF_Binary::lief_t& src) :
       Iterator(src.exported_symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -215,9 +225,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_imported_symbols(const ELF_Binary::lief_t& src) :
       Iterator(src.imported_symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -227,9 +239,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_notes(const ELF_Binary::lief_t& src) :
       Iterator(src.notes()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -240,9 +254,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_symtab_symbols(const ELF_Binary::lief_t& src) :
       Iterator(src.symtab_symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -253,9 +269,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_relocations(const ELF_Binary::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -267,9 +285,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_pltgot_relocations(const ELF_Binary::lief_t& src) :
       Iterator(src.pltgot_relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -281,9 +301,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_dynamic_relocations(const ELF_Binary::lief_t& src) :
       Iterator(src.dynamic_relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -295,9 +317,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_object_relocations(const ELF_Binary::lief_t& src) :
       Iterator(src.object_relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -309,9 +333,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_symbols_version(const ELF_Binary::lief_t& src) :
       Iterator(src.symbols_version()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -323,9 +349,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_symbols_version_requirement(const ELF_Binary::lief_t& src) :
       Iterator(src.symbols_version_requirement()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -337,9 +365,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_symbols_version_definition(const ELF_Binary::lief_t& src) :
       Iterator(src.symbols_version_definition()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -350,9 +380,11 @@ class ELF_Binary : public AbstractBinary {
     public:
     it_symbols(const ELF_Binary::lief_t& src) :
       Iterator(src.symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -591,12 +623,15 @@ class ELF_Binary : public AbstractBinary {
   auto last_offset_section() const {
     return impl().last_offset_section();
   }
+
   auto last_offset_segment() const {
     return impl().last_offset_segment();
   }
+
   auto next_virtual_address() const {
     return impl().next_virtual_address();
   }
+
   auto eof_offset() const {
     return impl().eof_offset();
   }
@@ -777,6 +812,7 @@ class ELF_Binary : public AbstractBinary {
   auto write(const std::string& output) {
     impl().write(output);
   }
+
   void write_with_config(const std::string& output,
                          const ELF_Binary_write_config_t& config) {
     impl().write(output, to_builder_config(config));
@@ -828,6 +864,7 @@ class ELF_Binary : public AbstractBinary {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

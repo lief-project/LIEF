@@ -29,9 +29,11 @@ class MachO_ThreadLocalVariables_Thunk
   auto func() const {
     return get().func;
   }
+
   auto key() const {
     return get().key;
   }
+
   auto offset() const {
     return get().offset;
   }
@@ -47,9 +49,11 @@ class MachO_ThreadLocalVariables : public MachO_Section {
     public:
     it_thunks(const MachO_ThreadLocalVariables::lief_t& src) :
       RandomRangeIterator(src.thunks()) {}
+
     auto next() {
       return RandomRangeIterator::next();
     }
+
     auto size() const {
       return RandomRangeIterator::size();
     }
@@ -82,6 +86,7 @@ class MachO_ThreadLocalVariables : public MachO_Section {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

@@ -27,6 +27,7 @@ class MachO_CodeSignature : public MachO_Command {
   uint32_t data_offset() const {
     return impl().data_offset();
   }
+
   uint32_t data_size() const {
     return impl().data_size();
   }

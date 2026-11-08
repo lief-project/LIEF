@@ -58,6 +58,7 @@ class LIEF_API DynamicEntryArray : public DynamicEntry {
   const array_t& array() const LIEF_LIFETIMEBOUND {
     return array_;
   }
+
   void array(const array_t& array) {
     array_ = array;
   }

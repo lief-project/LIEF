@@ -28,6 +28,7 @@ class MachO_Stub : public Mirror<LIEF::MachO::Stub> {
   auto address() const {
     return get().address();
   }
+
   Span raw() const {
     return make_span(get().raw());
   }

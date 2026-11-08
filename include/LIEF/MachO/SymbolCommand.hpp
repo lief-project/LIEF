@@ -74,12 +74,15 @@ class LIEF_API SymbolCommand : public LoadCommand {
   void symbol_offset(uint32_t offset) {
     symbols_offset_ = offset;
   }
+
   void numberof_symbols(uint32_t nb) {
     nb_symbols_ = nb;
   }
+
   void strings_offset(uint32_t offset) {
     strings_offset_ = offset;
   }
+
   void strings_size(uint32_t size) {
     strings_size_ = size;
   }

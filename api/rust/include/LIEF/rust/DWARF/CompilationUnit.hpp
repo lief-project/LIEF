@@ -40,9 +40,11 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
 
     it_functions(const DWARF_CompilationUnit::lief_t& src, imported_t) :
       ForwardIterator(src.imported_functions()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -53,9 +55,11 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
     public:
     it_types(const DWARF_CompilationUnit::lief_t& src) :
       ForwardIterator(src.types()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -66,9 +70,11 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
     public:
     it_variables(const DWARF_CompilationUnit::lief_t& src) :
       ForwardIterator(src.variables()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -83,9 +89,11 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto producer() const {
     return to_unique_string(get().producer());
   }
+
   auto compilation_dir() const {
     return to_unique_string(get().compilation_dir());
   }
@@ -93,12 +101,15 @@ class DWARF_CompilationUnit : private Mirror<LIEF::dwarf::CompilationUnit> {
   auto low_address() const {
     return get().low_address();
   }
+
   auto high_address() const {
     return get().high_address();
   }
+
   auto size() const {
     return get().size();
   }
+
   auto ranges() const {
     return make_unique_vector<Range>(details::make_range(get().ranges()));
   }

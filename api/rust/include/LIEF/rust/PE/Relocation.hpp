@@ -29,9 +29,11 @@ class PE_Relocation : Mirror<LIEF::PE::Relocation> {
     public:
     it_entries(const PE_Relocation::lief_t& src) :
       Iterator(src.entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -40,6 +42,7 @@ class PE_Relocation : Mirror<LIEF::PE::Relocation> {
   uint32_t virtual_address() const {
     return get().virtual_address();
   }
+
   uint32_t block_size() const {
     return get().block_size();
   }

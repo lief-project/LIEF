@@ -73,6 +73,7 @@ class LIEF_API FatBinary {
   it_binaries begin() LIEF_LIFETIMEBOUND {
     return binaries_;
   }
+
   it_const_binaries begin() const LIEF_LIFETIMEBOUND {
     return binaries_;
   }
@@ -111,6 +112,7 @@ class LIEF_API FatBinary {
   Binary* back() {
     return const_cast<Binary*>(static_cast<const FatBinary*>(this)->back());
   }
+
   const Binary* back() const {
     return binaries_.empty() ? nullptr : binaries_.back().get();
   }
@@ -126,6 +128,7 @@ class LIEF_API FatBinary {
   Binary* operator[](size_t index) {
     return at(index);
   }
+
   const Binary* operator[](size_t index) const {
     return at(index);
   }

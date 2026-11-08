@@ -30,9 +30,11 @@ class PE_RichHeader : Mirror<LIEF::PE::RichHeader> {
     public:
     it_entries(const PE_RichHeader::lief_t& src) :
       Iterator(src.entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -41,6 +43,7 @@ class PE_RichHeader : Mirror<LIEF::PE::RichHeader> {
   uint32_t key() const {
     return get().key();
   }
+
   auto set_key(uint32_t key) {
     get().key(key);
   }
@@ -48,6 +51,7 @@ class PE_RichHeader : Mirror<LIEF::PE::RichHeader> {
   auto raw() const {
     return make_unique_vector<uint8_t>(get().raw());
   }
+
   auto raw_with_key(uint32_t xor_key) const {
     return make_unique_vector<uint8_t>(get().raw(xor_key));
   }

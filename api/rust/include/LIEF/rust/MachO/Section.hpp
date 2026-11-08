@@ -34,9 +34,11 @@ class MachO_Section : public AbstractSection {
     public:
     it_relocations(const MachO_Section::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -45,30 +47,39 @@ class MachO_Section : public AbstractSection {
   auto segment_name() const {
     return to_unique_string(impl().segment_name());
   }
+
   auto address() const {
     return impl().address();
   }
+
   auto alignment() const {
     return impl().alignment();
   }
+
   auto relocation_offset() const {
     return impl().relocation_offset();
   }
+
   auto numberof_relocations() const {
     return impl().numberof_relocations();
   }
+
   auto flags() const {
     return as_u64(impl().flags());
   }
+
   auto section_type() const {
     return as_u64(impl().type());
   }
+
   auto reserved1() const {
     return impl().reserved1();
   }
+
   auto reserved2() const {
     return impl().reserved2();
   }
+
   auto reserved3() const {
     return impl().reserved3();
   }
@@ -80,6 +91,7 @@ class MachO_Section : public AbstractSection {
   auto segment() const {
     return details::try_unique<MachO_SegmentCommand>(impl().segment());
   }
+
   auto relocations() const {
     return std::make_unique<it_relocations>(impl());
   }
@@ -92,6 +104,7 @@ class MachO_Section : public AbstractSection {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

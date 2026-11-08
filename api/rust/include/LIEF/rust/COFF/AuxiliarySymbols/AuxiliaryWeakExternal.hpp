@@ -28,6 +28,7 @@ class COFF_AuxiliaryWeakExternal : public COFF_AuxiliarySymbol {
   auto sym_idx() const {
     return impl().sym_idx();
   }
+
   auto characteristics() const {
     return to_int(impl().characteristics());
   }

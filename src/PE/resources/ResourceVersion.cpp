@@ -87,6 +87,7 @@ result<ResourceVersion> ResourceVersion::parse(const ResourceData& node) {
   }
   return parse(content.data(), content.size());
 }
+
 result<ResourceVersion> ResourceVersion::parse(const uint8_t* p, size_t sz) {
   SpanStream strm(p, sz);
   return parse(strm);

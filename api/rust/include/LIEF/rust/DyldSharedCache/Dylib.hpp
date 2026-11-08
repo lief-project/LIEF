@@ -53,15 +53,19 @@ class dsc_Dylib : private Mirror<LIEF::dsc::Dylib> {
   auto path() const {
     return to_unique_string(get().path());
   }
+
   auto address() const {
     return get().address();
   }
+
   auto modtime() const {
     return get().modtime();
   }
+
   auto inode() const {
     return get().inode();
   }
+
   auto padding() const {
     return get().padding();
   }

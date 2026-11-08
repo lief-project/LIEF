@@ -51,6 +51,7 @@ class DWARF_editor_EnumType : public DWARF_editor_Type {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

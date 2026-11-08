@@ -108,6 +108,7 @@ class LIEF_API Header : public Object {
   OBJECT_TYPES object_type() const {
     return object_type_;
   }
+
   uint64_t entrypoint() const {
     return entrypoint_;
   }

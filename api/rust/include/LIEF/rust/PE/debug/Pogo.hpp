@@ -30,9 +30,11 @@ class PE_Pogo : public PE_Debug {
     public:
     it_entries(const PE_Pogo::lief_t& src) :
       Iterator(std::move(src.entries())) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }

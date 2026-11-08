@@ -46,6 +46,7 @@ class PE_Binary_write_config_t {
   static auto create() {
     return std::make_unique<PE_Binary_write_config_t>();
   }
+
   auto set_import(bool value) {
     config_.imports = value;
   }
@@ -173,9 +174,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_debug(const PE_Binary::lief_t& src) :
       Iterator(src.debug()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -186,9 +189,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_signatures(const PE_Binary::lief_t& src) :
       Iterator(src.signatures()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -199,9 +204,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_sections(const PE_Binary::lief_t& src) :
       Iterator(src.sections()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -212,9 +219,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_relocations(const PE_Binary::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -225,9 +234,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_imports(const PE_Binary::lief_t& src) :
       Iterator(src.imports()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -238,9 +249,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_delay_imports(const PE_Binary::lief_t& src) :
       Iterator(src.delay_imports()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -252,9 +265,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_data_directories(const PE_Binary::lief_t& src) :
       Iterator(src.data_directories()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -265,9 +280,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_strings_table(const PE_Binary::lief_t& src) :
       Iterator(src.coff_string_table()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -278,9 +295,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_symbols(const PE_Binary::lief_t& src) :
       Iterator(src.symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -291,9 +310,11 @@ class PE_Binary : public AbstractBinary {
     public:
     it_exceptions(const PE_Binary::lief_t& src) :
       Iterator(src.exceptions()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -677,6 +698,7 @@ class PE_Binary : public AbstractBinary {
   auto has_import(const std::string& name) const {
     return impl().has_import(name);
   }
+
   auto has_delay_import(const std::string& name) const {
     return impl().has_delay_import(name);
   }
@@ -703,6 +725,7 @@ class PE_Binary : public AbstractBinary {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

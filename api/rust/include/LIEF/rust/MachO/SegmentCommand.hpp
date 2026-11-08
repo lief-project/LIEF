@@ -30,9 +30,11 @@ class MachO_SegmentCommand : public MachO_Command {
     public:
     it_relocations(const MachO_SegmentCommand::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -44,9 +46,11 @@ class MachO_SegmentCommand : public MachO_Command {
     public:
     it_sections(const MachO_SegmentCommand::lief_t& src) :
       Iterator(src.sections()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -58,30 +62,39 @@ class MachO_SegmentCommand : public MachO_Command {
   auto name() const {
     return to_unique_string(impl().name());
   }
+
   uint64_t virtual_address() const {
     return impl().virtual_address();
   }
+
   uint64_t virtual_size() const {
     return impl().virtual_size();
   }
+
   uint64_t file_size() const {
     return impl().file_size();
   }
+
   uint64_t file_offset() const {
     return impl().file_offset();
   }
+
   uint32_t max_protection() const {
     return impl().max_protection();
   }
+
   uint32_t init_protection() const {
     return impl().init_protection();
   }
+
   uint32_t numberof_sections() const {
     return impl().numberof_sections();
   }
+
   uint32_t flags() const {
     return impl().flags();
   }
+
   auto content() const {
     return make_span(impl().content());
   }
@@ -89,6 +102,7 @@ class MachO_SegmentCommand : public MachO_Command {
   auto sections() const {
     return std::make_unique<it_sections>(impl());
   }
+
   auto relocations() const {
     return std::make_unique<it_relocations>(impl());
   }

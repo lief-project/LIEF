@@ -106,9 +106,11 @@ class LIEF_API ThreadCommand : public LoadCommand {
   void flavor(uint32_t flavor) {
     flavor_ = flavor;
   }
+
   void count(uint32_t count) {
     count_ = count;
   }
+
   void architecture(Header::CPU_TYPE arch) {
     architecture_ = arch;
   }

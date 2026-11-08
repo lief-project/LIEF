@@ -33,9 +33,11 @@ class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
     public:
     it_protocols(const ObjC_Protocol::lief_t& src) :
       ForwardIterator(src.protocols()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -46,9 +48,11 @@ class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
     public:
     it_opt_methods(const ObjC_Protocol::lief_t& src) :
       ForwardIterator(src.optional_methods()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -59,9 +63,11 @@ class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
     public:
     it_req_methods(const ObjC_Protocol::lief_t& src) :
       ForwardIterator(src.required_methods()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -72,9 +78,11 @@ class ObjC_Protocol : private Mirror<LIEF::objc::Protocol> {
     public:
     it_properties(const ObjC_Protocol::lief_t& src) :
       ForwardIterator(src.properties()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }

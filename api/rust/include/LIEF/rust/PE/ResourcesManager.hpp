@@ -33,6 +33,7 @@ class PE_ResourcesManager_string_entry_t
   auto string() const {
     return to_unique_string(get().string_u8());
   }
+
   auto id() const {
     return get().id;
   }
@@ -48,9 +49,11 @@ class PE_ResourcesManager : private Mirror<LIEF::PE::ResourcesManager> {
     public:
     it_icons(const PE_ResourcesManager::lief_t& src) :
       Iterator(src.icons()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -62,9 +65,11 @@ class PE_ResourcesManager : private Mirror<LIEF::PE::ResourcesManager> {
     public:
     it_version(const PE_ResourcesManager::lief_t& src) :
       ContainerIterator(src.version()) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }
@@ -76,9 +81,11 @@ class PE_ResourcesManager : private Mirror<LIEF::PE::ResourcesManager> {
     public:
     it_accelerator(const PE_ResourcesManager::lief_t& src) :
       Iterator(src.accelerator()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -91,9 +98,11 @@ class PE_ResourcesManager : private Mirror<LIEF::PE::ResourcesManager> {
     using container_t = LIEF::PE::ResourcesManager::strings_table_t;
     it_string_table_entry(const PE_ResourcesManager::lief_t& src) :
       ContainerIterator(src.string_table()) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }
@@ -122,9 +131,11 @@ class PE_ResourcesManager : private Mirror<LIEF::PE::ResourcesManager> {
   auto manifest() const {
     return to_unique_string(get().manifest());
   }
+
   auto set_manifest(const std::string& str) {
     get().manifest(str);
   }
+
   auto print_tree() const {
     return to_unique_string(get().print());
   }
@@ -132,18 +143,23 @@ class PE_ResourcesManager : private Mirror<LIEF::PE::ResourcesManager> {
   auto print_tree_with_depth(uint32_t depth) const {
     return to_unique_string(get().print(depth));
   }
+
   auto html() const {
     return make_unique_vector<std::string>(get().html());
   }
+
   auto icons() const {
     return std::make_unique<it_icons>(get());
   }
+
   auto version() const {
     return std::make_unique<it_version>(get());
   }
+
   auto accelerator() const {
     return std::make_unique<it_accelerator>(get());
   }
+
   auto string_table() const {
     return std::make_unique<it_string_table_entry>(get());
   }

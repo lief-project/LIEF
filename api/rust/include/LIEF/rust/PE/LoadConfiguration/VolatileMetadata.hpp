@@ -27,9 +27,11 @@ class PE_VolatileMetadata_range_t
   auto start() const {
     return get().start;
   }
+
   auto size() const {
     return get().size;
   }
+
   auto end() const {
     return get().end();
   }
@@ -46,9 +48,11 @@ class PE_VolatileMetadata : public Mirror<LIEF::PE::VolatileMetadata> {
     public:
     it_ranges(const PE_VolatileMetadata::lief_t& src) :
       Iterator(src.info_ranges()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -57,21 +61,27 @@ class PE_VolatileMetadata : public Mirror<LIEF::PE::VolatileMetadata> {
   auto size() const {
     return get().size();
   }
+
   auto min_version() const {
     return get().min_version();
   }
+
   auto max_version() const {
     return get().max_version();
   }
+
   auto access_table_rva() const {
     return get().access_table_rva();
   }
+
   auto access_table_size() const {
     return get().access_table_size();
   }
+
   auto info_range_rva() const {
     return get().info_range_rva();
   }
+
   auto info_ranges_size() const {
     return get().info_ranges_size();
   }

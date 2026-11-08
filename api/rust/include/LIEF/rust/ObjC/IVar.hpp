@@ -25,6 +25,7 @@ class ObjC_IVar : private Mirror<LIEF::objc::IVar> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto mangled_type() const {
     return to_unique_string(get().mangled_type());
   }

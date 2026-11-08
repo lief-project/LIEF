@@ -33,12 +33,15 @@ class COFF_Header : public Mirror<LIEF::COFF::Header> {
   auto nb_sections() const {
     return get().nb_sections();
   }
+
   auto pointerto_symbol_table() const {
     return get().pointerto_symbol_table();
   }
+
   auto nb_symbols() const {
     return get().nb_symbols();
   }
+
   auto timedatestamp() const {
     return get().timedatestamp();
   }

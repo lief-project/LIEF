@@ -215,6 +215,7 @@ const char* to_string(Symbol::BASE_TYPE e) {
   }
   return "NONE";
 }
+
 const char* to_string(Symbol::COMPLEX_TYPE e) {
 
 #define ENTRY(X) std::pair(Symbol::COMPLEX_TYPE::TY_##X, #X)

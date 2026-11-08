@@ -33,18 +33,23 @@ class MachO_Symbol : public AbstractSymbol {
   uint8_t get_type() const {
     return impl().raw_type();
   }
+
   uint8_t numberof_sections() const {
     return impl().numberof_sections();
   }
+
   uint16_t description() const {
     return impl().description();
   }
+
   auto origin() const {
     return as_u32(impl().origin());
   }
+
   auto category() const {
     return as_u32(impl().category());
   }
+
   auto is_external() const {
     return impl().is_external();
   }

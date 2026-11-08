@@ -456,6 +456,7 @@ ok_error_t Builder::compute_resources_size(const ResourceNode& node,
 
   return ok();
 }
+
 ok_error_t Builder::construct_resource(vector_iostream& ios,
                                        ResourceDirectory& dir,
                                        rsrc_build_context_t& ctx) {

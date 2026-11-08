@@ -28,12 +28,15 @@ class ELF_Relocation : public AbstractRelocation {
   int64_t addend() const {
     return impl().addend();
   }
+
   uint32_t get_type() const {
     return to_int(impl().type());
   }
+
   auto is_rela() const {
     return impl().is_rela();
   }
+
   auto is_rel() const {
     return impl().is_rel();
   }
@@ -41,12 +44,15 @@ class ELF_Relocation : public AbstractRelocation {
   uint32_t info() const {
     return impl().info();
   }
+
   uint32_t architecture() const {
     return to_int(impl().architecture());
   }
+
   uint32_t purpose() const {
     return to_int(impl().purpose());
   }
+
   uint32_t encoding() const {
     return to_int(impl().encoding());
   }

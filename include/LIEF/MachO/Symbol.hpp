@@ -158,6 +158,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   const ExportInfo* export_info() const LIEF_LIFETIMEBOUND {
     return export_info_;
   }
+
   ExportInfo* export_info() LIEF_LIFETIMEBOUND {
     return export_info_;
   }
@@ -211,9 +212,11 @@ class LIEF_API Symbol : public LIEF::Symbol {
   void raw_type(uint8_t type) {
     type_ = type;
   }
+
   void numberof_sections(uint8_t nbsections) {
     numberof_sections_ = nbsections;
   }
+
   void description(uint16_t desc) {
     description_ = desc;
   }
@@ -229,6 +232,7 @@ class LIEF_API Symbol : public LIEF::Symbol {
   private:
   Symbol(CATEGORY cat) :
     category_(cat) {}
+
   void library(DylibCommand& library) {
     library_ = &library;
   }

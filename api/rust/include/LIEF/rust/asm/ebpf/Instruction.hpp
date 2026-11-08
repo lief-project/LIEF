@@ -34,6 +34,7 @@ class asm_ebpf_Instruction : public asm_Instruction {
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }

@@ -23,6 +23,7 @@ class MachO_SubClient : public MachO_Command {
   using lief_t = LIEF::MachO::SubClient;
   MachO_SubClient(const lief_t& base) :
     MachO_Command(base) {}
+
   auto client() const {
     return to_unique_string(impl().client());
   }

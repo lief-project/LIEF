@@ -26,12 +26,15 @@ class PDB_PublicSymbol : private Mirror<LIEF::pdb::PublicSymbol> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto demangled_name() const {
     return to_unique_string(get().demangled_name());
   }
+
   auto section_name() const {
     return to_unique_string(get().section_name());
   }
+
   auto RVA() const {
     return get().RVA();
   }

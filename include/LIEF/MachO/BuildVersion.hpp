@@ -96,6 +96,7 @@ class LIEF_API BuildVersion : public LoadCommand {
   version_t sdk() const {
     return sdk_;
   }
+
   void sdk(version_t version) {
     sdk_ = version;
   }
@@ -103,6 +104,7 @@ class LIEF_API BuildVersion : public LoadCommand {
   PLATFORMS platform() const {
     return platform_;
   }
+
   void platform(PLATFORMS plat) {
     platform_ = plat;
   }

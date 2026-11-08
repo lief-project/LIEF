@@ -27,12 +27,15 @@ class PE_ResourceAccelerator : private Mirror<LIEF::PE::ResourceAccelerator> {
   auto flags() const {
     return get().flags();
   }
+
   auto ansi() const {
     return get().ansi();
   }
+
   auto id() const {
     return get().id();
   }
+
   auto padding() const {
     return get().padding();
   }

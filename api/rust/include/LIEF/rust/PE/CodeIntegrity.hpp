@@ -25,12 +25,15 @@ class PE_CodeIntegrity : private Mirror<LIEF::PE::CodeIntegrity> {
   auto flags() const {
     return get().flags();
   }
+
   auto catalog() const {
     return get().catalog();
   }
+
   auto catalog_offset() const {
     return get().catalog_offset();
   }
+
   auto reserved() const {
     return get().reserved();
   }

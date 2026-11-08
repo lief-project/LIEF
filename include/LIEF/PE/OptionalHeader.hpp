@@ -447,6 +447,7 @@ class LIEF_API OptionalHeader : public Object {
     add(c);
     return *this;
   }
+
   OptionalHeader& operator-=(DLL_CHARACTERISTICS c) LIEF_LIFETIMEBOUND {
     remove(c);
     return *this;

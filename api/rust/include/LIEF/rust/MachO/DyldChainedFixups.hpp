@@ -30,9 +30,11 @@ class MachO_DyldChainedFixups : public MachO_Command {
     public:
     it_bindings(const MachO_DyldChainedFixups::lief_t& src) :
       Iterator(src.bindings()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -43,27 +45,35 @@ class MachO_DyldChainedFixups : public MachO_Command {
   uint32_t data_offset() const {
     return impl().data_offset();
   }
+
   uint32_t data_size() const {
     return impl().data_size();
   }
+
   uint32_t fixups_version() const {
     return impl().fixups_version();
   }
+
   uint32_t starts_offset() const {
     return impl().starts_offset();
   }
+
   uint32_t imports_offset() const {
     return impl().imports_offset();
   }
+
   uint32_t symbols_offset() const {
     return impl().symbols_offset();
   }
+
   uint32_t imports_count() const {
     return impl().imports_count();
   }
+
   uint32_t symbols_format() const {
     return impl().symbols_format();
   }
+
   auto imports_format() const {
     return as_u32(impl().imports_format());
   }

@@ -23,15 +23,19 @@ class LIEF_Logging {
   static auto disable() {
     LIEF::logging::disable();
   }
+
   static auto reset() {
     LIEF::logging::reset();
   }
+
   static auto enable() {
     LIEF::logging::enable();
   }
+
   static auto set_level(uint32_t lvl) {
     LIEF::logging::set_level(LIEF::logging::Level(lvl));
   }
+
   static auto set_path(const std::string& path) {
     LIEF::logging::set_path(path);
   }

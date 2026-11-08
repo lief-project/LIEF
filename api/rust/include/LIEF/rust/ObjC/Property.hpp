@@ -25,6 +25,7 @@ class ObjC_Property : private Mirror<LIEF::objc::Property> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto attribute() const {
     return to_unique_string(get().attribute());
   }

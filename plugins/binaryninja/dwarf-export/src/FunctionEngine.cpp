@@ -32,6 +32,7 @@ class fmt::formatter<BN::InstructionTextToken> {
   constexpr auto parse(format_parse_context& ctx) {
     return ctx.begin();
   }
+
   template<typename Context>
   constexpr auto format(const BN::InstructionTextToken& T, Context& ctx) const {
     // or: format_to(ctx.out(), "{}", T.text);

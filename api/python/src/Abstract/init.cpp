@@ -39,6 +39,7 @@ void init_objects(nb::module_& m) {
   CREATE(Function, m);
   CREATE(DebugInfo, m);
 }
+
 void init_abstract(nb::module_& m) {
   init_objects(m);
 }

@@ -189,6 +189,7 @@ class LIEF_API SegmentCommand : public LoadCommand {
   it_relocations relocations() LIEF_LIFETIMEBOUND {
     return relocations_;
   }
+
   it_const_relocations relocations() const LIEF_LIFETIMEBOUND {
     return relocations_;
   }
@@ -221,24 +222,31 @@ class LIEF_API SegmentCommand : public LoadCommand {
   void virtual_address(uint64_t virtual_address) {
     virtual_address_ = virtual_address;
   }
+
   void virtual_size(uint64_t virtual_size) {
     virtual_size_ = virtual_size;
   }
+
   void file_offset(uint64_t file_offset) {
     file_offset_ = file_offset;
   }
+
   void file_size(uint64_t file_size) {
     file_size_ = file_size;
   }
+
   void max_protection(uint32_t max_protection) {
     max_protection_ = max_protection;
   }
+
   void init_protection(uint32_t init_protection) {
     init_protection_ = init_protection;
   }
+
   void numberof_sections(uint32_t nb_section) {
     nb_sections_ = nb_section;
   }
+
   void flags(uint32_t flags) {
     flags_ = flags;
   }

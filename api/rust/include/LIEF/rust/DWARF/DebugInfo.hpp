@@ -30,9 +30,11 @@ class DWARF_DebugInfo : public AbstracDebugInfo {
     public:
     it_compilation_units(const DWARF_DebugInfo::lief_t& src) :
       ForwardIterator(src.compilation_units()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }

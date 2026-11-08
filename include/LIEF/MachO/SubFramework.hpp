@@ -64,6 +64,7 @@ class LIEF_API SubFramework : public LoadCommand {
   std::string_view umbrella() const LIEF_LIFETIMEBOUND {
     return umbrella_;
   }
+
   void umbrella(std::string u) {
     umbrella_ = std::move(u);
   }

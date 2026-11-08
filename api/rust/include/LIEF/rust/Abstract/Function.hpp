@@ -28,6 +28,7 @@ class AbstractFunction : public AbstractSymbol {
   auto address() const {
     return impl().address();
   }
+
   auto flags() const {
     return to_int(impl().flags());
   }

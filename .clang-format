@@ -109,6 +109,8 @@ ReindentRawStrings: [doc, delim]
 SortIncludes: true
 SortUsingDeclarations: LexicographicNumeric
 
+SeparateFunctionDefinitions: true
+
 IncludeCategories:
   - Regex:           '^((<|")(spdlog|nanobind|catch2|utf8)/)'
     Priority:        3

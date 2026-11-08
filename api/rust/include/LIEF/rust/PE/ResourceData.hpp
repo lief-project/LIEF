@@ -24,6 +24,7 @@ class PE_ResourceData : public PE_ResourceNode {
   using lief_t = LIEF::PE::ResourceData;
   PE_ResourceData(const lief_t& obj) :
     PE_ResourceNode(obj) {}
+
   PE_ResourceData(std::unique_ptr<lief_t> obj) :
     PE_ResourceNode(std::move(obj)) {}
 
@@ -41,9 +42,11 @@ class PE_ResourceData : public PE_ResourceNode {
   auto code_page() const {
     return impl().code_page();
   }
+
   auto reserved() const {
     return impl().reserved();
   }
+
   auto offset() const {
     return impl().offset();
   }
@@ -72,6 +75,7 @@ class PE_ResourceData : public PE_ResourceNode {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

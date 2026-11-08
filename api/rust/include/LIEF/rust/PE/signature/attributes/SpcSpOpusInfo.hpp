@@ -12,6 +12,7 @@ class PE_SpcSpOpusInfo : public PE_Attribute {
   auto program_name() const {
     return to_unique_string(impl().program_name());
   }
+
   auto more_info() const {
     return to_unique_string(impl().more_info());
   }

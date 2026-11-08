@@ -126,6 +126,7 @@ class LIEF_API CompilationUnit {
     Language(LANG lang, uint32_t version) :
       lang(lang),
       version(version) {}
+
     Language(LANG lang) :
       Language(lang, 0) {}
 

@@ -46,6 +46,7 @@ class LIEF_API vector_iostream {
   vector_iostream() = default;
   vector_iostream(std::vector<uint8_t>& ref) :
     raw_(&ref) {}
+
   vector_iostream(bool endian_swap) :
     endian_swap_(endian_swap) {}
 
@@ -96,6 +97,7 @@ class LIEF_API vector_iostream {
     current_pos_ = (off_type)(pos + count);
     return *this;
   }
+
   vector_iostream& write_sized_int(uint64_t value, size_t size) {
     const uint64_t stack_val = value;
     return write(reinterpret_cast<const uint8_t*>(&stack_val), size);
@@ -166,6 +168,7 @@ class LIEF_API vector_iostream {
     c = *raw_;
     return *this;
   }
+
   vector_iostream& move(std::vector<uint8_t>& c) {
     c = std::move(owned_);
     return *this;

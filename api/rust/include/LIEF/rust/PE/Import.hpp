@@ -37,9 +37,11 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
     public:
     it_entries(const PE_Import::lief_t& src) :
       Iterator(src.entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -48,15 +50,19 @@ class PE_Import : private Mirror<LIEF::PE::Import> {
   uint32_t forwarder_chain() const {
     return get().forwarder_chain();
   }
+
   uint32_t timedatestamp() const {
     return get().timedatestamp();
   }
+
   uint32_t import_address_table_rva() const {
     return get().import_address_table_rva();
   }
+
   uint32_t import_lookup_table_rva() const {
     return get().import_lookup_table_rva();
   }
+
   auto name() const {
     return to_unique_string(get().name());
   }

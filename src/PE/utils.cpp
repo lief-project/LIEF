@@ -362,6 +362,7 @@ result<Import> resolve_ordinals(const Import& import, bool strict, bool use_std)
 
   return resolved_import;
 }
+
 ALGORITHMS algo_from_oid(std::string_view oid) {
   static const std::unordered_map<std::string_view, ALGORITHMS> OID_MAP = {
       {"2.16.840.1.101.3.4.2.3", ALGORITHMS::SHA_512},

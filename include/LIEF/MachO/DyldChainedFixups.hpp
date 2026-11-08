@@ -161,6 +161,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   void data_offset(uint32_t offset) {
     data_offset_ = offset;
   }
+
   void data_size(uint32_t size) {
     data_size_ = size;
   }
@@ -195,6 +196,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   uint32_t fixups_version() const {
     return fixups_version_;
   }
+
   void fixups_version(uint32_t version) {
     fixups_version_ = version;
   }
@@ -203,6 +205,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   uint32_t starts_offset() const {
     return starts_offset_;
   }
+
   void starts_offset(uint32_t offset) {
     starts_offset_ = offset;
   }
@@ -211,6 +214,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   uint32_t imports_offset() const {
     return imports_offset_;
   }
+
   void imports_offset(uint32_t offset) {
     imports_offset_ = offset;
   }
@@ -219,6 +223,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   uint32_t symbols_offset() const {
     return symbols_offset_;
   }
+
   void symbols_offset(uint32_t offset) {
     symbols_offset_ = offset;
   }
@@ -227,6 +232,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   uint32_t imports_count() const {
     return imports_count_;
   }
+
   void imports_count(uint32_t cnt) {
     imports_count_ = cnt;
   }
@@ -239,6 +245,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   uint32_t symbols_format() const {
     return symbols_format_;
   }
+
   void symbols_format(uint32_t fmt) {
     symbols_format_ = fmt;
   }
@@ -247,6 +254,7 @@ class LIEF_API DyldChainedFixups : public LoadCommand {
   DYLD_CHAINED_FORMAT imports_format() const {
     return imports_format_;
   }
+
   void imports_format(DYLD_CHAINED_FORMAT fmt) {
     imports_format_ = fmt;
   }

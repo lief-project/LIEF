@@ -47,6 +47,7 @@ class LIEF_API CodeView : public Debug {
 
   CodeView() :
     Debug(Debug::TYPES::CODEVIEW) {}
+
   CodeView(SIGNATURES sig) :
     Debug{Debug::TYPES::CODEVIEW},
     sig_{sig} {}

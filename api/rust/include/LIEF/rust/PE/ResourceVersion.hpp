@@ -34,6 +34,7 @@ class PE_ResourceStringTable_entry_t
   auto key() const {
     return to_unique_string(get().key_u8());
   }
+
   auto value() const {
     return to_unique_string(get().value_u8());
   }
@@ -50,9 +51,11 @@ class PE_ResourceStringTable : private Mirror<LIEF::PE::ResourceStringTable> {
     public:
     it_entries(const PE_ResourceStringTable::lief_t& src) :
       Iterator(src.entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -61,9 +64,11 @@ class PE_ResourceStringTable : private Mirror<LIEF::PE::ResourceStringTable> {
   auto get_type() const {
     return get().type();
   }
+
   auto key() const {
     return to_unique_string(get().key_u8());
   }
+
   auto entries() const {
     return std::make_unique<it_entries>(get());
   }
@@ -77,6 +82,7 @@ class PE_ResourceVar : private Mirror<LIEF::PE::ResourceVar> {
   auto get_type() const {
     return get().type();
   }
+
   auto key() const {
     return to_unique_string(get().key_u8());
   }
@@ -98,9 +104,11 @@ class PE_ResourceStringFileInfo
     public:
     it_children(const PE_ResourceStringFileInfo::lief_t& src) :
       Iterator(src.children()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -109,9 +117,11 @@ class PE_ResourceStringFileInfo
   auto get_type() const {
     return get().type();
   }
+
   auto key() const {
     return to_unique_string(get().key_u8());
   }
+
   auto children() const {
     return std::make_unique<it_children>(get());
   }
@@ -126,9 +136,11 @@ class PE_ResourceVarFileInfo : private Mirror<LIEF::PE::ResourceVarFileInfo> {
     public:
     it_vars(const PE_ResourceVarFileInfo::lief_t& src) :
       Iterator(src.vars()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -137,9 +149,11 @@ class PE_ResourceVarFileInfo : private Mirror<LIEF::PE::ResourceVarFileInfo> {
   auto get_type() const {
     return get().type();
   }
+
   auto key() const {
     return to_unique_string(get().key_u8());
   }
+
   auto vars() const {
     return std::make_unique<it_vars>(get());
   }
@@ -153,6 +167,7 @@ class PE_ResourceVersion : private Mirror<LIEF::PE::ResourceVersion> {
   auto get_type() const {
     return get().type();
   }
+
   auto key() const {
     return to_unique_string(get().key_u8());
   }
@@ -160,39 +175,51 @@ class PE_ResourceVersion : private Mirror<LIEF::PE::ResourceVersion> {
   auto file_info_signature() const {
     return get().file_info().signature;
   }
+
   auto file_info_struct_version() const {
     return get().file_info().struct_version;
   }
+
   auto file_info_file_version_ms() const {
     return get().file_info().file_version_ms;
   }
+
   auto file_info_file_version_ls() const {
     return get().file_info().file_version_ls;
   }
+
   auto file_info_product_version_ms() const {
     return get().file_info().product_version_ms;
   }
+
   auto file_info_product_version_ls() const {
     return get().file_info().product_version_ls;
   }
+
   auto file_info_file_flags_mask() const {
     return get().file_info().file_flags_mask;
   }
+
   auto file_info_file_flags() const {
     return get().file_info().file_flags;
   }
+
   auto file_info_file_os() const {
     return get().file_info().file_os;
   }
+
   auto file_info_file_type() const {
     return get().file_info().file_type;
   }
+
   auto file_info_file_subtype() const {
     return get().file_info().file_subtype;
   }
+
   auto file_info_file_date_ms() const {
     return get().file_info().file_date_ms;
   }
+
   auto file_info_file_date_ls() const {
     return get().file_info().file_date_ls;
   }

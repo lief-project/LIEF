@@ -35,9 +35,11 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
     public:
     it_methods(const ObjC_Class::lief_t& src) :
       ForwardIterator(src.methods()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -48,9 +50,11 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
     public:
     it_protocols(const ObjC_Class::lief_t& src) :
       ForwardIterator(src.protocols()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -61,9 +65,11 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
     public:
     it_properties(const ObjC_Class::lief_t& src) :
       ForwardIterator(src.properties()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -73,9 +79,11 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
     public:
     it_ivars(const ObjC_Class::lief_t& src) :
       ForwardIterator(src.ivars()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -84,9 +92,11 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto demangled_name() const {
     return to_unique_string(get().demangled_name());
   }
+
   auto is_meta() const {
     return get().is_meta();
   }
@@ -106,12 +116,15 @@ class ObjC_Class : private Mirror<LIEF::objc::Class> {
   auto methods() const {
     return std::make_unique<it_methods>(get());
   }
+
   auto protocols() const {
     return std::make_unique<it_protocols>(get());
   }
+
   auto properties() const {
     return std::make_unique<it_properties>(get());
   }
+
   auto ivars() const {
     return std::make_unique<it_ivars>(get());
   }

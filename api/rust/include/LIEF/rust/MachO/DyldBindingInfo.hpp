@@ -26,12 +26,15 @@ class MachO_DyldBindingInfo : public MachO_BindingInfo {
   auto binding_class() const {
     return to_int(impl().binding_class());
   }
+
   auto binding_type() const {
     return to_int(impl().binding_type());
   }
+
   auto is_non_weak_definition() const {
     return impl().is_non_weak_definition();
   }
+
   uint64_t original_offset() const {
     return impl().original_offset();
   }

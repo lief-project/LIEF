@@ -24,6 +24,7 @@ class ELF_Symbol : public AbstractSymbol {
   using lief_t = LIEF::ELF::Symbol;
   ELF_Symbol(const lief_t& obj) :
     AbstractSymbol(obj) {}
+
   uint32_t get_type() const {
     return to_int(impl().type());
   }
@@ -31,15 +32,19 @@ class ELF_Symbol : public AbstractSymbol {
   uint32_t binding() const {
     return to_int(impl().binding());
   }
+
   uint8_t information() const {
     return impl().information();
   }
+
   uint8_t other() const {
     return impl().other();
   }
+
   uint16_t section_idx() const {
     return impl().section_idx();
   }
+
   uint32_t visibility() const {
     return to_int(impl().visibility());
   }
@@ -47,6 +52,7 @@ class ELF_Symbol : public AbstractSymbol {
   auto section() const {
     return details::try_unique<ELF_Section>(impl().section());
   }
+
   auto symbol_version() const {
     return details::try_unique<ELF_SymbolVersion>(impl().symbol_version());
   }

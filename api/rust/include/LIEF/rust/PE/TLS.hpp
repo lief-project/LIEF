@@ -37,12 +37,15 @@ class PE_TLS : public Mirror<LIEF::PE::TLS> {
   auto addressof_index() const {
     return get().addressof_index();
   }
+
   auto addressof_callbacks() const {
     return get().addressof_callbacks();
   }
+
   auto sizeof_zero_fill() const {
     return get().sizeof_zero_fill();
   }
+
   auto characteristics() const {
     return get().characteristics();
   }
@@ -50,6 +53,7 @@ class PE_TLS : public Mirror<LIEF::PE::TLS> {
   auto data_template() const {
     return make_span(get().data_template());
   }
+
   auto addressof_raw_data() const {
     return make_unique_vector<uint64_t>(
         details::make_vector(get().addressof_raw_data())
@@ -61,6 +65,7 @@ class PE_TLS : public Mirror<LIEF::PE::TLS> {
         get().section()
     ); // NOLINT(lang-analyzer-cplusplus.NewDeleteLeaks)
   }
+
   auto data_directory() const {
     return details::try_unique<PE_DataDirectory>(
         get().directory()

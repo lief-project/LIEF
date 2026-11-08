@@ -192,6 +192,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void idx_local_symbol(uint32_t value) {
     idx_local_symbol_ = value;
   }
+
   void nb_local_symbols(uint32_t value) {
     nb_local_symbols_ = value;
   }
@@ -199,6 +200,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void idx_external_define_symbol(uint32_t value) {
     idx_external_define_symbol_ = value;
   }
+
   void nb_external_define_symbols(uint32_t value) {
     nb_external_define_symbols_ = value;
   }
@@ -206,6 +208,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void idx_undefined_symbol(uint32_t value) {
     idx_undefined_symbol_ = value;
   }
+
   void nb_undefined_symbols(uint32_t value) {
     nb_undefined_symbols_ = value;
   }
@@ -213,6 +216,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void toc_offset(uint32_t value) {
     toc_offset_ = value;
   }
+
   void nb_toc(uint32_t value) {
     nb_toc_ = value;
   }
@@ -220,6 +224,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void module_table_offset(uint32_t value) {
     module_table_offset_ = value;
   }
+
   void nb_module_table(uint32_t value) {
     nb_module_table_ = value;
   }
@@ -227,6 +232,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void external_reference_symbol_offset(uint32_t value) {
     external_reference_symbol_offset_ = value;
   }
+
   void nb_external_reference_symbols(uint32_t value) {
     nb_external_reference_symbols_ = value;
   }
@@ -234,6 +240,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void indirect_symbol_offset(uint32_t value) {
     indirect_sym_offset_ = value;
   }
+
   void nb_indirect_symbols(uint32_t value) {
     nb_indirect_symbols_ = value;
   }
@@ -241,6 +248,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void external_relocation_offset(uint32_t value) {
     external_relocation_offset_ = value;
   }
+
   void nb_external_relocations(uint32_t value) {
     nb_external_relocations_ = value;
   }
@@ -248,6 +256,7 @@ class LIEF_API DynamicSymbolCommand : public LoadCommand {
   void local_relocation_offset(uint32_t value) {
     local_relocation_offset_ = value;
   }
+
   void nb_local_relocations(uint32_t value) {
     nb_local_relocations_ = value;
   }

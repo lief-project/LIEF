@@ -29,6 +29,7 @@ static constexpr auto is_stack_exec_offset =
 uint32_t QNXStack::stack_size() const {
   return read_at<uint32_t>(stack_size_offset).value_or(0);
 }
+
 uint32_t QNXStack::stack_allocated() const {
   return read_at<uint32_t>(stack_allocated_offset).value_or(0);
 }

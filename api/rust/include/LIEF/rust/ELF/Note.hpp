@@ -28,12 +28,15 @@ class ELF_Note : public Mirror<LIEF::ELF::Note> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto get_type() const {
     return as_u32(get().type());
   }
+
   uint32_t original_type() const {
     return get().original_type();
   }
+
   uint64_t size() const {
     return get().size();
   }

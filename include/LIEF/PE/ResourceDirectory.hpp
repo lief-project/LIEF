@@ -98,18 +98,23 @@ class LIEF_API ResourceDirectory : public ResourceNode {
   void characteristics(uint32_t characteristics) {
     characteristics_ = characteristics;
   }
+
   void time_date_stamp(uint32_t time_date_stamp) {
     timedatestamp_ = time_date_stamp;
   }
+
   void major_version(uint16_t major_version) {
     majorversion_ = major_version;
   }
+
   void minor_version(uint16_t minor_version) {
     minorversion_ = minor_version;
   }
+
   void numberof_name_entries(uint16_t numberof_name_entries) {
     numberof_name_entries_ = numberof_name_entries;
   }
+
   void numberof_id_entries(uint16_t numberof_id_entries) {
     numberof_id_entries_ = numberof_id_entries;
   }

@@ -30,6 +30,7 @@ class PE_DynamicRelocation : public Mirror<LIEF::PE::DynamicRelocation> {
   auto version() const {
     return get().version();
   }
+
   auto symbol() const {
     return get().symbol();
   }

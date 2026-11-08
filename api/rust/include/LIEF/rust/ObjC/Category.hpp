@@ -34,9 +34,11 @@ class ObjC_Category : private Mirror<LIEF::objc::Category> {
     public:
     it_methods(const ObjC_Category::lief_t& src) :
       ForwardIterator(src.methods()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -47,9 +49,11 @@ class ObjC_Category : private Mirror<LIEF::objc::Category> {
     public:
     it_protocols(const ObjC_Category::lief_t& src) :
       ForwardIterator(src.protocols()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -60,9 +64,11 @@ class ObjC_Category : private Mirror<LIEF::objc::Category> {
     public:
     it_properties(const ObjC_Category::lief_t& src) :
       ForwardIterator(src.properties()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -71,6 +77,7 @@ class ObjC_Category : private Mirror<LIEF::objc::Category> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto class_name() const {
     return to_unique_string(get().class_name());
   }
@@ -78,9 +85,11 @@ class ObjC_Category : private Mirror<LIEF::objc::Category> {
   auto methods() const {
     return std::make_unique<it_methods>(get());
   }
+
   auto protocols() const {
     return std::make_unique<it_protocols>(get());
   }
+
   auto properties() const {
     return std::make_unique<it_properties>(get());
   }

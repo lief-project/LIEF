@@ -52,6 +52,7 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
   uint32_t data_offset() const {
     return data_offset_;
   }
+
   uint32_t data_size() const {
     return data_size_;
   }
@@ -59,6 +60,7 @@ class LIEF_API SegmentSplitInfo : public LoadCommand {
   void data_offset(uint32_t offset) {
     data_offset_ = offset;
   }
+
   void data_size(uint32_t size) {
     data_size_ = size;
   }

@@ -44,9 +44,11 @@ class COFF_Section : public AbstractSection {
     public:
     it_relocations(const COFF_Section::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -57,9 +59,11 @@ class COFF_Section : public AbstractSection {
     public:
     it_symbols(const COFF_Section::lief_t& src) :
       Iterator(src.symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -68,24 +72,31 @@ class COFF_Section : public AbstractSection {
   auto sizeof_raw_data() const {
     return impl().sizeof_raw_data();
   }
+
   auto virtual_size() const {
     return impl().virtual_size();
   }
+
   auto pointerto_raw_data() const {
     return impl().pointerto_raw_data();
   }
+
   auto pointerto_relocation() const {
     return impl().pointerto_relocation();
   }
+
   auto pointerto_line_numbers() const {
     return impl().pointerto_line_numbers();
   }
+
   auto numberof_relocations() const {
     return impl().numberof_relocations();
   }
+
   auto numberof_line_numbers() const {
     return impl().numberof_line_numbers();
   }
+
   auto characteristics() const {
     return impl().characteristics();
   }

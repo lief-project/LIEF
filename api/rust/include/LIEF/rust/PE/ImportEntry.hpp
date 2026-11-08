@@ -27,24 +27,31 @@ class PE_ImportEntry : public AbstractSymbol {
   auto is_ordinal() const {
     return impl().is_ordinal();
   }
+
   uint16_t ordinal() const {
     return impl().ordinal();
   }
+
   uint64_t hint_name_rva() const {
     return impl().hint_name_rva();
   }
+
   uint16_t hint() const {
     return impl().hint();
   }
+
   uint64_t iat_value() const {
     return impl().iat_value();
   }
+
   auto ilt_value() const {
     return impl().ilt_value();
   }
+
   uint64_t data() const {
     return impl().data();
   }
+
   uint64_t iat_address() const {
     return impl().iat_address();
   }
@@ -56,6 +63,7 @@ class PE_ImportEntry : public AbstractSymbol {
   auto set_iat_value(uint64_t value) {
     impl().iat_value(value);
   }
+
   auto set_ilt_value(uint64_t value) {
     impl().ilt_value(value);
   }
@@ -64,6 +72,7 @@ class PE_ImportEntry : public AbstractSymbol {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

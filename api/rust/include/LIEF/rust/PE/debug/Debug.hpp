@@ -29,24 +29,31 @@ class PE_Debug : public Mirror<LIEF::PE::Debug> {
   auto characteristics() const {
     return get().characteristics();
   }
+
   auto timestamp() const {
     return get().timestamp();
   }
+
   auto major_version() const {
     return get().major_version();
   }
+
   auto minor_version() const {
     return get().minor_version();
   }
+
   uint32_t get_type() const {
     return to_int(get().type());
   }
+
   auto sizeof_data() const {
     return get().sizeof_data();
   }
+
   auto addressof_rawdata() const {
     return get().addressof_rawdata();
   }
+
   auto pointerto_rawdata() const {
     return get().pointerto_rawdata();
   }
@@ -62,12 +69,15 @@ class PE_Debug : public Mirror<LIEF::PE::Debug> {
   auto set_characteristics(uint32_t value) {
     get().characteristics(value);
   }
+
   auto set_timestamp(uint32_t value) {
     get().timestamp(value);
   }
+
   auto set_major_version(uint16_t value) {
     get().major_version(value);
   }
+
   auto set_minor_version(uint16_t value) {
     get().minor_version(value);
   }

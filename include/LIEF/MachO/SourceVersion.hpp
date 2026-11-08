@@ -55,6 +55,7 @@ class LIEF_API SourceVersion : public LoadCommand {
   const version_t& version() const LIEF_LIFETIMEBOUND {
     return version_;
   }
+
   void version(const version_t& version) {
     version_ = version;
   }

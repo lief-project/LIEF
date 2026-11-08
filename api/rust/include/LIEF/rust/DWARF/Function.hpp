@@ -38,9 +38,11 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     public:
     it_variables(const DWARF_Function::lief_t& src) :
       ForwardIterator(src.variables()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -54,9 +56,11 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     using container_t = std::vector<std::unique_ptr<LIEF::dwarf::Parameter>>;
     it_parameters(container_t content) :
       ContainerIterator(std::move(content)) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }
@@ -69,9 +73,11 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     using container_t = std::vector<std::unique_ptr<LIEF::dwarf::Type>>;
     it_thrown_types(container_t content) :
       ContainerIterator(std::move(content)) {}
+
     auto next() {
       return ContainerIterator::next();
     }
+
     auto size() const {
       return ContainerIterator::size();
     }
@@ -83,6 +89,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     public:
     it_instructions(const DWARF_Function::lief_t& src) :
       ForwardIterator(src.instructions()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
@@ -94,9 +101,11 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
     public:
     it_lexical_blocks(const DWARF_Function::lief_t& src) :
       ForwardIterator(src.lexical_blocks()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -105,6 +114,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   auto name() const {
     return to_unique_string(get().name());
   }
+
   auto linkage_name() const {
     return to_unique_string(get().linkage_name());
   }
@@ -120,6 +130,7 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   auto is_artificial() const {
     return get().is_artificial();
   }
+
   auto is_external() const {
     return get().is_external();
   }
@@ -127,9 +138,11 @@ class DWARF_Function : private Mirror<LIEF::dwarf::Function> {
   auto size() const {
     return get().size();
   }
+
   auto ranges() const {
     return make_unique_vector<Range>(details::make_range(get().ranges()));
   }
+
   auto debug_location() const {
     return details::make_location(get().debug_location());
   }

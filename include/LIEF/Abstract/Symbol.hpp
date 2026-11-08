@@ -70,6 +70,7 @@ class LIEF_API Symbol : public Object {
   virtual uint64_t value() const {
     return value_;
   }
+
   virtual void value(uint64_t value) {
     value_ = value;
   }

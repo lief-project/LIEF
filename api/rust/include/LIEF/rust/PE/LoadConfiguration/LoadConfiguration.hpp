@@ -31,6 +31,7 @@ class PE_LoadConfiguration_guard_function_t
   auto rva() const {
     return get().rva;
   }
+
   auto extra() const {
     return get().extra;
   }
@@ -47,9 +48,11 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
     public:
     it_guard_cf_functions(const PE_LoadConfiguration::lief_t& src) :
       Iterator(src.guard_cf_functions()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -61,9 +64,11 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
     public:
     it_guard_address_taken_iat_entries(const PE_LoadConfiguration::lief_t& src) :
       Iterator(src.guard_address_taken_iat_entries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -75,9 +80,11 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
     public:
     it_guard_long_jump_targets(const PE_LoadConfiguration::lief_t& src) :
       Iterator(src.guard_long_jump_targets()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -89,9 +96,11 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
     public:
     it_guard_eh_continuation(const PE_LoadConfiguration::lief_t& src) :
       Iterator(src.guard_eh_continuation_functions()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -103,9 +112,11 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
     public:
     it_dynamic_relocations(const PE_LoadConfiguration::lief_t& src) :
       Iterator(src.dynamic_relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -114,60 +125,79 @@ class PE_LoadConfiguration : public Mirror<LIEF::PE::LoadConfiguration> {
   auto characteristics() const {
     return get().characteristics();
   }
+
   auto size() const {
     return get().size();
   }
+
   auto timedatestamp() const {
     return get().timedatestamp();
   }
+
   auto major_version() const {
     return get().major_version();
   }
+
   auto minor_version() const {
     return get().minor_version();
   }
+
   auto global_flags_clear() const {
     return get().global_flags_clear();
   }
+
   auto global_flags_set() const {
     return get().global_flags_set();
   }
+
   auto critical_section_default_timeout() const {
     return get().critical_section_default_timeout();
   }
+
   auto decommit_free_block_threshold() const {
     return get().decommit_free_block_threshold();
   }
+
   auto decommit_total_free_threshold() const {
     return get().decommit_total_free_threshold();
   }
+
   auto lock_prefix_table() const {
     return get().lock_prefix_table();
   }
+
   auto maximum_allocation_size() const {
     return get().maximum_allocation_size();
   }
+
   auto virtual_memory_threshold() const {
     return get().virtual_memory_threshold();
   }
+
   auto process_affinity_mask() const {
     return get().process_affinity_mask();
   }
+
   auto process_heap_flags() const {
     return get().process_heap_flags();
   }
+
   auto csd_version() const {
     return get().csd_version();
   }
+
   auto reserved1() const {
     return get().reserved1();
   }
+
   auto dependent_load_flags() const {
     return get().dependent_load_flags();
   }
+
   auto editlist() const {
     return get().editlist();
   }
+
   auto security_cookie() const {
     return get().security_cookie();
   }

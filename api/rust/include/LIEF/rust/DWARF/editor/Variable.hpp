@@ -30,12 +30,15 @@ class DWARF_editor_Variable : public Mirror<LIEF::dwarf::editor::Variable> {
   auto set_external() {
     get().set_external();
   }
+
   auto set_addr(uint64_t addr) {
     get().set_addr(addr);
   }
+
   auto set_stack_offset(uint64_t addr) {
     get().set_stack_offset(addr);
   }
+
   auto set_type(const DWARF_editor_Type& ty) {
     get().set_type(ty.get());
   }

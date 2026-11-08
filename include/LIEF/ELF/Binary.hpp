@@ -389,6 +389,7 @@ class LIEF_API Binary : public LIEF::Binary {
   it_symbols_version symbols_version() LIEF_LIFETIMEBOUND {
     return symbol_version_table_;
   }
+
   it_const_symbols_version symbols_version() const LIEF_LIFETIMEBOUND {
     return symbol_version_table_;
   }
@@ -1110,6 +1111,7 @@ class LIEF_API Binary : public LIEF::Binary {
     add(entry);
     return *this;
   }
+
   Binary& operator+=(const Section& section) LIEF_LIFETIMEBOUND {
     add(section);
     return *this;

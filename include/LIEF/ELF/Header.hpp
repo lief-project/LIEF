@@ -273,6 +273,7 @@ class LIEF_API Header : public Object {
   void numberof_segments(uint32_t n) {
     numberof_segments_ = n;
   }
+
   void section_header_size(uint32_t size) {
     section_header_size_ = size;
   }
@@ -280,6 +281,7 @@ class LIEF_API Header : public Object {
   void numberof_sections(uint32_t n) {
     numberof_sections_ = n;
   }
+
   void section_name_table_idx(uint32_t idx) {
     section_string_table_idx_ = idx;
   }

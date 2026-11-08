@@ -79,9 +79,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_commands(const MachO_Binary::lief_t& src) :
       Iterator(src.commands()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -92,9 +94,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_symbols(const MachO_Binary::lief_t& src) :
       Iterator(src.symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -106,9 +110,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_exported_symbols(const MachO_Binary::lief_t& src) :
       Iterator(src.exported_symbols()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -119,9 +125,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_sections(const MachO_Binary::lief_t& src) :
       Iterator(src.sections()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -132,9 +140,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_segments(const MachO_Binary::lief_t& src) :
       Iterator(src.segments()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -145,9 +155,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_libraries(const MachO_Binary::lief_t& src) :
       Iterator(src.libraries()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -159,9 +171,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_lazy_load_dylib_info(const MachO_Binary::lief_t& src) :
       Iterator(src.lazy_load_dylib_infos()) {}
+
     auto next() { // NOLINT
       return Iterator::next();
     }
+
     auto size() const { // NOLINT
       return Iterator::size();
     }
@@ -173,9 +187,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_relocations(const MachO_Binary::lief_t& src) :
       Iterator(src.relocations()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -187,9 +203,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_rpaths(const MachO_Binary::lief_t& src) :
       Iterator(src.rpaths()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -200,9 +218,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_sub_clients(const MachO_Binary::lief_t& src) :
       Iterator(src.subclients()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -213,9 +233,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_bindings_info(const MachO_Binary::lief_t& src) :
       ForwardIterator(src.bindings()) {}
+
     auto next() {
       return ForwardIterator::next();
     }
+
     auto size() const {
       return ForwardIterator::size();
     }
@@ -226,9 +248,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_stubs(const MachO_Binary::lief_t& src) :
       RandomRangeIterator(src.symbol_stubs()) {}
+
     auto next() {
       return RandomRangeIterator::next();
     }
+
     auto size() const {
       return RandomRangeIterator::size();
     }
@@ -239,9 +263,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_notes(const MachO_Binary::lief_t& src) :
       Iterator(src.notes()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -253,9 +279,11 @@ class MachO_Binary : public AbstractBinary {
     public:
     it_fileset_binaries(const MachO_Binary::lief_t& src) :
       Iterator(src.filesets()) {}
+
     auto next() {
       return Iterator::next();
     }
+
     auto size() const {
       return Iterator::size();
     }
@@ -263,6 +291,7 @@ class MachO_Binary : public AbstractBinary {
 
   MachO_Binary(const lief_t& bin) :
     AbstractBinary(bin) {}
+
   MachO_Binary(std::unique_ptr<lief_t> ptr) :
     AbstractBinary(std::move(ptr)) {}
 
@@ -273,36 +302,47 @@ class MachO_Binary : public AbstractBinary {
   auto commands() const {
     return std::make_unique<it_commands>(impl());
   }
+
   auto symbols() const {
     return std::make_unique<it_symbols>(impl());
   }
+
   auto exported_symbols() const {
     return std::make_unique<it_exported_symbols>(impl());
   }
+
   auto sections() const {
     return std::make_unique<it_sections>(impl());
   }
+
   auto segments() const {
     return std::make_unique<it_segments>(impl());
   }
+
   auto libraries() const {
     return std::make_unique<it_libraries>(impl());
   }
+
   auto lazy_load_dylib_infos() const {
     return std::make_unique<it_lazy_load_dylib_info>(impl());
   }
+
   auto relocations() const {
     return std::make_unique<it_relocations>(impl());
   }
+
   auto rpaths() const {
     return std::make_unique<it_rpaths>(impl());
   }
+
   auto bindings() const {
     return std::make_unique<it_bindings_info>(impl());
   }
+
   auto symbol_stubs() const {
     return std::make_unique<it_stubs>(impl());
   }
+
   auto notes() const {
     return std::make_unique<it_notes>(impl());
   }
@@ -448,6 +488,7 @@ class MachO_Binary : public AbstractBinary {
   auto is_ios() const {
     return impl().is_ios();
   }
+
   auto is_macos() const {
     return impl().is_macos();
   }
@@ -459,6 +500,7 @@ class MachO_Binary : public AbstractBinary {
   auto write(const std::string& output) {
     impl().write(output);
   }
+
   void write_with_config(const std::string& output,
                          const MachO_Binary_write_config_t& config) {
     impl().write(output, {config.linkedit});
@@ -669,6 +711,7 @@ class MachO_Binary : public AbstractBinary {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }

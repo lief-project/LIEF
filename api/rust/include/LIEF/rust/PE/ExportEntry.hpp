@@ -24,6 +24,7 @@ class PE_ExportEntry : public AbstractSymbol {
   using lief_t = LIEF::PE::ExportEntry;
   PE_ExportEntry(const lief_t& info) :
     AbstractSymbol(info) {}
+
   PE_ExportEntry(std::unique_ptr<lief_t> impl) :
     AbstractSymbol(std::move(impl)) {}
 
@@ -38,15 +39,19 @@ class PE_ExportEntry : public AbstractSymbol {
   auto ordinal() const {
     return impl().ordinal();
   }
+
   auto address() const {
     return impl().address();
   }
+
   auto is_extern() const {
     return impl().is_extern();
   }
+
   auto is_forwarded() const {
     return impl().is_forwarded();
   }
+
   auto function_rva() const {
     return impl().function_rva();
   }
@@ -54,6 +59,7 @@ class PE_ExportEntry : public AbstractSymbol {
   auto fwd_library() const {
     return to_unique_string(impl().forward_information().library);
   }
+
   auto fwd_function() const {
     return to_unique_string(impl().forward_information().function);
   }
@@ -61,6 +67,7 @@ class PE_ExportEntry : public AbstractSymbol {
   auto set_ordinal(uint16_t ordinal) {
     impl().ordinal(ordinal);
   }
+
   auto set_address(uint32_t addr) {
     impl().address(addr);
   }
@@ -73,6 +80,7 @@ class PE_ExportEntry : public AbstractSymbol {
   const lief_t& impl() const {
     return as<lief_t>(this);
   }
+
   lief_t& impl() {
     return as<lief_t>(this);
   }
