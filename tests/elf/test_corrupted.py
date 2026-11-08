@@ -185,3 +185,25 @@ def test_write_unreadable_content():
 
     built = elf.write_to_bytes()
     assert 0 < len(built) < 0x10000
+
+
+@pytest.mark.linux
+@pytest.mark.private
+def test_corrupted_section_offset(tmp_path: Path):
+    testcase = Path(get_sample("private/ELF/corrupted_section_offset.elf")).absolute()
+
+    code = dedent("""\
+    import lief
+    import sys
+    lief.logging.disable()
+    elf = lief.ELF.parse(sys.argv[1])
+    assert elf is not None
+    elf.add(lief.ELF.DynamicEntry(lief.ELF.DynamicEntry.TAG.DEBUG_TAG, 0))
+    elf.write(sys.argv[2])
+    """)
+
+    subprocess.check_call(
+        [sys.executable, "-c", code, str(testcase), str(tmp_path / "out.elf")],
+        timeout=60.0,
+        preexec_fn=address_space_limiter(),
+    )

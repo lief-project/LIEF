@@ -55,7 +55,7 @@ vector_iostream& vector_iostream::put(uint8_t c) {
 }
 
 vector_iostream& vector_iostream::write(const uint8_t* s, std::streamsize n) {
-  if (n < 0) {
+  if (n <= 0) {
     return *this;
   }
 
