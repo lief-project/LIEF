@@ -50,6 +50,26 @@ TEST_CASE("lief.test.iostream", "[lief][test][iostream]") {
     REQUIRE(std::u16string(out, out + name.size()) == name);
   }
 
+  SECTION("repeated writes use the current position") {
+    LIEF::vector_iostream ios;
+    ios.write(4, 0x11);
+    ios.seekp(1);
+    ios.write(2, 0x22);
+    REQUIRE(ios.raw() == std::vector<uint8_t>{0x11, 0x22, 0x22, 0x11});
+    REQUIRE(ios.tellp() == 3);
+
+    ios.seekp(6);
+    ios.write(2, 0x33);
+    REQUIRE(ios.raw() ==
+            std::vector<uint8_t>{0x11, 0x22, 0x22, 0x11, 0, 0, 0x33, 0x33});
+    REQUIRE(ios.tellp() == 8);
+
+    ios.seekp(10);
+    ios.write(size_t{0}, 0x44);
+    REQUIRE(ios.size() == 8);
+    REQUIRE(ios.tellp() == 10);
+  }
+
   SECTION("invalid write positions are rejected") {
     using off_type = LIEF::vector_iostream::off_type;
     using pos_type = LIEF::vector_iostream::pos_type;
