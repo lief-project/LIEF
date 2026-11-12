@@ -54,6 +54,9 @@
   * Fix a use-after-free of the section names when ``.shstrtab`` is relocated
     while writing the binary (advisory ``GHSA-jrqq-qr56-xgcv``)
   * Fix the sizes of the ELF note names and descriptions (:pr:`1402` by :github_user:`wleeaf`)
+  * Fix the update of the dynamic table when the file offset of ``PT_DYNAMIC``
+    is not consistent with its virtual address. ``add_library`` was not
+    reflected in the written binary for such libraries (:issue:`1268`).
 
 :COFF:
 

@@ -1230,6 +1230,19 @@ ok_error_t Builder::build_dynamic_section() {
 
   // Update the PT_DYNAMIC segment
   if (Segment* dynamic_seg = binary_->get(Segment::TYPE::DYNAMIC)) {
+    // The file offset of PT_DYNAMIC is not necessarily consistent with its
+    // virtual address (see issue #1268). The parser locates the dynamic table
+    // through the PT_LOAD segment that wraps it, so the table must be written
+    // at the offset matching the virtual address.
+    if (auto offset = binary_->virtual_address_to_offset(
+            dynamic_seg->virtual_address()))
+    {
+      dynamic_seg->file_offset(*offset);
+      if (Section* dynamic_section = binary_->get_section(".dynamic")) {
+        dynamic_section->offset(*offset);
+      }
+    }
+
     dynamic_seg->physical_size(raw.size());
     dynamic_seg->virtual_size(raw.size());
     dynamic_seg->content(std::move(raw));
