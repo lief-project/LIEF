@@ -87,6 +87,49 @@ def test_1132():
             assert binary.segment_from_offset(seg.file_offset) == seg
 
 
+@pytest.mark.parametrize(
+    "cpu", [lief.MachO.Header.CPU_TYPE.ARM, lief.MachO.Header.CPU_TYPE.ARM64]
+)
+@pytest.mark.parametrize("alignment", [12, 15])
+def test_1144(tmp_path: Path, cpu, alignment):
+    sample = get_sample("MachO/FAT_MachO_arm-arm64-binary-helloworld.bin")
+    binary = lief.MachO.parse(sample).take(cpu)
+    assert binary is not None
+
+    page_size = binary.page_size
+
+    section = lief.MachO.Section.create("__much_aligned")
+    assert section is not None
+    section.alignment = alignment
+    assert binary.add_section(section) is not None
+
+    added = binary.get_section("__much_aligned")
+    assert added is not None
+    assert added.offset % (1 << alignment) == 0
+
+    text = binary.get_section("__text")
+    assert text is not None
+    text_offset = text.offset
+
+    assert isinstance(binary.shift(1), lief.ok_t)
+
+    expected_shift = max(page_size, 1 << alignment)
+    assert text.offset - text_offset == expected_shift
+    assert added.offset % (1 << alignment) == 0
+
+    output = tmp_path / f"issue_1144_{cpu.name}_{alignment}.bin"
+    binary.write(output)
+
+    new = lief.MachO.parse(output).at(0)
+    assert new is not None
+    checked, err = lief.MachO.check_layout(new)
+    assert checked, err
+
+    new_section = new.get_section("__much_aligned")
+    assert new_section is not None
+    assert new_section.offset % (1 << alignment) == 0
+
+
 @pytest.mark.private
 def test_issue_ntype(tmp_path: Path):
     macho = parse_macho("private/MachO/amfid.arm64e").at(0)

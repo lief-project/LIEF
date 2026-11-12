@@ -923,8 +923,6 @@ void Binary::shift_command(size_t width, uint64_t from_offset) {
 }
 
 ok_error_t Binary::shift(size_t value) {
-  value = align(value, page_size());
-
   Header& header = this->header();
 
   // Offset of the load commands table
@@ -943,6 +941,24 @@ ok_error_t Binary::shift(size_t value) {
   // |************************|
   // +------------------------+ <---------- __TEXT.end
   const uint64_t loadcommands_end = loadcommands_start + header.sizeof_cmds();
+
+  // Sections are shifted by `value`, so this value must be a multiple of their
+  // alignment to preserve their file offsets. Section::alignment() is a log2
+  // exponent and alignments are powers of two: the greatest alignment is
+  // therefore also a multiple of the smaller ones. Empty sections are included
+  // as their offset must remain aligned as well.
+  uint32_t max_alignment_log2 = 0;
+  for (const Section* section : sections_) {
+    // The offset of a section is stored in a 32-bit field: larger alignments
+    // cannot be satisfied anyway.
+    if (section->alignment() >= 32) {
+      continue;
+    }
+    max_alignment_log2 = std::max(max_alignment_log2, section->alignment());
+  }
+
+  const uint64_t max_section_alignment = uint64_t{1} << max_alignment_log2;
+  value = align(value, std::max<uint64_t>(page_size(), max_section_alignment));
 
   // Segment that wraps this load command table
   SegmentCommand* load_cmd_segment = segment_from_offset(loadcommands_end);

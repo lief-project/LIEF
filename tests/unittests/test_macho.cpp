@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
@@ -40,6 +42,7 @@
 #include "LIEF/MachO/RelocationFixup.hpp"
 #include "LIEF/MachO/Section.hpp"
 #include "LIEF/MachO/Symbol.hpp"
+#include "LIEF/MachO/utils.hpp"
 #include "LIEF/logging.hpp"
 
 #include "LIEF/Abstract/Parser.hpp"
@@ -346,6 +349,53 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
 
         CHECK(fixup.address() == __auth_got + 2 * sizeof(uint64_t));
         CHECK(fixup.target() - new_bin->imagebase() == 0xdeadc0de);
+      }
+    }
+  }
+
+  SECTION("issue-1144-shift-max-alignment") {
+    const std::string sample =
+        test::get_macho_sample("FAT_MachO_arm-arm64-binary-helloworld.bin");
+
+    for (MachO::Header::CPU_TYPE cpu :
+         {MachO::Header::CPU_TYPE::ARM, MachO::Header::CPU_TYPE::ARM64})
+    {
+      for (uint32_t alignment : {12u, 15u}) {
+        auto bin = MachO::Parser::parse(sample)->take(cpu);
+        REQUIRE(bin != nullptr);
+
+        const uint64_t page_size = bin->page_size();
+        REQUIRE(page_size >= (uint64_t{1} << 12));
+
+        auto section = MachO::Section::create("__much_aligned");
+        REQUIRE(section != nullptr);
+        section->alignment(alignment);
+        REQUIRE(bin->add_section(*section) != nullptr);
+
+        const Section* added = bin->get_section("__much_aligned");
+        REQUIRE(added != nullptr);
+        REQUIRE((added->offset() % (uint64_t{1} << alignment)) == 0);
+
+        const Section* text = bin->get_section("__text");
+        REQUIRE(text != nullptr);
+        const uint64_t text_offset = text->offset();
+
+        REQUIRE(is_ok(bin->shift(1)));
+
+        const uint64_t expected_shift =
+            std::max<uint64_t>(page_size, uint64_t{1} << alignment);
+        CHECK(text->offset() - text_offset == expected_shift);
+        CHECK((added->offset() % (uint64_t{1} << alignment)) == 0);
+
+        auto rebuilt = reload(*bin);
+        REQUIRE(rebuilt != nullptr);
+
+        std::string error;
+        CHECK(MachO::check_layout(*rebuilt, &error));
+
+        const Section* new_section = rebuilt->get_section("__much_aligned");
+        REQUIRE(new_section != nullptr);
+        CHECK((new_section->offset() % (uint64_t{1} << alignment)) == 0);
       }
     }
   }
