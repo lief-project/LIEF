@@ -537,12 +537,18 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
 
   new_segment->physical_address(new_segment->virtual_address());
 
-  uint64_t segmentsize = align(content.size(), psize);
-  content.resize(segmentsize, 0);
+  const bool has_content = !content.empty();
+  const uint64_t segmentsize =
+      has_content ? align(content.size(), psize) : 0;
+  if (has_content) {
+    content.resize(segmentsize, 0);
+  }
 
   new_segment->handler_size_ = content.size();
   new_segment->physical_size(segmentsize);
-  new_segment->virtual_size(segmentsize);
+  new_segment->virtual_size(
+      has_content ? segmentsize
+                  : std::max<uint64_t>(segment.virtual_size(), segmentsize));
 
   new_segment->datahandler_ = datahandler_.get();
 
@@ -556,7 +562,9 @@ Segment* Binary::add_segment<Header::FILE_TYPE::EXEC>(const Segment& segment,
     LIEF_ERR("Allocation failed");
     return nullptr;
   }
-  new_segment->content(content);
+  if (has_content) {
+    new_segment->content(content);
+  }
 
   if (header.section_headers_offset() <=
       new_segment->file_offset() + new_segment->physical_size())
@@ -611,8 +619,10 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
   auto new_segment = std::make_unique<Segment>(segment);
   new_segment->datahandler_ = datahandler_.get();
 
+  const bool has_content = !content.empty();
+
   DataHandler::Node new_node{new_segment->file_offset(),
-                             new_segment->physical_size(),
+                             has_content ? new_segment->physical_size() : 0,
                              DataHandler::Node::SEGMENT};
   datahandler_->add(new_node);
 
@@ -629,7 +639,7 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
   LIEF_DEBUG("Last offset: {:#010x}", last_offset_aligned);
   LIEF_DEBUG("Base:        {:#010x}", base);
 
-  auto segmentsize = align_up<uint64_t>(content.size(), 0x10);
+  auto segmentsize = has_content ? align_up<uint64_t>(content.size(), 0x10) : 0;
 
   const uint64_t delta = last_offset_aligned + segmentsize - last_offset;
 
@@ -658,7 +668,9 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
 
   new_segment->handler_size_ = content.size();
   new_segment->physical_size(segmentsize);
-  new_segment->virtual_size(segmentsize);
+  new_segment->virtual_size(
+      has_content ? segmentsize
+                  : std::max<uint64_t>(segment.virtual_size(), segmentsize));
 
   // Patch SHDR
   Header& header = this->header();
@@ -674,7 +686,9 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
     return nullptr;
   }
 
-  new_segment->content(content);
+  if (has_content) {
+    new_segment->content(content);
+  }
 
   header.numberof_segments(header.numberof_segments() + 1);
 
@@ -773,15 +787,23 @@ Segment* Binary::extend_segment<Segment::TYPE::LOAD>(const Segment& segment,
 inline Segment seg_for_section(const Section& section) {
   Segment new_segment;
 
+  const bool is_nobits = section.type() == Section::TYPE::NOBITS;
+
   // Create the segment associated with the section
-  span<const uint8_t> content_ref = section.content();
-  new_segment.content(as_vector(content_ref));
+  std::vector<uint8_t> content;
+  if (!is_nobits) {
+    content = as_vector(section.content());
+  }
+  new_segment.content(std::move(content));
   new_segment.type(Segment::TYPE::LOAD);
 
   new_segment.virtual_address(section.virtual_address());
   new_segment.physical_address(section.virtual_address());
 
-  new_segment.physical_size(section.size());
+  // SHT_NOBITS sections only live in memory: the segment carries the
+  // section's virtual size but no file content.
+  new_segment.physical_size(is_nobits ? 0 : section.size());
+  new_segment.virtual_size(section.size());
   new_segment.file_offset(section.offset());
   new_segment.alignment(section.alignment());
 
@@ -822,10 +844,16 @@ Section* Binary::add_section</*loaded=*/true>(const Section& section,
                              DataHandler::Node::SECTION};
   datahandler_->add(new_node);
 
+  const bool is_nobits = new_section->type() == Section::TYPE::NOBITS;
+  const uint64_t section_size =
+      is_nobits ? segment_added->virtual_size() : segment_added->physical_size();
+
   new_section->virtual_address(segment_added->virtual_address());
-  new_section->size(segment_added->physical_size());
-  new_section->offset(segment_added->file_offset());
-  new_section->original_size_ = segment_added->physical_size();
+  new_section->size(section_size);
+  new_section->offset(
+      is_nobits ? std::max(segment_added->file_offset(), eof_offset())
+                : segment_added->file_offset());
+  new_section->original_size_ = section_size;
 
   new_section->segments_.push_back(segment_added);
   segment_added->sections_.push_back(new_section.get());
@@ -857,10 +885,18 @@ Section* Binary::add_section</*loaded=*/false>(const Section& section,
       break;
   }
 
-  const uint64_t delta = section.size();
+  // SHT_NOBITS sections do not consume any byte in the file. The size is only
+  // used to describe the memory range of the section.
+  const bool is_nobits = section.type() == Section::TYPE::NOBITS;
+
+  if (is_nobits) {
+    last_offset = std::max(last_offset, eof_offset());
+  }
+
+  const uint64_t delta = is_nobits ? 0 : section.size();
   shift_sections(last_offset, delta);
 
-  auto alloc = datahandler_->make_hole(last_offset, section.size());
+  auto alloc = datahandler_->make_hole(last_offset, delta);
   if (!alloc) {
     LIEF_ERR("Allocation failed");
     return nullptr;
@@ -869,8 +905,11 @@ Section* Binary::add_section</*loaded=*/false>(const Section& section,
   new_section->offset(last_offset);
   new_section->size(section.size());
 
-  // Copy original content in the data handler
-  new_section->content(as_vector(section.content()));
+  if (!is_nobits) {
+    // Copy original content in the data handler
+    new_section->content(as_vector(section.content()));
+  }
+  new_section->original_size_ = section.size();
 
   Header& header = this->header();
   header.numberof_sections(header.numberof_sections() + 1);

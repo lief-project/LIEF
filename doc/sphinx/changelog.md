@@ -54,6 +54,8 @@
   * Fix a use-after-free of the section names when ``.shstrtab`` is relocated
     while writing the binary (advisory ``GHSA-jrqq-qr56-xgcv``)
   * Fix the sizes of the ELF note names and descriptions (:pr:`1402` by :github_user:`wleeaf`)
+  * Add support for adding empty sections (``SHT_NOBITS``) and empty segments
+    (``p_filesz == 0``) that only reserve a virtual memory range (:issue:`1169`)
 
 :COFF:
 

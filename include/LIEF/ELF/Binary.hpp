@@ -672,6 +672,18 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @return The section added. The `size` and the `virtual address` might change.
   ///
   /// This function requires a well-formed ELF binary
+  ///
+  /// To add a section that only describes a memory range without storing any
+  /// byte in the file, set the section's type to `Section::TYPE::NOBITS` and
+  /// its size to the requested in-memory size. In this configuration:
+  /// - With `loaded = true`, LIEF adds a `PT_LOAD` segment whose `p_filesz`
+  ///   is 0 and whose `p_memsz` is the section's size.
+  /// - With `loaded = false`, the section is only described by its header and
+  ///   no byte is appended to the file.
+  ///
+  /// The section's flags are preserved. A `SHT_NOBITS` section that is meant
+  /// to be mapped should carry `Section::FLAGS::ALLOC` (and
+  /// `Section::FLAGS::WRITE` for writable data).
   Section* add(const Section& section, bool loaded = true,
                SEC_INSERT_POS pos = SEC_INSERT_POS::AUTO) LIEF_LIFETIMEBOUND;
 
@@ -721,6 +733,14 @@ class LIEF_API Binary : public LIEF::Binary {
   /// @return The segment added. `Virtual address` and `File Offset` might change.
   ///
   /// This function requires a well-formed ELF binary
+  ///
+  /// If the segment's content is empty, its `virtual_size` is preserved and
+  /// the segment is added with a physical (file) size of 0. This enables the
+  /// creation of a `PT_LOAD` segment that reserves `virtual_size` bytes of
+  /// memory without storing any byte in the file (`p_filesz == 0` and
+  /// `p_memsz == virtual_size`). The segment's type, flags and alignment are
+  /// preserved: use `Segment::TYPE::LOAD` together with the desired
+  /// `Segment::FLAGS` to define a loadable memory range.
   Segment* add(const Segment& segment, uint64_t base = 0) LIEF_LIFETIMEBOUND;
 
   /// Replace the segment given in 2nd parameter with the segment given in the

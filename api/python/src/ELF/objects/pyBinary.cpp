@@ -513,12 +513,26 @@ void create<Binary>(nb::module_& m) {
 
            If the section does not aim at being loaded in memory,
            the ``loaded`` parameter has to be set to ``False`` (default: ``True``)
+
+           To add a section that only describes a memory range, without storing
+           any byte in the file, set its type to
+           :attr:`lief.ELF.Section.TYPE.NOBITS` and its size to the requested
+           in-memory size. With ``loaded=True``, LIEF creates a ``PT_LOAD``
+           segment with ``p_filesz == 0`` and ``p_memsz == section.size``.
+           With ``loaded=False``, no byte is added to the file.
            )delim"_doc,
            "section"_a, "loaded"_a = true, "pos"_a = Binary::SEC_INSERT_POS::AUTO,
            nb::lock_self(), nb::rv_policy::reference_internal)
 
       .def("add", nb::overload_cast<const Segment&, uint64_t>(&Binary::add),
-           "Add a new :class:`~lief.ELF.Segment` in the binary"_doc, "segment"_a,
+           R"delim(
+           Add a new :class:`~lief.ELF.Segment` in the binary.
+
+           If the segment's content is empty, its ``virtual_size`` is preserved
+           and the segment is added with a physical (file) size of 0. This
+           enables the creation of a ``PT_LOAD`` segment that maps
+           ``virtual_size`` bytes without storing any byte in the file.
+           )delim"_doc, "segment"_a,
            "base"_a = 0, nb::lock_self(), nb::rv_policy::reference_internal)
 
       .def("add", nb::overload_cast<const Note&>(&Binary::add),

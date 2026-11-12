@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <vector>
+
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "LIEF/Abstract/Parser.hpp"
 #include "LIEF/ELF/Binary.hpp"
+#include "LIEF/ELF/Builder.hpp"
 #include "LIEF/ELF/DynamicEntry.hpp"
 #include "LIEF/ELF/DynamicEntryArray.hpp"
 #include "LIEF/ELF/DynamicEntryFlags.hpp"
@@ -28,6 +32,8 @@
 #include "LIEF/ELF/Note.hpp"
 #include "LIEF/ELF/NoteDetails/NoteAbi.hpp"
 #include "LIEF/ELF/Parser.hpp"
+#include "LIEF/ELF/Section.hpp"
+#include "LIEF/ELF/Segment.hpp"
 #include "LIEF/ELF/Symbol.hpp"
 #include "LIEF/ELF/SymbolVersion.hpp"
 #include "LIEF/ELF/SymbolVersionDefinition.hpp"
@@ -200,5 +206,65 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
     CHECK(std::string(
               ELF::to_string(static_cast<ELF::DynamicEntryFlags::FLAG>(0xDEAD))
           ) == "UNKNOWN");
+  }
+
+  SECTION("add-empty-section-segment") {
+    std::string path = test::get_elf_sample("ELF64_x86-64_binary_ls.bin");
+    auto bin = ELF::Parser::parse(path);
+    REQUIRE(bin != nullptr);
+
+    ELF::Section section(".lief.empty");
+    section.type(ELF::Section::TYPE::NOBITS);
+    section.size(0x1234);
+    section.alignment(0x10);
+    section.add(ELF::Section::FLAGS::ALLOC);
+    section.add(ELF::Section::FLAGS::WRITE);
+
+    ELF::Section* added_section = bin->add(section, /*loaded=*/false);
+    REQUIRE(added_section != nullptr);
+    CHECK(added_section->type() == ELF::Section::TYPE::NOBITS);
+    CHECK(added_section->size() == 0x1234);
+    CHECK(added_section->content().empty());
+
+    ELF::Segment segment;
+    segment.type(ELF::Segment::TYPE::LOAD);
+    segment.add(ELF::Segment::FLAGS::R);
+    segment.add(ELF::Segment::FLAGS::W);
+    segment.virtual_size(0x2000);
+    segment.alignment(0x1000);
+
+    ELF::Segment* added_segment = bin->add(segment);
+    REQUIRE(added_segment != nullptr);
+    CHECK(added_segment->type() == ELF::Segment::TYPE::LOAD);
+    CHECK(added_segment->physical_size() == 0);
+    CHECK(added_segment->virtual_size() == 0x2000);
+    CHECK(added_segment->content().empty());
+
+    ELF::Builder builder(*bin);
+    builder.build();
+    const std::vector<uint8_t>& raw = builder.get_build();
+    REQUIRE(!raw.empty());
+
+    auto reparsed = ELF::Parser::parse(raw);
+    REQUIRE(reparsed != nullptr);
+
+    const ELF::Section* re_section = reparsed->get_section(".lief.empty");
+    REQUIRE(re_section != nullptr);
+    CHECK(re_section->type() == ELF::Section::TYPE::NOBITS);
+    CHECK(re_section->size() == 0x1234);
+    CHECK(re_section->content().empty());
+
+    auto segments = reparsed->segments();
+    const auto it_segment = std::find_if(
+        segments.begin(), segments.end(),
+        [added_segment](const ELF::Segment& seg) {
+          return seg.type() == ELF::Segment::TYPE::LOAD &&
+                 seg.virtual_address() == added_segment->virtual_address();
+        });
+    REQUIRE(it_segment != segments.end());
+    CHECK(it_segment->physical_size() == 0);
+    CHECK(it_segment->virtual_size() == 0x2000);
+    CHECK(it_segment->has(ELF::Segment::FLAGS::R));
+    CHECK(it_segment->has(ELF::Segment::FLAGS::W));
   }
 }
