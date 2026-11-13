@@ -16,8 +16,10 @@
 #ifndef LIEF_PE_PARSER_H
 #define LIEF_PE_PARSER_H
 
-#include <string_view>
+#include <cstdint>
 #include <map>
+#include <memory>
+#include <string_view>
 #include <vector>
 
 #include "LIEF/errors.hpp"
@@ -218,8 +220,28 @@ class LIEF_API Parser : public LIEF::Parser {
   ok_error_t parse_exports();
   ok_error_t parse_sections();
 
+  /// Cache of the section contents that have already been read.
+  ///
+  /// Malformed binaries can have several section headers pointing to the same
+  /// (or to overlapping) raw data. This cache shares the content of the
+  /// already-read ranges and bounds the total number of bytes kept for the
+  /// sections.
+  struct section_content_cache_t {
+    struct interval_t {
+      uint64_t start = 0;
+      uint64_t end = 0;
+      std::shared_ptr<const std::vector<uint8_t>> data;
+    };
+
+    std::vector<interval_t> intervals;
+    uint64_t budget = 0;
+    uint64_t allocated = 0;
+    bool budget_warned = false;
+  };
+
   ok_error_t read_section_content(const details::pe_section& raw_sec,
-                                  uint32_t index, Section& section);
+                                  uint32_t index, Section& section,
+                                  section_content_cache_t& cache);
 
   template<typename PE_T>
   ok_error_t parse_headers();

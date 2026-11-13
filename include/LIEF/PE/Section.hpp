@@ -15,6 +15,8 @@
  */
 #ifndef LIEF_PE_SECTION_H
 #define LIEF_PE_SECTION_H
+#include <algorithm>
+#include <cstdint>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -123,6 +125,15 @@ class LIEF_API Section : public LIEF::Section {
 
   /// The actual content of the section
   span<const uint8_t> content() const LIEF_LIFETIMEBOUND override {
+    if (shared_content_ != nullptr) {
+      if (shared_content_offset_ >= shared_content_->size()) {
+        return {};
+      }
+      const uint64_t available = shared_content_->size() - shared_content_offset_;
+      const uint64_t size = std::min(shared_content_size_, available);
+      return span<const uint8_t>(shared_content_->data() + shared_content_offset_,
+                                 static_cast<size_t>(size));
+    }
     return content_;
   }
 
@@ -251,20 +262,20 @@ class LIEF_API Section : public LIEF::Section {
 
   /// @private
   LIEF_LOCAL Section& reserve(size_t size, uint8_t value = 0) LIEF_LIFETIMEBOUND {
-    content_.resize(size, value);
+    writable_storage().resize(size, value);
     return *this;
   }
 
   /// @private
   LIEF_LOCAL vector_iostream edit() LIEF_LIFETIMEBOUND {
-    return content_;
+    return writable_storage();
   }
 
   /// @private
   LIEF_LOCAL size_t serialize(vector_iostream& ios) const;
 
   span<uint8_t> writable_content() LIEF_LIFETIMEBOUND {
-    return content_;
+    return writable_storage();
   }
 
   void accept(Visitor& visitor) const override;
@@ -275,7 +286,25 @@ class LIEF_API Section : public LIEF::Section {
   static std::vector<CHARACTERISTICS> characteristics_to_list(uint32_t value);
 
   private:
+  /// Return a writable view of the section's content.
+  ///
+  /// If the content is currently shared with other sections, this function
+  /// makes a private copy first (copy-on-write).
+  std::vector<uint8_t>& writable_storage() {
+    if (shared_content_ != nullptr) {
+      const span<const uint8_t> current = content();
+      content_.assign(current.begin(), current.end());
+      shared_content_.reset();
+      shared_content_offset_ = 0;
+      shared_content_size_ = 0;
+    }
+    return content_;
+  }
+
   std::vector<uint8_t> content_;
+  std::shared_ptr<const std::vector<uint8_t>> shared_content_;
+  uint64_t shared_content_offset_ = 0;
+  uint64_t shared_content_size_ = 0;
   std::vector<uint8_t> padding_;
   uint32_t virtual_size_ = 0;
   uint32_t pointer_to_relocations_ = 0;

@@ -81,6 +81,8 @@
     silently dropped.
   * Fix an out-of-bounds read on the ``CodeView`` entries whose PDB whose
     content is truncated (:pr:`1399` by :github_user:`bacescuandrei`)
+  * Fix the memory usage of the PE parser when several section headers point
+    to the same raw data (:issue:`1412`)
 
 :MachO:
 
