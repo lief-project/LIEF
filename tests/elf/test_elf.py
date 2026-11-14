@@ -350,6 +350,33 @@ def test_dynamic_flags():
     d_flags_1.remove(lief.ELF.DynamicEntryFlags.FLAG.BIND_NOW)  # should be no-op
 
 
+def test_dynamic_flags_several():
+    ls = parse_elf("ELF/ELF32_ARM_binary_ls.bin")
+
+    FLAG = lief.ELF.DynamicEntryFlags.FLAG
+
+    d_flags = ls.get(lief.ELF.DynamicEntry.TAG.FLAGS)
+    d_flags_1 = ls.get(lief.ELF.DynamicEntry.TAG.FLAGS_1)
+
+    assert isinstance(d_flags, lief.ELF.DynamicEntryFlags)
+    assert isinstance(d_flags_1, lief.ELF.DynamicEntryFlags)
+
+    for entry in (d_flags, d_flags_1):
+        for f in entry.flags:
+            entry.remove(f)
+        assert entry.value == 0
+
+    d_flags.add(FLAG.ORIGIN)
+    d_flags.add(FLAG.BIND_NOW)
+    assert d_flags.value == 0x9
+    assert d_flags.flags == [FLAG.ORIGIN, FLAG.BIND_NOW]
+
+    d_flags_1.add(FLAG.NODEFLIB)
+    d_flags_1.add(FLAG.PIE)
+    assert d_flags_1.value == 0x8000800
+    assert d_flags_1.flags == [FLAG.NODEFLIB, FLAG.PIE]
+
+
 def test_unwind_arm():
     sample = "ELF/ELF32_ARM_binary_ls.bin"
     ls = lief.ELF.parse(get_sample(sample))

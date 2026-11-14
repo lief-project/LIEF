@@ -103,7 +103,7 @@ class LIEF_API DynamicEntryFlags : public DynamicEntry {
     flags_list_t flags = this->flags();
     return std::accumulate(flags.begin(), flags.end(), uint64_t(0),
                            [](uint64_t value, FLAG f) {
-                             return value + (uint64_t)f;
+                             return value | (uint64_t)f;
                            });
   }
 
