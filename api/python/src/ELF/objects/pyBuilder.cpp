@@ -18,6 +18,7 @@
 #include <nanobind/stl/vector.h>
 
 #include "ELF/pyELF.hpp"
+#include "pyErr.hpp"
 
 #include "LIEF/ELF/Binary.hpp"
 #include "LIEF/ELF/Builder.hpp"
@@ -93,7 +94,12 @@ void create<Builder>(nb::module_& m) {
       .def(nb::init<Binary&, const Builder::config_t&>(), "elf"_a, "config"_a)
 
       .def(
-          "build", [](Builder& self) { return self.build(); },
+          "build",
+          [](Builder& self) {
+            return LIEF::py::error_or(
+                static_cast<ok_error_t (Builder::*)()>(&Builder::build), self
+            );
+          },
           "Perform the build of the provided ELF binary"_doc, nb::lock_self()
       )
 

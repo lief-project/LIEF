@@ -930,7 +930,9 @@ uint64_t Binary::virtual_size() const {
 
 std::vector<uint8_t> Binary::raw() {
   Builder builder{*this, Builder::config_t{}};
-  builder.build();
+  if (!builder.build()) {
+    return {};
+  }
   return builder.get_build();
 }
 
@@ -1677,13 +1679,18 @@ bool Binary::has_interpreter() const {
 
 void Binary::write(const std::string& filename, const Builder::config_t& config) {
   Builder builder{*this, config};
-  builder.build();
+  if (!builder.build()) {
+    LIEF_ERR("'{}' has not been written", filename);
+    return;
+  }
   builder.write(filename);
 }
 
 void Binary::write(std::ostream& os, const Builder::config_t& config) {
   Builder builder{*this, config};
-  builder.build();
+  if (!builder.build()) {
+    return;
+  }
   builder.write(os);
 }
 

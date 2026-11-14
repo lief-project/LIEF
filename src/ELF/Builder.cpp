@@ -89,11 +89,11 @@ bool Builder::should_swap() const {
 }
 
 
-void Builder::build() {
+ok_error_t Builder::build() {
   const Header::CLASS elf_class = binary_->type();
   if (elf_class != Header::CLASS::ELF32 && elf_class != Header::CLASS::ELF64) {
     LIEF_ERR("Invalid ELF class");
-    return;
+    return make_error_code(lief_errors::file_format_error);
   }
 
   auto res = binary_->type() == Header::CLASS::ELF32 ? build<details::ELF32>() :
@@ -101,6 +101,7 @@ void Builder::build() {
   if (!res) {
     LIEF_ERR("Builder failed");
   }
+  return res;
 }
 
 const std::vector<uint8_t>& Builder::get_build() {

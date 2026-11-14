@@ -131,7 +131,7 @@ class LIEF_API Builder {
   ~Builder();
 
   /// Perform the build of the provided ELF binary
-  void build();
+  ok_error_t build();
 
   config_t& config() LIEF_LIFETIMEBOUND {
     return config_;

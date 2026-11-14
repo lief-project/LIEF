@@ -597,3 +597,22 @@ def test_repatch_non_pie(tmp_path: Path, sample: str):
 
     assert elf.has_interpreter
     assert elf.interpreter == new_interpreter
+
+
+def test_build_error(tmp_path: Path):
+    """
+    A failed build must leave the output file untouched
+    """
+    output = tmp_path / "issue_845.elf"
+    shutil.copy(get_sample("ELF/issue_845.elf"), output)
+    original = output.read_bytes()
+
+    elf = parse_elf(output)
+    elf.add(lief.ELF.DynamicEntryRunPath("/" + "x" * 300))
+    assert isinstance(lief.ELF.Builder(elf).build(), lief.lief_errors)
+
+    elf = parse_elf(output)
+    elf.add(lief.ELF.DynamicEntryRunPath("/" + "x" * 300))
+
+    elf.write(output)
+    assert output.read_bytes() == original
