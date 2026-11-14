@@ -54,6 +54,9 @@
   * Fix a use-after-free of the section names when ``.shstrtab`` is relocated
     while writing the binary (advisory ``GHSA-jrqq-qr56-xgcv``)
   * Fix the sizes of the ELF note names and descriptions (:pr:`1402` by :github_user:`wleeaf`)
+  * Fix the ``sh_info`` value of ``.symtab`` after the binary is written: it was
+    set to the index of the first exported symbol instead of the first non-local
+    symbol.
 
 :COFF:
 

@@ -962,26 +962,19 @@ ok_error_t Builder::build_symtab_symbols() {
   }
   LIEF_DEBUG(".symtab section: '{}'", symbol_section->name());
 
-  std::stable_sort(
+  const auto it_first_non_local_symbol = std::stable_partition(
       binary_->symtab_symbols_.begin(), binary_->symtab_symbols_.end(),
-      [](const std::unique_ptr<Symbol>& lhs, const std::unique_ptr<Symbol>& rhs) {
-        return lhs->is_local() && (rhs->is_global() || rhs->is_weak());
-      }
+      [](const std::unique_ptr<Symbol>& sym) { return sym->is_local(); }
   );
 
-  const auto it_first_exported_symbol = std::find_if(
-      binary_->symtab_symbols_.begin(), binary_->symtab_symbols_.end(),
-      [](const std::unique_ptr<Symbol>& sym) { return sym->is_exported(); }
-  );
-
-  const auto first_exported_symbol_index =
+  const auto first_non_local_symbol_index =
       static_cast<uint32_t>(std::distance(binary_->symtab_symbols_.begin(),
-                                          it_first_exported_symbol));
+                                          it_first_non_local_symbol));
 
-  if (first_exported_symbol_index != symbol_section->information()) {
+  if (first_non_local_symbol_index != symbol_section->information()) {
     LIEF_INFO("information of .symtab section changes from {:d} to {:d}",
-              symbol_section->information(), first_exported_symbol_index);
-    symbol_section->information(first_exported_symbol_index);
+              symbol_section->information(), first_non_local_symbol_index);
+    symbol_section->information(first_non_local_symbol_index);
   }
 
   if (symbol_section->link() == 0 ||

@@ -616,3 +616,20 @@ def test_build_error(tmp_path: Path):
 
     elf.write(output)
     assert output.read_bytes() == original
+
+
+def test_symtab_info(tmp_path: Path):
+    """
+    sh_info of .symtab is the index of the first non-local symbol
+    """
+    elf = parse_elf("ELF/ELF64_x86-64_library_libadd.so")
+    output = tmp_path / "libadd.so"
+    elf.write(output)
+
+    elf = parse_elf(output)
+    symtab = elf.get_section(".symtab")
+    assert symtab is not None
+
+    for idx, sym in enumerate(elf.symtab_symbols):
+        is_local = sym.binding == lief.ELF.Symbol.BINDING.LOCAL
+        assert is_local == (idx < symtab.information), sym.name
