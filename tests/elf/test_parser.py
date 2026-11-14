@@ -310,6 +310,37 @@ def test_issue_dynamic_table():
     assert dyn_entries[0].name == "libselinux.so.1"  # type: ignore
 
 
+def test_add_library_invalid_dynamic_offset(tmp_path: Path):
+    """The updated dynamic table must be written where the loader reads it.
+
+    See issue #1268: the file offset of PT_DYNAMIC is not necessarily
+    consistent with its virtual address.
+    """
+    elf = parse_elf("ELF/issue_dynamic_table.elf")
+
+    dyn_segment = next(
+        seg for seg in elf.segments if seg.type == lief.ELF.Segment.TYPE.DYNAMIC
+    )
+    dyn_section = next(
+        sec for sec in elf.sections if sec.type == lief.ELF.Section.TYPE.DYNAMIC
+    )
+
+    # Emulate a binary whose `.dynamic` section cannot be used as a fallback
+    # (the original sample from issue #1268 has no usable section).
+    dyn_section.name = ".dynamix"
+    dyn_section.size = 0
+
+    translated = elf.virtual_address_to_offset(dyn_segment.virtual_address)
+    dyn_segment.file_offset = translated + 0x100
+
+    elf.add_library("libgadget32.so")
+    output = tmp_path / "issue_1268.elf"
+    elf.write(output)
+
+    new = parse_elf(output)
+    assert new.has_library("libgadget32.so")
+
+
 def test_i64_big_endian():
     """From issue #1164"""
     elf = parse_elf("ELF/elf-HPUX-ia64-bash")
