@@ -145,6 +145,10 @@ result<Segment> Segment::from_raw(const uint8_t* ptr, size_t size) {
 }
 
 span<const uint8_t> Segment::content() const {
+  if (physical_size() == 0) {
+    return {};
+  }
+
   if (datahandler_ == nullptr) {
     LIEF_DEBUG("Getting content of segment {}@{:#x} from cache", to_string(type()),
                virtual_address());
@@ -188,6 +192,10 @@ span<const uint8_t> Segment::content() const {
 }
 
 size_t Segment::get_content_size() const {
+  if (physical_size() == 0) {
+    return 0;
+  }
+
   if (datahandler_ == nullptr) {
     return content_c_.size();
   }

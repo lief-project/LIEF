@@ -201,6 +201,12 @@ void Section::offset(uint64_t offset) {
 }
 
 span<const uint8_t> Section::content() const {
+  // SHT_NOBITS sections describe a memory range and never store bytes in the
+  // file, even if their (offset, size) range falls within the file.
+  if (type() == TYPE::NOBITS) {
+    return {};
+  }
+
   if (size() == 0 || is_frame()) {
     return {};
   }
