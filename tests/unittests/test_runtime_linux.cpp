@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 #include <dlfcn.h>
@@ -52,13 +51,13 @@ TEST_CASE("lief.test.runtime.linux", "[lief][test][runtime][linux]") {
     REQUIRE(module->size() > 0);
 
     std::vector<uint8_t> data = module->dump();
-    REQUIRE(data.size() == module->size());
+    CHECK(data.size() == module->size());
     REQUIRE(data.size() >= 4);
     CHECK(std::memcmp(data.data(), "\177ELF", 4) == 0);
 
     std::ostringstream os;
     std::vector<uint8_t> streamed = module->dump(os);
-    REQUIRE(streamed.size() == module->size());
+    CHECK(streamed.size() == module->size());
     const std::string buffer = os.str();
     REQUIRE(buffer.size() == streamed.size());
     CHECK(std::memcmp(buffer.data(), streamed.data(), streamed.size()) == 0);

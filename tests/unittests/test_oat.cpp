@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
@@ -27,11 +26,9 @@ using namespace std::string_literals;
 
 TEST_CASE("lief.test.oat", "[lief][test][oat]") {
   SECTION("classof") {
-    {
-      std::string path = test::get_oat_sample("OAT_138_AArch64_xdivert.oat");
-      std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse(path);
-      REQUIRE(LIEF::ELF::Binary::classof(bin.get()));
-      REQUIRE(LIEF::OAT::Binary::classof(bin.get()));
-    }
+    std::string path = test::get_oat_sample("OAT_138_AArch64_xdivert.oat");
+    std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse(path);
+    CHECK(LIEF::ELF::Binary::classof(bin.get()));
+    CHECK(LIEF::OAT::Binary::classof(bin.get()));
   }
 }

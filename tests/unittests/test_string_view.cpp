@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_range_equals.hpp>
 
 #include <string_view>
 #include <functional>
@@ -43,7 +44,7 @@
 using namespace LIEF;
 using namespace std::string_view_literals;
 
-TEST_CASE("String views respect their bounds", "[string-view]") {
+TEST_CASE("lief.test.string_view", "[lief][test][string_view]") {
   SECTION("Symbol lookup and removal accept borrowed names") {
     auto bin = ELF::Parser::parse(test::get_elf_sample("ELF32_ARM_binary_ls.bin"));
     REQUIRE(bin != nullptr);
@@ -92,8 +93,7 @@ TEST_CASE("String views respect their bounds", "[string-view]") {
     const std::string_view view(buffer, 3);
     const std::vector<uint8_t> expected = {'a', 0, 0xff};
     PE::ResourceData data(view);
-    CHECK(std::vector<uint8_t>(data.content().begin(), data.content().end()) ==
-          expected);
+    CHECK_THAT(data.content(), Catch::Matchers::RangeEquals(expected));
 
     ELF::Section section(".data");
     section.content({'a', 0, 0xff, 'a', 0, 0xff});

@@ -13,11 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/generators/catch_generators_adapters.hpp>
-#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include <LIEF/iterators.hpp>
 
@@ -145,252 +142,144 @@ struct Foo {
 };
 
 
-TEST_CASE("lief.test.const_ref_iterator", "[lief][iterators][const_ref]") {
-
-  const Foo foo;
+// `Foo` and `const Foo` select the `ref_iterator` and `const_ref_iterator`
+// overloads of the getters
+TEMPLATE_TEST_CASE("lief.test.ref_iterator", "[lief][iterators][ref]", Foo,
+                   const Foo) {
+  TestType foo;
+  using it_t = decltype(foo.get_bar());
+  using it_ptr_t = decltype(foo.get_bar_ptr());
 
   SECTION("operator++") {
-    it_const_ref_t bars = foo.get_bar();
-    REQUIRE(*(bars++) == "1");
-    REQUIRE(*bars == "2");
+    it_t bars = foo.get_bar();
+    CHECK(*(bars++) == "1");
+    CHECK(*bars == "2");
   }
 
 
   SECTION("operator++(int)") {
-    it_const_ref_t bars = foo.get_bar();
-    REQUIRE(*(++bars) == "2");
-    REQUIRE(*(++bars) == "3");
-    REQUIRE(*(++bars) == "4");
+    it_t bars = foo.get_bar();
+    CHECK(*(++bars) == "2");
+    CHECK(*(++bars) == "3");
+    CHECK(*(++bars) == "4");
   }
 
 
   SECTION("operator--") {
-    it_const_ref_t bars = foo.get_bar();
+    it_t bars = foo.get_bar();
     ++bars;
-    REQUIRE(*(bars--) == "2");
-    REQUIRE(*bars == "1");
+    CHECK(*(bars--) == "2");
+    CHECK(*bars == "1");
   }
 
 
   SECTION("operator--(int)") {
-    it_const_ref_t bars = foo.get_bar();
+    it_t bars = foo.get_bar();
 
     ++bars;
-    REQUIRE(*(--bars) == "1");
-    REQUIRE(*bars == "1");
+    CHECK(*(--bars) == "1");
+    CHECK(*bars == "1");
   }
 
 
   SECTION("operator+=") {
-    it_const_ref_t bars = foo.get_bar();
+    it_t bars = foo.get_bar();
     bars += 2;
-    REQUIRE(*bars == "3");
+    CHECK(*bars == "3");
   }
 
 
   SECTION("operator-=") {
-    it_const_ref_t bars = foo.get_bar();
+    it_t bars = foo.get_bar();
     bars += 4;
-    REQUIRE(*bars == "5");
+    CHECK(*bars == "5");
 
     bars -= 2;
-    REQUIRE(*bars == "3");
+    CHECK(*bars == "3");
   }
 
   SECTION("operator[]") {
-    it_const_ref_t bars = foo.get_bar();
-    REQUIRE(bars[4] == "5");
+    it_t bars = foo.get_bar();
+    CHECK(bars[4] == "5");
   }
 
 
   SECTION("operator+") {
-    it_const_ref_t bars = foo.get_bar();
-    REQUIRE(*(bars + 5) == "6");
+    it_t bars = foo.get_bar();
+    CHECK(*(bars + 5) == "6");
   }
 
 
   SECTION("operator-") {
-    it_const_ref_t bars = foo.get_bar();
+    it_t bars = foo.get_bar();
     bars += 4;
-    REQUIRE(*(bars - 1) == "4");
+    CHECK(*(bars - 1) == "4");
   }
 
 
   SECTION("Comparaisons") {
-    it_const_ref_t bars_lhs = foo.get_bar();
-    it_const_ref_t bars_rhs = foo.get_bar();
-    REQUIRE(bars_lhs == bars_rhs);
-    REQUIRE(std::begin(bars_lhs) == std::begin(bars_rhs));
-    REQUIRE(std::end(bars_lhs) == std::end(bars_rhs));
-    REQUIRE(std::end(bars_lhs) != std::begin(bars_rhs));
+    it_t bars_lhs = foo.get_bar();
+    it_t bars_rhs = foo.get_bar();
+    CHECK(bars_lhs == bars_rhs);
+    CHECK(std::begin(bars_lhs) == std::begin(bars_lhs));
+    CHECK(std::end(bars_lhs) == std::end(bars_lhs));
 
-    REQUIRE((bars_lhs + 5) == (bars_rhs + 5));
-    REQUIRE((bars_lhs + 5) != (bars_rhs + 6));
+    CHECK(std::begin(bars_lhs) == std::begin(bars_rhs));
+    CHECK(std::end(bars_lhs) == std::end(bars_rhs));
+    CHECK(std::end(bars_lhs) != std::begin(bars_rhs));
 
-    it_const_ref_t it1 = bars_lhs + 5;
-    it_const_ref_t it2 = bars_rhs + 4;
+    CHECK((bars_lhs + 5) == (bars_rhs + 5));
+    CHECK((bars_lhs + 5) != (bars_rhs + 6));
 
-    REQUIRE(it1 != it2);
-    REQUIRE((it1 - 1) == it2);
-    REQUIRE((it1 - it2) == 1);
+    it_t it1 = bars_lhs + 5;
+    it_t it2 = bars_rhs + 4;
 
-    REQUIRE(it1 > it2);
-    REQUIRE(it1 >= it1);
+    CHECK(it1 != it2);
+    CHECK((it1 - 1) == it2);
+    CHECK((it1 - it2) == 1);
+
+    CHECK(it1 > it2);
+    CHECK(it1 >= it1);
 
 
-    REQUIRE(it2 < it1);
-    REQUIRE(it2 <= it2);
+    CHECK(it2 < it1);
+    CHECK(it2 <= it2);
   }
 
 
   SECTION("Internal management") {
-    it_const_ref_t bars = foo.get_bar();
-    it_const_ref_ptr_t bars_ptr = foo.get_bar_ptr();
+    it_t bars = foo.get_bar();
+    it_ptr_t bars_ptr = foo.get_bar_ptr();
 
-    REQUIRE(bars.size() == foo.bar.size());
-    REQUIRE(bars_ptr.size() == foo.bar_ptr.size());
-    REQUIRE(*bars_ptr == "1");
-    REQUIRE(std::string(bars_ptr->c_str()) == "1");
-    REQUIRE(bars_ptr[2] == "3");
+    CHECK(bars.size() == foo.bar.size());
+    CHECK(bars_ptr.size() == foo.bar_ptr.size());
+    CHECK(*bars_ptr == "1");
+    CHECK(std::string(bars_ptr->c_str()) == "1");
+    CHECK(bars_ptr[2] == "3");
 
-    REQUIRE(std::string(bars->c_str()) == "1");
-    REQUIRE(std::string(bars_ptr->c_str()) == "1");
+    CHECK(std::string(bars->c_str()) == "1");
+    CHECK(std::string(bars_ptr->c_str()) == "1");
     size_t count = std::count_if(std::begin(bars), std::end(bars),
                                  [](const std::string& s) { return s == "6"; });
 
-    REQUIRE(count == 3);
+    CHECK(count == 3);
 
-    it_const_ref_t bar_operator_equal{bars};
+    it_t bar_operator_equal{bars};
     bar_operator_equal += 2;
     bar_operator_equal.operator=(bars);
-    REQUIRE(bar_operator_equal == bars);
+    CHECK(bar_operator_equal == bars);
   }
 }
 
-TEST_CASE("lief.test.ref_iterator", "[lief][iterators][ref]") {
+TEST_CASE("lief.test.ref_iterator.mutable", "[lief][iterators][ref]") {
   Foo foo;
 
-  SECTION("operator++") {
-    it_ref_t bars = foo.get_bar();
-    REQUIRE(*(bars++) == "1");
-    REQUIRE(*bars == "2");
-  }
-
-  SECTION("operator++(int)") {
-    it_ref_t bars = foo.get_bar();
-    REQUIRE(*(++bars) == "2");
-    REQUIRE(*(++bars) == "3");
-    REQUIRE(*(++bars) == "4");
-  }
-
-
-  SECTION("operator--") {
-    it_ref_t bars = foo.get_bar();
-    ++bars;
-    REQUIRE(*(bars--) == "2");
-    REQUIRE(*bars == "1");
-  }
-
-
-  SECTION("operator--(int)") {
-    it_ref_t bars = foo.get_bar();
-
-    ++bars;
-    REQUIRE(*(--bars) == "1");
-    REQUIRE(*bars == "1");
-  }
-
-
-  SECTION("operator+=") {
-    it_ref_t bars = foo.get_bar();
-    bars += 2;
-    REQUIRE(*bars == "3");
-  }
-
-
-  SECTION("operator-=") {
-    it_ref_t bars = foo.get_bar();
-    bars += 4;
-    REQUIRE(*bars == "5");
-
-    bars -= 2;
-    REQUIRE(*bars == "3");
-  }
-
-  SECTION("operator[]") {
-    it_ref_t bars = foo.get_bar();
-    REQUIRE(bars[4] == "5");
-  }
-
-
-  SECTION("operator+") {
-    it_ref_t bars = foo.get_bar();
-    REQUIRE(*(bars + 5) == "6");
-  }
-
-
-  SECTION("operator-") {
-    it_ref_t bars = foo.get_bar();
-    bars += 4;
-    REQUIRE(*(bars - 1) == "4");
-  }
-
-
-  SECTION("Comparaisons") {
-    it_ref_t bars_lhs = foo.get_bar();
-    it_ref_t bars_rhs = foo.get_bar();
-    REQUIRE(bars_lhs == bars_rhs);
-    REQUIRE(std::begin(bars_lhs) == std::begin(bars_lhs));
-    REQUIRE(std::end(bars_lhs) == std::end(bars_lhs));
-
-    REQUIRE(std::begin(bars_lhs) == std::begin(bars_rhs));
-    REQUIRE(std::end(bars_lhs) == std::end(bars_rhs));
-    REQUIRE(std::end(bars_lhs) != std::begin(bars_rhs));
-
-    REQUIRE((bars_lhs + 5) == (bars_rhs + 5));
-    REQUIRE((bars_lhs + 5) != (bars_rhs + 6));
-
-    it_ref_t it1 = bars_lhs + 5;
-    it_ref_t it2 = bars_rhs + 4;
-
-    REQUIRE(it1 != it2);
-    REQUIRE((it1 - 1) == it2);
-    REQUIRE((it1 - it2) == 1);
-
-    REQUIRE(it1 > it2);
-    REQUIRE(it1 >= it1);
-
-
-    REQUIRE(it2 < it1);
-    REQUIRE(it2 <= it2);
-  }
-
-
   SECTION("Internal management") {
-    it_ref_t bars = foo.get_bar();
     it_ref_ptr_t bars_ptr = foo.get_bar_ptr();
-
-    REQUIRE(bars.size() == foo.bar.size());
-    REQUIRE(bars_ptr.size() == foo.bar_ptr.size());
-    REQUIRE(*bars_ptr == "1");
-    REQUIRE(std::string(bars_ptr->c_str()) == "1");
-    REQUIRE(bars_ptr[2] == "3");
-
-    REQUIRE(std::string(bars->c_str()) == "1");
-    REQUIRE(std::string(bars_ptr->c_str()) == "1");
-    size_t count = std::count_if(std::begin(bars), std::end(bars),
-                                 [](const std::string& s) { return s == "6"; });
-
-    REQUIRE(count == 3);
-
-    it_ref_t bar_operator_equal{bars};
-    bar_operator_equal += 2;
-    bar_operator_equal.operator=(bars);
-    REQUIRE(bar_operator_equal == bars);
 
     std::string& first_one_ptr = *bars_ptr;
     first_one_ptr = "123456";
-    REQUIRE(foo.get_bar_ptr()[0] == "123456");
+    CHECK(foo.get_bar_ptr()[0] == "123456");
 
 
     *foo.get_bar() = "123456";
@@ -426,19 +315,14 @@ TEST_CASE("lief.test.ref_iterator", "[lief][iterators][ref]") {
   }
 }
 
-
-TEST_CASE("lief.test.filter_ref_iterator", "[lief][iterators][filter][ref]") {
-  Foo foo;
-
-  SECTION("Always true") {
-    it_filter_ref true_list = foo.filter_always_true();
-    CHECK(true_list.size() == 8);
-  }
+// `Foo` and `const Foo` select the `filter_iterator` and
+// `const_filter_iterator` overloads of the getters
+TEMPLATE_TEST_CASE("lief.test.filter_iterator", "[lief][iterators][filter]", Foo,
+                   const Foo) {
+  TestType foo;
 
   SECTION("operator++") {
-
-    it_filter_ref bar_filtred = foo.get_bar_filter();
-    it_filter_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
+    auto bar_filtred = foo.get_bar_filter();
 
     CHECK(std::begin(bar_filtred) == std::begin(bar_filtred));
 
@@ -452,63 +336,8 @@ TEST_CASE("lief.test.filter_ref_iterator", "[lief][iterators][filter][ref]") {
   }
 
   SECTION("size()") {
-
-    it_filter_ref bar_filtred = foo.get_bar_filter();
-    it_filter_ref bar_filtred_empty = foo.get_bar_filter_empty();
-    it_filter_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
-
-    CHECK(bar_filtred.size() == 4);
-    CHECK(bar_filtred_empty.size() == 0);
-    CHECK(bar_filtred_empty.empty());
-    CHECK(bar_ptr_filtred.size() == 2);
-  }
-
-
-  SECTION("operator[]") {
-
-    it_filter_ref bar_filtred = foo.get_bar_filter();
-    it_filter_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
-
-    CHECK(bar_filtred[0] == "1");
-  }
-
-
-  SECTION("Internal management") {
-    it_filter_ref bar_filtred = foo.get_bar_filter();
-    it_filter_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
-
-    bar_ptr_filtred[1] = "7";
-    bar_filtred[0] = "foo";
-
-    CHECK(foo.get_bar_filter()[0] == "foo");
-    CHECK(foo.get_bar_ptr_filter().size() == 1);
-  }
-}
-
-TEST_CASE("lief.test.const_filter_ref_iterator",
-          "[lief][iterators][filter][const_ref]") {
-  const Foo foo;
-
-  SECTION("operator++") {
-
-    it_filter_const_ref bar_filtred = foo.get_bar_filter();
-    it_filter_const_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
-
-    CHECK(std::begin(bar_filtred) == std::begin(bar_filtred));
-
-    CHECK(*bar_filtred == "1");
-    CHECK(*(++bar_filtred) == "6");
-    CHECK(*(bar_filtred++) == "6");
-    CHECK(*(++bar_filtred) == "6");
-    CHECK(*(bar_filtred++) == "6");
-
-    CHECK(bar_filtred == std::end(bar_filtred));
-  }
-
-  SECTION("size()") {
-
-    it_filter_const_ref bar_filtred = foo.get_bar_filter();
-    it_filter_const_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
+    auto bar_filtred = foo.get_bar_filter();
+    auto bar_ptr_filtred = foo.get_bar_ptr_filter();
 
     CHECK(bar_filtred.size() == 4);
     CHECK(bar_ptr_filtred.size() == 2);
@@ -516,9 +345,8 @@ TEST_CASE("lief.test.const_filter_ref_iterator",
 
 
   SECTION("operator[]") {
-
-    it_filter_const_ref bar_filtred = foo.get_bar_filter();
-    it_filter_const_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
+    auto bar_filtred = foo.get_bar_filter();
+    auto bar_ptr_filtred = foo.get_bar_ptr_filter();
 
     CHECK(bar_filtred[1] == "6");
     CHECK(bar_filtred[0] == "1");
@@ -531,6 +359,33 @@ TEST_CASE("lief.test.const_filter_ref_iterator",
   SECTION("local") {
     it_filter_const_ref_local bar_ptr_filtred = foo.get_bar_const_filter_local();
     CHECK(bar_ptr_filtred.size() == 3);
+  }
+}
+
+TEST_CASE("lief.test.filter_iterator.mutable", "[lief][iterators][filter]") {
+  Foo foo;
+
+  SECTION("Always true") {
+    it_filter_ref true_list = foo.filter_always_true();
+    CHECK(true_list.size() == 8);
+  }
+
+  SECTION("empty") {
+    it_filter_ref bar_filtred_empty = foo.get_bar_filter_empty();
+    CHECK(bar_filtred_empty.size() == 0);
+    CHECK(bar_filtred_empty.empty());
+  }
+
+
+  SECTION("Internal management") {
+    it_filter_ref bar_filtred = foo.get_bar_filter();
+    it_filter_ref_ptr bar_ptr_filtred = foo.get_bar_ptr_filter();
+
+    bar_ptr_filtred[1] = "7";
+    bar_filtred[0] = "foo";
+
+    CHECK(foo.get_bar_filter()[0] == "foo");
+    CHECK(foo.get_bar_ptr_filter().size() == 1);
   }
 }
 

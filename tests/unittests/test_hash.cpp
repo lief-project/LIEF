@@ -15,7 +15,6 @@
  */
 #include <LIEF/ELF/Section.hpp>
 #include <LIEF/hash.hpp>
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 using namespace LIEF;
@@ -25,7 +24,7 @@ TEST_CASE("lief.test.hash", "[lief][test][hash]") {
   SECTION("std::vector") {
     std::vector<uint8_t> buffer_1 = {1, 2, 3, 4};
     std::vector<uint8_t> buffer_2 = {1, 2, 3, 4};
-    REQUIRE(hash(buffer_1) == hash(buffer_2));
+    CHECK(hash(buffer_1) == hash(buffer_2));
   }
 
   SECTION("span") {
@@ -35,14 +34,14 @@ TEST_CASE("lief.test.hash", "[lief][test][hash]") {
     const span<const uint8_t> S1 = buffer_1;
     const span<const uint8_t> S2 = buffer_2;
 
-    REQUIRE(hash(S1) == hash(S2));
+    CHECK(hash(S1) == hash(S2));
   }
 
   SECTION("LIEF::Object") {
     ELF::Section S1(".hello");
     ELF::Section S2(".hello");
 
-    REQUIRE(hash(S1) == hash(S2));
+    CHECK(hash(S1) == hash(S2));
   }
 
 
@@ -53,20 +52,20 @@ TEST_CASE("lief.test.hash", "[lief][test][hash]") {
     auto P1 = std::make_pair(1, 2);
     auto P2 = std::make_pair(1, 2);
 
-    REQUIRE(H1.process(P1).value() == H2.process(P2).value());
+    CHECK(H1.process(P1).value() == H2.process(P2).value());
   }
 
   SECTION("LIEF::Hash::string-literal") {
     Hash H1(0x123);
     Hash H2(0x123);
 
-    REQUIRE(H1.process("literal").value() ==
-            H2.process(std::string("literal")).value());
+    CHECK(H1.process("literal").value() ==
+          H2.process(std::string("literal")).value());
 
     Hash H3(0x123);
     Hash H4(0x123);
 
-    REQUIRE(H3.process("literal\0ignored").value() ==
-            H4.process(std::string("literal")).value());
+    CHECK(H3.process("literal\0ignored").value() ==
+          H4.process(std::string("literal")).value());
   }
 }

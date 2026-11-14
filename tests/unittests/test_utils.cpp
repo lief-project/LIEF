@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 #include <LIEF/utils.hpp>
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 using namespace LIEF;
 
 TEST_CASE("lief.test.utils", "[lief][test][utils]") {
 
   SECTION("align") {
-    REQUIRE(align(30, 0) == 30);
-    REQUIRE(align(3, 8) == 8);
-    REQUIRE(align(15, 16) == 16);
-    REQUIRE(align(29, 16) == 32);
+    CHECK(align(30, 0) == 30);
+    CHECK(align(3, 8) == 8);
+    CHECK(align(15, 16) == 16);
+    CHECK(align(29, 16) == 32);
   }
 
   SECTION("round") {
-    REQUIRE(LIEF::round(1) == 1);
-    REQUIRE(LIEF::round(0x99) == 0x100);
-    REQUIRE(LIEF::round(0x10000) == 0x10000);
-    REQUIRE(LIEF::round(std::numeric_limits<uint16_t>::max() - 1) == 0x10000);
+    CHECK(LIEF::round(1) == 1);
+    CHECK(LIEF::round(0x99) == 0x100);
+    CHECK(LIEF::round(0x10000) == 0x10000);
+    CHECK(LIEF::round(std::numeric_limits<uint16_t>::max() - 1) == 0x10000);
   }
 
   SECTION("size_literal") {
-    REQUIRE(2_KB == 2048);
-    REQUIRE(3_MB == 3072_KB);
-    REQUIRE(4_GB == 4096_MB);
+    CHECK(2_KB == 2048);
+    CHECK(3_MB == 3072_KB);
+    CHECK(4_GB == 4096_MB);
   }
 
   SECTION("u16tou8") {

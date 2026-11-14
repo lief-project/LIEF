@@ -14,7 +14,6 @@ FetchContent_Declare(Catch2
 FetchContent_MakeAvailable(Catch2)
 
 add_executable(unittests
-  main.cpp
   utils.cpp
   test_iterators.cpp
   test_enums.cpp
@@ -52,7 +51,6 @@ add_test(unittests
 
 if (cxx_std_20 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
   add_executable(unittests_cxx20
-    main.cpp
     utils.cpp
     test_iterators_ranges.cpp
   )

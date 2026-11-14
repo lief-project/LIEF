@@ -18,6 +18,10 @@
 #include "LIEF/ELF.hpp"
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_container_properties.hpp>
+#include <catch2/matchers/catch_matchers_predicate.hpp>
+#include <catch2/matchers/catch_matchers_quantifiers.hpp>
+#include <catch2/matchers/catch_matchers_range_equals.hpp>
 
 #include <LIEF/iterators.hpp>
 
@@ -158,7 +162,7 @@ TEST_CASE("lief.test.iterators.ranges.ref_iterator", "[lief][iterators][ranges]"
           strings_t{"5", "6"});
 
     auto ints = it_ref{values} | std::views::transform(to_int);
-    CHECK(std::ranges::equal(ints, std::vector<int>{1, 2, 3, 4, 5, 6}));
+    CHECK_THAT(ints, Catch::Matchers::RangeEquals({1, 2, 3, 4, 5, 6}));
 
     it_ref range{values};
     auto filtered = range | std::views::filter(is_even);
@@ -178,7 +182,7 @@ TEST_CASE("lief.test.iterators.ranges.ref_iterator", "[lief][iterators][ranges]"
     CHECK(std::ranges::count_if(it_const_ref{values}, is_even) == 3);
     CHECK(std::ranges::size(it_ref{values}) == values.size());
     CHECK(std::ranges::distance(it_ref{values}) == 6);
-    CHECK(std::ranges::equal(it_const_ref{values}, values));
+    CHECK_THAT(it_const_ref{values}, Catch::Matchers::RangeEquals(values));
   }
 
   SECTION("pointers") {
@@ -219,7 +223,7 @@ TEST_CASE("lief.test.iterators.ranges.filter_iterator",
   CHECK(to_vector(even | std::views::take(2)) == strings_t{"2", "4"});
 
   auto ints = even | std::views::transform(to_int);
-  CHECK(std::ranges::equal(ints, std::vector<int>{2, 4, 6}));
+  CHECK_THAT(ints, Catch::Matchers::RangeEquals({2, 4, 6}));
 
   auto it = std::ranges::find(it_filter{values, is_even}, "4");
   REQUIRE(it != it.end());
@@ -248,9 +252,13 @@ TEST_CASE("lief.test.iterators.ranges.elf", "[lief][iterators][ranges]") {
   auto loads = elf->segments() | std::views::filter(&ELF::Segment::is_load);
   CHECK(size_t(std::ranges::distance(loads)) == nb_load);
 
-  for (const ELF::Segment& segment : loads) {
-    CHECK(segment.is_load());
-  }
+  CHECK_THAT(
+      loads,
+      Catch::Matchers::AllMatch(Catch::Matchers::Predicate<const ELF::Segment&>(
+          [](const ELF::Segment& segment) { return segment.is_load(); },
+          "is a PT_LOAD segment"
+      ))
+  );
 
   const ELF::Binary& const_elf = *elf;
   CHECK(std::ranges::count_if(const_elf.segments(), &ELF::Segment::is_load) ==
@@ -261,14 +269,13 @@ TEST_CASE("lief.test.iterators.ranges.elf", "[lief][iterators][ranges]") {
   CHECK(&*first_load == &*loads.begin());
 
   ELF::Binary::it_exported_symbols exported = elf->exported_symbols();
-  REQUIRE(!exported.empty());
+  REQUIRE_FALSE(exported.empty());
   auto names = exported | std::views::transform([](const ELF::Symbol& sym) {
                  return sym.name();
                });
   CHECK(size_t(std::ranges::distance(names.begin(), names.end())) ==
         exported.size());
-  CHECK(std::ranges::none_of(names,
-                             [](std::string_view name) { return name.empty(); }));
+  CHECK_THAT(names, Catch::Matchers::NoneMatch(Catch::Matchers::IsEmpty()));
 
   ELF::Binary::it_dynamic_relocations relocations = elf->dynamic_relocations();
   CHECK(size_t(std::ranges::distance(relocations.begin(), relocations.end())) ==

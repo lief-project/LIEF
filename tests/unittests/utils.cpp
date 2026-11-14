@@ -1,10 +1,8 @@
 #include "utils.hpp"
-#include <LIEF/logging.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <filesystem>
 
 namespace fs = std::filesystem;
-
-using namespace std::literals::string_literals;
 
 namespace LIEF::test {
 std::string get_sample_dir() {
@@ -13,23 +11,16 @@ std::string get_sample_dir() {
     if (fs::is_directory(path_dir)) {
       return fs::absolute(path_dir).string();
     }
-    logging::log(logging::Level::Err, "'"s + path_dir.string() +
-                                          "' is"
-                                          " not a valid directory");
-    std::exit(1);
+    FAIL("'" << path_dir.string() << "' is not a valid directory");
   }
-  logging::log(logging::Level::Err, "LIEF_SAMPLES_DIR not set!");
-  std::exit(1);
+  FAIL("LIEF_SAMPLES_DIR not set!");
 }
 
 std::string get_sample(const std::string& name) {
   fs::path sample_dir = get_sample_dir();
   fs::path fullpath = sample_dir / name;
   if (!fs::exists(fullpath) || !fs::is_regular_file(fullpath)) {
-    logging::log(logging::Level::Err, "'"s + fullpath.string() +
-                                          "' is"
-                                          " does not exist");
-    std::exit(1);
+    FAIL("'" << fullpath.string() << "' does not exist");
   }
   return fs::absolute(fullpath).string();
 }

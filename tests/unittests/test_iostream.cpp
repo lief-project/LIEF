@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include <limits>
@@ -30,7 +29,7 @@ TEST_CASE("lief.test.iostream", "[lief][test][iostream]") {
     LIEF::vector_iostream ios;
     ios.write(span_buffer);
 
-    REQUIRE(ios.raw() == buffer);
+    CHECK(ios.raw() == buffer);
   }
 
   SECTION("u16string write grows by bytes not chars") {
@@ -47,7 +46,7 @@ TEST_CASE("lief.test.iostream", "[lief][test][iostream]") {
     REQUIRE(ios.size() >= byte_size);
 
     const auto* out = reinterpret_cast<const char16_t*>(ios.raw().data());
-    REQUIRE(std::u16string(out, out + name.size()) == name);
+    CHECK(std::u16string(out, out + name.size()) == name);
   }
 
   SECTION("invalid write positions are rejected") {
@@ -61,32 +60,32 @@ TEST_CASE("lief.test.iostream", "[lief][test][iostream]") {
     ios.seekp((pos_type)std::numeric_limits<off_type>::max());
     ios.write<uint64_t>(0);
 
-    REQUIRE(ios.raw() == original);
-    REQUIRE(ios.tellp() == std::numeric_limits<off_type>::max());
+    CHECK(ios.raw() == original);
+    CHECK(ios.tellp() == std::numeric_limits<off_type>::max());
 
     ios.write(1, 0x43);
-    REQUIRE(ios.raw() == original);
-    REQUIRE(ios.tellp() == std::numeric_limits<off_type>::max());
+    CHECK(ios.raw() == original);
+    CHECK(ios.tellp() == std::numeric_limits<off_type>::max());
 
     ios.seekp(1, std::ios_base::cur);
-    REQUIRE(ios.tellp() == std::numeric_limits<off_type>::max());
+    CHECK(ios.tellp() == std::numeric_limits<off_type>::max());
 
     ios.seekp(0);
     ios.seekp((pos_type)-1);
-    REQUIRE(ios.tellp() == 0);
+    CHECK(ios.tellp() == 0);
 
     ios.seekp(-1, std::ios_base::beg);
-    REQUIRE(ios.tellp() == 0);
+    CHECK(ios.tellp() == 0);
 
     ios.seekp(std::numeric_limits<off_type>::min(), std::ios_base::cur);
-    REQUIRE(ios.tellp() == 0);
+    CHECK(ios.tellp() == 0);
 
     const size_t largest_size = std::numeric_limits<size_t>::max();
-    REQUIRE(ios.edit_as<uint8_t>(largest_size) == nullptr);
+    CHECK(ios.edit_as<uint8_t>(largest_size) == nullptr);
 
     if ((uintmax_t)largest_size > (uintmax_t)std::numeric_limits<off_type>::max())
     {
-      REQUIRE(ios.tellp() == 0);
+      CHECK(ios.tellp() == 0);
     }
   }
 }

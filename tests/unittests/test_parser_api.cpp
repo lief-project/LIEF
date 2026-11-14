@@ -69,10 +69,10 @@ using namespace LIEF;
 
 template<class Fn>
 void check_path_inputs(const std::string& sample, Fn&& parse) {
-  REQUIRE(parse(sample.c_str()));
-  REQUIRE(parse(sample));
-  REQUIRE(parse(std::string_view(sample)));
-  REQUIRE(parse(fs::path(sample)));
+  CHECK(parse(sample.c_str()));
+  CHECK(parse(sample));
+  CHECK(parse(std::string_view(sample)));
+  CHECK(parse(fs::path(sample)));
 }
 
 [[maybe_unused]]
@@ -117,9 +117,9 @@ TEST_CASE("lief.test.parser_api", "[lief][test][parser]") {
     const std::string buffer = sample + "/trailing/garbage";
     const std::string_view view(buffer.data(), sample.size());
 
-    REQUIRE(ELF::is_elf(view));
-    REQUIRE(LIEF::Parser::parse(view) != nullptr);
-    REQUIRE(ELF::Parser::parse(view) != nullptr);
+    CHECK(ELF::is_elf(view));
+    CHECK(LIEF::Parser::parse(view) != nullptr);
+    CHECK(ELF::Parser::parse(view) != nullptr);
   }
 
   SECTION("ELF::Parser") {
@@ -171,14 +171,18 @@ TEST_CASE("lief.test.parser_api", "[lief][test][parser]") {
     const std::string vdex =
         test::get_sample("VDEX", "VDEX_06_x86-64_CallDeviceId.vdex");
 
-    REQUIRE(OAT::Parser::parse(oat.c_str(), vdex.c_str()) != nullptr);
-    REQUIRE(OAT::Parser::parse(oat, vdex) != nullptr);
-    REQUIRE(OAT::Parser::parse(std::string_view(oat), std::string_view(vdex)) !=
-            nullptr);
-    REQUIRE(OAT::Parser::parse(fs::path(oat), fs::path(vdex)) != nullptr);
+    CHECK(OAT::Parser::parse(oat.c_str(), vdex.c_str()) != nullptr);
+    CHECK(OAT::Parser::parse(oat, vdex) != nullptr);
+    CHECK(OAT::Parser::parse(std::string_view(oat), std::string_view(vdex)) !=
+          nullptr);
+    CHECK(OAT::Parser::parse(fs::path(oat), fs::path(vdex)) != nullptr);
 
-    REQUIRE(OAT::Parser::parse(fs::path(oat), vdex) != nullptr);
-    REQUIRE(OAT::Parser::parse(oat, fs::path(vdex)) != nullptr);
+    CHECK(OAT::Parser::parse(fs::path(oat), vdex) != nullptr);
+    CHECK(OAT::Parser::parse(oat, fs::path(vdex)) != nullptr);
+  }
+#else
+  SECTION("OAT::Parser") {
+    SKIP("LIEF is built without OAT support");
   }
 #endif
 
@@ -189,6 +193,10 @@ TEST_CASE("lief.test.parser_api", "[lief][test][parser]") {
         [](const auto& file) { return DEX::Parser::parse(file) != nullptr; }
     );
   }
+#else
+  SECTION("DEX::Parser") {
+    SKIP("LIEF is built without DEX support");
+  }
 #endif
 
 #if defined(LIEF_ART_SUPPORT)
@@ -198,6 +206,10 @@ TEST_CASE("lief.test.parser_api", "[lief][test][parser]") {
                         return ART::Parser::parse(file) != nullptr;
                       });
   }
+#else
+  SECTION("ART::Parser") {
+    SKIP("LIEF is built without ART support");
+  }
 #endif
 
 #if defined(LIEF_VDEX_SUPPORT)
@@ -206,6 +218,10 @@ TEST_CASE("lief.test.parser_api", "[lief][test][parser]") {
                       [](const auto& file) {
                         return VDEX::Parser::parse(file) != nullptr;
                       });
+  }
+#else
+  SECTION("VDEX::Parser") {
+    SKIP("LIEF is built without VDEX support");
   }
 #endif
 }

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_predicate.hpp>
+#include <catch2/matchers/catch_matchers_quantifiers.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "LIEF/MachO/Binary.hpp"
@@ -49,6 +50,7 @@
 
 using namespace LIEF;
 using namespace std::string_literals;
+using Catch::Matchers::Equals;
 
 std::unique_ptr<MachO::Binary> reload(MachO::Binary& bin) {
   std::ostringstream oss;
@@ -62,11 +64,9 @@ std::unique_ptr<MachO::Binary> reload(MachO::Binary& bin) {
 
 TEST_CASE("lief.test.macho", "[lief][test][macho]") {
   SECTION("classof") {
-    {
-      std::string path = test::get_macho_sample("alivcffmpeg_armv7.dylib");
-      std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse(path);
-      REQUIRE(LIEF::MachO::Binary::classof(bin.get()));
-    }
+    std::string path = test::get_macho_sample("alivcffmpeg_armv7.dylib");
+    std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse(path);
+    CHECK(LIEF::MachO::Binary::classof(bin.get()));
   }
 
   SECTION("BuildVersion") {
@@ -93,9 +93,8 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
     }
 
     // Test to_string with invalid enum value (covers fallback "UNKNOWN")
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::BuildVersion::PLATFORMS>(9999))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::BuildVersion::PLATFORMS>(9999)),
+               Equals("UNKNOWN"));
   }
 
   SECTION("MainCommand") {
@@ -146,9 +145,8 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
   }
 
   SECTION("LoadCommand-is_linkedit_data") {
-    // Use sshd for DyldInfo, DynamicSymbolCommand, FunctionStarts,
-    // DataInCode, CodeSignature, SymbolCommand
-    {
+    SECTION("DyldInfo, DynamicSymbolCommand, FunctionStarts, DataInCode, "
+            "CodeSignature, SymbolCommand") {
       std::string path = test::get_macho_sample("MachO64_x86-64_binary_sshd.bin");
       auto bin = MachO::Parser::parse(path)->take(0);
       REQUIRE(bin != nullptr);
@@ -160,8 +158,7 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
       }
       CHECK(linkedit_count >= 5);
     }
-    // Use crypt_and_hash for DyldExportsTrie, DyldChainedFixups
-    {
+    SECTION("DyldExportsTrie, DyldChainedFixups") {
       std::string path = test::get_macho_sample(
           "9edfb04c55289c6c682a25211a4b30b927a86fe50b014610d04d6055bd4ac23d_"
           "crypt_and_hash.macho"
@@ -178,66 +175,58 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
       }
       CHECK(linkedit_count >= 6);
     }
-    // Use libdyld for SegmentSplitInfo
-    {
+    SECTION("SegmentSplitInfo") {
       std::string path =
           test::get_macho_sample("FAT_MachO_x86_x86-64_library_libdyld.dylib");
       auto fat = MachO::Parser::parse(path);
       REQUIRE(fat != nullptr);
       auto bin = fat->take(1);
       REQUIRE(bin != nullptr);
-      bool found_ssi = false;
-      for (const auto& cmd : bin->commands()) {
-        if (MachO::LoadCommand::is_linkedit_data(cmd) &&
-            cmd.command() == MachO::LoadCommand::TYPE::SEGMENT_SPLIT_INFO)
-        {
-          found_ssi = true;
-        }
-      }
-      CHECK(found_ssi);
+      const auto is_ssi = [](const MachO::LoadCommand& cmd) {
+        return MachO::LoadCommand::is_linkedit_data(cmd) &&
+               cmd.command() == MachO::LoadCommand::TYPE::SEGMENT_SPLIT_INFO;
+      };
+      CHECK_THAT(bin->commands(),
+                 Catch::Matchers::AnyMatch(
+                     Catch::Matchers::Predicate<const MachO::LoadCommand&>(
+                         is_ssi, "is a SEGMENT_SPLIT_INFO linkedit command"
+                     )
+                 ));
     }
   }
 
   SECTION("to_string-fallbacks") {
     // BuildToolVersion: invalid TOOLS enum
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::BuildToolVersion::TOOLS>(9999))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::BuildToolVersion::TOOLS>(9999)),
+               Equals("UNKNOWN"));
 
     // DataCodeEntry: invalid TYPES enum
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::DataCodeEntry::TYPES>(9999))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::DataCodeEntry::TYPES>(9999)),
+               Equals("UNKNOWN"));
 
     // DYLD_CHAINED_FORMAT: invalid enum
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::DYLD_CHAINED_FORMAT>(9999))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::DYLD_CHAINED_FORMAT>(9999)),
+               Equals("UNKNOWN"));
 
     // DYLD_CHAINED_PTR_FORMAT: invalid enum
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::DYLD_CHAINED_PTR_FORMAT>(9999))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::DYLD_CHAINED_PTR_FORMAT>(9999)),
+               Equals("UNKNOWN"));
 
     // Header::FLAGS: invalid enum
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::Header::FLAGS>(0x40000000))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::Header::FLAGS>(0x40000000)),
+               Equals("UNKNOWN"));
 
     // Header::FILE_TYPE: invalid enum
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::Header::FILE_TYPE>(9999))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::Header::FILE_TYPE>(9999)),
+               Equals("UNKNOWN"));
 
     // Header::CPU_TYPE: invalid enum
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::Header::CPU_TYPE>(9999))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::Header::CPU_TYPE>(9999)),
+               Equals("UNKNOWN"));
 
     // LoadCommand::TYPE: invalid enum
-    CHECK(std::string(
-              MachO::to_string(static_cast<MachO::LoadCommand::TYPE>(0xFFFFFFFF))
-          ) == "UNKNOWN");
+    CHECK_THAT(MachO::to_string(static_cast<MachO::LoadCommand::TYPE>(0xFFFFFFFF)),
+               Equals("UNKNOWN"));
   }
 
   SECTION("DyldChainedFixupsCreator") {
@@ -288,65 +277,64 @@ TEST_CASE("lief.test.macho", "[lief][test][macho]") {
 
       check(*rebuilt);
     }
-    {
-      SECTION("Simple Imports") {
-        std::string path = test::get_macho_sample("liblog_srp.dylib");
-        std::unique_ptr<MachO::Binary> bin = MachO::Parser::parse(path)->take(0);
-        REQUIRE(bin != nullptr);
 
-        uint64_t __auth_got = bin->get_section("__auth_got")->virtual_address();
+    SECTION("Simple Imports") {
+      std::string path = test::get_macho_sample("liblog_srp.dylib");
+      std::unique_ptr<MachO::Binary> bin = MachO::Parser::parse(path)->take(0);
+      REQUIRE(bin != nullptr);
+
+      uint64_t __auth_got = bin->get_section("__auth_got")->virtual_address();
+      MachO::DyldChainedFixupsCreator()
+          .add_binding(__auth_got + 0 * sizeof(uint64_t), "_calloc")
+          .add_binding(__auth_got + 4 * sizeof(uint64_t), "_dlopen")
+          .create(*bin);
+      std::unique_ptr<MachO::Binary> new_bin = reload(*bin);
+      const MachO::DyldChainedFixups* fixups = new_bin->dyld_chained_fixups();
+      REQUIRE(fixups != nullptr);
+      auto bindings = fixups->bindings();
+      REQUIRE(bindings.size() == 2);
+      CHECK(bindings[0].address() == __auth_got);
+      CHECK(bindings[0].symbol()->name() == "_calloc");
+      CHECK(bindings[0].library()->name() == "/usr/lib/libSystem.B.dylib");
+
+      CHECK(bindings[1].address() == __auth_got + 4 * sizeof(uint64_t));
+      CHECK(bindings[1].symbol()->name() == "_dlopen");
+      CHECK(bindings[1].library()->name() == "/usr/lib/libSystem.B.dylib");
+    }
+
+    SECTION("Imports with relocations") {
+      std::string path = test::get_macho_sample("liblog_srp.dylib");
+      std::unique_ptr<MachO::Binary> bin = MachO::Parser::parse(path)->take(0);
+      REQUIRE(bin != nullptr);
+
+      uint64_t __auth_got = bin->get_section("__auth_got")->virtual_address();
+      {
+        logging::Scoped Scope(logging::Level::Warn);
         MachO::DyldChainedFixupsCreator()
             .add_binding(__auth_got + 0 * sizeof(uint64_t), "_calloc")
+            .add_relocation(__auth_got + 2 * sizeof(uint64_t),
+                            bin->imagebase() + 0xdeadc0de)
             .add_binding(__auth_got + 4 * sizeof(uint64_t), "_dlopen")
             .create(*bin);
-        std::unique_ptr<MachO::Binary> new_bin = reload(*bin);
-        const MachO::DyldChainedFixups* fixups = new_bin->dyld_chained_fixups();
-        REQUIRE(fixups != nullptr);
-        auto bindings = fixups->bindings();
-        REQUIRE(bindings.size() == 2);
-        CHECK(bindings[0].address() == __auth_got);
-        CHECK(bindings[0].symbol()->name() == "_calloc");
-        CHECK(bindings[0].library()->name() == "/usr/lib/libSystem.B.dylib");
-
-        CHECK(bindings[1].address() == __auth_got + 4 * sizeof(uint64_t));
-        CHECK(bindings[1].symbol()->name() == "_dlopen");
-        CHECK(bindings[1].library()->name() == "/usr/lib/libSystem.B.dylib");
       }
+      std::unique_ptr<MachO::Binary> new_bin = reload(*bin);
+      const MachO::DyldChainedFixups* fixups = new_bin->dyld_chained_fixups();
+      REQUIRE(fixups != nullptr);
+      auto bindings = fixups->bindings();
+      REQUIRE(bindings.size() == 2);
+      CHECK(bindings[0].address() == __auth_got);
+      CHECK(bindings[0].symbol()->name() == "_calloc");
+      CHECK(bindings[0].library()->name() == "/usr/lib/libSystem.B.dylib");
 
-      SECTION("Imports with relocations") {
-        std::string path = test::get_macho_sample("liblog_srp.dylib");
-        std::unique_ptr<MachO::Binary> bin = MachO::Parser::parse(path)->take(0);
-        REQUIRE(bin != nullptr);
+      CHECK(bindings[1].address() == __auth_got + 4 * sizeof(uint64_t));
+      CHECK(bindings[1].symbol()->name() == "_dlopen");
+      CHECK(bindings[1].library()->name() == "/usr/lib/libSystem.B.dylib");
+      auto relocations = new_bin->relocations();
+      REQUIRE(relocations.size() == 1);
+      auto& fixup = static_cast<const MachO::RelocationFixup&>(relocations[0]);
 
-        uint64_t __auth_got = bin->get_section("__auth_got")->virtual_address();
-        {
-          logging::Scoped Scope(logging::Level::Warn);
-          MachO::DyldChainedFixupsCreator()
-              .add_binding(__auth_got + 0 * sizeof(uint64_t), "_calloc")
-              .add_relocation(__auth_got + 2 * sizeof(uint64_t),
-                              bin->imagebase() + 0xdeadc0de)
-              .add_binding(__auth_got + 4 * sizeof(uint64_t), "_dlopen")
-              .create(*bin);
-        }
-        std::unique_ptr<MachO::Binary> new_bin = reload(*bin);
-        const MachO::DyldChainedFixups* fixups = new_bin->dyld_chained_fixups();
-        REQUIRE(fixups != nullptr);
-        auto bindings = fixups->bindings();
-        REQUIRE(bindings.size() == 2);
-        CHECK(bindings[0].address() == __auth_got);
-        CHECK(bindings[0].symbol()->name() == "_calloc");
-        CHECK(bindings[0].library()->name() == "/usr/lib/libSystem.B.dylib");
-
-        CHECK(bindings[1].address() == __auth_got + 4 * sizeof(uint64_t));
-        CHECK(bindings[1].symbol()->name() == "_dlopen");
-        CHECK(bindings[1].library()->name() == "/usr/lib/libSystem.B.dylib");
-        auto relocations = new_bin->relocations();
-        REQUIRE(relocations.size() == 1);
-        auto& fixup = static_cast<const MachO::RelocationFixup&>(relocations[0]);
-
-        CHECK(fixup.address() == __auth_got + 2 * sizeof(uint64_t));
-        CHECK(fixup.target() - new_bin->imagebase() == 0xdeadc0de);
-      }
+      CHECK(fixup.address() == __auth_got + 2 * sizeof(uint64_t));
+      CHECK(fixup.target() - new_bin->imagebase() == 0xdeadc0de);
     }
   }
 }

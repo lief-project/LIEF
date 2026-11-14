@@ -67,7 +67,7 @@ struct List {
 using cu_t = canbe_unique<Counted>;
 
 
-TEST_CASE("canbe_unique: ownership", "[canbe_unique]") {
+TEST_CASE("lief.test.canbe_unique.ownership", "[lief][test][canbe_unique]") {
   Counted::alive = 0;
 
   SECTION("borrowed") {
@@ -151,7 +151,7 @@ TEST_CASE("canbe_unique: ownership", "[canbe_unique]") {
   CHECK(Counted::alive == 0);
 }
 
-TEST_CASE("canbe_unique: move", "[canbe_unique]") {
+TEST_CASE("lief.test.canbe_unique.move", "[lief][test][canbe_unique]") {
   // NOLINTBEGIN(bugprone-use-after-move)
   Counted::alive = 0;
   Counted borrowed_a(1);

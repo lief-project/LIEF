@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_range_equals.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
 #include "LIEF/Abstract/Parser.hpp"
@@ -37,10 +37,11 @@
 
 using namespace LIEF;
 using namespace std::string_literals;
+using Catch::Matchers::Equals;
 
 TEST_CASE("lief.test.elf", "[lief][test][elf]") {
   SECTION("classof") {
-    {
+    SECTION("ELF") {
       std::string path = test::get_elf_sample("ELF32_ARM_binary_ls.bin");
       std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse(path);
       REQUIRE(LIEF::ELF::Binary::classof(bin.get()));
@@ -55,10 +56,10 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
       CHECK(bin->get_int_from_virtual_address<uint64_t>(0xAEF6).value_or(0) ==
             0xd1042803bdf82001);
     }
-    {
+    SECTION("OAT") {
       std::string path = test::get_oat_sample("OAT_138_AArch64_xdivert.oat");
       std::unique_ptr<LIEF::Binary> bin = LIEF::Parser::parse(path);
-      REQUIRE(LIEF::ELF::Binary::classof(bin.get()));
+      CHECK(LIEF::ELF::Binary::classof(bin.get()));
     }
   }
 
@@ -88,10 +89,8 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
     ELF::DynamicEntryRpath rpath("/usr/lib:/opt/lib");
     CHECK(rpath.rpath() == "/usr/lib:/opt/lib");
 
-    auto paths = rpath.paths();
-    CHECK(paths.size() == 2);
-    CHECK(paths[0] == "/usr/lib");
-    CHECK(paths[1] == "/opt/lib");
+    CHECK_THAT(rpath.paths(),
+               Catch::Matchers::RangeEquals({"/usr/lib", "/opt/lib"}));
 
     // Test append
     rpath.append("/home/lib");
@@ -108,7 +107,7 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
     // Test print
     std::ostringstream oss;
     rpath.print(oss);
-    CHECK(oss.str().find("/first/lib") != std::string::npos);
+    CHECK_THAT(oss.str(), Catch::Matchers::ContainsSubstring("/first/lib"));
   }
 
   SECTION("DynamicEntry-create") {
@@ -142,9 +141,8 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
     CHECK(init_arr != nullptr);
 
     // Test to_string for DynamicEntry::TAG
-    CHECK(std::string(ELF::to_string(ELF::DynamicEntry::TAG::NEEDED)) == "NEEDED");
-    CHECK(std::string(ELF::to_string(ELF::DynamicEntry::TAG::UNKNOWN)) ==
-          "UNKNOWN");
+    CHECK_THAT(ELF::to_string(ELF::DynamicEntry::TAG::NEEDED), Equals("NEEDED"));
+    CHECK_THAT(ELF::to_string(ELF::DynamicEntry::TAG::UNKNOWN), Equals("UNKNOWN"));
   }
 
   SECTION("DynamicEntry-to_value") {
@@ -165,40 +163,43 @@ TEST_CASE("lief.test.elf", "[lief][test][elf]") {
       if (sv != nullptr) {
         std::ostringstream oss;
         oss << *sv;
-        CHECK(!oss.str().empty());
+        CHECK_FALSE(oss.str().empty());
       }
     }
 
     // Test SymbolVersionDefinition str
-    for (const auto& svd : bin->symbols_version_definition()) {
+    auto lib = ELF::Parser::parse(
+        test::get_elf_sample("ELF64_x86-64_library_libfreebl3.so")
+    );
+    REQUIRE(lib != nullptr);
+    REQUIRE_FALSE(lib->symbols_version_definition().empty());
+    for (const auto& svd : lib->symbols_version_definition()) {
       std::ostringstream oss;
       oss << svd;
-      CHECK(!oss.str().empty());
+      CHECK_FALSE(oss.str().empty());
     }
   }
 
   SECTION("Header-to_string-fallbacks") {
-    CHECK(std::string(
-              ELF::to_string(static_cast<ELF::Header::FILE_TYPE>(0xFFFF))
-          ) == "UNKNOWN");
-    CHECK(std::string(ELF::to_string(static_cast<ELF::Header::VERSION>(0xFFFF))) ==
-          "UNKNOWN");
-    CHECK(std::string(ELF::to_string(static_cast<ELF::Header::CLASS>(0xFF))) ==
-          "UNKNOWN");
-    CHECK(std::string(ELF::to_string(static_cast<ELF::Header::OS_ABI>(0xFE))) ==
-          "UNKNOWN");
-    CHECK(std::string(ELF::to_string(static_cast<ELF::Header::ELF_DATA>(0xFF))) ==
-          "UNKNOWN");
+    CHECK_THAT(ELF::to_string(static_cast<ELF::Header::FILE_TYPE>(0xFFFF)),
+               Equals("UNKNOWN"));
+    CHECK_THAT(ELF::to_string(static_cast<ELF::Header::VERSION>(0xFFFF)),
+               Equals("UNKNOWN"));
+    CHECK_THAT(ELF::to_string(static_cast<ELF::Header::CLASS>(0xFF)),
+               Equals("UNKNOWN"));
+    CHECK_THAT(ELF::to_string(static_cast<ELF::Header::OS_ABI>(0xFE)),
+               Equals("UNKNOWN"));
+    CHECK_THAT(ELF::to_string(static_cast<ELF::Header::ELF_DATA>(0xFF)),
+               Equals("UNKNOWN"));
   }
 
   SECTION("NoteAbi-to_string-fallback") {
-    CHECK(std::string(ELF::to_string(static_cast<ELF::NoteAbi::ABI>(0xFF))) ==
-          "UNKNOWN");
+    CHECK_THAT(ELF::to_string(static_cast<ELF::NoteAbi::ABI>(0xFF)),
+               Equals("UNKNOWN"));
   }
 
   SECTION("DynamicEntryFlags-to_string-fallback") {
-    CHECK(std::string(
-              ELF::to_string(static_cast<ELF::DynamicEntryFlags::FLAG>(0xDEAD))
-          ) == "UNKNOWN");
+    CHECK_THAT(ELF::to_string(static_cast<ELF::DynamicEntryFlags::FLAG>(0xDEAD)),
+               Equals("UNKNOWN"));
   }
 }

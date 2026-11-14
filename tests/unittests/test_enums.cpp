@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 #include <LIEF/enums.hpp>
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 enum class TEST_ENUM : uint32_t {
@@ -32,29 +31,29 @@ ENABLE_BITMASK_OPERATORS(TEST_ENUM);
 TEST_CASE("lief.test.enums_bitmask", "[lief][test][enums_bitmask]") {
 
   SECTION("operator|") {
-    REQUIRE((TEST_ENUM::A | TEST_ENUM::B) == TEST_ENUM::A_or_B);
+    CHECK((TEST_ENUM::A | TEST_ENUM::B) == TEST_ENUM::A_or_B);
   }
 
   SECTION("operator&") {
-    REQUIRE((TEST_ENUM::A & TEST_ENUM::B) == TEST_ENUM::A_and_B);
+    CHECK((TEST_ENUM::A & TEST_ENUM::B) == TEST_ENUM::A_and_B);
   }
 
   SECTION("operator~") {
-    REQUIRE(~TEST_ENUM::A == TEST_ENUM::not_A);
+    CHECK(~TEST_ENUM::A == TEST_ENUM::not_A);
   }
 
   SECTION("operator|=") {
     TEST_ENUM value = TEST_ENUM::A;
-    REQUIRE((value |= TEST_ENUM::B) == TEST_ENUM::A_or_B);
+    CHECK((value |= TEST_ENUM::B) == TEST_ENUM::A_or_B);
   }
 
   SECTION("operator&=") {
     TEST_ENUM value = TEST_ENUM::A;
-    REQUIRE((value &= TEST_ENUM::B) == TEST_ENUM::A_and_B);
+    CHECK((value &= TEST_ENUM::B) == TEST_ENUM::A_and_B);
   }
 
   SECTION("bool") {
-    REQUIRE(is_true(TEST_ENUM::A));
-    REQUIRE(!is_true(TEST_ENUM::None));
+    CHECK(is_true(TEST_ENUM::A));
+    CHECK_FALSE(is_true(TEST_ENUM::None));
   }
 }

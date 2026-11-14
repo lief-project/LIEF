@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 #include "utils.hpp"
 
@@ -32,15 +32,15 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     const auto buffer_addr = reinterpret_cast<uintptr_t>(buffer.data());
 
     MemoryStream stream(buffer_addr, buffer.size());
-    REQUIRE(stream.base_address() == buffer_addr);
-    REQUIRE(stream.binary() == nullptr);
-    REQUIRE(stream.pos() == 0);
-    REQUIRE(stream.size() == buffer.size());
-    REQUIRE(stream.end() == buffer.data() + buffer.size());
-    REQUIRE(stream.peek<uint8_t>() == 0x00);
-    REQUIRE(stream.peek<uint8_t>(1) == 0x10);
-    REQUIRE(stream.peek<uint8_t>(3) == 0x40);
-    REQUIRE(MemoryStream::classof(stream));
+    CHECK(stream.base_address() == buffer_addr);
+    CHECK(stream.binary() == nullptr);
+    CHECK(stream.pos() == 0);
+    CHECK(stream.size() == buffer.size());
+    CHECK(stream.end() == buffer.data() + buffer.size());
+    CHECK(stream.peek<uint8_t>() == 0x00);
+    CHECK(stream.peek<uint8_t>(1) == 0x10);
+    CHECK(stream.peek<uint8_t>(3) == 0x40);
+    CHECK(MemoryStream::classof(stream));
   }
 
   SECTION("FileStream") {
@@ -50,35 +50,35 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
     auto fstream = FileStream::from_file(filepath);
     REQUIRE(fstream);
     FileStream& fs = *fstream;
-    REQUIRE(FileStream::classof(fs));
+    CHECK(FileStream::classof(fs));
 
     std::vector<uint8_t> buffer;
     fs.peek_data(buffer, std::numeric_limits<uint32_t>::max(), 4);
-    REQUIRE(buffer.empty());
+    CHECK(buffer.empty());
 
     fs.peek_data(buffer, 0, 4);
-    REQUIRE(!buffer.empty());
-    REQUIRE(buffer.size() == 4);
+    CHECK_FALSE(buffer.empty());
+    CHECK(buffer.size() == 4);
   }
 
   SECTION("VectorStream") {
     std::vector<uint8_t> buffer{1, 2, 3};
     VectorStream vs(buffer);
-    REQUIRE(VectorStream::classof(vs));
+    CHECK(VectorStream::classof(vs));
 
-    REQUIRE(vs.p() == vs.content().data());
-    REQUIRE(vs.start() == vs.p());
-    REQUIRE(vs.end() == vs.content().data() + vs.content().size());
-    REQUIRE(static_cast<VectorStream&>(vs).p() ==
-            static_cast<const VectorStream&>(vs).p());
-    REQUIRE(static_cast<VectorStream&>(vs).end() ==
-            static_cast<const VectorStream&>(vs).end());
-    REQUIRE(static_cast<VectorStream&>(vs).start() ==
-            static_cast<const VectorStream&>(vs).start());
+    CHECK(vs.p() == vs.content().data());
+    CHECK(vs.start() == vs.p());
+    CHECK(vs.end() == vs.content().data() + vs.content().size());
+    CHECK(static_cast<VectorStream&>(vs).p() ==
+          static_cast<const VectorStream&>(vs).p());
+    CHECK(static_cast<VectorStream&>(vs).end() ==
+          static_cast<const VectorStream&>(vs).end());
+    CHECK(static_cast<VectorStream&>(vs).start() ==
+          static_cast<const VectorStream&>(vs).start());
     vs.read<uint8_t>();
 
-    REQUIRE(vs.p() != vs.content().data());
-    REQUIRE(vs.start() != vs.p());
+    CHECK(vs.p() != vs.content().data());
+    CHECK(vs.start() != vs.p());
   }
 
   SECTION("VectorStream-slice") {
@@ -180,77 +180,43 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
   }
 
   SECTION("BinaryStream-read_sleb128-sign-extension") {
-    const std::vector<std::pair<std::vector<uint8_t>, int64_t>> cases = {
+    auto [buffer, expected] = GENERATE(table<std::vector<uint8_t>, int64_t>({
         {{0x7f}, -1},
         {{0x40}, -64},
         {{0xbf, 0x7f}, -65},
         {{0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x7f}, INT64_MIN},
-    };
-    for (const auto& [buffer, expected] : cases) {
-      SpanStream ss(buffer);
-      size_t sz = 0;
-      auto val = ss.read_sleb128(&sz);
-      REQUIRE(val);
-      CHECK(static_cast<int64_t>(*val) == expected);
-      CHECK(sz == buffer.size());
-    }
+    }));
+    CAPTURE(buffer, expected);
+    SpanStream ss(buffer);
+    size_t sz = 0;
+    auto val = ss.read_sleb128(&sz);
+    REQUIRE(val);
+    CHECK(static_cast<int64_t>(*val) == expected);
+    CHECK(sz == buffer.size());
   }
 
   SECTION("BinaryStream-read_dwarf_encoded") {
-    // UDATA2 = 0x02
-    {
-      std::vector<uint8_t> buffer = {0x34, 0x12};
-      SpanStream ss(buffer);
-      auto val = ss.read_dwarf_encoded(0x02);
-      REQUIRE(val);
-      CHECK(*val == 0x1234);
-    }
-    // UDATA4 = 0x03
-    {
-      std::vector<uint8_t> buffer = {0x78, 0x56, 0x34, 0x12};
-      SpanStream ss(buffer);
-      auto val = ss.read_dwarf_encoded(0x03);
-      REQUIRE(val);
-      CHECK(*val == 0x12345678);
-    }
-    // UDATA8 = 0x04
-    {
-      std::vector<uint8_t> buffer = {0x01, 0x00, 0x00, 0x00,
-                                     0x00, 0x00, 0x00, 0x00};
-      SpanStream ss(buffer);
-      auto val = ss.read_dwarf_encoded(0x04);
-      REQUIRE(val);
-      CHECK(*val == 1);
-    }
-    // ULEB128 = 0x01
-    {
-      std::vector<uint8_t> buffer = {0x7F};
-      SpanStream ss(buffer);
-      auto val = ss.read_dwarf_encoded(0x01);
-      REQUIRE(val);
-      CHECK(*val == 127);
-    }
-    // SLEB128 = 0x09
-    {
-      std::vector<uint8_t> buffer = {0x7F};
-      SpanStream ss(buffer);
-      auto val = ss.read_dwarf_encoded(0x09);
-      REQUIRE(val);
-      CHECK(*val == -1);
-    }
-    // Default/unknown encoding = 0x00
-    {
-      std::vector<uint8_t> buffer = {0x00};
-      SpanStream ss(buffer);
-      auto val = ss.read_dwarf_encoded(0x00);
-      REQUIRE(val);
-      CHECK(*val == 0);
-    }
+    // clang-format off
+    auto [encoding, buffer, expected] =
+        GENERATE(table<uint8_t, std::vector<uint8_t>, int64_t>({
+          {/*UDATA2=*/0x02,  {0x34, 0x12},             0x1234},
+          {/*UDATA4=*/0x03,  {0x78, 0x56, 0x34, 0x12}, 0x12345678},
+          {/*UDATA8=*/0x04,  {1, 0, 0, 0, 0, 0, 0, 0}, 1},
+          {/*ULEB128=*/0x01, {0x7F},                   127},
+          {/*SLEB128=*/0x09, {0x7F},                   -1},
+          {/*unknown=*/0x00, {0x00},                   0},
+        }));
+    // clang-format on
+    CAPTURE(encoding);
+    SpanStream ss(buffer);
+    auto val = ss.read_dwarf_encoded(encoding);
+    REQUIRE(val);
+    CHECK(*val == expected);
   }
 
   SECTION("BinaryStream.ULEB128") {
-    // Largest valid value: UINT64_MAX encoded on the maximum of 10 bytes.
-    {
+    SECTION("Largest value") {
+      // UINT64_MAX encoded on the maximum of 10 bytes
       std::vector<uint8_t> buffer = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
                                      0xFF, 0xFF, 0xFF, 0xFF, 0x01};
       SpanStream ss(buffer);
@@ -261,88 +227,58 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
       CHECK(sz == 10);
     }
 
-    // Overflow
-    {
-      std::vector<uint8_t> buffer = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-                                     0xFF, 0xFF, 0xFF, 0xFF, 0x02};
+    SECTION("Invalid encodings") {
+      auto [kind, buffer, error] =
+          GENERATE(table<std::string, std::vector<uint8_t>, lief_errors>({
+              {"overflow",
+               {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x02},
+               lief_errors::corrupted},
+              {"non-canonical", std::vector<uint8_t>(10, 0x80),
+               lief_errors::corrupted},
+              {"truncated stream", {0x80}, lief_errors::read_error},
+              {"smallest non-canonical overflow",
+               {0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+                0x00},
+               lief_errors::corrupted},
+          }));
+      CAPTURE(kind);
       SpanStream ss(buffer);
       auto val = ss.read_uleb128();
-      REQUIRE(!val);
-      CHECK(val.error() == lief_errors::corrupted);
-    }
-
-    // Non-canonical
-    {
-      std::vector<uint8_t> buffer(10, 0x80);
-      SpanStream ss(buffer);
-      auto val = ss.read_uleb128();
-      REQUIRE(!val);
-      CHECK(val.error() == lief_errors::corrupted);
-    }
-
-    // Truncated stream.
-    {
-      std::vector<uint8_t> buffer = {0x80};
-      SpanStream ss(buffer);
-      auto val = ss.read_uleb128();
-      REQUIRE(!val);
-      CHECK(val.error() == lief_errors::read_error);
-    }
-
-    // Smallest non-canonical overflow.
-    {
-      std::vector<uint8_t> buffer = {0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-                                     0x80, 0x80, 0x80, 0x80, 0x80, 0x00};
-      SpanStream ss(buffer);
-      auto val = ss.read_uleb128();
-      REQUIRE(!val);
-      CHECK(val.error() == lief_errors::corrupted);
+      REQUIRE_FALSE(val);
+      CHECK(val.error() == error);
     }
   }
 
   SECTION("BinaryStream.SLEB128") {
-    {
-      std::vector<uint8_t> buffer = {0x80, 0x80, 0x80, 0x80, 0x80,
-                                     0x80, 0x80, 0x80, 0x80, 0x7F};
+    SECTION("Valid encodings") {
+      auto [buffer, expected] = GENERATE(table<std::vector<uint8_t>, int64_t>({
+          {{0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x7F},
+           std::numeric_limits<int64_t>::min()},
+          {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00},
+           std::numeric_limits<int64_t>::max()},
+          {{0x7F}, -1},
+      }));
+      CAPTURE(buffer, expected);
       SpanStream ss(buffer);
       size_t sz = 0;
       auto val = ss.read_sleb128(&sz);
       REQUIRE(val);
-      CHECK(static_cast<int64_t>(*val) == std::numeric_limits<int64_t>::min());
-      CHECK(sz == 10);
+      CHECK(static_cast<int64_t>(*val) == expected);
+      CHECK(sz == buffer.size());
     }
 
-    {
-      std::vector<uint8_t> buffer = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-                                     0xFF, 0xFF, 0xFF, 0xFF, 0x00};
+    SECTION("Invalid encodings") {
+      auto [kind, buffer, error] =
+          GENERATE(table<std::string, std::vector<uint8_t>, lief_errors>({
+              {"non-canonical", std::vector<uint8_t>(10, 0x80),
+               lief_errors::corrupted},
+              {"truncated stream", {0x80}, lief_errors::read_error},
+          }));
+      CAPTURE(kind);
       SpanStream ss(buffer);
       auto val = ss.read_sleb128();
-      REQUIRE(val);
-      CHECK(static_cast<int64_t>(*val) == std::numeric_limits<int64_t>::max());
-    }
-
-    {
-      std::vector<uint8_t> buffer = {0x7F};
-      SpanStream ss(buffer);
-      auto val = ss.read_sleb128();
-      REQUIRE(val);
-      CHECK(static_cast<int64_t>(*val) == -1);
-    }
-
-    {
-      std::vector<uint8_t> buffer(10, 0x80);
-      SpanStream ss(buffer);
-      auto val = ss.read_sleb128();
-      REQUIRE(!val);
-      CHECK(val.error() == lief_errors::corrupted);
-    }
-
-    {
-      std::vector<uint8_t> buffer = {0x80};
-      SpanStream ss(buffer);
-      auto val = ss.read_sleb128();
-      REQUIRE(!val);
-      CHECK(val.error() == lief_errors::read_error);
+      REQUIRE_FALSE(val);
+      CHECK(val.error() == error);
     }
   }
 
@@ -353,26 +289,26 @@ TEST_CASE("lief.test.binarystream", "[lief][test][binarystream]") {
 
     // Out of bounds peek
     auto result = stream.peek<uint32_t>(100);
-    CHECK(!result);
+    CHECK_FALSE(result);
   }
 
   SECTION("FileStream-from_file-error") {
     auto fstream = FileStream::from_file("/does/not/exist/at/all");
-    CHECK(!fstream);
+    CHECK_FALSE(fstream);
   }
 
   SECTION("VectorStream-from_file-error") {
     auto vs = VectorStream::from_file("/does/not/exist/at/all");
-    CHECK(!vs);
+    CHECK_FALSE(vs);
   }
 
   SECTION("FileStream-from_file-directory") {
     auto fstream = FileStream::from_file(test::get_sample_dir());
-    CHECK(!fstream);
+    CHECK_FALSE(fstream);
   }
 
   SECTION("VectorStream-from_file-directory") {
     auto vs = VectorStream::from_file(test::get_sample_dir());
-    CHECK(!vs);
+    CHECK_FALSE(vs);
   }
 }
