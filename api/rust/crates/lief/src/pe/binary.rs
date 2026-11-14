@@ -59,6 +59,7 @@ impl FromFFI<ffi::PE_Binary> for Binary {
 }
 
 impl Binary {
+    #[expect(dead_code)] // TODO(romain): remove this warning once dynload is integrated
     pub(crate) fn into_ffi(self) -> cxx::UniquePtr<ffi::PE_Binary> {
         self.ptr
     }
