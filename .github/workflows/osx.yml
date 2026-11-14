@@ -9,12 +9,28 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+defaults:
+  run:
+    shell: bash
+
 env:
   python-test-version: '3.14'
+  uv-version: '0.13.5'
+  CLICOLOR_FORCE: "1"
+  FORCE_COLOR: "1"
 
 jobs:
   osx-sdk:
     runs-on: macos-latest
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+      CCACHE_MAXSIZE: 10.0G
+      CCACHE_CPP2: 1
+      CCACHE_COMPRESS: 1
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -23,9 +39,9 @@ jobs:
         run: |
           brew install cmake ninja ccache
       - name: Setup cache dir
-        shell: bash
         run: |
-          mkdir -p $RUNNER_TEMP/.ccache
+          mkdir -p "${RUNNER_TEMP}/.ccache"
+          echo "CCACHE_DIR=${RUNNER_TEMP}/.ccache" >> "${GITHUB_ENV}"
       - name: ccache cache files
         uses: actions/cache@v6
         with:
@@ -34,15 +50,6 @@ jobs:
           restore-keys: |
               osx-${{ runner.os }}-sdk-
       - name: Build SDK
-        shell: bash
-        env:
-          CLICOLOR_FORCE: "1"
-          MACOSX_DEPLOYMENT_TARGET: "11.0"
-          CCACHE_DIR: ${{ runner.temp }}/.ccache
-          CCACHE_MAXSIZE: 10.0G
-          CCACHE_CPP2: 1
-          CCACHE_COMPRESS: 1
-          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
         run: |
           bash scripts/osx/package_sdk.sh
       - name: 'Upload SDK Artifact'
@@ -63,9 +70,21 @@ jobs:
           name: osx-x64-install
           path: install/x64
           retention-days: 1
+      - name: ccache stats
+        run: ccache --show-stats
   osx-testing:
     runs-on: macos-latest
     if: "!contains(github.event.head_commit.message, '[skip-test]')"
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+      CCACHE_MAXSIZE: 10.0G
+      CCACHE_CPP2: 1
+      CCACHE_COMPRESS: 1
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
+      LIEF_SAMPLES_DIR: "/tmp/samples"
+      LIEF_BUILD_DIR: "/tmp/lief-build"
+      PYLIEF_CONF: ${{ github.workspace }}/scripts/osx/osx-testing-x64.toml
+      PYTEST_ADDOPTS: "--color=yes"
     steps:
       - uses: actions/checkout@v7
         with:
@@ -77,10 +96,11 @@ jobs:
       - name: Install system dependencies
         run: |
           brew install cmake ninja ccache
+          python -m pip install "uv==${{ env.uv-version }}"
       - name: Setup cache dir
-        shell: bash
         run: |
-          mkdir -p $RUNNER_TEMP/.ccache
+          mkdir -p "${RUNNER_TEMP}/.ccache"
+          echo "CCACHE_DIR=${RUNNER_TEMP}/.ccache" >> "${GITHUB_ENV}"
       - name: ccache cache files
         uses: actions/cache@v6
         with:
@@ -88,41 +108,25 @@ jobs:
           key: osx-${{ runner.os }}-test-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
               osx-${{ runner.os }}-test-
-      - name: Upgrade pip
-        shell: bash
+      - name: Build Python ${{ env.python-test-version }}
         run: |
-          python -m pip install --upgrade pip
-      - name: Build Python ${{ env.python-test-version }} with tests
-        shell: bash
-        env:
-          LIEF_SAMPLES_DIR: "/tmp/samples"
-          LIEF_BUILD_DIR: "/tmp/lief-build"
-          PYLIEF_CONF: "${{ github.workspace }}/scripts/osx/osx-testing-x64.toml"
-          CLICOLOR_FORCE: "1"
-          PYTEST_ADDOPTS: "--color=yes"
-          FORCE_COLOR: "1"
-          MACOSX_TARGET: "11.7"
-          MACOSX_DEPLOYMENT_TARGET: "11.0"
-          CCACHE_DIR: ${{ runner.temp }}/.ccache
-          CCACHE_MAXSIZE: 10.0G
-          CCACHE_CPP2: 1
-          CCACHE_COMPRESS: 1
-          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
+          uv pip install --system --verbose api/python
+      - name: Download samples
         run: |
-          python -m pip install -r tests/requirements.txt
-          python -m pip -vvv install api/python
-          python tests/dl_samples.py ${LIEF_SAMPLES_DIR}
-      - name: Run tests
-        shell: bash
+          uv pip install --system -r tests/requirements.txt
+          python tests/dl_samples.py "${LIEF_SAMPLES_DIR}"
+      - name: Run unittests
+        run: |
+          ctest --output-on-failure --test-dir "${LIEF_BUILD_DIR}/"
+      - name: Run tools check
+        run: |
+          python tests/run_tools_check.py "${LIEF_BUILD_DIR}/"
+      - name: Run Python tests
         timeout-minutes: 20
-        env:
-          LIEF_SAMPLES_DIR: "/tmp/samples"
-          LIEF_BUILD_DIR: "/tmp/lief-build"
-          PYTEST_ADDOPTS: "--color=yes"
         run: |
           python tests/run_pytest.py
-          python tests/run_tools_check.py ${LIEF_BUILD_DIR}/
-          ctest --output-on-failure --test-dir ${LIEF_BUILD_DIR}/
+      - name: ccache stats
+        run: ccache --show-stats
   wheels:
     runs-on: macos-latest
     needs: osx-sdk
@@ -131,22 +135,30 @@ jobs:
         python-version: ['3.12', '3.13', '3.14']
         arch: ['x64', 'arm64']
       fail-fast: false
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+      CCACHE_MAXSIZE: 10.0G
+      CCACHE_CPP2: 1
+      CCACHE_COMPRESS: 1
+      LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
+      PYLIEF_CONF: ${{ github.workspace }}/scripts/osx/py-${{ matrix.arch }}.toml
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
+        id: python
         uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install system dependencies
         run: |
           brew install cmake ninja ccache
-          python -m pip install --upgrade pip
+          python -m pip install "uv==${{ env.uv-version }}"
       - name: Setup cache dir
-        shell: bash
         run: |
-          mkdir -p $RUNNER_TEMP/.ccache
+          mkdir -p "${RUNNER_TEMP}/.ccache"
+          echo "CCACHE_DIR=${RUNNER_TEMP}/.ccache" >> "${GITHUB_ENV}"
       - name: ccache cache files
         uses: actions/cache@v6
         with:
@@ -160,25 +172,18 @@ jobs:
           name: osx-${{ matrix.arch }}-install
           path: ~/lief-${{ matrix.arch }}-install
       - name: Build Python ${{ matrix.python-version }} [${{ matrix.arch }}]
-        shell: bash
         env:
-          MACOSX_DEPLOYMENT_TARGET: "11.0"
-          LIEF_VERSION_ENV: ${{ vars.LIEF_VERSION_ENV }}
-          FORCE_COLOR: "1"
-          CLICOLOR_FORCE: "1"
-          CCACHE_DIR: ${{ runner.temp }}/.ccache
-          CCACHE_MAXSIZE: 10.0G
-          CCACHE_CPP2: 1
-          CCACHE_COMPRESS: 1
-          PYLIEF_CONF: "${{ github.workspace }}/scripts/osx/py-${{ matrix.arch }}.toml"
+          UV_PYTHON: ${{ steps.python.outputs.python-path }}
         run: |
-          python -m pip -vv wheel --wheel-dir=dist/ api/python
+          uv build --wheel --out-dir dist/ ./api/python
       - name: 'Upload Python wheel artifact - ${{ matrix.python-version }}'
         uses: actions/upload-artifact@v7
         with:
           name: osx-wheel-${{ matrix.arch }}-${{ matrix.python-version }}
           path: dist/*.whl
           retention-days: 3
+      - name: ccache stats
+        run: ccache --show-stats
   deploy:
     runs-on: ubuntu-latest
     if: ${{ !cancelled() }}
@@ -200,7 +205,6 @@ jobs:
         env:
           LIEF_S3_KEY: ${{ secrets.LIEF_S3_KEY }}
           LIEF_S3_SECRET: ${{ secrets.LIEF_S3_SECRET }}
-        shell: bash
         run: |
           docker run --rm                                     \
             -v $GITHUB_WORKSPACE:/src                         \
