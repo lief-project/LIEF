@@ -191,6 +191,21 @@ def test_remove_req(tmp_path: Path):
     assert elf.symbols_version_requirement[0].name == "libm.so.6"
     assert elf.symbols_version_requirement[1].name == "libc.so.6"
 
+    # GLIBC_2.2.5 is required from libm.so.6 and libc.so.6: the versions of the
+    # symbols bound to libc.so.6 must be kept
+    libc = elf.symbols_version_requirement[1]
+    libc_versions = {aux.other: aux.name for aux in libc.get_auxiliary_symbols()}
+
+    assert "GLIBC_2.2.5" in libc_versions.values()
+
+    libc_symbols = {
+        sym.name: libc_versions[sym.symbol_version.version]  # type: ignore
+        for sym in elf.dynamic_symbols
+        if sym.symbol_version is not None
+        and sym.symbol_version.version in libc_versions
+    }
+    assert "GLIBC_2.2.5" in libc_symbols.values()
+
     assert elf.remove_version_requirement("libm.so.6")
 
     out = tmp_path / "out.elf"
@@ -203,6 +218,18 @@ def test_remove_req(tmp_path: Path):
     assert new.find_version_requirement("libc.so.6") is not None
 
     assert len(new.symbols_version_requirement) == 1
+
+    for name, version in libc_symbols.items():
+        assert isinstance(name, str)
+
+        sym = new.get_dynamic_symbol(name)
+        assert sym is not None
+
+        assert sym.symbol_version is not None
+        aux = sym.symbol_version.symbol_version_auxiliary
+        assert aux is not None, name
+
+        assert aux.name == version
 
     out.chmod(0o755)
 

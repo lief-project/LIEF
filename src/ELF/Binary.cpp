@@ -3587,14 +3587,10 @@ bool Binary::remove_version_requirement(std::string_view libname) {
   if (it == symbol_version_requirements_.end()) {
     return false;
   }
-  std::set<std::string> versions;
-
-  SymbolVersionRequirement* sym_ver_req = it->get();
-  auto aux = sym_ver_req->auxiliary_symbols();
-  std::transform(aux.begin(), aux.end(), std::inserter(versions, versions.begin()),
-                 [](const SymbolVersionAuxRequirement& req) {
-                   return std::string(req.name());
-                 });
+  std::set<const SymbolVersionAux*> versions;
+  for (const SymbolVersionAuxRequirement& aux : (*it)->auxiliary_symbols()) {
+    versions.insert(&aux);
+  }
 
   for (Symbol& sym : dynamic_symbols()) {
     SymbolVersion* symver = sym.symbol_version();
@@ -3602,9 +3598,7 @@ bool Binary::remove_version_requirement(std::string_view libname) {
       continue;
     }
 
-    if (const SymbolVersionAux* vers = symver->symbol_version_auxiliary();
-        vers != nullptr && versions.count(std::string(vers->name())))
-    {
+    if (versions.count(symver->symbol_version_auxiliary()) > 0) {
       symver->as_global();
     }
   }
