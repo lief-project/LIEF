@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "logging.hpp"
+#include <algorithm>
 #include <iterator>
 #include <memory>
 #include <numeric>
@@ -200,7 +201,8 @@ ok_error_t Parser::parse_rich_header() {
 
 
 ok_error_t Parser::read_section_content(const details::pe_section& raw_sec,
-                                        uint32_t index, Section& section) {
+                                        uint32_t index, Section& section,
+                                        section_content_cache_t& cache) {
   uint32_t numberof_sections = binary_->header().numberof_sections();
   uint32_t size_to_read = 0;
   const uint32_t offset = raw_sec.PointerToRawData;
@@ -234,10 +236,42 @@ ok_error_t Parser::read_section_content(const details::pe_section& raw_sec,
     return make_error_code(lief_errors::data_too_large);
   }
 
-  if (!stream_->peek_data(section.content_, peek_target, size_to_read,
-                          section.virtual_address()))
-  {
-    LIEF_ERR("Corrupted section #{:d} ({})", index, section.name());
+  const uint64_t peek_end = peek_target + size_to_read;
+
+  // A malformed PE can have several section headers pointing to the same raw
+  // data. Reuse the content that has already been read when the requested
+  // range is fully covered by one of the cached intervals.
+  const auto cached = std::find_if(
+      cache.intervals.begin(), cache.intervals.end(),
+      [peek_target, peek_end](const section_content_cache_t::interval_t& interval)
+      {
+        return interval.start <= peek_target && peek_end <= interval.end;
+      });
+
+  if (cached != cache.intervals.end()) {
+    section.shared_content_ = cached->data;
+    section.shared_content_offset_ = peek_target - cached->start;
+    section.shared_content_size_ = size_to_read;
+  } else if (cache.allocated + size_to_read > cache.budget) {
+    if (!cache.budget_warned) {
+      LIEF_WARN("Total section content exceeds the {} bytes budget. "
+                "The remaining sections will not be loaded",
+                cache.budget);
+      cache.budget_warned = true;
+    }
+  } else {
+    auto data = std::make_shared<std::vector<uint8_t>>();
+    if (stream_->peek_data(*data, peek_target, size_to_read,
+                           section.virtual_address()))
+    {
+      section.shared_content_ = data;
+      section.shared_content_offset_ = 0;
+      section.shared_content_size_ = size_to_read;
+      cache.allocated += size_to_read;
+      cache.intervals.push_back({peek_target, peek_end, std::move(data)});
+    } else {
+      LIEF_ERR("Corrupted section #{:d} ({})", index, section.name());
+    }
   }
 
   uint64_t padding_size = 0;
@@ -289,6 +323,18 @@ ok_error_t Parser::parse_sections() {
   static constexpr uint32_t SENTINEL = std::numeric_limits<uint32_t>::max();
   LIEF_DEBUG("Parsing sections");
 
+  // Bound the total number of bytes kept for the sections' content. A valid PE
+  // stores its section data at most once in the file, so twice the stream size
+  // leaves room for overlapping sections without letting a malformed binary
+  // amplify the memory usage.
+  static constexpr uint64_t MIN_CONTENT_BUDGET = 1_MB;
+  const uint64_t stream_size = stream_->size();
+  section_content_cache_t content_cache;
+  content_cache.budget =
+      stream_size > Parser::MAX_DATA_SIZE / 2
+          ? Parser::MAX_DATA_SIZE
+          : std::max<uint64_t>(2 * stream_size, MIN_CONTENT_BUDGET);
+
   const uint32_t pe_header_off = binary_->dos_header().addressof_new_exeheader();
   const uint32_t opt_header_off = pe_header_off + sizeof(details::pe_header);
   const uint32_t sections_offset =
@@ -319,7 +365,7 @@ ok_error_t Parser::parse_sections() {
       first_section_offset = std::min(first_section_offset, offset);
     }
 
-    read_section_content(raw_sec, i, *section);
+    read_section_content(raw_sec, i, *section, content_cache);
 
     if (std::string_view name = section->name(); name.size() > 1 && name[0] == '/')
     {

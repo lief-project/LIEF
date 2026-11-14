@@ -17,6 +17,12 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
 
+#include <algorithm>
+#include <cassert>
+#include <cstring>
+#include <string>
+#include <vector>
+
 #include "LIEF/PE/Binary.hpp"
 #include "LIEF/PE/CodeIntegrity.hpp"
 #include "LIEF/PE/DataDirectory.hpp"
@@ -47,6 +53,74 @@
 using namespace LIEF;
 using namespace std::string_literals;
 using Catch::Matchers::Equals;
+
+namespace {
+
+/// Build a PE32 file whose section headers all point to the same raw data.
+std::vector<uint8_t> build_overlapping_sections_pe(uint32_t nb_sections,
+                                                   uint32_t file_size) {
+  static constexpr uint32_t ALIGNMENT = 0x1000;
+  static constexpr uint32_t OPTIONAL_SIZE = 0xE0;
+  static constexpr uint32_t PE_OFFSET = 0x40;
+  static constexpr uint32_t COFF_OFFSET = PE_OFFSET + 4;
+  static constexpr uint32_t OPTIONAL_OFFSET = COFF_OFFSET + 20;
+  static constexpr uint32_t SECTIONS_OFFSET = OPTIONAL_OFFSET + OPTIONAL_SIZE;
+  static constexpr uint32_t SECTION_SIZE = 40;
+
+  const uint64_t span =
+      (uint64_t{file_size} + ALIGNMENT - 1) / ALIGNMENT * ALIGNMENT;
+  const uint64_t sections_end = SECTIONS_OFFSET + nb_sections * SECTION_SIZE;
+  assert(sections_end <= file_size);
+
+  std::vector<uint8_t> raw(file_size, 0xCC);
+  std::fill(raw.begin(), raw.begin() + sections_end, 0);
+
+  const auto write16 = [&raw](size_t offset, uint16_t value) {
+    std::memcpy(raw.data() + offset, &value, sizeof(value));
+  };
+  const auto write32 = [&raw](size_t offset, uint32_t value) {
+    std::memcpy(raw.data() + offset, &value, sizeof(value));
+  };
+
+  raw[0] = 'M';
+  raw[1] = 'Z';
+  write32(0x3C, PE_OFFSET);
+  std::memcpy(raw.data() + PE_OFFSET, "PE\0\0", 4);
+
+  // COFF header
+  write16(COFF_OFFSET + 0, 0x14C);   // Machine (i386)
+  write16(COFF_OFFSET + 2, nb_sections);
+  write16(COFF_OFFSET + 16, OPTIONAL_SIZE);
+  write16(COFF_OFFSET + 18, 0x0102);
+
+  // PE32 optional header
+  write16(OPTIONAL_OFFSET + 0, 0x10B);
+  write32(OPTIONAL_OFFSET + 28, 0x400000);  // ImageBase
+  write32(OPTIONAL_OFFSET + 32, ALIGNMENT); // SectionAlignment
+  write32(OPTIONAL_OFFSET + 36, 0x200);     // FileAlignment
+  write32(OPTIONAL_OFFSET + 56,
+          static_cast<uint32_t>(ALIGNMENT + nb_sections * span));
+  write32(OPTIONAL_OFFSET + 60, static_cast<uint32_t>(sections_end));
+  write16(OPTIONAL_OFFSET + 68, 3);  // Subsystem: console
+  write32(OPTIONAL_OFFSET + 92, 16); // NumberOfRvaAndSizes
+
+  for (uint32_t i = 0; i < nb_sections; ++i) {
+    const size_t header = SECTIONS_OFFSET + i * SECTION_SIZE;
+    const std::string name = ".s" + std::to_string(i);
+    std::memcpy(raw.data() + header, name.data(),
+                std::min<size_t>(name.size(), 8));
+    write32(header + 8, file_size);   // VirtualSize
+    write32(header + 12,
+            static_cast<uint32_t>(ALIGNMENT + i * span)); // VirtualAddress
+    write32(header + 16, file_size);  // SizeOfRawData
+    write32(header + 20, 0);          // PointerToRawData
+    write32(header + 36, 0x40000040); // MEM_READ | CNT_INITIALIZED_DATA
+  }
+
+  return raw;
+}
+
+}
 
 TEST_CASE("lief.test.pe", "[lief][test][pe]") {
   SECTION("parser") {
@@ -232,4 +306,40 @@ TEST_CASE("lief.test.pe", "[lief][test][pe]") {
       CHECK(!oss.str().empty());
     }
   }
+}
+
+TEST_CASE("lief.test.pe.overlapping_sections",
+          "[lief][test][pe][overlapping]") {
+  static constexpr uint32_t NB_SECTIONS = 1000;
+  static constexpr uint32_t FILE_SIZE = 0x10000;
+  std::vector<uint8_t> raw =
+      build_overlapping_sections_pe(NB_SECTIONS, FILE_SIZE);
+  std::unique_ptr<PE::Binary> bin = PE::Parser::parse(raw);
+  REQUIRE(bin != nullptr);
+
+  auto sections = bin->sections();
+  REQUIRE(sections.size() == NB_SECTIONS);
+
+  auto it = sections.begin();
+  REQUIRE(it != sections.end());
+  const PE::Section& first = *it;
+  const span<const uint8_t> reference = first.content();
+  REQUIRE(reference.size() == FILE_SIZE);
+  REQUIRE(std::memcmp(reference.data(), raw.data(), FILE_SIZE) == 0);
+
+  for (const PE::Section& section : sections) {
+    REQUIRE(section.content().size() == FILE_SIZE);
+    REQUIRE(section.content().data() == reference.data());
+  }
+
+  // The content is shared until one section is modified (copy-on-write).
+  ++it;
+  REQUIRE(it != sections.end());
+  PE::Section& second = *it;
+  span<uint8_t> writable = second.writable_content();
+  REQUIRE(writable.size() == FILE_SIZE);
+  writable[0] ^= 0xFF;
+
+  REQUIRE(first.content()[0] == raw[0]);
+  REQUIRE(second.content()[0] == (raw[0] ^ 0xFF));
 }
