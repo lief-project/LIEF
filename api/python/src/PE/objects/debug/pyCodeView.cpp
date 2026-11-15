@@ -18,9 +18,6 @@
 #include "LIEF/PE/debug/CodeView.hpp"
 #include "enums_wrapper.hpp"
 
-#include <sstream>
-#include <string>
-
 #define PY_ENUM(x) to_string(x), x
 
 namespace LIEF::PE::py {

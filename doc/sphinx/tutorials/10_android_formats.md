@@ -48,7 +48,7 @@ format. Using the ELF format makes sense for two main reasons:
 - It enables the use of the same loader: `/system/bin/linker{64}`.
 
 OAT files are actually ELF files, which is why we chose to add support for this
-format in LIEF. The ELF format acts as a wrapper around the Android-specific
+format in LIEF. The ELF format is used as a wrapper around the Android-specific
 OAT format.
 
 Basically, the associated ELF exports a few symbols:
@@ -63,7 +63,7 @@ oatbss                        OBJECT    GLOBAL    2338000   f5050
 oatbsslastword                OBJECT    GLOBAL    242d04c   4
 ```
 
-These symbols serve as pointers to specific parts of the OAT format. For
+These symbols are pointers to specific parts of the OAT format. For
 example, `oatdata` points to the beginning of the underlying OAT format,
 while `oatexec` points to the native code. For a deeper understanding of OAT
 internal structures, see:
@@ -226,7 +226,7 @@ ANDROID_VERSIONS.VERSION_800
 "8.0.0"
 ```
 
-To reflect the fact that OAT files are first and foremost ELF files, the
+To reflect the fact that OAT files are first class ELF files, the
 {class}`lief.OAT.Binary` class extends {sub-ref}`lief-elf-binary`:
 
 ```python

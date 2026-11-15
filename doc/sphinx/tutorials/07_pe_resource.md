@@ -90,8 +90,8 @@ manipulating binary resources.
 
 ## Resource Manager
 
-As mentioned previously, the {class}`~lief.PE.ResourcesManager` acts as a
-wrapper around the resource tree to:
+As mentioned previously, the {class}`~lief.PE.ResourcesManager` wraps the
+resource tree to:
 
 - Parse resources with predefined structures, such as
   {attr}`~lief.PE.ResourcesManager.TYPE.MANIFEST`, {attr}`~lief.PE.ResourcesManager.TYPE.ICON`, {attr}`~lief.PE.ResourcesManager.TYPE.VERSION`, etc.

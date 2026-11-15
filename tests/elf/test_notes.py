@@ -133,7 +133,7 @@ def test_crashpad():
 
 
 def test_note_sizes():
-    # namesz counts the null byte that ends the name, and descsz leaves out
+    # `namesz` counts the null byte that ends the name, and `descsz` leaves out
     # the padding that follows the description
     raw = bytes.fromhex("04000000050000003412000041424300") + bytes(
         [1, 2, 3, 4, 5, 0, 0, 0]
