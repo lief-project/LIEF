@@ -1542,10 +1542,28 @@ const Segment* Binary::segment_from_virtual_address(Segment::TYPE type,
   return it_segment->get();
 }
 
+const Segment* Binary::segment_from_offset(Segment::TYPE type,
+                                           uint64_t offset) const {
+  const auto it_segment = std::find_if(
+      segments_.cbegin(), segments_.cend(),
+      [offset, type](const std::unique_ptr<Segment>& segment) {
+        return segment->type() == type && segment->file_offset() <= offset &&
+               offset < (segment->file_offset() + segment->physical_size());
+      }
+  );
+
+  if (it_segment == segments_.cend()) {
+    return nullptr;
+  }
+
+  return it_segment->get();
+}
+
+
 const Segment* Binary::segment_from_offset(uint64_t offset) const {
   const auto it_segment =
       std::find_if(segments_.cbegin(), segments_.cend(),
-                   [&offset](const std::unique_ptr<Segment>& segment) {
+                   [offset](const std::unique_ptr<Segment>& segment) {
                      return segment->file_offset() <= offset &&
                             offset < (segment->file_offset() +
                                       segment->physical_size());

@@ -909,11 +909,23 @@ class LIEF_API Binary : public LIEF::Binary {
   /// Return the ELF::Segment from the @p offset. Return a nullptr
   /// if a segment can't be found.
   const Segment* segment_from_offset(uint64_t offset) const LIEF_LIFETIMEBOUND;
+
   Segment* segment_from_offset(uint64_t offset) LIEF_LIFETIMEBOUND {
     return const_cast<Segment*>(
         static_cast<const Binary*>(this)->segment_from_offset(offset)
     );
   }
+
+  const Segment* segment_from_offset(Segment::TYPE type,
+                                     uint64_t offset) const LIEF_LIFETIMEBOUND;
+
+  Segment* segment_from_offset(Segment::TYPE type,
+                               uint64_t offset) LIEF_LIFETIMEBOUND {
+    return const_cast<Segment*>(
+        static_cast<const Binary*>(this)->segment_from_offset(type, offset)
+    );
+  }
+
 
   /// Return the **first** ELF::DynamicEntry associated with the given tag
   /// If the tag can't be found, it returns a nullptr
