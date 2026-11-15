@@ -5,251 +5,126 @@ use std::time::Duration;
 use crate::common::FromFFI;
 use crate::elf::header::Arch;
 use crate::elf::note::NoteBase;
-use crate::{Error, to_result};
+use crate::{Error, enum_from_int, to_result};
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-/// Register for the x86 architecture
-pub enum RegX86 {
-    EBX,
-    ECX,
-    EDX,
-    ESI,
-    EDI,
-    EBP,
-    EAX,
-    DS,
-    ES,
-    FS,
-    GS,
-    ORIG_EAX,
-    EIP,
-    CS,
-    EFLAGS,
-    ESP,
-    SS,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for RegX86 {
-    fn from(value: u32) -> Self {
-        match value {
-            0 => RegX86::EBX,
-            1 => RegX86::ECX,
-            2 => RegX86::EDX,
-            3 => RegX86::ESI,
-            4 => RegX86::EDI,
-            5 => RegX86::EBP,
-            6 => RegX86::EAX,
-            7 => RegX86::DS,
-            8 => RegX86::ES,
-            9 => RegX86::FS,
-            10 => RegX86::GS,
-            11 => RegX86::ORIG_EAX,
-            12 => RegX86::EIP,
-            13 => RegX86::CS,
-            14 => RegX86::EFLAGS,
-            15 => RegX86::ESP,
-            16 => RegX86::SS,
-            _ => RegX86::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Register for the x86 architecture
+    RegX86: u32 {
+        EBX = 0,
+        ECX = 1,
+        EDX = 2,
+        ESI = 3,
+        EDI = 4,
+        EBP = 5,
+        EAX = 6,
+        DS = 7,
+        ES = 8,
+        FS = 9,
+        GS = 10,
+        ORIG_EAX = 11,
+        EIP = 12,
+        CS = 13,
+        EFLAGS = 14,
+        ESP = 15,
+        SS = 16,
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-/// Register for the x86-64 architecture
-pub enum RegX86_64 {
-    R15,
-    R14,
-    R13,
-    R12,
-    RBP,
-    RBX,
-    R11,
-    R10,
-    R9,
-    R8,
-    RAX,
-    RCX,
-    RDX,
-    RSI,
-    RDI,
-    ORIG_RAX,
-    RIP,
-    CS,
-    EFLAGS,
-    RSP,
-    SS,
-    FS_BASE,
-    GS_BASE,
-    DS,
-    ES,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for RegX86_64 {
-    fn from(value: u32) -> Self {
-        match value {
-            0 => RegX86_64::R15,
-            1 => RegX86_64::R14,
-            2 => RegX86_64::R13,
-            3 => RegX86_64::R12,
-            4 => RegX86_64::RBP,
-            5 => RegX86_64::RBX,
-            6 => RegX86_64::R11,
-            7 => RegX86_64::R10,
-            8 => RegX86_64::R9,
-            9 => RegX86_64::R8,
-            10 => RegX86_64::RAX,
-            11 => RegX86_64::RCX,
-            12 => RegX86_64::RDX,
-            13 => RegX86_64::RSI,
-            14 => RegX86_64::RDI,
-            15 => RegX86_64::ORIG_RAX,
-            16 => RegX86_64::RIP,
-            17 => RegX86_64::CS,
-            18 => RegX86_64::EFLAGS,
-            19 => RegX86_64::RSP,
-            20 => RegX86_64::SS,
-            21 => RegX86_64::FS_BASE,
-            22 => RegX86_64::GS_BASE,
-            23 => RegX86_64::DS,
-            24 => RegX86_64::ES,
-            _ => RegX86_64::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Register for the x86-64 architecture
+    RegX86_64: u32 {
+        R15 = 0,
+        R14 = 1,
+        R13 = 2,
+        R12 = 3,
+        RBP = 4,
+        RBX = 5,
+        R11 = 6,
+        R10 = 7,
+        R9 = 8,
+        R8 = 9,
+        RAX = 10,
+        RCX = 11,
+        RDX = 12,
+        RSI = 13,
+        RDI = 14,
+        ORIG_RAX = 15,
+        RIP = 16,
+        CS = 17,
+        EFLAGS = 18,
+        RSP = 19,
+        SS = 20,
+        FS_BASE = 21,
+        GS_BASE = 22,
+        DS = 23,
+        ES = 24,
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-/// Register for the ARM architecture
-pub enum RegARM {
-    R0,
-    R1,
-    R2,
-    R3,
-    R4,
-    R5,
-    R6,
-    R7,
-    R8,
-    R9,
-    R10,
-    R11,
-    R12,
-    R13,
-    R14,
-    R15,
-    CPSR,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for RegARM {
-    fn from(value: u32) -> Self {
-        match value {
-            0 => RegARM::R0,
-            1 => RegARM::R1,
-            2 => RegARM::R2,
-            3 => RegARM::R3,
-            4 => RegARM::R4,
-            5 => RegARM::R5,
-            6 => RegARM::R6,
-            7 => RegARM::R7,
-            8 => RegARM::R8,
-            9 => RegARM::R9,
-            10 => RegARM::R10,
-            11 => RegARM::R11,
-            12 => RegARM::R12,
-            13 => RegARM::R13,
-            14 => RegARM::R14,
-            15 => RegARM::R15,
-            16 => RegARM::CPSR,
-            _ => RegARM::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Register for the ARM architecture
+    RegARM: u32 {
+        R0 = 0,
+        R1 = 1,
+        R2 = 2,
+        R3 = 3,
+        R4 = 4,
+        R5 = 5,
+        R6 = 6,
+        R7 = 7,
+        R8 = 8,
+        R9 = 9,
+        R10 = 10,
+        R11 = 11,
+        R12 = 12,
+        R13 = 13,
+        R14 = 14,
+        R15 = 15,
+        CPSR = 16,
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-/// Register for the AArch64 architecture
-pub enum RegAArch64 {
-    X0,
-    X1,
-    X2,
-    X3,
-    X4,
-    X5,
-    X6,
-    X7,
-    X8,
-    X9,
-    X10,
-    X11,
-    X12,
-    X13,
-    X14,
-    X15,
-    X16,
-    X17,
-    X18,
-    X19,
-    X20,
-    X21,
-    X22,
-    X23,
-    X24,
-    X25,
-    X26,
-    X27,
-    X28,
-    X29,
-    X30,
-    X31,
-    PC,
-    PSTATE,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for RegAArch64 {
-    fn from(value: u32) -> Self {
-        match value {
-            0 => RegAArch64::X0,
-            1 => RegAArch64::X1,
-            2 => RegAArch64::X2,
-            3 => RegAArch64::X3,
-            4 => RegAArch64::X4,
-            5 => RegAArch64::X5,
-            6 => RegAArch64::X6,
-            7 => RegAArch64::X7,
-            8 => RegAArch64::X8,
-            9 => RegAArch64::X9,
-            10 => RegAArch64::X10,
-            11 => RegAArch64::X11,
-            12 => RegAArch64::X12,
-            13 => RegAArch64::X13,
-            14 => RegAArch64::X14,
-            15 => RegAArch64::X15,
-            16 => RegAArch64::X16,
-            17 => RegAArch64::X17,
-            18 => RegAArch64::X18,
-            19 => RegAArch64::X19,
-            20 => RegAArch64::X20,
-            21 => RegAArch64::X21,
-            22 => RegAArch64::X22,
-            23 => RegAArch64::X23,
-            24 => RegAArch64::X24,
-            25 => RegAArch64::X25,
-            26 => RegAArch64::X26,
-            27 => RegAArch64::X27,
-            28 => RegAArch64::X28,
-            29 => RegAArch64::X29,
-            30 => RegAArch64::X30,
-            31 => RegAArch64::X31,
-            32 => RegAArch64::PC,
-            33 => RegAArch64::PSTATE,
-            _ => RegAArch64::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Register for the AArch64 architecture
+    RegAArch64: u32 {
+        X0 = 0,
+        X1 = 1,
+        X2 = 2,
+        X3 = 3,
+        X4 = 4,
+        X5 = 5,
+        X6 = 6,
+        X7 = 7,
+        X8 = 8,
+        X9 = 9,
+        X10 = 10,
+        X11 = 11,
+        X12 = 12,
+        X13 = 13,
+        X14 = 14,
+        X15 = 15,
+        X16 = 16,
+        X17 = 17,
+        X18 = 18,
+        X19 = 19,
+        X20 = 20,
+        X21 = 21,
+        X22 = 22,
+        X23 = 23,
+        X24 = 24,
+        X25 = 25,
+        X26 = 26,
+        X27 = 27,
+        X28 = 28,
+        X29 = 29,
+        X30 = 30,
+        X31 = 31,
+        PC = 32,
+        PSTATE = 33,
     }
 }
 

@@ -2,6 +2,7 @@ use lief_ffi as ffi;
 use std::marker::PhantomData;
 
 use crate::common::FromFFI;
+use crate::enum_from_int;
 
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -262,23 +263,12 @@ impl std::fmt::Debug for AArch64PAuth<'_> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum X86FeatureFlag {
-    NONE,
-    USED,
-    NEEDED,
-    UNKNOWN(u64),
-}
-
-impl From<u64> for X86FeatureFlag {
-    fn from(value: u64) -> Self {
-        match value {
-            0 => X86FeatureFlag::NONE,
-            1 => X86FeatureFlag::USED,
-            2 => X86FeatureFlag::NEEDED,
-            _ => X86FeatureFlag::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    X86FeatureFlag: u64 {
+        NONE = 0,
+        USED = 1,
+        NEEDED = 2,
     }
 }
 
@@ -371,23 +361,12 @@ impl std::fmt::Debug for X86Features<'_> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum X86ISAFlag {
-    NONE,
-    USED,
-    NEEDED,
-    UNKNOWN(u64),
-}
-
-impl From<u64> for X86ISAFlag {
-    fn from(value: u64) -> Self {
-        match value {
-            0 => X86ISAFlag::NONE,
-            1 => X86ISAFlag::USED,
-            2 => X86ISAFlag::NEEDED,
-            _ => X86ISAFlag::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    X86ISAFlag: u64 {
+        NONE = 0,
+        USED = 1,
+        NEEDED = 2,
     }
 }
 

@@ -7,7 +7,7 @@ use std::marker::PhantomData;
 use crate::DeclOpt;
 use crate::Range;
 use crate::common::{FromFFI, into_optional, into_ranges};
-use crate::declare_fwd_iterator;
+use crate::{declare_fwd_iterator, enum_from_int};
 
 use super::{Function, Variable};
 use crate::dwarf::function::Functions;
@@ -20,57 +20,21 @@ pub struct CompilationUnit<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Langs {
-    C,
-    CPP,
-    RUST,
-    DART,
-    MODULA,
-    FORTRAN,
-    SWIFT,
-    D,
-    JAVA,
-    COBOL,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Langs {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Langs::C,
-            0x00000002 => Langs::CPP,
-            0x00000003 => Langs::RUST,
-            0x00000004 => Langs::DART,
-            0x00000005 => Langs::MODULA,
-            0x00000006 => Langs::FORTRAN,
-            0x00000007 => Langs::SWIFT,
-            0x00000008 => Langs::D,
-            0x00000009 => Langs::JAVA,
-            0x0000000A => Langs::COBOL,
-            _ => Langs::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Langs: u32 {
+        C = 0x00000001,
+        CPP = 0x00000002,
+        RUST = 0x00000003,
+        DART = 0x00000004,
+        MODULA = 0x00000005,
+        FORTRAN = 0x00000006,
+        SWIFT = 0x00000007,
+        D = 0x00000008,
+        JAVA = 0x00000009,
+        COBOL = 0x0000000A,
     }
 }
-impl From<Langs> for u32 {
-    fn from(value: Langs) -> u32 {
-        match value {
-            Langs::C => 0x00000001,
-            Langs::CPP => 0x00000002,
-            Langs::RUST => 0x00000003,
-            Langs::DART => 0x00000004,
-            Langs::MODULA => 0x00000005,
-            Langs::FORTRAN => 0x00000006,
-            Langs::SWIFT => 0x00000007,
-            Langs::D => 0x00000008,
-            Langs::JAVA => 0x00000009,
-            Langs::COBOL => 0x0000000A,
-            Langs::UNKNOWN(_) => 0,
-        }
-    }
-}
-
 /// Languages supported by the DWARF (v5) format.
 /// See: <https://dwarfstd.org/languages.html>
 ///

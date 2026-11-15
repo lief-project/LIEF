@@ -5,9 +5,9 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 
 use crate::common::FromFFI;
-use crate::declare_iterator;
 use crate::generic;
 use crate::to_slice;
+use crate::{declare_iterator, enum_from_int};
 
 /// Structure which represents an ELF Section
 pub struct Section<'a> {
@@ -106,193 +106,94 @@ impl Section<'_> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum Type {
-    /// No associated section (inactive entry)
-    SHT_NULL,
-    /// Program-defined contents.
-    PROGBITS,
-    /// Symbol table
-    SYMTAB,
-    /// String table
-    STRTAB,
-    /// Relocation entries; explicit addends.
-    RELA,
-    /// Symbol hash table.
-    HASH,
-    /// Information for dynamic linking.
-    DYNAMIC,
-    /// Information about the file.
-    NOTE,
-    /// Data occupies no space in the file.
-    NOBITS,
-    /// Relocation entries; no explicit addends.
-    REL,
-    /// Reserved
-    SHLIB,
-    /// Symbol table.
-    DYNSYM,
-    /// Pointers to initialization functions.
-    INIT_ARRAY,
-    /// Pointers to termination functions.
-    FINI_ARRAY,
-    /// Pointers to pre-init functions.
-    PREINIT_ARRAY,
-    /// Section group.
-    GROUP,
-    /// Indices for SHN_XINDEX entries.
-    SYMTAB_SHNDX,
-    /// Relocation entries; only offsets.
-    RELR,
-    /// Packed relocations (Android specific).
-    ANDROID_REL,
-    /// Packed relocations (Android specific).
-    ANDROID_RELA,
-    /// This section is used to mark symbols as address-significant.
-    LLVM_ADDRSIG,
-    /// New relr relocations (Android specific).
-    ANDROID_RELR,
-    /// Object attributes.
-    GNU_ATTRIBUTES,
-    /// GNU-style hash table.
-    GNU_HASH,
-    /// GNU version definitions.
-    GNU_VERDEF,
-    /// GNU version references.
-    GNU_VERNEED,
-    /// GNU symbol versions table.
-    GNU_VERSYM,
-    /// Exception Index table
-    ARM_EXIDX,
-    /// BPABI DLL dynamic linking pre-emption map
-    ARM_PREEMPTMAP,
-    /// Object file compatibility attributes
-    ARM_ATTRIBUTES,
-    ARM_DEBUGOVERLAY,
-    ARM_OVERLAYSECTION,
-    /// Link editor is to sort the entries in this section based on their sizes
-    HEX_ORDERED,
-    /// Unwind information
-    X86_64_UNWIND,
-    /// Register usage information
-    MIPS_REGINFO,
-    /// General options
-    MIPS_OPTIONS,
-    /// ABI information
-    MIPS_ABIFLAGS,
-    /// RISC-V Attribute
-    RISCV_ATTRIBUTES,
-    /// AArch64 build attributes
-    AARCH64_ATTRIBUTES,
-    /// AArch64 PAuth relocations
-    AARCH64_AUTH_RELR,
-    /// AArch64 memory tagging globals (static)
-    AARCH64_MEMTAG_GLOBALS_STATIC,
-    /// AArch64 memory tagging globals (dynamic)
-    AARCH64_MEMTAG_GLOBALS_DYNAMIC,
-    UNKNOWN(u64),
-}
-
-impl From<u64> for Type {
-    fn from(value: u64) -> Self {
-        match value {
-            0x00000000 => Type::SHT_NULL,
-            0x00000001 => Type::PROGBITS,
-            0x00000002 => Type::SYMTAB,
-            0x00000003 => Type::STRTAB,
-            0x00000004 => Type::RELA,
-            0x00000005 => Type::HASH,
-            0x00000006 => Type::DYNAMIC,
-            0x00000007 => Type::NOTE,
-            0x00000008 => Type::NOBITS,
-            0x00000009 => Type::REL,
-            0x0000000a => Type::SHLIB,
-            0x0000000b => Type::DYNSYM,
-            0x0000000e => Type::INIT_ARRAY,
-            0x0000000f => Type::FINI_ARRAY,
-            0x00000010 => Type::PREINIT_ARRAY,
-            0x00000011 => Type::GROUP,
-            0x00000012 => Type::SYMTAB_SHNDX,
-            0x00000013 => Type::RELR,
-            0x60000001 => Type::ANDROID_REL,
-            0x60000002 => Type::ANDROID_RELA,
-            0x6fff4c03 => Type::LLVM_ADDRSIG,
-            0x6fffff00 => Type::ANDROID_RELR,
-            0x6ffffff5 => Type::GNU_ATTRIBUTES,
-            0x6ffffff6 => Type::GNU_HASH,
-            0x6ffffffd => Type::GNU_VERDEF,
-            0x6ffffffe => Type::GNU_VERNEED,
-            0x6fffffff => Type::GNU_VERSYM,
-            0x170000001 => Type::ARM_EXIDX,
-            0x170000002 => Type::ARM_PREEMPTMAP,
-            0x170000003 => Type::ARM_ATTRIBUTES,
-            0x170000004 => Type::ARM_DEBUGOVERLAY,
-            0x170000005 => Type::ARM_OVERLAYSECTION,
-            0x270000000 => Type::HEX_ORDERED,
-            0x270000001 => Type::X86_64_UNWIND,
-            0x370000006 => Type::MIPS_REGINFO,
-            0x37000000d => Type::MIPS_OPTIONS,
-            0x37000002a => Type::MIPS_ABIFLAGS,
-            0x470000003 => Type::RISCV_ATTRIBUTES,
-            0x570000003 => Type::AARCH64_ATTRIBUTES,
-            0x570000004 => Type::AARCH64_AUTH_RELR,
-            0x570000007 => Type::AARCH64_MEMTAG_GLOBALS_STATIC,
-            0x570000008 => Type::AARCH64_MEMTAG_GLOBALS_DYNAMIC,
-            _ => Type::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    #[derive(PartialOrd, Ord)]
+    Type: u64 {
+        /// No associated section (inactive entry)
+        SHT_NULL = 0x00000000,
+        /// Program-defined contents.
+        PROGBITS = 0x00000001,
+        /// Symbol table
+        SYMTAB = 0x00000002,
+        /// String table
+        STRTAB = 0x00000003,
+        /// Relocation entries; explicit addends.
+        RELA = 0x00000004,
+        /// Symbol hash table.
+        HASH = 0x00000005,
+        /// Information for dynamic linking.
+        DYNAMIC = 0x00000006,
+        /// Information about the file.
+        NOTE = 0x00000007,
+        /// Data occupies no space in the file.
+        NOBITS = 0x00000008,
+        /// Relocation entries; no explicit addends.
+        REL = 0x00000009,
+        /// Reserved
+        SHLIB = 0x0000000a,
+        /// Symbol table.
+        DYNSYM = 0x0000000b,
+        /// Pointers to initialization functions.
+        INIT_ARRAY = 0x0000000e,
+        /// Pointers to termination functions.
+        FINI_ARRAY = 0x0000000f,
+        /// Pointers to pre-init functions.
+        PREINIT_ARRAY = 0x00000010,
+        /// Section group.
+        GROUP = 0x00000011,
+        /// Indices for SHN_XINDEX entries.
+        SYMTAB_SHNDX = 0x00000012,
+        /// Relocation entries; only offsets.
+        RELR = 0x00000013,
+        /// Packed relocations (Android specific).
+        ANDROID_REL = 0x60000001,
+        /// Packed relocations (Android specific).
+        ANDROID_RELA = 0x60000002,
+        /// This section is used to mark symbols as address-significant.
+        LLVM_ADDRSIG = 0x6fff4c03,
+        /// New relr relocations (Android specific).
+        ANDROID_RELR = 0x6fffff00,
+        /// Object attributes.
+        GNU_ATTRIBUTES = 0x6ffffff5,
+        /// GNU-style hash table.
+        GNU_HASH = 0x6ffffff6,
+        /// GNU version definitions.
+        GNU_VERDEF = 0x6ffffffd,
+        /// GNU version references.
+        GNU_VERNEED = 0x6ffffffe,
+        /// GNU symbol versions table.
+        GNU_VERSYM = 0x6fffffff,
+        /// Exception Index table
+        ARM_EXIDX = 0x170000001,
+        /// BPABI DLL dynamic linking pre-emption map
+        ARM_PREEMPTMAP = 0x170000002,
+        /// Object file compatibility attributes
+        ARM_ATTRIBUTES = 0x170000003,
+        ARM_DEBUGOVERLAY = 0x170000004,
+        ARM_OVERLAYSECTION = 0x170000005,
+        /// Link editor is to sort the entries in this section based on their sizes
+        HEX_ORDERED = 0x270000000,
+        /// Unwind information
+        X86_64_UNWIND = 0x270000001,
+        /// Register usage information
+        MIPS_REGINFO = 0x370000006,
+        /// General options
+        MIPS_OPTIONS = 0x37000000d,
+        /// ABI information
+        MIPS_ABIFLAGS = 0x37000002a,
+        /// RISC-V Attribute
+        RISCV_ATTRIBUTES = 0x470000003,
+        /// AArch64 build attributes
+        AARCH64_ATTRIBUTES = 0x570000003,
+        /// AArch64 PAuth relocations
+        AARCH64_AUTH_RELR = 0x570000004,
+        /// AArch64 memory tagging globals (static)
+        AARCH64_MEMTAG_GLOBALS_STATIC = 0x570000007,
+        /// AArch64 memory tagging globals (dynamic)
+        AARCH64_MEMTAG_GLOBALS_DYNAMIC = 0x570000008,
     }
 }
-impl From<Type> for u64 {
-    fn from(value: Type) -> u64 {
-        match value {
-            Type::SHT_NULL => 0x00000000,
-            Type::PROGBITS => 0x00000001,
-            Type::SYMTAB => 0x00000002,
-            Type::STRTAB => 0x00000003,
-            Type::RELA => 0x00000004,
-            Type::HASH => 0x00000005,
-            Type::DYNAMIC => 0x00000006,
-            Type::NOTE => 0x00000007,
-            Type::NOBITS => 0x00000008,
-            Type::REL => 0x00000009,
-            Type::SHLIB => 0x0000000a,
-            Type::DYNSYM => 0x0000000b,
-            Type::INIT_ARRAY => 0x0000000e,
-            Type::FINI_ARRAY => 0x0000000f,
-            Type::PREINIT_ARRAY => 0x00000010,
-            Type::GROUP => 0x00000011,
-            Type::SYMTAB_SHNDX => 0x00000012,
-            Type::RELR => 0x00000013,
-            Type::ANDROID_REL => 0x60000001,
-            Type::ANDROID_RELA => 0x60000002,
-            Type::LLVM_ADDRSIG => 0x6fff4c03,
-            Type::ANDROID_RELR => 0x6fffff00,
-            Type::GNU_ATTRIBUTES => 0x6ffffff5,
-            Type::GNU_HASH => 0x6ffffff6,
-            Type::GNU_VERDEF => 0x6ffffffd,
-            Type::GNU_VERNEED => 0x6ffffffe,
-            Type::GNU_VERSYM => 0x6fffffff,
-            Type::ARM_EXIDX => 0x170000001,
-            Type::ARM_PREEMPTMAP => 0x170000002,
-            Type::ARM_ATTRIBUTES => 0x170000003,
-            Type::ARM_DEBUGOVERLAY => 0x170000004,
-            Type::ARM_OVERLAYSECTION => 0x170000005,
-            Type::HEX_ORDERED => 0x270000000,
-            Type::X86_64_UNWIND => 0x270000001,
-            Type::MIPS_REGINFO => 0x370000006,
-            Type::MIPS_OPTIONS => 0x37000000d,
-            Type::MIPS_ABIFLAGS => 0x37000002a,
-            Type::RISCV_ATTRIBUTES => 0x470000003,
-            Type::AARCH64_ATTRIBUTES => 0x570000003,
-            Type::AARCH64_AUTH_RELR => 0x570000004,
-            Type::AARCH64_MEMTAG_GLOBALS_STATIC => 0x570000007,
-            Type::AARCH64_MEMTAG_GLOBALS_DYNAMIC => 0x570000008,
-            Type::UNKNOWN(value) => value,
-        }
-    }
-}
-
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct Flags: u64 {

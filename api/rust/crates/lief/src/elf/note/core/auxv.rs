@@ -4,79 +4,42 @@ use std::marker::PhantomData;
 
 use crate::common::FromFFI;
 use crate::elf::note::NoteBase;
+use crate::enum_from_int;
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-/// Auxiliary vector types
-pub enum Type {
-    END,
-    IGNORE_TY,
-    EXECFD,
-    PHDR,
-    PHENT,
-    PHNUM,
-    PAGESZ,
-    BASE,
-    FLAGS,
-    ENTRY,
-    NOTELF,
-    UID,
-    EUID,
-    GID,
-    EGID,
-    TGT_PLATFORM,
-    HWCAP,
-    CLKTCK,
-    FPUCW,
-    DCACHEBSIZE,
-    ICACHEBSIZE,
-    UCACHEBSIZE,
-    IGNOREPPC,
-    SECURE,
-    BASE_PLATFORM,
-    RANDOM,
-    HWCAP2,
-    EXECFN,
-    SYSINFO,
-    SYSINFO_EHDR,
-    UNKNOWN(u64),
-}
-
-impl From<u64> for Type {
-    fn from(value: u64) -> Self {
-        match value {
-            0 => Type::END,
-            1 => Type::IGNORE_TY,
-            2 => Type::EXECFD,
-            3 => Type::PHDR,
-            4 => Type::PHENT,
-            5 => Type::PHNUM,
-            6 => Type::PAGESZ,
-            7 => Type::BASE,
-            8 => Type::FLAGS,
-            9 => Type::ENTRY,
-            10 => Type::NOTELF,
-            11 => Type::UID,
-            12 => Type::EUID,
-            13 => Type::GID,
-            14 => Type::EGID,
-            15 => Type::TGT_PLATFORM,
-            16 => Type::HWCAP,
-            17 => Type::CLKTCK,
-            18 => Type::FPUCW,
-            19 => Type::DCACHEBSIZE,
-            20 => Type::ICACHEBSIZE,
-            21 => Type::UCACHEBSIZE,
-            22 => Type::IGNOREPPC,
-            23 => Type::SECURE,
-            24 => Type::BASE_PLATFORM,
-            25 => Type::RANDOM,
-            26 => Type::HWCAP2,
-            31 => Type::EXECFN,
-            32 => Type::SYSINFO,
-            33 => Type::SYSINFO_EHDR,
-            _ => Type::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Auxiliary vector types
+    Type: u64 {
+        END = 0,
+        IGNORE_TY = 1,
+        EXECFD = 2,
+        PHDR = 3,
+        PHENT = 4,
+        PHNUM = 5,
+        PAGESZ = 6,
+        BASE = 7,
+        FLAGS = 8,
+        ENTRY = 9,
+        NOTELF = 10,
+        UID = 11,
+        EUID = 12,
+        GID = 13,
+        EGID = 14,
+        TGT_PLATFORM = 15,
+        HWCAP = 16,
+        CLKTCK = 17,
+        FPUCW = 18,
+        DCACHEBSIZE = 19,
+        ICACHEBSIZE = 20,
+        UCACHEBSIZE = 21,
+        IGNOREPPC = 22,
+        SECURE = 23,
+        BASE_PLATFORM = 24,
+        RANDOM = 25,
+        HWCAP2 = 26,
+        EXECFN = 31,
+        SYSINFO = 32,
+        SYSINFO_EHDR = 33,
     }
 }
 

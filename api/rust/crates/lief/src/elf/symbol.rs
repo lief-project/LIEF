@@ -5,9 +5,9 @@ use std::pin::Pin;
 
 use super::SymbolVersion;
 use crate::common::{FromFFI, into_optional};
-use crate::declare_iterator;
 use crate::elf::Section;
 use crate::generic;
+use crate::{declare_iterator, enum_from_int};
 
 /// Structure which represents an ELF symbol
 pub struct Symbol<'a> {
@@ -15,109 +15,72 @@ pub struct Symbol<'a> {
     _owner: PhantomData<&'a ffi::ELF_Binary>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum Binding {
-    /// Local symbol
-    LOCAL,
-    /// Global symbol
-    GLOBAL,
-    /// Weak symbol
-    WEAK,
-    /// Unique symbol
-    GNU_UNIQUE,
-    UNKNOWN(u32),
-}
-
-impl Binding {
-    pub fn from_value(value: u32) -> Self {
-        match value {
-            0x00000000 => Binding::LOCAL,
-            0x00000001 => Binding::GLOBAL,
-            0x00000002 => Binding::WEAK,
-            0x0000000a => Binding::GNU_UNIQUE,
-            _ => Binding::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    #[derive(PartialOrd, Ord)]
+    Binding: u32 {
+        /// Local symbol
+        LOCAL = 0x00000000,
+        /// Global symbol
+        GLOBAL = 0x00000001,
+        /// Weak symbol
+        WEAK = 0x00000002,
+        /// Unique symbol
+        GNU_UNIQUE = 0x0000000a,
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-/// Type of the symbol. This enum matches the `STT_xxx` values of the ELF
-/// specs
-pub enum Type {
-    /// Symbol's type is not specified
-    NOTYPE,
-    /// Symbol is a data object (variable, array, etc.)
-    OBJECT,
-    /// Symbol is executable code (function, etc.)
-    FUNC,
-    /// Symbol refers to a section
-    SECTION,
-    /// Local, absolute symbol that refers to a file
-    FILE,
-    /// An uninitialized common block
-    COMMON,
-    /// Thread local data object
-    TLS,
-    /// GNU indirect function
-    GNU_IFUNC,
-    UNKNOWN(u32),
-}
-
-impl Type {
-    pub fn from_value(value: u32) -> Self {
-        match value {
-            0x00000000 => Type::NOTYPE,
-            0x00000001 => Type::OBJECT,
-            0x00000002 => Type::FUNC,
-            0x00000003 => Type::SECTION,
-            0x00000004 => Type::FILE,
-            0x00000005 => Type::COMMON,
-            0x00000006 => Type::TLS,
-            0x0000000a => Type::GNU_IFUNC,
-            _ => Type::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    #[derive(PartialOrd, Ord)]
+    /// Type of the symbol. This enum matches the `STT_xxx` values of the ELF
+    /// specs
+    Type: u32 {
+        /// Symbol's type is not specified
+        NOTYPE = 0x00000000,
+        /// Symbol is a data object (variable, array, etc.)
+        OBJECT = 0x00000001,
+        /// Symbol is executable code (function, etc.)
+        FUNC = 0x00000002,
+        /// Symbol refers to a section
+        SECTION = 0x00000003,
+        /// Local, absolute symbol that refers to a file
+        FILE = 0x00000004,
+        /// An uninitialized common block
+        COMMON = 0x00000005,
+        /// Thread local data object
+        TLS = 0x00000006,
+        /// GNU indirect function
+        GNU_IFUNC = 0x0000000a,
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-/// Visibility of the symbol. This enum matches the `STV_xxx` values of the
-/// official ELF specs
-pub enum Visibility {
-    /// Visibility is specified by binding type
-    DEFAULT,
-    /// Defined by processor supplements
-    INTERNAL,
-    /// Not visible to other components
-    HIDDEN,
-    /// Visible in other components but not preemptable
-    PROTECTED,
-    UNKNOWN(u32),
-}
-
-impl Visibility {
-    pub fn from_value(value: u32) -> Self {
-        match value {
-            0x00000000 => Visibility::DEFAULT,
-            0x00000001 => Visibility::INTERNAL,
-            0x00000002 => Visibility::HIDDEN,
-            0x00000003 => Visibility::PROTECTED,
-            _ => Visibility::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    #[derive(PartialOrd, Ord)]
+    /// Visibility of the symbol. This enum matches the `STV_xxx` values of the
+    /// official ELF specs
+    Visibility: u32 {
+        /// Visibility is specified by binding type
+        DEFAULT = 0x00000000,
+        /// Defined by processor supplements
+        INTERNAL = 0x00000001,
+        /// Not visible to other components
+        HIDDEN = 0x00000002,
+        /// Visible in other components but not preemptable
+        PROTECTED = 0x00000003,
     }
 }
 
 impl Symbol<'_> {
     /// The symbol's type provides a general classification for the associated entity
     pub fn get_type(&self) -> Type {
-        Type::from_value(self.ptr.get_type())
+        Type::from(self.ptr.get_type())
     }
 
     /// The symbol's binding determines the linkage visibility and behavior
     pub fn binding(&self) -> Binding {
-        Binding::from_value(self.ptr.binding())
+        Binding::from(self.ptr.binding())
     }
 
     /// This member specifies the symbol's type and binding attributes.
@@ -137,7 +100,7 @@ impl Symbol<'_> {
 
     /// Symbol visibility
     pub fn visibility(&self) -> Visibility {
-        Visibility::from_value(self.ptr.visibility())
+        Visibility::from(self.ptr.visibility())
     }
 
     /// Section associated with the symbol (if any)

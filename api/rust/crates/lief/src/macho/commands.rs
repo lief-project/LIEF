@@ -106,281 +106,73 @@ pub use uuid::UUID;
 pub use version_min::VersionMin;
 
 use crate::common::FromFFI;
-use crate::{declare_iterator, to_slice};
+use crate::{declare_iterator, enum_from_int, to_slice};
 
-#[derive(Debug, Copy, Clone)]
-pub enum LoadCommandTypes {
-    BuildVersion,
-    CodeSignature,
-    DataInCode,
-    DyldChainedFixups,
-    DyldEnvironment,
-    DyldExportsTrie,
-    DyldInfo,
-    DyldInfoOnly,
-    DylibCodeSignDrs,
-    Dysymtab,
-    EncryptionInfo,
-    EncryptionInfo64,
-    FilesetEntry,
-    FunctionStarts,
-    Fvmfile,
-    Ident,
-    Idfvmlib,
-    IdDylib,
-    IdDylinker,
-    LazyLoadDylib,
-    LinkerOptimizationHint,
-    LinkerOption,
-    LoadFvmLib,
-    LoadDylib,
-    LoadDylinker,
-    LoadUpwardDylib,
-    LoadWeakDylib,
-    Main,
-    Note,
-    PrebindCksum,
-    PreboundDylib,
-    Prepage,
-    ReExportDylib,
-    Routines,
-    Routines64,
-    Rpath,
-    Segment,
-    Segment64,
-    SegmentSplitInfo,
-    SourceVersion,
-    SubClient,
-    SubFramework,
-    SubLibrary,
-    SubUmbrella,
-    Symseg,
-    Symtab,
-    Thread,
-    TwoLevelHints,
-    Unixthread,
-    Uuid,
-    VersionMinIphoneOS,
-    VersionMinMacOSX,
-    VersionMinTvOS,
-    VersionMinWatchOS,
-    AtomInfo,
-    FunctionVariants,
-    FunctionVariantsFixups,
-    TargetTriple,
-    LazyLoadDylibInfo,
+enum_from_int! {
+    LoadCommandTypes: u64 {
+        BuildVersion = 0x00000032,
+        CodeSignature = 0x0000001D,
+        DataInCode = 0x00000029,
+        DyldChainedFixups = 0x80000034,
+        DyldEnvironment = 0x00000027,
+        DyldExportsTrie = 0x80000033,
+        DyldInfo = 0x00000022,
+        DyldInfoOnly = 0x80000022,
+        DylibCodeSignDrs = 0x0000002B,
+        Dysymtab = 0x0000000B,
+        EncryptionInfo = 0x00000021,
+        EncryptionInfo64 = 0x0000002C,
+        FilesetEntry = 0x80000035,
+        FunctionStarts = 0x00000026,
+        Fvmfile = 0x00000009,
+        Ident = 0x00000008,
+        Idfvmlib = 0x00000007,
+        IdDylib = 0x0000000D,
+        IdDylinker = 0x0000000F,
+        LazyLoadDylib = 0x00000020,
+        LinkerOptimizationHint = 0x0000002E,
+        LinkerOption = 0x0000002D,
+        LoadFvmLib = 0x00000006,
+        LoadDylib = 0x0000000C,
+        LoadDylinker = 0x0000000E,
+        LoadUpwardDylib = 0x80000023,
+        LoadWeakDylib = 0x80000018,
+        Main = 0x80000028,
+        Note = 0x00000031,
+        PrebindCksum = 0x00000017,
+        PreboundDylib = 0x00000010,
+        Prepage = 0x0000000A,
+        ReExportDylib = 0x8000001F,
+        Routines = 0x00000011,
+        Routines64 = 0x0000001A,
+        Rpath = 0x8000001C,
+        Segment = 0x00000001,
+        Segment64 = 0x00000019,
+        SegmentSplitInfo = 0x0000001E,
+        SourceVersion = 0x0000002A,
+        SubClient = 0x00000014,
+        SubFramework = 0x00000012,
+        SubLibrary = 0x00000015,
+        SubUmbrella = 0x00000013,
+        Symseg = 0x00000003,
+        Symtab = 0x00000002,
+        Thread = 0x00000004,
+        TwoLevelHints = 0x00000016,
+        Unixthread = 0x00000005,
+        Uuid = 0x0000001B,
+        VersionMinIphoneOS = 0x00000025,
+        VersionMinMacOSX = 0x00000024,
+        VersionMinTvOS = 0x0000002F,
+        VersionMinWatchOS = 0x00000030,
+        AtomInfo = 0x00000036,
+        FunctionVariants = 0x00000037,
+        FunctionVariantsFixups = 0x00000038,
+        TargetTriple = 0x00000039,
+        LazyLoadDylibInfo = 0x0000003A,
 
-    LiefUnknown,
-    Unknown(u64),
-}
-impl LoadCommandTypes {
-    const LC_BUILD_VERSION: u64 = 0x00000032;
-    const LC_CODE_SIGNATURE: u64 = 0x0000001D;
-    const LC_DATA_IN_CODE: u64 = 0x00000029;
-    const LC_DYLD_CHAINED_FIXUPS: u64 = 0x80000034;
-    const LC_DYLD_ENVIRONMENT: u64 = 0x00000027;
-    const LC_DYLD_EXPORTS_TRIE: u64 = 0x80000033;
-    const LC_DYLD_INFO: u64 = 0x00000022;
-    const LC_DYLD_INFO_ONLY: u64 = 0x80000022;
-    const LC_DYLIB_CODE_SIGN_DRS: u64 = 0x0000002B;
-    const LC_DYSYMTAB: u64 = 0x0000000B;
-    const LC_ENCRYPTION_INFO: u64 = 0x00000021;
-    const LC_ENCRYPTION_INFO_64: u64 = 0x0000002C;
-    const LC_FILESET_ENTRY: u64 = 0x80000035;
-    const LC_FUNCTION_STARTS: u64 = 0x00000026;
-    const LC_FVMFILE: u64 = 0x00000009;
-    const LC_IDENT: u64 = 0x00000008;
-    const LC_IDFVMLIB: u64 = 0x00000007;
-    const LC_ID_DYLIB: u64 = 0x0000000D;
-    const LC_ID_DYLINKER: u64 = 0x0000000F;
-    const LC_LAZY_LOAD_DYLIB: u64 = 0x00000020;
-    const LC_LINKER_OPTIMIZATION_HINT: u64 = 0x0000002E;
-    const LC_LINKER_OPTION: u64 = 0x0000002D;
-    const LC_LOADFVMLIB: u64 = 0x00000006;
-    const LC_LOAD_DYLIB: u64 = 0x0000000C;
-    const LC_LOAD_DYLINKER: u64 = 0x0000000E;
-    const LC_LOAD_UPWARD_DYLIB: u64 = 0x80000023;
-    const LC_LOAD_WEAK_DYLIB: u64 = 0x80000018;
-    const LC_MAIN: u64 = 0x80000028;
-    const LC_NOTE: u64 = 0x00000031;
-    const LC_PREBIND_CKSUM: u64 = 0x00000017;
-    const LC_PREBOUND_DYLIB: u64 = 0x00000010;
-    const LC_PREPAGE: u64 = 0x0000000A;
-    const LC_REEXPORT_DYLIB: u64 = 0x8000001F;
-    const LC_ROUTINES: u64 = 0x00000011;
-    const LC_ROUTINES_64: u64 = 0x0000001A;
-    const LC_RPATH: u64 = 0x8000001C;
-    const LC_SEGMENT: u64 = 0x00000001;
-    const LC_SEGMENT_64: u64 = 0x00000019;
-    const LC_SEGMENT_SPLIT_INFO: u64 = 0x0000001E;
-    const LC_SOURCE_VERSION: u64 = 0x0000002A;
-    const LC_SUB_CLIENT: u64 = 0x00000014;
-    const LC_SUB_FRAMEWORK: u64 = 0x00000012;
-    const LC_SUB_LIBRARY: u64 = 0x00000015;
-    const LC_SUB_UMBRELLA: u64 = 0x00000013;
-    const LC_SYMSEG: u64 = 0x00000003;
-    const LC_SYMTAB: u64 = 0x00000002;
-    const LC_THREAD: u64 = 0x00000004;
-    const LC_TWOLEVEL_HINTS: u64 = 0x00000016;
-    const LC_UNIXTHREAD: u64 = 0x00000005;
-    const LC_UUID: u64 = 0x0000001B;
-    const LC_VERSION_MIN_IPHONEOS: u64 = 0x00000025;
-    const LC_VERSION_MIN_MACOSX: u64 = 0x00000024;
-    const LC_VERSION_MIN_TVOS: u64 = 0x0000002F;
-    const LC_VERSION_MIN_WATCHOS: u64 = 0x00000030;
-    const LC_ATOM_INFO: u64 = 0x00000036;
-    const LC_FUNCTION_VARIANTS: u64 = 0x00000037;
-    const LC_FUNCTION_VARIANT_FIXUPS: u64 = 0x00000038;
-    const LC_TARGET_TRIPLE: u64 = 0x00000039;
-    const LC_LAZY_LOAD_DYLIB_INFO: u64 = 0x0000003A;
-
-    const LIEF_UNKNOWN: u64 = 0xffee0001;
-}
-
-impl From<u64> for LoadCommandTypes {
-    fn from(value: u64) -> Self {
-        match value {
-            LoadCommandTypes::LC_BUILD_VERSION => LoadCommandTypes::BuildVersion,
-            LoadCommandTypes::LC_CODE_SIGNATURE => LoadCommandTypes::CodeSignature,
-            LoadCommandTypes::LC_DATA_IN_CODE => LoadCommandTypes::DataInCode,
-            LoadCommandTypes::LC_DYLD_CHAINED_FIXUPS => LoadCommandTypes::DyldChainedFixups,
-            LoadCommandTypes::LC_DYLD_ENVIRONMENT => LoadCommandTypes::DyldEnvironment,
-            LoadCommandTypes::LC_DYLD_EXPORTS_TRIE => LoadCommandTypes::DyldExportsTrie,
-            LoadCommandTypes::LC_DYLD_INFO => LoadCommandTypes::DyldInfo,
-            LoadCommandTypes::LC_DYLD_INFO_ONLY => LoadCommandTypes::DyldInfoOnly,
-            LoadCommandTypes::LC_DYLIB_CODE_SIGN_DRS => LoadCommandTypes::DylibCodeSignDrs,
-            LoadCommandTypes::LC_DYSYMTAB => LoadCommandTypes::Dysymtab,
-            LoadCommandTypes::LC_ENCRYPTION_INFO => LoadCommandTypes::EncryptionInfo,
-            LoadCommandTypes::LC_ENCRYPTION_INFO_64 => LoadCommandTypes::EncryptionInfo64,
-            LoadCommandTypes::LC_FILESET_ENTRY => LoadCommandTypes::FilesetEntry,
-            LoadCommandTypes::LC_FUNCTION_STARTS => LoadCommandTypes::FunctionStarts,
-            LoadCommandTypes::LC_FVMFILE => LoadCommandTypes::Fvmfile,
-            LoadCommandTypes::LC_IDENT => LoadCommandTypes::Ident,
-            LoadCommandTypes::LC_IDFVMLIB => LoadCommandTypes::Idfvmlib,
-            LoadCommandTypes::LC_ID_DYLIB => LoadCommandTypes::IdDylib,
-            LoadCommandTypes::LC_ID_DYLINKER => LoadCommandTypes::IdDylinker,
-            LoadCommandTypes::LC_LAZY_LOAD_DYLIB => LoadCommandTypes::LazyLoadDylib,
-            LoadCommandTypes::LC_LINKER_OPTIMIZATION_HINT => {
-                LoadCommandTypes::LinkerOptimizationHint
-            }
-            LoadCommandTypes::LC_LINKER_OPTION => LoadCommandTypes::LinkerOption,
-            LoadCommandTypes::LC_LOADFVMLIB => LoadCommandTypes::LoadFvmLib,
-            LoadCommandTypes::LC_LOAD_DYLIB => LoadCommandTypes::LoadDylib,
-            LoadCommandTypes::LC_LOAD_DYLINKER => LoadCommandTypes::LoadDylinker,
-            LoadCommandTypes::LC_LOAD_UPWARD_DYLIB => LoadCommandTypes::LoadUpwardDylib,
-            LoadCommandTypes::LC_LOAD_WEAK_DYLIB => LoadCommandTypes::LoadWeakDylib,
-            LoadCommandTypes::LC_MAIN => LoadCommandTypes::Main,
-            LoadCommandTypes::LC_NOTE => LoadCommandTypes::Note,
-            LoadCommandTypes::LC_PREBIND_CKSUM => LoadCommandTypes::PrebindCksum,
-            LoadCommandTypes::LC_PREBOUND_DYLIB => LoadCommandTypes::PreboundDylib,
-            LoadCommandTypes::LC_PREPAGE => LoadCommandTypes::Prepage,
-            LoadCommandTypes::LC_REEXPORT_DYLIB => LoadCommandTypes::ReExportDylib,
-            LoadCommandTypes::LC_ROUTINES => LoadCommandTypes::Routines,
-            LoadCommandTypes::LC_ROUTINES_64 => LoadCommandTypes::Routines64,
-            LoadCommandTypes::LC_RPATH => LoadCommandTypes::Rpath,
-            LoadCommandTypes::LC_SEGMENT => LoadCommandTypes::Segment,
-            LoadCommandTypes::LC_SEGMENT_64 => LoadCommandTypes::Segment64,
-            LoadCommandTypes::LC_SEGMENT_SPLIT_INFO => LoadCommandTypes::SegmentSplitInfo,
-            LoadCommandTypes::LC_SOURCE_VERSION => LoadCommandTypes::SourceVersion,
-            LoadCommandTypes::LC_SUB_CLIENT => LoadCommandTypes::SubClient,
-            LoadCommandTypes::LC_SUB_FRAMEWORK => LoadCommandTypes::SubFramework,
-            LoadCommandTypes::LC_SUB_LIBRARY => LoadCommandTypes::SubLibrary,
-            LoadCommandTypes::LC_SUB_UMBRELLA => LoadCommandTypes::SubUmbrella,
-            LoadCommandTypes::LC_SYMSEG => LoadCommandTypes::Symseg,
-            LoadCommandTypes::LC_SYMTAB => LoadCommandTypes::Symtab,
-            LoadCommandTypes::LC_THREAD => LoadCommandTypes::Thread,
-            LoadCommandTypes::LC_TWOLEVEL_HINTS => LoadCommandTypes::TwoLevelHints,
-            LoadCommandTypes::LC_UNIXTHREAD => LoadCommandTypes::Unixthread,
-            LoadCommandTypes::LC_UUID => LoadCommandTypes::Uuid,
-            LoadCommandTypes::LC_VERSION_MIN_IPHONEOS => LoadCommandTypes::VersionMinIphoneOS,
-            LoadCommandTypes::LC_VERSION_MIN_MACOSX => LoadCommandTypes::VersionMinMacOSX,
-            LoadCommandTypes::LC_VERSION_MIN_TVOS => LoadCommandTypes::VersionMinTvOS,
-            LoadCommandTypes::LC_VERSION_MIN_WATCHOS => LoadCommandTypes::VersionMinWatchOS,
-            LoadCommandTypes::LC_ATOM_INFO => LoadCommandTypes::AtomInfo,
-            LoadCommandTypes::LC_FUNCTION_VARIANTS => LoadCommandTypes::FunctionVariants,
-            LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS => {
-                LoadCommandTypes::FunctionVariantsFixups
-            }
-            LoadCommandTypes::LC_TARGET_TRIPLE => LoadCommandTypes::TargetTriple,
-            LoadCommandTypes::LC_LAZY_LOAD_DYLIB_INFO => LoadCommandTypes::LazyLoadDylibInfo,
-            LoadCommandTypes::LIEF_UNKNOWN => LoadCommandTypes::LiefUnknown,
-            _ => LoadCommandTypes::Unknown(value),
-        }
+        LiefUnknown = 0xffee0001,
     }
 }
-
-impl From<LoadCommandTypes> for u64 {
-    fn from(value: LoadCommandTypes) -> Self {
-        match value {
-            LoadCommandTypes::BuildVersion => LoadCommandTypes::LC_BUILD_VERSION,
-            LoadCommandTypes::CodeSignature => LoadCommandTypes::LC_CODE_SIGNATURE,
-            LoadCommandTypes::DataInCode => LoadCommandTypes::LC_DATA_IN_CODE,
-            LoadCommandTypes::DyldChainedFixups => LoadCommandTypes::LC_DYLD_CHAINED_FIXUPS,
-            LoadCommandTypes::DyldEnvironment => LoadCommandTypes::LC_DYLD_ENVIRONMENT,
-            LoadCommandTypes::DyldExportsTrie => LoadCommandTypes::LC_DYLD_EXPORTS_TRIE,
-            LoadCommandTypes::DyldInfo => LoadCommandTypes::LC_DYLD_INFO,
-            LoadCommandTypes::DyldInfoOnly => LoadCommandTypes::LC_DYLD_INFO_ONLY,
-            LoadCommandTypes::DylibCodeSignDrs => LoadCommandTypes::LC_DYLIB_CODE_SIGN_DRS,
-            LoadCommandTypes::Dysymtab => LoadCommandTypes::LC_DYSYMTAB,
-            LoadCommandTypes::EncryptionInfo => LoadCommandTypes::LC_ENCRYPTION_INFO,
-            LoadCommandTypes::EncryptionInfo64 => LoadCommandTypes::LC_ENCRYPTION_INFO_64,
-            LoadCommandTypes::FilesetEntry => LoadCommandTypes::LC_FILESET_ENTRY,
-            LoadCommandTypes::FunctionStarts => LoadCommandTypes::LC_FUNCTION_STARTS,
-            LoadCommandTypes::Fvmfile => LoadCommandTypes::LC_FVMFILE,
-            LoadCommandTypes::Ident => LoadCommandTypes::LC_IDENT,
-            LoadCommandTypes::Idfvmlib => LoadCommandTypes::LC_IDFVMLIB,
-            LoadCommandTypes::IdDylib => LoadCommandTypes::LC_ID_DYLIB,
-            LoadCommandTypes::IdDylinker => LoadCommandTypes::LC_ID_DYLINKER,
-            LoadCommandTypes::LazyLoadDylib => LoadCommandTypes::LC_LAZY_LOAD_DYLIB,
-            LoadCommandTypes::LinkerOptimizationHint => {
-                LoadCommandTypes::LC_LINKER_OPTIMIZATION_HINT
-            }
-            LoadCommandTypes::LinkerOption => LoadCommandTypes::LC_LINKER_OPTION,
-            LoadCommandTypes::LoadFvmLib => LoadCommandTypes::LC_LOADFVMLIB,
-            LoadCommandTypes::LoadDylib => LoadCommandTypes::LC_LOAD_DYLIB,
-            LoadCommandTypes::LoadDylinker => LoadCommandTypes::LC_LOAD_DYLINKER,
-            LoadCommandTypes::LoadUpwardDylib => LoadCommandTypes::LC_LOAD_UPWARD_DYLIB,
-            LoadCommandTypes::LoadWeakDylib => LoadCommandTypes::LC_LOAD_WEAK_DYLIB,
-            LoadCommandTypes::Main => LoadCommandTypes::LC_MAIN,
-            LoadCommandTypes::Note => LoadCommandTypes::LC_NOTE,
-            LoadCommandTypes::PrebindCksum => LoadCommandTypes::LC_PREBIND_CKSUM,
-            LoadCommandTypes::PreboundDylib => LoadCommandTypes::LC_PREBOUND_DYLIB,
-            LoadCommandTypes::Prepage => LoadCommandTypes::LC_PREPAGE,
-            LoadCommandTypes::ReExportDylib => LoadCommandTypes::LC_REEXPORT_DYLIB,
-            LoadCommandTypes::Routines => LoadCommandTypes::LC_ROUTINES,
-            LoadCommandTypes::Routines64 => LoadCommandTypes::LC_ROUTINES_64,
-            LoadCommandTypes::Rpath => LoadCommandTypes::LC_RPATH,
-            LoadCommandTypes::Segment => LoadCommandTypes::LC_SEGMENT,
-            LoadCommandTypes::Segment64 => LoadCommandTypes::LC_SEGMENT_64,
-            LoadCommandTypes::SegmentSplitInfo => LoadCommandTypes::LC_SEGMENT_SPLIT_INFO,
-            LoadCommandTypes::SourceVersion => LoadCommandTypes::LC_SOURCE_VERSION,
-            LoadCommandTypes::SubClient => LoadCommandTypes::LC_SUB_CLIENT,
-            LoadCommandTypes::SubFramework => LoadCommandTypes::LC_SUB_FRAMEWORK,
-            LoadCommandTypes::SubLibrary => LoadCommandTypes::LC_SUB_LIBRARY,
-            LoadCommandTypes::SubUmbrella => LoadCommandTypes::LC_SUB_UMBRELLA,
-            LoadCommandTypes::Symseg => LoadCommandTypes::LC_SYMSEG,
-            LoadCommandTypes::Symtab => LoadCommandTypes::LC_SYMTAB,
-            LoadCommandTypes::Thread => LoadCommandTypes::LC_THREAD,
-            LoadCommandTypes::TwoLevelHints => LoadCommandTypes::LC_TWOLEVEL_HINTS,
-            LoadCommandTypes::Unixthread => LoadCommandTypes::LC_UNIXTHREAD,
-            LoadCommandTypes::Uuid => LoadCommandTypes::LC_UUID,
-            LoadCommandTypes::VersionMinIphoneOS => LoadCommandTypes::LC_VERSION_MIN_IPHONEOS,
-            LoadCommandTypes::VersionMinMacOSX => LoadCommandTypes::LC_VERSION_MIN_MACOSX,
-            LoadCommandTypes::VersionMinTvOS => LoadCommandTypes::LC_VERSION_MIN_TVOS,
-            LoadCommandTypes::VersionMinWatchOS => LoadCommandTypes::LC_VERSION_MIN_WATCHOS,
-            LoadCommandTypes::AtomInfo => LoadCommandTypes::LC_ATOM_INFO,
-            LoadCommandTypes::FunctionVariants => LoadCommandTypes::LC_FUNCTION_VARIANTS,
-            LoadCommandTypes::FunctionVariantsFixups => {
-                LoadCommandTypes::LC_FUNCTION_VARIANT_FIXUPS
-            }
-            LoadCommandTypes::TargetTriple => LoadCommandTypes::LC_TARGET_TRIPLE,
-            LoadCommandTypes::LazyLoadDylibInfo => LoadCommandTypes::LC_LAZY_LOAD_DYLIB_INFO,
-            LoadCommandTypes::LiefUnknown => LoadCommandTypes::LIEF_UNKNOWN,
-            LoadCommandTypes::Unknown(value) => value,
-        }
-    }
-}
-
 #[derive(Debug)]
 /// Enum that wraps all the different Mach-O load commands (`LC_xxx`).
 /// Note that all these commands implements the trait: [`Command`]

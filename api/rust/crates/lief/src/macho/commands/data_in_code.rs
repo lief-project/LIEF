@@ -2,7 +2,7 @@ use super::Command;
 use lief_ffi as ffi;
 
 use crate::to_slice;
-use crate::{common::FromFFI, declare_iterator};
+use crate::{common::FromFFI, declare_iterator, enum_from_int};
 use std::marker::PhantomData;
 
 /// Structure that represents the `LC_DATA_IN_CODE` command
@@ -67,27 +67,14 @@ pub struct DataCodeEntry<'a> {
     _owner: PhantomData<&'a ffi::MachO_DataInCode>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum EntryType {
-    DATA,
-    JUMP_TABLE_8,
-    JUMP_TABLE_16,
-    JUMP_TABLE_32,
-    ABS_JUMP_TABLE_32,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for EntryType {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => EntryType::DATA,
-            0x00000002 => EntryType::JUMP_TABLE_8,
-            0x00000003 => EntryType::JUMP_TABLE_16,
-            0x00000004 => EntryType::JUMP_TABLE_32,
-            0x00000005 => EntryType::ABS_JUMP_TABLE_32,
-            _ => EntryType::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    EntryType: u32 {
+        DATA = 0x00000001,
+        JUMP_TABLE_8 = 0x00000002,
+        JUMP_TABLE_16 = 0x00000003,
+        JUMP_TABLE_32 = 0x00000004,
+        ABS_JUMP_TABLE_32 = 0x00000005,
     }
 }
 

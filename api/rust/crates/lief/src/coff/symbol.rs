@@ -5,217 +5,73 @@ use std::pin::Pin;
 
 use crate::common::{FromFFI, into_optional};
 use crate::to_slice;
-use crate::{declare_iterator, generic};
+use crate::{declare_iterator, enum_from_int, generic};
 
 use super::Section;
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum StorageClass {
-    INVALID,
-    END_OF_FUNCTION,
-    NONE,
-    AUTOMATIC,
-    EXTERNAL,
-    STATIC,
-    REGISTER,
-    EXTERNAL_DEF,
-    LABEL,
-    UNDEFINED_LABEL,
-    MEMBER_OF_STRUCT,
-    ARGUMENT,
-    STRUCT_TAG,
-    MEMBER_OF_UNION,
-    UNION_TAG,
-    TYPE_DEFINITION,
-    UNDEFINED_STATIC,
-    ENUM_TAG,
-    MEMBER_OF_ENUM,
-    REGISTER_PARAM,
-    BIT_FIELD,
-    BLOCK,
-    FUNCTION,
-    END_OF_STRUCT,
-    FILE,
-    SECTION,
-    WEAK_EXTERNAL,
-    CLR_TOKEN,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for StorageClass {
-    fn from(value: u32) -> Self {
-        match value {
-            0x000000ff => StorageClass::INVALID,
-            0xffffffff => StorageClass::END_OF_FUNCTION,
-            0x00000000 => StorageClass::NONE,
-            0x00000001 => StorageClass::AUTOMATIC,
-            0x00000002 => StorageClass::EXTERNAL,
-            0x00000003 => StorageClass::STATIC,
-            0x00000004 => StorageClass::REGISTER,
-            0x00000005 => StorageClass::EXTERNAL_DEF,
-            0x00000006 => StorageClass::LABEL,
-            0x00000007 => StorageClass::UNDEFINED_LABEL,
-            0x00000008 => StorageClass::MEMBER_OF_STRUCT,
-            0x00000009 => StorageClass::ARGUMENT,
-            0x0000000a => StorageClass::STRUCT_TAG,
-            0x0000000b => StorageClass::MEMBER_OF_UNION,
-            0x0000000c => StorageClass::UNION_TAG,
-            0x0000000d => StorageClass::TYPE_DEFINITION,
-            0x0000000e => StorageClass::UNDEFINED_STATIC,
-            0x0000000f => StorageClass::ENUM_TAG,
-            0x00000010 => StorageClass::MEMBER_OF_ENUM,
-            0x00000011 => StorageClass::REGISTER_PARAM,
-            0x00000012 => StorageClass::BIT_FIELD,
-            0x00000064 => StorageClass::BLOCK,
-            0x00000065 => StorageClass::FUNCTION,
-            0x00000066 => StorageClass::END_OF_STRUCT,
-            0x00000067 => StorageClass::FILE,
-            0x00000068 => StorageClass::SECTION,
-            0x00000069 => StorageClass::WEAK_EXTERNAL,
-            0x0000006b => StorageClass::CLR_TOKEN,
-            _ => StorageClass::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    StorageClass: u32 {
+        INVALID = 0x000000ff,
+        END_OF_FUNCTION = 0xffffffff,
+        NONE = 0x00000000,
+        AUTOMATIC = 0x00000001,
+        EXTERNAL = 0x00000002,
+        STATIC = 0x00000003,
+        REGISTER = 0x00000004,
+        EXTERNAL_DEF = 0x00000005,
+        LABEL = 0x00000006,
+        UNDEFINED_LABEL = 0x00000007,
+        MEMBER_OF_STRUCT = 0x00000008,
+        ARGUMENT = 0x00000009,
+        STRUCT_TAG = 0x0000000a,
+        MEMBER_OF_UNION = 0x0000000b,
+        UNION_TAG = 0x0000000c,
+        TYPE_DEFINITION = 0x0000000d,
+        UNDEFINED_STATIC = 0x0000000e,
+        ENUM_TAG = 0x0000000f,
+        MEMBER_OF_ENUM = 0x00000010,
+        REGISTER_PARAM = 0x00000011,
+        BIT_FIELD = 0x00000012,
+        BLOCK = 0x00000064,
+        FUNCTION = 0x00000065,
+        END_OF_STRUCT = 0x00000066,
+        FILE = 0x00000067,
+        SECTION = 0x00000068,
+        WEAK_EXTERNAL = 0x00000069,
+        CLR_TOKEN = 0x0000006b,
     }
 }
-impl From<StorageClass> for u32 {
-    fn from(value: StorageClass) -> u32 {
-        match value {
-            StorageClass::INVALID => 0x000000ff,
-            StorageClass::END_OF_FUNCTION => 0xffffffff,
-            StorageClass::NONE => 0x00000000,
-            StorageClass::AUTOMATIC => 0x00000001,
-            StorageClass::EXTERNAL => 0x00000002,
-            StorageClass::STATIC => 0x00000003,
-            StorageClass::REGISTER => 0x00000004,
-            StorageClass::EXTERNAL_DEF => 0x00000005,
-            StorageClass::LABEL => 0x00000006,
-            StorageClass::UNDEFINED_LABEL => 0x00000007,
-            StorageClass::MEMBER_OF_STRUCT => 0x00000008,
-            StorageClass::ARGUMENT => 0x00000009,
-            StorageClass::STRUCT_TAG => 0x0000000a,
-            StorageClass::MEMBER_OF_UNION => 0x0000000b,
-            StorageClass::UNION_TAG => 0x0000000c,
-            StorageClass::TYPE_DEFINITION => 0x0000000d,
-            StorageClass::UNDEFINED_STATIC => 0x0000000e,
-            StorageClass::ENUM_TAG => 0x0000000f,
-            StorageClass::MEMBER_OF_ENUM => 0x00000010,
-            StorageClass::REGISTER_PARAM => 0x00000011,
-            StorageClass::BIT_FIELD => 0x00000012,
-            StorageClass::BLOCK => 0x00000064,
-            StorageClass::FUNCTION => 0x00000065,
-            StorageClass::END_OF_STRUCT => 0x00000066,
-            StorageClass::FILE => 0x00000067,
-            StorageClass::SECTION => 0x00000068,
-            StorageClass::WEAK_EXTERNAL => 0x00000069,
-            StorageClass::CLR_TOKEN => 0x0000006b,
-            StorageClass::UNKNOWN(value) => value,
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    BaseType: u32 {
+        TY_NULL = 0x00000000,
+        TY_VOID = 0x00000001,
+        TY_CHAR = 0x00000002,
+        TY_SHORT = 0x00000003,
+        TY_INT = 0x00000004,
+        TY_LONG = 0x00000005,
+        TY_FLOAT = 0x00000006,
+        TY_DOUBLE = 0x00000007,
+        TY_STRUCT = 0x00000008,
+        TY_UNION = 0x00000009,
+        TY_ENUM = 0x0000000a,
+        TY_MOE = 0x0000000b,
+        TY_BYTE = 0x0000000c,
+        TY_WORD = 0x0000000d,
+        TY_UINT = 0x0000000e,
+        TY_DWORD = 0x0000000f,
     }
 }
-
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum BaseType {
-    TY_NULL,
-    TY_VOID,
-    TY_CHAR,
-    TY_SHORT,
-    TY_INT,
-    TY_LONG,
-    TY_FLOAT,
-    TY_DOUBLE,
-    TY_STRUCT,
-    TY_UNION,
-    TY_ENUM,
-    TY_MOE,
-    TY_BYTE,
-    TY_WORD,
-    TY_UINT,
-    TY_DWORD,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for BaseType {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => BaseType::TY_NULL,
-            0x00000001 => BaseType::TY_VOID,
-            0x00000002 => BaseType::TY_CHAR,
-            0x00000003 => BaseType::TY_SHORT,
-            0x00000004 => BaseType::TY_INT,
-            0x00000005 => BaseType::TY_LONG,
-            0x00000006 => BaseType::TY_FLOAT,
-            0x00000007 => BaseType::TY_DOUBLE,
-            0x00000008 => BaseType::TY_STRUCT,
-            0x00000009 => BaseType::TY_UNION,
-            0x0000000a => BaseType::TY_ENUM,
-            0x0000000b => BaseType::TY_MOE,
-            0x0000000c => BaseType::TY_BYTE,
-            0x0000000d => BaseType::TY_WORD,
-            0x0000000e => BaseType::TY_UINT,
-            0x0000000f => BaseType::TY_DWORD,
-            _ => BaseType::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    ComplexType: u32 {
+        TY_NULL = 0x00000000,
+        TY_POINTER = 0x00000001,
+        TY_FUNCTION = 0x00000002,
+        TY_ARRAY = 0x00000003,
     }
 }
-impl From<BaseType> for u32 {
-    fn from(value: BaseType) -> u32 {
-        match value {
-            BaseType::TY_NULL => 0x00000000,
-            BaseType::TY_VOID => 0x00000001,
-            BaseType::TY_CHAR => 0x00000002,
-            BaseType::TY_SHORT => 0x00000003,
-            BaseType::TY_INT => 0x00000004,
-            BaseType::TY_LONG => 0x00000005,
-            BaseType::TY_FLOAT => 0x00000006,
-            BaseType::TY_DOUBLE => 0x00000007,
-            BaseType::TY_STRUCT => 0x00000008,
-            BaseType::TY_UNION => 0x00000009,
-            BaseType::TY_ENUM => 0x0000000a,
-            BaseType::TY_MOE => 0x0000000b,
-            BaseType::TY_BYTE => 0x0000000c,
-            BaseType::TY_WORD => 0x0000000d,
-            BaseType::TY_UINT => 0x0000000e,
-            BaseType::TY_DWORD => 0x0000000f,
-            BaseType::UNKNOWN(value) => value,
-        }
-    }
-}
-
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum ComplexType {
-    TY_NULL,
-    TY_POINTER,
-    TY_FUNCTION,
-    TY_ARRAY,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for ComplexType {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => ComplexType::TY_NULL,
-            0x00000001 => ComplexType::TY_POINTER,
-            0x00000002 => ComplexType::TY_FUNCTION,
-            0x00000003 => ComplexType::TY_ARRAY,
-            _ => ComplexType::UNKNOWN(value),
-        }
-    }
-}
-impl From<ComplexType> for u32 {
-    fn from(value: ComplexType) -> u32 {
-        match value {
-            ComplexType::TY_NULL => 0x00000000,
-            ComplexType::TY_POINTER => 0x00000001,
-            ComplexType::TY_FUNCTION => 0x00000002,
-            ComplexType::TY_ARRAY => 0x00000003,
-            ComplexType::UNKNOWN(value) => value,
-        }
-    }
-}
-
 /// Structure that represents a COFF symbol.
 ///
 /// **Warning:** The [`crate::generic::Symbol::value`] should be interpreted in perspective of
@@ -662,48 +518,18 @@ impl AuxiliarySectionDefinition<'_> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum ComdatSelection {
-    NONE,
-    NODUPLICATES,
-    ANY,
-    SAME_SIZE,
-    EXACT_MATCH,
-    ASSOCIATIVE,
-    LARGEST,
-    UNKNOWN(u8),
-}
-
-impl From<u8> for ComdatSelection {
-    fn from(value: u8) -> Self {
-        match value {
-            0x00000000 => ComdatSelection::NONE,
-            0x00000001 => ComdatSelection::NODUPLICATES,
-            0x00000002 => ComdatSelection::ANY,
-            0x00000003 => ComdatSelection::SAME_SIZE,
-            0x00000004 => ComdatSelection::EXACT_MATCH,
-            0x00000005 => ComdatSelection::ASSOCIATIVE,
-            0x00000006 => ComdatSelection::LARGEST,
-            _ => ComdatSelection::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    ComdatSelection: u8 {
+        NONE = 0x00000000,
+        NODUPLICATES = 0x00000001,
+        ANY = 0x00000002,
+        SAME_SIZE = 0x00000003,
+        EXACT_MATCH = 0x00000004,
+        ASSOCIATIVE = 0x00000005,
+        LARGEST = 0x00000006,
     }
 }
-impl From<ComdatSelection> for u8 {
-    fn from(value: ComdatSelection) -> u8 {
-        match value {
-            ComdatSelection::NONE => 0x00000000,
-            ComdatSelection::NODUPLICATES => 0x00000001,
-            ComdatSelection::ANY => 0x00000002,
-            ComdatSelection::SAME_SIZE => 0x00000003,
-            ComdatSelection::EXACT_MATCH => 0x00000004,
-            ComdatSelection::ASSOCIATIVE => 0x00000005,
-            ComdatSelection::LARGEST => 0x00000006,
-            ComdatSelection::UNKNOWN(value) => value,
-        }
-    }
-}
-
 /// "Weak externals" are a mechanism for object files that allows flexibility at
 /// link time. A module can contain an unresolved external symbol (`sym1`), but
 /// it can also include an auxiliary record that indicates that if `sym1` is not
@@ -722,39 +548,15 @@ pub struct AuxiliaryWeakExternal<'a> {
     _owner: PhantomData<&'a ffi::COFF_Symbol>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Characteristics {
-    SEARCH_NOLIBRARY,
-    SEARCH_LIBRARY,
-    SEARCH_ALIAS,
-    ANTI_DEPENDENCY,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Characteristics {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Characteristics::SEARCH_NOLIBRARY,
-            0x00000002 => Characteristics::SEARCH_LIBRARY,
-            0x00000003 => Characteristics::SEARCH_ALIAS,
-            0x00000004 => Characteristics::ANTI_DEPENDENCY,
-            _ => Characteristics::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Characteristics: u32 {
+        SEARCH_NOLIBRARY = 0x00000001,
+        SEARCH_LIBRARY = 0x00000002,
+        SEARCH_ALIAS = 0x00000003,
+        ANTI_DEPENDENCY = 0x00000004,
     }
 }
-impl From<Characteristics> for u32 {
-    fn from(value: Characteristics) -> u32 {
-        match value {
-            Characteristics::SEARCH_NOLIBRARY => 0x00000001,
-            Characteristics::SEARCH_LIBRARY => 0x00000002,
-            Characteristics::SEARCH_ALIAS => 0x00000003,
-            Characteristics::ANTI_DEPENDENCY => 0x00000004,
-            Characteristics::UNKNOWN(value) => value,
-        }
-    }
-}
-
 impl FromFFI<ffi::COFF_AuxiliaryWeakExternal> for AuxiliaryWeakExternal<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::COFF_AuxiliaryWeakExternal>) -> Self {
         Self {

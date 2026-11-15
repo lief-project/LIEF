@@ -323,3 +323,36 @@ macro_rules! to_ok_result {
         $crate::__to_ok_result!($func $(, $args)*)
     };
 }
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! enum_from_int {
+    ($(#[$meta:meta])* $name:ident: $int:ty {
+        $($(#[$variant_meta:meta])* $variant:ident = $value:literal),* $(,)?
+    }) => {
+        $(#[$meta])*
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+        pub enum $name {
+            $($(#[$variant_meta])* $variant,)*
+            Unknown($int),
+        }
+
+        impl From<$int> for $name {
+            fn from(value: $int) -> Self {
+                match value {
+                    $($value => Self::$variant,)*
+                    other => Self::Unknown(other),
+                }
+            }
+        }
+
+        impl From<$name> for $int {
+            fn from(value: $name) -> Self {
+                match value {
+                    $($name::$variant => $value,)*
+                    $name::Unknown(other) => other,
+                }
+            }
+        }
+    };
+}

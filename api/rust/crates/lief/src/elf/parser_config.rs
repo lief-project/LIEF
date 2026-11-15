@@ -1,5 +1,7 @@
 use lief_ffi as ffi;
 
+use crate::enum_from_int;
+
 /// This structure is used to tweak the ELF parser: [`crate::elf::Binary::parse_with_config`]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Config {
@@ -63,46 +65,21 @@ impl Config {
     }
 }
 
-/// Enum that describes the different methods that can be used by the parser to identify
-/// the number of dynamic symbols
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum DynSymCount {
-    /// Automatic detection
-    AUTO,
+enum_from_int! {
+    /// Enum that describes the different methods that can be used by the parser to identify
+    /// the number of dynamic symbols
+    #[allow(non_camel_case_types)]
+    DynSymCount: u32 {
+        /// Automatic detection
+        AUTO = 0,
 
-    /// Count based on sections (not very reliable
-    SECTION,
+        /// Count based on sections (not very reliable
+        SECTION = 1,
 
-    /// Count based on hash table (reliable)
-    HASH,
+        /// Count based on hash table (reliable)
+        HASH = 2,
 
-    /// Count based on PLT/GOT relocations (very reliable but not accurate)
-    RELOCATIONS,
-
-    UNKNOWN(u32),
-}
-
-impl From<u32> for DynSymCount {
-    fn from(value: u32) -> Self {
-        match value {
-            0 => DynSymCount::AUTO,
-            1 => DynSymCount::SECTION,
-            2 => DynSymCount::HASH,
-            3 => DynSymCount::RELOCATIONS,
-            _ => DynSymCount::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<DynSymCount> for u32 {
-    fn from(value: DynSymCount) -> u32 {
-        match value {
-            DynSymCount::AUTO => 0,
-            DynSymCount::SECTION => 1,
-            DynSymCount::HASH => 2,
-            DynSymCount::RELOCATIONS => 3,
-            DynSymCount::UNKNOWN(value) => value,
-        }
+        /// Count based on PLT/GOT relocations (very reliable but not accurate)
+        RELOCATIONS = 3,
     }
 }

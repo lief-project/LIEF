@@ -1,6 +1,8 @@
 use lief_ffi as ffi;
 use std::sync::Arc;
 
+use crate::enum_from_int;
+
 pub type SymbolResolver = dyn Fn(&str) -> Option<u64> + Send + Sync + 'static;
 
 #[derive(Clone)]
@@ -55,38 +57,16 @@ impl AssemblerConfig {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-/// The different supported dialects
-pub enum Dialect {
-    DEFAULT_DIALECT,
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// The different supported dialects
+    Dialect: u32 {
+        DEFAULT_DIALECT = 0x00000000,
 
-    /// Intel syntax
-    X86_INTEL,
+        /// Intel syntax
+        X86_INTEL = 0x00000001,
 
-    /// Intel syntax
-    X86_ATT,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Dialect {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => Dialect::DEFAULT_DIALECT,
-            0x00000001 => Dialect::X86_INTEL,
-            0x00000002 => Dialect::X86_ATT,
-            _ => Dialect::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<Dialect> for u32 {
-    fn from(value: Dialect) -> u32 {
-        match value {
-            Dialect::DEFAULT_DIALECT => 0x00000000,
-            Dialect::X86_INTEL => 0x00000001,
-            Dialect::X86_ATT => 0x00000002,
-            Dialect::UNKNOWN(value) => value,
-        }
+        /// Intel syntax
+        X86_ATT = 0x00000002,
     }
 }

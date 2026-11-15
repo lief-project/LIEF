@@ -3,33 +3,19 @@ use std::marker::PhantomData;
 
 use super::NoteBase;
 use crate::common::FromFFI;
+use crate::enum_from_int;
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-/// ABI type for the note
-pub enum Abi {
-    LINUX,
-    GNU,
-    SOLARIS2,
-    FREEBSD,
-    NETBSD,
-    SYLLABLE,
-    NACL,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Abi {
-    fn from(value: u32) -> Self {
-        match value {
-            0 => Abi::LINUX,
-            1 => Abi::GNU,
-            2 => Abi::SOLARIS2,
-            3 => Abi::FREEBSD,
-            4 => Abi::NETBSD,
-            5 => Abi::SYLLABLE,
-            6 => Abi::NACL,
-            _ => Abi::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// ABI type for the note
+    Abi: u32 {
+        LINUX = 0,
+        GNU = 1,
+        SOLARIS2 = 2,
+        FREEBSD = 3,
+        NETBSD = 4,
+        SYLLABLE = 5,
+        NACL = 6,
     }
 }
 

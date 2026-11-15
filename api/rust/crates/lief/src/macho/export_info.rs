@@ -4,6 +4,7 @@ use bitflags::bitflags;
 use std::{fmt, marker::PhantomData};
 
 use crate::common::{FromFFI, into_optional};
+use crate::enum_from_int;
 
 use super::{Symbol, commands::Dylib};
 
@@ -13,23 +14,12 @@ pub struct ExportInfo<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Kind {
-    REGULAR,
-    THREAD_LOCAL,
-    ABSOLUTE,
-    UNKNOWN(u64),
-}
-
-impl From<u64> for Kind {
-    fn from(value: u64) -> Self {
-        match value {
-            0x00000000 => Kind::REGULAR,
-            0x00000001 => Kind::THREAD_LOCAL,
-            0x00000002 => Kind::ABSOLUTE,
-            _ => Kind::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Kind: u64 {
+        REGULAR = 0x00000000,
+        THREAD_LOCAL = 0x00000001,
+        ABSOLUTE = 0x00000002,
     }
 }
 

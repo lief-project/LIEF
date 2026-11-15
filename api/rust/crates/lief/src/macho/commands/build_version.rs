@@ -4,61 +4,23 @@ use lief_ffi as ffi;
 
 use super::Command;
 use crate::common::FromFFI;
-use crate::declare_iterator;
+use crate::{declare_iterator, enum_from_int};
 
-/// Tool used during the build
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Tool {
-    CLANG,
-    SWIFT,
-    LD,
-    LLD,
-    METAL,
-    AIRLLD,
-    AIRNT,
-    AIRNT_PLUGIN,
-    AIRPACK,
-    GPUARCHIVER,
-    METAL_FRAMEWORK,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Tool {
-    fn from(value: u32) -> Self {
-        match value {
-            1 => Tool::CLANG,
-            2 => Tool::SWIFT,
-            3 => Tool::LD,
-            4 => Tool::LLD,
-            1024 => Tool::METAL,
-            1025 => Tool::AIRLLD,
-            1026 => Tool::AIRNT,
-            1027 => Tool::AIRNT_PLUGIN,
-            1028 => Tool::AIRPACK,
-            1031 => Tool::GPUARCHIVER,
-            1032 => Tool::METAL_FRAMEWORK,
-            _ => Tool::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<Tool> for u32 {
-    fn from(value: Tool) -> u32 {
-        match value {
-            Tool::CLANG => 1,
-            Tool::SWIFT => 2,
-            Tool::LD => 3,
-            Tool::LLD => 4,
-            Tool::METAL => 1024,
-            Tool::AIRLLD => 1025,
-            Tool::AIRNT => 1026,
-            Tool::AIRNT_PLUGIN => 1027,
-            Tool::AIRPACK => 1028,
-            Tool::GPUARCHIVER => 1031,
-            Tool::METAL_FRAMEWORK => 1032,
-            Tool::UNKNOWN(v) => v,
-        }
+enum_from_int! {
+    /// Tool used during the build
+    #[allow(non_camel_case_types)]
+    Tool: u32 {
+        CLANG = 1,
+        SWIFT = 2,
+        LD = 3,
+        LLD = 4,
+        METAL = 1024,
+        AIRLLD = 1025,
+        AIRNT = 1026,
+        AIRNT_PLUGIN = 1027,
+        AIRPACK = 1028,
+        GPUARCHIVER = 1031,
+        METAL_FRAMEWORK = 1032,
     }
 }
 
@@ -108,67 +70,34 @@ pub struct BuildVersion<'a> {
     _owner: PhantomData<&'a ffi::MachO_Binary>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Platform {
-    MACOS,
-    IOS,
-    TVOS,
-    WATCHOS,
-    BRIDGEOS,
-    MAC_CATALYST,
-    IOS_SIMULATOR,
-    TVOS_SIMULATOR,
-    WATCHOS_SIMULATOR,
-    DRIVERKIT,
-    VISIONOS,
-    VISIONOS_SIMULATOR,
-    FIRMWARE,
-    SEPOS,
-    MACOS_EXCLAVE_CORE,
-    MACOS_EXCLAVE_KIT,
-    IOS_EXCLAVE_CORE,
-    IOS_EXCLAVE_KIT,
-    TVOS_EXCLAVE_CORE,
-    TVOS_EXCLAVE_KIT,
-    WATCHOS_EXCLAVE_CORE,
-    WATCHOS_EXCLAVE_KIT,
-    VISIONOS_EXCLAVE_CORE,
-    VISIONOS_EXCLAVE_KIT,
-    ANY,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Platform {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Platform::MACOS,
-            0x00000002 => Platform::IOS,
-            0x00000003 => Platform::TVOS,
-            0x00000004 => Platform::WATCHOS,
-            0x00000005 => Platform::BRIDGEOS,
-            0x00000006 => Platform::MAC_CATALYST,
-            0x00000007 => Platform::IOS_SIMULATOR,
-            0x00000008 => Platform::TVOS_SIMULATOR,
-            0x00000009 => Platform::WATCHOS_SIMULATOR,
-            0x0000000A => Platform::DRIVERKIT,
-            0x0000000B => Platform::VISIONOS,
-            0x0000000C => Platform::VISIONOS_SIMULATOR,
-            0x0000000D => Platform::FIRMWARE,
-            0x0000000E => Platform::SEPOS,
-            0x0000000F => Platform::MACOS_EXCLAVE_CORE,
-            0x00000010 => Platform::MACOS_EXCLAVE_KIT,
-            0x00000011 => Platform::IOS_EXCLAVE_CORE,
-            0x00000012 => Platform::IOS_EXCLAVE_KIT,
-            0x00000013 => Platform::TVOS_EXCLAVE_CORE,
-            0x00000014 => Platform::TVOS_EXCLAVE_KIT,
-            0x00000015 => Platform::WATCHOS_EXCLAVE_CORE,
-            0x00000016 => Platform::WATCHOS_EXCLAVE_KIT,
-            0x00000017 => Platform::VISIONOS_EXCLAVE_CORE,
-            0x00000018 => Platform::VISIONOS_EXCLAVE_KIT,
-            0xFFFFFFFF => Platform::ANY,
-            _ => Platform::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Platform: u32 {
+        MACOS = 0x00000001,
+        IOS = 0x00000002,
+        TVOS = 0x00000003,
+        WATCHOS = 0x00000004,
+        BRIDGEOS = 0x00000005,
+        MAC_CATALYST = 0x00000006,
+        IOS_SIMULATOR = 0x00000007,
+        TVOS_SIMULATOR = 0x00000008,
+        WATCHOS_SIMULATOR = 0x00000009,
+        DRIVERKIT = 0x0000000A,
+        VISIONOS = 0x0000000B,
+        VISIONOS_SIMULATOR = 0x0000000C,
+        FIRMWARE = 0x0000000D,
+        SEPOS = 0x0000000E,
+        MACOS_EXCLAVE_CORE = 0x0000000F,
+        MACOS_EXCLAVE_KIT = 0x00000010,
+        IOS_EXCLAVE_CORE = 0x00000011,
+        IOS_EXCLAVE_KIT = 0x00000012,
+        TVOS_EXCLAVE_CORE = 0x00000013,
+        TVOS_EXCLAVE_KIT = 0x00000014,
+        WATCHOS_EXCLAVE_CORE = 0x00000015,
+        WATCHOS_EXCLAVE_KIT = 0x00000016,
+        VISIONOS_EXCLAVE_CORE = 0x00000017,
+        VISIONOS_EXCLAVE_KIT = 0x00000018,
+        ANY = 0xFFFFFFFF,
     }
 }
 

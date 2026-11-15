@@ -1,6 +1,6 @@
 use super::load_configuration::AsCHPEMetadata;
 use crate::common::FromFFI;
-use crate::declare_iterator;
+use crate::{declare_iterator, enum_from_int};
 use lief_ffi as ffi;
 use std::marker::PhantomData;
 
@@ -191,28 +191,18 @@ impl<'a> FromFFI<ffi::PE_CHPEMetadataARM64_range_entry_t> for RangeEntry<'a> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum RangeType {
-    /// Pure ARM64 code
-    ARM64,
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    #[derive(PartialOrd, Ord)]
+    RangeType: u32 {
+        /// Pure ARM64 code
+        ARM64 = 0x000000000,
 
-    /// ARM64EC hybrid code (compatible with x64)
-    ARM64EC,
+        /// ARM64EC hybrid code (compatible with x64)
+        ARM64EC = 0x000000001,
 
-    /// x64 code
-    AMD64,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for RangeType {
-    fn from(value: u32) -> Self {
-        match value {
-            0x000000000 => RangeType::ARM64,
-            0x000000001 => RangeType::ARM64EC,
-            0x000000002 => RangeType::AMD64,
-            _ => RangeType::UNKNOWN(value),
-        }
+        /// x64 code
+        AMD64 = 0x000000002,
     }
 }
 

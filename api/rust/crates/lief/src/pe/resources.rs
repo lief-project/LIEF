@@ -11,7 +11,7 @@ use std::{fmt, marker::PhantomData};
 
 use crate::common::into_optional;
 use crate::to_slice;
-use crate::{common::FromFFI, declare_iterator};
+use crate::{common::FromFFI, declare_iterator, enum_from_int};
 
 /// This enum represents a node in the resource tree which can be either: a **directory** node
 /// or a data (leaf) node.
@@ -352,90 +352,32 @@ impl<'a> FromFFI<ffi::PE_ResourcesManager> for Manager<'a> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Types {
-    CURSOR,
-    BITMAP,
-    ICON,
-    MENU,
-    DIALOG,
-    STRING,
-    FONTDIR,
-    FONT,
-    ACCELERATOR,
-    RCDATA,
-    MESSAGETABLE,
-    GROUP_CURSOR,
-    GROUP_ICON,
-    VERSION,
-    DLGINCLUDE,
-    PLUGPLAY,
-    VXD,
-    ANICURSOR,
-    ANIICON,
-    HTML,
-    MANIFEST,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Types {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Types::CURSOR,
-            0x00000002 => Types::BITMAP,
-            0x00000003 => Types::ICON,
-            0x00000004 => Types::MENU,
-            0x00000005 => Types::DIALOG,
-            0x00000006 => Types::STRING,
-            0x00000007 => Types::FONTDIR,
-            0x00000008 => Types::FONT,
-            0x00000009 => Types::ACCELERATOR,
-            0x0000000a => Types::RCDATA,
-            0x0000000b => Types::MESSAGETABLE,
-            0x0000000c => Types::GROUP_CURSOR,
-            0x0000000e => Types::GROUP_ICON,
-            0x00000010 => Types::VERSION,
-            0x00000011 => Types::DLGINCLUDE,
-            0x00000013 => Types::PLUGPLAY,
-            0x00000014 => Types::VXD,
-            0x00000015 => Types::ANICURSOR,
-            0x00000016 => Types::ANIICON,
-            0x00000017 => Types::HTML,
-            0x00000018 => Types::MANIFEST,
-            _ => Types::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Types: u32 {
+        CURSOR = 0x00000001,
+        BITMAP = 0x00000002,
+        ICON = 0x00000003,
+        MENU = 0x00000004,
+        DIALOG = 0x00000005,
+        STRING = 0x00000006,
+        FONTDIR = 0x00000007,
+        FONT = 0x00000008,
+        ACCELERATOR = 0x00000009,
+        RCDATA = 0x0000000a,
+        MESSAGETABLE = 0x0000000b,
+        GROUP_CURSOR = 0x0000000c,
+        GROUP_ICON = 0x0000000e,
+        VERSION = 0x00000010,
+        DLGINCLUDE = 0x00000011,
+        PLUGPLAY = 0x00000013,
+        VXD = 0x00000014,
+        ANICURSOR = 0x00000015,
+        ANIICON = 0x00000016,
+        HTML = 0x00000017,
+        MANIFEST = 0x00000018,
     }
 }
-impl From<Types> for u32 {
-    fn from(value: Types) -> u32 {
-        match value {
-            Types::CURSOR => 0x00000001,
-            Types::BITMAP => 0x00000002,
-            Types::ICON => 0x00000003,
-            Types::MENU => 0x00000004,
-            Types::DIALOG => 0x00000005,
-            Types::STRING => 0x00000006,
-            Types::FONTDIR => 0x00000007,
-            Types::FONT => 0x00000008,
-            Types::ACCELERATOR => 0x00000009,
-            Types::RCDATA => 0x0000000a,
-            Types::MESSAGETABLE => 0x0000000b,
-            Types::GROUP_CURSOR => 0x0000000c,
-            Types::GROUP_ICON => 0x0000000e,
-            Types::VERSION => 0x00000010,
-            Types::DLGINCLUDE => 0x00000011,
-            Types::PLUGPLAY => 0x00000013,
-            Types::VXD => 0x00000014,
-            Types::ANICURSOR => 0x00000015,
-            Types::ANIICON => 0x00000016,
-            Types::HTML => 0x00000017,
-            Types::MANIFEST => 0x00000018,
-            Types::UNKNOWN(value) => value,
-        }
-    }
-}
-
 impl Manager<'_> {
     /// Return the manifest as a string. This manifest matches the node associated with
     /// the type: [`Types::MANIFEST`].

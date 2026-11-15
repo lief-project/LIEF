@@ -6,7 +6,7 @@ use std::marker::PhantomData;
 
 use super::exception::ExceptionInfo;
 use crate::common::{FromFFI, into_optional};
-use crate::{declare_fwd_iterator, to_opt, to_slice};
+use crate::{declare_fwd_iterator, enum_from_int, to_opt, to_slice};
 use bitflags::bitflags;
 
 /// This structure represents an entry in the exception table (`.pdata` section)
@@ -68,185 +68,98 @@ impl RuntimeFunction<'_> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum UnwindOpcodes {
-    /// Push a nonvolatile integer register, decrementing RSP by 8.
-    /// The operation info is the number of the register. Because of the
-    /// constraints on epilogs, `PUSH_NONVOL` unwind codes must appear first
-    /// in the prolog and correspondingly, last in the unwind code array.
-    /// This relative ordering applies to all other unwind codes except
-    /// [`UnwindOpcodes::PUSH_MACHFRAME`].
-    PUSH_NONVOL,
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    UnwindOpcodes: u32 {
+        /// Push a nonvolatile integer register, decrementing RSP by 8.
+        /// The operation info is the number of the register. Because of the
+        /// constraints on epilogs, `PUSH_NONVOL` unwind codes must appear first
+        /// in the prolog and correspondingly, last in the unwind code array.
+        /// This relative ordering applies to all other unwind codes except
+        /// [`UnwindOpcodes::PUSH_MACHFRAME`].
+        PUSH_NONVOL = 0x00000000,
 
-    /// Allocate a large-sized area on the stack.
-    /// There are two forms. If the operation info equals 0,
-    /// then the size of the allocation divided by 8 is recorded in the next slot,
-    /// allowing an allocation up to 512K - 8. If the operation info equals 1,
-    /// then the unscaled size of the allocation is recorded in the next two
-    /// slots in little-endian format, allowing allocations up to 4GB - 8.
-    ALLOC_LARGE,
+        /// Allocate a large-sized area on the stack.
+        /// There are two forms. If the operation info equals 0,
+        /// then the size of the allocation divided by 8 is recorded in the next slot,
+        /// allowing an allocation up to 512K - 8. If the operation info equals 1,
+        /// then the unscaled size of the allocation is recorded in the next two
+        /// slots in little-endian format, allowing allocations up to 4GB - 8.
+        ALLOC_LARGE = 0x00000001,
 
-    /// Allocate a small-sized area on the stack. The size of the allocation is
-    /// the operation info field * 8 + 8, allowing allocations from 8 to 128 bytes.
-    ALLOC_SMALL,
+        /// Allocate a small-sized area on the stack. The size of the allocation is
+        /// the operation info field * 8 + 8, allowing allocations from 8 to 128 bytes.
+        ALLOC_SMALL = 0x00000002,
 
-    /// Establish the frame pointer register by setting the register to some
-    /// offset of the current RSP. The offset is equal to the Frame Register
-    /// offset (scaled) field in the UNWIND_INFO * 16, allowing offsets from
-    /// 0 to 240. The use of an offset permits establishing a frame pointer that
-    /// points to the middle of the fixed stack allocation, helping code density
-    /// by allowing more accesses to use short instruction forms. The operation
-    /// info field is reserved and shouldn't be us
-    SET_FPREG,
+        /// Establish the frame pointer register by setting the register to some
+        /// offset of the current RSP. The offset is equal to the Frame Register
+        /// offset (scaled) field in the UNWIND_INFO * 16, allowing offsets from
+        /// 0 to 240. The use of an offset permits establishing a frame pointer that
+        /// points to the middle of the fixed stack allocation, helping code density
+        /// by allowing more accesses to use short instruction forms. The operation
+        /// info field is reserved and shouldn't be us
+        SET_FPREG = 0x00000003,
 
-    /// Save a nonvolatile integer register on the stack using a MOV instead of a
-    /// PUSH. This code is primarily used for shrink-wrapping, where a nonvolatile
-    /// register is saved to the stack in a position that was previously allocated.
-    /// The operation info is the number of the register. The scaled-by-8 stack
-    /// offset is recorded in the next unwind operation code slot, as described
-    /// in the note above
-    SAVE_NONVOL,
+        /// Save a nonvolatile integer register on the stack using a MOV instead of a
+        /// PUSH. This code is primarily used for shrink-wrapping, where a nonvolatile
+        /// register is saved to the stack in a position that was previously allocated.
+        /// The operation info is the number of the register. The scaled-by-8 stack
+        /// offset is recorded in the next unwind operation code slot, as described
+        /// in the note above
+        SAVE_NONVOL = 0x00000004,
 
-    /// Save a nonvolatile integer register on the stack with a long offset,
-    /// using a MOV instead of a PUSH. This code is primarily used for
-    /// shrink-wrapping, where a nonvolatile register is saved to the stack in a
-    /// position that was previously allocated. The operation info is the number
-    /// of the register. The unscaled stack offset is recorded in the next two
-    /// unwind operation code slots, as described in the note above.
-    SAVE_NONVOL_FAR,
+        /// Save a nonvolatile integer register on the stack with a long offset,
+        /// using a MOV instead of a PUSH. This code is primarily used for
+        /// shrink-wrapping, where a nonvolatile register is saved to the stack in a
+        /// position that was previously allocated. The operation info is the number
+        /// of the register. The unscaled stack offset is recorded in the next two
+        /// unwind operation code slots, as described in the note above.
+        SAVE_NONVOL_FAR = 0x00000005,
 
-    /// This entry is only revelant for version 2. It describes the function
-    /// epilog.
-    EPILOG,
+        /// This entry is only revelant for version 2. It describes the function
+        /// epilog.
+        EPILOG = 0x00000006,
 
-    /// Reserved
-    /// Originally SAVE_XMM128_FAR in version 1, but deprecated and removed
-    SPARE,
+        /// Reserved
+        /// Originally SAVE_XMM128_FAR in version 1, but deprecated and removed
+        SPARE = 0x00000007,
 
-    /// Save all 128 bits of a nonvolatile XMM register on the stack.
-    /// The operation info is the number of the register. The scaled-by-16 stack
-    /// offset is recorded in the next slot.
-    SAVE_XMM128,
+        /// Save all 128 bits of a nonvolatile XMM register on the stack.
+        /// The operation info is the number of the register. The scaled-by-16 stack
+        /// offset is recorded in the next slot.
+        SAVE_XMM128 = 0x00000008,
 
-    /// Save all 128 bits of a nonvolatile XMM register on the stack with a
-    /// long offset. The operation info is the number of the register.
-    /// The unscaled stack offset is recorded in the next two slots.
-    SAVE_XMM128_FAR,
+        /// Save all 128 bits of a nonvolatile XMM register on the stack with a
+        /// long offset. The operation info is the number of the register.
+        /// The unscaled stack offset is recorded in the next two slots.
+        SAVE_XMM128_FAR = 0x00000009,
 
-    /// Push a machine frame. This unwind code is used to record the effect of a
-    /// hardware interrupt or exception.
-    PUSH_MACHFRAME,
-
-    UNKNOWN(u32),
-}
-
-impl From<u32> for UnwindOpcodes {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => UnwindOpcodes::PUSH_NONVOL,
-            0x00000001 => UnwindOpcodes::ALLOC_LARGE,
-            0x00000002 => UnwindOpcodes::ALLOC_SMALL,
-            0x00000003 => UnwindOpcodes::SET_FPREG,
-            0x00000004 => UnwindOpcodes::SAVE_NONVOL,
-            0x00000005 => UnwindOpcodes::SAVE_NONVOL_FAR,
-            0x00000006 => UnwindOpcodes::EPILOG,
-            0x00000007 => UnwindOpcodes::SPARE,
-            0x00000008 => UnwindOpcodes::SAVE_XMM128,
-            0x00000009 => UnwindOpcodes::SAVE_XMM128_FAR,
-            0x0000000a => UnwindOpcodes::PUSH_MACHFRAME,
-            _ => UnwindOpcodes::UNKNOWN(value),
-        }
+        /// Push a machine frame. This unwind code is used to record the effect of a
+        /// hardware interrupt or exception.
+        PUSH_MACHFRAME = 0x0000000a,
     }
 }
-impl From<UnwindOpcodes> for u32 {
-    fn from(value: UnwindOpcodes) -> u32 {
-        match value {
-            UnwindOpcodes::PUSH_NONVOL => 0x00000000,
-            UnwindOpcodes::ALLOC_LARGE => 0x00000001,
-            UnwindOpcodes::ALLOC_SMALL => 0x00000002,
-            UnwindOpcodes::SET_FPREG => 0x00000003,
-            UnwindOpcodes::SAVE_NONVOL => 0x00000004,
-            UnwindOpcodes::SAVE_NONVOL_FAR => 0x00000005,
-            UnwindOpcodes::EPILOG => 0x00000006,
-            UnwindOpcodes::SPARE => 0x00000007,
-            UnwindOpcodes::SAVE_XMM128 => 0x00000008,
-            UnwindOpcodes::SAVE_XMM128_FAR => 0x00000009,
-            UnwindOpcodes::PUSH_MACHFRAME => 0x0000000a,
-            UnwindOpcodes::UNKNOWN(value) => value,
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    UnwindReg: u32 {
+        RAX = 0x00000000,
+        RCX = 0x00000001,
+        RDX = 0x00000002,
+        RBX = 0x00000003,
+        RSP = 0x00000004,
+        RBP = 0x00000005,
+        RSI = 0x00000006,
+        RDI = 0x00000007,
+        R8 = 0x00000008,
+        R9 = 0x00000009,
+        R10 = 0x0000000a,
+        R11 = 0x0000000b,
+        R12 = 0x0000000c,
+        R13 = 0x0000000d,
+        R14 = 0x0000000e,
+        R15 = 0x0000000f,
     }
 }
-
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum UnwindReg {
-    RAX,
-    RCX,
-    RDX,
-    RBX,
-    RSP,
-    RBP,
-    RSI,
-    RDI,
-    R8,
-    R9,
-    R10,
-    R11,
-    R12,
-    R13,
-    R14,
-    R15,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for UnwindReg {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => UnwindReg::RAX,
-            0x00000001 => UnwindReg::RCX,
-            0x00000002 => UnwindReg::RDX,
-            0x00000003 => UnwindReg::RBX,
-            0x00000004 => UnwindReg::RSP,
-            0x00000005 => UnwindReg::RBP,
-            0x00000006 => UnwindReg::RSI,
-            0x00000007 => UnwindReg::RDI,
-            0x00000008 => UnwindReg::R8,
-            0x00000009 => UnwindReg::R9,
-            0x0000000a => UnwindReg::R10,
-            0x0000000b => UnwindReg::R11,
-            0x0000000c => UnwindReg::R12,
-            0x0000000d => UnwindReg::R13,
-            0x0000000e => UnwindReg::R14,
-            0x0000000f => UnwindReg::R15,
-            _ => UnwindReg::UNKNOWN(value),
-        }
-    }
-}
-impl From<UnwindReg> for u32 {
-    fn from(value: UnwindReg) -> u32 {
-        match value {
-            UnwindReg::RAX => 0x00000000,
-            UnwindReg::RCX => 0x00000001,
-            UnwindReg::RDX => 0x00000002,
-            UnwindReg::RBX => 0x00000003,
-            UnwindReg::RSP => 0x00000004,
-            UnwindReg::RBP => 0x00000005,
-            UnwindReg::RSI => 0x00000006,
-            UnwindReg::RDI => 0x00000007,
-            UnwindReg::R8 => 0x00000008,
-            UnwindReg::R9 => 0x00000009,
-            UnwindReg::R10 => 0x0000000a,
-            UnwindReg::R11 => 0x0000000b,
-            UnwindReg::R12 => 0x0000000c,
-            UnwindReg::R13 => 0x0000000d,
-            UnwindReg::R14 => 0x0000000e,
-            UnwindReg::R15 => 0x0000000f,
-            UnwindReg::UNKNOWN(value) => value,
-        }
-    }
-}
-
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct UnwindFlags: u8 {

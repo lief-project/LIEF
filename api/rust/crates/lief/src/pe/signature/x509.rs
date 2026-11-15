@@ -4,8 +4,8 @@ use bitflags::bitflags;
 use lief_ffi as ffi;
 
 use crate::common::{FromFFI, into_optional};
-use crate::declare_iterator;
 use crate::pe::Algorithms;
+use crate::{declare_iterator, enum_from_int};
 
 use super::RsaInfo;
 
@@ -39,104 +39,55 @@ impl<'a> FromFFI<ffi::PE_x509> for X509<'a> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-/// Public key scheme
-pub enum KeyType {
-    /// Unknown scheme
-    NONE,
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Public key scheme
+    KeyType: u32 {
+        /// Unknown scheme
+        NONE = 0x00000000,
 
-    /// RSA Scheme
-    RSA,
+        /// RSA Scheme
+        RSA = 0x00000001,
 
-    /// Elliptic-curve scheme
-    ECKEY,
+        /// Elliptic-curve scheme
+        ECKEY = 0x00000002,
 
-    /// Elliptic-curve Diffie-Hellman
-    ECKEY_DH,
+        /// Elliptic-curve Diffie-Hellman
+        ECKEY_DH = 0x00000003,
 
-    /// Elliptic-curve Digital Signature Algorithm
-    ECDSA,
+        /// Elliptic-curve Digital Signature Algorithm
+        ECDSA = 0x00000004,
 
-    /// RSA scheme with an alternative implementation for signing and decrypting
-    RSA_ALT,
+        /// RSA scheme with an alternative implementation for signing and decrypting
+        RSA_ALT = 0x00000005,
 
-    /// RSA Probabilistic signature scheme
-    RSASSA_PSS,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for KeyType {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => KeyType::NONE,
-            0x00000001 => KeyType::RSA,
-            0x00000002 => KeyType::ECKEY,
-            0x00000003 => KeyType::ECKEY_DH,
-            0x00000004 => KeyType::ECDSA,
-            0x00000005 => KeyType::RSA_ALT,
-            0x00000006 => KeyType::RSASSA_PSS,
-            _ => KeyType::UNKNOWN(value),
-        }
+        /// RSA Probabilistic signature scheme
+        RSASSA_PSS = 0x00000006,
     }
 }
 
-/// Key usage as defined in RFC #5280 - section-4.2.1.3
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum KeyUsage {
-    /// The key is used for digital signature
-    DIGITAL_SIGNATURE,
-    /// The key is used for digital signature and to protect against falsely denying some action
-    NON_REPUDIATION,
-    /// The key is used for enciphering private or secret keys
-    KEY_ENCIPHERMENT,
-    /// The key is used for directly enciphering raw user data without an intermediate symmetric cipher
-    DATA_ENCIPHERMENT,
-    /// The key is used for key agreement (e.g. with Diffie-Hellman)
-    KEY_AGREEMENT,
-    /// The key is used for verifying signatures on public key certificates
-    KEY_CERT_SIGN,
-    /// The key is used for verifying signatures on certificate revocation lists
-    CRL_SIGN,
-    /// In association with KEY_AGREEMENT, the key is only used for enciphering data
-    ENCIPHER_ONLY,
-    /// In association with KEY_AGREEMENT, the key is only used for deciphering data
-    DECIPHER_ONLY,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for KeyUsage {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => KeyUsage::DIGITAL_SIGNATURE,
-            0x00000001 => KeyUsage::NON_REPUDIATION,
-            0x00000002 => KeyUsage::KEY_ENCIPHERMENT,
-            0x00000003 => KeyUsage::DATA_ENCIPHERMENT,
-            0x00000004 => KeyUsage::KEY_AGREEMENT,
-            0x00000005 => KeyUsage::KEY_CERT_SIGN,
-            0x00000006 => KeyUsage::CRL_SIGN,
-            0x00000007 => KeyUsage::ENCIPHER_ONLY,
-            0x00000008 => KeyUsage::DECIPHER_ONLY,
-            _ => KeyUsage::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<KeyUsage> for u32 {
-    fn from(value: KeyUsage) -> u32 {
-        match value {
-            KeyUsage::DIGITAL_SIGNATURE => 0x00000000,
-            KeyUsage::NON_REPUDIATION => 0x00000001,
-            KeyUsage::KEY_ENCIPHERMENT => 0x00000002,
-            KeyUsage::DATA_ENCIPHERMENT => 0x00000003,
-            KeyUsage::KEY_AGREEMENT => 0x00000004,
-            KeyUsage::KEY_CERT_SIGN => 0x00000005,
-            KeyUsage::CRL_SIGN => 0x00000006,
-            KeyUsage::ENCIPHER_ONLY => 0x00000007,
-            KeyUsage::DECIPHER_ONLY => 0x00000008,
-            KeyUsage::UNKNOWN(v) => v,
-        }
+enum_from_int! {
+    /// Key usage as defined in RFC #5280 - section-4.2.1.3
+    #[allow(non_camel_case_types)]
+    KeyUsage: u32 {
+        /// The key is used for digital signature
+        DIGITAL_SIGNATURE = 0x00000000,
+        /// The key is used for digital signature and to protect against falsely denying some action
+        NON_REPUDIATION = 0x00000001,
+        /// The key is used for enciphering private or secret keys
+        KEY_ENCIPHERMENT = 0x00000002,
+        /// The key is used for directly enciphering raw user data without an intermediate symmetric cipher
+        DATA_ENCIPHERMENT = 0x00000003,
+        /// The key is used for key agreement (e.g. with Diffie-Hellman)
+        KEY_AGREEMENT = 0x00000004,
+        /// The key is used for verifying signatures on public key certificates
+        KEY_CERT_SIGN = 0x00000005,
+        /// The key is used for verifying signatures on certificate revocation lists
+        CRL_SIGN = 0x00000006,
+        /// In association with KEY_AGREEMENT, the key is only used for enciphering data
+        ENCIPHER_ONLY = 0x00000007,
+        /// In association with KEY_AGREEMENT, the key is only used for deciphering data
+        DECIPHER_ONLY = 0x00000008,
     }
 }
 

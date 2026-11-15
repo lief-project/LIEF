@@ -15,46 +15,19 @@ use lief_ffi as ffi;
 use std::convert::{From, Into};
 use std::path::Path;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-/// The different levels of log
-pub enum Level {
-    Off,
-    Trace,
-    Debug,
-    Info,
-    Warn,
-    Err,
-    Critical,
-    Unknown(u32),
-}
+use crate::enum_from_int;
 
-impl From<u32> for Level {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => Level::Off,
-            0x00000001 => Level::Trace,
-            0x00000002 => Level::Debug,
-            0x00000003 => Level::Info,
-            0x00000004 => Level::Warn,
-            0x00000005 => Level::Err,
-            0x00000006 => Level::Critical,
-            _ => Level::Unknown(value),
-        }
-    }
-}
-
-impl From<Level> for u32 {
-    fn from(value: Level) -> Self {
-        match value {
-            Level::Off => 0x00000000,
-            Level::Trace => 0x00000001,
-            Level::Debug => 0x00000002,
-            Level::Info => 0x00000003,
-            Level::Warn => 0x00000004,
-            Level::Err => 0x00000005,
-            Level::Critical => 0x00000006,
-            Level::Unknown(_) => 0x00000003, // Info
-        }
+enum_from_int! {
+    #[derive(PartialOrd, Ord)]
+    /// The different levels of log
+    Level: u32 {
+        Off = 0x00000000,
+        Trace = 0x00000001,
+        Debug = 0x00000002,
+        Info = 0x00000003,
+        Warn = 0x00000004,
+        Err = 0x00000005,
+        Critical = 0x00000006,
     }
 }
 

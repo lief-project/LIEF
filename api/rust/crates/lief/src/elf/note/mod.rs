@@ -2,8 +2,8 @@ use lief_ffi as ffi;
 use std::marker::PhantomData;
 
 use crate::common::FromFFI;
-use crate::declare_iterator;
 use crate::to_slice;
+use crate::{declare_iterator, enum_from_int};
 
 pub mod android_ident;
 pub mod core;
@@ -58,161 +58,54 @@ pub enum Notes<'a> {
     Generic(Generic<'a>),
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-/// LIEF representation of the ELF `NT_` values.
-pub enum Type {
-    GNU_ABI_TAG,
-    GNU_HWCAP,
-    GNU_BUILD_ID,
-    GNU_GOLD_VERSION,
-    GNU_PROPERTY_TYPE_0,
-    GNU_BUILD_ATTRIBUTE_OPEN,
-    GNU_BUILD_ATTRIBUTE_FUNC,
-    CRASHPAD,
-    CORE_PRSTATUS,
-    CORE_FPREGSET,
-    CORE_PRPSINFO,
-    CORE_TASKSTRUCT,
-    CORE_AUXV,
-    CORE_PSTATUS,
-    CORE_FPREGS,
-    CORE_PSINFO,
-    CORE_LWPSTATUS,
-    CORE_LWPSINFO,
-    CORE_WIN32PSTATUS,
-    CORE_FILE,
-    CORE_PRXFPREG,
-    CORE_SIGINFO,
-    CORE_ARM_VFP,
-    CORE_ARM_TLS,
-    CORE_ARM_HW_BREAK,
-    CORE_ARM_HW_WATCH,
-    CORE_ARM_SYSTEM_CALL,
-    CORE_ARM_SVE,
-    CORE_ARM_PAC_MASK,
-    CORE_ARM_PACA_KEYS,
-    CORE_ARM_PACG_KEYS,
-    CORE_TAGGED_ADDR_CTRL,
-    CORE_PAC_ENABLED_KEYS,
-    CORE_X86_TLS,
-    CORE_X86_IOPERM,
-    CORE_X86_XSTATE,
-    CORE_X86_CET,
-    ANDROID_IDENT,
-    ANDROID_MEMTAG,
-    ANDROID_KUSER,
-    GO_BUILDID,
-    STAPSDT,
-    QNX_STACK,
-    UNKNOWN(u32),
-}
-
-impl Type {
-    pub fn from_value(value: u32) -> Self {
-        match value {
-            0x00000001 => Type::GNU_ABI_TAG,
-            0x00000002 => Type::GNU_HWCAP,
-            0x00000003 => Type::GNU_BUILD_ID,
-            0x00000004 => Type::GNU_GOLD_VERSION,
-            0x00000005 => Type::GNU_PROPERTY_TYPE_0,
-            0x00000006 => Type::GNU_BUILD_ATTRIBUTE_OPEN,
-            0x00000007 => Type::GNU_BUILD_ATTRIBUTE_FUNC,
-            0x00000008 => Type::CRASHPAD,
-            0x00000009 => Type::CORE_PRSTATUS,
-            0x0000000a => Type::CORE_FPREGSET,
-            0x0000000b => Type::CORE_PRPSINFO,
-            0x0000000c => Type::CORE_TASKSTRUCT,
-            0x0000000d => Type::CORE_AUXV,
-            0x0000000e => Type::CORE_PSTATUS,
-            0x0000000f => Type::CORE_FPREGS,
-            0x00000010 => Type::CORE_PSINFO,
-            0x00000011 => Type::CORE_LWPSTATUS,
-            0x00000012 => Type::CORE_LWPSINFO,
-            0x00000013 => Type::CORE_WIN32PSTATUS,
-            0x00000014 => Type::CORE_FILE,
-            0x00000015 => Type::CORE_PRXFPREG,
-            0x00000016 => Type::CORE_SIGINFO,
-            0x00000017 => Type::CORE_ARM_VFP,
-            0x00000018 => Type::CORE_ARM_TLS,
-            0x00000019 => Type::CORE_ARM_HW_BREAK,
-            0x0000001a => Type::CORE_ARM_HW_WATCH,
-            0x0000001b => Type::CORE_ARM_SYSTEM_CALL,
-            0x0000001c => Type::CORE_ARM_SVE,
-            0x0000001d => Type::CORE_ARM_PAC_MASK,
-            0x0000001e => Type::CORE_ARM_PACA_KEYS,
-            0x0000001f => Type::CORE_ARM_PACG_KEYS,
-            0x00000020 => Type::CORE_TAGGED_ADDR_CTRL,
-            0x00000021 => Type::CORE_PAC_ENABLED_KEYS,
-            0x00000022 => Type::CORE_X86_TLS,
-            0x00000023 => Type::CORE_X86_IOPERM,
-            0x00000024 => Type::CORE_X86_XSTATE,
-            0x00000025 => Type::CORE_X86_CET,
-            0x00000026 => Type::ANDROID_IDENT,
-            0x00000027 => Type::ANDROID_MEMTAG,
-            0x00000028 => Type::ANDROID_KUSER,
-            0x00000029 => Type::GO_BUILDID,
-            0x0000002a => Type::STAPSDT,
-            0x0000002b => Type::QNX_STACK,
-            _ => Type::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<u32> for Type {
-    fn from(value: u32) -> Self {
-        Type::from_value(value)
-    }
-}
-
-impl From<Type> for u32 {
-    fn from(value: Type) -> u32 {
-        match value {
-            Type::GNU_ABI_TAG => 0x00000001,
-            Type::GNU_HWCAP => 0x00000002,
-            Type::GNU_BUILD_ID => 0x00000003,
-            Type::GNU_GOLD_VERSION => 0x00000004,
-            Type::GNU_PROPERTY_TYPE_0 => 0x00000005,
-            Type::GNU_BUILD_ATTRIBUTE_OPEN => 0x00000006,
-            Type::GNU_BUILD_ATTRIBUTE_FUNC => 0x00000007,
-            Type::CRASHPAD => 0x00000008,
-            Type::CORE_PRSTATUS => 0x00000009,
-            Type::CORE_FPREGSET => 0x0000000a,
-            Type::CORE_PRPSINFO => 0x0000000b,
-            Type::CORE_TASKSTRUCT => 0x0000000c,
-            Type::CORE_AUXV => 0x0000000d,
-            Type::CORE_PSTATUS => 0x0000000e,
-            Type::CORE_FPREGS => 0x0000000f,
-            Type::CORE_PSINFO => 0x00000010,
-            Type::CORE_LWPSTATUS => 0x00000011,
-            Type::CORE_LWPSINFO => 0x00000012,
-            Type::CORE_WIN32PSTATUS => 0x00000013,
-            Type::CORE_FILE => 0x00000014,
-            Type::CORE_PRXFPREG => 0x00000015,
-            Type::CORE_SIGINFO => 0x00000016,
-            Type::CORE_ARM_VFP => 0x00000017,
-            Type::CORE_ARM_TLS => 0x00000018,
-            Type::CORE_ARM_HW_BREAK => 0x00000019,
-            Type::CORE_ARM_HW_WATCH => 0x0000001a,
-            Type::CORE_ARM_SYSTEM_CALL => 0x0000001b,
-            Type::CORE_ARM_SVE => 0x0000001c,
-            Type::CORE_ARM_PAC_MASK => 0x0000001d,
-            Type::CORE_ARM_PACA_KEYS => 0x0000001e,
-            Type::CORE_ARM_PACG_KEYS => 0x0000001f,
-            Type::CORE_TAGGED_ADDR_CTRL => 0x00000020,
-            Type::CORE_PAC_ENABLED_KEYS => 0x00000021,
-            Type::CORE_X86_TLS => 0x00000022,
-            Type::CORE_X86_IOPERM => 0x00000023,
-            Type::CORE_X86_XSTATE => 0x00000024,
-            Type::CORE_X86_CET => 0x00000025,
-            Type::ANDROID_IDENT => 0x00000026,
-            Type::ANDROID_MEMTAG => 0x00000027,
-            Type::ANDROID_KUSER => 0x00000028,
-            Type::GO_BUILDID => 0x00000029,
-            Type::STAPSDT => 0x0000002a,
-            Type::QNX_STACK => 0x0000002b,
-            Type::UNKNOWN(value) => value,
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    #[derive(PartialOrd, Ord)]
+    /// LIEF representation of the ELF `NT_` values.
+    Type: u32 {
+        GNU_ABI_TAG = 0x00000001,
+        GNU_HWCAP = 0x00000002,
+        GNU_BUILD_ID = 0x00000003,
+        GNU_GOLD_VERSION = 0x00000004,
+        GNU_PROPERTY_TYPE_0 = 0x00000005,
+        GNU_BUILD_ATTRIBUTE_OPEN = 0x00000006,
+        GNU_BUILD_ATTRIBUTE_FUNC = 0x00000007,
+        CRASHPAD = 0x00000008,
+        CORE_PRSTATUS = 0x00000009,
+        CORE_FPREGSET = 0x0000000a,
+        CORE_PRPSINFO = 0x0000000b,
+        CORE_TASKSTRUCT = 0x0000000c,
+        CORE_AUXV = 0x0000000d,
+        CORE_PSTATUS = 0x0000000e,
+        CORE_FPREGS = 0x0000000f,
+        CORE_PSINFO = 0x00000010,
+        CORE_LWPSTATUS = 0x00000011,
+        CORE_LWPSINFO = 0x00000012,
+        CORE_WIN32PSTATUS = 0x00000013,
+        CORE_FILE = 0x00000014,
+        CORE_PRXFPREG = 0x00000015,
+        CORE_SIGINFO = 0x00000016,
+        CORE_ARM_VFP = 0x00000017,
+        CORE_ARM_TLS = 0x00000018,
+        CORE_ARM_HW_BREAK = 0x00000019,
+        CORE_ARM_HW_WATCH = 0x0000001a,
+        CORE_ARM_SYSTEM_CALL = 0x0000001b,
+        CORE_ARM_SVE = 0x0000001c,
+        CORE_ARM_PAC_MASK = 0x0000001d,
+        CORE_ARM_PACA_KEYS = 0x0000001e,
+        CORE_ARM_PACG_KEYS = 0x0000001f,
+        CORE_TAGGED_ADDR_CTRL = 0x00000020,
+        CORE_PAC_ENABLED_KEYS = 0x00000021,
+        CORE_X86_TLS = 0x00000022,
+        CORE_X86_IOPERM = 0x00000023,
+        CORE_X86_XSTATE = 0x00000024,
+        CORE_X86_CET = 0x00000025,
+        ANDROID_IDENT = 0x00000026,
+        ANDROID_MEMTAG = 0x00000027,
+        ANDROID_KUSER = 0x00000028,
+        GO_BUILDID = 0x00000029,
+        STAPSDT = 0x0000002a,
+        QNX_STACK = 0x0000002b,
     }
 }
 
@@ -229,7 +122,7 @@ pub trait NoteBase {
     /// Return the type of the note. This type does not match the `NT_` type
     /// value. For accessing the original `NT_` value, check [`NoteBase::original_type`]
     fn get_type(&self) -> Type {
-        Type::from_value(self.get_base().get_type())
+        Type::from(self.get_base().get_type())
     }
 
     /// The original `NT_xxx` integer value. The meaning of this value likely

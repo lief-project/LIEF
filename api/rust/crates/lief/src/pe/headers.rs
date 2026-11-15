@@ -8,6 +8,7 @@ use bitflags::bitflags;
 use std::marker::PhantomData;
 
 use crate::common::FromFFI;
+use crate::enum_from_int;
 use lief_ffi as ffi;
 
 /// Structure which represents the DosHeader, the **first** structure presents at the beginning of
@@ -155,152 +156,72 @@ impl FromFFI<ffi::PE_Header> for Header<'_> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum MachineType {
-    /// Alpha AXP, 32-bit address space
-    ALPHA,
-    /// Alpha AXP, 64-bit address space
-    ALPHA64,
-    /// Matsushita AM33
-    AM33,
-    /// AMD x64
-    AMD64,
-    /// ARM little endian
-    ARM,
-    /// ARMv7 Thumb mode only
-    ARMNT,
-    /// ARMv8 in 64-bits mode
-    ARM64,
-    /// EFI byte code
-    EBC,
-    /// Intel 386 or later
-    I386,
-    /// Intel Itanium processor family
-    IA64,
-    /// LoongArch 32-bit processor family
-    LOONGARCH32,
-    /// LoongArch 64-bit processor family
-    LOONGARCH64,
-    /// Mitsubishi M32R little endian
-    M32R,
-    /// MIPS16
-    MIPS16,
-    /// MIPS with FPU
-    MIPSFPU,
-    /// MIPS16 with FPU
-    MIPSFPU16,
-    /// Power PC little endian
-    POWERPC,
-    /// Power PC with floating point
-    POWERPCFP,
-    /// Power PC big endian
-    POWERPCBE,
-    /// MIPS with little endian
-    R4000,
-    /// RISC-V 32-bit address space
-    RISCV32,
-    /// RISC-V 64-bit address space
-    RISCV64,
-    /// RISC-V 128-bit address space
-    RISCV128,
-    /// Hitachi SH3
-    SH3,
-    /// Hitachi SH3 DSP
-    SH3DSP,
-    /// Hitachi SH4
-    SH4,
-    /// Hitachi SH5
-    SH5,
-    /// ARM or Thumb
-    THUMB,
-    /// MIPS little-endian WCE v2
-    WCEMIPSV2,
-    ARM64EC,
-    ARM64X,
-    CHPE_X86,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for MachineType {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000184 => MachineType::ALPHA,
-            0x00000284 => MachineType::ALPHA64,
-            0x000001d3 => MachineType::AM33,
-            0x00008664 => MachineType::AMD64,
-            0x000001c0 => MachineType::ARM,
-            0x000001c4 => MachineType::ARMNT,
-            0x0000aa64 => MachineType::ARM64,
-            0x00000ebc => MachineType::EBC,
-            0x0000014c => MachineType::I386,
-            0x00000200 => MachineType::IA64,
-            0x00006232 => MachineType::LOONGARCH32,
-            0x00006264 => MachineType::LOONGARCH64,
-            0x00009041 => MachineType::M32R,
-            0x00000266 => MachineType::MIPS16,
-            0x00000366 => MachineType::MIPSFPU,
-            0x00000466 => MachineType::MIPSFPU16,
-            0x000001f0 => MachineType::POWERPC,
-            0x000001f1 => MachineType::POWERPCFP,
-            0x000001f2 => MachineType::POWERPCBE,
-            0x00000166 => MachineType::R4000,
-            0x00005032 => MachineType::RISCV32,
-            0x00005064 => MachineType::RISCV64,
-            0x00005128 => MachineType::RISCV128,
-            0x000001a2 => MachineType::SH3,
-            0x000001a3 => MachineType::SH3DSP,
-            0x000001a6 => MachineType::SH4,
-            0x000001a8 => MachineType::SH5,
-            0x000001c2 => MachineType::THUMB,
-            0x00000169 => MachineType::WCEMIPSV2,
-            0x0000a641 => MachineType::ARM64EC,
-            0x0000a64e => MachineType::ARM64X,
-            0x00003a64 => MachineType::CHPE_X86,
-            _ => MachineType::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    MachineType: u32 {
+        /// Alpha AXP, 32-bit address space
+        ALPHA = 0x00000184,
+        /// Alpha AXP, 64-bit address space
+        ALPHA64 = 0x00000284,
+        /// Matsushita AM33
+        AM33 = 0x000001d3,
+        /// AMD x64
+        AMD64 = 0x00008664,
+        /// ARM little endian
+        ARM = 0x000001c0,
+        /// ARMv7 Thumb mode only
+        ARMNT = 0x000001c4,
+        /// ARMv8 in 64-bits mode
+        ARM64 = 0x0000aa64,
+        /// EFI byte code
+        EBC = 0x00000ebc,
+        /// Intel 386 or later
+        I386 = 0x0000014c,
+        /// Intel Itanium processor family
+        IA64 = 0x00000200,
+        /// LoongArch 32-bit processor family
+        LOONGARCH32 = 0x00006232,
+        /// LoongArch 64-bit processor family
+        LOONGARCH64 = 0x00006264,
+        /// Mitsubishi M32R little endian
+        M32R = 0x00009041,
+        /// MIPS16
+        MIPS16 = 0x00000266,
+        /// MIPS with FPU
+        MIPSFPU = 0x00000366,
+        /// MIPS16 with FPU
+        MIPSFPU16 = 0x00000466,
+        /// Power PC little endian
+        POWERPC = 0x000001f0,
+        /// Power PC with floating point
+        POWERPCFP = 0x000001f1,
+        /// Power PC big endian
+        POWERPCBE = 0x000001f2,
+        /// MIPS with little endian
+        R4000 = 0x00000166,
+        /// RISC-V 32-bit address space
+        RISCV32 = 0x00005032,
+        /// RISC-V 64-bit address space
+        RISCV64 = 0x00005064,
+        /// RISC-V 128-bit address space
+        RISCV128 = 0x00005128,
+        /// Hitachi SH3
+        SH3 = 0x000001a2,
+        /// Hitachi SH3 DSP
+        SH3DSP = 0x000001a3,
+        /// Hitachi SH4
+        SH4 = 0x000001a6,
+        /// Hitachi SH5
+        SH5 = 0x000001a8,
+        /// ARM or Thumb
+        THUMB = 0x000001c2,
+        /// MIPS little-endian WCE v2
+        WCEMIPSV2 = 0x00000169,
+        ARM64EC = 0x0000a641,
+        ARM64X = 0x0000a64e,
+        CHPE_X86 = 0x00003a64,
     }
 }
-impl From<MachineType> for u32 {
-    fn from(value: MachineType) -> u32 {
-        match value {
-            MachineType::ALPHA => 0x184,
-            MachineType::ALPHA64 => 0x284,
-            MachineType::AM33 => 0x000001d3,
-            MachineType::AMD64 => 0x00008664,
-            MachineType::ARM => 0x000001c0,
-            MachineType::ARMNT => 0x000001c4,
-            MachineType::ARM64 => 0x0000aa64,
-            MachineType::EBC => 0x00000ebc,
-            MachineType::I386 => 0x0000014c,
-            MachineType::IA64 => 0x00000200,
-            MachineType::LOONGARCH32 => 0x6232,
-            MachineType::LOONGARCH64 => 0x6264,
-            MachineType::M32R => 0x00009041,
-            MachineType::MIPS16 => 0x00000266,
-            MachineType::MIPSFPU => 0x00000366,
-            MachineType::MIPSFPU16 => 0x00000466,
-            MachineType::POWERPC => 0x000001f0,
-            MachineType::POWERPCFP => 0x000001f1,
-            MachineType::POWERPCBE => 0x000001f2,
-            MachineType::R4000 => 0x00000166,
-            MachineType::RISCV32 => 0x00005032,
-            MachineType::RISCV64 => 0x00005064,
-            MachineType::RISCV128 => 0x00005128,
-            MachineType::SH3 => 0x000001a2,
-            MachineType::SH3DSP => 0x000001a3,
-            MachineType::SH4 => 0x000001a6,
-            MachineType::SH5 => 0x000001a8,
-            MachineType::THUMB => 0x000001c2,
-            MachineType::WCEMIPSV2 => 0x00000169,
-            MachineType::ARM64EC => 0x0000a641,
-            MachineType::ARM64X => 0x0000a64e,
-            MachineType::CHPE_X86 => 0x00003a64,
-            MachineType::UNKNOWN(_) => 0,
-        }
-    }
-}
-
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct Characteristics: u32 {
@@ -560,98 +481,52 @@ impl std::fmt::Display for DllCharacteristics {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Subsystem {
-    /// Device drivers and native Windows processes
-    NATIVE,
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Subsystem: u64 {
+        /// Device drivers and native Windows processes
+        NATIVE = 0x00000001,
 
-    /// The Windows GUI subsystem.
-    WINDOWS_GUI,
+        /// The Windows GUI subsystem.
+        WINDOWS_GUI = 0x00000002,
 
-    /// The Windows character subsystem.
-    WINDOWS_CUI,
+        /// The Windows character subsystem.
+        WINDOWS_CUI = 0x00000003,
 
-    /// The OS/2 character subsytem.
-    OS2_CUI,
+        /// The OS/2 character subsytem.
+        OS2_CUI = 0x00000005,
 
-    /// The POSIX character subsystem.
-    POSIX_CUI,
+        /// The POSIX character subsystem.
+        POSIX_CUI = 0x00000007,
 
-    /// Native Windows 9x driver.
-    NATIVE_WINDOWS,
+        /// Native Windows 9x driver.
+        NATIVE_WINDOWS = 0x00000008,
 
-    /// Windows CE.
-    WINDOWS_CE_GUI,
+        /// Windows CE.
+        WINDOWS_CE_GUI = 0x00000009,
 
-    /// An EFI application.
-    EFI_APPLICATION,
+        /// An EFI application.
+        EFI_APPLICATION = 0x0000000a,
 
-    /// An EFI driver with boot services.
-    EFI_BOOT_SERVICE_DRIVER,
+        /// An EFI driver with boot services.
+        EFI_BOOT_SERVICE_DRIVER = 0x0000000b,
 
-    /// An EFI driver with run-time services.
-    EFI_RUNTIME_DRIVER,
+        /// An EFI driver with run-time services.
+        EFI_RUNTIME_DRIVER = 0x0000000c,
 
-    /// An EFI ROM image.
-    EFI_ROM,
+        /// An EFI ROM image.
+        EFI_ROM = 0x0000000d,
 
-    /// XBOX
-    XBOX,
+        /// XBOX
+        XBOX = 0x0000000e,
 
-    /// A BCD application.
-    WINDOWS_BOOT_APPLICATION,
+        /// A BCD application.
+        WINDOWS_BOOT_APPLICATION = 0x00000010,
 
-    /// Security Metadata Containers
-    XBOX_CODE_CATALOG,
-
-    /// An unknown subsystem.
-    UNKNOWN(u64),
-}
-
-impl From<u64> for Subsystem {
-    fn from(value: u64) -> Self {
-        match value {
-            0x00000001 => Subsystem::NATIVE,
-            0x00000002 => Subsystem::WINDOWS_GUI,
-            0x00000003 => Subsystem::WINDOWS_CUI,
-            0x00000005 => Subsystem::OS2_CUI,
-            0x00000007 => Subsystem::POSIX_CUI,
-            0x00000008 => Subsystem::NATIVE_WINDOWS,
-            0x00000009 => Subsystem::WINDOWS_CE_GUI,
-            0x0000000a => Subsystem::EFI_APPLICATION,
-            0x0000000b => Subsystem::EFI_BOOT_SERVICE_DRIVER,
-            0x0000000c => Subsystem::EFI_RUNTIME_DRIVER,
-            0x0000000d => Subsystem::EFI_ROM,
-            0x0000000e => Subsystem::XBOX,
-            0x00000010 => Subsystem::WINDOWS_BOOT_APPLICATION,
-            0x00000011 => Subsystem::XBOX_CODE_CATALOG,
-            _ => Subsystem::UNKNOWN(value),
-        }
+        /// Security Metadata Containers
+        XBOX_CODE_CATALOG = 0x00000011,
     }
 }
-impl From<Subsystem> for u64 {
-    fn from(value: Subsystem) -> u64 {
-        match value {
-            Subsystem::NATIVE => 0x00000001,
-            Subsystem::WINDOWS_GUI => 0x00000002,
-            Subsystem::WINDOWS_CUI => 0x00000003,
-            Subsystem::OS2_CUI => 0x00000005,
-            Subsystem::POSIX_CUI => 0x00000007,
-            Subsystem::NATIVE_WINDOWS => 0x00000008,
-            Subsystem::WINDOWS_CE_GUI => 0x00000009,
-            Subsystem::EFI_APPLICATION => 0x0000000a,
-            Subsystem::EFI_BOOT_SERVICE_DRIVER => 0x0000000b,
-            Subsystem::EFI_RUNTIME_DRIVER => 0x0000000c,
-            Subsystem::EFI_ROM => 0x0000000d,
-            Subsystem::XBOX => 0x0000000e,
-            Subsystem::WINDOWS_BOOT_APPLICATION => 0x00000010,
-            Subsystem::XBOX_CODE_CATALOG => 0x00000011,
-            Subsystem::UNKNOWN(_) => 0,
-        }
-    }
-}
-
 impl OptionalHeader<'_> {
     /// Magic number identifying PE32 (0x10b) or PE32+ (0x20b)
     pub fn magic(&self) -> u32 {

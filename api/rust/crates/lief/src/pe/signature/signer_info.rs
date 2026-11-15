@@ -3,70 +3,28 @@ use std::marker::PhantomData;
 use super::X509;
 use super::attributes::Attribute;
 use crate::common::{FromFFI, into_optional};
-use crate::declare_iterator;
 use crate::pe::Algorithms;
 use crate::to_slice;
+use crate::{declare_iterator, enum_from_int};
 use lief_ffi as ffi;
 
-/// Concrete type of a signature attribute
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum AttributeType {
-    CONTENT_TYPE,
-    GENERIC_TYPE,
-    SIGNING_CERTIFICATE_V2,
-    SPC_SP_OPUS_INFO,
-    SPC_RELAXED_PE_MARKER_CHECK,
-    MS_COUNTER_SIGN,
-    MS_SPC_NESTED_SIGN,
-    MS_SPC_STATEMENT_TYPE,
-    MS_PLATFORM_MANIFEST_BINARY_ID,
-    PKCS9_AT_SEQUENCE_NUMBER,
-    PKCS9_COUNTER_SIGNATURE,
-    PKCS9_MESSAGE_DIGEST,
-    PKCS9_SIGNING_TIME,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for AttributeType {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => AttributeType::CONTENT_TYPE,
-            0x00000002 => AttributeType::GENERIC_TYPE,
-            0x00000003 => AttributeType::SIGNING_CERTIFICATE_V2,
-            0x00000004 => AttributeType::SPC_SP_OPUS_INFO,
-            0x00000005 => AttributeType::SPC_RELAXED_PE_MARKER_CHECK,
-            0x00000006 => AttributeType::MS_COUNTER_SIGN,
-            0x00000007 => AttributeType::MS_SPC_NESTED_SIGN,
-            0x00000008 => AttributeType::MS_SPC_STATEMENT_TYPE,
-            0x00000009 => AttributeType::MS_PLATFORM_MANIFEST_BINARY_ID,
-            0x0000000a => AttributeType::PKCS9_AT_SEQUENCE_NUMBER,
-            0x0000000b => AttributeType::PKCS9_COUNTER_SIGNATURE,
-            0x0000000c => AttributeType::PKCS9_MESSAGE_DIGEST,
-            0x0000000d => AttributeType::PKCS9_SIGNING_TIME,
-            _ => AttributeType::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<AttributeType> for u32 {
-    fn from(value: AttributeType) -> u32 {
-        match value {
-            AttributeType::CONTENT_TYPE => 0x00000001,
-            AttributeType::GENERIC_TYPE => 0x00000002,
-            AttributeType::SIGNING_CERTIFICATE_V2 => 0x00000003,
-            AttributeType::SPC_SP_OPUS_INFO => 0x00000004,
-            AttributeType::SPC_RELAXED_PE_MARKER_CHECK => 0x00000005,
-            AttributeType::MS_COUNTER_SIGN => 0x00000006,
-            AttributeType::MS_SPC_NESTED_SIGN => 0x00000007,
-            AttributeType::MS_SPC_STATEMENT_TYPE => 0x00000008,
-            AttributeType::MS_PLATFORM_MANIFEST_BINARY_ID => 0x00000009,
-            AttributeType::PKCS9_AT_SEQUENCE_NUMBER => 0x0000000a,
-            AttributeType::PKCS9_COUNTER_SIGNATURE => 0x0000000b,
-            AttributeType::PKCS9_MESSAGE_DIGEST => 0x0000000c,
-            AttributeType::PKCS9_SIGNING_TIME => 0x0000000d,
-            AttributeType::UNKNOWN(v) => v,
-        }
+enum_from_int! {
+    /// Concrete type of a signature attribute
+    #[allow(non_camel_case_types)]
+    AttributeType: u32 {
+        CONTENT_TYPE = 0x00000001,
+        GENERIC_TYPE = 0x00000002,
+        SIGNING_CERTIFICATE_V2 = 0x00000003,
+        SPC_SP_OPUS_INFO = 0x00000004,
+        SPC_RELAXED_PE_MARKER_CHECK = 0x00000005,
+        MS_COUNTER_SIGN = 0x00000006,
+        MS_SPC_NESTED_SIGN = 0x00000007,
+        MS_SPC_STATEMENT_TYPE = 0x00000008,
+        MS_PLATFORM_MANIFEST_BINARY_ID = 0x00000009,
+        PKCS9_AT_SEQUENCE_NUMBER = 0x0000000a,
+        PKCS9_COUNTER_SIGNATURE = 0x0000000b,
+        PKCS9_MESSAGE_DIGEST = 0x0000000c,
+        PKCS9_SIGNING_TIME = 0x0000000d,
     }
 }
 

@@ -1,47 +1,26 @@
 use std::fmt;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum Error {
-    ReadError,
-    NotFound,
-    NotImplemented,
-    NotSupported,
-    Corrupted,
-    ConversionError,
-    ReadOutOfBound,
-    ASN1BadTag,
-    FileError,
-    FileFormatError,
-    ParsingError,
-    BuildError,
-    DataTooLarge,
-    RequireExtendedVersion,
-    Inconsistent,
-    RuntimeError,
-    Unknown(u32),
-}
+use crate::enum_from_int;
 
-impl From<u32> for Error {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Error::ReadError,
-            0x00000002 => Error::NotFound,
-            0x00000003 => Error::NotImplemented,
-            0x00000004 => Error::NotSupported,
-            0x00000005 => Error::Corrupted,
-            0x00000006 => Error::ConversionError,
-            0x00000007 => Error::ReadOutOfBound,
-            0x00000008 => Error::ASN1BadTag,
-            0x00000009 => Error::FileError,
-            0x0000000a => Error::FileFormatError,
-            0x0000000b => Error::ParsingError,
-            0x0000000c => Error::BuildError,
-            0x0000000d => Error::DataTooLarge,
-            0x0000000e => Error::RequireExtendedVersion,
-            0x0000000f => Error::Inconsistent,
-            0x00000010 => Error::RuntimeError,
-            _ => Error::Unknown(value),
-        }
+enum_from_int! {
+    #[derive(PartialOrd, Ord)]
+    Error: u32 {
+        ReadError = 0x00000001,
+        NotFound = 0x00000002,
+        NotImplemented = 0x00000003,
+        NotSupported = 0x00000004,
+        Corrupted = 0x00000005,
+        ConversionError = 0x00000006,
+        ReadOutOfBound = 0x00000007,
+        ASN1BadTag = 0x00000008,
+        FileError = 0x00000009,
+        FileFormatError = 0x0000000a,
+        ParsingError = 0x0000000b,
+        BuildError = 0x0000000c,
+        DataTooLarge = 0x0000000d,
+        RequireExtendedVersion = 0x0000000e,
+        Inconsistent = 0x0000000f,
+        RuntimeError = 0x00000010,
     }
 }
 

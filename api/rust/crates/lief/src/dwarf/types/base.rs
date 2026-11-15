@@ -2,6 +2,7 @@ use lief_ffi as ffi;
 
 use crate::common::FromFFI;
 use crate::dwarf::types::DwarfType;
+use crate::enum_from_int;
 use std::marker::PhantomData;
 
 /// This class wraps the `DW_TAG_base_type` type which can be used -- for
@@ -11,66 +12,33 @@ pub struct Base<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Encoding {
-    NONE,
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Encoding: u32 {
+        NONE = 0x00000000,
 
-    /// Mirror `DW_ATE_signed`
-    SIGNED,
+        /// Mirror `DW_ATE_signed`
+        SIGNED = 0x00000001,
 
-    /// Mirror `DW_ATE_signed_char`
-    SIGNED_CHAR,
+        /// Mirror `DW_ATE_signed_char`
+        SIGNED_CHAR = 0x00000002,
 
-    /// Mirror `DW_ATE_unsigned`
-    UNSIGNED,
+        /// Mirror `DW_ATE_unsigned`
+        UNSIGNED = 0x00000003,
 
-    /// Mirror `DW_ATE_unsigned_char`
-    UNSIGNED_CHAR,
+        /// Mirror `DW_ATE_unsigned_char`
+        UNSIGNED_CHAR = 0x00000004,
 
-    /// Mirror `DW_ATE_float`
-    FLOAT,
+        /// Mirror `DW_ATE_float`
+        FLOAT = 0x00000005,
 
-    /// Mirror `DW_ATE_boolean`
-    BOOLEAN,
+        /// Mirror `DW_ATE_boolean`
+        BOOLEAN = 0x00000006,
 
-    /// Mirror `DW_ATE_address`
-    ADDRESS,
-
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Encoding {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => Encoding::NONE,
-            0x00000001 => Encoding::SIGNED,
-            0x00000002 => Encoding::SIGNED_CHAR,
-            0x00000003 => Encoding::UNSIGNED,
-            0x00000004 => Encoding::UNSIGNED_CHAR,
-            0x00000005 => Encoding::FLOAT,
-            0x00000006 => Encoding::BOOLEAN,
-            0x00000007 => Encoding::ADDRESS,
-            _ => Encoding::UNKNOWN(value),
-        }
+        /// Mirror `DW_ATE_address`
+        ADDRESS = 0x00000007,
     }
 }
-impl From<Encoding> for u32 {
-    fn from(value: Encoding) -> u32 {
-        match value {
-            Encoding::NONE => 0x00000000,
-            Encoding::SIGNED => 0x00000001,
-            Encoding::SIGNED_CHAR => 0x00000002,
-            Encoding::UNSIGNED => 0x00000003,
-            Encoding::UNSIGNED_CHAR => 0x00000004,
-            Encoding::FLOAT => 0x00000005,
-            Encoding::BOOLEAN => 0x00000006,
-            Encoding::ADDRESS => 0x00000007,
-            Encoding::UNKNOWN(_) => 0,
-        }
-    }
-}
-
 impl FromFFI<ffi::DWARF_types_Base> for Base<'_> {
     fn from_ffi(cmd: cxx::UniquePtr<ffi::DWARF_types_Base>) -> Self {
         Self {

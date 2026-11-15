@@ -2,6 +2,7 @@ use lief_ffi as ffi;
 
 use crate::common::FromFFI;
 use crate::dwarf::editor::types::EditorType;
+use crate::enum_from_int;
 
 /// This structure represents a struct-like type which can be:
 ///
@@ -18,34 +19,12 @@ impl FromFFI<ffi::DWARF_editor_StructType> for Struct {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Kind {
-    CLASS,
-    STRUCT,
-    UNION,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Kind {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => Kind::CLASS,
-            0x00000001 => Kind::STRUCT,
-            0x00000002 => Kind::UNION,
-            _ => Kind::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<Kind> for u32 {
-    fn from(value: Kind) -> Self {
-        match value {
-            Kind::CLASS => 0,
-            Kind::STRUCT => 1,
-            Kind::UNION => 2,
-            Kind::UNKNOWN(value) => value,
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Kind: u32 {
+        CLASS = 0x00000000,
+        STRUCT = 0x00000001,
+        UNION = 0x00000002,
     }
 }
 

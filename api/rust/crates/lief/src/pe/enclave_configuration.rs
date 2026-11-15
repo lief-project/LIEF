@@ -1,7 +1,7 @@
 //! PE enclave configuration
 use std::marker::PhantomData;
 
-use crate::{common::FromFFI, declare_iterator, to_slice};
+use crate::{common::FromFFI, declare_iterator, enum_from_int, to_slice};
 use lief_ffi as ffi;
 
 /// Defines an entry in the array of images that an enclave can import.
@@ -224,43 +224,30 @@ impl<'a> FromFFI<ffi::PE_EnclaveImport> for EnclaveImport<'a> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone)]
-pub enum Type {
-    /// None of the identifiers of the image need to match the value in the
-    /// import record.
-    NONE,
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Type: u32 {
+        /// None of the identifiers of the image need to match the value in the
+        /// import record.
+        NONE = 0x00000000,
 
-    /// The value of the enclave unique identifier of the image must match the
-    /// value in the import record. Otherwise, loading of the image fails.
-    UNIQUE_ID,
+        /// The value of the enclave unique identifier of the image must match the
+        /// value in the import record. Otherwise, loading of the image fails.
+        UNIQUE_ID = 0x00000001,
 
-    /// The value of the enclave author identifier of the image must match the
-    /// value in the import record. Otherwise, loading of the image fails. If
-    /// this flag is set and the import record indicates an author identifier
-    /// of all zeros, the imported image must be part of the Windows installation.
-    AUTHOR_ID,
+        /// The value of the enclave author identifier of the image must match the
+        /// value in the import record. Otherwise, loading of the image fails. If
+        /// this flag is set and the import record indicates an author identifier
+        /// of all zeros, the imported image must be part of the Windows installation.
+        AUTHOR_ID = 0x00000002,
 
-    /// The value of the enclave family identifier of the image must match the
-    /// value in the import record. Otherwise, loading of the image fails.
-    FAMILY_ID,
+        /// The value of the enclave family identifier of the image must match the
+        /// value in the import record. Otherwise, loading of the image fails.
+        FAMILY_ID = 0x00000003,
 
-    /// The value of the enclave image identifier of the image must match the
-    /// value in the import record. Otherwise, loading of the image fails.
-    IMAGE_ID,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Type {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => Type::NONE,
-            0x00000001 => Type::UNIQUE_ID,
-            0x00000002 => Type::AUTHOR_ID,
-            0x00000003 => Type::FAMILY_ID,
-            0x00000004 => Type::IMAGE_ID,
-            _ => Type::UNKNOWN(value),
-        }
+        /// The value of the enclave image identifier of the image must match the
+        /// value in the import record. Otherwise, loading of the image fails.
+        IMAGE_ID = 0x00000004,
     }
 }
 

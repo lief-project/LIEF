@@ -7,8 +7,8 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 
 use crate::common::{FromFFI, into_optional};
-use crate::declare_iterator;
 use crate::generic;
+use crate::{declare_iterator, enum_from_int};
 
 use bitflags::bitflags;
 
@@ -29,86 +29,55 @@ pub struct Generic<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Type {
-    /// Regular section.
-    REGULAR,
-    /// Zero fill on demand section.
-    ZEROFILL,
-    /// Section with literal C strings.
-    CSTRING_LITERALS,
-    /// Section with 4 byte literals.
-    S_4BYTE_LITERALS,
-    /// Section with 8 byte literals.
-    S_8BYTE_LITERALS,
-    /// Section with pointers to literals.
-    LITERAL_POINTERS,
-    /// Section with non-lazy symbol pointers.
-    NON_LAZY_SYMBOL_POINTERS,
-    /// Section with lazy symbol pointers.
-    LAZY_SYMBOL_POINTERS,
-    /// Section with symbol stubs, byte size of stub in the Reserved2 field.
-    SYMBOL_STUBS,
-    /// Section with only function pointers for initialization.
-    MOD_INIT_FUNC_POINTERS,
-    /// Section with only function pointers for termination.
-    MOD_TERM_FUNC_POINTERS,
-    /// Section contains symbols that are to be coalesced.
-    COALESCED,
-    /// Zero fill on demand section (that can be larger than 4 gigabytes).
-    GB_ZEROFILL,
-    /// Section with only pairs of function pointers for interposing.
-    INTERPOSING,
-    /// Section with only 16 byte literals.
-    S_16BYTE_LITERALS,
-    /// Section contains DTrace Object Format.
-    DTRACE_DOF,
-    /// Section with lazy symbol pointers to lazy loaded dylibs.
-    LAZY_DYLIB_SYMBOL_POINTERS,
-    /// Thread local data section.
-    THREAD_LOCAL_REGULAR,
-    /// Thread local zerofill section.
-    THREAD_LOCAL_ZEROFILL,
-    /// Section with thread local variable structure data.
-    THREAD_LOCAL_VARIABLES,
-    /// Section with pointers to thread local structures.
-    THREAD_LOCAL_VARIABLE_POINTERS,
-    /// Section with thread local variable initialization pointers to functions.
-    THREAD_LOCAL_INIT_FUNCTION_POINTERS,
-    /// Section with 32-bit offsets to initializer functions
-    INIT_FUNC_OFFSETS,
-    UNKNOWN(u64),
-}
-
-impl From<u64> for Type {
-    fn from(value: u64) -> Self {
-        match value {
-            0x00000000 => Type::REGULAR,
-            0x00000001 => Type::ZEROFILL,
-            0x00000002 => Type::CSTRING_LITERALS,
-            0x00000003 => Type::S_4BYTE_LITERALS,
-            0x00000004 => Type::S_8BYTE_LITERALS,
-            0x00000005 => Type::LITERAL_POINTERS,
-            0x00000006 => Type::NON_LAZY_SYMBOL_POINTERS,
-            0x00000007 => Type::LAZY_SYMBOL_POINTERS,
-            0x00000008 => Type::SYMBOL_STUBS,
-            0x00000009 => Type::MOD_INIT_FUNC_POINTERS,
-            0x0000000a => Type::MOD_TERM_FUNC_POINTERS,
-            0x0000000b => Type::COALESCED,
-            0x0000000c => Type::GB_ZEROFILL,
-            0x0000000d => Type::INTERPOSING,
-            0x0000000e => Type::S_16BYTE_LITERALS,
-            0x0000000f => Type::DTRACE_DOF,
-            0x00000010 => Type::LAZY_DYLIB_SYMBOL_POINTERS,
-            0x00000011 => Type::THREAD_LOCAL_REGULAR,
-            0x00000012 => Type::THREAD_LOCAL_ZEROFILL,
-            0x00000013 => Type::THREAD_LOCAL_VARIABLES,
-            0x00000014 => Type::THREAD_LOCAL_VARIABLE_POINTERS,
-            0x00000015 => Type::THREAD_LOCAL_INIT_FUNCTION_POINTERS,
-            0x00000016 => Type::INIT_FUNC_OFFSETS,
-            _ => Type::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Type: u64 {
+        /// Regular section.
+        REGULAR = 0x00000000,
+        /// Zero fill on demand section.
+        ZEROFILL = 0x00000001,
+        /// Section with literal C strings.
+        CSTRING_LITERALS = 0x00000002,
+        /// Section with 4 byte literals.
+        S_4BYTE_LITERALS = 0x00000003,
+        /// Section with 8 byte literals.
+        S_8BYTE_LITERALS = 0x00000004,
+        /// Section with pointers to literals.
+        LITERAL_POINTERS = 0x00000005,
+        /// Section with non-lazy symbol pointers.
+        NON_LAZY_SYMBOL_POINTERS = 0x00000006,
+        /// Section with lazy symbol pointers.
+        LAZY_SYMBOL_POINTERS = 0x00000007,
+        /// Section with symbol stubs, byte size of stub in the Reserved2 field.
+        SYMBOL_STUBS = 0x00000008,
+        /// Section with only function pointers for initialization.
+        MOD_INIT_FUNC_POINTERS = 0x00000009,
+        /// Section with only function pointers for termination.
+        MOD_TERM_FUNC_POINTERS = 0x0000000a,
+        /// Section contains symbols that are to be coalesced.
+        COALESCED = 0x0000000b,
+        /// Zero fill on demand section (that can be larger than 4 gigabytes).
+        GB_ZEROFILL = 0x0000000c,
+        /// Section with only pairs of function pointers for interposing.
+        INTERPOSING = 0x0000000d,
+        /// Section with only 16 byte literals.
+        S_16BYTE_LITERALS = 0x0000000e,
+        /// Section contains DTrace Object Format.
+        DTRACE_DOF = 0x0000000f,
+        /// Section with lazy symbol pointers to lazy loaded dylibs.
+        LAZY_DYLIB_SYMBOL_POINTERS = 0x00000010,
+        /// Thread local data section.
+        THREAD_LOCAL_REGULAR = 0x00000011,
+        /// Thread local zerofill section.
+        THREAD_LOCAL_ZEROFILL = 0x00000012,
+        /// Section with thread local variable structure data.
+        THREAD_LOCAL_VARIABLES = 0x00000013,
+        /// Section with pointers to thread local structures.
+        THREAD_LOCAL_VARIABLE_POINTERS = 0x00000014,
+        /// Section with thread local variable initialization pointers to functions.
+        THREAD_LOCAL_INIT_FUNCTION_POINTERS = 0x00000015,
+        /// Section with 32-bit offsets to initializer functions
+        INIT_FUNC_OFFSETS = 0x00000016,
     }
 }
 

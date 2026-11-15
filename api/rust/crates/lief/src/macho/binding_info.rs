@@ -6,6 +6,7 @@ use super::symbol::Symbol;
 use std::{fmt, marker::PhantomData};
 
 use crate::common::{FromFFI, into_optional};
+use crate::enum_from_int;
 
 #[derive(Debug)]
 /// This enum exposes all the different types of binding operations that
@@ -147,57 +148,34 @@ pub struct Dyld<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum BINDING_CLASS {
-    WEAK,
-    LAZY,
-    STANDARD,
-    THREADED,
-    UNKNOWN(u64),
-}
-
-impl BINDING_CLASS {
-    pub fn from_value(value: u64) -> Self {
-        match value {
-            0x00000001 => BINDING_CLASS::WEAK,
-            0x00000002 => BINDING_CLASS::LAZY,
-            0x00000003 => BINDING_CLASS::STANDARD,
-            0x00000064 => BINDING_CLASS::THREADED,
-            _ => BINDING_CLASS::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    BINDING_CLASS: u64 {
+        WEAK = 0x00000001,
+        LAZY = 0x00000002,
+        STANDARD = 0x00000003,
+        THREADED = 0x00000064,
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum BIND_TYPES {
-    POINTER,
-    TEXT_ABSOLUTE32,
-    TEXT_PCREL32,
-    UNKNOWN(u64),
-}
-
-impl BIND_TYPES {
-    pub fn from_value(value: u64) -> Self {
-        match value {
-            0x00000001 => BIND_TYPES::POINTER,
-            0x00000002 => BIND_TYPES::TEXT_ABSOLUTE32,
-            0x00000003 => BIND_TYPES::TEXT_PCREL32,
-            _ => BIND_TYPES::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    BIND_TYPES: u64 {
+        POINTER = 0x00000001,
+        TEXT_ABSOLUTE32 = 0x00000002,
+        TEXT_PCREL32 = 0x00000003,
     }
 }
 
 impl Dyld<'_> {
     /// Class of the binding (weak, lazy, ...)
     pub fn binding_class(&self) -> BINDING_CLASS {
-        BINDING_CLASS::from_value(self.ptr.binding_class())
+        BINDING_CLASS::from(self.ptr.binding_class())
     }
 
     /// Type of the binding. Most of the times it should be [`BIND_TYPES::POINTER`]
     pub fn binding_type(&self) -> BIND_TYPES {
-        BIND_TYPES::from_value(self.ptr.binding_type())
+        BIND_TYPES::from(self.ptr.binding_type())
     }
 
     pub fn is_non_weak_definition(&self) -> bool {
@@ -243,30 +221,19 @@ pub struct Chained<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum CHAINED_FORMAT {
-    IMPORT,
-    IMPORT_ADDEND,
-    IMPORT_ADDEND64,
-    UNKNOWN(u32),
-}
-
-impl CHAINED_FORMAT {
-    pub fn from_value(value: u32) -> Self {
-        match value {
-            0x00000001 => CHAINED_FORMAT::IMPORT,
-            0x00000002 => CHAINED_FORMAT::IMPORT_ADDEND,
-            0x00000003 => CHAINED_FORMAT::IMPORT_ADDEND64,
-            _ => CHAINED_FORMAT::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    CHAINED_FORMAT: u32 {
+        IMPORT = 0x00000001,
+        IMPORT_ADDEND = 0x00000002,
+        IMPORT_ADDEND64 = 0x00000003,
     }
 }
 
 impl Chained<'_> {
     /// Format of the imports
     pub fn format(&self) -> CHAINED_FORMAT {
-        CHAINED_FORMAT::from_value(self.ptr.format())
+        CHAINED_FORMAT::from(self.ptr.format())
     }
 
     /// Format of the pointer

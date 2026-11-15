@@ -2,8 +2,8 @@ use std::marker::PhantomData;
 use std::pin::Pin;
 
 use crate::common::{AsFFI, FromFFI, into_optional};
-use crate::declare_iterator;
 use crate::generic;
+use crate::{declare_iterator, enum_from_int};
 use lief_ffi as ffi;
 
 use super::commands::Dylib;
@@ -20,94 +20,42 @@ pub struct Symbol<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Category {
-    NONE,
-    LOCAL,
-    EXTERNAL,
-    UNDEFINED,
-    INDIRECT_ABS,
-    INDIRECT_LOCAL,
-    INDIRECT_ABS_LOCAL,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Category {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => Category::NONE,
-            0x00000001 => Category::LOCAL,
-            0x00000002 => Category::EXTERNAL,
-            0x00000003 => Category::UNDEFINED,
-            0x00000004 => Category::INDIRECT_ABS,
-            0x00000005 => Category::INDIRECT_LOCAL,
-            0x00000006 => Category::INDIRECT_ABS_LOCAL,
-            _ => Category::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Category: u32 {
+        NONE = 0x00000000,
+        LOCAL = 0x00000001,
+        EXTERNAL = 0x00000002,
+        UNDEFINED = 0x00000003,
+        INDIRECT_ABS = 0x00000004,
+        INDIRECT_LOCAL = 0x00000005,
+        INDIRECT_ABS_LOCAL = 0x00000006,
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Origin {
-    DYLD_EXPORT,
-    DYLD_BIND,
-    LC_SYMTAB,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Origin {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Origin::DYLD_EXPORT,
-            0x00000002 => Origin::DYLD_BIND,
-            0x00000003 => Origin::LC_SYMTAB,
-            _ => Origin::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Origin: u32 {
+        DYLD_EXPORT = 0x00000001,
+        DYLD_BIND = 0x00000002,
+        LC_SYMTAB = 0x00000003,
     }
 }
 
-/// Symbol type as defined by `nlist_xx.n_type & N_TYPE`
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Type {
-    /// The symbol is undefined
-    UNDEFINED,
-    /// The symbol is absolute
-    ABSOLUTE_SYM,
-    /// The symbol is defined in a specific section
-    SECTION,
-    /// The symbol is undefined and the image is using a prebound value
-    PREBOUND,
-    /// The symbol is defined to be the same as another symbol
-    INDIRECT,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Type {
-    fn from(value: u32) -> Self {
-        match value {
-            0x0 => Type::UNDEFINED,
-            0x2 => Type::ABSOLUTE_SYM,
-            0xe => Type::SECTION,
-            0xc => Type::PREBOUND,
-            0xa => Type::INDIRECT,
-            _ => Type::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<Type> for u32 {
-    fn from(value: Type) -> u32 {
-        match value {
-            Type::UNDEFINED => 0x0,
-            Type::ABSOLUTE_SYM => 0x2,
-            Type::SECTION => 0xe,
-            Type::PREBOUND => 0xc,
-            Type::INDIRECT => 0xa,
-            Type::UNKNOWN(v) => v,
-        }
+enum_from_int! {
+    /// Symbol type as defined by `nlist_xx.n_type & N_TYPE`
+    #[allow(non_camel_case_types)]
+    Type: u32 {
+        /// The symbol is undefined
+        UNDEFINED = 0x0,
+        /// The symbol is absolute
+        ABSOLUTE_SYM = 0x2,
+        /// The symbol is defined in a specific section
+        SECTION = 0xe,
+        /// The symbol is undefined and the image is using a prebound value
+        PREBOUND = 0xc,
+        /// The symbol is defined to be the same as another symbol
+        INDIRECT = 0xa,
     }
 }
 

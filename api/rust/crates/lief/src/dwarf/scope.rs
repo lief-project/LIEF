@@ -2,6 +2,7 @@ use lief_ffi as ffi;
 
 use crate::common::FromFFI;
 use crate::common::into_optional;
+use crate::enum_from_int;
 use std::marker::PhantomData;
 
 /// This class materializes a scope in which Function, Variable, Type, ...
@@ -11,45 +12,17 @@ pub struct Scope<'a> {
     _owner: PhantomData<&'a ()>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Type {
-    UNION,
-    CLASS,
-    STRUCT,
-    NAMESPACE,
-    FUNCTION,
-    COMPILATION_UNIT,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Type {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Type::UNION,
-            0x00000002 => Type::CLASS,
-            0x00000003 => Type::STRUCT,
-            0x00000004 => Type::NAMESPACE,
-            0x00000005 => Type::FUNCTION,
-            0x00000006 => Type::COMPILATION_UNIT,
-            _ => Type::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Type: u32 {
+        UNION = 0x00000001,
+        CLASS = 0x00000002,
+        STRUCT = 0x00000003,
+        NAMESPACE = 0x00000004,
+        FUNCTION = 0x00000005,
+        COMPILATION_UNIT = 0x00000006,
     }
 }
-impl From<Type> for u32 {
-    fn from(value: Type) -> u32 {
-        match value {
-            Type::UNION => 0x00000001,
-            Type::CLASS => 0x00000002,
-            Type::STRUCT => 0x00000003,
-            Type::NAMESPACE => 0x00000004,
-            Type::FUNCTION => 0x00000005,
-            Type::COMPILATION_UNIT => 0x00000006,
-            Type::UNKNOWN(_) => 0,
-        }
-    }
-}
-
 impl FromFFI<ffi::DWARF_Scope> for Scope<'_> {
     fn from_ffi(ptr: cxx::UniquePtr<ffi::DWARF_Scope>) -> Self {
         Self {

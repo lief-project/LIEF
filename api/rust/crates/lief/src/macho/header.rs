@@ -3,146 +3,51 @@ use lief_ffi as ffi;
 use bitflags::bitflags;
 
 use crate::common::FromFFI;
+use crate::enum_from_int;
 use std::{fmt, marker::PhantomData};
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum FileType {
-    OBJECT,
-    EXECUTE,
-    FVMLIB,
-    CORE,
-    PRELOAD,
-    DYLIB,
-    DYLINKER,
-    BUNDLE,
-    DYLIB_STUB,
-    DSYM,
-    KEXT_BUNDLE,
-    FILESET,
-    GPU_EXECUTE,
-    GPU_DYLIB,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for FileType {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => FileType::OBJECT,
-            0x00000002 => FileType::EXECUTE,
-            0x00000003 => FileType::FVMLIB,
-            0x00000004 => FileType::CORE,
-            0x00000005 => FileType::PRELOAD,
-            0x00000006 => FileType::DYLIB,
-            0x00000007 => FileType::DYLINKER,
-            0x00000008 => FileType::BUNDLE,
-            0x00000009 => FileType::DYLIB_STUB,
-            0x0000000a => FileType::DSYM,
-            0x0000000b => FileType::KEXT_BUNDLE,
-            0x0000000c => FileType::FILESET,
-            0x0000000d => FileType::GPU_EXECUTE,
-            0x0000000e => FileType::GPU_DYLIB,
-            _ => FileType::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    FileType: u32 {
+        OBJECT = 0x00000001,
+        EXECUTE = 0x00000002,
+        FVMLIB = 0x00000003,
+        CORE = 0x00000004,
+        PRELOAD = 0x00000005,
+        DYLIB = 0x00000006,
+        DYLINKER = 0x00000007,
+        BUNDLE = 0x00000008,
+        DYLIB_STUB = 0x00000009,
+        DSYM = 0x0000000a,
+        KEXT_BUNDLE = 0x0000000b,
+        FILESET = 0x0000000c,
+        GPU_EXECUTE = 0x0000000d,
+        GPU_DYLIB = 0x0000000e,
     }
 }
-impl From<FileType> for u32 {
-    fn from(value: FileType) -> u32 {
-        match value {
-            FileType::OBJECT => 0x00000001,
-            FileType::EXECUTE => 0x00000002,
-            FileType::FVMLIB => 0x00000003,
-            FileType::CORE => 0x00000004,
-            FileType::PRELOAD => 0x00000005,
-            FileType::DYLIB => 0x00000006,
-            FileType::DYLINKER => 0x00000007,
-            FileType::BUNDLE => 0x00000008,
-            FileType::DYLIB_STUB => 0x00000009,
-            FileType::DSYM => 0x0000000a,
-            FileType::KEXT_BUNDLE => 0x0000000b,
-            FileType::FILESET => 0x0000000c,
-            FileType::GPU_EXECUTE => 0x0000000d,
-            FileType::GPU_DYLIB => 0x0000000e,
-            FileType::UNKNOWN(value) => value,
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    CpuType: i32 {
+        ANY = -1,
+        X86 = 0x00000007,
+        X86_64 = 0x01000007,
+        MIPS = 0x00000008,
+        MC98000 = 0x0000000a,
+        HPPA = 0x0000000b,
+        ARM = 0x0000000c,
+        ARM64 = 0x0100000c,
+        MC88000 = 0x0000000d,
+        SPARC = 0x0000000e,
+        I860 = 0x0000000f,
+        ALPHA = 0x00000010,
+        POWERPC = 0x00000012,
+        POWERPC64 = 0x01000012,
+        APPLE_GPU = 0x01000013,
+        AMD_GPU = 0x01000014,
+        INTEL_GPU = 0x01000015,
+        AIR64 = 0x01000017,
     }
 }
-
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum CpuType {
-    ANY,
-    X86,
-    X86_64,
-    MIPS,
-    MC98000,
-    HPPA,
-    ARM,
-    ARM64,
-    MC88000,
-    SPARC,
-    I860,
-    ALPHA,
-    POWERPC,
-    POWERPC64,
-    APPLE_GPU,
-    AMD_GPU,
-    INTEL_GPU,
-    AIR64,
-    UNKNOWN(i32),
-}
-
-impl From<i32> for CpuType {
-    fn from(value: i32) -> Self {
-        match value {
-            -1 => CpuType::ANY,
-            0x00000007 => CpuType::X86,
-            0x01000007 => CpuType::X86_64,
-            0x00000008 => CpuType::MIPS,
-            0x0000000a => CpuType::MC98000,
-            0x0000000b => CpuType::HPPA,
-            0x0000000c => CpuType::ARM,
-            0x0100000c => CpuType::ARM64,
-            0x0000000d => CpuType::MC88000,
-            0x0000000e => CpuType::SPARC,
-            0x0000000f => CpuType::I860,
-            0x00000010 => CpuType::ALPHA,
-            0x00000012 => CpuType::POWERPC,
-            0x01000012 => CpuType::POWERPC64,
-            0x01000013 => CpuType::APPLE_GPU,
-            0x01000014 => CpuType::AMD_GPU,
-            0x01000015 => CpuType::INTEL_GPU,
-            0x01000017 => CpuType::AIR64,
-            _ => CpuType::UNKNOWN(value),
-        }
-    }
-}
-impl From<CpuType> for i32 {
-    fn from(value: CpuType) -> i32 {
-        match value {
-            CpuType::ANY => -1,
-            CpuType::X86 => 0x00000007,
-            CpuType::X86_64 => 0x01000007,
-            CpuType::MIPS => 0x00000008,
-            CpuType::MC98000 => 0x0000000a,
-            CpuType::HPPA => 0x0000000b,
-            CpuType::ARM => 0x0000000c,
-            CpuType::ARM64 => 0x0100000c,
-            CpuType::MC88000 => 0x0000000d,
-            CpuType::SPARC => 0x0000000e,
-            CpuType::I860 => 0x0000000f,
-            CpuType::ALPHA => 0x00000010,
-            CpuType::POWERPC => 0x00000012,
-            CpuType::POWERPC64 => 0x01000012,
-            CpuType::APPLE_GPU => 0x01000013,
-            CpuType::AMD_GPU => 0x01000014,
-            CpuType::INTEL_GPU => 0x01000015,
-            CpuType::AIR64 => 0x01000017,
-            CpuType::UNKNOWN(_) => -1,
-        }
-    }
-}
-
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct Flags: u32 {

@@ -4,9 +4,9 @@ use std::marker::PhantomData;
 
 use crate::common::FromFFI;
 use crate::common::into_optional;
-use crate::declare_iterator;
 use crate::pe::Section;
 use crate::to_slice;
+use crate::{declare_iterator, enum_from_int};
 
 use lief_ffi as ffi;
 
@@ -15,73 +15,26 @@ pub struct DataDirectory<'a> {
     _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone)]
-pub enum Type {
-    EXPORT_TABLE,
-    IMPORT_TABLE,
-    RESOURCE_TABLE,
-    EXCEPTION_TABLE,
-    CERTIFICATE_TABLE,
-    BASE_RELOCATION_TABLE,
-    DEBUG_DIR,
-    ARCHITECTURE,
-    GLOBAL_PTR,
-    TLS_TABLE,
-    LOAD_CONFIG_TABLE,
-    BOUND_IMPORT,
-    IAT,
-    DELAY_IMPORT_DESCRIPTOR,
-    CLR_RUNTIME_HEADER,
-    RESERVED,
-    UNKNOWN(u32),
-}
-
-/// Data directory's types
-impl From<u32> for Type {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => Type::EXPORT_TABLE,
-            0x00000001 => Type::IMPORT_TABLE,
-            0x00000002 => Type::RESOURCE_TABLE,
-            0x00000003 => Type::EXCEPTION_TABLE,
-            0x00000004 => Type::CERTIFICATE_TABLE,
-            0x00000005 => Type::BASE_RELOCATION_TABLE,
-            0x00000006 => Type::DEBUG_DIR,
-            0x00000007 => Type::ARCHITECTURE,
-            0x00000008 => Type::GLOBAL_PTR,
-            0x00000009 => Type::TLS_TABLE,
-            0x0000000a => Type::LOAD_CONFIG_TABLE,
-            0x0000000b => Type::BOUND_IMPORT,
-            0x0000000c => Type::IAT,
-            0x0000000d => Type::DELAY_IMPORT_DESCRIPTOR,
-            0x0000000e => Type::CLR_RUNTIME_HEADER,
-            0x0000000f => Type::RESERVED,
-            _ => Type::UNKNOWN(value),
-        }
-    }
-}
-impl From<Type> for u32 {
-    fn from(ty: Type) -> Self {
-        match ty {
-            Type::EXPORT_TABLE => 0x00000000,
-            Type::IMPORT_TABLE => 0x00000001,
-            Type::RESOURCE_TABLE => 0x00000002,
-            Type::EXCEPTION_TABLE => 0x00000003,
-            Type::CERTIFICATE_TABLE => 0x00000004,
-            Type::BASE_RELOCATION_TABLE => 0x00000005,
-            Type::DEBUG_DIR => 0x00000006,
-            Type::ARCHITECTURE => 0x00000007,
-            Type::GLOBAL_PTR => 0x00000008,
-            Type::TLS_TABLE => 0x00000009,
-            Type::LOAD_CONFIG_TABLE => 0x0000000a,
-            Type::BOUND_IMPORT => 0x0000000b,
-            Type::IAT => 0x0000000c,
-            Type::DELAY_IMPORT_DESCRIPTOR => 0x0000000d,
-            Type::CLR_RUNTIME_HEADER => 0x0000000e,
-            Type::RESERVED => 0x0000000f,
-            Type::UNKNOWN(_) => 0x0000000f, // RESERVED
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Data directory's types
+    Type: u32 {
+        EXPORT_TABLE = 0x00000000,
+        IMPORT_TABLE = 0x00000001,
+        RESOURCE_TABLE = 0x00000002,
+        EXCEPTION_TABLE = 0x00000003,
+        CERTIFICATE_TABLE = 0x00000004,
+        BASE_RELOCATION_TABLE = 0x00000005,
+        DEBUG_DIR = 0x00000006,
+        ARCHITECTURE = 0x00000007,
+        GLOBAL_PTR = 0x00000008,
+        TLS_TABLE = 0x00000009,
+        LOAD_CONFIG_TABLE = 0x0000000a,
+        BOUND_IMPORT = 0x0000000b,
+        IAT = 0x0000000c,
+        DELAY_IMPORT_DESCRIPTOR = 0x0000000d,
+        CLR_RUNTIME_HEADER = 0x0000000e,
+        RESERVED = 0x0000000f,
     }
 }
 

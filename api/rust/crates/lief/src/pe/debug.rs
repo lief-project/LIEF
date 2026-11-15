@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 
 use crate::common::into_optional;
 use crate::declare_iterator;
-use crate::{common::FromFFI, to_slice};
+use crate::{common::FromFFI, enum_from_int, to_slice};
 use lief_ffi as ffi;
 use std::pin::Pin;
 
@@ -33,53 +33,27 @@ pub enum Entries<'a> {
     Generic(Generic<'a>),
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone)]
-pub enum Type {
-    COFF,
-    CODEVIEW,
-    FPO,
-    MISC,
-    EXCEPTION,
-    FIXUP,
-    OMAP_TO_SRC,
-    OMAP_FROM_SRC,
-    BORLAND,
-    RESERVED10,
-    CLSID,
-    VC_FEATURE,
-    POGO,
-    ILTCG,
-    MPX,
-    REPRO,
-    PDBCHECKSUM,
-    EX_DLLCHARACTERISTICS,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Type {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Type::COFF,
-            0x00000002 => Type::CODEVIEW,
-            0x00000003 => Type::FPO,
-            0x00000004 => Type::MISC,
-            0x00000005 => Type::EXCEPTION,
-            0x00000006 => Type::FIXUP,
-            0x00000007 => Type::OMAP_TO_SRC,
-            0x00000008 => Type::OMAP_FROM_SRC,
-            0x00000009 => Type::BORLAND,
-            0x0000000a => Type::RESERVED10,
-            0x0000000b => Type::CLSID,
-            0x0000000c => Type::VC_FEATURE,
-            0x0000000d => Type::POGO,
-            0x0000000e => Type::ILTCG,
-            0x0000000f => Type::MPX,
-            0x00000010 => Type::REPRO,
-            0x00000013 => Type::PDBCHECKSUM,
-            0x00000014 => Type::EX_DLLCHARACTERISTICS,
-            _ => Type::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Type: u32 {
+        COFF = 0x00000001,
+        CODEVIEW = 0x00000002,
+        FPO = 0x00000003,
+        MISC = 0x00000004,
+        EXCEPTION = 0x00000005,
+        FIXUP = 0x00000006,
+        OMAP_TO_SRC = 0x00000007,
+        OMAP_FROM_SRC = 0x00000008,
+        BORLAND = 0x00000009,
+        RESERVED10 = 0x0000000a,
+        CLSID = 0x0000000b,
+        VC_FEATURE = 0x0000000c,
+        POGO = 0x0000000d,
+        ILTCG = 0x0000000e,
+        MPX = 0x0000000f,
+        REPRO = 0x00000010,
+        PDBCHECKSUM = 0x00000013,
+        EX_DLLCHARACTERISTICS = 0x00000014,
     }
 }
 
@@ -313,44 +287,16 @@ pub struct Pogo<'a> {
     _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
-/// Signature type for [`Pogo`] debug entries
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum PogoSignature {
-    ZERO,
-    LCTG,
-    PGI,
-    PGO,
-    PGU,
-    SPGO,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for PogoSignature {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => PogoSignature::ZERO,
-            0x4C544347 => PogoSignature::LCTG,
-            0x50474900 => PogoSignature::PGI,
-            0x50474F00 => PogoSignature::PGO,
-            0x50475500 => PogoSignature::PGU,
-            0x5350474f => PogoSignature::SPGO,
-            _ => PogoSignature::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<PogoSignature> for u32 {
-    fn from(value: PogoSignature) -> u32 {
-        match value {
-            PogoSignature::ZERO => 0x00000000,
-            PogoSignature::LCTG => 0x4C544347,
-            PogoSignature::PGI => 0x50474900,
-            PogoSignature::PGO => 0x50474F00,
-            PogoSignature::PGU => 0x50475500,
-            PogoSignature::SPGO => 0x5350474f,
-            PogoSignature::UNKNOWN(v) => v,
-        }
+enum_from_int! {
+    /// Signature type for [`Pogo`] debug entries
+    #[allow(non_camel_case_types)]
+    PogoSignature: u32 {
+        ZERO = 0x00000000,
+        LCTG = 0x4C544347,
+        PGI = 0x50474900,
+        PGO = 0x50474F00,
+        PGU = 0x50475500,
+        SPGO = 0x5350474f,
     }
 }
 
@@ -441,42 +387,18 @@ pub struct CodeView<'a> {
     _owner: PhantomData<&'a ffi::PE_Binary>,
 }
 
-/// Signature type for [`CodeView`] debug entries
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum CodeViewSignature {
-    /// PDB 7.0 signature
-    PDB_70,
-    /// PDB 2.0 signature
-    PDB_20,
-    /// CodeView 5.0 signature
-    CV_50,
-    /// CodeView 4.1 signature
-    CV_41,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for CodeViewSignature {
-    fn from(value: u32) -> Self {
-        match value {
-            0x53445352 => CodeViewSignature::PDB_70,
-            0x3031424e => CodeViewSignature::PDB_20,
-            0x3131424e => CodeViewSignature::CV_50,
-            0x3930424e => CodeViewSignature::CV_41,
-            _ => CodeViewSignature::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<CodeViewSignature> for u32 {
-    fn from(value: CodeViewSignature) -> u32 {
-        match value {
-            CodeViewSignature::PDB_70 => 0x53445352,
-            CodeViewSignature::PDB_20 => 0x3031424e,
-            CodeViewSignature::CV_50 => 0x3131424e,
-            CodeViewSignature::CV_41 => 0x3930424e,
-            CodeViewSignature::UNKNOWN(v) => v,
-        }
+enum_from_int! {
+    /// Signature type for [`CodeView`] debug entries
+    #[allow(non_camel_case_types)]
+    CodeViewSignature: u32 {
+        /// PDB 7.0 signature
+        PDB_70 = 0x53445352,
+        /// PDB 2.0 signature
+        PDB_20 = 0x3031424e,
+        /// CodeView 5.0 signature
+        CV_50 = 0x3131424e,
+        /// CodeView 4.1 signature
+        CV_41 = 0x3930424e,
     }
 }
 
@@ -695,30 +617,12 @@ impl<'a> FromFFI<ffi::PE_PDBChecksum> for PDBChecksum<'a> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum ChecksumAlgorithm {
-    SHA256,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for ChecksumAlgorithm {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => ChecksumAlgorithm::SHA256,
-            _ => ChecksumAlgorithm::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    ChecksumAlgorithm: u32 {
+        SHA256 = 0x00000001,
     }
 }
-impl From<ChecksumAlgorithm> for u32 {
-    fn from(value: ChecksumAlgorithm) -> u32 {
-        match value {
-            ChecksumAlgorithm::SHA256 => 0x00000001,
-            ChecksumAlgorithm::UNKNOWN(value) => value,
-        }
-    }
-}
-
 impl PDBChecksum<'_> {
     /// Hash of the PDB content
     pub fn hash(&self) -> &[u8] {

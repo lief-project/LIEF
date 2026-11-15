@@ -3,192 +3,76 @@ use lief_ffi as ffi;
 use super::{Dylib, MappingInfo, SubCache};
 use crate::Error;
 use crate::common::{FromFFI, into_optional};
-use crate::{declare_iterator, declare_lazy_iterator, to_result};
+use crate::{declare_iterator, declare_lazy_iterator, enum_from_int, to_result};
 use std::path::Path;
 
 use crate::assembly;
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-/// This enum wraps the dyld's git tags for which the structure of
-/// dyld shared cache evolved
-pub enum Version {
-    /// dyld-95.3 (2007-10-30)
-    DYLD_95_3,
-    /// dyld-195.5 (2011-07-13)
-    DYLD_195_5,
-    /// dyld-239.3 (2013-10-29)
-    DYLD_239_3,
-    /// dyld-360.14 (2015-09-04)
-    DYLD_360_14,
-    /// dyld-421.1 (2016-09-22)
-    DYLD_421_1,
-    /// dyld-832.7.1 (2020-11-19)
-    DYLD_832_7_1,
-    /// dyld-940 (2021-02-09)
-    DYLD_940,
-    /// dyld-1042.1 (2022-10-19)
-    DYLD_1042_1,
-    /// dyld-1231.3 (2024-09-24)
-    DYLD_1231_3,
-    /// dyld-1284.13 (2025-04-25)
-    DYLD_1284_13,
-    /// This value is used for versions of dyld not publicly released or not yet
-    /// supported by LIEF
-    UNRELEASED,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Version {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Version::DYLD_95_3,
-            0x00000002 => Version::DYLD_195_5,
-            0x00000003 => Version::DYLD_239_3,
-            0x00000004 => Version::DYLD_360_14,
-            0x00000005 => Version::DYLD_421_1,
-            0x00000006 => Version::DYLD_832_7_1,
-            0x00000007 => Version::DYLD_940,
-            0x00000008 => Version::DYLD_1042_1,
-            0x00000009 => Version::DYLD_1231_3,
-            0x0000000A => Version::DYLD_1284_13,
-            0x0000000B => Version::UNRELEASED,
-            _ => Version::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// This enum wraps the dyld's git tags for which the structure of
+    /// dyld shared cache evolved
+    Version: u32 {
+        /// dyld-95.3 (2007-10-30)
+        DYLD_95_3 = 0x00000001,
+        /// dyld-195.5 (2011-07-13)
+        DYLD_195_5 = 0x00000002,
+        /// dyld-239.3 (2013-10-29)
+        DYLD_239_3 = 0x00000003,
+        /// dyld-360.14 (2015-09-04)
+        DYLD_360_14 = 0x00000004,
+        /// dyld-421.1 (2016-09-22)
+        DYLD_421_1 = 0x00000005,
+        /// dyld-832.7.1 (2020-11-19)
+        DYLD_832_7_1 = 0x00000006,
+        /// dyld-940 (2021-02-09)
+        DYLD_940 = 0x00000007,
+        /// dyld-1042.1 (2022-10-19)
+        DYLD_1042_1 = 0x00000008,
+        /// dyld-1231.3 (2024-09-24)
+        DYLD_1231_3 = 0x00000009,
+        /// dyld-1284.13 (2025-04-25)
+        DYLD_1284_13 = 0x0000000A,
+        /// This value is used for versions of dyld not publicly released or not yet
+        /// supported by LIEF
+        UNRELEASED = 0x0000000B,
     }
 }
-impl From<Version> for u32 {
-    fn from(value: Version) -> u32 {
-        match value {
-            Version::DYLD_95_3 => 0x00000001,
-            Version::DYLD_195_5 => 0x00000002,
-            Version::DYLD_239_3 => 0x00000003,
-            Version::DYLD_360_14 => 0x00000004,
-            Version::DYLD_421_1 => 0x00000005,
-            Version::DYLD_832_7_1 => 0x00000006,
-            Version::DYLD_940 => 0x00000007,
-            Version::DYLD_1042_1 => 0x00000008,
-            Version::DYLD_1231_3 => 0x00000009,
-            Version::DYLD_1284_13 => 0x0000000A,
-            Version::UNRELEASED => 0x0000000B,
-            Version::UNKNOWN(_) => 0,
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Platforms supported by the dyld shared cache
+    Platform: u32 {
+        MACOS = 0x00000001,
+        IOS = 0x00000002,
+        TVOS = 0x00000003,
+        WATCHOS = 0x00000004,
+        BRIDGEOS = 0x00000005,
+        IOSMAC = 0x00000006,
+        IOS_SIMULATOR = 0x00000007,
+        TVOS_SIMULATOR = 0x00000008,
+        WATCHOS_SIMULATOR = 0x00000009,
+        DRIVERKIT = 0x0000000a,
+        VISIONOS = 0x0000000b,
+        VISIONOS_SIMULATOR = 0x0000000c,
+        FIRMWARE = 0x0000000d,
+        SEPOS = 0x0000000e,
+        ANY = 0xffffffff,
     }
 }
-
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-/// Platforms supported by the dyld shared cache
-pub enum Platform {
-    MACOS,
-    IOS,
-    TVOS,
-    WATCHOS,
-    BRIDGEOS,
-    IOSMAC,
-    IOS_SIMULATOR,
-    TVOS_SIMULATOR,
-    WATCHOS_SIMULATOR,
-    DRIVERKIT,
-    VISIONOS,
-    VISIONOS_SIMULATOR,
-    FIRMWARE,
-    SEPOS,
-    ANY,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Platform {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Platform::MACOS,
-            0x00000002 => Platform::IOS,
-            0x00000003 => Platform::TVOS,
-            0x00000004 => Platform::WATCHOS,
-            0x00000005 => Platform::BRIDGEOS,
-            0x00000006 => Platform::IOSMAC,
-            0x00000007 => Platform::IOS_SIMULATOR,
-            0x00000008 => Platform::TVOS_SIMULATOR,
-            0x00000009 => Platform::WATCHOS_SIMULATOR,
-            0x0000000a => Platform::DRIVERKIT,
-            0x0000000b => Platform::VISIONOS,
-            0x0000000c => Platform::VISIONOS_SIMULATOR,
-            0x0000000d => Platform::FIRMWARE,
-            0x0000000e => Platform::SEPOS,
-            0xffffffff => Platform::ANY,
-            _ => Platform::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    /// Architecture supported by the dyld shared cache
+    Arch: u32 {
+        I386 = 0x00000001,
+        X86_64 = 0x00000002,
+        X86_64H = 0x00000003,
+        ARMV5 = 0x00000004,
+        ARMV6 = 0x00000005,
+        ARMV7 = 0x00000006,
+        ARM64 = 0x00000007,
+        ARM64E = 0x00000008,
     }
 }
-impl From<Platform> for u32 {
-    fn from(value: Platform) -> u32 {
-        match value {
-            Platform::MACOS => 0x00000001,
-            Platform::IOS => 0x00000002,
-            Platform::TVOS => 0x00000003,
-            Platform::WATCHOS => 0x00000004,
-            Platform::BRIDGEOS => 0x00000005,
-            Platform::IOSMAC => 0x00000006,
-            Platform::IOS_SIMULATOR => 0x00000007,
-            Platform::TVOS_SIMULATOR => 0x00000008,
-            Platform::WATCHOS_SIMULATOR => 0x00000009,
-            Platform::DRIVERKIT => 0x0000000a,
-            Platform::VISIONOS => 0x0000000b,
-            Platform::VISIONOS_SIMULATOR => 0x0000000c,
-            Platform::FIRMWARE => 0x0000000d,
-            Platform::SEPOS => 0x0000000e,
-            Platform::ANY => 0xffffffff,
-            Platform::UNKNOWN(_) => 0,
-        }
-    }
-}
-
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-/// Architecture supported by the dyld shared cache
-pub enum Arch {
-    I386,
-    X86_64,
-    X86_64H,
-    ARMV5,
-    ARMV6,
-    ARMV7,
-    ARM64,
-    ARM64E,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Arch {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Arch::I386,
-            0x00000002 => Arch::X86_64,
-            0x00000003 => Arch::X86_64H,
-            0x00000004 => Arch::ARMV5,
-            0x00000005 => Arch::ARMV6,
-            0x00000006 => Arch::ARMV7,
-            0x00000007 => Arch::ARM64,
-            0x00000008 => Arch::ARM64E,
-            _ => Arch::UNKNOWN(value),
-        }
-    }
-}
-impl From<Arch> for u32 {
-    fn from(value: Arch) -> u32 {
-        match value {
-            Arch::I386 => 0x00000001,
-            Arch::X86_64 => 0x00000002,
-            Arch::X86_64H => 0x00000003,
-            Arch::ARMV5 => 0x00000004,
-            Arch::ARMV6 => 0x00000005,
-            Arch::ARMV7 => 0x00000006,
-            Arch::ARM64 => 0x00000007,
-            Arch::ARM64E => 0x00000008,
-            Arch::UNKNOWN(_) => 0,
-        }
-    }
-}
-
 /// This struct interfaces a dyld shared cache file.
 pub struct DyldSharedCache {
     ptr: cxx::UniquePtr<ffi::dsc_DyldSharedCache>,

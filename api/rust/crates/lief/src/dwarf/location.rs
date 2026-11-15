@@ -7,7 +7,7 @@ use std::fmt;
 use std::marker::PhantomData;
 
 use crate::common::{FromFFI, into_optional};
-use crate::{declare_fwd_iterator, to_opt, to_slice};
+use crate::{declare_fwd_iterator, enum_from_int, to_opt, to_slice};
 
 /// Where the value of a variable or a parameter lives, as described by a DWARF
 /// location expression.
@@ -238,24 +238,13 @@ impl CompositeLocation<'_> {
     }
 }
 
-/// Whether a [`Piece`] comes from `DW_OP_piece` or `DW_OP_bit_piece`
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum PieceKind {
-    /// `DW_OP_piece`
-    Byte,
-    /// `DW_OP_bit_piece`
-    Bit,
-    /// A kind that is not recognized
-    Unknown(u8),
-}
-
-impl From<u8> for PieceKind {
-    fn from(value: u8) -> Self {
-        match value {
-            0 => PieceKind::Byte,
-            1 => PieceKind::Bit,
-            _ => PieceKind::Unknown(value),
-        }
+enum_from_int! {
+    /// Whether a [`Piece`] comes from `DW_OP_piece` or `DW_OP_bit_piece`
+    PieceKind: u8 {
+        /// `DW_OP_piece`
+        Byte = 0,
+        /// `DW_OP_bit_piece`
+        Bit = 1,
     }
 }
 

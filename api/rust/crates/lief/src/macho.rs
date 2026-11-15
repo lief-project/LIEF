@@ -69,6 +69,7 @@ pub use symbol::Symbol;
 pub use thread_local_variables::ThreadLocalVariables;
 
 use crate::common::AsFFI;
+use crate::enum_from_int;
 
 #[doc(inline)]
 pub use parser_config::Config as ParserConfig;
@@ -135,53 +136,23 @@ pub fn is_64<P: AsRef<Path>>(path: P) -> bool {
     ffi::MachO_Utils::is_64(&__cxx_s)
 }
 
-/// Mach-O magic values
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum MachOType {
-    /// 32-bit big-endian magic
-    MAGIC,
-    /// 32-bit little-endian magic
-    CIGAM,
-    /// 64-bit big-endian magic
-    MAGIC_64,
-    /// 64-bit little-endian magic
-    CIGAM_64,
-    /// Big-endian fat magic
-    MAGIC_FAT,
-    /// Little-endian fat magic
-    CIGAM_FAT,
-    /// Neural model magic
-    NEURAL_MODEL,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for MachOType {
-    fn from(value: u32) -> Self {
-        match value {
-            0xFEEDFACE => MachOType::MAGIC,
-            0xCEFAEDFE => MachOType::CIGAM,
-            0xFEEDFACF => MachOType::MAGIC_64,
-            0xCFFAEDFE => MachOType::CIGAM_64,
-            0xCAFEBABE => MachOType::MAGIC_FAT,
-            0xBEBAFECA => MachOType::CIGAM_FAT,
-            0xBEEFFACE => MachOType::NEURAL_MODEL,
-            _ => MachOType::UNKNOWN(value),
-        }
-    }
-}
-
-impl From<MachOType> for u32 {
-    fn from(value: MachOType) -> u32 {
-        match value {
-            MachOType::MAGIC => 0xFEEDFACE,
-            MachOType::CIGAM => 0xCEFAEDFE,
-            MachOType::MAGIC_64 => 0xFEEDFACF,
-            MachOType::CIGAM_64 => 0xCFFAEDFE,
-            MachOType::MAGIC_FAT => 0xCAFEBABE,
-            MachOType::CIGAM_FAT => 0xBEBAFECA,
-            MachOType::NEURAL_MODEL => 0xBEEFFACE,
-            MachOType::UNKNOWN(v) => v,
-        }
+enum_from_int! {
+    /// Mach-O magic values
+    #[allow(non_camel_case_types)]
+    MachOType: u32 {
+        /// 32-bit big-endian magic
+        MAGIC = 0xFEEDFACE,
+        /// 32-bit little-endian magic
+        CIGAM = 0xCEFAEDFE,
+        /// 64-bit big-endian magic
+        MAGIC_64 = 0xFEEDFACF,
+        /// 64-bit little-endian magic
+        CIGAM_64 = 0xCFFAEDFE,
+        /// Big-endian fat magic
+        MAGIC_FAT = 0xCAFEBABE,
+        /// Little-endian fat magic
+        CIGAM_FAT = 0xBEBAFECA,
+        /// Neural model magic
+        NEURAL_MODEL = 0xBEEFFACE,
     }
 }

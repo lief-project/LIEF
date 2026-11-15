@@ -1,6 +1,6 @@
 use lief_ffi as ffi;
 
-use crate::{common::FromFFI, common::into_optional, generic};
+use crate::{common::FromFFI, common::into_optional, enum_from_int, generic};
 use std::marker::PhantomData;
 use std::option::Option;
 use std::path::Path;
@@ -37,69 +37,23 @@ impl FromFFI<ffi::DWARF_Editor> for Editor<'_> {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Format {
-    ELF,
-    MACHO,
-    PE,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Format {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000000 => Format::ELF,
-            0x00000001 => Format::MACHO,
-            0x00000002 => Format::PE,
-            _ => Format::UNKNOWN(value),
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Format: u32 {
+        ELF = 0x00000000,
+        MACHO = 0x00000001,
+        PE = 0x00000002,
     }
 }
-impl From<Format> for u32 {
-    fn from(value: Format) -> u32 {
-        match value {
-            Format::ELF => 0x00000000,
-            Format::MACHO => 0x00000001,
-            Format::PE => 0x00000002,
-            Format::UNKNOWN(_) => 0,
-        }
+enum_from_int! {
+    #[allow(non_camel_case_types)]
+    Arch: u32 {
+        X64 = 0x00000001,
+        X86 = 0x00000002,
+        AARCH64 = 0x00000003,
+        ARM = 0x00000004,
     }
 }
-
-#[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
-pub enum Arch {
-    X64,
-    X86,
-    AARCH64,
-    ARM,
-    UNKNOWN(u32),
-}
-
-impl From<u32> for Arch {
-    fn from(value: u32) -> Self {
-        match value {
-            0x00000001 => Arch::X64,
-            0x00000002 => Arch::X86,
-            0x00000003 => Arch::AARCH64,
-            0x00000004 => Arch::ARM,
-            _ => Arch::UNKNOWN(value),
-        }
-    }
-}
-impl From<Arch> for u32 {
-    fn from(value: Arch) -> u32 {
-        match value {
-            Arch::X64 => 0x00000001,
-            Arch::X86 => 0x00000002,
-            Arch::AARCH64 => 0x00000003,
-            Arch::ARM => 0x00000004,
-            Arch::UNKNOWN(_) => 0,
-        }
-    }
-}
-
 impl<'a> Editor<'a> {
     /// Instantiate an editor for the given binary object
     pub fn from_binary(bin: &'a mut dyn generic::Binary) -> Option<Editor<'a>> {

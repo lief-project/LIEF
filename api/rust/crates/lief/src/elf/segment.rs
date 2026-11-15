@@ -65,7 +65,7 @@ pub enum Type {
     HP_HSL_ANNOT,
     HP_STACK,
     HP_CORE_UTSNAME,
-    UNKNOWN(u64),
+    Unknown(u64),
 }
 
 impl From<u64> for Type {
@@ -110,7 +110,7 @@ impl From<u64> for Type {
             0x20000060000013 => Type::HP_HSL_ANNOT,
             0x20000060000014 => Type::HP_STACK,
             0x20000060000015 => Type::HP_CORE_UTSNAME,
-            _ => Type::UNKNOWN(value),
+            _ => Type::Unknown(value),
         }
     }
 }
@@ -157,7 +157,7 @@ impl From<Type> for u64 {
             Type::HP_HSL_ANNOT => 0x20000060000013,
             Type::HP_STACK => 0x20000060000014,
             Type::HP_CORE_UTSNAME => 0x20000060000015,
-            Type::UNKNOWN(value) => value,
+            Type::Unknown(value) => value,
         }
     }
 }

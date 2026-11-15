@@ -83,7 +83,7 @@ impl DyldChainedFixups<'_> {
 
     /// The format of the imports
     pub fn imports_format(&self) -> CHAINED_FORMAT {
-        CHAINED_FORMAT::from_value(self.ptr.imports_format())
+        CHAINED_FORMAT::from(self.ptr.imports_format())
     }
 
     /// Iterator over the bindings [`crate::macho::BindingInfo::Chained`]
