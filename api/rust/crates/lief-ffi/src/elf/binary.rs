@@ -56,6 +56,8 @@ pub mod ffi {
         type ELF_Binary_write_config_t = crate::elf::binary::write_config_t;
 
         type LIEF_ELF_DynamicEntry = crate::elf::dynamic_entry::ffi::LIEF_ELF_DynamicEntry;
+        type LIEF_ELF_Section = crate::elf::section::ffi::LIEF_ELF_Section;
+        type LIEF_ELF_Segment = crate::elf::segment::ffi::LIEF_ELF_Segment;
 
         type ELF_Binary;
 
@@ -220,6 +222,16 @@ pub mod ffi {
         fn add_segment(self: Pin<&mut ELF_Binary>, segment: &ELF_Segment)
         -> UniquePtr<ELF_Segment>;
         fn remove_segment(self: Pin<&mut ELF_Binary>, segment: &ELF_Segment, clear: bool);
+        unsafe fn remove_segment_from_ptr(
+            self: Pin<&mut ELF_Binary>,
+            ptr: *const LIEF_ELF_Segment,
+            clear: bool,
+        );
+        unsafe fn remove_section_from_ptr(
+            self: Pin<&mut ELF_Binary>,
+            ptr: *const LIEF_ELF_Section,
+            clear: bool,
+        );
         fn remove_segments_by_type(self: Pin<&mut ELF_Binary>, ty: u64, clear: bool);
         fn has_dynamic_entry_tag(self: &ELF_Binary, tag: u64) -> bool;
         fn has_segment_type(self: &ELF_Binary, ty: u64) -> bool;

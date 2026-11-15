@@ -607,6 +607,32 @@ impl Binary {
             .remove_segment(segment.ptr.as_ref().unwrap(), clear)
     }
 
+    /// Remove the segments matching the given predicate. If `clear` is set,
+    /// their original content is filled with zeros.
+    ///
+    /// The function returns the number of segments that have been removed.
+    pub fn remove_segment_if<P>(&mut self, predicate: P, clear: bool) -> usize
+    where
+        P: Fn(&Segment) -> bool,
+    {
+        let segments = self
+            .segments()
+            .filter(|segment| predicate(segment))
+            .map(|segment| segment.ptr.raw_ptr())
+            .collect::<Vec<_>>();
+
+        let cnt = segments.len();
+
+        for ffi_segment in segments {
+            unsafe {
+                self.ptr
+                    .pin_mut()
+                    .remove_segment_from_ptr(ffi_segment, clear);
+            }
+        }
+        cnt
+    }
+
     /// Remove all segments associated with the given type.
     ///
     /// If `clear` is set, the original content of the segments will be filled
@@ -832,6 +858,32 @@ impl Binary {
     /// filled with zeros before removal.
     pub fn remove_section(&mut self, section: &Section, clear: bool) {
         self.ptr.pin_mut().remove_section(section.as_ffi(), clear);
+    }
+
+    /// Remove the sections matching the given predicate. If `clear` is set,
+    /// their content is filled with zeros.
+    ///
+    /// The function returns the number of sections that have been removed.
+    pub fn remove_section_if<P>(&mut self, predicate: P, clear: bool) -> usize
+    where
+        P: Fn(&Section) -> bool,
+    {
+        let sections = self
+            .sections()
+            .filter(|section| predicate(section))
+            .map(|section| section.as_ffi().raw_ptr())
+            .collect::<Vec<_>>();
+
+        let cnt = sections.len();
+
+        for ffi_section in sections {
+            unsafe {
+                self.ptr
+                    .pin_mut()
+                    .remove_section_from_ptr(ffi_section, clear);
+            }
+        }
+        cnt
     }
 
     /// Remove the given note

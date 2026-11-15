@@ -431,6 +431,16 @@ class ELF_Binary : public AbstractBinary {
     impl().remove(*ptr);
   }
 
+  auto remove_segment_from_ptr(const LIEF::ELF::Segment* ptr, bool clear) {
+    assert(ptr != nullptr);
+    impl().remove(*ptr, clear);
+  }
+
+  auto remove_section_from_ptr(const LIEF::ELF::Section* ptr, bool clear) {
+    assert(ptr != nullptr);
+    impl().remove(*ptr, clear);
+  }
+
   auto add_dynamic_entry(const ELF_DynamicEntry& entry) {
     return std::make_unique<ELF_DynamicEntry>(impl().add(entry.get()));
   }

@@ -18,6 +18,8 @@
 #include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/helpers.hpp"
 
+using LIEF_ELF_Segment = LIEF::ELF::Segment;
+
 class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
   public:
   using lief_t = LIEF::ELF::Segment;
@@ -105,6 +107,10 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
 
   auto clear() {
     get().clear();
+  }
+
+  const auto* raw_ptr() const {
+    return &get();
   }
 
   auto to_string() const {

@@ -400,3 +400,25 @@ fn test_section_segment_setters() {
     seg.set_physical_size(0x10);
     assert_eq!(seg.physical_size(), 0x10);
 }
+
+#[test]
+fn test_remove_segment_section_if() {
+    let path = utils::get_elf_sample("ELF64_x86-64_binary_hello-c.bin").unwrap();
+    let mut elf = lief::elf::Binary::parse(path).unwrap();
+
+    let is_note = |segment: &lief::elf::Segment| segment.p_type() == segment::Type::NOTE;
+
+    let nb_segments = elf.segments().count();
+    let nb_notes = elf.segments().filter(is_note).count();
+
+    assert!(nb_notes > 0);
+    assert_eq!(elf.remove_segment_if(is_note, true), nb_notes);
+    assert_eq!(elf.segments().count(), nb_segments - nb_notes);
+
+    assert_eq!(elf.remove_segment_if(is_note, true), 0);
+
+    let nb_sections = elf.sections().count();
+    assert_eq!(elf.remove_section_if(|s| s.name() == ".comment", false), 1);
+    assert_eq!(elf.sections().count(), nb_sections - 1);
+    assert!(elf.section_by_name(".comment").is_none());
+}

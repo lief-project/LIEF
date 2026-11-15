@@ -6,6 +6,8 @@ pub mod ffi {
         type Span = crate::utils::ffi::Span;
         type ELF_Segment;
 
+        type LIEF_ELF_Segment;
+
         fn content(self: &ELF_Segment) -> Span;
         #[Self = "ELF_Segment"]
         fn create() -> UniquePtr<ELF_Segment>;
@@ -29,6 +31,7 @@ pub mod ffi {
         fn set_physical_size(self: Pin<&mut ELF_Segment>, value: u64);
         fn set_alignment(self: Pin<&mut ELF_Segment>, value: u64);
         unsafe fn set_content(self: Pin<&mut ELF_Segment>, ptr: *const u8, size: u64);
+        fn raw_ptr(self: &ELF_Segment) -> *const LIEF_ELF_Segment;
     }
     impl UniquePtr<ELF_Segment> {}
 }

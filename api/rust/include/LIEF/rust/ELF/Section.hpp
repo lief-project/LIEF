@@ -19,6 +19,8 @@
 #include "LIEF/rust/Span.hpp"
 #include "LIEF/rust/helpers.hpp"
 
+using LIEF_ELF_Section = LIEF::ELF::Section;
+
 class ELF_Section : public AbstractSection {
   public:
   using lief_t = LIEF::ELF::Section;
@@ -93,6 +95,10 @@ class ELF_Section : public AbstractSection {
 
   void set_alignment(uint64_t value) {
     impl().alignment(value);
+  }
+
+  const auto* raw_ptr() const {
+    return &impl();
   }
 
   private:

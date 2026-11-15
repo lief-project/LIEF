@@ -6,6 +6,8 @@ pub mod ffi {
         type Span = crate::utils::ffi::Span;
         type ELF_Section;
 
+        type LIEF_ELF_Section;
+
         #[Self = "ELF_Section"]
         fn create() -> UniquePtr<ELF_Section>;
         #[Self = "ELF_Section"]
@@ -29,6 +31,7 @@ pub mod ffi {
         fn set_type(self: Pin<&mut ELF_Section>, value: u64);
         fn set_flags(self: Pin<&mut ELF_Section>, value: u64);
         fn set_alignment(self: Pin<&mut ELF_Section>, value: u64);
+        fn raw_ptr(self: &ELF_Section) -> *const LIEF_ELF_Section;
     }
 
     impl UniquePtr<ELF_Section> {}
