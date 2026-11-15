@@ -28,6 +28,7 @@
 
 
 #include "Builder.tcc"
+#include "endianness.hpp"
 
 #include "ExeLayout.hpp"
 #include "ObjectFileLayout.hpp"
@@ -68,24 +69,8 @@ Builder::Builder(Binary& binary, const config_t& config) :
 
 
 bool Builder::should_swap() const {
-  switch (binary_->get_abstract_header().endianness()) {
-#ifdef __BYTE_ORDER__
-  #if defined(__ORDER_LITTLE_ENDIAN__) &&                                         \
-      (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-    case LIEF::Header::ENDIANNESS::BIG:
-  #elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-    case LIEF::Header::ENDIANNESS::LITTLE:
-  #endif
-      return true;
-#else
-    // If there is no __BYTE_ORDER__ (e.g. MSVC), assume little-endian
-    case LIEF::Header::ENDIANNESS::BIG: return true;
-#endif
-    default:
-      // we're good (or don't know what to do), consider bytes are in the expected
-      // order
-      return false;
-  }
+  return binary_->get_abstract_header().endianness() ==
+         SWAPPED_ENDIANNESS<LIEF::Header::ENDIANNESS>;
 }
 
 

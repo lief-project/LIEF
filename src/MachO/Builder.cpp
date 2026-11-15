@@ -28,6 +28,7 @@
 #include "LIEF/MachO/UUIDCommand.hpp"
 
 #include "Object.tcc"
+#include "endianness.hpp"
 
 #include "MachO/Binary.tcc"
 #include "MachO/Builder.tcc"
@@ -55,24 +56,8 @@ bool Builder::should_swap() const {
   if (binary_ == nullptr) {
     return false;
   }
-  switch (binary_->get_abstract_header().endianness()) {
-#ifdef __BYTE_ORDER__
-  #if defined(__ORDER_LITTLE_ENDIAN__) &&                                         \
-      (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-    case LIEF::Header::ENDIANNESS::BIG:
-  #elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-    case LIEF::Header::ENDIANNESS::LITTLE:
-  #endif
-      return true;
-#else
-    // If there is no __BYTE_ORDER__ (e.g. MSVC), assume little-endian
-    case LIEF::Header::ENDIANNESS::BIG: return true;
-#endif
-    default:
-      // we're good (or don't know what to do), consider bytes are in the
-      // expected order
-      return false;
-  }
+  return binary_->get_abstract_header().endianness() ==
+         SWAPPED_ENDIANNESS<LIEF::Header::ENDIANNESS>;
 }
 
 template<typename T>

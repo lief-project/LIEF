@@ -19,22 +19,16 @@
 
 #include "LIEF/MachO/ThreadCommand.hpp"
 #include "MachO/Structures.hpp"
+#include "endianness.hpp"
 
 namespace LIEF::MachO {
 
 template<class T>
 inline T from_big_endian(T value) {
-#ifdef __BYTE_ORDER__
-  #if defined(__ORDER_LITTLE_ENDIAN__) &&                                         \
-      (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-  return get_swapped_endian<T>(value);
-  #else
-  return value;
-  #endif
-#else
-  // No __BYTE_ORDER__ (e.g. MSVC): assume a little-endian host.
-  return get_swapped_endian<T>(value);
-#endif
+  using ENDIANNESS = LIEF::Header::ENDIANNESS;
+  return HOST_ENDIANNESS<ENDIANNESS> == ENDIANNESS::BIG ?
+             value :
+             get_swapped_endian<T>(value);
 }
 
 ThreadCommand::ThreadCommand(const details::thread_command& cmd,

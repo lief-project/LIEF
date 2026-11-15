@@ -41,6 +41,7 @@
 
 #include "Parser.tcc"
 
+#include "endianness.hpp"
 #include "internal_utils.hpp"
 
 namespace LIEF::ELF {
@@ -100,34 +101,6 @@ Header::ELF_DATA determine_elf_endianess(ARCH machine) {
 
     default: return Header::ELF_DATA::NONE;
   }
-}
-
-/*
- * Get the endianness of the current architecture
- */
-constexpr Header::ELF_DATA get_endianess() {
-#ifdef __BYTE_ORDER__
-  #if defined(__ORDER_LITTLE_ENDIAN__) &&                                         \
-      (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-  return Header::ELF_DATA::LSB;
-  #elif defined(__ORDER_BIG_ENDIAN__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-  return Header::ELF_DATA::MSB;
-  #endif
-#endif
-  /* If there is no __BYTE_ORDER__ we take the (arbitrary) decision that we are
-   * on a little-endian architecture.
-   */
-  return Header::ELF_DATA::LSB;
-}
-
-constexpr Header::ELF_DATA invert_endianess(Header::ELF_DATA endian) {
-  if (endian == Header::ELF_DATA::MSB) {
-    return Header::ELF_DATA::LSB;
-  }
-  if (endian == Header::ELF_DATA::LSB) {
-    return Header::ELF_DATA::MSB;
-  }
-  return Header::ELF_DATA::NONE;
 }
 
 Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
@@ -194,7 +167,7 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
     {
       auto it = std::find(BOTH_ENDIANESS.begin(), BOTH_ENDIANESS.end(), machine);
       if (it != BOTH_ENDIANESS.end()) {
-        return get_endianess();
+        return HOST_ENDIANNESS<Header::ELF_DATA>;
       }
     }
 
@@ -202,7 +175,7 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
       auto it =
           std::find(BOTH_ENDIANESS.begin(), BOTH_ENDIANESS.end(), machine_swap);
       if (it != BOTH_ENDIANESS.end()) {
-        return invert_endianess(get_endianess());
+        return SWAPPED_ENDIANNESS<Header::ELF_DATA>;
       }
     }
   }
@@ -211,15 +184,10 @@ Header::ELF_DATA determine_elf_endianess(BinaryStream& stream) {
 
 bool Parser::should_swap() const {
   const Header::ELF_DATA binary_endian = determine_elf_endianess(*stream_);
-  const Header::ELF_DATA current_endian = get_endianess();
-  LIEF_DEBUG("LIEF Endianness:   '{}'", to_string(current_endian));
+  LIEF_DEBUG("LIEF Endianness:   '{}'",
+             to_string(HOST_ENDIANNESS<Header::ELF_DATA>));
   LIEF_DEBUG("Binary Endianness: '{}'", to_string(binary_endian));
-  if (binary_endian != Header::ELF_DATA::NONE &&
-      current_endian != Header::ELF_DATA::NONE)
-  {
-    return binary_endian != current_endian;
-  }
-  return false;
+  return binary_endian == SWAPPED_ENDIANNESS<Header::ELF_DATA>;
 }
 
 Target determine_elf_target(BinaryStream& stream) {
