@@ -383,3 +383,20 @@ fn test_header_identity() {
     assert_eq!(header.identity_os_abi(), OsAbi::LINUX);
     assert!(format!("{header:?}").contains("identity_abi_version: 1"));
 }
+
+#[test]
+fn test_section_segment_setters() {
+    use lief::elf::section;
+
+    let mut sec = lief::elf::Section::new_with_name(".note.lief");
+    sec.set_type(section::Type::NOTE);
+    sec.set_flags(section::Flags::ALLOC);
+    sec.set_alignment(4);
+    assert_eq!(sec.get_type(), section::Type::NOTE);
+    assert_eq!(sec.flags(), section::Flags::ALLOC);
+    assert_eq!(sec.alignment(), 4);
+
+    let mut seg = lief::elf::Segment::new();
+    seg.set_physical_size(0x10);
+    assert_eq!(seg.physical_size(), 0x10);
+}

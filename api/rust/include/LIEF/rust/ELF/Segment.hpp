@@ -83,6 +83,10 @@ class ELF_Segment : public Mirror<LIEF::ELF::Segment> {
     get().virtual_size(value);
   }
 
+  auto set_physical_size(uint64_t value) {
+    get().physical_size(value);
+  }
+
   auto set_alignment(uint64_t value) {
     get().alignment(value);
   }

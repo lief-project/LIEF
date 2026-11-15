@@ -26,6 +26,9 @@ pub mod ffi {
         fn original_size(self: &ELF_Section) -> u64;
         fn content(self: &ELF_Section) -> Span;
         fn to_string(self: &ELF_Section) -> UniquePtr<CxxString>;
+        fn set_type(self: Pin<&mut ELF_Section>, value: u64);
+        fn set_flags(self: Pin<&mut ELF_Section>, value: u64);
+        fn set_alignment(self: Pin<&mut ELF_Section>, value: u64);
     }
 
     impl UniquePtr<ELF_Section> {}

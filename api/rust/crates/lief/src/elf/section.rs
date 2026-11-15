@@ -89,6 +89,21 @@ impl Section<'_> {
     pub fn content(&self) -> &[u8] {
         to_slice!(self.ptr.content());
     }
+
+    /// Change the type of the section
+    pub fn set_type(&mut self, ty: Type) {
+        self.ptr.pin_mut().set_type(ty.into());
+    }
+
+    /// Change the flags of the section
+    pub fn set_flags(&mut self, flags: Flags) {
+        self.ptr.pin_mut().set_flags(flags.bits());
+    }
+
+    /// Change the alignment of the section
+    pub fn set_alignment(&mut self, alignment: u64) {
+        self.ptr.pin_mut().set_alignment(alignment);
+    }
 }
 
 #[allow(non_camel_case_types)]

@@ -83,8 +83,24 @@ class ELF_Section : public AbstractSection {
     return to_unique_string(details::to_string(impl()));
   }
 
+  void set_type(uint64_t value) {
+    impl().type(lief_t::TYPE(value));
+  }
+
+  void set_flags(uint64_t value) {
+    impl().flags(value);
+  }
+
+  void set_alignment(uint64_t value) {
+    impl().alignment(value);
+  }
+
   private:
   const lief_t& impl() const {
+    return as<lief_t>(this);
+  }
+
+  lief_t& impl() {
     return as<lief_t>(this);
   }
 };

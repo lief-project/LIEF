@@ -292,6 +292,10 @@ impl Segment<'_> {
         self.ptr.pin_mut().set_virtual_size(vsize);
     }
 
+    pub fn set_physical_size(&mut self, size: u64) {
+        self.ptr.pin_mut().set_physical_size(size);
+    }
+
     pub fn set_alignment(&mut self, alignment: u64) {
         self.ptr.pin_mut().set_alignment(alignment);
     }

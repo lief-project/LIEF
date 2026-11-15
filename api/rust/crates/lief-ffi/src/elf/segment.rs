@@ -26,6 +26,7 @@ pub mod ffi {
         fn set_virtual_address(self: Pin<&mut ELF_Segment>, value: u64);
         fn set_physical_address(self: Pin<&mut ELF_Segment>, value: u64);
         fn set_virtual_size(self: Pin<&mut ELF_Segment>, value: u64);
+        fn set_physical_size(self: Pin<&mut ELF_Segment>, value: u64);
         fn set_alignment(self: Pin<&mut ELF_Segment>, value: u64);
         unsafe fn set_content(self: Pin<&mut ELF_Segment>, ptr: *const u8, size: u64);
     }
