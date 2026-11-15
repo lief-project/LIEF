@@ -49,8 +49,8 @@
     encoding.
   * |lief-elf-relocation-resolve| now supports ``R_MIPS_REL32``.
   * Bound the number of links between the |lief-elf-section| and
-    |lief-elf-segment| objects created by the parser. Issue found by :zhangyan8216:
-    in advisory ``GHSA-r5x5-7225-g759``
+    |lief-elf-segment| objects created by the parser. Issue found by
+    :github_user:`zhangyan8216` in advisory ``GHSA-r5x5-7225-g759``
   * Fix a use-after-free of the section names when ``.shstrtab`` is relocated
     while writing the binary (advisory ``GHSA-jrqq-qr56-xgcv``)
   * Fix the sizes of the ELF note names and descriptions (:pr:`1402` by :github_user:`wleeaf`)
