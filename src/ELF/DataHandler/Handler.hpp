@@ -15,6 +15,7 @@
  */
 #ifndef LIEF_ELF_DATA_HANDLER
 #define LIEF_ELF_DATA_HANDLER
+#include <cstring>
 #include <functional>
 #include <memory>
 #include <vector>
@@ -68,6 +69,16 @@ class LIEF_API Handler {
   void remove(uint64_t offset, uint64_t size, Node::Type type);
 
   ok_error_t make_hole(uint64_t offset, uint64_t size);
+
+  ok_error_t shift(uint64_t from, uint64_t to, uint64_t size) {
+    if (from > to || to > data_.size() || size > data_.size() - to) {
+      return make_error_code(lief_errors::corrupted);
+    }
+    std::memmove(/*dst=*/data_.data() + from + size, /*src*/ data_.data() + from,
+                 to - from);
+    std::fill(data_.begin() + from, data_.begin() + from + size, 0);
+    return ok();
+  }
 
   ok_error_t reserve(uint64_t offset, uint64_t size);
 
