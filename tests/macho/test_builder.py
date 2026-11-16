@@ -283,6 +283,9 @@ def test_extend_section_2(tmp_path: Path):
     for section in sections:
         assert original.extend_section(section, 1000)
 
+    checked, err = lief.MachO.check_layout(original)
+    assert checked, err
+
     original.write(output)
     fat = lief.MachO.parse(output)
     assert fat is not None

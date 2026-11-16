@@ -1027,6 +1027,11 @@ ok_error_t Binary::shift(size_t value) {
 
   refresh_seg_offset();
   available_command_space_ += value;
+  // The insertion above grows the file by `value` bytes and moves the
+  // following segments (including __LINKEDIT) forward. Keep the original
+  // size in sync so that layout checks run on the in-memory binary match
+  // the layout that will be written.
+  original_size(original_size() + value);
   return ok();
 }
 
