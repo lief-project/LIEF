@@ -88,13 +88,16 @@ class LIEF_API vector_iostream {
 
   vector_iostream& write(size_t count, uint8_t value) {
     size_t pos = 0;
-    if (!checked_write_pos(count, pos) || count > raw_->max_size() - raw_->size())
-    {
+    if (count == 0 || !checked_write_pos(count, pos)) {
       return *this;
     }
 
-    raw_->insert(raw_->end(), count, value);
-    current_pos_ = (off_type)(pos + count);
+    const size_t end = pos + count;
+    if (raw_->size() < end) {
+      raw_->resize(end);
+    }
+    std::fill(raw_->begin() + pos, raw_->begin() + end, value);
+    current_pos_ = (off_type)end;
     return *this;
   }
 
