@@ -112,6 +112,9 @@ std::vector<Section::CHARACTERISTICS>
 
 void Section::content(const std::vector<uint8_t>& data) {
   content_ = data;
+  shared_content_.reset();
+  shared_content_offset_ = 0;
+  shared_content_size_ = 0;
 }
 
 void Section::accept(LIEF::Visitor& visitor) const {
@@ -123,7 +126,8 @@ std::unique_ptr<SpanStream> Section::stream() const {
 }
 
 void Section::clear(uint8_t c) {
-  std::fill(content_.begin(), content_.end(), c);
+  std::vector<uint8_t>& data = writable_storage();
+  std::fill(data.begin(), data.end(), c);
 }
 
 size_t Section::serialize(vector_iostream& ios) const {
